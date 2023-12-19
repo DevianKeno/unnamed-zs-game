@@ -1,0 +1,27 @@
+{
+	"Player":
+	{
+		"Vitals":
+		{
+			"Health":
+			{
+				"baseMaximum": 100,
+				"baseRegen": 0.1
+			},
+			"Stamina":
+			{
+				"baseMaximum": 100,
+				"baseRegen": 5
+			},
+			"Mana":
+			{
+				"baseMaximum": 100,
+				"baseRegen": 1
+			},
+			"MoveSpeed":
+			{
+				"baseMaximum": 10
+			},
+		}
+	}
+}

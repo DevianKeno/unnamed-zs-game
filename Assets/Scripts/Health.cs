@@ -1,17 +1,18 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
-namespace ZS
+namespace URMG
 {
-    /// <summary>
-    /// Player health attribute.
-    /// </summary>
-    public class Health : VitalAttribute
-    {
-        public override float BaseMaximum
-        {
-            get { return Defaults.BaseMaxHealth; }
-        }
-    }
+    // public class Health : VitalAttribute
+    // {
+    //     // public Health()
+    //     // {
+    //     //     Game.Tick.OnSecond += OnSecond;
+    //     // }
+
+    //     void OnSecond(object sender, Tick.TickEventArgs e)
+    //     {
+    //         throw new NotImplementedException();
+    //     }
+    // }
 }

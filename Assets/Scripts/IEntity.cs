@@ -1,10 +1,15 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
-namespace ZS
+namespace URMG
 {
-    public interface IEntity : IDamageable, IKillable
+    public interface ISpawnable
+    {
+        public void Spawn();
+    }
+    
+    /// <summary>
+    /// Entities are damageable and killable.
+    /// </summary>
+    public interface IEntity : ISpawnable, IDamageable, IKillable
     {
 
     }

@@ -1,8 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
-public interface IDamageable
+namespace URMG
 {
-    public void InflictDamage(float value);
+    public interface IDamageable
+    {
+        public void TakeDamage();
+    }
 }

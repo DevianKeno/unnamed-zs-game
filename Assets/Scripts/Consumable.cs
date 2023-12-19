@@ -1,9 +1,8 @@
-
 using UnityEngine;
 
-namespace ZS
+namespace URMG
 {
-    public abstract class Consumable : MonoBehaviour, IConsumable, IPickupable, IDroppable
+    public abstract class Consumable : MonoBehaviour, IConsumable, IDroppable
     {
         public void Consume()
         {

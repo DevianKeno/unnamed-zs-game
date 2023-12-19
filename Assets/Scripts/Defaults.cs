@@ -2,8 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ZS
+namespace URMG
 {
+    /// <summary>
+    /// These should be read from a file.
+    /// </summary>
     public class Defaults
     {
         public static float BaseMaxHealth = 100f;

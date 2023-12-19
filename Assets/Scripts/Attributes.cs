@@ -1,33 +1,22 @@
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEngine;
 
-namespace ZS
+namespace URMG
 {
+    /// <summary>
+    /// Represents a collection of attributes for an entity.
+    /// </summary>
     public class Attributes
     {
-        Dictionary<string, Attribute> attributes;
+        protected Dictionary<string, Attribute> _attributes;
         
-        GenericAttribute _movementSpeed;
-        public GenericAttribute MovementSpeed { get => _movementSpeed; }
-        GenericAttribute _experience;
-        public GenericAttribute Experience { get => _experience; }
-        Health _health;
-        public Health Health { get => _health; }
-        VitalAttribute _stamina;
-        public VitalAttribute Stamina { get => _stamina; }
-        VitalAttribute _mana;
-        public VitalAttribute Mana { get => _mana; }
-
-        public float this[string name]
+        public Attribute this[string name]
         {
-            get => attributes[name].Value;
+            get => _attributes[name];
         }
 
-        public Attributes()
+        public void AddAttribute(Attribute attribute)
         {
-            
+            // _attributes.Add(attribute.Name, attribute);
         }
     }
 }

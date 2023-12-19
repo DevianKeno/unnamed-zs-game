@@ -1,4 +1,4 @@
-﻿{
+{
     "files.exclude":
     {
         "**/.DS_Store":true,
@@ -51,5 +51,8 @@
         "ProjectSettings/":true,
         "temp/":true,
         "Temp/":true
-    }
+    },
+    "dotnet.defaultSolution": "unnamed-zs-game.sln",
+    "dotnet.preferCSharpExtension": true,
+    "cmake.sourceDirectory": "F:/Development/GitHub/unnamed-zs-game/Library/PackageCache/com.unity.ide.visualstudio@2.0.22/Editor/COMIntegration/COMIntegration~"
 }

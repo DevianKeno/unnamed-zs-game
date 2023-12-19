@@ -27,6 +27,7 @@ public class Slot
     }
 
     /// <summary>
+    /// Adds the item.
     /// Returns excess items if any.
     /// </summary>
     public Item AddItem(Item toAdd)

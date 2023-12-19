@@ -1,5 +1,9 @@
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using URMG.Core;
+using URMG.InventoryS;
 using URMG.Items;
 
 namespace URMG.UI
@@ -7,17 +11,60 @@ namespace URMG.UI
 public class InventoryUI : MonoBehaviour
 {
     public const int MaxBagSlots = 18;
-    Dictionary<int, SlotUI> slots = new();
-    [SerializeField] GameObject bag;
+    Dictionary<int, SlotUI> uiSlots = new();
     bool _isVisible = true;
+    bool isHolding;
+    SlotUI selectedSlot;
+    SlotUI heldSlot;
+    [SerializeField] GameObject bag;
+    [SerializeField] GameObject slotPrefab;
+    [SerializeField] GameObject itemDisplayPrefab;
 
     void Awake()
     {
-        int i = 0;
-        foreach (Transform t in bag.transform)
+        InitBag();
+    }
+
+    void InitBag()
+    {
+        for (int i = 0; i < MaxBagSlots; i++)
         {
-            slots.Add(i, t.GetComponent<SlotUI>());
-            i++;
+            GameObject slotGO = Instantiate(slotPrefab, bag.transform);
+            slotGO.name = $"Slot {i}";
+            GameObject idGO = Instantiate(itemDisplayPrefab, slotGO.transform);
+            idGO.name = $"Item Display";
+
+            SlotUI slot = slotGO.GetComponent<SlotUI>();
+            slot.SetDisplayUI(idGO.GetComponent<ItemDisplayUI>());
+            slot.OnClick += OnClickSlot;
+            uiSlots.Add(i, slot);
+        }
+    }
+
+    public void OnClickSlot(object slot, PointerEventData e)
+    {
+        selectedSlot = (SlotUI) slot;
+        if (e.button == PointerEventData.InputButton.Left)
+        {
+            if (isHolding)
+            {
+
+            } else
+            {
+                heldSlot = Instantiate(slotPrefab, Game.UI.Canvas.transform).GetComponent<SlotUI>();
+            }
+
+        } else if (e.button == PointerEventData.InputButton.Right)
+        {
+            
+        }
+    }
+
+    void Update()
+    {
+        if (heldSlot != null)
+        {
+            heldSlot.transform.position = Input.mousePosition;
         }
     }
 
@@ -28,12 +75,7 @@ public class InventoryUI : MonoBehaviour
             Debug.Log("Slot index out of bounds.");
             return;
         }
-        slots[slotIndex].SetDisplayItem(item);
-    }
-
-    public void RefreshSlot(int index)
-    {
-        slots[index].Refresh();
+        uiSlots[slotIndex].SetDisplay(item);
     }
 
     public void Show()

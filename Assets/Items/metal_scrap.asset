@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 873d4c4f155a35a46b4699d35b336ec7, type: 3}
-  m_Name: small_stone
+  m_Name: metal_scrap
   m_EditorClassIdentifier: 
-  Id: small_stone
-  Name: Small Stone
-  Description: A relatively small stone.
+  Id: metal_scrap
+  Name: Metal Scrap
+  Description: Scrap metal parts.
   Sprite: {fileID: 0}
   IsStackable: 1
   MaxStackSize: 999

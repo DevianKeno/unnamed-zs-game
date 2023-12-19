@@ -12,6 +12,8 @@ public class InventoryHandler
     public const int MaxBagSlots = 18;
     InventoryUI ui;
     Slot[] _slots = new Slot[MaxBagSlots];
+    Slot[] _occupiedSlots = new Slot[MaxBagSlots];
+    Slot[] _emptySlots = new Slot[MaxBagSlots];
 
     public InventoryHandler()
     {
@@ -46,14 +48,13 @@ public class InventoryHandler
             }
             
             if (slot.Item.CompareTo(item))
-            {                
-                Item excess = slot.AddItem(item);
-
-                if (excess != null)
+            {
+                if (slot.AddItem(item) != null)
                 {
                     return TryPutNearest(item);
                 }
-                ui.RefreshSlot(slot.Index);
+                ui.SetDisplayedItem(slot.Index, slot.Item);
+                return true;
             } else
             {
                 continue;

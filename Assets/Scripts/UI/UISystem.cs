@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using URMG.InventoryS;
 
 namespace URMG.UI
@@ -9,16 +10,16 @@ namespace URMG.UI
 public sealed class UISystem : MonoBehaviour
 {
     [SerializeField] Canvas canvas;
+    public Canvas Canvas { get => canvas; }
     [SerializeField] InteractIndicator _pickupIndicator;
     public InteractIndicator InteractIndicator { get => _pickupIndicator; }
-
     [SerializeField] InventoryUI _inventoryUI;
     public InventoryUI InventoryUI { get => _inventoryUI; }
-
+    
     [Header("Prefabs")]
     [SerializeField] GameObject pickupPrefab;
     [SerializeField] GameObject inventoryPrefab;
-    
+
     /// <summary>
     /// Bind given inventory to the UI.
     /// </summary>
@@ -40,6 +41,11 @@ public sealed class UISystem : MonoBehaviour
 
         _inventoryUI = Instantiate(inventoryPrefab, canvas.transform).GetComponent<InventoryUI>();
         _inventoryUI.Hide();
+    }
+
+    public void Create()
+    {
+
     }
 }
 }

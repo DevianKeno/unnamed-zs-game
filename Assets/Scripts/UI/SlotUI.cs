@@ -3,77 +3,47 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
 using URMG.Items;
+using URMG.Core;
+using URMG.UI.Colors;
 using System;
 
 namespace URMG.UI
 {
-public class SlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler
-{
-    public static Color Opaque = new(1f, 1f, 1f, 1f);
-    public static Color Transparent = new(1f, 1f, 1f, 0f);
-    public static Color Normal = new(0f, 0f, 0f, 0.5f);
-    public static Color Hovered = new(0.2f, 0.2f, 0.2f, 0.5f);
-
-    Item _item;    
-    [SerializeField] Image slotImage;
-    [SerializeField] Image itemImage;
-    [SerializeField] TextMeshProUGUI countText;
-    [SerializeField] TextMeshProUGUI altText;
+    public class SlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler
+    {
+        public static Color Opaque { get => new(1f, 1f, 1f, 1f); }
+        public static Color Transparent { get => new(1f, 1f, 1f, 0f); }
+        public static Color Normal { get => new(0f, 0f, 0f, 0.5f); }
+        public static Color Hovered { get => new(0.2f, 0.2f, 0.2f, 0.5f); }
     
-    public void OnPointerDown(PointerEventData eventData)
-    {
-        
-    }
+        ItemDisplayUI displayUI;
+        [SerializeField] Image image;
+        public event EventHandler<PointerEventData> OnClick;
 
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        slotImage.color = Hovered;
-    }
-
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        slotImage.color = Normal;
-    }
-
-    public void Refresh()
-    {
-        if (_item.Count == 1)
+        public void OnPointerEnter(PointerEventData e)
         {
-            countText.text = "";
-        } else
-        {
-            countText.text = _item.Count.ToString();
-        }
-    }
-
-    public void SetDisplayItem(Item item)
-    {
-        _item = item;
-
-        if (item.Data.Sprite != null)
-        {
-            altText.enabled = false;
-            itemImage.sprite = item.Data.Sprite;
-            itemImage.color = Opaque;
-        } else
-        {
-            altText.enabled = true;
-            altText.text = item.Data.Name;
+            image.color = Hovered;
         }
 
-        if (item.Count == 1)
+        public void OnPointerExit(PointerEventData e)
         {
-            countText.text = "";
-        } else
+            image.color = Normal;
+        }
+
+        public void OnPointerDown(PointerEventData e)
         {
-            countText.text = item.Count.ToString();
+            OnClick?.Invoke(this, e);
+        }
+
+        public void SetDisplayUI(ItemDisplayUI obj)
+        {
+            displayUI = obj;
+        }
+
+        public void SetDisplay(Item item)
+        {
+            if (displayUI == null) return;
+            displayUI.SetDisplay(item);
         }
     }
-
-    void Clear()
-    {        
-        itemImage = null;
-        itemImage.color = Transparent;
-    }
-}
 }

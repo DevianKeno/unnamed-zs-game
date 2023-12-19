@@ -13,7 +13,6 @@ public sealed class Game : MonoBehaviour
     public static TickSystem Tick { get => _tick; }
     static Console.Console _console;
     public static Console.Console Console { get => _console; }
-
     public event Action OnInitialize;
 
     void Awake()

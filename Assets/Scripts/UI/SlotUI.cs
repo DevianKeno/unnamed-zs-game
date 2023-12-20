@@ -1,11 +1,9 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using TMPro;
 using URMG.Items;
 using URMG.Core;
-using URMG.UI.Colors;
-using System;
 
 namespace URMG.UI
 {
@@ -15,19 +13,25 @@ namespace URMG.UI
         public static Color Transparent { get => new(1f, 1f, 1f, 0f); }
         public static Color Normal { get => new(0f, 0f, 0f, 0.5f); }
         public static Color Hovered { get => new(0.2f, 0.2f, 0.2f, 0.5f); }
-    
-        ItemDisplayUI displayUI;
-        [SerializeField] Image image;
+        public int Index;
         public event EventHandler<PointerEventData> OnClick;
+        Image _image;
+        ItemDisplayUI _displayUI;
+
+        void Awake()
+        {
+            _image = GetComponent<Image>();
+            _displayUI = GetComponentInChildren<ItemDisplayUI>();
+        }
 
         public void OnPointerEnter(PointerEventData e)
         {
-            image.color = Hovered;
+            _image.color = Hovered;
         }
 
         public void OnPointerExit(PointerEventData e)
         {
-            image.color = Normal;
+            _image.color = Normal;
         }
 
         public void OnPointerDown(PointerEventData e)
@@ -35,15 +39,9 @@ namespace URMG.UI
             OnClick?.Invoke(this, e);
         }
 
-        public void SetDisplayUI(ItemDisplayUI obj)
-        {
-            displayUI = obj;
-        }
-
         public void SetDisplay(Item item)
         {
-            if (displayUI == null) return;
-            displayUI.SetDisplay(item);
+            _displayUI.SetDisplay(item);
         }
     }
 }

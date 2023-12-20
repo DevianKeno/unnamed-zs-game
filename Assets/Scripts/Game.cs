@@ -36,8 +36,6 @@ public sealed class Game : MonoBehaviour
     void Init()
     {
         OnInitialize?.Invoke();
-
-        UI.Init();
     }
 }
 }

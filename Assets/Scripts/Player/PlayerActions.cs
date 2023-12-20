@@ -47,7 +47,7 @@ public class PlayerActions : MonoBehaviour
     /// <summary>
     /// I want the cam to lock and cursor to appear only when the key is released :P
     /// </summary>
-    public void CheckInventory()
+    public void ToggleInventory()
     {
         Game.UI.InventoryUI.ToggleVisibility();
     }

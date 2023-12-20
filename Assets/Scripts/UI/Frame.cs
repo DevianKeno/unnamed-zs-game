@@ -6,8 +6,8 @@ namespace URMG.UI
     {
         public string Name = "Frame";
         public Vector2 size = new (1920f, 1080f); // Default size
-        [SerializeField] public RectTransform Rect;
-
+        public RectTransform Rect;
+        
         void Awake()
         {
             Rect = GetComponent<RectTransform>();

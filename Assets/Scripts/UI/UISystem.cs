@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using URMG.InventoryS;
+using URMG.Items;
 
 namespace URMG.UI
 {
@@ -19,33 +20,19 @@ public sealed class UISystem : MonoBehaviour
     [Header("Prefabs")]
     [SerializeField] GameObject pickupPrefab;
     [SerializeField] GameObject inventoryPrefab;
+    public GameObject ItemDisplayPrefab;
 
-    /// <summary>
-    /// Bind given inventory to the UI.
-    /// </summary>
-    public void BindInventory(InventoryHandler i)
-    {
-        if (i == null)
-        {
-            Debug.Log("Failed to bind Inventory to UI as there is no Inventory.");
-            return;
-        }
-    }
-
-    public void Init()
+    void Start()
     {
         Debug.Log("Initializing UI...");
         
         _pickupIndicator = Instantiate(pickupPrefab, canvas.transform).GetComponent<InteractIndicator>();
         _pickupIndicator.Hide();
-
-        _inventoryUI = Instantiate(inventoryPrefab, canvas.transform).GetComponent<InventoryUI>();
-        _inventoryUI.Hide();
     }
 
-    public void Create()
+    public ItemDisplayUI CreateItemDisplay(Item item)
     {
-
+        return Instantiate(ItemDisplayPrefab, Canvas.transform).GetComponent<ItemDisplayUI>();
     }
 }
 }

@@ -224,7 +224,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 179d4a2b432e9e046b993c41d6444e34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  image: {fileID: 0}
 --- !u!1 &714188234143661376
 GameObject:
   m_ObjectHideFlags: 0
@@ -441,8 +440,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 3049359801282679261}
   - {fileID: 5871585547059072798}
+  - {fileID: 3049359801282679261}
   m_Father: {fileID: 6264895913102787442}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -572,7 +571,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1704840859589466855}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 9104316901061806792}
+        m_TargetAssemblyTypeName: URMG.UI.FrameController, Assembly-CSharp
+        m_MethodName: SwitchFrame
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: crafting
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &2846622165583428001
 GameObject:
   m_ObjectHideFlags: 0
@@ -662,7 +673,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 179d4a2b432e9e046b993c41d6444e34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  image: {fileID: 0}
 --- !u!1 &2957627940540633690
 GameObject:
   m_ObjectHideFlags: 0
@@ -953,7 +963,7 @@ RectTransform:
   - {fileID: 5331525191884670156}
   - {fileID: 6938362849843182744}
   m_Father: {fileID: 4892041049398922949}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -1017,7 +1027,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4892041049398922949}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -1469,6 +1479,42 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!1 &5223351982174834702
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8633628523660533988}
+  m_Layer: 5
+  m_Name: Inactive Frames
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &8633628523660533988
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5223351982174834702}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7386666880170975960}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &5228110280701391558
 GameObject:
   m_ObjectHideFlags: 0
@@ -1559,7 +1605,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 179d4a2b432e9e046b993c41d6444e34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  image: {fileID: 0}
 --- !u!1 &5467719576857884801
 GameObject:
   m_ObjectHideFlags: 0
@@ -1657,7 +1702,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 179d4a2b432e9e046b993c41d6444e34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  image: {fileID: 0}
 --- !u!114 &8266029879224779111
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1771,7 +1815,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 179d4a2b432e9e046b993c41d6444e34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  image: {fileID: 0}
 --- !u!1 &5761679499702174381
 GameObject:
   m_ObjectHideFlags: 0
@@ -1900,7 +1943,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 179d4a2b432e9e046b993c41d6444e34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  image: {fileID: 0}
 --- !u!1 &6264895912411053903
 GameObject:
   m_ObjectHideFlags: 0
@@ -1990,7 +2032,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 179d4a2b432e9e046b993c41d6444e34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  image: {fileID: 0}
 --- !u!1 &6264895913078347615
 GameObject:
   m_ObjectHideFlags: 0
@@ -2026,7 +2067,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 257.2038}
+  m_AnchoredPosition: {x: 0, y: 366}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &6264895913078347601
@@ -2097,8 +2138,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 7386666880170975960}
   - {fileID: 6264895913154530147}
+  - {fileID: 7386666880170975960}
   - {fileID: 3217055185239333908}
   - {fileID: 4892041049398922949}
   - {fileID: 7083883181311373819}
@@ -2130,6 +2171,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71237f68c061f8a4e827243d6c922785, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inv: {fileID: 0}
   bag: {fileID: 6264895913078347615}
   slotPrefab: {fileID: 7226684566756821322, guid: 218b3dd085eba5c40820caed6b8fc32e, type: 3}
   itemDisplayPrefab: {fileID: 5993031782858655458, guid: 69f9d656166c5f343947161e86d926db, type: 3}
@@ -2164,7 +2206,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6264895913102787442}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -2355,7 +2397,7 @@ GameObject:
   - component: {fileID: 7386666880170975960}
   - component: {fileID: 9104316901061806792}
   m_Layer: 5
-  m_Name: FrameController
+  m_Name: Frame Controller (Script)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2372,9 +2414,10 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 8633628523660533988}
   m_Father: {fileID: 6264895913102787442}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -2394,12 +2437,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   AnimationFactor: 1
-  <CurrentFrame>k__BackingField: {fileID: 0}
+  <CurrentFrame>k__BackingField: {fileID: 7215919625748104250}
   Frames:
+  - {fileID: 7215919625748104250}
+  - {fileID: 3651510750452732089}
   - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  inactive: {fileID: 0}
+  inactive: {fileID: 5223351982174834702}
 --- !u!1 &8389457054370062337
 GameObject:
   m_ObjectHideFlags: 0
@@ -2522,16 +2565,16 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 9104316901061806792}
         m_TargetAssemblyTypeName: URMG.UI.FrameController, Assembly-CSharp
-        m_MethodName: SwitchTo
+        m_MethodName: SwitchFrame
         m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: Equipment
+          m_StringArgument: equipment
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!1001 &194457655602934401

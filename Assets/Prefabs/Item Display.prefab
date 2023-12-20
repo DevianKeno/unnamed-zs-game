@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 1573274074914418010}
   - component: {fileID: 4717402737523479765}
   - component: {fileID: 978103743619419775}
-  m_Layer: 5
+  - component: {fileID: 4484895790551455733}
+  m_Layer: 2
   m_Name: Count (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -60,7 +61,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -135,6 +136,27 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!223 &4484895790551455733
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2549615269757894726}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
 --- !u!1 &4886265347549630781
 GameObject:
   m_ObjectHideFlags: 0
@@ -146,7 +168,7 @@ GameObject:
   - component: {fileID: 5387474831028067485}
   - component: {fileID: 4657952117938939807}
   - component: {fileID: 4397969410178795938}
-  m_Layer: 5
+  m_Layer: 2
   m_Name: Alt Text (TMP
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -195,7 +217,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -282,7 +304,7 @@ GameObject:
   - component: {fileID: 3665969606298944767}
   - component: {fileID: 4494180898781530103}
   - component: {fileID: 4574587701464950729}
-  m_Layer: 5
+  m_Layer: 2
   m_Name: Item Display
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -333,7 +355,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:

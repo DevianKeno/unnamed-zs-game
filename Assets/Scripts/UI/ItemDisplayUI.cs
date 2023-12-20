@@ -12,13 +12,20 @@ namespace URMG.UI
         [SerializeField] TextMeshProUGUI countText;
         [SerializeField] TextMeshProUGUI altText;
 
-        public void Awake()
-        {
+        void Start()
+        {            
             image.color = SlotUI.Transparent;
         }
-
+        
         public void SetDisplay(Item item)
         {
+            if (item == Item.None)
+            {
+                gameObject.SetActive(false);
+                return;
+            }
+            gameObject.SetActive(true);
+
             if (item.Data.Sprite != null)
             {
                 altText.enabled = false;

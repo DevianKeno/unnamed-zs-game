@@ -109,8 +109,8 @@ public class PlayerControls : MonoBehaviour
 
     void OnInventoryX(InputAction.CallbackContext context)
     {
-        ToggleCameraMovement();
-        playerActions.CheckInventory();
+        playerActions.ToggleInventory();
+        AllowCameraMovement(!Game.UI.InventoryUI.IsVisible);
     }
 
     void OnDisable()
@@ -199,24 +199,24 @@ public class PlayerControls : MonoBehaviour
         transform.position += _movement;
     }
     
-    public void ToggleControls(bool value)
+    public void AllowControls(bool value)
     {
         if (value) moveInput.Enable();
         else moveInput.Disable();
     }
     
-    public void ToggleCameraMovement()
+    public void AllowCameraMovement(bool value)
     {
-        if (_allowCamMovement)
-        {
-            _allowCamMovement = false;
-            vCamPOV.m_VerticalAxis.m_MaxSpeed = 0f;
-            vCamPOV.m_HorizontalAxis.m_MaxSpeed = 0f;
-        } else
+        if (value)
         {
             _allowCamMovement = true;
             vCamPOV.m_VerticalAxis.m_MaxSpeed = CamSensitivity;
             vCamPOV.m_HorizontalAxis.m_MaxSpeed = CamSensitivity;
+        } else
+        {
+            _allowCamMovement = false;
+            vCamPOV.m_VerticalAxis.m_MaxSpeed = 0f;
+            vCamPOV.m_HorizontalAxis.m_MaxSpeed = 0f;
         }
     }
 }

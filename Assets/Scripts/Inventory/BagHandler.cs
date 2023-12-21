@@ -4,23 +4,26 @@ using UnityEngine;
 using URMG.Items;
 using URMG.UI;
 
-namespace URMG.InventoryS
+namespace URMG.Inventory
 {
     public struct SlotContentChangedArgs
     {
-        public Slot Slot;
+        /// <summary>
+        /// The Slot that has changed.
+        /// </summary>
+        public ItemSlot Slot;
     }
 
     /// <summary>
-    /// Inventory manager.
+    /// Manages the Bag screen.
     /// </summary>
-    public class InventoryHandler : MonoBehaviour
+    public class BagHandler : MonoBehaviour
     {
         public int MaxBagSlots = 18;
-        InventoryData data;
-        [SerializeField] Slot[] _slots;
-        Slot[] _emptySlots;
-        Slot[] _occupiedSlots;
+        BagData data;
+        [SerializeField] ItemSlot[] _slots;
+        int[] _emptySlots;
+        int[] _occupiedSlots;
 
         /// <summary>
         /// Called whenever the content of a Slot is changed.
@@ -29,30 +32,30 @@ namespace URMG.InventoryS
 
         void Awake()
         {
-            _slots = new Slot[MaxBagSlots];
-            _emptySlots = new Slot[MaxBagSlots];
-            _occupiedSlots = new Slot[MaxBagSlots];
+            _slots = new ItemSlot[MaxBagSlots];
+            _emptySlots = new int[MaxBagSlots];
+            _occupiedSlots = new int[MaxBagSlots];
         }
 
         void Start()
         {
             for (int i = 0; i < _slots.Length; i++)
             {
-                Slot newSlot = new(i);
+                ItemSlot newSlot = new(i);
                 newSlot.OnContentChanged += SlotContentChanged;
                 _slots[i] = newSlot;
             }
         }
 
-        void SlotContentChanged(object sender, Slot.ContentChangedArgs e)
+        void SlotContentChanged(object sender, ItemSlot.ContentChangedArgs e)
         {
             OnSlotContentChanged?.Invoke(this, new()
             {
-                Slot = (Slot) sender
+                Slot = (ItemSlot) sender
             });
         }
 
-        public Slot GetSlot(int index)
+        public ItemSlot GetSlot(int index)
         {
             if (index < 0 || index > MaxBagSlots) throw new ArgumentOutOfRangeException();
             return _slots[index];
@@ -65,9 +68,9 @@ namespace URMG.InventoryS
         {
             if (item == Item.None) return true;
 
-            foreach (Slot slot in _slots)
+            foreach (ItemSlot slot in _slots)
             {
-                if (slot.IsEmpty)
+                if (slot.IsEmpty) // just put
                 {
                     slot.PutItem(item);
                     return true;
@@ -76,6 +79,7 @@ namespace URMG.InventoryS
                 if (slot.TryCombine(item, out Item excess))
                 {
                     if (TryPutNearest(excess)) return true;
+                    continue;
                 }
             }
             return false;
@@ -86,7 +90,7 @@ namespace URMG.InventoryS
         /// </summary>
         public bool TryPut(int slotIndex, Item item)
         {
-            Slot slot = GetSlot(slotIndex);
+            ItemSlot slot = GetSlot(slotIndex);
 
             if (slot.IsEmpty)
             {
@@ -97,7 +101,8 @@ namespace URMG.InventoryS
             if (slot.TryCombine(item, out Item excess))
             {
                 if (TryPutNearest(excess)) return true;
-            }         
+                return false;
+            }
             return false;
         }
 
@@ -106,7 +111,7 @@ namespace URMG.InventoryS
         /// </summary>
         public Item Take(int slotIndex)
         {
-            Slot slot = GetSlot(slotIndex);
+            ItemSlot slot = GetSlot(slotIndex);
             if (slot.IsEmpty) return Item.None;
 
             return slot.TakeItems(-1);
@@ -117,7 +122,7 @@ namespace URMG.InventoryS
         /// </summary>
         public Item TakeItems(int slotIndex, int amount)
         {           
-            Slot slot = GetSlot(slotIndex);
+            ItemSlot slot = GetSlot(slotIndex);
             if (slot.IsEmpty) return Item.None;
 
             return slot.TakeItems(amount);
@@ -133,7 +138,7 @@ namespace URMG.InventoryS
             
         }
 
-        public void ClearItem(Slot slot)
+        public void ClearItem(ItemSlot slot)
         {
             if (slot.IsEmpty) return;
             slot.Clear();

@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
-using URMG.InventoryS;
+using URMG.Inventory;
 using URMG.Items;
 
 namespace URMG.UI
@@ -12,8 +12,8 @@ public sealed class UISystem : MonoBehaviour
 {
     [SerializeField] Canvas canvas;
     public Canvas Canvas { get => canvas; }
-    [SerializeField] InteractIndicator _pickupIndicator;
-    public InteractIndicator InteractIndicator { get => _pickupIndicator; }
+    [SerializeField] InteractionIndicator _pickupIndicator;
+    public InteractionIndicator InteractIndicator { get => _pickupIndicator; }
     [SerializeField] InventoryUI _inventoryUI;
     public InventoryUI InventoryUI { get => _inventoryUI; }
     
@@ -26,7 +26,10 @@ public sealed class UISystem : MonoBehaviour
     {
         Debug.Log("Initializing UI...");
         
-        _pickupIndicator = Instantiate(pickupPrefab, canvas.transform).GetComponent<InteractIndicator>();
+        _inventoryUI.enabled = true;
+        _inventoryUI.Hide();
+
+        _pickupIndicator = Instantiate(pickupPrefab, canvas.transform).GetComponent<InteractionIndicator>();
         _pickupIndicator.Hide();
     }
 

@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using URMG.Core;
+using URMG.Systems;
 using URMG.Items;
 using URMG.Interactions;
 
@@ -19,20 +19,37 @@ public class PlayerActions : MonoBehaviour
     {
         player = GetComponent<PlayerCore>();
     }
-    
+
+    public void SelectHotbar(int index)
+    {            
+        if (index < 0 || index > 9) return;
+
+        Debug.Log($"Equipped hotbar slot {index}");
+    }
+
+
     public void Jump(InputAction.CallbackContext context)
     {            
         //
     }
 
     /// <summary>
-    /// Make this player interact with the given Interactable.
+    /// Make this player interact with an Interactable object.
     /// </summary>
     public void Interact(IInteractable obj)
     {
         obj.Interact(this, new InteractArgs());
     }
 
+    public void Equip()
+    {
+
+    }
+
+    /// <summary>
+    /// Pick up item from ItemEntity and put in the inventory.
+    /// There is currently no checking if inventory is full.
+    /// </summary>
     public void PickUpItem(ItemEntity itemEntity)
     {
         if (!player.CanPickUpItems) return;
@@ -43,7 +60,7 @@ public class PlayerActions : MonoBehaviour
             Destroy(itemEntity.gameObject);
         }
     }
-    
+
     /// <summary>
     /// I want the cam to lock and cursor to appear only when the key is released :P
     /// </summary>

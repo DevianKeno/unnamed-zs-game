@@ -16,5 +16,4 @@ MonoBehaviour:
   Name: None
   Description: None.
   Sprite: {fileID: 0}
-  IsStackable: 0
-  MaxStackSize: 0
+  StackSize: 1

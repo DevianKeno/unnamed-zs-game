@@ -2,22 +2,23 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using URMG.Core;
-using URMG.InventoryS;
+using URMG.Systems;
+using URMG.Inventory;
 using URMG.Items;
 
 namespace URMG.UI
 {
     public class InventoryUI : MonoBehaviour
     {
-        [SerializeField] InventoryHandler _inventory;
-        Dictionary<int, SlotUI> _slotUIs = new();
+        [SerializeField] BagHandler _inventory;
+        Dictionary<int, ItemSlotUI> _bagSlotsUIs = new();
+        Dictionary<int, ItemSlotUI> _hotbarSlotUIs = new();
         bool _isVisible = true;
         public bool IsVisible { get => _isVisible; }
         bool _isHolding = false;
         int _fromIndex;
         Item _heldItem;
-        Slot selectedSlot;
+        ItemSlot selectedSlot;
 
         bool _isPutting;
         bool _isGetting;
@@ -31,12 +32,12 @@ namespace URMG.UI
             int i = 0;
             foreach (Transform t in bag.transform)
             {
-                SlotUI s = t.GetComponent<SlotUI>();
+                ItemSlotUI s = t.GetComponent<ItemSlotUI>();
                 s.Index = i;
                 s.OnClick += OnClickSlot;
-                _slotUIs.Add(i, s);
+                _bagSlotsUIs.Add(i, s);
                 i++;
-            }
+            }            
 
             Hide();
         }
@@ -48,12 +49,12 @@ namespace URMG.UI
 
         private void SlotContentChangedCallback(object sender, SlotContentChangedArgs e)
         {
-            _slotUIs[e.Slot.Index].SetDisplay(e.Slot.Item);
+            _bagSlotsUIs[e.Slot.Index].SetDisplay(e.Slot.Item);
         }
 
         public void OnClickSlot(object slot, PointerEventData e)
         {
-            SlotUI slotUI = (SlotUI) slot;
+            ItemSlotUI slotUI = (ItemSlotUI) slot;
             selectedSlot = _inventory.GetSlot(slotUI.Index);
 
             if (e.button == PointerEventData.InputButton.Left)
@@ -143,7 +144,7 @@ namespace URMG.UI
                 Debug.Log("Slot index out of bounds.");
                 return;
             }
-            _slotUIs[slotIndex].SetDisplay(item);
+            _bagSlotsUIs[slotIndex].SetDisplay(item);
         }
 
         public void Show()

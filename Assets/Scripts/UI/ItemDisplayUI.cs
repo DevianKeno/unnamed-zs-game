@@ -14,7 +14,7 @@ namespace URMG.UI
 
         void Start()
         {            
-            image.color = SlotUI.Transparent;
+            image.color = ItemSlotUI.Transparent;
         }
         
         public void SetDisplay(Item item)
@@ -30,12 +30,12 @@ namespace URMG.UI
             {
                 altText.enabled = false;
                 image.sprite = item.Data.Sprite;
-                image.color = SlotUI.Opaque;
+                image.color = ItemSlotUI.Opaque;
             } else
             {
                 altText.enabled = true;
                 altText.text = item.Data.Name;
-                image.color = SlotUI.Transparent;
+                image.color = ItemSlotUI.Transparent;
             }
 
             if (item.Count == 1)

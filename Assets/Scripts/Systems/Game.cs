@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using URMG.UI;
 
-namespace URMG.Core
+namespace URMG.Systems
 {
 public sealed class Game : MonoBehaviour
 {

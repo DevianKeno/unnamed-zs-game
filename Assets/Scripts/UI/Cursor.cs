@@ -2,18 +2,18 @@ using UnityEngine;
 
 namespace URMG.UI
 {
-public class Cursor : MonoBehaviour
-{
-    public static void Show()
+    public class Cursor : MonoBehaviour
     {
-        UnityEngine.Cursor.visible = true;
-        UnityEngine.Cursor.lockState = CursorLockMode.None;
-    }
+        public static void Show()
+        {
+            UnityEngine.Cursor.visible = true;
+            UnityEngine.Cursor.lockState = CursorLockMode.None;
+        }
 
-    public static void Hide()
-    {
-        UnityEngine.Cursor.visible = false;
-        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+        public static void Hide()
+        {
+            UnityEngine.Cursor.visible = false;
+            UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+        }
     }
-}
 }

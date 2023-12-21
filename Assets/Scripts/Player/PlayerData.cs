@@ -1,8 +1,8 @@
 
-using URMG.InventoryS;
+using URMG.Inventory;
 
 public struct PlayerData
 {
     public string Name;
-    public InventoryData inventoryData;
+    public BagData inventoryData;
 }

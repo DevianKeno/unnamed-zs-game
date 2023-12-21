@@ -3,11 +3,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using URMG.Items;
-using URMG.Core;
+using URMG.Systems;
 
 namespace URMG.UI
 {
-    public class SlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler
+    public class ItemSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler
     {
         public static Color Opaque { get => new(1f, 1f, 1f, 1f); }
         public static Color Transparent { get => new(1f, 1f, 1f, 0f); }

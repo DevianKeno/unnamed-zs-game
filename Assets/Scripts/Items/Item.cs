@@ -9,15 +9,18 @@ namespace URMG.Items
     }
     
     /// <summary>
-    /// Represents an item with count.
+    /// Represents an Item with count.
     /// </summary>
     [Serializable]
     public class Item : IComparable<Item>
     {
         public static Item None { get => null; }
-
         [SerializeField] ItemData _itemData;
         public ItemData Data { get => _itemData; }
+        public string Id { get => _itemData.Id; }
+        public string Name { get => _itemData.Name; }
+        public int StackSize { get => _itemData.StackSize; }
+        public ItemType Type { get => _itemData.Type; }
         [SerializeField] int _count;
         public int Count { get => _count; }
 
@@ -33,6 +36,11 @@ namespace URMG.Items
             _count = count;
         }
         
+        public void SetCount(int value)
+        {
+            _count = value;
+        }
+
         public Item(Item item)
         {
             _itemData = item.Data;
@@ -62,7 +70,7 @@ namespace URMG.Items
         /// </summary>
         public bool CompareTo(Item other)
         {
-            if (_itemData.Id == other.Data.Id) return true;
+            if (_itemData.Id == other.Id) return true;
             return false;
         }
     }

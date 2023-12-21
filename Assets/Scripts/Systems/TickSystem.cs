@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace URMG.Core
+namespace URMG.Systems
 {
     public struct TickEventArgs
     {

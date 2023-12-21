@@ -1,11 +1,12 @@
 using System;
-using System.Threading;
 using UnityEngine;
 using URMG.Items;
 
-namespace URMG.InventoryS
+namespace URMG.Inventory
 {
-    public class Slot
+    public enum SlotType { All, Item, Weapon, Tool, Equipment, Accessory }
+
+    public class ItemSlot
     {
         public struct ContentChangedArgs
         {
@@ -27,16 +28,25 @@ namespace URMG.InventoryS
                 return false;
             }
         }
+        public SlotType Type;
 
         /// <summary>
         /// Called whenever the content of this slot is changed.
         /// </summary>
         public event EventHandler<ContentChangedArgs> OnContentChanged;
 
-        public Slot(int index)
+        public ItemSlot(int index)
         {
             _index = index;
             _item = Item.None;
+            Type = SlotType.All;
+        }
+        
+        public ItemSlot(int index, SlotType slotType)
+        {
+            _index = index;
+            _item = Item.None;
+            Type = slotType;
         }
 
         void ContentChanged()
@@ -47,12 +57,18 @@ namespace URMG.InventoryS
             });
         }
 
+        public bool TryPut(Item item)
+        {
+            if ((int) Type + 1 != (int) item.Type) return false;
+            PutItem(item);
+            return true;
+        }
+
         public void PutItem(Item item)
         {
             _item = item;
             ContentChanged();
         }
-
         public void Clear()
         {
             _item = Item.None;
@@ -93,22 +109,23 @@ namespace URMG.InventoryS
         /// </summary>
         public bool TryCombine(Item toAdd, out Item excess)
         {
-            if (!_item.CompareTo(toAdd) || !toAdd.Data.IsStackable)
+            if (!_item.CompareTo(toAdd))
             {
                 excess = toAdd;
                 return false;
             }
         
+            // Stack overflow when stack size is 0, needs fix
             int newCount = _item.Count + toAdd.Count;
-            int excessCount = newCount - _item.Data.MaxStackSize;
+            int excessCount = newCount - _item.StackSize;
 
             if (excessCount > 0)
             {
-                _item = new(_item.Data, _item.Data.MaxStackSize);
-                excess = new(_item.Data, excessCount);
+                _item = new(_item, _item.StackSize);
+                excess = new(_item, excessCount);
             } else
             {
-                _item = new(_item.Data, newCount);
+                _item = new(_item, newCount);
                 excess = Item.None;
             }
             ContentChanged();

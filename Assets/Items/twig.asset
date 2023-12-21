@@ -16,5 +16,4 @@ MonoBehaviour:
   Name: Twig
   Description: Brittle stick.
   Sprite: {fileID: 0}
-  IsStackable: 1
-  MaxStackSize: 999
+  StackSize: 999

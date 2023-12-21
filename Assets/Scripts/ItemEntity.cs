@@ -13,6 +13,10 @@ public class ItemEntity : MonoBehaviour, IInteractable
     public string Action => "Pick Up";
     public event EventHandler<InteractArgs> OnInteract;
 
+    /// <summary>
+    /// Take an Item object from the entity.
+    /// </summary>
+    /// <returns></returns>
     public Item AsItem()
     {
         return new Item(ItemData, ItemCount);

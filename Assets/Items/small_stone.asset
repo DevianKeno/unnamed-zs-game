@@ -16,5 +16,4 @@ MonoBehaviour:
   Name: Small Stone
   Description: A relatively small stone.
   Sprite: {fileID: 0}
-  IsStackable: 1
-  MaxStackSize: 999
+  StackSize: 999

@@ -6,7 +6,7 @@ using System;
 
 namespace URMG.UI
 {
-public class InteractIndicator : MonoBehaviour
+public class InteractionIndicator : MonoBehaviour
 {
     public struct Data
     {
@@ -58,7 +58,7 @@ public class InteractIndicator : MonoBehaviour
             Debug.Log("Failed to set PickupIndicator item as Item is null.");
             return;
         }
-        objectTMP.text = item.Data.Name;
+        objectTMP.text = item.Name;
     }
 }
 }

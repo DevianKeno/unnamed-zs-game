@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 873d4c4f155a35a46b4699d35b336ec7, type: 3}
-  m_Name: fiber_cord
+  m_Name: medium_pouch
   m_EditorClassIdentifier: 
-  Id: fiber_cord
-  Name: Fiber Cord
-  Description: Thin string made from plant fiber.
+  Id: medium_pouch
+  Name: Medium Pouch
+  Description: Allows for two tool slots.
   Sprite: {fileID: 0}
-  StackSize: 999
+  StackSize: 1
   Type: 0

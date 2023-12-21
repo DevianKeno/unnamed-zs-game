@@ -16,5 +16,4 @@ MonoBehaviour:
   Name: Metal Scrap
   Description: Scrap metal parts.
   Sprite: {fileID: 0}
-  IsStackable: 1
-  MaxStackSize: 999
+  StackSize: 999

@@ -16,5 +16,4 @@ MonoBehaviour:
   Name: Leaves
   Description: Pile of leaves.
   Sprite: {fileID: 0}
-  IsStackable: 1
-  MaxStackSize: 999
+  StackSize: 999

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
-using URMG.Core;
-using URMG.InventoryS;
+using URMG.Systems;
+using URMG.Inventory;
 
 namespace URMG.Player
 {
@@ -15,8 +15,7 @@ namespace URMG.Player
         bool _isSpawned = false;
         bool _isAlive = false;
         
-        [SerializeField] InventoryHandler _inventory;
-        public InventoryHandler Inventory { get => _inventory; }
-
+        [SerializeField] BagHandler _inventory;
+        public BagHandler Inventory { get => _inventory; }
     }
 }

@@ -1,6 +1,8 @@
+using UnityEngine;
+
 namespace URMG.Crafting
 {
-    public class Recipe
+    public class Crafter : MonoBehaviour
     {
         // public Item Output;
         public int Amount;

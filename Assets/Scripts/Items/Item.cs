@@ -1,16 +1,24 @@
+using System;
+using UnityEngine;
+
 namespace URMG.Items
 {
     public interface IComparable<T>
     {
         public bool CompareTo(T other);
     }
-
+    
+    /// <summary>
+    /// Represents an item with count.
+    /// </summary>
+    [Serializable]
     public class Item : IComparable<Item>
     {
         public static Item None { get => null; }
-        ItemData _itemData;
+
+        [SerializeField] ItemData _itemData;
         public ItemData Data { get => _itemData; }
-        int _count;
+        [SerializeField] int _count;
         public int Count { get => _count; }
 
         public Item(ItemData itemData, int count)

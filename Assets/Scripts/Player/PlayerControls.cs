@@ -20,18 +20,23 @@ namespace URMG.Player
     public class PlayerControls : MonoBehaviour
     {
         public const float CamSensitivity = 0.32f;
-        
+
         PlayerCore player;
         public PlayerCore Player { get => player; }
 
         [SerializeField] Camera cam;
+        public CharacterController controller;
+        public Transform GroundCheck;
+        public LayerMask GroundMask;
         public Camera Cam { get => cam; }
         bool _allowCamMovement = true;
 
-        public const float MoveSpeed = 3f;
+        public const float MoveSpeed = 6f;
         public const float WalkSpeed = MoveSpeed * 0.7f;
-        public const float JumpForce = 1f;
-        
+        public const float JumpForce = 1.5f;
+        public const float Gravity = -9.81f;
+        public const float GroundDistance = 0.4f;
+
         RaycastHit hit;
         Ray ray;
         public float sphereRadius = 0;
@@ -44,6 +49,7 @@ namespace URMG.Player
         /// The movement values to be added for the current frame.
         /// </summary>
         Vector3 _movement;
+        Vector3 FallSpeed;
         bool _isMoving;
         public bool IsMoving { get => _isMoving; }
         bool _isGrounded;
@@ -123,8 +129,10 @@ namespace URMG.Player
 
         void OnJumpX(InputAction.CallbackContext context)
         {
-            // Make the player Jump
-            // if (_isGrounded)
+            if(CheckGrounded())
+            {
+                FallSpeed.y = Mathf.Sqrt(JumpForce * -2f * Gravity);
+            }
         }
 
         void OnInteractX(InputAction.CallbackContext context)
@@ -187,6 +195,10 @@ namespace URMG.Player
         //     Gizmos.DrawWireSphere(ray.origin + ray.direction * (interactMaxDistance + sphereRadius), sphereRadius);
         // }
 
+        bool CheckGrounded()
+        {
+            return _isGrounded = Physics.CheckSphere(GroundCheck.position, GroundDistance, GroundMask) && FallSpeed.y < 0;
+        }
         void CheckMoving()
         {
             if (rb.velocity == Vector3.zero) _isMoving = false;
@@ -210,20 +222,34 @@ namespace URMG.Player
         {
             HandleDirection();
             ApplyMovement();
+            ApplyGravity();
         }
 
         void HandleDirection()
         {
             // Moves player relative to the camera
+            // _movement = frameInput.move.x * cam.transform.right + frameInput.move.y * cam.transform.forward;
+            // _movement.y = 0f; 
+            // _movement.Normalize();
+            // _movement *= MoveSpeed * Time.deltaTime;
             _movement = frameInput.move.x * cam.transform.right + frameInput.move.y * cam.transform.forward;
-            _movement.y = 0f; 
             _movement.Normalize();
-            _movement *= MoveSpeed * Time.deltaTime;
         }
 
         void ApplyMovement()
         {
-            transform.position += _movement;
+            // transform.position += _movement;
+            controller.Move(_movement * MoveSpeed * Time.deltaTime);
+        }
+
+        void ApplyGravity()
+        {
+            if (CheckGrounded())
+            {
+                FallSpeed.y = -2f;
+            }
+            FallSpeed.y += Gravity * Time.deltaTime;
+            controller.Move(FallSpeed * Time.deltaTime);
         }
         
         public void AllowControls(bool value)

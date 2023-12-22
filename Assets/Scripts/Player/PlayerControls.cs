@@ -78,6 +78,7 @@ namespace URMG.Player
             vCamPOV = vCam.GetCinemachineComponent<CinemachinePOV>();
             player = GetComponent<PlayerCore>();
             playerActions = GetComponent<PlayerActions>();
+            controller = GetComponent<CharacterController>();
             InitControls();
         }
 
@@ -120,12 +121,12 @@ namespace URMG.Player
 
         void OnPrimaryX(InputAction.CallbackContext context)
         {
-            
+            playerActions.PerformPrimary();
         }
 
         void OnSecondaryX(InputAction.CallbackContext context)
         {
-            
+            playerActions.PerformSecondary();
         }
 
         void OnJumpX(InputAction.CallbackContext context)

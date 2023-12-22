@@ -1,14 +1,40 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
+using UnityEngine.Events;
 
-namespace URMG
+namespace URMG.States
 {
-    public abstract class State
+    [Serializable] public class EnterStateEvent : UnityEvent {}
+    [Serializable] public class TickStateEvent : UnityEvent {}
+    [Serializable] public class ExitStateEvent : UnityEvent {}
+
+    [Serializable]
+    public abstract class State : MonoBehaviour
     {
         public string Name;
         public int AnimId;
         public bool IsLocked;
+        [SerializeField] EnterStateEvent _OnEnterState = new();
+        [SerializeField] TickStateEvent _OnTickState = new();
+        [SerializeField] ExitStateEvent _OnExitState = new();
+
+        public EnterStateEvent OnEnterState
+        {
+            get { return _OnEnterState; }
+            set { _OnEnterState = value; }
+        }
+        
+        public TickStateEvent OnTickState
+        {
+            get { return _OnTickState; }
+            set { _OnTickState = value; }
+        }
+
+        public ExitStateEvent OnExitState
+        {
+            get { return _OnExitState; }
+            set { _OnExitState = value; }
+        }
 
         public State(string name)
         {
@@ -26,7 +52,7 @@ namespace URMG
         public abstract void Enter();
 
         /// <summary>
-        /// Called once every frame while in this state.
+        /// Called once every game tick while in this state.
         /// </summary>
         public abstract void Update();
 

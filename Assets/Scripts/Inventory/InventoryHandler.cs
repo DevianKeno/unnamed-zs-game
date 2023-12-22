@@ -17,11 +17,15 @@ namespace URMG.Inventory
     /// <summary>
     /// Manages the Bag screen.
     /// </summary>
-    public class BagHandler : MonoBehaviour
+    public class InventoryHandler : MonoBehaviour
     {
         public int MaxBagSlots = 18;
+        public int MaxExtraToolSlots = 8;
         BagData data;
-        [SerializeField] ItemSlot[] _slots;
+        ItemSlot _mainhand;
+        ItemSlot _offhand;
+        ItemSlot[] _hotbar;
+        ItemSlot[] _backpack;
         int[] _emptySlots;
         int[] _occupiedSlots;
 
@@ -32,18 +36,31 @@ namespace URMG.Inventory
 
         void Awake()
         {
-            _slots = new ItemSlot[MaxBagSlots];
+            _hotbar = new ItemSlot[MaxExtraToolSlots];
+            _backpack = new ItemSlot[MaxBagSlots];
             _emptySlots = new int[MaxBagSlots];
             _occupiedSlots = new int[MaxBagSlots];
         }
 
         void Start()
         {
-            for (int i = 0; i < _slots.Length; i++)
+            _mainhand = new (0, SlotType.Weapon);
+            _offhand = new (0, SlotType.Tool);
+
+            int i = 0;
+            for (int j = 0; j < _hotbar.Length; j++)
             {
-                ItemSlot newSlot = new(i);
+                ItemSlot newSlot = new(i, SlotType.Tool);
                 newSlot.OnContentChanged += SlotContentChanged;
-                _slots[i] = newSlot;
+                _hotbar[j] = newSlot;
+                i++;
+            }
+
+            for (int j = 0; j < _backpack.Length; j++)
+            {
+                ItemSlot newSlot = new(i, SlotType.Item);
+                newSlot.OnContentChanged += SlotContentChanged;
+                _backpack[j] = newSlot;
             }
         }
 
@@ -58,7 +75,7 @@ namespace URMG.Inventory
         public ItemSlot GetSlot(int index)
         {
             if (index < 0 || index > MaxBagSlots) throw new ArgumentOutOfRangeException();
-            return _slots[index];
+            return _backpack[index];
         }
 
         /// <summary>
@@ -68,7 +85,7 @@ namespace URMG.Inventory
         {
             if (item == Item.None) return true;
 
-            foreach (ItemSlot slot in _slots)
+            foreach (ItemSlot slot in _backpack)
             {
                 if (slot.IsEmpty) // just put
                 {
@@ -146,7 +163,7 @@ namespace URMG.Inventory
 
         public void ClearItem(int slotIndex)
         {
-            ClearItem(_slots[slotIndex]);
+            ClearItem(_backpack[slotIndex]);
         }
     }
 }

@@ -10,7 +10,7 @@ namespace URMG.UI
 {
     public class InventoryUI : MonoBehaviour
     {
-        [SerializeField] BagHandler _inventory;
+        [SerializeField] InventoryHandler _inventory;
         Dictionary<int, ItemSlotUI> _bagSlotsUIs = new();
         Dictionary<int, ItemSlotUI> _hotbarSlotUIs = new();
         bool _isVisible = true;

@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
+using URMG.Systems;
+using URMG.States;
 
 namespace URMG
 {
@@ -15,10 +18,11 @@ namespace URMG
     public abstract class StateMachine : MonoBehaviour
     {
         public State InitialState;
-        State _currentState;
+        [SerializeField] State _currentState;
         public State CurrentState { get => _currentState; }
         public float LockedUntil;
         public bool IsTransitioning = false;
+        public List<State> States = new();
 
         /// <summary>
         /// Fired everytime the state is changed.
@@ -28,9 +32,11 @@ namespace URMG
         void Start()
         {
             if (InitialState != null) _currentState = InitialState;
+
+            Game.Tick.OnTick += Tick;
         }
 
-        void Update()
+        void Tick(object sender, TickEventArgs e)
         {
             _currentState.Update();
         }

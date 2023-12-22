@@ -1,12 +1,17 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace URMG.Player
 {
-    [RequireComponent(typeof(PlayerCore))]
+    [RequireComponent(typeof(PlayerCore), typeof(Animator))]
     public class PlayerAnimator : MonoBehaviour
     {
-        [SerializeField] Animator animator;
+        [SerializeField] PlayerCore _player;
+        [SerializeField] Animator _animator;
+
+        void Awake()
+        {
+            _player = GetComponent<PlayerCore>();
+            _animator = GetComponent<Animator>();
+        }
     }
 }

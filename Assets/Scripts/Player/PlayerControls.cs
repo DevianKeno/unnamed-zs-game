@@ -20,11 +20,12 @@ namespace URMG.Player
     public class PlayerControls : MonoBehaviour
     {
         public const float CamSensitivity = 0.32f;
-
+        float xRotation = 0f;
         PlayerCore player;
         public PlayerCore Player { get => player; }
 
         [SerializeField] Camera cam;
+        public Transform CharacterBody;
         public CharacterController controller;
         public Transform GroundCheck;
         public LayerMask GroundMask;
@@ -134,14 +135,13 @@ namespace URMG.Player
                 FallSpeed.y = Mathf.Sqrt(JumpForce * -2f * Gravity);
             }
         }
-
+        
         void OnInteractX(InputAction.CallbackContext context)
         {
             if (lookingAt == null) return;
             
             playerActions.Interact(lookingAt);
         }
-
         void OnInventoryX(InputAction.CallbackContext context)
         {
             playerActions.ToggleInventory();
@@ -232,13 +232,18 @@ namespace URMG.Player
             // _movement.y = 0f; 
             // _movement.Normalize();
             // _movement *= MoveSpeed * Time.deltaTime;
-            _movement = frameInput.move.x * cam.transform.right + frameInput.move.y * cam.transform.forward;
+
+            Vector3 cameraForward = cam.transform.forward;
+            cameraForward.y = 0f;
+            _movement = frameInput.move.x * cam.transform.right + frameInput.move.y * cameraForward.normalized;
             _movement.Normalize();
         }
 
         void ApplyMovement()
         {
-            // transform.position += _movement;
+            Quaternion dRotation = Quaternion.Euler(cam.transform.eulerAngles.x, 0f, 0f);
+            CharacterBody.rotation = Quaternion.Slerp(CharacterBody.rotation, dRotation, Time.deltaTime * CamSensitivity);
+
             controller.Move(_movement * MoveSpeed * Time.deltaTime);
         }
 

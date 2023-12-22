@@ -877,6 +877,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 963194227}
+  CharacterBody: {fileID: 1400893110}
   controller: {fileID: 545283253}
   GroundCheck: {fileID: 1551354572}
   GroundMask:
@@ -3158,7 +3159,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 1
-  m_Constraints: 112
+  m_Constraints: 126
   m_CollisionDetection: 1
 --- !u!23 &1400893115
 MeshRenderer:

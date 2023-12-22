@@ -69,9 +69,18 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Walk",
+                    "name": "Run",
                     "type": "Button",
                     "id": "dd375dd0-4efb-4773-9d68-a85265391825",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Crouch",
+                    "type": "Button",
+                    "id": "cb2add60-ad54-4a7b-a342-bf0a88d8035a",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -359,7 +368,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Walk",
+                    "action": "Run",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -470,6 +479,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Hotbar",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "dc1d8d3b-926e-47fe-9b14-3b92f4ea39c6",
+                    "path": "<Keyboard>/leftCtrl",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Crouch",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

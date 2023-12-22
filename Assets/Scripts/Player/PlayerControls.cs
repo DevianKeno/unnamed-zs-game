@@ -33,7 +33,7 @@ namespace URMG.Player
         bool _allowCamMovement = true;
 
         public const float MoveSpeed = 6f;
-        public const float WalkSpeed = MoveSpeed * 0.7f;
+        public const float WalkSpeed = MoveSpeed * 0.5f;
         public const float JumpForce = 1.5f;
         public const float Gravity = -9.81f;
         public const float GroundDistance = 0.4f;
@@ -51,10 +51,15 @@ namespace URMG.Player
         /// </summary>
         Vector3 _movement;
         Vector3 FallSpeed;
+        Vector3 CrouchPosition;
         bool _isMoving;
         public bool IsMoving { get => _isMoving; }
         bool _isGrounded;
         public bool IsGrounded { get => _isGrounded; }
+        bool _isRunning;
+        public bool isRunning { get => _isRunning; }
+        bool _isCrouching;
+        public bool isCrouching { get => _isCrouching; }
 
         public event EventHandler OnMoveStart;
         public event EventHandler OnMoveStop;
@@ -64,6 +69,8 @@ namespace URMG.Player
         PlayerInput playerInput;
         InputAction moveInput;
         InputAction jumpInput;
+        InputAction runInput;
+        InputAction crouchInput;
         InputAction primaryInput;
         InputAction secondaryInput;
         InputAction interactInput;
@@ -87,6 +94,8 @@ namespace URMG.Player
             playerInput = GetComponent<PlayerInput>();
             moveInput = playerInput.actions.FindAction("Move");
             jumpInput = playerInput.actions.FindAction("Jump");
+            runInput = playerInput.actions.FindAction("Run");
+            crouchInput = playerInput.actions.FindAction("Crouch");
             primaryInput = playerInput.actions.FindAction("Primary");
             secondaryInput = playerInput.actions.FindAction("Secondary");
             interactInput = playerInput.actions.FindAction("Interact");
@@ -100,13 +109,18 @@ namespace URMG.Player
 
             moveInput.Enable();
             jumpInput.Enable();
+            runInput.Enable();
+            crouchInput.Enable();
             primaryInput.Enable();
             secondaryInput.Enable();
             interactInput.Enable();
             inventoryInput.Enable();
             hotbarInput.Enable();
 
-            jumpInput.performed += OnJumpX;              // Pressed Space (default)            
+            jumpInput.performed += OnJumpX;              // Pressed Space (default)
+            runInput.started += OnRunX;                 // Pressed Shift (default)  
+            runInput.canceled += OnRunX;                // Released Shift
+            crouchInput.performed += OnCrouchX;         // Pressed LCtrl (default)
             primaryInput.performed += OnPrimaryX;        // Pressed LMB (default)
             secondaryInput.performed += OnSecondaryX;    // Pressed RMB (default)
             interactInput.performed += OnInteractX;      // Pressed F (default)
@@ -136,6 +150,20 @@ namespace URMG.Player
                 FallSpeed.y = Mathf.Sqrt(JumpForce * -2f * Gravity);
             }
         }
+
+        void OnRunX(InputAction.CallbackContext context)
+        {
+            _isRunning = !_isRunning;
+            if (_isCrouching)
+            {
+                Crouch();
+            }
+        }
+
+        void OnCrouchX(InputAction.CallbackContext context)
+        {
+            Crouch();
+        } 
         
         void OnInteractX(InputAction.CallbackContext context)
         {
@@ -154,6 +182,7 @@ namespace URMG.Player
             Game.Tick.OnTick -= Tick;
             moveInput.Disable();
             jumpInput.Disable();
+            runInput.Disable();
             interactInput.Disable();
             inventoryInput.Disable();
         }
@@ -245,9 +274,24 @@ namespace URMG.Player
             Quaternion dRotation = Quaternion.Euler(cam.transform.eulerAngles.x, 0f, 0f);
             CharacterBody.rotation = Quaternion.Slerp(CharacterBody.rotation, dRotation, Time.deltaTime * CamSensitivity);
 
-            controller.Move(_movement * MoveSpeed * Time.deltaTime);
-        }
+            float MovementSpeed = WalkSpeed;
 
+            if (_isCrouching) MovementSpeed *= 0.3f;
+            else MovementSpeed = WalkSpeed;
+
+            if (_isRunning) controller.Move(_movement * MoveSpeed * Time.deltaTime);
+            else controller.Move(_movement * MovementSpeed * Time.deltaTime);
+            
+        }
+        void Crouch()
+        {
+            _isCrouching = !_isCrouching;
+            if (_isCrouching) CrouchPosition = new Vector3(vCam.transform.position.x, vCam.transform.position.y * 0.5f, vCam.transform.position.z);
+            else CrouchPosition = new Vector3(vCam.transform.position.x, vCam.transform.position.y * 2f, vCam.transform.position.z);
+
+            //idk how to lerp this shit
+            vCam.transform.position = Vector3.Lerp(vCam.transform.position, CrouchPosition, 1);
+        }
         void ApplyGravity()
         {
             if (CheckGrounded())

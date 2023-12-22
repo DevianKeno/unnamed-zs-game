@@ -43,6 +43,16 @@ namespace URMG.Player
             //
         }
 
+        public void Run(InputAction.CallbackContext context)
+        {
+
+        }
+
+        public void Crouch(InputAction.CallbackContext context)
+        {
+            
+        }
+
         /// <summary>
         /// Make this player interact with an Interactable object.
         /// </summary>

@@ -288,9 +288,18 @@ namespace URMG.Player
             _isCrouching = !_isCrouching;
             if (_isCrouching) CrouchPosition = new Vector3(vCam.transform.position.x, vCam.transform.position.y * 0.5f, vCam.transform.position.z);
             else CrouchPosition = new Vector3(vCam.transform.position.x, vCam.transform.position.y * 2f, vCam.transform.position.z);
-
-            //idk how to lerp this shit
-            vCam.transform.position = Vector3.Lerp(vCam.transform.position, CrouchPosition, 1);
+            
+            // vCam.transform.position = Vector3.Lerp(vCam.transform.position, CrouchPosition, 1);
+            LeanTween.value(gameObject, vCam.transform.position.y, CrouchPosition.y, 0.3f)
+            .setOnUpdate(
+                (i) =>
+                {
+                    vCam.transform.position = new Vector3
+                    (vCam.transform.position.x,
+                    i,
+                    vCam.transform.position.z);
+                }
+            ).setEaseOutExpo();
         }
         void ApplyGravity()
         {

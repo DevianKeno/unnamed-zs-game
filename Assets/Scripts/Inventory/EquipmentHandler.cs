@@ -1,8 +1,8 @@
 using System;
 using UnityEngine;
-using URMG.Inventory;
+using UZSG.Inventory;
 
-namespace URMG
+namespace UZSG
 {
     public class EquipmentHandler : MonoBehaviour
     {

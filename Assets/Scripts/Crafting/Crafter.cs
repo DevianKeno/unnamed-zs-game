@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace URMG.Crafting
+namespace UZSG.Crafting
 {
     public class Crafter : MonoBehaviour
     {

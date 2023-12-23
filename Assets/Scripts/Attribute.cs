@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace URMG
+namespace UZSG
 {
     /// <summary>
     /// An attribute represents a value without any particular bounds.

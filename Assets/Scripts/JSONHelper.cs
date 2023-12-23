@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace URMG
+namespace UZSG
 {
     public class JSONHelper
     {        

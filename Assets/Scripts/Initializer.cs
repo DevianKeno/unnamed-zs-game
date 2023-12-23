@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-using URMG;
+using UZSG;
 
 public sealed class Initializer : MonoBehaviour
 {

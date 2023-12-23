@@ -1,8 +1,8 @@
 using System;
 using UnityEngine;
-using URMG.Systems;
+using UZSG.Systems;
 
-namespace URMG
+namespace UZSG
 {
     /// <summary>
     /// A vital attribute represents a value between 0 and a maximum value.

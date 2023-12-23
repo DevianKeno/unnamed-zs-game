@@ -1,27 +1,9 @@
-using URMG.States;
+using UZSG.States;
 
-namespace URMG.Player
+namespace UZSG.Player
 {
     public class IdleState : State
     {
-        public IdleState(string name) : base(name)
-        {
-
-        }
-
-        public override void Enter()
-        {
-            
-        }
-
-        public override void Exit()
-        {            
-            
-        }
-
-        public override void Update()
-        {
-            
-        }
+        public override string Name => throw new System.NotImplementedException();
     }
 }

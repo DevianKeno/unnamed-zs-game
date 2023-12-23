@@ -1,37 +1,22 @@
 using System;
 using UnityEngine;
-using URMG.Player;
-using URMG.UI;
-using URMG.States;
+using UZSG.Player;
+using UZSG.UI;
+using UZSG.States;
+using UZSG.Interactions;
 
-namespace URMG
+namespace UZSG
 {
-    // public class StartEquipState : State
-    // {
-    // }
-
-    // public class EquippedState : State
-    // {
-    // }
-    
-    // public class PerformPrimaryState : State
-    // {
-    // }
-    
-    // public class PerformSecondaryState : State
-    // {
-    // }
-
-    // public class DeequipState : State
-    // {
-    // }
-
     public struct EquipableArgs
     {
     }
 
-    public interface IEquipable
+    /// <summary>
+    /// Stuff that are visible in FPP when equipped.
+    /// </summary>
+    public interface IFPPVisible
     {
+        public GameObject FPPModel { get; }
     }
 
     /// <summary>
@@ -40,10 +25,37 @@ namespace URMG
     [RequireComponent(typeof(PlayerActions))]
     public class FPPHandler : MonoBehaviour
     {
+        public class EquipState : State
+        {
+            public override string Name => "Equip";
+        }
+
+        public class IdleState : State
+        {
+            public override string Name => "Idle";
+        }
+        
+        public class PerformPrimaryState : State
+        {
+            public override string Name => "Primary";
+        }
+        
+        public class PerformSecondaryState : State
+        {
+            public override string Name => "Secondary";
+        }
+
+        public class DequipState : State
+        {
+            public override string Name => "Dequip";
+        }
+
         [SerializeField] Camera _camera;
         PlayerActions _playerActions;
         Animator _animator;
         FPPStateMachine _stateMachine;
+
+        [SerializeField] GameObject katana;
 
         void Awake()
         {
@@ -64,8 +76,9 @@ namespace URMG
             }
         }
 
-        public void Equip(IEquipable obj)
+        public void Equip(IFPPVisible obj)
         {
+            Instantiate(obj.FPPModel, _camera.transform);
         }
     }
 

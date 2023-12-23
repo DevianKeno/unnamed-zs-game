@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace URMG
+namespace UZSG
 {
     /// <summary>
     /// Represents a collection of attributes for an entity.

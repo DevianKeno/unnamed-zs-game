@@ -1,9 +1,9 @@
 using System;
 using UnityEngine;
-using URMG.Systems;
-using URMG.Inventory;
+using UZSG.Systems;
+using UZSG.Inventory;
 
-namespace URMG.Player
+namespace UZSG.Player
 {
     /// <summary>
     /// Player core functionalities.

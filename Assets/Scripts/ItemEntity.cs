@@ -1,26 +1,45 @@
+using UZSG.Player;
+using UZSG.Interactions;
+using UZSG.Items;
 using System;
-using UnityEngine;
-using URMG.Interactions;
-using URMG.Player;
 
-namespace URMG.Items
+namespace UZSG.Entities
 {
-    public class ItemEntity : MonoBehaviour, IInteractable
+    public class ItemEntity : Entity, IInteractable
     {
         public ItemData ItemData;
         public int ItemCount;
         public string Name => ItemData.Name;
-        public string Action => "Pick Up";
+        public string Action
+        {
+            get
+            {
+                if (ItemData.Type == ItemType.Item ||
+                    ItemData.Type == ItemType.Tool || 
+                    ItemData.Type == ItemType.Equipment ||
+                    ItemData.Type == ItemType.Accessory) return "Pick Up";
+                if (ItemData.Type == ItemType.Weapon) return "Equip";
+                return "Interact with";
+            }
+        }
+
         public event EventHandler<InteractArgs> OnInteract;
 
         /// <summary>
         /// Gets an Item object from the entity.
         /// </summary>
-        /// <returns></returns>
         public Item AsItem()
         {
             return new Item(ItemData, ItemCount);
         }
+
+        /// <summary>
+        /// Gets a Weapon object from the entity.
+        /// </summary>
+        // public Weapon AsWeapon()
+        // {
+        //     // return new Weapon();
+        // }
 
         public void Interact(PlayerActions actor, InteractArgs args)
         {

@@ -1,9 +1,9 @@
 using System;
 using UnityEngine;
-using URMG.Inventory;
-using URMG.Items;
+using UZSG.Inventory;
+using UZSG.Items;
 
-namespace URMG
+namespace UZSG
 {
     /// <summary>
     /// Base class for all Containers that have Slots.
@@ -18,6 +18,7 @@ namespace URMG
 
         protected virtual void SlotContentChanged(object slot, ItemSlot.ContentChangedArgs e)
         {
+            Debug.Log("content changed");
             OnSlotContentChanged?.Invoke(this, new((ItemSlot) slot));
         }
 

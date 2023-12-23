@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace URMG
+namespace UZSG
 {
     /// <summary>
     /// Represents the player's vital statistics.

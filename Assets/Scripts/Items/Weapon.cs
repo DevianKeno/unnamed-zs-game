@@ -1,77 +1,23 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
-using URMG.Items;
+using UZSG.Items;
+using UZSG.States;
 
-namespace URMG
+namespace UZSG
 {
-    public struct SalvageData
+    public class Tool : IFPPVisible
     {
-        // List<Slot> Contents;
+        public GameObject FPPModel => throw new NotImplementedException();
     }
 
-    public interface ISalvageable
+    public class Weapon : IFPPVisible
     {
-        public SalvageData Salvage();
-    }
+        WeaponData _data;
+        public GameObject FPPModel => _data.FPPModel;
 
-    public interface IDurable
-    {
-        public Toughness Toughness { get; }
-        public Durability Durability { get; }
-    }
-
-    public class Toughness
-    {
-
-    }
-
-    public class Durability
-    {
-        int _current;
-        public int Current { get => _current; }
-
-        int _max;
-        public int Max { get => _max; }
-
-        public void Add(int amount)
+        public Weapon(WeaponData data)
         {
-
+            _data = data;
         }
-
-        public void Remove(int amount)
-        {
-
-        }
-
-        public void Set(int amount)
-        {
-            if (amount < 0) throw new ArgumentOutOfRangeException();
-
-        }
-
-        /// <summary>
-        /// Breaks the weapon.
-        /// </summary>
-        public void Break()
-        {
-
-        }
-    }
-
-    public class Weapon : MonoBehaviour
-    {
-        WeaponData data;
-        Toughness _toughness;
-        public Toughness Toughness { get => _toughness; }
-        Durability _durability;
-        public Durability Durability { get => _durability; }
-        protected float _baseDamage;
-        public float BaseDamage { get => _baseDamage; }
-    }
-
-    public class Gun
-    {
-        float baseDamage;
     }
 }

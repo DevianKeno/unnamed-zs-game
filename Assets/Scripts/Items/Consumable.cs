@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace URMG
+namespace UZSG
 {
     public abstract class Consumable : MonoBehaviour, IConsumable, IDroppable
     {

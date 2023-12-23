@@ -1,13 +1,13 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using URMG.Systems;
-using URMG.Items;
-using URMG.Interactions;
-using System.Runtime.InteropServices;
-using System;
-using URMG.Inventory;
+using UZSG.Systems;
+using UZSG.Items;
+using UZSG.Interactions;
+using UZSG.Inventory;
+using UZSG.Entities;
 
-namespace URMG.Player
+namespace UZSG.Player
 {
 
     /// <summary>
@@ -22,8 +22,9 @@ namespace URMG.Player
             public Actions Action;
         }
 
-        PlayerCore player;
-        public PlayerCore Player { get => player; }
+        PlayerCore _player;
+        public PlayerCore Player { get => _player; }
+        FPPHandler _FPPHandler;
 
         public event EventHandler<ActionPerformedArgs> OnActionPerform;
 
@@ -34,7 +35,8 @@ namespace URMG.Player
 
         void Awake()
         {
-            player = GetComponent<PlayerCore>();
+            _player = GetComponent<PlayerCore>();
+            _FPPHandler = GetComponent<FPPHandler>();
         }
 
         public void SelectHotbar(int index)
@@ -46,7 +48,8 @@ namespace URMG.Player
                 Action = Actions.SelectHotbar
             });
 
-            ItemSlot slot = player.Inventory.Hotbar[index];
+            // if (index == 1) _FPPHandler.Equip();
+
             Debug.Log($"Equipped hotbar slot {index}");
         }
 
@@ -67,7 +70,7 @@ namespace URMG.Player
 
         public void Run(InputAction.CallbackContext context)
         {
-
+            
         }
 
         public void Crouch(InputAction.CallbackContext context)
@@ -94,13 +97,36 @@ namespace URMG.Player
         /// </summary>
         public void PickUpItem(ItemEntity itemEntity)
         {
-            if (!player.CanPickUpItems) return;
-            if (player.Inventory == null) return;
+            if (!_player.CanPickUpItems) return;
+            if (_player.Inventory == null) return;
+
+            Item item = itemEntity.AsItem();
             
-            if (player.Inventory.Bag.TryPutNearest(itemEntity.AsItem()))
+            if (item.Type == ItemType.Weapon)
             {
-                Destroy(itemEntity.gameObject);
-            }
+                if (_player.Inventory.Hotbar.Mainhand.IsEmpty)
+                {
+                    _player.Inventory.Hotbar.Mainhand.PutItem(item);
+                    Destroy(itemEntity.gameObject);
+                    /* Cache weapon data and model
+                    Weapon weapon = new(_player.Inventory.Hotbar.Mainhand.Item);
+
+                    */
+                }
+            } else if (item.Type == ItemType.Tool)
+            {
+                if (_player.Inventory.Hotbar.Offhand.IsEmpty)
+                {
+                    _player.Inventory.Hotbar.Offhand.PutItem(item);
+                    Destroy(itemEntity.gameObject);
+                } // else try to put in other hotbar slots (3-0) only if available
+            } else
+            {
+                if (_player.Inventory.Bag.TryPutNearest(item))
+                {
+                    Destroy(itemEntity.gameObject);
+                }
+            }            
         }
 
         /// <summary>

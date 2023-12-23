@@ -1,5 +1,5 @@
 
-using URMG.Inventory;
+using UZSG.Inventory;
 
 public struct PlayerData
 {

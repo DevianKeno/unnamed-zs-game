@@ -1,9 +1,9 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
-using URMG.Inventory;
-using URMG.Items;
+using UZSG.Inventory;
+using UZSG.Items;
 
-namespace URMG.UI
+namespace UZSG.UI
 {
 /// <summary>
 /// UI Manager for URMG.

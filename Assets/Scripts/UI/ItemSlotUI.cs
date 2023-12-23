@@ -2,11 +2,11 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using URMG.Items;
-using URMG.Systems;
-using URMG.Inventory;
+using UZSG.Items;
+using UZSG.Systems;
+using UZSG.Inventory;
 
-namespace URMG.UI
+namespace UZSG.UI
 {
     public class ItemSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler
     {

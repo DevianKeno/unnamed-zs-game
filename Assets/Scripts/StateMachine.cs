@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using URMG.Systems;
-using URMG.States;
+using UZSG.Systems;
+using UZSG.States;
 
-namespace URMG
+namespace UZSG
 {
     public struct StateChangedArgs
     {

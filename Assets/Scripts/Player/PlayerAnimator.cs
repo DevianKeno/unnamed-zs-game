@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace URMG.Player
+namespace UZSG.Player
 {
     [RequireComponent(typeof(PlayerCore), typeof(Animator))]
     public class PlayerAnimator : MonoBehaviour

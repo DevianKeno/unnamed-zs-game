@@ -2,7 +2,7 @@
 using System;
 using UnityEngine;
 
-namespace URMG.Player
+namespace UZSG.Player
 {
 /// <summary>
 /// Represents the default attributes a player has.

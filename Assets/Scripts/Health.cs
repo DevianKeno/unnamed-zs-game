@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace URMG
+namespace UZSG
 {
     // public class Health : VitalAttribute
     // {

@@ -1,20 +1,24 @@
 using System;
-using URMG.Player;
+using UnityEngine;
+using UZSG.Player;
 
-namespace URMG.Interactions
+namespace UZSG.Interactions
 {
     public struct InteractArgs
     {
     }
 
-    public interface IInteractable 
+    /// <summary>
+    /// Represents objects that the Player can interact with.
+    /// </summary>
+    public interface IInteractable
     {
-        public string Name { get; }
+        public abstract string Name { get; }
         /// <summary>
-        /// Text display when hovered.
+        /// Text displayed when looking at the Interactable.
         /// </summary>
-        public string Action { get; }
-        public void Interact(PlayerActions actor, InteractArgs args);
+        public abstract string Action { get; }
+        public abstract void Interact(PlayerActions actor, InteractArgs args);
         public event EventHandler<InteractArgs> OnInteract;
     }
 }

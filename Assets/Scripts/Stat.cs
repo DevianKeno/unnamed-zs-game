@@ -1,5 +1,5 @@
 
-namespace URMG
+namespace UZSG
 {
     /// <summary>
     /// Represents

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace URMG.Inventory
+namespace UZSG.Inventory
 {
     public struct BagData
     {

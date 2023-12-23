@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace URMG.States
+namespace UZSG.States
 {
     [Serializable] public class EnterStateEvent : UnityEvent {}
     [Serializable] public class TickStateEvent : UnityEvent {}
@@ -11,7 +11,7 @@ namespace URMG.States
     [Serializable]
     public abstract class State : MonoBehaviour
     {
-        public string Name;
+        public abstract string Name { get; }
         public int AnimId;
         public bool IsLocked;
         [SerializeField] EnterStateEvent _OnEnterState = new();
@@ -36,11 +36,6 @@ namespace URMG.States
             set { _OnExitState = value; }
         }
 
-        public State(string name)
-        {
-            Name = name;
-        }
-
         public void Lock(bool value)
         {
             IsLocked = value;
@@ -49,16 +44,16 @@ namespace URMG.States
         /// <summary>
         /// Called once upon entering this state.
         /// </summary>
-        public abstract void Enter();
+        public virtual void Enter() {}
 
         /// <summary>
         /// Called once every game tick while in this state.
         /// </summary>
-        public abstract void Update();
+        public virtual void Update() {}
 
         /// <summary>
         /// Called once upon exiting this state.
         /// </summary>
-        public abstract void Exit();
+        public virtual void Exit() {}
     }
 }

@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
-using URMG.Systems;
+using UZSG.Systems;
 
-namespace URMG.Console
+namespace UZSG.Console
 {
     public readonly struct Command
     {

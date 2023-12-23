@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace URMG.UI
+namespace UZSG.UI
 {
     public class Frame : MonoBehaviour
     {

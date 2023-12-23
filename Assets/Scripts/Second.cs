@@ -1,6 +1,6 @@
 using System;
 
-namespace URMG.Timebase
+namespace UZSG.Timebase
 {
     public struct Second
     {

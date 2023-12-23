@@ -2,11 +2,11 @@ using System;
 using Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using URMG.Systems;
-using URMG.Items;
-using URMG.Interactions;
+using UZSG.Systems;
+using UZSG.Items;
+using UZSG.Interactions;
 
-namespace URMG.Player
+namespace UZSG.Player
 {
     public struct FrameInput
     {
@@ -206,11 +206,7 @@ namespace URMG.Player
 
                 if (hit.collider.CompareTag("Item"))
                 {
-                    Game.UI.InteractIndicator.Show(new()
-                    {
-                        Action = lookingAt.Action,
-                        Object = lookingAt.Name,
-                    });
+                    Game.UI.InteractIndicator.Show(lookingAt);
                 }
             } else
             {

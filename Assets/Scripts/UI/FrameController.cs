@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace URMG.UI
+namespace UZSG.UI
 {
     public class FrameController : MonoBehaviour
     {
@@ -28,7 +28,7 @@ namespace URMG.UI
                 if (IsTransitioning) return;
                 IsTransitioning = true;
 
-                LeanTween.move(CurrentFrame.Rect, new Vector3(-1920f, 0f, 0f), AnimationFactor)
+                LeanTween.move(CurrentFrame.Rect, new Vector3(-Screen.width, 0f, 0f), AnimationFactor)
                 .setEaseOutExpo()
                 .setOnComplete( () =>
                 {

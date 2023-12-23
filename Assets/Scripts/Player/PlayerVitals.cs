@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace URMG.Player
+namespace UZSG.Player
 {
     /// <summary>
     /// Represents the different values the Player has.

@@ -412,7 +412,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 300916839}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b76cd9a331b99f42a134b422757d8f5, type: 3}
+  m_Script: {fileID: 11500000, guid: 0b0fc83af09fe2549bd4cf68475cdf03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ItemData: {fileID: 11400000, guid: 9a15ab273ce6ac4408d2a9e03329c10f, type: 2}
@@ -626,8 +626,8 @@ RectTransform:
   m_Children:
   - {fileID: 1355726197}
   - {fileID: 427524843}
-  - {fileID: 977180118}
   - {fileID: 7902477000822433005}
+  - {fileID: 977180118}
   - {fileID: 726213498}
   m_Father: {fileID: 0}
   m_RootOrder: 6
@@ -789,7 +789,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 544516861}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b76cd9a331b99f42a134b422757d8f5, type: 3}
+  m_Script: {fileID: 11500000, guid: 0b0fc83af09fe2549bd4cf68475cdf03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ItemData: {fileID: 11400000, guid: 35a7f50afca84d847b7a649f7d65b88b, type: 2}
@@ -968,7 +968,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 624416320}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b76cd9a331b99f42a134b422757d8f5, type: 3}
+  m_Script: {fileID: 11500000, guid: 0b0fc83af09fe2549bd4cf68475cdf03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ItemData: {fileID: 11400000, guid: 9a15ab273ce6ac4408d2a9e03329c10f, type: 2}
@@ -2105,7 +2105,7 @@ RectTransform:
   - {fileID: 832470901}
   - {fileID: 1349594204}
   m_Father: {fileID: 427029727}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
@@ -3155,7 +3155,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df7c5360b3cb545469f2320e0f54c9ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Name: run
   AnimId: 0
   IsLocked: 0
   _OnEnterState:
@@ -3429,7 +3428,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1287873810}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 057a8109f665ff44db11de79479c034a, type: 3}
+  m_Script: {fileID: 11500000, guid: 0b0fc83af09fe2549bd4cf68475cdf03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ItemData: {fileID: 11400000, guid: d6d1ed202e1e02b4997085e628a26454, type: 2}
@@ -3676,7 +3675,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1431861899}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b76cd9a331b99f42a134b422757d8f5, type: 3}
+  m_Script: {fileID: 11500000, guid: 0b0fc83af09fe2549bd4cf68475cdf03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ItemData: {fileID: 11400000, guid: 35a7f50afca84d847b7a649f7d65b88b, type: 2}
@@ -4278,7 +4277,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1546750258}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b76cd9a331b99f42a134b422757d8f5, type: 3}
+  m_Script: {fileID: 11500000, guid: 0b0fc83af09fe2549bd4cf68475cdf03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ItemData: {fileID: 11400000, guid: 35a7f50afca84d847b7a649f7d65b88b, type: 2}
@@ -4561,6 +4560,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _camera: {fileID: 1957117178}
+  katana: {fileID: 5319525924537272960, guid: f61748ffb300a934e8e10d583dcdddf3, type: 3}
 --- !u!1001 &1554595344
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5331,7 +5331,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1677778763}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b76cd9a331b99f42a134b422757d8f5, type: 3}
+  m_Script: {fileID: 11500000, guid: 0b0fc83af09fe2549bd4cf68475cdf03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ItemData: {fileID: 11400000, guid: 9a15ab273ce6ac4408d2a9e03329c10f, type: 2}
@@ -5564,7 +5564,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5840759fa9afee54093cd2e96e6ea775, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Name: idle
   AnimId: 0
   IsLocked: 0
   _OnEnterState:
@@ -5943,7 +5942,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1931656276}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b76cd9a331b99f42a134b422757d8f5, type: 3}
+  m_Script: {fileID: 11500000, guid: 0b0fc83af09fe2549bd4cf68475cdf03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ItemData: {fileID: 11400000, guid: 74e8913029c3a3b4583fb180fdd991bc, type: 2}
@@ -6155,7 +6154,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.01
-  far clip plane: 100
+  far clip plane: 1000
   field of view: 60
   orthographic: 0
   orthographic size: 5
@@ -7374,7 +7373,7 @@ RectTransform:
   - {fileID: 6762413438234068295}
   - {fileID: 8700488557748529498}
   m_Father: {fileID: 427029727}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}

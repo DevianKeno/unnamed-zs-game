@@ -1,9 +1,9 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using URMG.Items;
+using UZSG.Items;
 
-namespace URMG.UI
+namespace UZSG.UI
 {
     public class ItemDisplayUI : MonoBehaviour
     {

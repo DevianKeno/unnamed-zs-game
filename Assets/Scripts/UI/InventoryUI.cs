@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using URMG.Systems;
-using URMG.Inventory;
-using URMG.Items;
+using UZSG.Systems;
+using UZSG.Inventory;
+using UZSG.Items;
 
-namespace URMG.UI
+namespace UZSG.UI
 {
     public class InventoryUI : MonoBehaviour
     {
@@ -31,7 +31,7 @@ namespace URMG.UI
         [SerializeField] GameObject slotPrefab;
         [SerializeField] GameObject itemDisplayPrefab;
 
-        void Start()
+        void Awake()
         {            
             // Bag slots
             int i = 0;
@@ -45,7 +45,7 @@ namespace URMG.UI
             }
 
             // Hotbar slots
-            i = 0;
+            i = 1;
             foreach (Transform t in hotbar.transform)
             {
                 ItemSlotUI s = t.GetComponent<ItemSlotUI>();
@@ -54,7 +54,11 @@ namespace URMG.UI
                 _hotbarSlotUIs.Add(i, s);
                 i++;
             }
-            
+            _hotbarSlotUIs[10].Index = 0;
+        }
+
+        void Start()
+        {            
             Hide();
         }
 

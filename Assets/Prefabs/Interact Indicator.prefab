@@ -313,7 +313,7 @@ GameObject:
   - component: {fileID: 8250109019658285424}
   - component: {fileID: 8250109019658285426}
   m_Layer: 5
-  m_Name: Object Name (TMP)
+  m_Name: Object (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -585,8 +585,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   indicator: {fileID: 8250109019733149546}
-  actionTMP: {fileID: 8250109018558998000}
-  objectTMP: {fileID: 8250109019658285424}
+  actionText: {fileID: 8250109018558998000}
+  objectText: {fileID: 8250109019658285424}
 --- !u!1 &8401173355290518190
 GameObject:
   m_ObjectHideFlags: 0

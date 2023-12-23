@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace URMG
+namespace UZSG
 {
     /// <summary>
     /// These should be read from a file.

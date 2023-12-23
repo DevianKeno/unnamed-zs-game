@@ -1,8 +1,8 @@
 using System;
 using UnityEngine;
-using URMG.UI;
+using UZSG.UI;
 
-namespace URMG.Systems
+namespace UZSG.Systems
 {
 public sealed class Game : MonoBehaviour
 {

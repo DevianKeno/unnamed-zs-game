@@ -1,7 +1,7 @@
 using UnityEngine;
-using URMG.Items;
+using UZSG.Items;
 
-namespace URMG.Crafting
+namespace UZSG.Crafting
 {
     [CreateAssetMenu(fileName = "Recipe Data", menuName = "URMG/Recipe Data")]
     public class RecipeData : ScriptableObject

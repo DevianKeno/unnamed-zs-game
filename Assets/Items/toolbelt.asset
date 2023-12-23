@@ -17,4 +17,6 @@ MonoBehaviour:
   Description: Katana.
   Sprite: {fileID: 0}
   StackSize: 1
-  Type: 2
+  Type: 4
+  IsMaterial: 0
+  Model: {fileID: 0}

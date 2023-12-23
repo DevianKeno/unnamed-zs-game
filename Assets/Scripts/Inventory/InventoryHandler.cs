@@ -1,10 +1,10 @@
 using System;
 using UnityEditor;
 using UnityEngine;
-using URMG.Items;
-using URMG.UI;
+using UZSG.Items;
+using UZSG.UI;
 
-namespace URMG.Inventory
+namespace UZSG.Inventory
 {
     public enum ContainerType { Hotbar, Bag, Container }
     public struct SlotContentChangedArgs

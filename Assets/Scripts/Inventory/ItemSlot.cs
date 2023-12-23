@@ -1,8 +1,8 @@
 using System;
 using UnityEngine;
-using URMG.Items;
+using UZSG.Items;
 
-namespace URMG.Inventory
+namespace UZSG.Inventory
 {
     [Flags]
     public enum SlotType

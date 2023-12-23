@@ -1,9 +1,10 @@
 using System;
 using UnityEngine;
 
-namespace URMG.Items
+namespace UZSG.Items
 {
     public enum ItemType { Item, Weapon, Tool, Equipment, Accessory }
+    public enum ItemSubtype { Material, Consumable, Tool, Weapon, Equipable, Accessory }
 
     [CreateAssetMenu(fileName = "Item", menuName = "URMG/Item")]
     [Serializable]

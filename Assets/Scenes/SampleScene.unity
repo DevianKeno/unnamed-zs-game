@@ -3160,12 +3160,15 @@ MonoBehaviour:
   _OnEnterState:
     m_PersistentCalls:
       m_Calls: []
+    m_CallsDirty: 1
   _OnTickState:
     m_PersistentCalls:
       m_Calls: []
+    m_CallsDirty: 1
   _OnExitState:
     m_PersistentCalls:
       m_Calls: []
+    m_CallsDirty: 1
 --- !u!1001 &1280816658
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4556,11 +4559,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1553506943}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4945d81f45cf4ab4c9ec403cf808ae22, type: 3}
+  m_Script: {fileID: 11500000, guid: 9f3b41504a21b1f4d8b35856426cbb02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _camera: {fileID: 1957117178}
-  _playerActions: {fileID: 0}
+  InitialState: {fileID: 0}
+  _currentState: {fileID: 0}
+  _lockedUntil: 0
+  _isTransitioning: 0
 --- !u!1001 &1554595344
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5569,12 +5574,15 @@ MonoBehaviour:
   _OnEnterState:
     m_PersistentCalls:
       m_Calls: []
+    m_CallsDirty: 1
   _OnTickState:
     m_PersistentCalls:
       m_Calls: []
+    m_CallsDirty: 1
   _OnExitState:
     m_PersistentCalls:
       m_Calls: []
+    m_CallsDirty: 1
 --- !u!1001 &1849051862
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6055,6 +6063,7 @@ GameObject:
   - component: {fileID: 1957117177}
   - component: {fileID: 1957117179}
   - component: {fileID: 1957117180}
+  - component: {fileID: 1957117181}
   m_Layer: 0
   m_Name: FPP
   m_TagString: Untagged
@@ -6201,6 +6210,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d9dff5dc050d3f41b882e29c6e12fa7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1957117181
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1957117173}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a07b8e1b86516d949bc9ac8e79746068, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  InitialState: {fileID: 0}
+  _currentState: {fileID: 0}
+  _lockedUntil: 0
+  _isTransitioning: 0
 --- !u!1001 &1972766275
 PrefabInstance:
   m_ObjectHideFlags: 0

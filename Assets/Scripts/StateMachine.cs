@@ -38,7 +38,7 @@ namespace UZSG.Systems
 
         void Tick(object sender, TickEventArgs e)
         {
-            _currentState.Tick();
+            if (InitialState != null) _currentState.Tick();
         }
 
         /// <summary>

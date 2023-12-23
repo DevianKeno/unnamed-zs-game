@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using URMG.Items;
 
 namespace URMG
 {
@@ -58,8 +59,9 @@ namespace URMG
         }
     }
 
-    public class Weapon : MonoBehaviour, IDurable
+    public class Weapon : MonoBehaviour
     {
+        WeaponData data;
         Toughness _toughness;
         public Toughness Toughness { get => _toughness; }
         Durability _durability;

@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using URMG.Items;
 using URMG.Systems;
+using URMG.Inventory;
 
 namespace URMG.UI
 {
@@ -13,8 +14,10 @@ namespace URMG.UI
         public static Color Transparent { get => new(1f, 1f, 1f, 0f); }
         public static Color Normal { get => new(0f, 0f, 0f, 0.5f); }
         public static Color Hovered { get => new(0.2f, 0.2f, 0.2f, 0.5f); }
+        
         public int Index;
         public event EventHandler<PointerEventData> OnClick;
+        ItemSlot _itemSlot;
         Image _image;
         ItemDisplayUI _displayUI;
 

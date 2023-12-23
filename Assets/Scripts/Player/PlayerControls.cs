@@ -51,7 +51,7 @@ namespace URMG.Player
         /// </summary>
         Vector3 _movement;
         Vector3 FallSpeed;
-        Vector3 CrouchPosition;
+        float CrouchPosition;
         bool _isMoving;
         public bool IsMoving { get => _isMoving; }
         bool _isGrounded;
@@ -128,7 +128,7 @@ namespace URMG.Player
             hotbarInput.performed += OnHotbarSelect;    // Pressed Tab/E (default)
         }
 
-        private void OnHotbarSelect(InputAction.CallbackContext context)
+        void OnHotbarSelect(InputAction.CallbackContext context)
         {            
             playerActions.SelectHotbar(int.Parse(context.control.displayName));
         }
@@ -286,11 +286,18 @@ namespace URMG.Player
         void Crouch()
         {
             _isCrouching = !_isCrouching;
-            if (_isCrouching) CrouchPosition = new Vector3(vCam.transform.position.x, vCam.transform.position.y * 0.5f, vCam.transform.position.z);
-            else CrouchPosition = new Vector3(vCam.transform.position.x, vCam.transform.position.y * 2f, vCam.transform.position.z);
-            
-            // vCam.transform.position = Vector3.Lerp(vCam.transform.position, CrouchPosition, 1);
-            LeanTween.value(gameObject, vCam.transform.position.y, CrouchPosition.y, 0.3f)
+            float TransitionSpeed;
+            if (_isCrouching)
+            { 
+                CrouchPosition = vCam.transform.position.y * 0.5f;
+                TransitionSpeed = 1f;
+            }
+            else
+            {
+                CrouchPosition = vCam.transform.position.y * 2f;
+                TransitionSpeed = 0.3f;
+            }
+            LeanTween.value(gameObject, vCam.transform.position.y, CrouchPosition, TransitionSpeed)
             .setOnUpdate(
                 (i) =>
                 {

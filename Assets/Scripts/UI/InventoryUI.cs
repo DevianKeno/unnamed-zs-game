@@ -11,67 +11,103 @@ namespace URMG.UI
     public class InventoryUI : MonoBehaviour
     {
         [SerializeField] InventoryHandler _inventory;
-        Dictionary<int, ItemSlotUI> _bagSlotsUIs = new();
-        Dictionary<int, ItemSlotUI> _hotbarSlotUIs = new();
+        [SerializeField] Dictionary<int, ItemSlotUI> _bagSlotUIs = new();
+        [SerializeField] Dictionary<int, ItemSlotUI> _hotbarSlotUIs = new();
         bool _isVisible = true;
         public bool IsVisible { get => _isVisible; }
         bool _isHolding = false;
         int _fromIndex;
         Item _heldItem;
         ItemSlot selectedSlot;
-
         bool _isPutting;
         bool _isGetting;
         ItemDisplayUI _displayedItem;
+
+        [Header("Bag")]
         [SerializeField] GameObject bag;
+        [SerializeField] GameObject hotbar;
+
+        [Header("Prefabs")]
         [SerializeField] GameObject slotPrefab;
         [SerializeField] GameObject itemDisplayPrefab;
 
         void Start()
-        {
+        {            
+            // Bag slots
             int i = 0;
             foreach (Transform t in bag.transform)
             {
                 ItemSlotUI s = t.GetComponent<ItemSlotUI>();
                 s.Index = i;
-                s.OnClick += OnClickSlot;
-                _bagSlotsUIs.Add(i, s);
+                s.OnClick += OnClickBagSlot;
+                _bagSlotUIs.Add(i, s);
                 i++;
-            }            
+            }
 
+            // Hotbar slots
+            i = 0;
+            foreach (Transform t in hotbar.transform)
+            {
+                ItemSlotUI s = t.GetComponent<ItemSlotUI>();
+                s.Index = i;
+                s.OnClick += OnClickHotbarSlot;
+                _hotbarSlotUIs.Add(i, s);
+                i++;
+            }
+            
             Hide();
         }
 
         void OnEnable()
         {
-            _inventory.OnSlotContentChanged += SlotContentChangedCallback;
+            _inventory.Hotbar.OnSlotContentChanged += HotbarSlotChangedCallback;
+            _inventory.Bag.OnSlotContentChanged += BagSlotChangedCallback;
         }
 
-        private void SlotContentChangedCallback(object sender, SlotContentChangedArgs e)
+        void HotbarSlotChangedCallback(object sender, SlotContentChangedArgs e)
         {
-            _bagSlotsUIs[e.Slot.Index].SetDisplay(e.Slot.Item);
+            _hotbarSlotUIs[e.Slot.Index].SetDisplay(e.Slot.Item);
         }
 
-        public void OnClickSlot(object slot, PointerEventData e)
+        void BagSlotChangedCallback(object sender, SlotContentChangedArgs e)
         {
-            ItemSlotUI slotUI = (ItemSlotUI) slot;
-            selectedSlot = _inventory.GetSlot(slotUI.Index);
+            _bagSlotUIs[e.Slot.Index].SetDisplay(e.Slot.Item);
+        }
+
+        void OnClickHotbarSlot(object sender, PointerEventData e)
+        {
+            ItemSlotUI slotUI = (ItemSlotUI) sender;
+            selectedSlot = _inventory.Bag[slotUI.Index];
+
+            if (e.button == PointerEventData.InputButton.Left)
+            {
+
+            } else if (e.button == PointerEventData.InputButton.Right)
+            {
+
+            }
+        }
+
+        void OnClickBagSlot(object sender, PointerEventData e)
+        {
+            ItemSlotUI slotUI = (ItemSlotUI) sender;
+            selectedSlot = _inventory.Bag[slotUI.Index];
 
             if (e.button == PointerEventData.InputButton.Left)
             {
                 if (_isHolding)
                 {
-                    if (_inventory.TryPut(selectedSlot.Index, _heldItem))
+                    if (_inventory.Bag.TryPut(selectedSlot.Index, _heldItem))
                     {
                         ReleaseItem();
                     } else // swap items
                     {
-                        Item tookItem = _inventory.Take(selectedSlot.Index);
-                        _inventory.TryPut(selectedSlot.Index, SwapHeld(tookItem));
+                        Item tookItem = _inventory.Bag.Take(selectedSlot.Index);
+                        _inventory.Bag.TryPut(selectedSlot.Index, SwapHeld(tookItem));
                     }
                 } else
                 {
-                    HoldItem(_inventory.Take(selectedSlot.Index));
+                    HoldItem(_inventory.Bag.Take(selectedSlot.Index));
                 }
             
             } else if (e.button == PointerEventData.InputButton.Right)
@@ -80,19 +116,19 @@ namespace URMG.UI
                 {                    
                     _isPutting = true;
                     
-                    if (_inventory.TryPut(selectedSlot.Index, new(_heldItem, 1)))
+                    if (_inventory.Bag.TryPut(selectedSlot.Index, new(_heldItem, 1)))
                     {
                         HoldItem(new(_heldItem, _heldItem.Count - 1));
                         _displayedItem.SetDisplay(_heldItem);
                     } else // swap items
                     {
-                        Item tookItem = _inventory.Take(selectedSlot.Index);
-                        _inventory.TryPut(selectedSlot.Index, SwapHeld(tookItem));
+                        Item tookItem = _inventory.Bag.Take(selectedSlot.Index);
+                        _inventory.Bag.TryPut(selectedSlot.Index, SwapHeld(tookItem));
                     }
                 } else // get 1 from selected slot
                 {
                     _isGetting = true;
-                    HoldItem(_inventory.TakeItems(selectedSlot.Index, 1));
+                    HoldItem(_inventory.Bag.TakeItems(selectedSlot.Index, 1));
                 }
             }
         }
@@ -144,7 +180,7 @@ namespace URMG.UI
                 Debug.Log("Slot index out of bounds.");
                 return;
             }
-            _bagSlotsUIs[slotIndex].SetDisplay(item);
+            _bagSlotUIs[slotIndex].SetDisplay(item);
         }
 
         public void Show()

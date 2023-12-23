@@ -8,7 +8,7 @@ namespace URMG
 {
     public struct StateChangedArgs
     {
-        public State Prev;
+        public State Current;
         public State Next;
     }
 
@@ -25,7 +25,7 @@ namespace URMG
         public List<State> States = new();
 
         /// <summary>
-        /// Fired everytime the state is changed.
+        /// Calles everytime before the state changes.
         /// </summary>
         public event EventHandler<StateChangedArgs> OnStateChanged;
 
@@ -60,17 +60,17 @@ namespace URMG
             if (Time.time < LockedUntil) return false;
 
             IsTransitioning = true;
+            OnStateChanged?.Invoke(this, new()
+            {
+                Current = _currentState,
+                Next = state
+            });
             _currentState.Exit();
             _currentState = state;
             _currentState.Enter();
 
             LockedUntil = Time.time + lockForSeconds;
             IsTransitioning = false;
-
-            OnStateChanged?.Invoke(this, new()
-            {
-                Next = state
-            });
 
             return true;
         }

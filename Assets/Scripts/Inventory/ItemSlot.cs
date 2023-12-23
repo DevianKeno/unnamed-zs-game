@@ -4,34 +4,39 @@ using URMG.Items;
 
 namespace URMG.Inventory
 {
-    public enum SlotType { All, Item, Weapon, Tool, Equipment, Accessory }
+    [Flags]
+    public enum SlotType
+    {
+        All = 1,
+        Item = 2,
+        Tool = 4,
+        Weapon = 8,
+        Equipment = 16,
+        Accessory = 32
+    }
 
+    [Serializable]
     public class ItemSlot
     {
         public struct ContentChangedArgs
         {
-            public Item Content;
+            public Item Item;
         }
+        
+        public static ItemSlot Empty { get => null; }
 
         [SerializeField] int _index;
-        public int Index { get => _index; }
+        public int Index => _index;
 
         [SerializeField] Item _item;
-        public Item Item { get => _item; }
+        public Item Item => _item;
 
         [SerializeField] bool _isEmpty;
-        public bool IsEmpty
-        {
-            get 
-            {
-                if (_item == Item.None) return true;
-                return false;
-            }
-        }
+        public bool IsEmpty => _isEmpty;
         public SlotType Type;
 
         /// <summary>
-        /// Called whenever the content of this slot is changed.
+        /// Called whenever the content of this Slot is changed.
         /// </summary>
         public event EventHandler<ContentChangedArgs> OnContentChanged;
 
@@ -39,6 +44,7 @@ namespace URMG.Inventory
         {
             _index = index;
             _item = Item.None;
+            _isEmpty = true;
             Type = SlotType.All;
         }
         
@@ -46,6 +52,7 @@ namespace URMG.Inventory
         {
             _index = index;
             _item = Item.None;
+            _isEmpty = true;
             Type = slotType;
         }
 
@@ -53,8 +60,13 @@ namespace URMG.Inventory
         {        
             OnContentChanged?.Invoke(this, new()
             {
-                Content = _item
+                Item = _item
             });
+        }
+
+        public Item View()
+        {
+            return new(_item);
         }
 
         public bool TryPut(Item item)
@@ -67,11 +79,13 @@ namespace URMG.Inventory
         public void PutItem(Item item)
         {
             _item = item;
+            _isEmpty = false;
             ContentChanged();
         }
         public void Clear()
         {
             _item = Item.None;
+            _isEmpty = true;
             ContentChanged();
         }
 
@@ -98,8 +112,7 @@ namespace URMG.Inventory
         public Item TakeAll()
         {
             Item toTake = new(_item, _item.Count);
-            _item = Item.None;
-            ContentChanged();
+            Clear();
             return toTake;
         }
 

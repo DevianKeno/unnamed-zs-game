@@ -14,12 +14,8 @@ namespace URMG.Player
         public bool CanPickUpItems = true;
         bool _isSpawned = false;
         bool _isAlive = false;
-
-        public int EquippedSlot;
         
         [SerializeField] InventoryHandler _inventory;
         public InventoryHandler Inventory { get => _inventory; }
-
-        
     }
 }

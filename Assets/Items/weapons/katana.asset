@@ -26,7 +26,11 @@ MonoBehaviour:
     BaseCritStrike: 0
     BaseCritDamage: 0
   _FPPModel: {fileID: 5319525924537272960, guid: f61748ffb300a934e8e10d583dcdddf3, type: 3}
-  Equip: 
-  Dequip: 
-  Primary: []
-  Secondary: 
+  _controller: {fileID: 9100000, guid: 69b52eb4b17375c408914433ef1ae021, type: 2}
+  AnimNames:
+    Equip: Equip
+    Idle: Idle
+    Run: 
+    Primary: []
+    Secondary: 
+    Hold: Stance

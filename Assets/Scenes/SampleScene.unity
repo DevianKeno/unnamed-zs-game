@@ -2038,7 +2038,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1553506944}
-  m_RootOrder: 2
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &963194229
 MonoBehaviour:
@@ -2875,7 +2875,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1553506944}
-  m_RootOrder: 0
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1108656320
 MonoBehaviour:
@@ -3577,7 +3577,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1553506944}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &1400893114
 Rigidbody:
@@ -4405,7 +4405,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1553506944}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1553506943
 GameObject:
@@ -4441,12 +4441,12 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1108656319}
-  - {fileID: 1908363388}
   - {fileID: 963194228}
   - {fileID: 1957117174}
+  - {fileID: 1108656319}
   - {fileID: 1400893110}
   - {fileID: 1551354572}
+  - {fileID: 1908363388}
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4560,7 +4560,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _camera: {fileID: 1957117178}
-  katana: {fileID: 5319525924537272960, guid: f61748ffb300a934e8e10d583dcdddf3, type: 3}
+  _playerActions: {fileID: 0}
 --- !u!1001 &1554595344
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5910,7 +5910,7 @@ Transform:
   - {fileID: 1828754333}
   - {fileID: 1257715131}
   m_Father: {fileID: 1553506944}
-  m_RootOrder: 1
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1931656276
 GameObject:
@@ -6053,8 +6053,10 @@ GameObject:
   - component: {fileID: 1957117178}
   - component: {fileID: 1957117175}
   - component: {fileID: 1957117177}
+  - component: {fileID: 1957117179}
+  - component: {fileID: 1957117180}
   m_Layer: 0
-  m_Name: FPP Camera
+  m_Name: FPP
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6074,7 +6076,7 @@ Transform:
   m_Children:
   - {fileID: 106902869}
   m_Father: {fileID: 1553506944}
-  m_RootOrder: 3
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1957117175
 MonoBehaviour:
@@ -6173,6 +6175,32 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &1957117179
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1957117173}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4945d81f45cf4ab4c9ec403cf808ae22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _camera: {fileID: 1957117178}
+  _playerActions: {fileID: 1553506945}
+--- !u!114 &1957117180
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1957117173}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d9dff5dc050d3f41b882e29c6e12fa7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1972766275
 PrefabInstance:
   m_ObjectHideFlags: 0

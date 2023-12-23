@@ -2,16 +2,14 @@ using UnityEngine;
 
 namespace UZSG.Player
 {
-    [RequireComponent(typeof(PlayerCore), typeof(Animator))]
-    public class PlayerAnimator : MonoBehaviour
+    [RequireComponent(typeof(PlayerCore))]
+    public class PlayerAnimator : Systems.Animator
     {
         [SerializeField] PlayerCore _player;
-        [SerializeField] Animator _animator;
-
+        
         void Awake()
         {
             _player = GetComponent<PlayerCore>();
-            _animator = GetComponent<Animator>();
         }
     }
 }

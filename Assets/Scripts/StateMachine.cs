@@ -1,29 +1,29 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UZSG.Systems;
-using UZSG.States;
+using UnityEngine.InputSystem;
 
-namespace UZSG
+namespace UZSG.Systems
 {
-    public struct StateChangedArgs
-    {
-        public State Current;
-        public State Next;
-    }
-
     /// <summary>
     /// 
     /// </summary>
-    public abstract class StateMachine : MonoBehaviour
+    public abstract class StateMachine<EState> : MonoBehaviour where EState : Enum
     {
-        public State InitialState;
-        [SerializeField] State _currentState;
-        public State CurrentState { get => _currentState; }
-        public float LockedUntil;
-        public bool IsTransitioning = false;
-        public List<State> States = new();
-
+        public struct StateChangedArgs
+        {
+            public State<EState> Current;
+            public State<EState> Next;
+        }
+        public Dictionary<EState, State<EState>> States = new();
+        public State<EState> InitialState;
+        [SerializeField] State<EState> _currentState;
+        public State<EState> CurrentState => _currentState;
+        [SerializeField] float _lockedUntil;
+        public float LockedUntil => _lockedUntil;
+        [SerializeField] bool _isTransitioning = false;
+        public bool IsTransitioning => _isTransitioning;
+        
         /// <summary>
         /// Calles everytime before the state changes.
         /// </summary>
@@ -38,28 +38,32 @@ namespace UZSG
 
         void Tick(object sender, TickEventArgs e)
         {
-            _currentState.Update();
+            _currentState.Tick();
         }
 
-        public virtual void SetState(State state)
+        /// <summary>
+        /// Transition to state.
+        /// </summary>
+        public virtual void ToState(State<EState> state)
         {
             if (_currentState == state) return;
             
             TrySwitchState(state);
         }
 
-        public virtual void SetState(State state, float lockForSeconds)
+        public virtual void ToState(State<EState> state, float lockForSeconds)
         {
             if (_currentState == state) return;
 
             TrySwitchState(state, lockForSeconds);
         }
 
-        bool TrySwitchState(State state, float lockForSeconds = 0f)
+        bool TrySwitchState(State<EState> state, float lockForSeconds = 0f)
         {
             if (Time.time < LockedUntil) return false;
+            _isTransitioning = true;
+            _lockedUntil = Time.time + lockForSeconds;
 
-            IsTransitioning = true;
             OnStateChanged?.Invoke(this, new()
             {
                 Current = _currentState,
@@ -69,8 +73,7 @@ namespace UZSG
             _currentState = state;
             _currentState.Enter();
 
-            LockedUntil = Time.time + lockForSeconds;
-            IsTransitioning = false;
+            _isTransitioning = false;
 
             return true;
         }

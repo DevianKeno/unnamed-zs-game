@@ -65,7 +65,7 @@ namespace UZSG.Player
         public event EventHandler OnMoveStart;
         public event EventHandler OnMoveStop;
 
-        PlayerActions playerActions;
+        PlayerActions _actions;
         FrameInput frameInput;
         PlayerInput playerInput;
         InputAction moveInput;
@@ -85,7 +85,7 @@ namespace UZSG.Player
         {
             vCamPOV = vCam.GetCinemachineComponent<CinemachinePOV>();
             player = GetComponent<PlayerCore>();
-            playerActions = GetComponent<PlayerActions>();
+            _actions = GetComponent<PlayerActions>();
             controller = GetComponent<CharacterController>();
             InitControls();
         }
@@ -118,30 +118,37 @@ namespace UZSG.Player
             inventoryInput.Enable();
             hotbarInput.Enable();
 
-            jumpInput.performed += OnJumpX;              // Pressed Space (default)
-            runInput.started += OnRunX;                 // Pressed Shift (default)  
-            runInput.canceled += OnRunX;                // Released Shift
-            crouchInput.performed += OnCrouchX;         // Pressed LCtrl (default)
-            primaryInput.performed += OnPrimaryX;        // Pressed LMB (default)
-            secondaryInput.performed += OnSecondaryX;    // Pressed RMB (default)
-            interactInput.performed += OnInteractX;      // Pressed F (default)
-            inventoryInput.performed += OnInventoryX;    // Pressed Tab/E (default)
-            hotbarInput.performed += OnHotbarSelect;    // Pressed Tab/E (default)
+            /*  performed = Pressed and released
+                started = Pressed
+                canceled = Released
+            */
+            jumpInput.performed += OnJumpX;                 // Space (default)
+            runInput.started += OnRunX;                     // Shift (default)  
+            runInput.canceled += OnRunX;                    // Shift
+            crouchInput.performed += OnCrouchX;             // LCtrl (default)
+
+            primaryInput.performed += OnPrimaryX;           // LMB (default)
+            secondaryInput.started += OnSecondaryX;         // RMB (default)
+            secondaryInput.canceled += OnSecondaryX;         // RMB (default)
+
+            interactInput.performed += OnInteractX;         // F (default)
+            inventoryInput.performed += OnInventoryX;       // Tab/E (default)
+            hotbarInput.performed += OnHotbarSelect;        // Tab/E (default)
         }
 
         void OnHotbarSelect(InputAction.CallbackContext context)
         {            
-            playerActions.SelectHotbar(int.Parse(context.control.displayName));
+            _actions.SelectHotbar(int.Parse(context.control.displayName));
         }
 
         void OnPrimaryX(InputAction.CallbackContext context)
         {
-            playerActions.PerformPrimary();
+            _actions.PerformPrimary();
         }
 
         void OnSecondaryX(InputAction.CallbackContext context)
         {
-            playerActions.PerformSecondary();
+            _actions.PerformSecondary();
         }
 
         void OnJumpX(InputAction.CallbackContext context)
@@ -170,11 +177,11 @@ namespace UZSG.Player
         {
             if (lookingAt == null) return;
             
-            playerActions.Interact(lookingAt);
+            _actions.Interact(lookingAt);
         }
         void OnInventoryX(InputAction.CallbackContext context)
         {
-            playerActions.ToggleInventory();
+            _actions.ToggleInventory();
             AllowCameraMovement(!Game.UI.InventoryUI.IsVisible);
         }
 
@@ -254,7 +261,6 @@ namespace UZSG.Player
 
         void HandleDirection()
         {
-            // Moves player relative to the camera
             // _movement = frameInput.move.x * cam.transform.right + frameInput.move.y * cam.transform.forward;
             // _movement.y = 0f; 
             // _movement.Normalize();
@@ -262,6 +268,7 @@ namespace UZSG.Player
 
             Vector3 cameraForward = cam.transform.forward;
             cameraForward.y = 0f;
+            // Moves player relative to the camera
             _movement = frameInput.move.x * cam.transform.right + frameInput.move.y * cameraForward.normalized;
             _movement.Normalize();
         }

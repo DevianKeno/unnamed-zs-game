@@ -5,6 +5,9 @@ using System;
 
 namespace UZSG.Entities
 {
+    /// <summary>
+    /// Items that appear in the world (e.g. Interactables, Pickupables, etc.)
+    /// </summary>
     public class ItemEntity : Entity, IInteractable
     {
         public ItemData ItemData;

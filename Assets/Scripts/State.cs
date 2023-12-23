@@ -2,58 +2,72 @@ using System;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace UZSG.States
+namespace UZSG.Systems
 {
-    [Serializable] public class EnterStateEvent : UnityEvent {}
-    [Serializable] public class TickStateEvent : UnityEvent {}
-    [Serializable] public class ExitStateEvent : UnityEvent {}
-
+    /// <summary>
+    /// Base state representation.
+    /// </summary>
     [Serializable]
-    public abstract class State : MonoBehaviour
+    public abstract class State<EState> : MonoBehaviour where EState : Enum
     {
-        public abstract string Name { get; }
-        public int AnimId;
-        public bool IsLocked;
-        [SerializeField] EnterStateEvent _OnEnterState = new();
-        [SerializeField] TickStateEvent _OnTickState = new();
-        [SerializeField] ExitStateEvent _OnExitState = new();
-
-        public EnterStateEvent OnEnterState
+        public struct ChangedContext
         {
-            get { return _OnEnterState; }
-            set { _OnEnterState = value; }
+
         }
         
-        public TickStateEvent OnTickState
-        {
-            get { return _OnTickState; }
-            set { _OnTickState = value; }
-        }
+        EState _key;
+        public EState Key => _key;
+        bool _isLocked;
+        public bool IsLocked => _isLocked;
 
-        public ExitStateEvent OnExitState
+        public Action OnEnterState { get; internal set; }
+
+        [field: Header("Events")]       
+        /// <summary>
+        /// Called once when entering this State.
+        /// </summary>
+        public event EventHandler<ChangedContext> OnEnter;
+        /// <summary>
+        /// Called every game tick when in this State.
+        /// </summary>
+        public event EventHandler<ChangedContext> OnTick;
+        /// <summary>
+        /// Called once when exiting this State.
+        /// </summary>
+        public event EventHandler<ChangedContext> OnExit;
+
+        public State(EState key)
         {
-            get { return _OnExitState; }
-            set { _OnExitState = value; }
+            _key = key;
         }
 
         public void Lock(bool value)
         {
-            IsLocked = value;
+            _isLocked = value;
         }
 
-        /// <summary>
-        /// Called once upon entering this state.
-        /// </summary>
-        public virtual void Enter() {}
+        public virtual void Enter()
+        {
+            OnEnter?.Invoke(this, new()
+            {
 
-        /// <summary>
-        /// Called once every game tick while in this state.
-        /// </summary>
-        public virtual void Update() {}
+            });
+        }
 
-        /// <summary>
-        /// Called once upon exiting this state.
-        /// </summary>
-        public virtual void Exit() {}
+        public virtual void Tick()
+        {
+            OnTick?.Invoke(this, new()
+            {
+
+            });
+        }
+
+        public virtual void Exit()
+        {
+            OnExit?.Invoke(this, new()
+            {
+
+            });
+        }
     }
 }

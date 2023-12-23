@@ -1,14 +1,17 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using TMPro;
 using UZSG.Systems;
 using UZSG.Items;
 using UZSG.Interactions;
 using UZSG.Inventory;
 using UZSG.Entities;
+using UZSG.FPP;
 
 namespace UZSG.Player
 {
+    public enum PlayerStates { Idle, Run, Jump, Walk, Crouch }
 
     /// <summary>
     /// Represents the different actions the Player can do.
@@ -16,39 +19,39 @@ namespace UZSG.Player
     [RequireComponent(typeof(PlayerCore))]
     public class PlayerActions : MonoBehaviour
     {
-        public enum Actions { Jump, SelectHotbar }
-        public struct ActionPerformedArgs
-        {
-            public Actions Action;
-        }
-
         PlayerCore _player;
         public PlayerCore Player { get => _player; }
-        FPPHandler _FPPHandler;
 
-        public event EventHandler<ActionPerformedArgs> OnActionPerform;
-
-        public void OnSelectHotbar()
-        {
-
-        }
+        FPPHandler _fpp;
+        StateMachine<PlayerStates> _sm;
 
         void Awake()
         {
             _player = GetComponent<PlayerCore>();
-            _FPPHandler = GetComponent<FPPHandler>();
+            _fpp = GetComponent<FPPHandler>();
+            _sm = GetComponent<StateMachine<PlayerStates>>();
+            _sm.InitialState = _sm.States[PlayerStates.Idle];
+        }
+
+        void Start()
+        {
+        }
+
+        void Jump()
+        {
+            _sm.ToState(_sm.States[PlayerStates.Jump]);
         }
 
         public void SelectHotbar(int index)
         {
             if (index < 0 || index > 9) return;
 
-            OnActionPerform?.Invoke(this, new()
-            {
-                Action = Actions.SelectHotbar
-            });
+            // OnActionPerform?.Invoke(this, new()
+            // {
+            //     Action = Actions.SelectHotbar
+            // });
 
-            // if (index == 1) _FPPHandler.Equip();
+            // if (index == 1) _fpp.Equip();
 
             Debug.Log($"Equipped hotbar slot {index}");
         }
@@ -61,11 +64,6 @@ namespace UZSG.Player
         public void PerformSecondary()
         {
             
-        }
-
-        public void Jump(InputAction.CallbackContext context)
-        {            
-            //
         }
 
         public void Run(InputAction.CallbackContext context)
@@ -108,10 +106,10 @@ namespace UZSG.Player
                 {
                     _player.Inventory.Hotbar.Mainhand.PutItem(item);
                     Destroy(itemEntity.gameObject);
-                    /* Cache weapon data and model
-                    Weapon weapon = new(_player.Inventory.Hotbar.Mainhand.Item);
 
-                    */
+                    // Weapon weapon = new(_player.Inventory.Hotbar.Mainhand.Item);
+                    // _FPPHandler.Load(weapon);
+
                 }
             } else if (item.Type == ItemType.Tool)
             {

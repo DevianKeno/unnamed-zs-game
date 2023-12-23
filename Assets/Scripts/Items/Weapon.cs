@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
+using UZSG.FPP;
 using UZSG.Items;
-using UZSG.States;
 
 namespace UZSG
 {

@@ -46,7 +46,6 @@ namespace URMG.UI
                     CurrentFrame = frame;
                     IsTransitioning = false;
                 });
-            
             }
         }
 

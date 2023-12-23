@@ -4,17 +4,33 @@ using URMG.Systems;
 using URMG.Items;
 using URMG.Interactions;
 using System.Runtime.InteropServices;
+using System;
+using URMG.Inventory;
 
 namespace URMG.Player
 {
+
     /// <summary>
     /// Represents the different actions the Player can do.
     /// </summary>
     [RequireComponent(typeof(PlayerCore))]
     public class PlayerActions : MonoBehaviour
     {
+        public enum Actions { Jump, SelectHotbar }
+        public struct ActionPerformedArgs
+        {
+            public Actions Action;
+        }
+
         PlayerCore player;
         public PlayerCore Player { get => player; }
+
+        public event EventHandler<ActionPerformedArgs> OnActionPerform;
+
+        public void OnSelectHotbar()
+        {
+
+        }
 
         void Awake()
         {
@@ -22,15 +38,21 @@ namespace URMG.Player
         }
 
         public void SelectHotbar(int index)
-        {            
+        {
             if (index < 0 || index > 9) return;
+
+            OnActionPerform?.Invoke(this, new()
+            {
+                Action = Actions.SelectHotbar
+            });
+
+            ItemSlot slot = player.Inventory.Hotbar[index];
             Debug.Log($"Equipped hotbar slot {index}");
         }
 
         public void PerformPrimary()
         {
             // Attack
-
         }
 
         public void PerformSecondary()
@@ -75,7 +97,7 @@ namespace URMG.Player
             if (!player.CanPickUpItems) return;
             if (player.Inventory == null) return;
             
-            if (player.Inventory.TryPutNearest(itemEntity.AsItem()))
+            if (player.Inventory.Bag.TryPutNearest(itemEntity.AsItem()))
             {
                 Destroy(itemEntity.gameObject);
             }

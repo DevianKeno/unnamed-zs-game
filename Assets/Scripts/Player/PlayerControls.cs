@@ -128,7 +128,7 @@ namespace URMG.Player
             hotbarInput.performed += OnHotbarSelect;    // Pressed Tab/E (default)
         }
 
-        private void OnHotbarSelect(InputAction.CallbackContext context)
+        void OnHotbarSelect(InputAction.CallbackContext context)
         {            
             playerActions.SelectHotbar(int.Parse(context.control.displayName));
         }

@@ -5,6 +5,8 @@ namespace URMG.Items
     [CreateAssetMenu(fileName = "Weapon", menuName = "URMG/Weapon")]
     public class WeaponData : ItemData
     {
-        public int BaseDamage;
+        [Header("Weapon Attributes")]
+        public WeaponAttributes Attributes;
+        [SerializeField] GameObject FPPModel;
     }
 }

@@ -9,11 +9,14 @@ namespace URMG.Items
     [Serializable]
     public class ItemData : ScriptableObject
     {
+        [Header("Item Attributes")]
         public string Id;
         public string Name;
         [TextArea] public string Description;
         public Sprite Sprite;
         public int StackSize;
         public ItemType Type;
+        public bool IsMaterial;
+        public GameObject Model;
     }
 }

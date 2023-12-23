@@ -52,6 +52,7 @@ namespace URMG.Player
         Vector3 _movement;
         Vector3 FallSpeed;
         float CrouchPosition;
+        bool isTransitioning;
         bool _isMoving;
         public bool IsMoving { get => _isMoving; }
         bool _isGrounded;
@@ -285,12 +286,17 @@ namespace URMG.Player
         }
         void Crouch()
         {
+            if (isTransitioning) return;
+
+            isTransitioning = !isTransitioning;
             _isCrouching = !_isCrouching;
+
             float TransitionSpeed;
+            
             if (_isCrouching)
             { 
                 CrouchPosition = vCam.transform.position.y * 0.5f;
-                TransitionSpeed = 1f;
+                TransitionSpeed = 0.3f;
             }
             else
             {
@@ -298,16 +304,17 @@ namespace URMG.Player
                 TransitionSpeed = 0.3f;
             }
             LeanTween.value(gameObject, vCam.transform.position.y, CrouchPosition, TransitionSpeed)
-            .setOnUpdate(
-                (i) =>
-                {
+            .setOnUpdate( (i) =>
+                {   
                     vCam.transform.position = new Vector3
                     (vCam.transform.position.x,
                     i,
                     vCam.transform.position.z);
                 }
-            ).setEaseOutExpo();
+            ).setOnComplete( () => {isTransitioning = false;} )
+            .setEaseOutExpo();
         }
+
         void ApplyGravity()
         {
             if (CheckGrounded())

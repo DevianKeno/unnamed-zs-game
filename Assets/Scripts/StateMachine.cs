@@ -15,6 +15,7 @@ namespace UZSG.Systems
             public State<EState> Current;
             public State<EState> Next;
         }
+        
         public Dictionary<EState, State<EState>> States = new();
         public State<EState> InitialState;
         [SerializeField] State<EState> _currentState;
@@ -31,6 +32,11 @@ namespace UZSG.Systems
 
         void Start()
         {
+            foreach (EState state in Enum.GetValues(typeof(EState)))
+            {
+                States[state] = new State<EState>(state);
+            }
+
             if (InitialState != null) _currentState = InitialState;
 
             Game.Tick.OnTick += Tick;

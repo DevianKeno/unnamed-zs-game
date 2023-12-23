@@ -6,7 +6,6 @@ using UZSG.UI;
 
 namespace UZSG.Inventory
 {
-    public enum ContainerType { Hotbar, Bag, Container }
     public struct SlotContentChangedArgs
     {
         ItemSlot _slot;
@@ -20,7 +19,6 @@ namespace UZSG.Inventory
             _slot = slot;
         }
     }
-
 
     public class InventoryHandler : MonoBehaviour
     {

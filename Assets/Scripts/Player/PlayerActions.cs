@@ -1,11 +1,8 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using TMPro;
 using UZSG.Systems;
 using UZSG.Items;
 using UZSG.Interactions;
-using UZSG.Inventory;
 using UZSG.Entities;
 using UZSG.FPP;
 
@@ -23,23 +20,19 @@ namespace UZSG.Player
         public PlayerCore Player { get => _player; }
 
         FPPHandler _fpp;
-        StateMachine<PlayerStates> _sm;
 
         void Awake()
         {
             _player = GetComponent<PlayerCore>();
             _fpp = GetComponent<FPPHandler>();
-            _sm = GetComponent<StateMachine<PlayerStates>>();
-            _sm.InitialState = _sm.States[PlayerStates.Idle];
         }
 
         void Start()
         {
         }
 
-        void Jump()
-        {
-            _sm.ToState(_sm.States[PlayerStates.Jump]);
+        public void Jump()
+        {            
         }
 
         public void SelectHotbar(int index)

@@ -5,6 +5,5 @@ namespace UZSG.FPP
 {
     public class FPPStateMachine : StateMachine<FPPStates>
     {
-        
     }
 }

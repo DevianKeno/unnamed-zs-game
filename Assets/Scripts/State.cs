@@ -8,7 +8,7 @@ namespace UZSG.Systems
     /// Base state representation.
     /// </summary>
     [Serializable]
-    public abstract class State<EState> : MonoBehaviour where EState : Enum
+    public class State<EState> where EState : Enum
     {
         public struct ChangedContext
         {
@@ -19,8 +19,6 @@ namespace UZSG.Systems
         public EState Key => _key;
         bool _isLocked;
         public bool IsLocked => _isLocked;
-
-        public Action OnEnterState { get; internal set; }
 
         [field: Header("Events")]       
         /// <summary>
@@ -39,6 +37,10 @@ namespace UZSG.Systems
         public State(EState key)
         {
             _key = key;
+        }
+
+        public State()
+        {
         }
 
         public void Lock(bool value)

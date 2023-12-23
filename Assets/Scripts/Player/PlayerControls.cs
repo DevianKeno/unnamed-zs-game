@@ -21,8 +21,8 @@ namespace UZSG.Player
     {
         public const float CamSensitivity = 0.32f;
         float xRotation = 0f;
-        PlayerCore player;
-        public PlayerCore Player { get => player; }
+        PlayerCore _player;
+        public PlayerCore Player { get => _player; }
 
         [SerializeField] Camera cam;
         public Transform CharacterBody;
@@ -84,7 +84,7 @@ namespace UZSG.Player
         void Awake()
         {
             vCamPOV = vCam.GetCinemachineComponent<CinemachinePOV>();
-            player = GetComponent<PlayerCore>();
+            _player = GetComponent<PlayerCore>();
             _actions = GetComponent<PlayerActions>();
             controller = GetComponent<CharacterController>();
             InitControls();
@@ -155,6 +155,7 @@ namespace UZSG.Player
         {
             if(CheckGrounded())
             {
+                _player.sm.ToState(_player.sm.States[PlayerStates.Jump]);
                 FallSpeed.y = Mathf.Sqrt(JumpForce * -2f * Gravity);
             }
         }
@@ -260,12 +261,7 @@ namespace UZSG.Player
         }
 
         void HandleDirection()
-        {
-            // _movement = frameInput.move.x * cam.transform.right + frameInput.move.y * cam.transform.forward;
-            // _movement.y = 0f; 
-            // _movement.Normalize();
-            // _movement *= MoveSpeed * Time.deltaTime;
-
+        {            
             Vector3 cameraForward = cam.transform.forward;
             cameraForward.y = 0f;
             // Moves player relative to the camera
@@ -290,6 +286,8 @@ namespace UZSG.Player
         void Crouch()
         {
             if (isTransitioning) return;
+
+            _player.sm.ToState(_player.sm.States[PlayerStates.Crouch]);
 
             isTransitioning = !isTransitioning;
             _isCrouching = !_isCrouching;

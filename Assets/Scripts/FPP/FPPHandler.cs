@@ -44,7 +44,6 @@ namespace UZSG.FPP
 
         void Start()
         {
-            _sm.InitialState = _sm.States[FPPStates.None]; // I think it should be Equip
             UI.Cursor.Hide();
         }
 

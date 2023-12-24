@@ -27,7 +27,7 @@ namespace UZSG.Systems
         public bool DebugMode = false;
         
         /// <summary>
-        /// Calles everytime before the state changes.
+        /// Calles everytime before the State changes.
         /// </summary>
         public event EventHandler<StateChangedArgs> OnStateChanged;
 
@@ -59,6 +59,9 @@ namespace UZSG.Systems
             TrySwitchState(state);
         }
 
+        /// <summary>
+        /// Transition to state and prevent from transitioning to other states for a certain amount of seconds.
+        /// </summary>
         public virtual void ToState(State<E> state, float lockForSeconds)
         {
             if (_currentState == state) return;

@@ -1,9 +1,11 @@
-using System;
 using UnityEngine;
 using UZSG.Systems;
 
 namespace UZSG.FPP
 {
+    /// <summary>
+    /// Represents objects that are animated in first-person perspective.
+    /// </summary>
     [RequireComponent(typeof(Animator))]
     public class FPPAnimatable : MonoBehaviour
     {

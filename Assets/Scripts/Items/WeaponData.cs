@@ -7,6 +7,9 @@ using UZSG.FPP;
 
 namespace UZSG.Items
 {
+    /// <summary>
+    /// List of possible animations an FPP model have.
+    /// </summary>
     [Serializable]
     public struct FPPAnimations : IEnumerable
     {
@@ -17,7 +20,7 @@ namespace UZSG.Items
         public string Secondary;
         public string Hold;
 
-        public IEnumerator GetEnumerator()
+        public readonly IEnumerator GetEnumerator()
         {
             List<string> s = new()
             {
@@ -60,11 +63,5 @@ namespace UZSG.Items
         public FPPAnimations Anims => Anim;
         private ItemData itemData;
         private int count;
-
-        public WeaponData(ItemData itemData, int count)
-        {
-            this.itemData = itemData;
-            this.count = count;
-        }
     }
 }

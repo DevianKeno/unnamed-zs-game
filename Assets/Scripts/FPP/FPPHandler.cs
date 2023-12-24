@@ -7,12 +7,9 @@ using UZSG.Items;
 namespace UZSG.FPP
 {
     public enum FPPStates { None, Equip, Idle, Run, Primary, Secondary, Hold, Dequip }
-    public struct EquipableArgs
-    {
-    }
 
     /// <summary>
-    /// Stuff that are visible in FPP when equipped.
+    /// Represents objects that are visible in first-person perspective.
     /// </summary>
     public interface IFPPVisible
     {
@@ -22,7 +19,7 @@ namespace UZSG.FPP
     }
 
     /// <summary>
-    /// Handles the Equipable items of the first-person view.
+    /// Handles the functionalities of the first-person view.
     /// </summary>
     public class FPPHandler : MonoBehaviour
     {

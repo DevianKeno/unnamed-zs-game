@@ -6,7 +6,7 @@ using UZSG.Items;
 namespace UZSG
 {
     /// <summary>
-    /// Base class for all Containers that have Slots.
+    /// Base class for all Containers that have ItemSlots.
     /// </summary>
     public abstract class Container : MonoBehaviour
     {

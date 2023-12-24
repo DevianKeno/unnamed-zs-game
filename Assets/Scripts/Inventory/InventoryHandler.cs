@@ -1,8 +1,4 @@
-using System;
-using UnityEditor;
 using UnityEngine;
-using UZSG.Items;
-using UZSG.UI;
 
 namespace UZSG.Inventory
 {

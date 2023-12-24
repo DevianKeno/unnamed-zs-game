@@ -15,6 +15,9 @@ namespace UZSG.Inventory
         Accessory = 32
     }
 
+    /// <summary>
+    /// Represents a container where Items can be put in.
+    /// </summary>
     [Serializable]
     public class ItemSlot
     {

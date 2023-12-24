@@ -4,38 +4,38 @@ using UZSG.UI;
 
 namespace UZSG.Systems
 {
-public sealed class Game : MonoBehaviour
-{
-    public static Game Main { get; private set; }
-    static UISystem _UI;
-    public static UISystem UI { get => _UI; }
-    static TickSystem _tick;
-    public static TickSystem Tick { get => _tick; }
-    static Console.Console _console;
-    public static Console.Console Console { get => _console; }
-    public event Action OnInitialize;
-
-    void Awake()
+    public sealed class Game : MonoBehaviour
     {
-        DontDestroyOnLoad(this);
+        public static Game Main { get; private set; }
+        static UISystem _UI;
+        public static UISystem UI { get => _UI; }
+        static TickSystem _tick;
+        public static TickSystem Tick { get => _tick; }
+        static Console.Console _console;
+        public static Console.Console Console { get => _console; }
+        public event Action OnInitialize;
 
-        if (Main != null && Main != this)
+        void Awake()
         {
-            Destroy(this);
-        } else
-        {
-            Main = this;
-            _UI = GetComponentInChildren<UISystem>();
-            _tick = GetComponentInChildren<TickSystem>();
-            _console = GetComponentInChildren<Console.Console>();                
+            DontDestroyOnLoad(this);
+
+            if (Main != null && Main != this)
+            {
+                Destroy(this);
+            } else
+            {
+                Main = this;
+                _UI = GetComponentInChildren<UISystem>();
+                _tick = GetComponentInChildren<TickSystem>();
+                _console = GetComponentInChildren<Console.Console>();                
+            }
+
+            Init();
         }
 
-        Init();
+        void Init()
+        {
+            OnInitialize?.Invoke();
+        }
     }
-
-    void Init()
-    {
-        OnInitialize?.Invoke();
-    }
-}
 }

@@ -8,7 +8,7 @@ namespace UZSG.Systems
         public int Tick;
     }
     /// <summary>
-    /// Tick system.
+    /// Game's internal Tick system.
     /// </summary>
     public sealed class TickSystem : MonoBehaviour
     {

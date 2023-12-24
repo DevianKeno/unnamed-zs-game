@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using UZSG.FPP;
 using UZSG.Items;
 
 namespace UZSG
@@ -10,6 +9,9 @@ namespace UZSG
         public GameObject FPPModel => throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Represents a Weapon as an Item.
+    /// </summary>
     public class Weapon : Item
     {
         WeaponData _data;
@@ -18,7 +20,5 @@ namespace UZSG
         {
             _data = (WeaponData) itemData;
         }
-
-        public GameObject FPPModel => _data.FPPModel;
     }
 }

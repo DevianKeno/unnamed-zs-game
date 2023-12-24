@@ -1,41 +1,39 @@
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UZSG.Inventory;
 using UZSG.Items;
 
 namespace UZSG.UI
 {
-/// <summary>
-/// UI Manager for URMG.
-/// </summary>
-public sealed class UISystem : MonoBehaviour
-{
-    [SerializeField] Canvas canvas;
-    public Canvas Canvas { get => canvas; }
-    [SerializeField] InteractionIndicator _pickupIndicator;
-    public InteractionIndicator InteractIndicator { get => _pickupIndicator; }
-    [SerializeField] InventoryUI _inventoryUI;
-    public InventoryUI InventoryUI { get => _inventoryUI; }
-    
-    [Header("Prefabs")]
-    [SerializeField] GameObject pickupPrefab;
-    [SerializeField] GameObject inventoryPrefab;
-    public GameObject ItemDisplayPrefab;
-
-    void Start()
+    /// <summary>
+    /// UI Manager for URMG.
+    /// </summary>
+    public sealed class UISystem : MonoBehaviour
     {
-        Debug.Log("Initializing UI...");
+        [SerializeField] Canvas canvas;
+        public Canvas Canvas { get => canvas; }
+        [SerializeField] InteractionIndicator _pickupIndicator;
+        public InteractionIndicator InteractIndicator { get => _pickupIndicator; }
+        [SerializeField] InventoryUI _inventoryUI;
+        public InventoryUI InventoryUI { get => _inventoryUI; }
         
-        _inventoryUI.enabled = true;
-        _inventoryUI.Hide();
+        [Header("Prefabs")]
+        [SerializeField] GameObject pickupPrefab;
+        [SerializeField] GameObject inventoryPrefab;
+        public GameObject ItemDisplayPrefab;
 
-        _pickupIndicator = Instantiate(pickupPrefab, canvas.transform).GetComponent<InteractionIndicator>();
-        _pickupIndicator.Hide();
-    }
+        void Start()
+        {
+            Debug.Log("Initializing UI...");
+            
+            _inventoryUI.enabled = true;
+            _inventoryUI.Hide();
 
-    public ItemDisplayUI CreateItemDisplay(Item item)
-    {
-        return Instantiate(ItemDisplayPrefab, Canvas.transform).GetComponent<ItemDisplayUI>();
+            _pickupIndicator = Instantiate(pickupPrefab, canvas.transform).GetComponent<InteractionIndicator>();
+            _pickupIndicator.Hide();
+        }
+
+        public ItemDisplayUI CreateItemDisplay(Item item)
+        {
+            return Instantiate(ItemDisplayPrefab, Canvas.transform).GetComponent<ItemDisplayUI>();
+        }
     }
-}
 }

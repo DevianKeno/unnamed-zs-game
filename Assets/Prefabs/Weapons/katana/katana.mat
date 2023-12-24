@@ -8,12 +8,12 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: katana
-  m_Shader: {fileID: 4800000, guid: 9baf30ce95c751649b14d96da3a4b4d5, type: 3}
-  m_ValidKeywords:
-  - _EMISSIVE_SIMPLE
-  - _OUTLINE_NML
+  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+  m_ValidKeywords: []
   m_InvalidKeywords:
   - _
+  - _EMISSIVE_SIMPLE
+  - _OUTLINE_NML
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -149,7 +149,7 @@ Material:
     - _Farthest_Distance: 100
     - _GI_Intensity: 0
     - _GlossMapScale: 1
-    - _Glossiness: 0.5
+    - _Glossiness: 0.247
     - _GlossyReflections: 1
     - _HighColor_Power: 0
     - _Inverse_MatcapMask: 0
@@ -184,7 +184,7 @@ Material:
     - _Is_ViewShift: 0
     - _LightDirection_MaskOn: 0
     - _MatCap: 0
-    - _Metallic: 0
+    - _Metallic: 0.356
     - _Mode: 0
     - _Nearest_Distance: 0.5
     - _OUTLINE: 0

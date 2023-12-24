@@ -15,17 +15,17 @@ namespace UZSG.Player
         bool _isSpawned = false;
         bool _isAlive = false;
         
-        [SerializeField] PlayerStateMachine _sm;
+        [SerializeField] StateMachine<PlayerStates> _sm;
         /// <summary>
         /// Player state machine.
         /// </summary>
-        public PlayerStateMachine sm => _sm;
+        public StateMachine<PlayerStates> sm => _sm;
         [SerializeField] InventoryHandler _inventory;
         public InventoryHandler Inventory { get => _inventory; }
 
         void Awake()
         {
-            _sm = GetComponent<PlayerStateMachine>();
+            _sm = GetComponent<StateMachine<PlayerStates>>();
         }
 
         void Start()

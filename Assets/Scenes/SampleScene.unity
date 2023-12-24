@@ -4504,8 +4504,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f3b41504a21b1f4d8b35856426cbb02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  InitialState: {fileID: 0}
-  _currentState: {fileID: 0}
   _lockedUntil: 0
   _isTransitioning: 0
 --- !u!1001 &1554595344
@@ -6073,8 +6071,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a07b8e1b86516d949bc9ac8e79746068, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  InitialState: {fileID: 0}
-  _currentState: {fileID: 0}
   _lockedUntil: 0
   _isTransitioning: 0
 --- !u!1001 &1972766275

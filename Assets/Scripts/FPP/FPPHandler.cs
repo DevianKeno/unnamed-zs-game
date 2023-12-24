@@ -44,6 +44,7 @@ namespace UZSG.FPP
 
         void Start()
         {
+            _sm.InitialState = _sm.States[FPPStates.None];
             UI.Cursor.Hide();
         }
 

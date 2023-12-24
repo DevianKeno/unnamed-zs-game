@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace UZSG.Systems
 {
     /// <summary>
-    /// 
+    /// Base class for State Machines.
     /// </summary>
     public abstract class StateMachine<EState> : MonoBehaviour where EState : Enum
     {
@@ -16,7 +15,8 @@ namespace UZSG.Systems
             public State<EState> Next;
         }
         
-        public Dictionary<EState, State<EState>> States = new();
+        Dictionary<EState, State<EState>> _states = new();
+        public Dictionary<EState, State<EState>> States => _states;
         public State<EState> InitialState;
         [SerializeField] State<EState> _currentState;
         public State<EState> CurrentState => _currentState;
@@ -30,15 +30,17 @@ namespace UZSG.Systems
         /// </summary>
         public event EventHandler<StateChangedArgs> OnStateChanged;
 
-        void Start()
+        void Awake()
         {
             foreach (EState state in Enum.GetValues(typeof(EState)))
             {
-                States[state] = new State<EState>(state);
+                _states[state] = new State<EState>(state);
             }
+        }
 
+        void Start()
+        {
             if (InitialState != null) _currentState = InitialState;
-
             Game.Tick.OnTick += Tick;
         }
 
@@ -52,15 +54,13 @@ namespace UZSG.Systems
         /// </summary>
         public virtual void ToState(State<EState> state)
         {
-            if (_currentState == state) return;
-            
+            if (_currentState == state) return;            
             TrySwitchState(state);
         }
 
         public virtual void ToState(State<EState> state, float lockForSeconds)
         {
             if (_currentState == state) return;
-
             TrySwitchState(state, lockForSeconds);
         }
 

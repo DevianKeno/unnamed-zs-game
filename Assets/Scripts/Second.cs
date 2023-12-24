@@ -2,9 +2,11 @@ using System;
 
 namespace UZSG.Timebase
 {
-    public struct Second
+    public readonly struct Second
     {
-        private float value;
+        public static Second Minute { get => new(60); }
+        public static Second Hour { get => new(3600); }
+        private readonly float value;
 
         public Second(float value)
         {

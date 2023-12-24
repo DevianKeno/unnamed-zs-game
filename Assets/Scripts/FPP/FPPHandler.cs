@@ -1,10 +1,7 @@
-using System;
 using UnityEngine;
+using UnityEditor.Animations;
 using UZSG.Player;
-using UZSG.UI;
-using UZSG.Interactions;
 using UZSG.Systems;
-using System.Linq.Expressions;
 using UZSG.Items;
 
 namespace UZSG.FPP
@@ -20,6 +17,8 @@ namespace UZSG.FPP
     public interface IFPPVisible
     {
         public GameObject FPPModel { get; }
+        public AnimatorController Controller { get; }
+        public FPPAnimations Anims { get; }
     }
 
     /// <summary>
@@ -28,11 +27,9 @@ namespace UZSG.FPP
     public class FPPHandler : MonoBehaviour
     {
         [SerializeField] Camera _camera;
-        [SerializeField] PlayerActions _playerActions;
-        
-        GameObject _current;
-        FPPAnimator _animator;
+        [SerializeField] PlayerCore _player;
         StateMachine<FPPStates> _sm;
+        FPPAnimatable _anim;
         WeaponData _equippedData;
         float transitionDuration = 0.1f;
 
@@ -45,15 +42,35 @@ namespace UZSG.FPP
         void Start()
         {
             _sm.InitialState = _sm.States[FPPStates.None];
+            _sm.OnStateChanged += StateChangedCallback;
+            _player.sm.OnStateChanged += PlayerStateChangedCallback;
             UI.Cursor.Hide();
+        }
+
+        void PlayerStateChangedCallback(object sender, StateMachine<PlayerStates>.StateChangedArgs e)
+        {
+            if (_sm.States.TryGetValue((FPPStates) e.Next, out State<FPPStates> nextState))
+            {
+                _sm.ToState(nextState);
+            }
+        }
+
+        void StateChangedCallback(object sender, StateMachine<FPPStates>.StateChangedArgs e)
+        {
+            if (e.Next == FPPStates.Equip)
+            {
+                _anim.Play("Equip", 0f);
+            }
         }
 
         /// <summary>
         /// Cache model and data.
         /// </summary>
         public void Load(IFPPVisible obj)
-        {
-            _current = Instantiate(obj.FPPModel, _camera.transform);
+        {            
+            GameObject go = Instantiate(obj.FPPModel, _camera.transform);
+            _anim = go.GetComponent<FPPAnimatable>();
+            _anim.Load(obj);
         }
     }
 }

@@ -82,6 +82,16 @@ namespace UZSG.Inventory
             _isEmpty = false;
             ContentChanged();
         }
+
+        public bool TryPutItem(Item item)
+        {
+            if (!_isEmpty) return false;
+            _item = item;
+            _isEmpty = false;
+            ContentChanged();
+            return true;
+        }
+        
         public void Clear()
         {
             _item = Item.None;

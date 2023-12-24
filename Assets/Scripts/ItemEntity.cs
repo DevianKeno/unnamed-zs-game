@@ -33,7 +33,18 @@ namespace UZSG.Entities
         /// </summary>
         public Item AsItem()
         {
-            return new Item(ItemData, ItemCount);
+            Item item = new(ItemData, ItemCount);
+
+            if (ItemData is WeaponData data)
+            {
+                item = new Weapon(data, 1);
+            }
+            return item;
+        }
+
+        public ItemData GetItemData()
+        {
+            return ItemData;
         }
 
         /// <summary>

@@ -1,11 +1,14 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEditor.Animations;
 using UnityEngine;
+using UZSG.FPP;
 
 namespace UZSG.Items
 {
     [Serializable]
-    public struct FPPWeaponAnimations
+    public struct FPPAnimations : IEnumerable
     {
         public string Equip;
         public string Idle;
@@ -13,6 +16,20 @@ namespace UZSG.Items
         public string[] Primary;
         public string Secondary;
         public string Hold;
+
+        public IEnumerator GetEnumerator()
+        {
+            List<string> s = new()
+            {
+                Equip,
+                Idle,
+                Run,
+                Secondary,
+                Hold
+            };
+            s.AddRange(Primary);
+            return s.GetEnumerator();
+        }
 
         /// <summary>
         /// Get a random animation.
@@ -29,7 +46,7 @@ namespace UZSG.Items
     /// Represents the various data a Weapon has.
     /// </summary>
     [CreateAssetMenu(fileName = "Weapon", menuName = "URMG/Weapon")]
-    public class WeaponData : ItemData
+    public class WeaponData : ItemData, IFPPVisible
     {
         [Header("Weapon Attributes")]
         public WeaponAttributes Attributes;
@@ -39,6 +56,15 @@ namespace UZSG.Items
         [Header("Animations")]
         [SerializeField] AnimatorController _controller;
         public AnimatorController Controller => _controller;
-        public FPPWeaponAnimations AnimNames;
+        public FPPAnimations Anim;
+        public FPPAnimations Anims => Anim;
+        private ItemData itemData;
+        private int count;
+
+        public WeaponData(ItemData itemData, int count)
+        {
+            this.itemData = itemData;
+            this.count = count;
+        }
     }
 }

@@ -8,7 +8,7 @@ using UZSG.FPP;
 
 namespace UZSG.Player
 {
-    public enum PlayerStates { Idle, Run, Jump, Walk, Crouch }
+    public enum PlayerStates { Idle, Run, Jump, Walk, Crouch, PerformPrimary, PerformSecondary, Hold }
 
     /// <summary>
     /// Represents the different actions the Player can do.
@@ -18,13 +18,11 @@ namespace UZSG.Player
     {
         PlayerCore _player;
         public PlayerCore Player { get => _player; }
-
-        FPPHandler _fpp;
+        [SerializeField] FPPHandler _fpp;
 
         void Awake()
         {
             _player = GetComponent<PlayerCore>();
-            _fpp = GetComponent<FPPHandler>();
         }
 
         void Start()
@@ -91,33 +89,25 @@ namespace UZSG.Player
             if (!_player.CanPickUpItems) return;
             if (_player.Inventory == null) return;
 
+            bool gotItem;
             Item item = itemEntity.AsItem();
-            
+
             if (item.Type == ItemType.Weapon)
             {
-                if (_player.Inventory.Hotbar.Mainhand.IsEmpty)
-                {
-                    _player.Inventory.Hotbar.Mainhand.PutItem(item);
-                    Destroy(itemEntity.gameObject);
-
-                    // Weapon weapon = new(_player.Inventory.Hotbar.Mainhand.Item);
-                    // _FPPHandler.Load(weapon);
-
-                }
+                gotItem = _player.Inventory.Hotbar.Mainhand.TryPutItem(item);
+                // Don't know what happens if the item has ItemData instead of WeaponData
+                _fpp.Load((WeaponData) item.Data);
+                
             } else if (item.Type == ItemType.Tool)
             {
-                if (_player.Inventory.Hotbar.Offhand.IsEmpty)
-                {
-                    _player.Inventory.Hotbar.Offhand.PutItem(item);
-                    Destroy(itemEntity.gameObject);
-                } // else try to put in other hotbar slots (3-0) only if available
+                gotItem = _player.Inventory.Hotbar.Offhand.TryPutItem(item);
+                // else try to put in other hotbar slots (3-0) only if available
             } else
             {
-                if (_player.Inventory.Bag.TryPutNearest(item))
-                {
-                    Destroy(itemEntity.gameObject);
-                }
-            }            
+                gotItem = _player.Inventory.Bag.TryPutNearest(item);
+            }
+
+            if (gotItem) Destroy(itemEntity.gameObject);
         }
 
         /// <summary>

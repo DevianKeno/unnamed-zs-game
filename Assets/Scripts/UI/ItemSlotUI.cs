@@ -17,23 +17,29 @@ namespace UZSG.UI
         
         public int Index;
         public event EventHandler<PointerEventData> OnClick;
+        public event EventHandler<PointerEventData> OnStartHover;
+        public event EventHandler<PointerEventData> OnEndHover;
+        public RectTransform rect;
         ItemSlot _itemSlot;
         Image _image;
         ItemDisplayUI _displayUI;
 
         void Awake()
         {
+            rect = GetComponent<RectTransform>();
             _image = GetComponent<Image>();
             _displayUI = GetComponentInChildren<ItemDisplayUI>();
         }
 
         public void OnPointerEnter(PointerEventData e)
         {
+            OnStartHover?.Invoke(this, e);
             _image.color = Hovered;
         }
 
         public void OnPointerExit(PointerEventData e)
         {
+            OnEndHover?.Invoke(this, e);
             _image.color = Normal;
         }
 

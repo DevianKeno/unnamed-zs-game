@@ -18,10 +18,12 @@ namespace UZSG.UI
         bool _isHolding = false;
         int _fromIndex;
         Item _heldItem;
-        ItemSlot selectedSlot;
+        ItemSlot _selectedSlot;
+        ItemSlotUI _selectedSlotUI;
         bool _isPutting;
         bool _isGetting;
         ItemDisplayUI _displayedItem;
+        Selector selector;
 
         [Header("Bag")]
         [SerializeField] GameObject bag;
@@ -30,9 +32,10 @@ namespace UZSG.UI
         [Header("Prefabs")]
         [SerializeField] GameObject slotPrefab;
         [SerializeField] GameObject itemDisplayPrefab;
+        [SerializeField] GameObject selectorPrefab;
 
         void Awake()
-        {            
+        {
             // Bag slots
             int i = 0;
             foreach (Transform t in bag.transform)
@@ -40,6 +43,8 @@ namespace UZSG.UI
                 ItemSlotUI s = t.GetComponent<ItemSlotUI>();
                 s.Index = i;
                 s.OnClick += OnClickBagSlot;
+                s.OnStartHover += OnStartHoverSlot;
+                s.OnEndHover += OnEndHoverSlot;
                 _bagSlotUIs.Add(i, s);
                 i++;
             }
@@ -51,6 +56,8 @@ namespace UZSG.UI
                 ItemSlotUI s = t.GetComponent<ItemSlotUI>();
                 s.Index = i;
                 s.OnClick += OnClickHotbarSlot;
+                s.OnStartHover += OnStartHoverSlot;
+                s.OnEndHover += OnEndHoverSlot;
                 _hotbarSlotUIs.Add(i, s);
                 i++;
             }
@@ -58,7 +65,9 @@ namespace UZSG.UI
         }
 
         void Start()
-        {            
+        {
+            selector = Instantiate(selectorPrefab, transform).GetComponent<Selector>();
+            selector.Hide();
             Hide();
         }
 
@@ -66,6 +75,36 @@ namespace UZSG.UI
         {
             _inventory.Hotbar.OnSlotContentChanged += HotbarSlotChangedCallback;
             _inventory.Bag.OnSlotContentChanged += BagSlotChangedCallback;
+        }
+
+        void OnStartHoverSlot(object sender, PointerEventData e)
+        {
+            selector.Show();
+            _selectedSlotUI = (ItemSlotUI) sender;
+            selector.rect.position = _selectedSlotUI.rect.position;
+            selector.rect.sizeDelta = _selectedSlotUI.rect.sizeDelta;
+            // other animation stuff
+        }
+
+        void OnEndHoverSlot(object sender, PointerEventData e)
+        {
+            selector.Hide();
+            _selectedSlotUI = null;
+            _selectedSlot = null;
+        }
+
+        void OnClickHotbarSlot(object sender, PointerEventData e)
+        {
+            ItemSlotUI slotUI = (ItemSlotUI) sender;
+            _selectedSlot = _inventory.Bag[slotUI.Index];
+
+            if (e.button == PointerEventData.InputButton.Left)
+            {
+
+            } else if (e.button == PointerEventData.InputButton.Right)
+            {
+
+            }
         }
 
         void HotbarSlotChangedCallback(object sender, SlotContentChangedArgs e)
@@ -78,40 +117,26 @@ namespace UZSG.UI
             _bagSlotUIs[e.Slot.Index].SetDisplay(e.Slot.Item);
         }
 
-        void OnClickHotbarSlot(object sender, PointerEventData e)
-        {
-            ItemSlotUI slotUI = (ItemSlotUI) sender;
-            selectedSlot = _inventory.Bag[slotUI.Index];
-
-            if (e.button == PointerEventData.InputButton.Left)
-            {
-
-            } else if (e.button == PointerEventData.InputButton.Right)
-            {
-
-            }
-        }
-
         void OnClickBagSlot(object sender, PointerEventData e)
         {
-            ItemSlotUI slotUI = (ItemSlotUI) sender;
-            selectedSlot = _inventory.Bag[slotUI.Index];
+            _selectedSlotUI = (ItemSlotUI) sender;
+            _selectedSlot = _inventory.Bag[_selectedSlotUI.Index];
 
             if (e.button == PointerEventData.InputButton.Left)
             {
                 if (_isHolding)
                 {
-                    if (_inventory.Bag.TryPut(selectedSlot.Index, _heldItem))
+                    if (_inventory.Bag.TryPut(_selectedSlot.Index, _heldItem))
                     {
                         ReleaseItem();
                     } else // swap items
                     {
-                        Item tookItem = _inventory.Bag.Take(selectedSlot.Index);
-                        _inventory.Bag.TryPut(selectedSlot.Index, SwapHeld(tookItem));
+                        Item tookItem = _inventory.Bag.Take(_selectedSlot.Index);
+                        _inventory.Bag.TryPut(_selectedSlot.Index, SwapHeld(tookItem));
                     }
                 } else
                 {
-                    HoldItem(_inventory.Bag.Take(selectedSlot.Index));
+                    HoldItem(_inventory.Bag.Take(_selectedSlot.Index));
                 }
             
             } else if (e.button == PointerEventData.InputButton.Right)
@@ -120,19 +145,19 @@ namespace UZSG.UI
                 {                    
                     _isPutting = true;
                     
-                    if (_inventory.Bag.TryPut(selectedSlot.Index, new(_heldItem, 1)))
+                    if (_inventory.Bag.TryPut(_selectedSlot.Index, new(_heldItem, 1)))
                     {
                         HoldItem(new(_heldItem, _heldItem.Count - 1));
                         _displayedItem.SetDisplay(_heldItem);
                     } else // swap items
                     {
-                        Item tookItem = _inventory.Bag.Take(selectedSlot.Index);
-                        _inventory.Bag.TryPut(selectedSlot.Index, SwapHeld(tookItem));
+                        Item tookItem = _inventory.Bag.Take(_selectedSlot.Index);
+                        _inventory.Bag.TryPut(_selectedSlot.Index, SwapHeld(tookItem));
                     }
                 } else // get 1 from selected slot
                 {
                     _isGetting = true;
-                    HoldItem(_inventory.Bag.TakeItems(selectedSlot.Index, 1));
+                    HoldItem(_inventory.Bag.TakeItems(_selectedSlot.Index, 1));
                 }
             }
         }

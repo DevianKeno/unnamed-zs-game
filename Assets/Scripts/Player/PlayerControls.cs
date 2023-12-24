@@ -93,7 +93,7 @@ namespace UZSG.Player
             runInput.Enable();
             crouchInput.Enable();
 
-            /*  performed = Pressed and released
+            /*  performed = Pressed or released
                 started = Pressed
                 canceled = Released
             */
@@ -115,14 +115,13 @@ namespace UZSG.Player
         {
             if(CheckGrounded())
             {
-                _player.sm.ToState(_player.sm.States[PlayerStates.Jump]);
                 FallSpeed.y = Mathf.Sqrt(JumpForce * -2f * Gravity);
             }
         }
 
         void OnRunX(InputAction.CallbackContext context)
         {
-            _isRunning = !_isRunning;
+            _isRunning = !_isRunning;            
             if (_isCrouching)
             {
                 Crouch();

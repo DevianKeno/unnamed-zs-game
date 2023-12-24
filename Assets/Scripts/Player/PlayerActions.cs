@@ -22,7 +22,7 @@ namespace UZSG.Player
 
         PlayerCore _player;
         public PlayerCore Player { get => _player; }
-        [SerializeField] FPPHandler _fpp;
+        [SerializeField] FPPHandler _FPP;
         [SerializeField] Camera cam;
         [SerializeField] bool _allowCamMovement = true;
 
@@ -67,17 +67,16 @@ namespace UZSG.Player
             inventoryInput.Enable();
             hotbarInput.Enable();
 
-            /*  performed = Pressed and released
+            /*  performed = Pressed or released
                 started = Pressed
                 canceled = Released
             */
-            primaryInput.performed += OnPrimaryX;           // LMB (default)
-            secondaryInput.started += OnSecondaryX;         // RMB (default)
-            secondaryInput.canceled += OnSecondaryX;         // RMB (default)
-
             interactInput.performed += OnInteractX;         // F (default)
             inventoryInput.performed += OnInventoryX;       // Tab/E (default)
             hotbarInput.performed += OnHotbarSelect;        // Tab/E (default)
+            primaryInput.performed += OnPrimaryX;           // LMB (default)
+            secondaryInput.started += OnSecondaryX;         // RMB (default)
+            secondaryInput.canceled += OnSecondaryX;         // RMB (default)
         }
 
         void OnDisable()
@@ -96,8 +95,6 @@ namespace UZSG.Player
             // {
             //     Action = Actions.SelectHotbar
             // });
-
-            // if (index == 1) _fpp.Equip();
 
             Debug.Log($"Equipped hotbar slot {index}");
         }
@@ -175,7 +172,7 @@ namespace UZSG.Player
             {
                 gotItem = _player.Inventory.Hotbar.Mainhand.TryPutItem(item);
                 // Don't know what happens if the item has ItemData instead of WeaponData
-                _fpp.Load((WeaponData) item.Data);
+                _FPP.Load((WeaponData) item.Data);
                 
             } else if (item.Type == ItemType.Tool)
             {

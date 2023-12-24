@@ -21,7 +21,7 @@ namespace UZSG
         public float Value { get => _value; }
 
         /// <summary>
-        /// Fired everytime ONLY IF this attribute's value is changed.
+        /// Fired everytime ONLY IF the value of this attribute is changed.
         /// </summary>
         public event EventHandler<ValueChangedArgs> OnValueChanged;
 

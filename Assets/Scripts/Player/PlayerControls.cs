@@ -30,22 +30,12 @@ namespace UZSG.Player
         public Transform GroundCheck;
         public LayerMask GroundMask;
         public Camera Cam { get => cam; }
-        bool _allowCamMovement = true;
 
         public const float MoveSpeed = 6f;
         public const float WalkSpeed = MoveSpeed * 0.5f;
         public const float JumpForce = 1.5f;
         public const float Gravity = -9.81f;
         public const float GroundDistance = 0.4f;
-
-        RaycastHit hit;
-        Ray ray;
-        public float sphereRadius = 0;
-        public float interactMaxDistance = 1;
-        /// <summary>
-        /// The interactable object the Player is currently looking at.
-        /// </summary>
-        IInteractable lookingAt;
         /// <summary>
         /// The movement values to be added for the current frame.
         /// </summary>
@@ -67,41 +57,31 @@ namespace UZSG.Player
 
         PlayerActions _actions;
         FrameInput frameInput;
-        PlayerInput playerInput;
+        PlayerInput _input;
         InputAction moveInput;
         InputAction jumpInput;
         InputAction runInput;
         InputAction crouchInput;
-        InputAction primaryInput;
-        InputAction secondaryInput;
-        InputAction interactInput;
-        InputAction inventoryInput;
-        InputAction hotbarInput;
         [SerializeField] Rigidbody rb;
         [SerializeField] CinemachineVirtualCamera vCam;
-        CinemachinePOV vCamPOV;
+        CinemachinePOV _vCamPOV;
 
         void Awake()
         {
-            vCamPOV = vCam.GetCinemachineComponent<CinemachinePOV>();
             _player = GetComponent<PlayerCore>();
             _actions = GetComponent<PlayerActions>();
+            _input = GetComponent<PlayerInput>();
             controller = GetComponent<CharacterController>();
+            _vCamPOV = vCam.GetCinemachineComponent<CinemachinePOV>();
             InitControls();
         }
 
         void InitControls()
         {
-            playerInput = GetComponent<PlayerInput>();
-            moveInput = playerInput.actions.FindAction("Move");
-            jumpInput = playerInput.actions.FindAction("Jump");
-            runInput = playerInput.actions.FindAction("Run");
-            crouchInput = playerInput.actions.FindAction("Crouch");
-            primaryInput = playerInput.actions.FindAction("Primary");
-            secondaryInput = playerInput.actions.FindAction("Secondary");
-            interactInput = playerInput.actions.FindAction("Interact");
-            inventoryInput = playerInput.actions.FindAction("Inventory");
-            hotbarInput = playerInput.actions.FindAction("Hotbar");
+            moveInput = _input.actions.FindAction("Move");
+            jumpInput = _input.actions.FindAction("Jump");
+            runInput = _input.actions.FindAction("Run");
+            crouchInput = _input.actions.FindAction("Crouch");
         }
 
         void Start()
@@ -112,11 +92,6 @@ namespace UZSG.Player
             jumpInput.Enable();
             runInput.Enable();
             crouchInput.Enable();
-            primaryInput.Enable();
-            secondaryInput.Enable();
-            interactInput.Enable();
-            inventoryInput.Enable();
-            hotbarInput.Enable();
 
             /*  performed = Pressed and released
                 started = Pressed
@@ -126,29 +101,14 @@ namespace UZSG.Player
             runInput.started += OnRunX;                     // Shift (default)  
             runInput.canceled += OnRunX;                    // Shift
             crouchInput.performed += OnCrouchX;             // LCtrl (default)
-
-            primaryInput.performed += OnPrimaryX;           // LMB (default)
-            secondaryInput.started += OnSecondaryX;         // RMB (default)
-            secondaryInput.canceled += OnSecondaryX;         // RMB (default)
-
-            interactInput.performed += OnInteractX;         // F (default)
-            inventoryInput.performed += OnInventoryX;       // Tab/E (default)
-            hotbarInput.performed += OnHotbarSelect;        // Tab/E (default)
         }
 
-        void OnHotbarSelect(InputAction.CallbackContext context)
-        {            
-            _actions.SelectHotbar(int.Parse(context.control.displayName));
-        }
-
-        void OnPrimaryX(InputAction.CallbackContext context)
+        void OnDisable()
         {
-            _actions.PerformPrimary();
-        }
-
-        void OnSecondaryX(InputAction.CallbackContext context)
-        {
-            _actions.PerformSecondary();
+            Game.Tick.OnTick -= Tick;
+            moveInput.Disable();
+            jumpInput.Disable();
+            runInput.Disable();
         }
 
         void OnJumpX(InputAction.CallbackContext context)
@@ -172,63 +132,13 @@ namespace UZSG.Player
         void OnCrouchX(InputAction.CallbackContext context)
         {
             Crouch();
-        } 
-        
-        void OnInteractX(InputAction.CallbackContext context)
-        {
-            if (lookingAt == null) return;
-            
-            _actions.Interact(lookingAt);
-        }
-        void OnInventoryX(InputAction.CallbackContext context)
-        {
-            _actions.ToggleInventory();
-            AllowCameraMovement(!Game.UI.InventoryUI.IsVisible);
-        }
-
-        void OnDisable()
-        {
-            Game.Tick.OnTick -= Tick;
-            moveInput.Disable();
-            jumpInput.Disable();
-            runInput.Disable();
-            interactInput.Disable();
-            inventoryInput.Disable();
         }
 
         void Tick(object sender, TickEventArgs e)
         {
             CheckMoving();
             HandleMovement();
-            CheckLookingAt();
         }
-
-        void CheckLookingAt()
-        {
-            // Cast a ray from the center of the screen
-            ray = cam.ScreenPointToRay(new Vector2(Screen.width / 2, Screen.height / 2));
-
-            if (Physics.SphereCast(ray, sphereRadius, out RaycastHit hit, interactMaxDistance, LayerMask.GetMask("Interactable")))
-            {
-                lookingAt = hit.collider.gameObject.GetComponent<IInteractable>();
-
-                if (hit.collider.CompareTag("Item"))
-                {
-                    Game.UI.InteractIndicator.Show(lookingAt);
-                }
-            } else
-            {
-                lookingAt = null;
-                Game.UI.InteractIndicator.Hide();
-            }
-        }
-
-        // void OnDrawGizmos()
-        // {
-        //     Gizmos.DrawLine(ray.origin, ray.origin + ray.direction * (interactMaxDistance + sphereRadius));
-        //     Gizmos.DrawWireSphere(ray.origin + ray.direction * (interactMaxDistance + sphereRadius), sphereRadius);
-        //     Gizmos.DrawWireSphere(ray.origin + ray.direction * (interactMaxDistance + sphereRadius), sphereRadius);
-        // }
 
         bool CheckGrounded()
         {
@@ -261,7 +171,7 @@ namespace UZSG.Player
         }
 
         void HandleDirection()
-        {            
+        {
             Vector3 cameraForward = cam.transform.forward;
             cameraForward.y = 0f;
             // Moves player relative to the camera
@@ -279,8 +189,8 @@ namespace UZSG.Player
             if (_isCrouching) MovementSpeed *= 0.3f;
             else MovementSpeed = WalkSpeed;
 
-            if (_isRunning) controller.Move(_movement * MoveSpeed * Time.deltaTime);
-            else controller.Move(_movement * MovementSpeed * Time.deltaTime);
+            if (_isRunning) controller.Move(MoveSpeed * Time.deltaTime * _movement);
+            else controller.Move(MovementSpeed * Time.deltaTime * _movement);
             
         }
         void Crouch()
@@ -330,21 +240,6 @@ namespace UZSG.Player
         {
             if (value) moveInput.Enable();
             else moveInput.Disable();
-        }
-        
-        public void AllowCameraMovement(bool value)
-        {
-            if (value)
-            {
-                _allowCamMovement = true;
-                vCamPOV.m_VerticalAxis.m_MaxSpeed = CamSensitivity;
-                vCamPOV.m_HorizontalAxis.m_MaxSpeed = CamSensitivity;
-            } else
-            {
-                _allowCamMovement = false;
-                vCamPOV.m_VerticalAxis.m_MaxSpeed = 0f;
-                vCamPOV.m_HorizontalAxis.m_MaxSpeed = 0f;
-            }
         }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UZSG.Systems;
@@ -5,6 +6,7 @@ using UZSG.Items;
 using UZSG.Interactions;
 using UZSG.Entities;
 using UZSG.FPP;
+using Cinemachine;
 
 namespace UZSG.Player
 {
@@ -16,25 +18,78 @@ namespace UZSG.Player
     [RequireComponent(typeof(PlayerCore))]
     public class PlayerActions : MonoBehaviour
     {
+        public const float CamSensitivity = 0.32f;
+
         PlayerCore _player;
         public PlayerCore Player { get => _player; }
         [SerializeField] FPPHandler _fpp;
+        [SerializeField] Camera cam;
+        [SerializeField] bool _allowCamMovement = true;
+
+        /// <summary>
+        /// The interactable object the Player is currently looking at.
+        /// </summary>
+        IInteractable lookingAt;
+        RaycastHit hit;
+        Ray ray;
+        public float sphereRadius = 0;
+        public float interactMaxDistance = 1;
+        
+        PlayerInput _input;
+        InputAction primaryInput;
+        InputAction secondaryInput;
+        InputAction interactInput;
+        InputAction inventoryInput;
+        InputAction hotbarInput;
+        [SerializeField] CinemachineVirtualCamera vCam;
+        CinemachinePOV _vCamPOV;
 
         void Awake()
         {
             _player = GetComponent<PlayerCore>();
+            _input = GetComponent<PlayerInput>();
+            _vCamPOV = vCam.GetCinemachineComponent<CinemachinePOV>();
+            
+            primaryInput = _input.actions.FindAction("Primary");
+            secondaryInput = _input.actions.FindAction("Secondary");
+            interactInput = _input.actions.FindAction("Interact");
+            inventoryInput = _input.actions.FindAction("Inventory");
+            hotbarInput = _input.actions.FindAction("Hotbar");
         }
 
         void Start()
         {
+            Game.Tick.OnTick += Tick;
+            
+            primaryInput.Enable();
+            secondaryInput.Enable();
+            interactInput.Enable();
+            inventoryInput.Enable();
+            hotbarInput.Enable();
+
+            /*  performed = Pressed and released
+                started = Pressed
+                canceled = Released
+            */
+            primaryInput.performed += OnPrimaryX;           // LMB (default)
+            secondaryInput.started += OnSecondaryX;         // RMB (default)
+            secondaryInput.canceled += OnSecondaryX;         // RMB (default)
+
+            interactInput.performed += OnInteractX;         // F (default)
+            inventoryInput.performed += OnInventoryX;       // Tab/E (default)
+            hotbarInput.performed += OnHotbarSelect;        // Tab/E (default)
         }
 
-        public void Jump()
-        {            
-        }
-
-        public void SelectHotbar(int index)
+        void OnDisable()
         {
+            Game.Tick.OnTick -= Tick;
+            interactInput.Disable();
+            inventoryInput.Disable();
+        }
+
+        void OnHotbarSelect(InputAction.CallbackContext context)
+        {
+            int index = int.Parse(context.control.displayName);            
             if (index < 0 || index > 9) return;
 
             // OnActionPerform?.Invoke(this, new()
@@ -46,39 +101,63 @@ namespace UZSG.Player
 
             Debug.Log($"Equipped hotbar slot {index}");
         }
-
-        public void PerformPrimary()
+        
+        void OnInteractX(InputAction.CallbackContext context)
         {
-            // Attack
-        }
-
-        public void PerformSecondary()
-        {
-            
-        }
-
-        public void Run(InputAction.CallbackContext context)
-        {
-            
-        }
-
-        public void Crouch(InputAction.CallbackContext context)
-        {
-            
+            if (lookingAt == null) return;            
+            lookingAt.Interact(this, new InteractArgs());
         }
 
         /// <summary>
-        /// Make this player interact with an Interactable object.
-        /// </summary>
-        public void Interact(IInteractable obj)
+        /// I want the cam to lock and cursor to appear only when the key is released :P
+        /// </summary>    
+        void OnInventoryX(InputAction.CallbackContext context)
         {
-            obj.Interact(this, new InteractArgs());
+            Game.UI.InventoryUI.ToggleVisibility();
+            AllowCameraMovement(!Game.UI.InventoryUI.IsVisible);
         }
 
-        public void Equip()
+        void OnPrimaryX(InputAction.CallbackContext context)
         {
-
+            
         }
+
+        void OnSecondaryX(InputAction.CallbackContext context)
+        {
+            
+        }
+
+        void Tick(object sender, TickEventArgs e)
+        {
+            CheckLookingAt();
+        }
+
+        void CheckLookingAt()
+        {
+            // Cast a ray from the center of the screen
+            ray = cam.ScreenPointToRay(new Vector2(Screen.width / 2, Screen.height / 2));
+
+            if (Physics.SphereCast(ray, sphereRadius, out RaycastHit hit, interactMaxDistance, LayerMask.GetMask("Interactable")))
+            {
+                lookingAt = hit.collider.gameObject.GetComponent<IInteractable>();
+
+                if (hit.collider.CompareTag("Item"))
+                {
+                    Game.UI.InteractIndicator.Show(lookingAt);
+                }
+            } else
+            {
+                lookingAt = null;
+                Game.UI.InteractIndicator.Hide();
+            }
+        }        
+        
+        // void OnDrawGizmos()
+        // {
+        //     Gizmos.DrawLine(ray.origin, ray.origin + ray.direction * (interactMaxDistance + sphereRadius));
+        //     Gizmos.DrawWireSphere(ray.origin + ray.direction * (interactMaxDistance + sphereRadius), sphereRadius);
+        //     Gizmos.DrawWireSphere(ray.origin + ray.direction * (interactMaxDistance + sphereRadius), sphereRadius);
+        // }
 
         /// <summary>
         /// Pick up item from ItemEntity and put in the inventory.
@@ -109,13 +188,20 @@ namespace UZSG.Player
 
             if (gotItem) Destroy(itemEntity.gameObject);
         }
-
-        /// <summary>
-        /// I want the cam to lock and cursor to appear only when the key is released :P
-        /// </summary>
-        public void ToggleInventory()
+        
+        public void AllowCameraMovement(bool value)
         {
-            Game.UI.InventoryUI.ToggleVisibility();
+            if (value)
+            {
+                _allowCamMovement = true;
+                _vCamPOV.m_VerticalAxis.m_MaxSpeed = CamSensitivity;
+                _vCamPOV.m_HorizontalAxis.m_MaxSpeed = CamSensitivity;
+            } else
+            {
+                _allowCamMovement = false;
+                _vCamPOV.m_VerticalAxis.m_MaxSpeed = 0f;
+                _vCamPOV.m_HorizontalAxis.m_MaxSpeed = 0f;
+            }
         }
     }
 }

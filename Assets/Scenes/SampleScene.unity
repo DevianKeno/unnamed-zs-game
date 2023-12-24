@@ -4057,6 +4057,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _fpp: {fileID: 1957117180}
+  cam: {fileID: 963194227}
+  _allowCamMovement: 1
+  sphereRadius: 0
+  interactMaxDistance: 1
+  vCam: {fileID: 1957117175}
 --- !u!114 &1553506946
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4076,8 +4081,6 @@ MonoBehaviour:
   GroundMask:
     serializedVersion: 2
     m_Bits: 512
-  sphereRadius: 0.6
-  interactMaxDistance: 1.25
   rb: {fileID: 1400893114}
   vCam: {fileID: 1957117175}
 --- !u!114 &1553506947

@@ -205,12 +205,12 @@ namespace UZSG.Player
             
             if (_isCrouching)
             { 
-                CrouchPosition = vCam.transform.position.y * 0.5f;
+                CrouchPosition = vCam.transform.position.y - 1f;
                 TransitionSpeed = 0.3f;
             }
             else
             {
-                CrouchPosition = vCam.transform.position.y * 2f;
+                CrouchPosition = vCam.transform.position.y + 1f;
                 TransitionSpeed = 0.3f;
             }
             LeanTween.value(gameObject, vCam.transform.position.y, CrouchPosition, TransitionSpeed)

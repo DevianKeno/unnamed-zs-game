@@ -22,11 +22,18 @@ namespace UZSG.Inventory
         public Hotbar Hotbar { get => _hotbar; }
         Bag _bag;
         public Bag Bag { get => _bag; }
+        public ItemSlot Equipped { get => Hotbar.Equipped; }
 
         void Awake()
         {
             _hotbar = GetComponent<Hotbar>();
             _bag = GetComponent<Bag>();
+        }
+
+        public void SelectHotbarSlot(int index)
+        {            
+            if (index < 0 || index > 9) return; // Should be index > Hotbar.MaxSlots
+            Hotbar.SelectSlot(index);
         }
     }
 }

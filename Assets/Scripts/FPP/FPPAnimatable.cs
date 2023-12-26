@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UZSG.Systems;
 
@@ -9,32 +10,38 @@ namespace UZSG.FPP
     [RequireComponent(typeof(Animator))]
     public class FPPAnimatable : MonoBehaviour
     {
+        public float HitstopDuration = 0.25f;
         Animator _animator;
 
         void Awake()
         {            
             _animator = GetComponent<Animator>();
         }
-
-        void Start()
-        {
-            Game.Tick.OnTick += Tick;
-        }
-
-        void Tick(object sender, TickEventArgs e)
-        {
-            
-        }
-
+        
+        /// <summary>
+        /// Load animation data of the object.
+        /// </summary>
         public void Load(IFPPVisible obj)
         {
-            _animator.runtimeAnimatorController = obj.Controller;
+            _animator.runtimeAnimatorController = obj?.Controller;
         }
 
-        public void Play(string name, float normalizedTransitionDuration)
+        public void Play(string name)
         {
-            _animator.CrossFade(name, normalizedTransitionDuration);
+            _animator.Play(name);
         }
-    }  
+
+        public void PauseUntil(float time)
+        {
+            _animator.speed = 0f;
+            StartCoroutine(ResumeAnim(time));
+        }
+
+        IEnumerator ResumeAnim(float duration)
+        {
+            yield return new WaitForSeconds(duration);
+            _animator.speed = 1f;
+        }
+    }
 }
 

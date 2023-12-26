@@ -9,7 +9,7 @@ namespace UZSG.Interactions
     }
 
     /// <summary>
-    /// Represents objects that the Player can interact with.
+    /// Represents objects that the Player can interact with by pressing the Interact button (F by default).
     /// </summary>
     public interface IInteractable
     {

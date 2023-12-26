@@ -7,10 +7,11 @@ using UZSG.Interactions;
 using UZSG.Entities;
 using UZSG.FPP;
 using Cinemachine;
+using UZSG.Inventory;
 
 namespace UZSG.Player
 {
-    public enum PlayerStates { Idle, Run, Jump, Walk, Crouch, PerformPrimary, PerformSecondary, Hold }
+    public enum PlayerStates { Idle, Run, Jump, Walk, Crouch, Equip, PerformPrimary, PerformSecondary, Hold }
 
     /// <summary>
     /// Represents the different actions the Player can do.
@@ -77,6 +78,8 @@ namespace UZSG.Player
             primaryInput.performed += OnPrimaryX;           // LMB (default)
             secondaryInput.started += OnSecondaryX;         // RMB (default)
             secondaryInput.canceled += OnSecondaryX;         // RMB (default)
+
+            _player.Inventory.Hotbar.OnChangeEquipped += HotbarChangeEquippedCallback;
         }
 
         void OnDisable()
@@ -88,15 +91,13 @@ namespace UZSG.Player
 
         void OnHotbarSelect(InputAction.CallbackContext context)
         {
-            int index = int.Parse(context.control.displayName);            
-            if (index < 0 || index > 9) return;
+            if (!int.TryParse(context.control.displayName, out int index)) return;
+            _player.Inventory.SelectHotbarSlot(index);
+        }
 
-            // OnActionPerform?.Invoke(this, new()
-            // {
-            //     Action = Actions.SelectHotbar
-            // });
-
-            Debug.Log($"Equipped hotbar slot {index}");
+        void HotbarChangeEquippedCallback(object sender, Hotbar.ChangeEquippedArgs e)
+        {
+            _FPP.Equip(e.Index);
         }
         
         void OnInteractX(InputAction.CallbackContext context)
@@ -116,12 +117,12 @@ namespace UZSG.Player
 
         void OnPrimaryX(InputAction.CallbackContext context)
         {
-            
+            _player.sm.ToState(_player.sm.States[PlayerStates.PerformPrimary]);
         }
 
         void OnSecondaryX(InputAction.CallbackContext context)
         {
-            
+            _player.sm.ToState(_player.sm.States[PlayerStates.PerformSecondary]);
         }
 
         void Tick(object sender, TickEventArgs e)
@@ -171,13 +172,21 @@ namespace UZSG.Player
             if (item.Type == ItemType.Weapon)
             {
                 gotItem = _player.Inventory.Hotbar.Mainhand.TryPutItem(item);
-                // Don't know what happens if the item has ItemData instead of WeaponData
-                _FPP.Load((WeaponData) item.Data);
-                
+
+                if (WeaponData.TryGetWeaponData(item.Data, out WeaponData weaponData))
+                {
+                    _FPP.Load(weaponData, 1);
+                }
+
             } else if (item.Type == ItemType.Tool)
             {
-                gotItem = _player.Inventory.Hotbar.Offhand.TryPutItem(item);
-                // else try to put in other hotbar slots (3-0) only if available
+                gotItem = _player.Inventory.Hotbar.Offhand.TryPutItem(item);                
+
+                // if (ToolData.TryGetToolData(item.Data, out ToolData toolData))
+                // {
+                //     _FPP.Load(toolData, 1);
+                // }
+                // // else try to put in other hotbar slots (3-0) and only if available
             } else
             {
                 gotItem = _player.Inventory.Bag.TryPutNearest(item);

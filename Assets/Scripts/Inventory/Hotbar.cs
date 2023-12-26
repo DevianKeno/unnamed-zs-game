@@ -1,9 +1,16 @@
+using System;
 using UnityEngine;
 
 namespace UZSG.Inventory
 {
     public class Hotbar : Container
     {
+        public struct ChangeEquippedArgs
+        {
+            public int Index;
+            public ItemSlot Equipped;
+        }
+
         public static int MainhandIndex = 1;
         public static int OffhandIndex = 2;
         public static int[] SlotsIndex = { 3, 4, 5, 6, 7, 8, 9, 0 };
@@ -13,6 +20,10 @@ namespace UZSG.Inventory
         public ItemSlot Offhand { get => _offhand; }
         [SerializeField] ItemSlot[] _slots;
         public override ItemSlot[] Slots => _slots;
+        public int _equippedIndex = -1;
+        public ItemSlot _equipped;
+        public ItemSlot Equipped { get => _equipped; }
+        public event EventHandler<ChangeEquippedArgs> OnChangeEquipped;
 
         public ItemSlot this[int i]
         {
@@ -45,6 +56,25 @@ namespace UZSG.Inventory
                 _slots[i] = newSlot;
             }
             _slots[0] = _slots[10];
+        }
+
+        public void SelectSlot(int index)
+        {
+            if (_equippedIndex == index)
+            {
+                _equippedIndex = -1;
+                _equipped = null;
+            } else
+            {
+                _equippedIndex = index;
+                _equipped = _slots[index];
+            }
+
+            OnChangeEquipped?.Invoke(this, new()
+            {
+                Index = index,
+                Equipped = _equipped
+            });
         }
     }
 }

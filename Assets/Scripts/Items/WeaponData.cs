@@ -20,6 +20,14 @@ namespace UZSG.Items
         public string Secondary;
         public string Hold;
 
+        public readonly string this[int i]
+        {
+            get
+            {
+                return "null";
+            }
+        }
+
         public readonly IEnumerator GetEnumerator()
         {
             List<string> s = new()
@@ -63,5 +71,11 @@ namespace UZSG.Items
         public FPPAnimations Anims => Anim;
         private ItemData itemData;
         private int count;
+        
+        public static bool TryGetWeaponData(ItemData item, out WeaponData weaponData)
+        {
+            weaponData = item as WeaponData;
+            return weaponData != null;
+        }
     }
 }

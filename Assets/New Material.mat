@@ -24,7 +24,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _1st_ShadeMap:
-        m_Texture: {fileID: 2800000, guid: 3edde8df04de767478ff9ba23701d787, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _2nd_ShadeMap:
@@ -220,13 +220,13 @@ Material:
     - _UVSec: 0
     - _Unlit_Intensity: 1
     - _Use_1stAs2nd: 0
-    - _Use_BaseAs1st: 0
+    - _Use_BaseAs1st: 1
     - _ZWrite: 1
     - _simpleUI: 0
     - _utsTechnique: 0
     - _utsVersion: 2.09
     m_Colors:
-    - _1st_ShadeColor: {r: 0.72676134, g: 0.6229975, b: 0.754717, a: 1}
+    - _1st_ShadeColor: {r: 0.3762905, g: 0.43671605, b: 0.5283019, a: 1}
     - _2nd_ShadeColor: {r: 1, g: 1, b: 1, a: 1}
     - _Ap_RimLightColor: {r: 1, g: 1, b: 1, a: 1}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}

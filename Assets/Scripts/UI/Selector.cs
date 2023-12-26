@@ -14,6 +14,13 @@ namespace UZSG.UI
             image = GetComponent<Image>();
         }
 
+        public void Select(ItemSlotUI element)
+        {
+            rect.position = element.rect.position;
+            rect.sizeDelta = element.rect.sizeDelta;
+            image.enabled = true;
+        }
+
         public void Show()
         {
             image.enabled = true;

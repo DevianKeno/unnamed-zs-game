@@ -3,8 +3,6 @@ using Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UZSG.Systems;
-using UZSG.Items;
-using UZSG.Interactions;
 
 namespace UZSG.Player
 {

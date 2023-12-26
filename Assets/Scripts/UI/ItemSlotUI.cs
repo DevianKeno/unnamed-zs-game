@@ -3,19 +3,20 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UZSG.Items;
-using UZSG.Systems;
 using UZSG.Inventory;
 
 namespace UZSG.UI
 {
-    public class ItemSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler
+    public enum UIState { Normal, Hovered }
+
+    public class ItemSlotUI : MonoBehaviour, ISelectable, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler
     {
         public static Color Opaque { get => new(1f, 1f, 1f, 1f); }
         public static Color Transparent { get => new(1f, 1f, 1f, 0f); }
         public static Color Normal { get => new(0f, 0f, 0f, 0.5f); }
         public static Color Hovered { get => new(0.2f, 0.2f, 0.2f, 0.5f); }
-        
         public int Index;
+        public UIState State;
         public event EventHandler<PointerEventData> OnClick;
         public event EventHandler<PointerEventData> OnStartHover;
         public event EventHandler<PointerEventData> OnEndHover;
@@ -29,6 +30,17 @@ namespace UZSG.UI
             rect = GetComponent<RectTransform>();
             _image = GetComponent<Image>();
             _displayUI = GetComponentInChildren<ItemDisplayUI>();
+        }
+        
+        public void SetState(UIState state)
+        {
+            if (state == UIState.Normal)
+            {                
+                _image.color = Normal;
+            } else if (state == UIState.Hovered)
+            {
+                _image.color = Hovered;
+            }
         }
 
         public void OnPointerEnter(PointerEventData e)

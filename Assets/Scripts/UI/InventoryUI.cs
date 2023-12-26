@@ -74,15 +74,14 @@ namespace UZSG.UI
         void OnEnable()
         {
             _inventory.Hotbar.OnSlotContentChanged += HotbarSlotChangedCallback;
+            _inventory.Hotbar.OnChangeEquipped += HotbarChangeEquippedCallback;
             _inventory.Bag.OnSlotContentChanged += BagSlotChangedCallback;
         }
 
         void OnStartHoverSlot(object sender, PointerEventData e)
         {
-            selector.Show();
+            selector.Select((ItemSlotUI) sender);
             _selectedSlotUI = (ItemSlotUI) sender;
-            selector.rect.position = _selectedSlotUI.rect.position;
-            selector.rect.sizeDelta = _selectedSlotUI.rect.sizeDelta;
             // other animation stuff
         }
 
@@ -91,6 +90,16 @@ namespace UZSG.UI
             selector.Hide();
             _selectedSlotUI = null;
             _selectedSlot = null;
+        }
+
+        void HotbarSlotChangedCallback(object sender, SlotContentChangedArgs e)
+        {
+            _hotbarSlotUIs[e.Slot.Index].SetDisplay(e.Slot.Item);
+        }
+
+        void HotbarChangeEquippedCallback(object sender, Hotbar.ChangeEquippedArgs e)
+        {
+            
         }
 
         void OnClickHotbarSlot(object sender, PointerEventData e)
@@ -105,11 +114,6 @@ namespace UZSG.UI
             {
 
             }
-        }
-
-        void HotbarSlotChangedCallback(object sender, SlotContentChangedArgs e)
-        {
-            _hotbarSlotUIs[e.Slot.Index].SetDisplay(e.Slot.Item);
         }
 
         void BagSlotChangedCallback(object sender, SlotContentChangedArgs e)
@@ -223,6 +227,8 @@ namespace UZSG.UI
         public void Hide()
         {
             if (!_isVisible) return;
+            _selectedSlotUI?.SetState(UIState.Normal);
+            _selectedSlotUI = null;
             _isVisible = false;
             gameObject.SetActive(false);
             Cursor.Hide();

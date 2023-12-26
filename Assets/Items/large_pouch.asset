@@ -17,4 +17,7 @@ MonoBehaviour:
   Description: Allows for three tool slots!
   Sprite: {fileID: 0}
   StackSize: 1
-  Type: 0
+  Type: 4
+  Subtype: 5
+  IsMaterial: 0
+  Model: {fileID: 0}

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor.Animations;
 using UZSG.Player;
@@ -6,8 +7,6 @@ using UZSG.Items;
 
 namespace UZSG.FPP
 {
-    public enum FPPStates { None, Equip, Idle, Run, Primary, Secondary, Hold, Dequip }
-
     /// <summary>
     /// Represents objects that are visible in first-person perspective.
     /// </summary>
@@ -23,51 +22,56 @@ namespace UZSG.FPP
     /// </summary>
     public class FPPHandler : MonoBehaviour
     {
+        /// <summary>
+        /// First-person camera.
+        /// </summary>
         [SerializeField] Camera _camera;
         [SerializeField] PlayerCore _player;
-        StateMachine<FPPStates> _sm;
-        FPPAnimatable _anim;
+        GameObject _equipped;
+        FPPAnimatable _animator;
         WeaponData _equippedData;
         float transitionDuration = 0.1f;
+        Dictionary<int, GameObject> _cachedModels = new();
+        Dictionary<int, IFPPVisible> _anims = new();
 
         void Awake()
         {
             _camera = GetComponent<Camera>();
-            _sm = GetComponent<StateMachine<FPPStates>>();
         }
 
         void Start()
         {
-            _sm.InitialState = _sm.States[FPPStates.None];
-            _sm.OnStateChanged += StateChangedCallback;
             _player.sm.OnStateChanged += PlayerStateChangedCallback;
             UI.Cursor.Hide();
         }
 
         void PlayerStateChangedCallback(object sender, StateMachine<PlayerStates>.StateChangedArgs e)
         {
-            if (_sm.States.TryGetValue((FPPStates) e.Next, out State<FPPStates> nextState))
-            {
-                _sm.ToState(nextState);
-            }
-        }
-
-        void StateChangedCallback(object sender, StateMachine<FPPStates>.StateChangedArgs e)
-        {
-            if (e.Next == FPPStates.Equip)
-            {
-                _anim.Play("Equip", 0f);
-            }
+            if (_equipped == null) return;
+            // _animator.Play(_anims[1].Anims.Idle);
         }
 
         /// <summary>
         /// Cache model and data.
         /// </summary>
-        public void Load(IFPPVisible obj)
-        {            
+        public void Load(IFPPVisible obj, int index)
+        {
+            if (obj == null) return;
+
             GameObject go = Instantiate(obj.FPPModel, _camera.transform);
-            _anim = go.GetComponent<FPPAnimatable>();
-            _anim.Load(obj);
+            _cachedModels.Add(index, go);
+            _anims.Add(index, go.GetComponent<IFPPVisible>());
+        }
+
+        public void Equip(int index)
+        {
+            _equipped?.SetActive(false);
+            _equipped = _cachedModels[index] ?? _equipped;
+            
+
+            _equipped.SetActive(true);
+            _animator.Load(_anims[index]);
+            _animator.Play("Equip");
         }
     }
 }

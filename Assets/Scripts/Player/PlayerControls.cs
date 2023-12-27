@@ -50,6 +50,8 @@ namespace UZSG.Player
         bool _isCrouching;
         public bool isCrouching { get => _isCrouching; }
 
+        float _Magnitude;
+        public float ControllerMagnitude { get => _Magnitude; }
         public event EventHandler OnMoveStart;
         public event EventHandler OnMoveStop;
 
@@ -60,7 +62,6 @@ namespace UZSG.Player
         InputAction jumpInput;
         InputAction runInput;
         InputAction crouchInput;
-        [SerializeField] Rigidbody rb;
         [SerializeField] CinemachineVirtualCamera vCam;
         CinemachinePOV _vCamPOV;
 
@@ -143,7 +144,7 @@ namespace UZSG.Player
         }
         void CheckMoving()
         {
-            if (rb.velocity == Vector3.zero) _isMoving = false;
+            if (_Magnitude == 0f) _isMoving = false;
             else _isMoving = true;
         }
 
@@ -179,7 +180,7 @@ namespace UZSG.Player
         void ApplyMovement()
         {
             Quaternion dRotation = Quaternion.Euler(cam.transform.eulerAngles.x, 0f, 0f);
-            CharacterBody.rotation = Quaternion.Slerp(CharacterBody.rotation, dRotation, Time.deltaTime * CamSensitivity);
+            Cam.transform.rotation = Quaternion.Slerp(CharacterBody.rotation, dRotation, Time.deltaTime * CamSensitivity);
 
             float MovementSpeed = WalkSpeed;
 
@@ -188,6 +189,8 @@ namespace UZSG.Player
 
             if (_isRunning) controller.Move(MoveSpeed * Time.deltaTime * _movement);
             else controller.Move(MovementSpeed * Time.deltaTime * _movement);
+
+            _Magnitude = new Vector3(controller.velocity.x, 0, controller.velocity.z).magnitude;
             
         }
         void Crouch()

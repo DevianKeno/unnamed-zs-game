@@ -1,5 +1,6 @@
 using System;
 using Cinemachine;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UZSG.Systems;
@@ -113,6 +114,8 @@ namespace UZSG.Player
         {
             if(CheckGrounded())
             {
+                _player.sm.ToState(_player.sm.States[PlayerStates.Jump]);
+
                 FallSpeed.y = Mathf.Sqrt(JumpForce * -2f * Gravity);
             }
         }

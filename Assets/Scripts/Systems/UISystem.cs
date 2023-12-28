@@ -24,7 +24,7 @@ namespace UZSG.UI
         {
             Debug.Log("Initializing UI...");
             
-            _inventoryUI.Hide();
+            _inventoryUI?.Hide();
 
             _pickupIndicator = Instantiate(pickupPrefab, canvas.transform).GetComponent<InteractionIndicator>();
             _pickupIndicator.Hide();

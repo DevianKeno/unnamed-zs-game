@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UZSG.UI;
+using UZSG.World;
 
 namespace UZSG.Systems
 {
@@ -11,6 +12,8 @@ namespace UZSG.Systems
         public static UISystem UI { get => _UI; }
         static TickSystem _tick;
         public static TickSystem Tick { get => _tick; }
+        static WorldManager _worldManager;
+        public static WorldManager World { get => _worldManager; }
         static Console.Console _console;
         public static Console.Console Console { get => _console; }
         public event Action OnInitialize;
@@ -27,7 +30,8 @@ namespace UZSG.Systems
                 Main = this;
                 _UI = GetComponentInChildren<UISystem>();
                 _tick = GetComponentInChildren<TickSystem>();
-                _console = GetComponentInChildren<Console.Console>();                
+                _worldManager = GetComponentInChildren<WorldManager>();   
+                _console = GetComponentInChildren<Console.Console>();                 
             }
 
             Init();

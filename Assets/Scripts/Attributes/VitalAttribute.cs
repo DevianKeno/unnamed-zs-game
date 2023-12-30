@@ -2,21 +2,23 @@ using System;
 using UnityEngine;
 using UZSG.Systems;
 
-namespace UZSG
+namespace UZSG.Attributes
 {
     /// <summary>
-    /// A vital attribute represents a value between 0 and a maximum value.
-    /// This value can either be static or regenerate/degenerate over time.
+    /// A vital attribute represents a value between 0 and MaxValue.
+    /// The value can either be static or regenerate/degenerate over time, which changes every second.
     /// </summary>
     [Serializable]
-    public class VitalAttribute : Attribute
+    public partial class VitalAttribute : Attribute
     {
+        public static float Min => 0f;
         /// <summary>
         /// The natural change in value over time.
         /// </summary>
-        public enum Cycle { Regen, Degen, Static }
-
-        protected Cycle _type;
+        public enum CycleType { Regen, Degen, Static }
+        public CycleType Type;
+        public enum CycleTime { Tick, Second }
+        public CycleTime Time;
         protected bool _allowChange = true;
         protected bool _allowRegen = true;
         protected bool _allowDegen = true;
@@ -24,68 +26,112 @@ namespace UZSG
         protected bool _limitOverflow = true;
         protected bool _limitUnderflow = true;
         protected float _minimum = 0f;
+        protected float _delayedChangeDuration;
                 
+        [SerializeField] protected float _baseMaximum;
         /// <summary>
         /// Base maximum value.
         /// </summary>
-        
-        [SerializeField] protected float _baseMaximum;
-        public float BaseMaximum { get; }
+        public float BaseMax => _baseMaximum;
 
         [SerializeField] protected float _currentMaximum;
         /// <summary>
-        /// Current maximum value after multipliers.
+        /// Current maximum value, after multipliers.
         /// </summary>
-        public float Max { get => _currentMaximum; }
+        public float Max => _currentMaximum;
 
-        [SerializeField] protected float _multiplier;
+        [SerializeField] protected float _multiplier = 1;
         /// <summary>
-        /// Multiplier for maximum value. 1 is default, representing the base maximum value.
+        /// Multiplier for BaseMax. Default is 1.
+        /// Max = (BaseMax * Multiplier)
         /// </summary>
-        public float Multiplier { get => _multiplier; }
+        public float Multiplier => _multiplier;
 
+        [SerializeField] protected float _baseRegen;
         /// <summary>
         /// Base regeneration value.
         /// </summary>
-        [SerializeField] protected float _baseRegen;
+        public float BaseRegen => _baseRegen;
+
         [SerializeField] protected float _currentRegen;
         /// <summary>
-        /// Current regeneration value after multipliers.
+        /// Amount added to the current Value per cycle, after multipliers.
+        /// (Value += RegenValue)
         /// </summary>
-        public float RegenValue { get => _currentRegen; }
+        public float RegenValue => _currentRegen;
+
         /// <summary>
         /// Base degeneration value.
         /// </summary>
         [SerializeField] protected float _baseDegen;
+        /// <summary>
+        /// Base degeneration value.
+        /// </summary>
+        public float BaseDegen => _baseDegen;
+        
         [SerializeField] protected float _currentDegen;
         /// <summary>
-        /// Current degeneration value after multipliers.
+        /// Amount removed from the current Value per cycle, after multipliers.
+        /// (Value -= DegenValue) 
         /// </summary>
-        public float DegenValue { get => _currentDegen; }
+        public float DegenValue => _currentDegen;
         
-        private float _regenMultiplier;
-        protected float RegenMultiplier { get => _regenMultiplier; }
+        [SerializeField] protected float _regenMultiplier = 1;
+        /// <summary>
+        /// Regeneration value multiplier. Default is 1.
+        /// (RegenValue = BaseRegen * RegenMultiplier)
+        /// </summary>
+        public float RegenMultiplier => _regenMultiplier;
 
-        private float _degenMultiplier;
-        protected float DegenMultiplier { get => _degenMultiplier; }
+        [SerializeField] protected float _degenMultiplier = 1;
+        /// <summary>
+        /// Degeneration value multiplier. Default is 1.
+        /// (DegenValue = BaseDegen * DegenMultiplier)
+        /// </summary>
+        public float DegenMultiplier => _degenMultiplier;
 
+        /// <summary>
+        /// Called when the value reaches its maximum.
+        /// </summary>
         public event Action OnReachFull;
+        /// <summary>
+        /// Called when the value reaches zero.
+        /// </summary>
         public event Action OnReachZero;
 
-        public VitalAttribute(float baseMax, float value, Cycle cycle) : base(value)
+        public VitalAttribute(float baseMax, float baseChange, CycleType cycle, CycleTime time) : base(baseMax)
         {
             _baseMaximum = baseMax;
+            _value = baseMax;
+            Type = cycle;
+            Time = time;
 
-            switch (cycle)
-            {                    
-                case Cycle.Regen:
-                case Cycle.Degen:
-                    Game.Tick.OnSecond += Second;
-                    break;
+            _currentMaximum = _baseMaximum;
+
+            if (Type == CycleType.Regen)
+            {
+                _baseRegen = _currentRegen = baseChange;
+            } else if (Type == CycleType.Degen)
+            {
+                _baseDegen = _currentDegen = baseChange;
+            }
+
+            if (Type != CycleType.Static)
+            {
+                if (Time == CycleTime.Tick)
+                    Game.Tick.OnTick += Update;
+                else                
+                    Game.Tick.OnSecond += Update;
             }
         }
 
-        void Second(object sender, TickEventArgs e)
+        ~VitalAttribute()
+        {
+            Game.Tick.OnTick -= Update;
+            Game.Tick.OnSecond -= Update;
+        }
+
+        void Update(object sender, TickEventArgs e)
         {
             Degen();
             Regen();
@@ -98,7 +144,10 @@ namespace UZSG
         {
             if (!_allowRegen) return;
 
-            _value += RegenValue;
+            if (_value < _currentMaximum)
+                _value += RegenValue;
+            else
+                _value = _currentMaximum;
         }
 
         /// <summary>
@@ -108,12 +157,15 @@ namespace UZSG
         {
             if (!_allowDegen) return;
 
-            _value -= DegenValue;
+            if (_value < _currentMaximum)
+                _value -= DegenValue;
+            else
+                _value = _currentMaximum;
         }
         
-        protected override void OnValueChange()
+        protected override void ValueChanged()
         {
-            base.OnValueChange();
+            base.ValueChanged();
 
             if (_value == _minimum)
             {
@@ -173,7 +225,7 @@ namespace UZSG
         /// <summary>
         /// Set current regeneration value per second.
         /// </summary>
-        protected void SetRegen(float value)
+        void SetRegen(float value)
         {
             _currentRegen = value;
         }
@@ -181,7 +233,7 @@ namespace UZSG
         /// <summary>
         /// Set maximum value for attribute.
         /// </summary>
-        protected void SetMax(float value)
+        void SetMax(float value)
         {
             _currentMaximum = value;
         }
@@ -190,30 +242,39 @@ namespace UZSG
         /// Start regeneration/degeneration cycle.
         /// </summary>
         /// <param name="cycle"></param>
-        public void StartCycle(Cycle cycle)
+        public void StartCycle(CycleType cycle)
         {
-            if (!_allowChange) return;
+            _allowChange = true;
 
-            if (cycle == Cycle.Regen)
+            if (cycle == CycleType.Regen)
             {
                 Regen();
-            } else if (cycle == Cycle.Degen)
+            } else if (cycle == CycleType.Degen)
             {
                 Degen();
             }
         }
 
+        /// <summary>
+        /// Whether to allow the change of this value over time.
+        /// </summary>
         public void AllowRegen(bool value)
         {
             _allowRegen = value;
         }
 
+        /// <summary>
+        /// Value += (BaseRegen * RegenMultipler) per cycle.
+        /// </summary>
         public void AddRegenMultiplier(float value)
         {
             _regenMultiplier += value;
             SetRegen(_baseRegen * _regenMultiplier);
         }
 
+        /// <summary>
+        /// (RegenValue * RegenMultipler) per cycle.
+        /// </summary>
         public void SetRegenMultiplier(float value)
         {
             _regenMultiplier = value;
@@ -223,7 +284,7 @@ namespace UZSG
         public virtual float ToMax()
         {
             _value = _currentMaximum;
-            OnValueChange();
+            ValueChanged();
             return _value;
         }
 

@@ -12,26 +12,33 @@ namespace UZSG.Systems
     /// </summary>
     public sealed class TickSystem : MonoBehaviour
     {
-        [SerializeField] int DefaultTPS = 20;
+        [Header("Defaults")]
+        [SerializeField] int DefaultTPS = 60;
         [SerializeField] int MaxTPS = 10000;
+        
+        [Header("Current")]
         [SerializeField] bool _isFrozen = false;
-        public bool IsFrozen { get => _isFrozen; }
-        int _ticksPerSecond;
-        public int TicksPerSecond { get => _ticksPerSecond; }
-        public int TPS { get => _ticksPerSecond; }
-        float _secondPerTick;
-        public float SecondPerTick { get => _secondPerTick; }
+        public bool IsFrozen => _isFrozen;
+        [SerializeField] int _ticksPerSecond;
+        public int TicksPerSecond => _ticksPerSecond;
+        public int TPS => _ticksPerSecond;
+        [SerializeField] float _secondPerTick;
+        public float SecondPerTick => _secondPerTick;
         float _tickTimer;
-        int _totalTicks;
+
+        [Header("Lifetime")]
+        [SerializeField] int _currentTick;
+        /// <summary>
+        /// The tick in the current second, which is a number between 0 and TicksPerSecond.
+        /// </summary>
+        public int CurrentTick => _currentTick;
+        [SerializeField] int _totalTicks;
         /// <summary>
         /// Total number of ticks.
         /// </summary>
-        public int TotalTicks { get => _totalTicks; } 
-        int _currentTick;
-        /// <summary>
-        /// The tick in the current second. A number between 0 and TicksPerSecond.
-        /// </summary>
-        public int CurrentTick { get => _currentTick; } 
+        public int TotalTicks => _totalTicks;
+
+        #region Events
         /// <summary>
         /// Fired every game tick.
         /// </summary>
@@ -40,11 +47,12 @@ namespace UZSG.Systems
         /// Fired every real-time second.
         /// </summary>
         public event EventHandler<TickEventArgs> OnSecond;
+        #endregion
 
-        void Awake()
+        void Start()
         {
             _ticksPerSecond = DefaultTPS;
-            _secondPerTick = 1 / DefaultTPS;
+            _secondPerTick = 1f / DefaultTPS;
         }
 
         void Update()

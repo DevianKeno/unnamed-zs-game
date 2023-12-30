@@ -3,6 +3,7 @@ using Cinemachine;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Interactions;
 using UZSG.Systems;
 
 namespace UZSG.Player
@@ -25,12 +26,13 @@ namespace UZSG.Player
 
         [SerializeField] Camera cam;
         public Transform CharacterBody;
-        public CharacterController controller;
+        public CharacterController _controller;
         public Transform GroundCheck;
         public LayerMask GroundMask;
+        Vector3 prevPos;
         public Camera Cam { get => cam; }
 
-        public const float MoveSpeed = 6f;
+        public const float MoveSpeed = 10f;
         public const float WalkSpeed = MoveSpeed * 0.5f;
         public const float JumpForce = 1.5f;
         public const float Gravity = -9.81f;
@@ -38,7 +40,7 @@ namespace UZSG.Player
         /// <summary>
         /// The movement values to be added for the current frame.
         /// </summary>
-        Vector3 _movement;
+        Vector3 _frameMovement;
         Vector3 FallSpeed;
         float CrouchPosition;
         bool isTransitioning;
@@ -71,7 +73,7 @@ namespace UZSG.Player
             _player = GetComponent<PlayerCore>();
             _actions = GetComponent<PlayerActions>();
             _input = GetComponent<PlayerInput>();
-            controller = GetComponent<CharacterController>();
+            _controller = GetComponent<CharacterController>();
             _vCamPOV = vCam.GetCinemachineComponent<CinemachinePOV>();
             InitControls();
         }
@@ -101,6 +103,8 @@ namespace UZSG.Player
             runInput.started += OnRunX;                     // Shift (default)  
             runInput.canceled += OnRunX;                    // Shift
             crouchInput.performed += OnCrouchX;             // LCtrl (default)
+
+            prevPos = _controller.transform.position;
         }
 
         void OnDisable()
@@ -115,18 +119,27 @@ namespace UZSG.Player
         {
             if(CheckGrounded())
             {
-                _player.sm.ToState(_player.sm.States[PlayerStates.Jump]);
+                if (_player.Attributes.Vitals["Stamina"].Value < 10) return;
 
+                _player.sm.ToState(_player.sm.States[PlayerStates.Jump]);
                 FallSpeed.y = Mathf.Sqrt(JumpForce * -2f * Gravity);
             }
         }
 
         void OnRunX(InputAction.CallbackContext context)
         {
-            _isRunning = !_isRunning;            
             if (_isCrouching)
             {
                 Crouch();
+            }
+            if (_isRunning)
+            {
+                _isRunning = false;
+                _player.sm.ToState(_player.sm.States[PlayerStates.Run]);
+            } else
+            {
+                _isRunning = true;
+                _player.sm.ToState(_player.sm.States[PlayerStates.Idle]);
             }
         }
 
@@ -176,26 +189,38 @@ namespace UZSG.Player
             Vector3 cameraForward = cam.transform.forward;
             cameraForward.y = 0f;
             // Moves player relative to the camera
-            _movement = frameInput.move.x * cam.transform.right + frameInput.move.y * cameraForward.normalized;
-            _movement.Normalize();
+            _frameMovement = frameInput.move.x * cam.transform.right + frameInput.move.y * cameraForward.normalized;
+            _frameMovement.Normalize();
         }
 
         void ApplyMovement()
         {
             Quaternion dRotation = Quaternion.Euler(cam.transform.eulerAngles.x, 0f, 0f);
-            Cam.transform.rotation = Quaternion.Slerp(CharacterBody.rotation, dRotation, Time.deltaTime * CamSensitivity);
+            Cam.transform.rotation = Quaternion.Slerp(CharacterBody.rotation, dRotation, Time.fixedDeltaTime * CamSensitivity);
 
             float MovementSpeed = WalkSpeed;
 
-            if (_isCrouching) MovementSpeed *= 0.3f;
-            else MovementSpeed = WalkSpeed;
+            if (_isCrouching)
+                MovementSpeed *= 0.3f;
+            else
+                MovementSpeed = WalkSpeed;
 
-            if (_isRunning) controller.Move(MoveSpeed * Time.deltaTime * _movement);
-            else controller.Move(MovementSpeed * Time.deltaTime * _movement);
+            if (_isRunning) 
+            {
+                _controller.Move(MoveSpeed * Time.fixedDeltaTime * _frameMovement);
+            } else
+            {
+                _controller.Move(MovementSpeed * Time.fixedDeltaTime * _frameMovement);
+                // transform.position += _frameMovement;
+                // Vector3 targetPos = MovementSpeed * Time.fixedDeltaTime * _frameMovement;
 
-            _Magnitude = new Vector3(controller.velocity.x, 0, controller.velocity.z).magnitude;
-            
+                // _controller.Move(Vector3.Lerp(prevPos, targetPos, 0f));
+    
+            }
+            prevPos = _controller.transform.position;
+            _Magnitude = new Vector3(_controller.velocity.x, 0, _controller.velocity.z).magnitude;    
         }
+
         void Crouch()
         {
             if (isTransitioning) return;
@@ -235,8 +260,8 @@ namespace UZSG.Player
             {
                 FallSpeed.y = -2f;
             }
-            FallSpeed.y += Gravity * Time.deltaTime;
-            controller.Move(FallSpeed * Time.deltaTime);
+            FallSpeed.y += Gravity * Time.fixedDeltaTime;
+            _controller.Move(FallSpeed * Time.fixedDeltaTime);
         }
         
         public void AllowControls(bool value)

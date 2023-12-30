@@ -40,22 +40,22 @@ namespace UZSG.Inventory
         void Awake() 
         {
             _slots = new ItemSlot[11];
+
             _mainhand = new (MainhandIndex, SlotType.Weapon);
             _mainhand.OnContentChanged += SlotContentChanged;
+            _slots[1] = _mainhand;
+
             _offhand = new (OffhandIndex, SlotType.Tool);
             _offhand.OnContentChanged += SlotContentChanged;
-            _slots[1] = _mainhand;
             _slots[2] = _offhand;
+
             for (int i = 3; i < 11; i++)
             {
-                ItemSlot newSlot = new(i)
-                {
-                    Type = SlotType.Tool,
-                };
+                ItemSlot newSlot = new(i) { Type = SlotType.Tool };
                 newSlot.OnContentChanged += SlotContentChanged;
                 _slots[i] = newSlot;
             }
-            _slots[0] = _slots[10];
+            _slots[0] = _slots[10]; // Hotbar slot 0 pertains to the 10th index
         }
 
         public void SelectSlot(int index)

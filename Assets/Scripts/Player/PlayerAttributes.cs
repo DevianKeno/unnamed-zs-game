@@ -5,21 +5,21 @@ namespace UZSG.Player
     /// <summary>
     /// Represents the default attributes a player has.
     /// </summary>
-    public class PlayerAttributes : MonoBehaviour
+    public class PlayerAttributes
     {
-        [SerializeField] PlayerVitalAttributes _vitals;
-        public PlayerVitalAttributes Vitals => _vitals;
+        [SerializeField] PlayerVitalAttributes _vital;
+        public PlayerVitalAttributes Vital => _vital;
         
         [SerializeField] PlayerGenericAttributes _generic;
-        public PlayerGenericAttributes Generics => _generic;
-
-        void Start()
-        {
-            _vitals = new();
-            _generic = new();
-        }
+        public PlayerGenericAttributes Generic => _generic;
         
         internal void Initialize()
+        {
+            _vital.Initialize();
+            _generic.Initialize();
+        }
+
+        public void ReadData()
         {
             
         }

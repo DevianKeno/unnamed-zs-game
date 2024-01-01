@@ -14,15 +14,14 @@ namespace UZSG.Player
     public enum PlayerStates { Idle, Run, Jump, Walk, Crouch, Equip, PerformPrimary, PerformSecondary, Hold }
 
     /// <summary>
-    /// Represents the different actions the Player can do.
+    /// Handles the different actions the Player can do.
     /// </summary>
-    [RequireComponent(typeof(PlayerCore))]
     public class PlayerActions : MonoBehaviour
     {
         public const float CamSensitivity = 0.32f;
 
-        PlayerCore _player;
-        public PlayerCore Player { get => _player; }
+        PlayerEntity _player;
+        public PlayerEntity Player { get => _player; }
         [SerializeField] FPPHandler _FPP;
         [SerializeField] Camera cam;
         [SerializeField] bool _allowCamMovement = true;
@@ -47,7 +46,7 @@ namespace UZSG.Player
 
         void Awake()
         {
-            _player = GetComponent<PlayerCore>();
+            _player = GetComponent<PlayerEntity>();
             _input = GetComponent<PlayerInput>();
             _vCamPOV = vCam.GetCinemachineComponent<CinemachinePOV>();
             

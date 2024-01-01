@@ -40,20 +40,15 @@ namespace UZSG.Systems
 
         #region Events
         /// <summary>
-        /// Fired every game tick.
+        /// Called every game tick.
         /// </summary>
         public event EventHandler<TickEventArgs> OnTick;
         /// <summary>
-        /// Fired every real-time second.
+        /// Called every real-time second.
         /// </summary>
         public event EventHandler<TickEventArgs> OnSecond;
+        
         #endregion
-
-        void Start()
-        {
-            _ticksPerSecond = DefaultTPS;
-            _secondPerTick = 1f / DefaultTPS;
-        }
 
         void Update()
         {
@@ -77,11 +72,17 @@ namespace UZSG.Systems
             }
         }
 
+        internal void Initialize()
+        {
+            _ticksPerSecond = DefaultTPS;
+            _secondPerTick = 1f / DefaultTPS;
+        }
+
         public void SetTPS(int value)
         {
             if (value < 0)
             {
-                Debug.Log("[WARNING]: TPS cannot be a negative value.");
+                Debug.LogWarning("TPS cannot be a negative value.");
                 return;
             }
 
@@ -100,7 +101,7 @@ namespace UZSG.Systems
             {
                 _ticksPerSecond = value;
             }
-            _secondPerTick = 1 / _ticksPerSecond;
+            _secondPerTick = 1f / _ticksPerSecond;
         }
 
         public void ToggleFreeze(bool value)

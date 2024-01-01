@@ -1,66 +1,194 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UZSG.Systems;
+using UZSG.UI;
 
-namespace UZSG.Console
+namespace UZSG.Systems
 {
-    public readonly struct Command
-    {
-        readonly string _name; 
-        public readonly string Name { get => _name; } 
-        readonly string _description; 
-        public readonly string Description { get => _description; } 
-
-        public Command(string name, string description)
-        {
-            _name = name;
-            _description = description;
-        }
-    }
-
     public struct CommandArgs
     {
-        public string[] args;
+        public string[] Args;
 
         public readonly string this[int i]
         {
-            get => args[i];
+            get => Args[i];
+        }
+
+        public CommandArgs(string[] args)
+        {
+            Args = args;
         }
     }
 
-    public class Console : MonoBehaviour
+    public sealed partial class Console : MonoBehaviour
     {
-        List<Command> _commands = new();
-        public string Input;
+        bool _isInitialized;
+        public bool IsInitialized => _isInitialized;
+        public bool EnableDebugMode = true;
+        Dictionary<string, Command> _commands = new();
+        public List<string> Messages;
 
-        void Awake()
+        /// <summary>
+        /// Called everytime the Console logs a message.
+        /// </summary>
+        public event Action<string> OnLogMessage;
+        public event Action<Command> OnInvokeCommand;
+
+        internal void Initialize()
         {
-            Game.Main.OnInitialize += Init;
+            if (_isInitialized) return;
+            _isInitialized = true;
+
+            LogDebug("Initializing console...");
+            InitializeCommands();
         }
 
-        void Init()
+        void InitializeCommands()
         {
+            LogDebug("Initializing command registry...");
+            /// Arguments enclosed in <> are required, [] are optional
             
+            CreateCommand("clear",
+                          "Clears the console messages.")
+                          .OnInvoke += CClear;
+            
+            CreateCommand("help",
+                          "Prints help message.")
+                          .OnInvoke += CHelp;
+            
+            CreateCommand("item <item_id> [amount]",
+                          "Gives the player the item.")
+                          .OnInvoke += CItem;
+
+            CreateCommand("say <message>",
+                          "Send a message.")
+                          .OnInvoke += CSay;
+            
+            CreateCommand("spawn <entity_id>",
+                          "Spawns an entity.")
+                          .OnInvoke += CSpawn;
+
+            // /spawn item "bandage" 1
+
+            // CreateCommand("tick <freeze|set> <value>",
+            //               "Control the game's tick rate.").AddCallback(Command_Tick);
         }
 
-        public void SubmitInput()
+        /// <summary>
+        /// Create a new Console command.
+        /// </summary>
+        Command CreateCommand(string command, string description = "")
         {
-            CommandArgs args = new CommandArgs();
+            string[] args = command.Split(" ");
+
+            Command newCommand = new()
+            {
+                Name = args[0],
+                Syntax = command,
+                Description = description
+            };
+
+            string substr;
+            foreach (string arg in args[1..])
+            {
+                if (arg.Contains("|"))
+                {
+                    // Represents AND arguments
+                    // Currently unhandled logic
+                    string[] split = arg.Split("|");
+                }
+
+                if (arg.StartsWith("<") && arg.EndsWith(">")) // Required argument
+                {
+                    substr = arg[1..^1];
+                    newCommand.Arguments.Add(new()
+                    {
+                        Type = Command.ArgumentType.Required
+                    });
+
+                } else if (arg.StartsWith("[") && arg.EndsWith("]")) // Optional argument
+                {
+                    substr = arg[1..^1];
+                    newCommand.Arguments.Add(new()
+                    {
+                        Type = Command.ArgumentType.Optional
+                    });
+                }
+            }
+
+            _commands[args[0]] = newCommand; 
+            return newCommand;           
         }
 
-        public void RunCommand(Command command, CommandArgs args)
+        public void Run(string input)
         {
+            if (input.StartsWith("/")) input = input[1..]; // Remove '/' if present
+            string[] split = input.Split(' ');
 
+            RunCommand(split[0], split[1..]);
         }
 
-        public void Log(object obj)
+        void RunCommand(string command, string[] args)
         {
-            Debug.Log(obj);
+            if (_commands.ContainsKey(command))
+            {
+                // Invalid command arguments are currently unhandled
+                _commands[command].Invoke(args);
+            } else
+            {
+                PromptInvalid();
+            }
         }
-    }
 
-    public class GUI
-    {
+        /// <summary>
+        /// Prompts invalid command usage.
+        /// </summary>
+        void PromptInvalid()
+        {
+            Log("Invalid command. Type '/help' for a list of available commands.");
+        }
 
+        void PromptInvalid(string command)
+        {
+            if (_commands.ContainsKey(command))
+            {
+                Log($"Invalid command usage. Try '/help {command}'");
+            } else
+            {
+                PromptInvalid();
+            }
+        }
+
+        public void Write(string message)
+        {
+            Messages.Add($"{message}");
+            OnLogMessage?.Invoke(message);
+        }
+
+        public void WriteLine(string message)
+        {
+            Messages.Add($"\n{message}");
+            OnLogMessage?.Invoke($"\n{message}");
+        }
+
+        public void Log(object message)
+        {
+            try
+            {
+                WriteLine($"{message}");
+            } catch
+            {
+                Debug.Log(message);
+            }
+        }
+        
+        /// <summary>
+        /// Log a debug message into the game's console.
+        /// </summary>
+        public void LogDebug(object message)
+        {
+            if (!EnableDebugMode) return;
+            Log(message);
+        }
     }
 }

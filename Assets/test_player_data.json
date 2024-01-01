@@ -1,0 +1,32 @@
+{
+  "vitals": {
+    "health": {
+      "base": 100,
+      "multiplier": 1,
+      "change": 1,
+      "allowChange": true,
+      "cycle": "regen"
+    },
+    "stamina": {
+      "base": 100,
+      "multiplier": 1,
+      "change": 1,
+      "allowChange": true,
+      "cycle": "regen"
+    },
+    "mana": {
+      "base": 100,
+      "multiplier": 1,
+      "change": 1,
+      "allowChange": true,
+      "cycle": "regen"
+    },
+    "stamina": {
+      "base": 100,
+      "multiplier": 1,
+      "change": 1,
+      "allowChange": true,
+      "cycle": "regen"
+    }
+  }
+}

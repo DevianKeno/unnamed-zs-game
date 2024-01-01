@@ -5,7 +5,7 @@ namespace UZSG.UI
 {
     public class HUDHandler : MonoBehaviour
     {
-        public PlayerCore Player;
+        public PlayerEntity Player;
 
         [Header("Elements")]
         public StaminaBar StaminaBar;
@@ -15,9 +15,9 @@ namespace UZSG.UI
             Player.OnDoneInit += PlayerDoneInitCallback;
         }
 
-        void PlayerDoneInitCallback()
+        void PlayerDoneInitCallback(object sender, System.EventArgs e)
         {
-            StaminaBar.SetAttribute(Player.Attributes.Vitals["Stamina"]);
+            StaminaBar.SetAttribute(Player.Attributes.Vital["Stamina"]);
         }
     }
 }

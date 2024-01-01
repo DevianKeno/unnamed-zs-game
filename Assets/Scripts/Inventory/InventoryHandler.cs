@@ -24,6 +24,11 @@ namespace UZSG.Inventory
         public Bag Bag { get => _bag; }
         public ItemSlot Equipped { get => Hotbar.Equipped; }
 
+        public void Initialize()
+        {
+
+        }
+
         void Awake()
         {
             _hotbar = GetComponent<Hotbar>();

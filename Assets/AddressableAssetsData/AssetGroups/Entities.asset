@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Entities
+  m_EditorClassIdentifier: 
+  m_GroupName: Entities
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 9dbf0c8836df1f042911de31c851aa72
+  m_SerializeEntries:
+  - m_GUID: a978a181786835e409a8feff807a0c0d
+    m_Address: Assets/Entities/Player.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b58efabbf6a7a1c47be35d9df85e1f04
+    m_Address: Assets/Entities/Eruptor.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b430ab7081e218e42953878032ad89d7
+    m_Address: Assets/Entities/item.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: d6b1e406a4a37f140ab8a82b4ab55278, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: ab0cca8899e94924a9f42f2d59159e7a, type: 2}
+    - {fileID: 11400000, guid: a75e44319d2ac98478b492a5d4997c9f, type: 2}

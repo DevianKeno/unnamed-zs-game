@@ -2,6 +2,54 @@
     "name": "PlayerControls",
     "maps": [
         {
+            "name": "Global",
+            "id": "e9554ee0-92fa-46ce-94eb-da6f6b96c5d3",
+            "actions": [
+                {
+                    "name": "Toggle Console Window",
+                    "type": "Button",
+                    "id": "4c9abf30-1297-4f43-aeea-7b5388b89db4",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Toggle Cursor",
+                    "type": "Button",
+                    "id": "af88dc32-90d1-4676-acf3-9bcee200b5dc",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "15c0915d-ee16-4be4-b2ae-5202cca5774c",
+                    "path": "<Keyboard>/f1",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Toggle Console Window",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "84980993-7ee8-4dae-aa64-e15b4e96ddd0",
+                    "path": "<Keyboard>/leftAlt",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Toggle Cursor",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
             "name": "Player",
             "id": "d01684a2-2132-4061-a2a4-6f79c9a8d01b",
             "actions": [

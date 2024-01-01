@@ -1,13 +1,14 @@
 using System;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 namespace UZSG.Items
 {
     public enum ItemType { Item, Weapon, Tool, Equipment, Accessory }
     public enum ItemSubtype { Consumable, Tool, Weapon, Equipable, Accessory }
 
-    [CreateAssetMenu(fileName = "Item", menuName = "URMG/Item")]
     [Serializable]
+    [CreateAssetMenu(fileName = "Item", menuName = "URMG/Item")]
     public class ItemData : ScriptableObject
     {
         [Header("Item Attributes")]
@@ -19,6 +20,6 @@ namespace UZSG.Items
         public ItemType Type;
         public ItemSubtype Subtype;
         public bool IsMaterial;
-        public GameObject Model;
+        public AssetReference AssetReference;
     }
 }

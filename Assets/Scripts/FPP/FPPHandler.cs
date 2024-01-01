@@ -26,7 +26,7 @@ namespace UZSG.FPP
         /// First-person camera.
         /// </summary>
         [SerializeField] Camera _camera;
-        [SerializeField] PlayerCore _player;
+        [SerializeField] PlayerEntity _player;
         GameObject _equipped;
         FPPAnimatable _animator;
         WeaponData _equippedData;
@@ -42,7 +42,7 @@ namespace UZSG.FPP
         void Start()
         {
             _player.sm.OnStateChanged += PlayerStateChangedCallback;
-            UI.Cursor.Hide();
+            Game.UI.ToggleCursor(false);
         }
 
         void PlayerStateChangedCallback(object sender, StateMachine<PlayerStates>.StateChangedArgs e)

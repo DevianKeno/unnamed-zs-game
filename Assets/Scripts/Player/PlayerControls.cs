@@ -80,21 +80,20 @@ namespace UZSG.Player
             _input = GetComponent<PlayerInput>();
             _controller = GetComponent<CharacterController>();
             _vCamPOV = vCam.GetCinemachineComponent<CinemachinePOV>();
-            InitControls();
         }
 
-        void InitControls()
+        internal void Initialize()
+        {
+            InitializeControls();
+        }
+
+        void InitializeControls()
         {
             moveInput = _input.actions.FindAction("Move");
             jumpInput = _input.actions.FindAction("Jump");
             runInput = _input.actions.FindAction("Run");
             crouchInput = _input.actions.FindAction("Crouch");
-        }
-
-        void Start()
-        {
-            Game.Tick.OnTick += Tick;
-            _player.OnDoneInit += PlayerDoneInit;
+            
 
             moveInput.Enable();
             jumpInput.Enable();
@@ -105,18 +104,19 @@ namespace UZSG.Player
                 started = Pressed
                 canceled = Released
             */
+            moveInput.started += OnMoveX;
             jumpInput.performed += OnJumpX;                 // Space (default)
             runInput.started += OnRunX;                     // Shift (default)  
             runInput.canceled += OnRunX;                    // Shift
             crouchInput.performed += OnCrouchX;             // LCtrl (default)
 
-            prevPos = _controller.transform.position;
+            Game.Tick.OnTick += Tick;
+            _player.OnDoneInit += PlayerDoneInit;
         }
 
         void PlayerDoneInit(object sender, EventArgs e)
         {
-            // _moveSpeed = _player.Attributes.Generic["MoveSpeed"];
-            _moveSpeed = 10f;
+            _moveSpeed = _player.Attributes.GetAttributeFromId("move_speed").Value;
         }
 
         void OnDisable()
@@ -127,11 +127,24 @@ namespace UZSG.Player
             runInput.Disable();
         }
 
+        void OnMoveX(InputAction.CallbackContext context)
+        {
+            Debug.Log("I tried moving...");
+            var move = moveInput.ReadValue<Vector2>();
+
+            Vector3 camForward = _cam.transform.forward;
+            camForward.y = 0f; // Inhibit vertical movement
+
+            // Move player relative to camera direction
+            _frameMovement = (move.x * _cam.transform.right) + (move.y * camForward.normalized);
+            _frameMovement.Normalize();
+        }
+
         void OnJumpX(InputAction.CallbackContext context)
         {
             if(CheckGrounded())
             {
-                if (_player.Attributes.Vital["Stamina"].Value < 10) return;
+                if (_player.Attributes.GetAttributeFromId("stamina").Value < 10) return;
 
                 _player.sm.ToState(_player.sm.States[PlayerStates.Jump]);
                 FallSpeed.y = Mathf.Sqrt(JumpForce * -2f * Gravity);
@@ -188,12 +201,12 @@ namespace UZSG.Player
 
         void Update()
         {
-            frameInput = GatherInput();
+            // frameInput = GatherInput();
         }
 
         void HandleMovement()
         {
-            HandleDirection();
+            // HandleDirection();
             ApplyMovement();
             ApplyGravity();
         }
@@ -213,7 +226,7 @@ namespace UZSG.Player
             Quaternion dRotation = Quaternion.Euler(_cam.transform.eulerAngles.x, 0f, 0f);
             _cam.transform.rotation = Quaternion.Slerp(CharacterBody.rotation, dRotation, Time.fixedDeltaTime * CamSensitivity);
         
-            _controller.transform.position = _frameMovement * (_moveSpeed * Time.fixedDeltaTime);
+            _controller.Move(_frameMovement * (_moveSpeed * Time.fixedDeltaTime));
             _magnitude = new Vector3(_controller.velocity.x, 0, _controller.velocity.z).magnitude;    
         }
 

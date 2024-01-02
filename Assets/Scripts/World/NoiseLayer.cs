@@ -1,6 +1,6 @@
 using System;
 
-namespace UZSG.World
+namespace UZSG.WorldBuilder
 {
     [Serializable]
     public struct NoiseLayers

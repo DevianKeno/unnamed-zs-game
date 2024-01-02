@@ -24,9 +24,9 @@ namespace UZSG.UI
 
         void ValueChangedCallback(object sender, Attribute.ValueChangedArgs e)
         {
-            VitalAttribute atr = (VitalAttribute) sender;
-            BarValue = atr.Value;
-            var barOffset = Mathf.InverseLerp(VitalAttribute.Min, atr.Max, atr.Value);
+            Attribute attr = (Attribute) sender;
+            BarValue = attr.Value;
+            var barOffset = Mathf.InverseLerp(attr.Minimum, attr.CurrentMaximum, attr.Value);
 
             Bar.offsetMax = new(
                 -Mathf.Lerp(_emptySizeDelta, _fullSizeDelta, barOffset),
@@ -40,7 +40,7 @@ namespace UZSG.UI
                 LeanTween.value(Buffer.gameObject, BufferValue, BarValue, 0.5f)
                 .setOnUpdate((i) =>
                 {
-                    var bufferOffset = Mathf.InverseLerp(VitalAttribute.Min, atr.Max, i);
+                    var bufferOffset = Mathf.InverseLerp(Attribute.Minimum, attr.CurrentMaximum, i);
 
                     Buffer.offsetMax = new(
                         -Mathf.Lerp(_emptySizeDelta, _fullSizeDelta, bufferOffset),

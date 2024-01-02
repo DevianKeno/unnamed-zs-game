@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace UZSG.World
+namespace UZSG.WorldBuilder
 {
     public class World
     {

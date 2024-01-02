@@ -1,7 +1,7 @@
 using UnityEngine;
 using UZSG.Systems;
 
-namespace UZSG.World
+namespace UZSG.WorldBuilder
 {
     public struct MeshBuffer
     {
@@ -21,7 +21,7 @@ namespace UZSG.World
             CountBuffer.SetCounterValue(0);
             CountBuffer.SetData(new uint[] { 0, 0 });
 
-            int maxTriangles = Game.World.Attributes.ChunkSize * Game.World.Attributes.WorldHeight * Game.World.Attributes.ChunkSize / 4;
+            int maxTriangles = Game.World.World.Attributes.ChunkSize * Game.World.World.Attributes.WorldHeight * Game.World.World.Attributes.ChunkSize / 4;
 
             VertexBuffer ??= new ComputeBuffer(maxTriangles * 3, 12);
             ColorBuffer ??= new ComputeBuffer(maxTriangles * 3, 16);;

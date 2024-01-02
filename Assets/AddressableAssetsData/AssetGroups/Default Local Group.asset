@@ -17,8 +17,8 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: 4df500ee1f95bb542be6e196e4ad9a8d
   m_SerializeEntries:
-  - m_GUID: 3262e8978c388714c9e6efa149ada4fb
-    m_Address: Assets/Prefabs/Player.prefab
+  - m_GUID: c8a8e49113fae5b40b045ce0f2eeb0c3
+    m_Address: Assets/Prefabs/Player (Entity).prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

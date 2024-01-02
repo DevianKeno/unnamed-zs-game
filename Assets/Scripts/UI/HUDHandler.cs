@@ -17,7 +17,7 @@ namespace UZSG.UI
 
         void PlayerDoneInitCallback(object sender, System.EventArgs e)
         {
-            StaminaBar.SetAttribute(Player.Attributes.Vital["Stamina"]);
+            StaminaBar.SetAttribute(Player.Attributes["Stamina"]);
         }
     }
 }

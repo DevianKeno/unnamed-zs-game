@@ -51,6 +51,10 @@ namespace UZSG.Systems
             CreateCommand("clear",
                           "Clears the console messages.")
                           .OnInvoke += CClear;
+
+            CreateCommand("freecam",
+                          "Toggle Free Look Camera.")
+                          .OnInvoke += CFreecam;
             
             CreateCommand("help",
                           "Prints help message.")
@@ -64,9 +68,13 @@ namespace UZSG.Systems
                           "Send a message.")
                           .OnInvoke += CSay;
             
-            CreateCommand("spawn <entity_id>",
+            CreateCommand("spawn <entity_id> [x] [y] [z]",
                           "Spawns an entity.")
                           .OnInvoke += CSpawn;
+
+            CreateCommand("world <create|load> <world_name>",
+                          "")
+                          .OnInvoke += CWorld;
 
             // /spawn item "bandage" 1
 

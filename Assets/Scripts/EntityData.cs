@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UZSG.Attributes;
 
 namespace UZSG.Entities
 {

@@ -17,20 +17,11 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: 9dbf0c8836df1f042911de31c851aa72
   m_SerializeEntries:
-  - m_GUID: a978a181786835e409a8feff807a0c0d
-    m_Address: Assets/Entities/Player.asset
+  - m_GUID: ef4da43c618b0174a80a37a44c57e65f
+    m_Address: Assets/Entities
     m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: b58efabbf6a7a1c47be35d9df85e1f04
-    m_Address: Assets/Entities/Eruptor.asset
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: b430ab7081e218e42953878032ad89d7
-    m_Address: Assets/Entities/item.asset
-    m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - entities
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: d6b1e406a4a37f140ab8a82b4ab55278, type: 2}

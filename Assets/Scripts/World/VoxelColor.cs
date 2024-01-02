@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace UZSG.World
+namespace UZSG.WorldBuilder
 {
     [Serializable]
     public struct VoxelColor

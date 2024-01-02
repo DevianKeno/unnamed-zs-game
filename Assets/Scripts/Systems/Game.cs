@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UZSG.UI;
-using UZSG.World;
+using UZSG.WorldBuilder;
 
 namespace UZSG.Systems
 {
@@ -17,12 +17,14 @@ namespace UZSG.Systems
         // public static AudioManager Audio { get => _audio; }
         static ItemManager _items;
         public static ItemManager Items { get => _items; }
+        static AttributesManager _attrs;
+        public static AttributesManager AttributesManager { get => _attrs; }
         static WorldManager _worldManager;
         public static WorldManager World { get => _worldManager; }
         static TickSystem _tick;
         public static TickSystem Tick { get => _tick; }
-        static EntityManager _entityHandler;
-        public static EntityManager Entity { get => _entityHandler; }
+        static EntityManager _entityManager;
+        public static EntityManager Entity { get => _entityManager; }
 
         PlayerInput _input;
         InputAction _toggleConsoleInput;
@@ -42,12 +44,13 @@ namespace UZSG.Systems
             } else
             {
                 Main = this;
+                _console = GetComponentInChildren<Console>();
                 _UI = GetComponentInChildren<UIManager>();
                 _tick = GetComponentInChildren<TickSystem>();
-                _console = GetComponentInChildren<Console>();
                 _worldManager = GetComponentInChildren<WorldManager>();
                 _items = GetComponentInChildren<ItemManager>();
-                _entityHandler = GetComponentInChildren<EntityManager>();
+                _entityManager = GetComponentInChildren<EntityManager>();
+                _attrs = GetComponentInChildren<AttributesManager>();
             }
 
             _input = GetComponent<PlayerInput>();
@@ -66,13 +69,15 @@ namespace UZSG.Systems
 
             _UI.Initialize();
             // _audio.Initialize();
+            _worldManager.Initialize();
 
             #region Theses should be only initialized upon entering worlds
-            // _worldManager.Initialize();
             _tick.Initialize();
             _items.Initialize();
-            // _entityHandler.Initialize();
+            _entityManager.Initialize();
+            _attrs.Initialize();
             #endregion
+            
 
             OnLateInit?.Invoke();
         }

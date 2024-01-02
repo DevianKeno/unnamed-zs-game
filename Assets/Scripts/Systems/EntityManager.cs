@@ -16,8 +16,8 @@ namespace UZSG.Systems
         /// <summary>
         /// Contains the list of all spawnable entities in the game.
         /// </summary>
-        public List<EntityData> _entityList;
-        Dictionary<string, GameObject> _cachedEntities = new();
+        Dictionary<string, EntityData> _entityList = new();
+        [SerializeField] AssetLabelReference assetLabelReference;
 
         internal void Initialize()
         {
@@ -25,50 +25,42 @@ namespace UZSG.Systems
             _isInitialized = true;
 
             var startTime = Time.time;
-            Game.Console?.Log("Initializing entities...");
+            Game.Console?.Log("Initializing Entity database...");
 
-            foreach (EntityData data in _entityList)
+            Addressables.LoadAssetsAsync<EntityData>(assetLabelReference, (a) =>
             {
-                Game.Console?.LogDebug($"[EntityHandler]: Loading asset for entity: {data.Name}");
-
-                Addressables.LoadAssetAsync<GameObject>(data.AssetReference).Completed += (a) =>
-                {
-                    if (a.Status == AsyncOperationStatus.Succeeded)
-                    {
-                        _cachedEntities[data.Name] = a.Result;
-                    } else
-                    {
-                        Game.Console?.LogDebug($"Failed to load asset for entity: {data.Name}");
-                    }
-                };
-            }
-
-            Game.Console?.LogDebug($"Done initializing entities took {Time.time - startTime} ms");
+                Game.Console?.LogDebug($"Loading data for Entity {a.Id}");
+                _entityList[a.Id] = a;
+            });
         }
 
         /// <summary>
         /// Spawn an entity in the game world.
         /// </summary>
-        public void Spawn(string[] args)
+        public void Spawn(string entityId)
         {
-            string entityId = args[0];
-            string data = args[1];
-
-            if (_cachedEntities.ContainsKey(entityId))
+            if (_entityList.ContainsKey(entityId))
             {
-                var go = Instantiate(_cachedEntities[entityId]);
-
-                if (go.TryGetComponent(out Entity entity))
+                Addressables.LoadAssetAsync<GameObject>(_entityList[entityId].AssetReference).Completed += (a) =>
                 {
-                    entity.Data = new()
+                    if (a.Status == AsyncOperationStatus.Succeeded)
                     {
+                        Vector3 position = new(0f, 1f, 0f);
+                        var go = Instantiate(a.Result, position, Quaternion.identity);
+                        
+                        if (go.TryGetComponent(out Entity entity))
+                        {
+                            go.name = entity.Data.Name;
+                            entity.Spawn();
+                        }
 
-                    };
-                }
-            } else
-            {
-                Game.Console?.LogDebug($"Failed to spawn entity. Invalid entity id");
-            }
+                        Game.Console?.Log($"Spawned entity {entityId} at ({position.x}, {position.y}, {position.z})");
+                        return;
+                    }
+
+                    Game.Console?.LogDebug($"Failed to spawn entity {entityId}");
+                };
+            }            
         }
     }
 }

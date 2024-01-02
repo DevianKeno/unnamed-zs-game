@@ -12,7 +12,8 @@ namespace UZSG.Systems
     {
         public struct ChangedContext
         {
-
+            public EState PreviousState;
+            public EState NextState;
         }
         
         EState _key;

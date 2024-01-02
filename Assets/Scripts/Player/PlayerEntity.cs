@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UZSG.Systems;
 using UZSG.Inventory;
 using UZSG.Entities;
+using UZSG.Attributes;
 
 namespace UZSG.Player
 {
@@ -10,44 +12,44 @@ namespace UZSG.Player
     /// Player core functionalities.
     /// This contains all information related to the Player.
     /// </summary>
-    public class PlayerEntity : Entity
+    public class PlayerEntity : Entity, IAttributeCollection
     {
         public bool CanPickUpItems = true;
-        bool _isSpawned = false;
-        bool _isAlive = false;
-        
+
         [Tooltip("State machine.")]
         [SerializeField] StateMachine<PlayerStates> _sm;
         /// <summary>
         /// Player state machine.
         /// </summary>
         public StateMachine<PlayerStates> sm => _sm;
-        [SerializeField] PlayerAttributes _attributes;
-        public PlayerAttributes Attributes => _attributes;
+        [SerializeField] PlayerControls _controls;
+
+        [SerializeField] AttributeCollection _attributes;
+        public AttributeCollection Attributes => _attributes;
+
         [SerializeField] InventoryHandler _inventory;
         public InventoryHandler Inventory => _inventory;
-
-        public float Stamina;
 
         public event EventHandler<EventArgs> OnDoneInit;
 
         void Awake()
         {
             _sm = GetComponent<StateMachine<PlayerStates>>();
-            _attributes = GetComponent<PlayerAttributes>();
-        }        
+            _controls.GetComponent<PlayerControls>();
+        }
 
-        public override void Spawn(Vector3 position)
+        public override void Spawn()
         {
-            base.Spawn(position);
-
+            base.Spawn();
             Initialize();
         }
 
         void Initialize()
         {
-            _attributes.Initialize();
-            
+            Game.Console.Log("I, player, has been spawned!");
+            InitializeAttributes();
+            _controls.Initialize();
+
             _sm.InitialState = _sm.States[PlayerStates.Idle];
 
             _sm.States[PlayerStates.Idle].OnEnter += OnIdleX;
@@ -59,10 +61,30 @@ namespace UZSG.Player
             Game.Tick.OnTick += Tick;
         }
 
+        void InitializeAttributes()
+        {
+            var attr = Game.AttributesManager.CreateAttribute("health");
+            Attributes.AddAttribute(attr);
+            
+            attr = Game.AttributesManager.CreateAttribute("stamina");
+            Attributes.AddAttribute(attr);
+            
+            attr = Game.AttributesManager.CreateAttribute("mana");
+            Attributes.AddAttribute(attr);
+
+            attr = Game.AttributesManager.CreateAttribute("hunger");
+            Attributes.AddAttribute(attr);
+
+            attr = Game.AttributesManager.CreateAttribute("hydration");
+            Attributes.AddAttribute(attr);
+            
+            attr = Game.AttributesManager.CreateAttribute("move_speed");
+            attr.Value = 10;
+            Attributes.AddAttribute(attr);
+        }
+
         void Tick(object sender, TickEventArgs e)
         {
-            Stamina = _attributes.Vital["Stamina"].Value;
-            Debug.Log(Stamina);
         }
 
         void OnIdleX(object sender, State<PlayerStates>.ChangedContext e)
@@ -75,13 +97,12 @@ namespace UZSG.Player
 
         void OnCrouchX(object sender, State<PlayerStates>.ChangedContext e)
         {
-            Debug.Log("uy yuko");
         }
 
         void OnJumpX(object sender, State<PlayerStates>.ChangedContext e)
         {
             float jumpStaminaCost = 10f;
-            _attributes.Vital["Stamina"].Remove(jumpStaminaCost);
+            _attributes["Stamina"].Remove(jumpStaminaCost);
         }
     }
 }

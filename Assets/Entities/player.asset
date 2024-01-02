@@ -15,7 +15,7 @@ MonoBehaviour:
   Id: player
   Name: Player
   AssetReference:
-    m_AssetGUID: 3262e8978c388714c9e6efa149ada4fb
+    m_AssetGUID: c8a8e49113fae5b40b045ce0f2eeb0c3
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0

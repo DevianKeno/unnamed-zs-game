@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace UZSG.Entities
@@ -8,12 +9,6 @@ namespace UZSG.Entities
     public class Entity : MonoBehaviour, ISpawnable//, IAlive
     {
         public EntityData Data;
-
-        
-
-        public virtual void Spawn(Vector3 position)
-        {
-            // Instantiate(_entityData.Prefab, position, Quaternion.identity);
-        }
+        public virtual void Spawn() {}
     }
 }

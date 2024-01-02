@@ -13,7 +13,7 @@ namespace UZSG.Systems
         [SerializeField] AssetLabelReference assetLabelReference;
 
         internal void Initialize()
-        {            
+        {
             if (_isInitialized) return;
             _isInitialized = true;
             
@@ -22,10 +22,9 @@ namespace UZSG.Systems
 
             Addressables.LoadAssetsAsync<ItemData>(assetLabelReference, (a) =>
             {                
-                _itemList[a.Name] = a;
+                Game.Console?.LogDebug($"Loading data for item {a.Id}");
+                _itemList[a.Id] = a;
             });
-
-            Game.Console?.LogDebug($"Done initializing items took {Time.time - startTime} ms");
         }
 
         /// <summary>

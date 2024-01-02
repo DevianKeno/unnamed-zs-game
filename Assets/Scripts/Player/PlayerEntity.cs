@@ -81,6 +81,10 @@ namespace UZSG.Player
             attr = Game.AttributesManager.CreateAttribute("move_speed");
             attr.Value = 10;
             Attributes.AddAttribute(attr);
+
+            attr = Game.AttributesManager.CreateAttribute("crouch_speed");
+            attr.Value = 5;
+            Attributes.AddAttribute(attr);
         }
 
         void Tick(object sender, TickEventArgs e)

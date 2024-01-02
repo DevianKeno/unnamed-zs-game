@@ -16,7 +16,7 @@ MonoBehaviour:
   Name: Crouch Speed
   Description: 
   Minimum: 0
-  BaseValue: 100
+  BaseValue: 5
   Multiplier: 1
   IsVital: 0
   AllowChange: 0

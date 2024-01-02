@@ -104,7 +104,6 @@ namespace UZSG.Player
                 started = Pressed
                 canceled = Released
             */
-            moveInput.started += OnMoveX;
             jumpInput.performed += OnJumpX;                 // Space (default)
             runInput.started += OnRunX;                     // Shift (default)  
             runInput.canceled += OnRunX;                    // Shift
@@ -201,12 +200,12 @@ namespace UZSG.Player
 
         void Update()
         {
-            // frameInput = GatherInput();
+            frameInput = GatherInput();
         }
 
         void HandleMovement()
         {
-            // HandleDirection();
+            HandleDirection();
             ApplyMovement();
             ApplyGravity();
         }
@@ -227,6 +226,7 @@ namespace UZSG.Player
             _cam.transform.rotation = Quaternion.Slerp(CharacterBody.rotation, dRotation, Time.fixedDeltaTime * CamSensitivity);
         
             _controller.Move(_frameMovement * (_moveSpeed * Time.fixedDeltaTime));
+
             _magnitude = new Vector3(_controller.velocity.x, 0, _controller.velocity.z).magnitude;    
         }
 

@@ -256,17 +256,18 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5142996516149911681}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: decb3b174ddd2344894008506765747c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   IsEnabled: 1
-  Amplitude: 0.015
-  Frequency: 10
+  Amplitude: 0.075
+  Frequency: 12
   MinMoveSpeed: 1
   controls: {fileID: 7617903866874250683}
   player: {fileID: 8107631895800867322}
+  model: {fileID: 94713427562349016}
   virtualCamera: {fileID: 7017140821926563795}
 --- !u!1 &5771848841049438004
 GameObject:
@@ -730,6 +731,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MoveSpeed: 10
+  RunSpeed: 0
+  CrouchSpeed: 0
   JumpTime: 2
   JumpHeight: 4
   Gravity: -9.81

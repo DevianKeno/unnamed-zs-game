@@ -227,7 +227,6 @@ namespace UZSG.Player
 
         void OnMoveInput(InputAction.CallbackContext context)
         {
-            Debug.Log(context.ReadValue<Vector2>());
             _frameInput.move = context.ReadValue<Vector2>();
             _isMovePressed =  _frameInput.move.x != 0 || _frameInput.move.y != 0;
         }

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using TMPro;
 using UZSG.Systems;
@@ -12,6 +13,8 @@ namespace UZSG.UI
 
         [SerializeField] TextMeshProUGUI messages;
         [SerializeField] TMP_InputField inputField;
+
+        public event Action<bool> OnToggle;
 
         void OnEnable()
         {
@@ -55,6 +58,7 @@ namespace UZSG.UI
 
         public void ToggleWindow(bool isVisible)
         {
+            OnToggle?.Invoke(isVisible);
             _isVisible = isVisible;
             gameObject.SetActive(isVisible);
         }

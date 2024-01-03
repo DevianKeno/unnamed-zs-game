@@ -389,17 +389,6 @@
                 },
                 {
                     "name": "",
-                    "id": "c0599ae4-a447-44fd-863e-976baf4b3daa",
-                    "path": "<Keyboard>/e",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Inventory",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "a2f7bedf-00c0-41dd-8785-89163525f88b",
                     "path": "<Keyboard>/f",
                     "interactions": "",

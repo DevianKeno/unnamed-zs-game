@@ -5,8 +5,19 @@ namespace UZSG.Systems
 {
     public struct TickEventArgs
     {
-        public int Tick;
+        public int _tick;
+        public readonly int Tick => _tick;
+        public float _deltaTime;
+        /// <summary>
+        /// The time it took to complete this tick.
+        /// </summary>
+        public readonly float DeltaTime => _deltaTime;
     }
+
+    public struct SecondEventArgs
+    {
+    }
+
     /// <summary>
     /// Game's internal Tick system.
     /// </summary>
@@ -22,9 +33,9 @@ namespace UZSG.Systems
         [SerializeField] int _ticksPerSecond;
         public int TicksPerSecond => _ticksPerSecond;
         public int TPS => _ticksPerSecond;
-        [SerializeField] float _secondPerTick;
-        public float SecondPerTick => _secondPerTick;
-        float _tickTimer;
+        [SerializeField] float _secondsPerTick;
+        public float SecondsPerTick => _secondsPerTick;
+        int _cachedTicksPerSecond;
 
         [Header("Lifetime")]
         [SerializeField] int _currentTick;
@@ -38,6 +49,12 @@ namespace UZSG.Systems
         /// </summary>
         public int TotalTicks => _totalTicks;
 
+        float _deltaTick = 0f;
+        /// <summary>
+        /// The interval in seconds from the last tick to the current tick.
+        /// </summary>
+        public float DeltaTick => _deltaTick;
+
         #region Events
         /// <summary>
         /// Called every game tick.
@@ -46,7 +63,7 @@ namespace UZSG.Systems
         /// <summary>
         /// Called every real-time second.
         /// </summary>
-        public event EventHandler<TickEventArgs> OnSecond;
+        public event EventHandler<SecondEventArgs> OnSecond;
         
         #endregion
 
@@ -54,20 +71,23 @@ namespace UZSG.Systems
         {
             if (_isFrozen) return;
 
-            _tickTimer += Time.deltaTime;
+            _deltaTick += Time.deltaTime;
 
-            if (_tickTimer >= _secondPerTick)
+            if (_deltaTick >= _secondsPerTick)
             {
-                _tickTimer -= _secondPerTick;
+                OnTick?.Invoke(this, new TickEventArgs{
+                    _tick = _currentTick,
+                    _deltaTime = _deltaTick
+                });
+
+                _deltaTick -= _secondsPerTick;
                 _currentTick++;
                 _totalTicks++;
-
-                OnTick?.Invoke(this, new TickEventArgs{ Tick = _currentTick });
 
                 if (_currentTick >= _ticksPerSecond)
                 {
                     _currentTick = 0;
-                    OnSecond?.Invoke(this, new TickEventArgs{ Tick = _currentTick });
+                    OnSecond?.Invoke(this, new SecondEventArgs());
                 }
             }
         }
@@ -75,7 +95,7 @@ namespace UZSG.Systems
         internal void Initialize()
         {
             _ticksPerSecond = DefaultTPS;
-            _secondPerTick = 1f / DefaultTPS;
+            _secondsPerTick = 1f / DefaultTPS;
         }
 
         public void SetTPS(int value)
@@ -88,11 +108,11 @@ namespace UZSG.Systems
 
             if (value == 0)
             {
-                ToggleFreeze(true);
+                SetFreezed(true);
                 return;
             }
 
-            if (_isFrozen) ToggleFreeze(false);
+            if (_isFrozen) SetFreezed(false);
 
             if (value > MaxTPS)
             {
@@ -101,12 +121,24 @@ namespace UZSG.Systems
             {
                 _ticksPerSecond = value;
             }
-            _secondPerTick = 1f / _ticksPerSecond;
+            _secondsPerTick = 1f / _ticksPerSecond;
         }
 
-        public void ToggleFreeze(bool value)
+        public void SetFreezed(bool value)
         {
             _isFrozen = value;
+
+            if (value)
+            {
+                _cachedTicksPerSecond = _ticksPerSecond;
+                _ticksPerSecond = 0;
+                _secondsPerTick = 0f;
+                _deltaTick = 0f;
+            } else
+            {
+                _ticksPerSecond = _cachedTicksPerSecond;
+                _secondsPerTick = 1f / _ticksPerSecond;
+            }
         }
     }
 }

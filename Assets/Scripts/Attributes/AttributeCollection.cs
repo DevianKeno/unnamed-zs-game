@@ -63,6 +63,21 @@ namespace UZSG.Attributes
             }
         }
 
+        public void RemoveAttribute(string id, out Attribute attribute)
+        {
+            if (Attributes.TryGetValue(id, out Attribute attr))
+            {
+                Attributes.Remove(id, out Attribute attrs);
+                var attrIdPair = AttributeList.Find(part => part.Id == id);
+                AttributeList.Remove(attrIdPair);
+                attribute = attr;
+            } else
+            {
+                attribute = Attribute.None;
+                Game.Console?.Log($"Unable to remove Attribute [{id}] as it does not exist within the collection.");
+            }
+        }
+
         public Attribute GetAttributeFromId(string id)
         {
             if (Attributes.ContainsKey(id))
@@ -71,7 +86,7 @@ namespace UZSG.Attributes
             }
 
             Game.Console?.Log($"Unable to retrieve Attribute [{id}] as it's not in the collection.");
-            return null;
+            return Attribute.None;
         }
 
         // public Attribute GetAttributeFromName(string name)

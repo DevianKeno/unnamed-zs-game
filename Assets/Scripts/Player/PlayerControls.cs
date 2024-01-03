@@ -19,222 +19,331 @@ namespace UZSG.Player
     /// </summary>
     public class PlayerControls : MonoBehaviour
     {
-        public const float CamSensitivity = 0.32f;
-        float xRotation = 0f;
-        PlayerEntity _player;
-        public PlayerEntity Player { get => _player; }
-
+        #region These should be read as attributes
         /// <summary>
-        /// Cached movement speed from the Player. This should subscribe to the OnValueChanged event.
+        /// Cached movement values from the Player. This should subscribe to the OnValueChanged event.
         /// </summary>
-        float _moveSpeed;
+        public float MoveSpeed;
+        public float RunSpeed;
+        public float CrouchSpeed;
+        public float JumpTime = 1f;
+        public float JumpHeight = 2f;
+        public float Gravity = -9.81f;
+        public float FallSpeedMultiplier = 2f;
         public float CrouchSpeedMultiplier = 0.7f;
-        [SerializeField] Camera _cam;
-        public Transform CharacterBody;
-        public CharacterController _controller;
-        public Transform GroundCheck;
-        public LayerMask GroundMask;
-        Vector3 prevPos;
-        public Camera Cam { get => _cam; }
-
-        public const float MoveSpeed = 10f;
-        public const float WalkSpeed = MoveSpeed * 0.5f;
-        public const float JumpForce = 1.5f;
-        public const float Gravity = -9.81f;
-        public const float GroundDistance = 0.4f;
+        public float LookRotationSpeed = 100.0f;
+        #endregion
+        
+        public float GroundingForce = -1f;
+        public float GroundDistance = 0.5f;
         /// <summary>
-        /// The movement values to be added for the current frame.
+        /// The input values performed in the current frame.
         /// </summary>
-        Vector3 _frameMovement;
-        Vector3 FallSpeed;
+        FrameInput _frameInput;
+        /// <summary>
+        /// The velocity to be applied for the current frame.
+        /// </summary>
+        Vector3 _frameVelocity;
+        Vector3 _previousPosition;
+        Vector3 _targetPosition;
+
+        float _currentSpeed;
+        bool _isMovePressed;
+        float initialJumpVelocity;
+        bool _jumped;
         float CrouchPosition;
         bool _isTransitioning;
-        bool _isMoving;
-        public bool IsMoving { get => _isMoving; }
-        bool _isGrounded;
-        public bool IsGrounded { get => _isGrounded; }
         bool _isRunning;
+        /// <summary>
+        /// Check if holding [Run] key and speed is greater than run threshold
+        /// </summary>
         public bool isRunning { get => _isRunning; }
         bool _isCrouching;
         public bool isCrouching { get => _isCrouching; }
 
-        float _magnitude;
-        public float ControllerMagnitude { get => _magnitude; }
+        public bool IsMoving
+        {
+            get
+            {
+                if (Magnitude > 0) return true;
+                return false;
+            }
+        }
+
+        public bool IsGrounded
+        {
+            get
+            {
+                return Physics.Raycast(groundChecker.position, Vector3.down, GroundDistance, groundMask);
+            }
+        }
+
+        public bool IsFalling
+        {
+            get => _frameVelocity.y <= 0f && !IsGrounded;
+        }
+
+        public Vector3 Velocity
+        {
+            get => rb.velocity;
+        }
+
+        /// <summary>
+        /// Represents how fast the player is moving in any direction.
+        /// </summary>
+        public float Speed
+        {
+            get => rb.velocity.magnitude;
+        }
+
+        public float HorizontalSpeed
+        {
+            get
+            {
+                var horizontalVelocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+                return horizontalVelocity.magnitude;
+            }
+        }
+
+        public float VerticalSpeed
+        {
+            get => rb.velocity.y;
+        }
+
+        public float Magnitude
+        {
+            get => new Vector3(rb.velocity.x, 0, rb.velocity.z).magnitude;   
+        }
+
+        #region Events
         public event EventHandler OnMoveStart;
         public event EventHandler OnMoveStop;
+        #endregion
 
-        PlayerActions _actions;
-        FrameInput frameInput;
-        PlayerInput _input;
+        public PlayerEntity Player { get => player; }
+
+        [Header("Components")]
+        [SerializeField] PlayerEntity player;
+        /// <summary>
+        /// The Player's 3D model.
+        /// </summary>
+        [SerializeField] Transform model;
+        [SerializeField] CinemachineVirtualCamera virtualCamera;
+        [SerializeField] CinemachinePOV virtualCamPOV;
+        [SerializeField] Rigidbody rb;
+        [SerializeField] Transform groundChecker;
+        [SerializeField] LayerMask groundMask;
+        [SerializeField] PlayerInput input;
+        PlayerActions actions;
         InputAction moveInput;
         InputAction jumpInput;
         InputAction runInput;
         InputAction crouchInput;
-        [SerializeField] CinemachineVirtualCamera vCam;
-        CinemachinePOV _vCamPOV;
 
         void Awake()
         {
-            _player = GetComponent<PlayerEntity>();
-            _actions = GetComponent<PlayerActions>();
-            _input = GetComponent<PlayerInput>();
-            _controller = GetComponent<CharacterController>();
-            _vCamPOV = vCam.GetCinemachineComponent<CinemachinePOV>();
+            player = GetComponent<PlayerEntity>();
+            actions = GetComponent<PlayerActions>();
+            input = GetComponent<PlayerInput>();
+            virtualCamPOV = virtualCamera.GetCinemachineComponent<CinemachinePOV>();
+            
+            moveInput = input.actions.FindAction("Move");
+            jumpInput = input.actions.FindAction("Jump");
+            runInput = input.actions.FindAction("Run");
+            crouchInput = input.actions.FindAction("Crouch");
         }
+
+        // void OnDrawGizmos()
+        // {            
+        //     Gizmos.DrawLine(groundChecker.transform.position, groundChecker.transform.position + Vector3.down * GroundDistance);
+        // }
 
         internal void Initialize()
         {
             InitializeControls();
+            RetrieveAttributes();
         }
 
         void InitializeControls()
-        {
-            moveInput = _input.actions.FindAction("Move");
-            jumpInput = _input.actions.FindAction("Jump");
-            runInput = _input.actions.FindAction("Run");
-            crouchInput = _input.actions.FindAction("Crouch");
-            
+        {            
+            SetControlsEnabled(true);
 
-            moveInput.Enable();
-            jumpInput.Enable();
-            runInput.Enable();
-            crouchInput.Enable();
+            moveInput.performed += OnMoveInput;
+            moveInput.started += OnMoveInput;
+            moveInput.canceled += OnMoveInput;
 
-            /*  performed = Pressed or released
-                started = Pressed
-                canceled = Released
-            */
-            jumpInput.performed += OnJumpX;                 // Space (default)
-            runInput.started += OnRunX;                     // Shift (default)  
-            runInput.canceled += OnRunX;                    // Shift
-            crouchInput.performed += OnCrouchX;             // LCtrl (default)
+            jumpInput.performed += OnJumpInput;                 // Space (default)
 
-            Game.Tick.OnTick += Tick;
-            _player.OnDoneInit += PlayerDoneInit;
+            runInput.started += OnRunInput;                     // Shift (default)  
+
+            runInput.canceled += OnRunInput;                    // Shift
+
+            crouchInput.performed += OnCrouchInput;             // LCtrl (default)
+
+            Game.UI.ConsoleUI.OnToggle += ConsoleWindowToggledCallback;
+            _previousPosition = transform.position;
         }
 
-        void PlayerDoneInit(object sender, EventArgs e)
+        void ConsoleWindowToggledCallback(bool value)
         {
-            _moveSpeed = _player.Attributes.GetAttributeFromId("move_speed").Value;
+            SetControlsEnabled(!value);
+        }
+
+        void SetControlsEnabled(bool value)
+        {
+            if (value)
+            {
+                moveInput.Enable();
+                jumpInput.Enable();
+                runInput.Enable();
+                crouchInput.Enable();
+            } else
+            {
+                moveInput.Disable();
+                jumpInput.Disable();
+                runInput.Disable();
+                crouchInput.Disable();
+            }
         }
 
         void OnDisable()
         {
-            Game.Tick.OnTick -= Tick;
-            moveInput.Disable();
-            jumpInput.Disable();
-            runInput.Disable();
+            SetControlsEnabled(false);
         }
 
-        void OnMoveX(InputAction.CallbackContext context)
+        void RetrieveAttributes()
         {
-            Debug.Log("I tried moving...");
-            var move = moveInput.ReadValue<Vector2>();
-
-            Vector3 camForward = _cam.transform.forward;
-            camForward.y = 0f; // Inhibit vertical movement
-
-            // Move player relative to camera direction
-            _frameMovement = (move.x * _cam.transform.right) + (move.y * camForward.normalized);
-            _frameMovement.Normalize();
+            MoveSpeed = player.Attributes.GetAttributeFromId("move_speed").Value;
+            RunSpeed = player.Attributes.GetAttributeFromId("run_speed").Value;
+            CrouchSpeed = player.Attributes.GetAttributeFromId("crouch_speed").Value;
+            
+            _currentSpeed = MoveSpeed;
         }
 
-        void OnJumpX(InputAction.CallbackContext context)
+        void FixedUpdate()
         {
-            if(CheckGrounded())
+            HandleMovement();
+        }
+
+        void OnMoveInput(InputAction.CallbackContext context)
+        {
+            Debug.Log(context.ReadValue<Vector2>());
+            _frameInput.move = context.ReadValue<Vector2>();
+            _isMovePressed =  _frameInput.move.x != 0 || _frameInput.move.y != 0;
+        }
+
+        void OnJumpInput(InputAction.CallbackContext context)
+        {
+            if (IsGrounded)
             {
-                if (_player.Attributes.GetAttributeFromId("stamina").Value < 10) return;
-
-                _player.sm.ToState(_player.sm.States[PlayerStates.Jump]);
-                FallSpeed.y = Mathf.Sqrt(JumpForce * -2f * Gravity);
+                _jumped = true;
             }
         }
 
-        void OnRunX(InputAction.CallbackContext context)
+        void OnRunInput(InputAction.CallbackContext context)
         {
             if (_isCrouching)
             {
                 Crouch();
             }
 
-            if (_isRunning)
+            ToggleRun(!_isRunning);
+        }
+
+        void ToggleRun(bool value)
+        {
+            _isRunning = value;
+            if (value)
             {
-                _isRunning = false;
-                _player.sm.ToState(_player.sm.States[PlayerStates.Run]);
+                _currentSpeed = RunSpeed;
+                player.sm.ToState(player.sm.States[PlayerStates.Run]);
             } else
             {
-                _isRunning = true;
-                _player.sm.ToState(_player.sm.States[PlayerStates.Idle]);
+                _currentSpeed = MoveSpeed;
+                player.sm.ToState(player.sm.States[PlayerStates.Idle]);
             }
         }
 
-        void OnCrouchX(InputAction.CallbackContext context)
+        void OnCrouchInput(InputAction.CallbackContext context)
         {
             Crouch();
         }
 
-        void Tick(object sender, TickEventArgs e)
+        Vector3 GetCameraForward()
         {
-            CheckMoving();
-            HandleMovement();
-        }
-
-        bool CheckGrounded()
-        {
-            return _isGrounded = Physics.CheckSphere(GroundCheck.position, GroundDistance, GroundMask) && FallSpeed.y < 0;
-        }
-
-        void CheckMoving()
-        {
-            if (_magnitude == 0f) _isMoving = false;
-            else _isMoving = true;
-        }
-
-        FrameInput GatherInput()
-        {
-            return new()
-            {
-                move = moveInput.ReadValue<Vector2>()
-            };
-        }
-
-        void Update()
-        {
-            frameInput = GatherInput();
+            Vector3 camForward = player.MainCamera.transform.forward;
+            camForward.y = 0f;
+            return camForward;
         }
 
         void HandleMovement()
         {
             HandleDirection();
+            HandleRotation();
+            HandleGravity();
+            HandleJump();
+
             ApplyMovement();
-            ApplyGravity();
         }
 
         void HandleDirection()
         {
-            Vector3 camForward = _cam.transform.forward;
-            camForward.y = 0f;
-
-            // Move player relative to the camera
-            _frameMovement = (frameInput.move.x * _cam.transform.right) + (frameInput.move.y * camForward.normalized);
-            _frameMovement.Normalize();
+            _frameVelocity = (_frameInput.move.x * player.MainCamera.transform.right) + (_frameInput.move.y * GetCameraForward().normalized);
+            _frameVelocity.Normalize();
         }
 
+        void HandleRotation()
+        {
+            model.rotation = Quaternion.LookRotation(GetCameraForward().normalized);
+        }
+
+        void HandleJump()
+        {
+            if (!_jumped) return;
+            _jumped = false;
+            
+            // The time required to reach the highest point of the jump
+            float timeToApex = JumpTime / 2;
+            _frameVelocity.y = (2 * JumpHeight) / timeToApex; // this should be cached
+        }
+
+        void HandleGravity()
+        {            
+            // Calculates the player's internal gravity
+            Gravity = (-2 * JumpHeight) / Mathf.Pow(JumpTime / 2, 2); // this should be cached
+
+            if (IsGrounded) // grounding force only
+            {
+                _frameVelocity.y = GroundingForce;
+
+            } else if (IsFalling) // increasing fall speed
+            {
+                _frameVelocity.y += Gravity * FallSpeedMultiplier * Time.fixedDeltaTime;
+            } else // normal gravity
+            {
+                _frameVelocity.y += Gravity * Time.fixedDeltaTime;
+            }
+        }
+        
         void ApplyMovement()
         {
-            Quaternion dRotation = Quaternion.Euler(_cam.transform.eulerAngles.x, 0f, 0f);
-            _cam.transform.rotation = Quaternion.Slerp(CharacterBody.rotation, dRotation, Time.fixedDeltaTime * CamSensitivity);
-        
-            _controller.Move(_frameMovement * (_moveSpeed * Time.fixedDeltaTime));
+            _targetPosition = _previousPosition + (_frameVelocity * (_currentSpeed * Time.fixedDeltaTime));
 
-            _magnitude = new Vector3(_controller.velocity.x, 0, _controller.velocity.z).magnitude;    
+            if (_previousPosition != _targetPosition)
+            {
+                Vector3 displacement = _targetPosition - _previousPosition;
+                rb.velocity = displacement / Game.Tick.SecondsPerTick;
+            } else
+            {
+                rb.velocity = Vector3.zero;
+            }
         }
 
         void Crouch()
         {
             if (_isTransitioning) return;
 
-            _player.sm.ToState(_player.sm.States[PlayerStates.Crouch]);
+            player.sm.ToState(player.sm.States[PlayerStates.Crouch]);
 
             _isTransitioning = !_isTransitioning;
             _isCrouching = !_isCrouching;
@@ -242,50 +351,40 @@ namespace UZSG.Player
             float TransitionSpeed;
             
             if (_isCrouching)
-            { 
-                _moveSpeed *= CrouchSpeedMultiplier;
-                CrouchPosition = vCam.transform.position.y - 1f;
+            {            
+                _currentSpeed = CrouchSpeed;
+                CrouchPosition = virtualCamera.transform.position.y - 1f;
                 TransitionSpeed = 0.3f;
             } else
             {
-                _moveSpeed /= CrouchSpeedMultiplier;
-                CrouchPosition = vCam.transform.position.y + 1f;
+                _currentSpeed = MoveSpeed;
+                CrouchPosition = virtualCamera.transform.position.y + 1f;
                 TransitionSpeed = 0.3f;
             }
 
-            LeanTween.value(gameObject, vCam.transform.position.y, CrouchPosition, TransitionSpeed)
-            .setOnUpdate( (i) =>
+            LeanTween.value(gameObject, virtualCamera.transform.position.y, CrouchPosition, TransitionSpeed)
+                .setOnUpdate( (i) =>
                 {   
-                    vCam.transform.position = new Vector3(
-                        vCam.transform.position.x,
+                    virtualCamera.transform.position = new Vector3(
+                        virtualCamera.transform.position.x,
                         i,
-                        vCam.transform.position.z
+                        virtualCamera.transform.position.z
                     );
-                }
-            ).setOnComplete( () =>
+                }).setOnComplete( () =>
                 {
                     _isTransitioning = false;
-                }
-            ).setEaseOutExpo();
-        }
-
-        void ApplyGravity()
-        {
-            if (CheckGrounded())
-            {
-                FallSpeed.y = -2f;
-            }
-
-            FallSpeed.y += Gravity * Time.fixedDeltaTime;
-            _controller.Move(FallSpeed * Time.fixedDeltaTime);
+                }).setEaseOutExpo();
         }
         
         public void AllowControls(bool value)
         {
             if (value)
+            {
                 moveInput.Enable();
-            else
+            } else
+            {
                 moveInput.Disable();
+            }
         }
     }
 }

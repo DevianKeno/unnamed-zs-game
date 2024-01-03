@@ -4,29 +4,15 @@ using UnityEditor.Animations;
 using UZSG.Player;
 using UZSG.Systems;
 using UZSG.Items;
+using Cinemachine;
 
 namespace UZSG.FPP
 {
-    /// <summary>
-    /// Represents objects that are visible in first-person perspective.
-    /// </summary>
-    public interface IFPPVisible
-    {
-        public GameObject FPPModel { get; }
-        public AnimatorController Controller { get; }
-        public FPPAnimations Anims { get; }
-    }
-
     /// <summary>
     /// Handles the functionalities of the first-person view.
     /// </summary>
     public class FPPHandler : MonoBehaviour
     {
-        /// <summary>
-        /// First-person camera.
-        /// </summary>
-        [SerializeField] Camera _camera;
-        [SerializeField] PlayerEntity _player;
         GameObject _equipped;
         FPPAnimatable _animator;
         WeaponData _equippedData;
@@ -34,9 +20,15 @@ namespace UZSG.FPP
         Dictionary<int, GameObject> _cachedModels = new();
         Dictionary<int, IFPPVisible> _anims = new();
 
+        /// <summary>
+        /// First-person camera.
+        /// </summary>
+        [SerializeField] CinemachineVirtualCamera FPPCamera;
+        [SerializeField] PlayerEntity _player;
+
         void Awake()
         {
-            _camera = GetComponent<Camera>();
+            FPPCamera = GetComponentInChildren<CinemachineVirtualCamera>();
         }
 
         void Start()
@@ -58,7 +50,7 @@ namespace UZSG.FPP
         {
             if (obj == null) return;
 
-            GameObject go = Instantiate(obj.FPPModel, _camera.transform);
+            GameObject go = Instantiate(obj.FPPModel, FPPCamera.transform);
             _cachedModels.Add(index, go);
             _anims.Add(index, go.GetComponent<IFPPVisible>());
         }

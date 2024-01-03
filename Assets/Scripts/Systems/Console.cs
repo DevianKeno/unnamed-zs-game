@@ -72,6 +72,14 @@ namespace UZSG.Systems
                           "Spawns an entity.")
                           .OnInvoke += CSpawn;
 
+            CreateCommand("teleport <x> <y> <z>",
+                          "Teleport to coordinates.")
+                          .OnInvoke += CTeleport;
+
+            CreateCommand("tick <set|freeze> [value]",
+                          "Manipulate in-game tick system.")
+                          .OnInvoke += CTick;
+
             CreateCommand("world <create|load> <world_name>",
                           "")
                           .OnInvoke += CWorld;

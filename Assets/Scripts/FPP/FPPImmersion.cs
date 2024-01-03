@@ -47,7 +47,7 @@ namespace UZSG.FPP
         }
         private void CheckMotion()
         {
-            float speed = controls.ControllerMagnitude;
+            float speed = controls.Magnitude;
             if (speed < _toggleSpeed) return;
             if (!_controller.isGrounded) return;
 
@@ -60,7 +60,7 @@ namespace UZSG.FPP
 
         private Vector3 FocusTarget()
         {
-            Vector3 pos = new Vector3(transform.position.x, transform.position.y + _cameraHolder.localPosition.y, transform.position.z);
+            Vector3 pos = new(transform.position.x, transform.position.y + _cameraHolder.localPosition.y, transform.position.z);
             pos += _cameraHolder.forward * 15.0f;
             return pos;
         }

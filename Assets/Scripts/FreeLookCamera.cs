@@ -47,8 +47,8 @@ namespace UZSG
             Vector2 input = moveInput.ReadValue<Vector2>();
             Vector3 movement = (input.x * MainCamera.transform.right) + (input.y * MainCamera.transform.forward);
 
-            Quaternion dRotation = Quaternion.Euler(MainCamera.transform.eulerAngles.x, 0f, 0f);
-            MainCamera.transform.rotation = Quaternion.Slerp(transform.rotation, dRotation, Time.deltaTime * Sensitivity);
+            // Quaternion dRotation = Quaternion.Euler(MainCamera.transform.eulerAngles.x, 0f, 0f);
+            // MainCamera.transform.rotation = Quaternion.Slerp(transform.rotation, dRotation, Time.deltaTime * Sensitivity);
 
             transform.position += movement * (MoveSpeed * Time.deltaTime);
         }

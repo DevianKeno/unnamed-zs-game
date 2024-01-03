@@ -18,6 +18,10 @@ namespace UZSG.Attributes
             public float Change;
             public float New;
         }
+        public static Attribute None
+        {
+            get => new(null);
+        }
 
         [SerializeField] AttributeData _data;
         public AttributeData Data => _data;
@@ -118,29 +122,29 @@ namespace UZSG.Attributes
 
         ~Attribute()
         {
-            Game.Tick.OnTick -= Update;
-            Game.Tick.OnSecond -= Update;
+            Game.Tick.OnTick -= Tick;
+            Game.Tick.OnSecond -= Second;
         }
 
         public static void ToMax(Attribute attr)
         {
             attr.PreviousValue = attr.Value;
             attr.Value = attr.CurrentMaximum;            
-            if (attr.PreviousValue != attr.Value) attr.ValueChanged(Mathf.Abs(attr.PreviousValue - attr.Value));
+            attr.ValueChanged();
         }
         
         public static void ToMin(Attribute attr)
         {
             attr.PreviousValue = attr.Value;
-            attr.Value = attr.Minimum;            
-            if (attr.PreviousValue != attr.Value) attr.ValueChanged(Mathf.Abs(attr.PreviousValue - attr.Value));
+            attr.Value = attr.Minimum;
+            attr.ValueChanged();
         }
         
         public static void ToZero(Attribute attr)
         {
             attr.PreviousValue = attr.Value;
-            attr.Value = 0f;            
-            if (attr.PreviousValue != attr.Value) attr.ValueChanged(Mathf.Abs(attr.PreviousValue - attr.Value));
+            attr.Value = 0f;
+            attr.ValueChanged();
         }
 
         /// <summary>
@@ -151,7 +155,7 @@ namespace UZSG.Attributes
             PreviousValue = Value;
             Value += value;
             CheckOverflow();
-            if (PreviousValue != Value) ValueChanged(Mathf.Abs(PreviousValue - Value));
+            ValueChanged();
         }
         
         /// <summary>
@@ -162,7 +166,24 @@ namespace UZSG.Attributes
             PreviousValue = Value;
             Value -= value;
             CheckUnderflow();
-            if (PreviousValue != Value) ValueChanged(Mathf.Abs(PreviousValue - Value));
+            ValueChanged();
+        }
+        
+        /// <summary>
+        /// Tries to remove the amount from the attribute's current value.
+        /// Returns true if the value is less than the current value, false otherwise.
+        /// </summary>
+        public bool TryRemove(float value)
+        {
+            if (value < Value)
+            {
+                PreviousValue = Value;
+                Value -= value;
+                CheckUnderflow();
+                ValueChanged();
+                return true;
+            }
+            return false;
         }
 
         /// <summary>
@@ -186,20 +207,29 @@ namespace UZSG.Attributes
         {
             if (Cycle == Cycle.PerSecond)
             {
-                Game.Tick.OnTick += Update;
+                Game.Tick.OnTick += Tick;
             } else if (Cycle == Cycle.PerTick)
             {
-                Game.Tick.OnSecond += Update;
+                Game.Tick.OnSecond += Second;
             }
         }
 
-        void Update(object sender, TickEventArgs e)
+        void Tick(object sender, TickEventArgs e)
+        {
+            PerformChange();
+        }
+
+        void Second(object sender, SecondEventArgs e)
         {
             PerformChange();
         }
         
-        void ValueChanged(float value)
+        void ValueChanged()
         {
+            if (Value == PreviousValue) return;
+            
+            float value = Mathf.Abs(Value - PreviousValue);
+            
             if (Value == Minimum)
             {
                 OnReachMinimum?.Invoke(this, new()

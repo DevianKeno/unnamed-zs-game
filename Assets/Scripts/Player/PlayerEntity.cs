@@ -31,11 +31,13 @@ namespace UZSG.Player
         public InventoryHandler Inventory => _inventory;
 
         public event EventHandler<EventArgs> OnDoneInit;
+        public Camera MainCamera;
 
         void Awake()
         {
             _sm = GetComponent<StateMachine<PlayerStates>>();
             _controls.GetComponent<PlayerControls>();
+            MainCamera = Camera.main;
         }
 
         public override void Spawn()
@@ -79,11 +81,15 @@ namespace UZSG.Player
             Attributes.AddAttribute(attr);
             
             attr = Game.AttributesManager.CreateAttribute("move_speed");
-            attr.Value = 10;
+            attr.Value = 7f;
+            Attributes.AddAttribute(attr);
+
+            attr = Game.AttributesManager.CreateAttribute("run_speed");
+            attr.Value = Attributes.GetAttributeFromId("move_speed").Value * 1.5f;
             Attributes.AddAttribute(attr);
 
             attr = Game.AttributesManager.CreateAttribute("crouch_speed");
-            attr.Value = 5;
+            attr.Value = Attributes.GetAttributeFromId("move_speed").Value * 0.4f;
             Attributes.AddAttribute(attr);
         }
 
@@ -106,7 +112,7 @@ namespace UZSG.Player
         void OnJumpX(object sender, State<PlayerStates>.ChangedContext e)
         {
             float jumpStaminaCost = 10f;
-            _attributes["Stamina"].Remove(jumpStaminaCost);
+            _attributes.GetAttributeFromId("stamina").Remove(jumpStaminaCost);
         }
     }
 }

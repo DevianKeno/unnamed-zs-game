@@ -66,6 +66,39 @@ namespace UZSG.Systems
         }
 
         /// <summary>
+        /// Spawns an entity.
+        /// </summary>
+        void CTeleport(object sender, string[] args)
+        {
+            if (int.TryParse(args[1], out int x))
+            if (int.TryParse(args[2], out int y))
+            if (int.TryParse(args[3], out int z))
+            {
+                
+            }
+        }
+
+        /// <summary>
+        /// Spawns an entity.
+        /// </summary>
+        void CTick(object sender, string[] args)
+        {
+            if (args[0] == "freeze")
+            {
+                Game.Tick.SetFreezed(!Game.Tick.IsFrozen);
+            } else if (args[0] == "set")
+            {
+                if (int.TryParse(args[1], out int value))
+                {
+                    Game.Tick.SetTPS(value);
+                } else
+                {
+                    Game.Console.Log("TPS must be a positive integer value.");
+                }
+            }
+        }
+
+        /// <summary>
         /// World commands.
         /// </summary>
         void CWorld(object sender, string[] args)

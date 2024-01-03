@@ -845,16 +845,16 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: UZSG.Systems.PlayerSpawner, Assembly-CSharp
-        m_MethodName: SpawnPlayer
-        m_Mode: 1
+      - m_Target: {fileID: 1728544474}
+        m_TargetAssemblyTypeName: UZSG.Systems.Console, Assembly-CSharp
+        m_MethodName: Run
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument: spawn player
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &427524845
@@ -4864,11 +4864,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ff053a150be7c24986a27128978b8a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DefaultTPS: 60
+  DefaultTPS: 64
   MaxTPS: 10000
   _isFrozen: 0
   _ticksPerSecond: 0
-  _secondPerTick: 0
+  _secondsPerTick: 0
   _currentTick: 0
   _totalTicks: 0
 --- !u!224 &1570317668 stripped
@@ -8866,7 +8866,7 @@ MonoBehaviour:
   m_BlendUpdateMethod: 1
   m_DefaultBlend:
     m_Style: 1
-    m_Time: 2
+    m_Time: 0.5
     m_CustomCurve:
       serializedVersion: 2
       m_Curve: []
@@ -9458,7 +9458,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -459.831, y: -11}
+  m_AnchoredPosition: {x: -459.83105, y: -11}
   m_SizeDelta: {x: -1420, y: -580}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &9076292722206337443

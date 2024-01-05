@@ -59,7 +59,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_RecenterTarget: 0
   m_VerticalAxis:
-    Value: 0
+    Value: -74.56266
     m_SpeedMode: 1
     m_MaxSpeed: 0.32
     m_AccelTime: 0.1
@@ -83,7 +83,7 @@ MonoBehaviour:
     m_LegacyHeadingDefinition: -1
     m_LegacyVelocityFilterStrength: -1
   m_HorizontalAxis:
-    Value: 0
+    Value: 34.267136
     m_SpeedMode: 1
     m_MaxSpeed: 0.32
     m_AccelTime: 0.1
@@ -119,7 +119,7 @@ GameObject:
   - component: {fileID: 1619014706767930603}
   - component: {fileID: 3289239852993729928}
   - component: {fileID: 3696063409950771944}
-  - component: {fileID: 4686605439890487349}
+  - component: {fileID: 8503156178327154515}
   m_Layer: 0
   m_Name: FPP Camera
   m_TagString: Untagged
@@ -249,7 +249,7 @@ MonoBehaviour:
   AutoEnableInputs: 1
   XYAxis: {fileID: -5630151704836100654, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
   ZAxis: {fileID: 0}
---- !u!114 &4686605439890487349
+--- !u!114 &8503156178327154515
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -258,17 +258,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 5142996516149911681}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: decb3b174ddd2344894008506765747c, type: 3}
+  m_Script: {fileID: 11500000, guid: 26a10ca446ef4fc4790d9971f66da6e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsEnabled: 1
-  Amplitude: 0.075
-  Frequency: 12
-  MinMoveSpeed: 1
-  controls: {fileID: 7617903866874250683}
+  Sensitivity: 0.32
+  EnableControls: 1
+  EnableBobbing: 1
+  Amplitude: 0.03
+  Frequency: 15
+  MinMoveSpeed: 3
   player: {fileID: 8107631895800867322}
-  model: {fileID: 94713427562349016}
-  virtualCamera: {fileID: 7017140821926563795}
+  mainCamera: {fileID: 0}
+  virtualCamera: {fileID: 0}
+  POV: {fileID: 0}
 --- !u!1 &5771848841049438004
 GameObject:
   m_ObjectHideFlags: 0
@@ -668,10 +670,9 @@ GameObject:
   - component: {fileID: 7617903866874250683}
   - component: {fileID: 5659626291116057010}
   - component: {fileID: 1956494563113857842}
-  - component: {fileID: 8394152581638175708}
-  - component: {fileID: 8772656889777774786}
   - component: {fileID: 2195213024220016002}
   - component: {fileID: 795924285969382268}
+  - component: {fileID: 8394152581638175708}
   m_Layer: 0
   m_Name: Player (Entity)
   m_TagString: Untagged
@@ -712,12 +713,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Data: {fileID: 11400000, guid: a978a181786835e409a8feff807a0c0d, type: 2}
   CanPickUpItems: 1
-  _sm: {fileID: 2195213024220016002}
-  _controls: {fileID: 7617903866874250683}
-  _attributes:
+  <Attributes>k__BackingField:
     AttributeList: []
-  _inventory: {fileID: 6573940630714393000}
-  MainCamera: {fileID: 0}
 --- !u!114 &7617903866874250683
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -741,10 +738,11 @@ MonoBehaviour:
   LookRotationSpeed: 100
   GroundingForce: -1
   GroundDistance: 0.4
+  CameraSensitivity: 0.32
+  EnableMovementControls: 1
+  EnableCameraControls: 1
   player: {fileID: 8107631895800867322}
   model: {fileID: 94713427562349016}
-  virtualCamera: {fileID: 3289239852993729928}
-  virtualCamPOV: {fileID: 0}
   rb: {fileID: 8394152581638175708}
   groundChecker: {fileID: 1807161492040155152}
   groundMask:
@@ -763,12 +761,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83dcb9e909c595f4fbc9bf79ad9c9e20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _FPP: {fileID: 0}
-  cam: {fileID: 1619014706767930603}
-  _allowCamMovement: 1
-  sphereRadius: 0.5
-  interactMaxDistance: 1.25
-  vCam: {fileID: 3289239852993729928}
+  Radius: 0.75
+  MaxInteractDistance: 1.25
 --- !u!114 &1956494563113857842
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -799,59 +793,6 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!54 &8394152581638175708
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9031321928697203625}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 1
-  m_Constraints: 112
-  m_CollisionDetection: 0
---- !u!143 &8772656889777774786
-CharacterController:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9031321928697203625}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Height: 2
-  m_Radius: 0.6
-  m_SlopeLimit: 45
-  m_StepOffset: 0.7
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &2195213024220016002
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -879,5 +820,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4945d81f45cf4ab4c9ec403cf808ae22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FPPCamera: {fileID: 0}
-  _player: {fileID: 8107631895800867322}
+  _camera: {fileID: 8503156178327154515}
+--- !u!54 &8394152581638175708
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9031321928697203625}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 1
+  m_Constraints: 112
+  m_CollisionDetection: 0

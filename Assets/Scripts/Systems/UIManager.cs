@@ -79,6 +79,11 @@ namespace UZSG.UI
             ToggleCursor(!_isCursorVisible);
         }
 
+        public void ToggleCursor()
+        {
+            ToggleCursor(!_isCursorVisible);
+        }
+
         public void ToggleCursor(bool isVisible)
         {
             if (isVisible)            
@@ -89,11 +94,6 @@ namespace UZSG.UI
             _isCursorVisible = isVisible;
             Cursor.visible = isVisible;
             OnCursorToggled?.Invoke(isVisible);
-        }
-
-        public void ToggleCursor()
-        {
-            ToggleCursor(!_isCursorVisible);
         }
 
         public ItemDisplayUI CreateItemDisplay(Item item)

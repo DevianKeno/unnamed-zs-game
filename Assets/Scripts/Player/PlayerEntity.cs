@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UZSG.Systems;
 using UZSG.Inventory;
@@ -16,28 +15,33 @@ namespace UZSG.Player
     {
         public bool CanPickUpItems = true;
 
-        [Tooltip("State machine.")]
-        [SerializeField] StateMachine<PlayerStates> _sm;
+        #region Events
+        public event EventHandler<EventArgs> OnDoneInit;
+        #endregion
+
+        [field: Header("Components")]
+        /// <summary>
+        /// The Unity camera tagged "MainCamera"
+        /// </summary>
+        public Camera MainCamera { get; private set; }
         /// <summary>
         /// Player state machine.
         /// </summary>
-        public StateMachine<PlayerStates> sm => _sm;
-        [SerializeField] PlayerControls _controls;
-
-        [SerializeField] AttributeCollection _attributes;
-        public AttributeCollection Attributes => _attributes;
-
-        [SerializeField] InventoryHandler _inventory;
-        public InventoryHandler Inventory => _inventory;
-
-        public event EventHandler<EventArgs> OnDoneInit;
-        public Camera MainCamera;
+        public StateMachine<PlayerStates> sm { get; private set; }
+        [field: SerializeField] public AttributeCollection Attributes { get; private set; }
+        public PlayerControls Controls { get; private set; }
+        public PlayerActions Actions { get; private set; }
+        public PlayerFPP FPP { get; private set; }
+        public InventoryHandler Inventory { get; private set; }
 
         void Awake()
         {
-            _sm = GetComponent<StateMachine<PlayerStates>>();
-            _controls.GetComponent<PlayerControls>();
             MainCamera = Camera.main;
+            sm = GetComponent<StateMachine<PlayerStates>>();
+            Controls = GetComponent<PlayerControls>();
+            Actions = GetComponent<PlayerActions>();
+            FPP = GetComponent<PlayerFPP>();
+            // Inventory = GetComponent<InventoryHandler>();
         }
 
         public override void Spawn()
@@ -49,15 +53,18 @@ namespace UZSG.Player
         void Initialize()
         {
             Game.Console.Log("I, player, has been spawned!");
+
             InitializeAttributes();
-            _controls.Initialize();
+            Controls.Initialize();
+            Actions.Initialize();
+            FPP.Initialize();
 
-            _sm.InitialState = _sm.States[PlayerStates.Idle];
+            sm.InitialState = sm.States[PlayerStates.Idle];
 
-            _sm.States[PlayerStates.Idle].OnEnter += OnIdleX;
-            _sm.States[PlayerStates.Run].OnEnter += OnRunX;
-            _sm.States[PlayerStates.Jump].OnEnter += OnJumpX;
-            _sm.States[PlayerStates.Crouch].OnEnter += OnCrouchX;
+            sm.States[PlayerStates.Idle].OnEnter += OnIdleX;
+            sm.States[PlayerStates.Run].OnEnter += OnRunX;
+            sm.States[PlayerStates.Jump].OnEnter += OnJumpX;
+            sm.States[PlayerStates.Crouch].OnEnter += OnCrouchX;
 
             OnDoneInit?.Invoke(this, new());
             Game.Tick.OnTick += Tick;
@@ -112,7 +119,7 @@ namespace UZSG.Player
         void OnJumpX(object sender, State<PlayerStates>.ChangedContext e)
         {
             float jumpStaminaCost = 10f;
-            _attributes.GetAttributeFromId("stamina").Remove(jumpStaminaCost);
+            Attributes.GetAttributeFromId("stamina").Remove(jumpStaminaCost);
         }
     }
 }

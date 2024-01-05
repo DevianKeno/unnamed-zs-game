@@ -34,7 +34,7 @@ namespace UZSG.Attributes
     }
 
     [CustomEditor(typeof(AttributeData))]
-    public class MyScriptableObjectEditor : Editor
+    public class AttributeDataEditor : Editor
     {
         SerializedProperty allowChange;
         SerializedProperty type;

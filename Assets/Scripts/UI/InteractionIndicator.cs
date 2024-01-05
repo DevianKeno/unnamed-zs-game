@@ -20,6 +20,7 @@ namespace UZSG.UI
         public void Show(IInteractable obj)
         {
             if (obj == null) return;
+            
             actionText.text = obj.Action;
             objectText.text = obj.Name;
             indicator.SetActive(true);

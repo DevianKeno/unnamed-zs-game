@@ -18,10 +18,26 @@
 				"baseMaximum": 100,
 				"baseRegen": 1
 			},
-			"MoveSpeed":
+			"Hunger":
 			{
-				"baseMaximum": 10
+				"baseMaximum": 100,
+				"baseRegen": 1
 			},
+			"Thirst":
+			{
+				"baseMaximum": 100,
+				"baseRegen": 1
+			},
+			"Infection":
+			{
+				"baseMaximum": 100,
+				"baseRegen": 1
+			},
+			"Oxygen":
+			{
+				"baseMaximum": 100,
+				"baseRegen": 1
+			}
 		}
 	}
 }

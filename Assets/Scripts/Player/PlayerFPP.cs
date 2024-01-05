@@ -1,17 +1,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor.Animations;
-using UZSG.Player;
+using UZSG.FPP;
 using UZSG.Systems;
 using UZSG.Items;
 using Cinemachine;
 
-namespace UZSG.FPP
+namespace UZSG.Player
 {
     /// <summary>
-    /// Handles the functionalities of the first-person view.
+    /// Handles the functionalities of the Player's first-person view.
     /// </summary>
-    public class FPPHandler : MonoBehaviour
+    public class PlayerFPP : MonoBehaviour
     {
         GameObject _equipped;
         FPPAnimatable _animator;
@@ -19,21 +19,24 @@ namespace UZSG.FPP
         float transitionDuration = 0.1f;
         Dictionary<int, GameObject> _cachedModels = new();
         Dictionary<int, IFPPVisible> _anims = new();
+        
+        PlayerEntity player;
+        [SerializeField] FPPCamera _camera;
+        public FPPCamera Camera => _camera;
 
-        /// <summary>
-        /// First-person camera.
-        /// </summary>
-        [SerializeField] CinemachineVirtualCamera FPPCamera;
-        [SerializeField] PlayerEntity _player;
+        internal void Initialize()
+        {
+            
+        }
 
         void Awake()
         {
-            FPPCamera = GetComponentInChildren<CinemachineVirtualCamera>();
+            player = GetComponent<PlayerEntity>();
         }
 
         void Start()
         {
-            _player.sm.OnStateChanged += PlayerStateChangedCallback;
+            player.sm.OnStateChanged += PlayerStateChangedCallback;
             Game.UI.ToggleCursor(false);
         }
 
@@ -50,7 +53,7 @@ namespace UZSG.FPP
         {
             if (obj == null) return;
 
-            GameObject go = Instantiate(obj.FPPModel, FPPCamera.transform);
+            GameObject go = Instantiate(obj.FPPModel, Camera.transform);
             _cachedModels.Add(index, go);
             _anims.Add(index, go.GetComponent<IFPPVisible>());
         }

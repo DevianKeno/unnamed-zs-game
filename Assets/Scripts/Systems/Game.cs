@@ -26,6 +26,10 @@ namespace UZSG.Systems
         static EntityManager _entityManager;
         public static EntityManager Entity { get => _entityManager; }
 
+        #region Debug
+        public FreeLookCamera FreeLookCamera;
+        #endregion
+
         PlayerInput _input;
         InputAction _toggleConsoleInput;
         
@@ -60,6 +64,8 @@ namespace UZSG.Systems
         {
             InitializeManagers();
             InitializeGlobalControls();
+            
+            FreeLookCamera.Initialize();
         }
 
         void InitializeManagers()

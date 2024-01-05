@@ -58,8 +58,9 @@ namespace UZSG.UI
 
         public void ToggleWindow(bool isVisible)
         {
-            OnToggle?.Invoke(isVisible);
             _isVisible = isVisible;
+            OnToggle?.Invoke(isVisible);
+            Game.UI.ToggleCursor(isVisible);
             gameObject.SetActive(isVisible);
         }
 

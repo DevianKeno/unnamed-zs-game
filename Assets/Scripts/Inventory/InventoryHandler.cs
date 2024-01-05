@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace UZSG.Inventory
@@ -19,10 +20,10 @@ namespace UZSG.Inventory
     public class InventoryHandler : MonoBehaviour
     {
         Hotbar _hotbar;
-        public Hotbar Hotbar { get => _hotbar; }
+        public Hotbar Hotbar => _hotbar;
         Bag _bag;
-        public Bag Bag { get => _bag; }
-        public ItemSlot Equipped { get => Hotbar.Equipped; }
+        public Bag Bag => _bag;
+        public ItemSlot Equipped => Hotbar.Equipped;
 
         public void Initialize()
         {

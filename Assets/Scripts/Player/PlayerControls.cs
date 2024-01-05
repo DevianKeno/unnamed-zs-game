@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Cinemachine;
 using UZSG.Systems;
+using UZSG.FPP;
 
 namespace UZSG.Player
 {
@@ -36,6 +37,11 @@ namespace UZSG.Player
         
         public float GroundingForce = -1f;
         public float GroundDistance = 0.5f;
+
+        [Header("Controls")]
+        public float CameraSensitivity = 0.32f;
+        public bool EnableMovementControls = true;
+        public bool EnableCameraControls = true;
         /// <summary>
         /// The input values performed in the current frame.
         /// </summary>
@@ -128,13 +134,10 @@ namespace UZSG.Player
         /// The Player's 3D model.
         /// </summary>
         [SerializeField] Transform model;
-        [SerializeField] CinemachineVirtualCamera virtualCamera;
-        [SerializeField] CinemachinePOV virtualCamPOV;
         [SerializeField] Rigidbody rb;
         [SerializeField] Transform groundChecker;
         [SerializeField] LayerMask groundMask;
         [SerializeField] PlayerInput input;
-        PlayerActions actions;
         InputAction moveInput;
         InputAction jumpInput;
         InputAction runInput;
@@ -143,9 +146,7 @@ namespace UZSG.Player
         void Awake()
         {
             player = GetComponent<PlayerEntity>();
-            actions = GetComponent<PlayerActions>();
             input = GetComponent<PlayerInput>();
-            virtualCamPOV = virtualCamera.GetCinemachineComponent<CinemachinePOV>();
             
             moveInput = input.actions.FindAction("Move");
             jumpInput = input.actions.FindAction("Jump");
@@ -227,12 +228,16 @@ namespace UZSG.Player
 
         void OnMoveInput(InputAction.CallbackContext context)
         {
+            if (!EnableMovementControls) return;
+
             _frameInput.move = context.ReadValue<Vector2>();
-            _isMovePressed =  _frameInput.move.x != 0 || _frameInput.move.y != 0;
+            _isMovePressed = _frameInput.move.x != 0 || _frameInput.move.y != 0;
         }
 
         void OnJumpInput(InputAction.CallbackContext context)
         {
+            if (!EnableMovementControls) return;
+
             if (IsGrounded)
             {
                 _jumped = true;
@@ -240,7 +245,9 @@ namespace UZSG.Player
         }
 
         void OnRunInput(InputAction.CallbackContext context)
-        {
+        {            
+            if (!EnableMovementControls) return;
+
             if (_isCrouching)
             {
                 Crouch();
@@ -264,7 +271,9 @@ namespace UZSG.Player
         }
 
         void OnCrouchInput(InputAction.CallbackContext context)
-        {
+        {            
+            if (!EnableMovementControls) return;
+
             Crouch();
         }
 
@@ -331,7 +340,7 @@ namespace UZSG.Player
             if (_previousPosition != _targetPosition)
             {
                 Vector3 displacement = _targetPosition - _previousPosition;
-                rb.velocity = displacement / Game.Tick.SecondsPerTick;
+                rb.velocity = displacement / Game.Tick.SecondsPerTick; // Will break if SecondsPerTick is 0
             } else
             {
                 rb.velocity = Vector3.zero;
@@ -352,31 +361,37 @@ namespace UZSG.Player
             if (_isCrouching)
             {            
                 _currentSpeed = CrouchSpeed;
-                CrouchPosition = virtualCamera.transform.position.y - 1f;
+                CrouchPosition = player.FPP.Camera.transform.position.y - 1f;
                 TransitionSpeed = 0.3f;
             } else
             {
                 _currentSpeed = MoveSpeed;
-                CrouchPosition = virtualCamera.transform.position.y + 1f;
+                CrouchPosition = player.FPP.Camera.transform.position.y + 1f;
                 TransitionSpeed = 0.3f;
             }
 
-            LeanTween.value(gameObject, virtualCamera.transform.position.y, CrouchPosition, TransitionSpeed)
+            LeanTween.value(gameObject, player.FPP.Camera.transform.position.y, CrouchPosition, TransitionSpeed)
                 .setOnUpdate( (i) =>
                 {   
-                    virtualCamera.transform.position = new Vector3(
-                        virtualCamera.transform.position.x,
+                    player.FPP.Camera.transform.position = new Vector3(
+                        player.FPP.Camera.transform.position.x,
                         i,
-                        virtualCamera.transform.position.z
+                        player.FPP.Camera.transform.position.z
                     );
                 }).setOnComplete( () =>
                 {
                     _isTransitioning = false;
                 }).setEaseOutExpo();
         }
-        
-        public void AllowControls(bool value)
+
+        public void ToggleMovementControls()
         {
+            ToggleMovementControls(!EnableMovementControls);
+        }
+        
+        public void ToggleMovementControls(bool value)
+        {
+            EnableMovementControls = value;
             if (value)
             {
                 moveInput.Enable();

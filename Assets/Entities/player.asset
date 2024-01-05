@@ -12,10 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cea627f23728654ba7f2d8e85166973, type: 3}
   m_Name: player
   m_EditorClassIdentifier: 
-  Id: player
-  Name: Player
   AssetReference:
     m_AssetGUID: c8a8e49113fae5b40b045ce0f2eeb0c3
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
+  Id: player
+  Name: Player
+  Attributable: 1
+  Attributes:
+  - {fileID: 11400000, guid: e1db9201565269c4caebcb12298f0665, type: 2}
+  - {fileID: 11400000, guid: 03beca28745658c48a7358ce536b9573, type: 2}
+  - {fileID: 11400000, guid: 7483f2347fa993845a34e0f8c8bbe2a5, type: 2}
+  - {fileID: 11400000, guid: 1163b94315ee82b43880f69e4567d600, type: 2}
+  - {fileID: 11400000, guid: a256a1de972d93b4b88e0ee04c8d2aa5, type: 2}
+  - {fileID: 11400000, guid: fe9f66b79d95e7948a4dfcb4512568c7, type: 2}
+  - {fileID: 11400000, guid: 1ca754ca1365db04c87c8de19db59ede, type: 2}
+  - {fileID: 11400000, guid: 2d61d3236698a6a4e81d503fae1c7421, type: 2}

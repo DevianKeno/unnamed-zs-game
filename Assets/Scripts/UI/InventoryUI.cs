@@ -218,24 +218,27 @@ namespace UZSG.UI
 
         public void Show()
         {
-            if (_isVisible) return;
-            _isVisible = true;
             gameObject.SetActive(true);
             Game.UI.ToggleCursor(true);
         }
 
         public void Hide()
         {
-            if (!_isVisible) return;
             _selectedSlotUI?.SetState(UIState.Normal);
             _selectedSlotUI = null;
-            _isVisible = false;
             gameObject.SetActive(false);
             Game.UI.ToggleCursor(false);
         }
 
         public void ToggleVisibility()
         {
+            ToggleVisibility(!_isVisible);
+        }
+
+        public void ToggleVisibility(bool isVisible)
+        {
+            _isVisible = isVisible;
+            
             if (_isVisible)
             {
                 Hide();
@@ -243,6 +246,6 @@ namespace UZSG.UI
             {
                 Show();
             }
-        }
+        }        
     }
 }

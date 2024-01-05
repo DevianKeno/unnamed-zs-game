@@ -15,7 +15,7 @@ MonoBehaviour:
   m_DefaultGroup: 4df500ee1f95bb542be6e196e4ad9a8d
   m_currentHash:
     serializedVersion: 2
-    Hash: cf27024265fd3bb24a3a9fc83d9026dd
+    Hash: 00218218e91320a1bbbf38e91bf44c6a
   m_OptimizeCatalogSize: 0
   m_BuildRemoteCatalog: 0
   m_BundleLocalCatalog: 0
@@ -49,6 +49,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3a1c3e634a5d2c640837d6f850c04726, type: 2}
   - {fileID: 11400000, guid: 55bf0002ddb4ab042a5407da0e367c83, type: 2}
   - {fileID: 11400000, guid: 00cc93a3c244a4d45962cddd85b19906, type: 2}
+  - {fileID: 11400000, guid: 885ef14304a29404e85e5d6286bd3e44, type: 2}
   m_BuildSettings:
     m_CompileScriptsInVirtualMode: 0
     m_CleanupStreamingAssetsAfterBuilds: 1
@@ -93,6 +94,7 @@ MonoBehaviour:
     - attributes
     - entities
     - items
+    - recipes
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: 4a6fdce26f389fb4d8d9a70a3414d3f2, type: 2}

@@ -7,7 +7,7 @@ using UZSG.Systems;
 namespace UZSG.UI
 {
     /// <summary>
-    /// UI Manager for URMG.
+    /// UI Manager for UZSG.
     /// </summary>
     public sealed class UIManager : MonoBehaviour
     {
@@ -35,9 +35,8 @@ namespace UZSG.UI
         
         #endregion
         
-        PlayerInput _input;
+        PlayerInput input;
         InputAction toggleCursorInput;
-
 
         [Header("UI Prefabs")]
         [SerializeField] GameObject consoleWindowPrefab;
@@ -47,7 +46,7 @@ namespace UZSG.UI
         
         void Awake()
         {
-            _input = GetComponent<PlayerInput>();
+            input = GetComponent<PlayerInput>();
         }
 
         internal void Initialize()
@@ -58,8 +57,8 @@ namespace UZSG.UI
             GameObject go;            
             Game.Console?.Log("Initializing UI...");
 
-            _input.actions.FindActionMap("Global").Enable();
-            toggleCursorInput = _input.actions.FindAction("Toggle Cursor");
+            input.actions.FindActionMap("Global").Enable();
+            toggleCursorInput = input.actions.FindAction("Toggle Cursor");
             toggleCursorInput.performed += ToggleCursor;
 
             go = Instantiate(consoleWindowPrefab, canvas.transform);

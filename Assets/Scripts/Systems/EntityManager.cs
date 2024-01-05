@@ -18,7 +18,7 @@ namespace UZSG.Systems
         /// </summary>
         Dictionary<string, EntityData> _entityList = new();
         [SerializeField] AssetLabelReference assetLabelReference;
-
+        
         internal void Initialize()
         {
             if (_isInitialized) return;
@@ -61,6 +61,10 @@ namespace UZSG.Systems
                     Game.Console?.LogDebug($"Failed to spawn entity {entityId}");
                 };
             }            
+        }
+
+        public void Spawn(string entityId, Vector3 position)
+        {
         }
     }
 }

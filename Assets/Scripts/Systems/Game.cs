@@ -9,29 +9,37 @@ namespace UZSG.Systems
     public sealed class Game : MonoBehaviour
     {
         public static Game Main { get; private set; }
+
+        #region Core
         static Console _console;
         public static Console Console { get => _console; }
         static UIManager _UI;
         public static UIManager UI { get => _UI; }
-        // static AudioManager _audio;
-        // public static AudioManager Audio { get => _audio; }
-        static ItemManager _items;
-        public static ItemManager Items { get => _items; }
-        static AttributesManager _attrs;
-        public static AttributesManager AttributesManager { get => _attrs; }
+        static AudioManager _audioManager;
+        public static AudioManager Audio { get => _audioManager; }
         static WorldManager _worldManager;
         public static WorldManager World { get => _worldManager; }
+        #endregion
+
+        #region World-entry
         static TickSystem _tick;
         public static TickSystem Tick { get => _tick; }
+        static AttributesManager _attrManager;
+        public static AttributesManager Attributes { get => _attrManager; }
+        static ItemManager _itemManager;
+        public static ItemManager Items { get => _itemManager; }
+        static RecipeManager _recipeManager;
+        public static RecipeManager Recipes { get => _recipeManager; }
         static EntityManager _entityManager;
         public static EntityManager Entity { get => _entityManager; }
-
+        #endregion
+        
         #region Debug
         public FreeLookCamera FreeLookCamera;
         #endregion
 
-        PlayerInput _input;
-        InputAction _toggleConsoleInput;
+        PlayerInput input;
+        InputAction toggleConsoleInput;
         
         /// <summary>
         /// Called after all Managers have been initialized.
@@ -49,15 +57,18 @@ namespace UZSG.Systems
             {
                 Main = this;
                 _console = GetComponentInChildren<Console>();
+                
                 _UI = GetComponentInChildren<UIManager>();
-                _tick = GetComponentInChildren<TickSystem>();
+                _audioManager = GetComponentInChildren<AudioManager>();
                 _worldManager = GetComponentInChildren<WorldManager>();
-                _items = GetComponentInChildren<ItemManager>();
+                
+                _tick = GetComponentInChildren<TickSystem>();
+                _attrManager = GetComponentInChildren<AttributesManager>();
+                _itemManager = GetComponentInChildren<ItemManager>();
                 _entityManager = GetComponentInChildren<EntityManager>();
-                _attrs = GetComponentInChildren<AttributesManager>();
             }
 
-            _input = GetComponent<PlayerInput>();
+            input = GetComponent<PlayerInput>();
         }
 
         void Start()
@@ -74,25 +85,25 @@ namespace UZSG.Systems
             _console.Initialize();
 
             _UI.Initialize();
-            // _audio.Initialize();
+            _audioManager.Initialize();
             _worldManager.Initialize();
 
-            #region Theses should be only initialized upon entering worlds
+            #region These should be only initialized upon entering worlds
+            /// Thesea are run only on scenes that are already "worlds"
             _tick.Initialize();
-            _items.Initialize();
+            _attrManager.Initialize();
+            _itemManager.Initialize();
             _entityManager.Initialize();
-            _attrs.Initialize();
-            #endregion
-            
+            #endregion            
 
             OnLateInit?.Invoke();
         }
 
         void InitializeGlobalControls()
         {
-            _toggleConsoleInput = _input.actions.FindAction("Toggle Console Window");
+            toggleConsoleInput = input.actions.FindAction("Toggle Console Window");
 
-            _toggleConsoleInput.performed += ToggleConsole;
+            toggleConsoleInput.performed += ToggleConsole;
         }
 
         /// <summary>

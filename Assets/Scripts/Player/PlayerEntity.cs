@@ -4,6 +4,8 @@ using UZSG.Systems;
 using UZSG.Inventory;
 using UZSG.Entities;
 using UZSG.Attributes;
+using System.Collections.Generic;
+using UZSG.Crafting;
 
 namespace UZSG.Player
 {
@@ -72,30 +74,30 @@ namespace UZSG.Player
 
         void InitializeAttributes()
         {
-            var attr = Game.AttributesManager.CreateAttribute("health");
+            var attr = Game.Attributes.CreateAttribute("health");
             Attributes.AddAttribute(attr);
             
-            attr = Game.AttributesManager.CreateAttribute("stamina");
+            attr = Game.Attributes.CreateAttribute("stamina");
             Attributes.AddAttribute(attr);
             
-            attr = Game.AttributesManager.CreateAttribute("mana");
+            attr = Game.Attributes.CreateAttribute("mana");
             Attributes.AddAttribute(attr);
 
-            attr = Game.AttributesManager.CreateAttribute("hunger");
+            attr = Game.Attributes.CreateAttribute("hunger");
             Attributes.AddAttribute(attr);
 
-            attr = Game.AttributesManager.CreateAttribute("hydration");
+            attr = Game.Attributes.CreateAttribute("hydration");
             Attributes.AddAttribute(attr);
             
-            attr = Game.AttributesManager.CreateAttribute("move_speed");
+            attr = Game.Attributes.CreateAttribute("move_speed");
             attr.Value = 7f;
             Attributes.AddAttribute(attr);
 
-            attr = Game.AttributesManager.CreateAttribute("run_speed");
+            attr = Game.Attributes.CreateAttribute("run_speed");
             attr.Value = Attributes.GetAttributeFromId("move_speed").Value * 1.5f;
             Attributes.AddAttribute(attr);
 
-            attr = Game.AttributesManager.CreateAttribute("crouch_speed");
+            attr = Game.Attributes.CreateAttribute("crouch_speed");
             attr.Value = Attributes.GetAttributeFromId("move_speed").Value * 0.4f;
             Attributes.AddAttribute(attr);
         }

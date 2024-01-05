@@ -3,6 +3,9 @@ using UZSG.Items;
 
 namespace UZSG.Systems
 {
+    /// <summary>
+    /// Developer console for invoking system commands.
+    /// </summary>
     public sealed partial class Console : MonoBehaviour, IInitializable
     {
         #region Command implementations

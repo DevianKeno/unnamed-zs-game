@@ -10,22 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: Items
+  m_Name: Recipes
   m_EditorClassIdentifier: 
-  m_GroupName: Items
+  m_GroupName: Recipes
   m_Data:
     m_SerializedData: []
-  m_GUID: e41f8c06b7533374aa45ec0c3c72bede
+  m_GUID: 8de258ce5b70d6746bd2ace89f7d7177
   m_SerializeEntries:
-  - m_GUID: 1e748601be5151447bda073619fc594d
-    m_Address: Assets/Data/Items
+  - m_GUID: 342304b77230c3f499e9705c7e019b14
+    m_Address: Assets/Data/Recipes
     m_ReadOnly: 0
     m_SerializedLabels:
-    - items
+    - recipes
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: d6b1e406a4a37f140ab8a82b4ab55278, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: 1ce98e90da9f8a14f9f532b92eb37a97, type: 2}
-    - {fileID: 11400000, guid: 89a0ccb429bfe3246bcc9e8bd2102dec, type: 2}
+    - {fileID: 11400000, guid: ec051d756d4a08b418752f0ab5cf831d, type: 2}
+    - {fileID: 11400000, guid: e39d5c7c24e03ab4f8c83258f2ce2fb0, type: 2}

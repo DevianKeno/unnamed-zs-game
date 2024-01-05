@@ -75,7 +75,7 @@ namespace UZSG.Player
             secondaryInput.started += OnPerformSecondary;         // RMB (default)
             secondaryInput.canceled += OnPerformSecondary;         // RMB (default)
 
-            player.Inventory.Hotbar.OnChangeEquipped += HotbarChangeEquippedCallback;
+            // player.Inventory.Hotbar.OnChangeEquipped += HotbarChangeEquippedCallback;
         }
 
         void OnDisable()

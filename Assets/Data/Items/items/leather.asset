@@ -18,3 +18,10 @@ MonoBehaviour:
   Sprite: {fileID: 0}
   StackSize: 999
   Type: 0
+  Subtype: 0
+  IsMaterial: 1
+  AssetReference:
+    m_AssetGUID: 
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0

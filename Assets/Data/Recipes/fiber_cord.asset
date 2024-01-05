@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3372a5b7bb26d3f488d62bf6042f3f86, type: 3}
   m_Name: fiber_cord
   m_EditorClassIdentifier: 
+  Id: recipe_fiber_cord
   Name: Fiber Cord
   Output:
     _itemData: {fileID: 11400000, guid: 1a052c19c2caff046a456a3918e4c3eb, type: 2}

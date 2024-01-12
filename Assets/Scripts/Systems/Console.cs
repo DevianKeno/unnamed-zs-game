@@ -206,5 +206,14 @@ namespace UZSG.Systems
             if (!EnableDebugMode) return;
             Log(message);
         }
+        
+        /// <summary>
+        /// Log a debug message into the game's console.
+        /// </summary>
+        public void LogWarning(object message)
+        {
+            if (!EnableDebugMode) return;
+            Log($"[WARNING]: {message}");
+        }
     }
 }

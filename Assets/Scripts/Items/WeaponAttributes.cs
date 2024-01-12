@@ -1,13 +1,22 @@
 using System;
+using UnityEngine.Rendering;
 
 namespace UZSG.Items
 {
     [Serializable]
-    public struct WeaponAttributes
+    public struct WeaponMeleeAttributes
     {
-        public int BaseDamage;
-        public float BaseMeleeSpeed;
+        public float BaseDamage;
         public float BaseCritStrike;
         public float BaseCritDamage;
+    }
+    
+    [Serializable]
+    public struct WeaponRangedAttributes
+    {
+        public float BaseDamage;
+        public int Capacity;
+        public float ReloadSpeed;
+        public float ReloadSpeedMultiplier;
     }
 }

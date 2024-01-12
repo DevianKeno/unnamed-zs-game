@@ -9,6 +9,6 @@ namespace UZSG.Entities
     public class Entity : MonoBehaviour, ISpawnable//, IAlive
     {
         public EntityData Data;
-        public virtual void Spawn() {}
+        public virtual void OnSpawn() {}
     }
 }

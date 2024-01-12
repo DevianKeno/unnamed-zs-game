@@ -23,10 +23,10 @@ namespace UZSG.Player
         PlayerEntity player;
         [SerializeField] FPPCamera _camera;
         public FPPCamera Camera => _camera;
+        public Transform WeaponHolder;
 
         internal void Initialize()
         {
-            
         }
 
         void Awake()
@@ -37,6 +37,7 @@ namespace UZSG.Player
         void Start()
         {
             player.sm.OnStateChanged += PlayerStateChangedCallback;
+            Camera.WeaponOrigin = WeaponHolder.transform.localPosition;
             Game.UI.ToggleCursor(false);
         }
 
@@ -53,7 +54,7 @@ namespace UZSG.Player
         {
             if (obj == null) return;
 
-            GameObject go = Instantiate(obj.FPPModel, Camera.transform);
+            GameObject go = Instantiate(obj.FPPModel, Camera.WeaponHolder.transform);
             _cachedModels.Add(index, go);
             _anims.Add(index, go.GetComponent<IFPPVisible>());
         }

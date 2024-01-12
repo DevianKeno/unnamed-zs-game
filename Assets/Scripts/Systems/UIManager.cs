@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UZSG.Inventory;
 using UZSG.Items;
 using UZSG.Systems;
 
@@ -24,12 +25,16 @@ namespace UZSG.UI
         public ConsoleUI ConsoleUI => _consoleUI;
         [SerializeField] InteractionIndicator _interactIndicator;
         public InteractionIndicator InteractIndicator => _interactIndicator;
+        [SerializeField] HUDHandler _HUD;
+        public HUDHandler HUD => _HUD;
         [SerializeField] InventoryUI _inventoryUI;
         public InventoryUI InventoryUI => _inventoryUI;
 
         #region UI Events
         /// <summary>
         /// Called everytime the visibility of the cursor changes.
+        /// Params:
+        ///   bool: isVisible
         /// </summary>
         public event Action<bool> OnCursorToggled;
         
@@ -41,6 +46,7 @@ namespace UZSG.UI
         [Header("UI Prefabs")]
         [SerializeField] GameObject consoleWindowPrefab;
         [SerializeField] GameObject interactIndicatorPrefab;
+        [SerializeField] GameObject HUDPrefab;
         [SerializeField] GameObject inventoryPrefab;
         [SerializeField] GameObject itemDisplayPrefab;
         
@@ -65,6 +71,11 @@ namespace UZSG.UI
             go.name = "Console Window";
             _consoleUI = go.GetComponent<ConsoleUI>();
             _consoleUI.Initialize();
+            
+            go = Instantiate(HUDPrefab, canvas.transform);
+            go.name = "HUD";
+            _HUD = go.GetComponent<HUDHandler>();
+            _HUD.Initialize();
 
             #region Should only appear inside worlds
             _inventoryUI?.Hide();

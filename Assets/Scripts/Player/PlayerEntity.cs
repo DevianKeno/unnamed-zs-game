@@ -34,7 +34,8 @@ namespace UZSG.Player
         public PlayerControls Controls { get; private set; }
         public PlayerActions Actions { get; private set; }
         public PlayerFPP FPP { get; private set; }
-        public InventoryHandler Inventory { get; private set; }
+        [SerializeField] InventoryHandler _inventory;
+        public InventoryHandler Inventory => _inventory;
 
         void Awake()
         {
@@ -43,12 +44,11 @@ namespace UZSG.Player
             Controls = GetComponent<PlayerControls>();
             Actions = GetComponent<PlayerActions>();
             FPP = GetComponent<PlayerFPP>();
-            // Inventory = GetComponent<InventoryHandler>();
         }
 
-        public override void Spawn()
+        public override void OnSpawn()
         {
-            base.Spawn();
+            base.OnSpawn();
             Initialize();
         }
 
@@ -60,6 +60,8 @@ namespace UZSG.Player
             Controls.Initialize();
             Actions.Initialize();
             FPP.Initialize();
+            
+            Game.UI.InventoryUI?.BindInventory(_inventory);
 
             sm.InitialState = sm.States[PlayerStates.Idle];
 
@@ -67,6 +69,9 @@ namespace UZSG.Player
             sm.States[PlayerStates.Run].OnEnter += OnRunX;
             sm.States[PlayerStates.Jump].OnEnter += OnJumpX;
             sm.States[PlayerStates.Crouch].OnEnter += OnCrouchX;
+
+            Game.UI.HUD.SetPlayer(this);
+            Game.UI.HUD.ToggleVisibility(true);
 
             OnDoneInit?.Invoke(this, new());
             Game.Tick.OnTick += Tick;
@@ -90,7 +95,7 @@ namespace UZSG.Player
             Attributes.AddAttribute(attr);
             
             attr = Game.Attributes.CreateAttribute("move_speed");
-            attr.Value = 7f;
+            attr.Value = 8.5f;
             Attributes.AddAttribute(attr);
 
             attr = Game.Attributes.CreateAttribute("run_speed");

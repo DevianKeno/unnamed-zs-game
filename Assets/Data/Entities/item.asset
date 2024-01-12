@@ -12,10 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cea627f23728654ba7f2d8e85166973, type: 3}
   m_Name: item
   m_EditorClassIdentifier: 
-  Id: item
-  Name: Item (Entity)
   AssetReference:
-    m_AssetGUID: 
+    m_AssetGUID: 40f96aaff95f534479b911626edf87ba
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
+  Id: item
+  Name: Item (Entity)
+  Attributable: 0
+  Attributes: []

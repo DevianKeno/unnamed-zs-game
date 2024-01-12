@@ -12,6 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 873d4c4f155a35a46b4699d35b336ec7, type: 3}
   m_Name: bandage
   m_EditorClassIdentifier: 
+  AssetReference:
+    m_AssetGUID: ccea5945f4750e048930c3dfdda097aa
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
   Id: bandage
   Name: Bandage
   Description: Stops bleeding.
@@ -20,4 +25,3 @@ MonoBehaviour:
   Type: 0
   Subtype: 1
   IsMaterial: 1
-  Model: {fileID: 0}

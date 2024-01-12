@@ -8,6 +8,10 @@ namespace UZSG.Systems
     /// </summary>
     public sealed partial class Console : MonoBehaviour, IInitializable
     {
+        /// The args parameters represent the arguments WITHOUT the actual command.
+        /// ex. "/spawn item bandage"
+        /// The args would consist of [item, bandage]
+        
         #region Command implementations
         /// <summary>
         /// Clears the console messages.
@@ -38,7 +42,7 @@ namespace UZSG.Systems
                 WriteLine("List of available commands");
                 foreach (var c in _commands)
                 {
-
+                    ///TECHNICAL DEBT
                 }
             }
         }
@@ -65,7 +69,16 @@ namespace UZSG.Systems
         /// </summary>
         void CSpawn(object sender, string[] args)
         {
-            Game.Entity.Spawn(args[0]);
+            if (args.Length == 1)
+            {
+                Game.Entity.Spawn(args[0]);
+            } else
+            {
+                if (args[0] == "item")
+                {
+                    Game.Entity.SpawnItem(args[1]);
+                }
+            }
         }
 
         /// <summary>

@@ -12,8 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 873d4c4f155a35a46b4699d35b336ec7, type: 3}
   m_Name: none
   m_EditorClassIdentifier: 
+  AssetReference:
+    m_AssetGUID: 40f96aaff95f534479b911626edf87ba
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
   Id: none
   Name: None
-  Description: None.
+  Description: This item represents nothing.
   Sprite: {fileID: 0}
   StackSize: 1
+  Type: 0
+  Subtype: 0
+  IsMaterial: 0

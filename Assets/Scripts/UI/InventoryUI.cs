@@ -71,11 +71,69 @@ namespace UZSG.UI
             Hide();
         }
 
+        void Update()
+        {
+            if (_displayedItem != null)
+            {
+                _displayedItem.transform.position = Input.mousePosition;
+            }
+        }
+
         void OnEnable()
         {
             _inventory.Hotbar.OnSlotContentChanged += HotbarSlotChangedCallback;
             _inventory.Hotbar.OnChangeEquipped += HotbarChangeEquippedCallback;
             _inventory.Bag.OnSlotContentChanged += BagSlotChangedCallback;
+        }
+        
+        public void BindInventory(InventoryHandler inventory)
+        {
+            if (inventory != null)
+            {
+                _inventory = inventory;
+            }
+        }
+
+        public void SetSlotDisplay(int slotIndex, Item item)
+        {
+            if (slotIndex > 18 )
+            {
+                Debug.Log("Slot index out of bounds.");
+                return;
+            }
+            _bagSlotUIs[slotIndex].SetDisplay(item);
+        }
+
+        public void Show()
+        {
+            gameObject.SetActive(true);
+            Game.UI.ToggleCursor(true);
+        }
+
+        public void Hide()
+        {
+            _selectedSlotUI?.SetState(UIState.Normal);
+            _selectedSlotUI = null;
+            gameObject.SetActive(false);
+            Game.UI.ToggleCursor(false);
+        }
+
+        public void ToggleVisibility()
+        {
+            ToggleVisibility(!_isVisible);
+        }
+
+        public void ToggleVisibility(bool isVisible)
+        {
+            _isVisible = isVisible;
+            
+            if (_isVisible)
+            {
+                Hide();
+            } else
+            {
+                Show();
+            }
         }
 
         void OnStartHoverSlot(object sender, PointerEventData e)
@@ -197,55 +255,5 @@ namespace UZSG.UI
             _heldItem = null;
             Destroy(_displayedItem.gameObject);
         }
-
-        void Update()
-        {
-            if (_displayedItem != null)
-            {
-                _displayedItem.transform.position = Input.mousePosition;
-            }
-        }
-
-        public void SetSlotDisplay(int slotIndex, Item item)
-        {
-            if (slotIndex > 18 )
-            {
-                Debug.Log("Slot index out of bounds.");
-                return;
-            }
-            _bagSlotUIs[slotIndex].SetDisplay(item);
-        }
-
-        public void Show()
-        {
-            gameObject.SetActive(true);
-            Game.UI.ToggleCursor(true);
-        }
-
-        public void Hide()
-        {
-            _selectedSlotUI?.SetState(UIState.Normal);
-            _selectedSlotUI = null;
-            gameObject.SetActive(false);
-            Game.UI.ToggleCursor(false);
-        }
-
-        public void ToggleVisibility()
-        {
-            ToggleVisibility(!_isVisible);
-        }
-
-        public void ToggleVisibility(bool isVisible)
-        {
-            _isVisible = isVisible;
-            
-            if (_isVisible)
-            {
-                Hide();
-            } else
-            {
-                Show();
-            }
-        }        
     }
 }

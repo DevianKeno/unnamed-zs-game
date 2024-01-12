@@ -128,19 +128,21 @@ namespace UZSG.Player
             CheckLookingAt();
         }
 
+        /// <summary>
+        /// Maybe instead of firing every tick, this can just fire everytime the player's ray collides with an IInteractable object
+        /// </summary>
         void CheckLookingAt()
         {
             // Cast a ray from the center of the screen
             ray = player.MainCamera.ScreenPointToRay(new Vector2(Screen.width / 2, Screen.height / 2));
 
             if (Physics.SphereCast(ray, Radius, out RaycastHit hit, MaxInteractDistance, LayerMask.GetMask("Interactable")))
+            // if (Physics.Raycast(ray, out RaycastHit hit, MaxInteractDistance, LayerMask.GetMask("Interactable")))
             {
                 lookingAt = hit.collider.gameObject.GetComponent<IInteractable>();
 
-                if (hit.collider.CompareTag("Item"))
-                {
-                    Game.UI.InteractIndicator.Show(lookingAt);
-                }
+                Game.UI.InteractIndicator.Show(lookingAt);
+
             } else
             {
                 lookingAt = null;
@@ -151,11 +153,11 @@ namespace UZSG.Player
         /// <summary>
         /// Visualizes the interaction size.
         /// </summary>
-        // void OnDrawGizmos()
-        // {
-        //     Gizmos.DrawLine(ray.origin, ray.origin + ray.direction * (MaxInteractDistance + Radius));
-        //     Gizmos.DrawWireSphere(ray.origin + ray.direction * (MaxInteractDistance + Radius), Radius);
-        // }
+        void OnDrawGizmos()
+        {
+            Gizmos.DrawLine(ray.origin, ray.origin + ray.direction * (MaxInteractDistance));
+            Gizmos.DrawWireSphere(ray.origin + ray.direction * (MaxInteractDistance + Radius), Radius);
+        }
 
         /// <summary>
         /// Pick up item from ItemEntity and put in the inventory.

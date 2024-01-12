@@ -89,11 +89,12 @@ namespace UZSG.Systems
             _worldManager.Initialize();
 
             #region These should be only initialized upon entering worlds
-            /// Thesea are run only on scenes that are already "worlds"
+            /// These are run only on scenes that are already "worlds"           
             _tick.Initialize();
             _attrManager.Initialize();
             _itemManager.Initialize();
             _entityManager.Initialize();
+
             #endregion            
 
             OnLateInit?.Invoke();

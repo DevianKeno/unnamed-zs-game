@@ -12,16 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 873d4c4f155a35a46b4699d35b336ec7, type: 3}
   m_Name: cloth
   m_EditorClassIdentifier: 
+  AssetReference:
+    m_AssetGUID: 
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
   Id: cloth
   Name: Cloth
   Description: Manipis na tela.
   Sprite: {fileID: 0}
   StackSize: 999
   Type: 0
-  Subtype: 1
+  Subtype: 0
   IsMaterial: 1
-  AssetReference:
-    m_AssetGUID: 
-    m_SubObjectName: 
-    m_SubObjectType: 
-    m_EditorAssetChanged: 0

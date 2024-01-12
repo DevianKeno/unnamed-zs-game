@@ -2,6 +2,7 @@ using UnityEngine;
 using Cinemachine;
 using UZSG.Systems;
 using UZSG.Player;
+using System;
 
 namespace UZSG.FPP
 {
@@ -20,11 +21,16 @@ namespace UZSG.FPP
         /// <summary>
         /// The original position of the camera.
         /// </summary>
-        Vector3 _origin;
+        Vector3 _camOrigin;
+        /// <summary>
+        /// The original position of the weapon holder.
+        /// </summary>
+        public Vector3 WeaponOrigin;
         float lerpTimer;
         
         [Header("Components")]
-        [SerializeField] PlayerEntity player;
+        public PlayerEntity player;
+        public Transform WeaponHolder;
         [SerializeField] Camera mainCamera;
         [SerializeField] CinemachineVirtualCamera virtualCamera;
         [SerializeField] CinemachinePOV POV;
@@ -38,7 +44,13 @@ namespace UZSG.FPP
 
         void Start()
         {
-            _origin = virtualCamera.transform.localPosition;
+            _camOrigin = virtualCamera.transform.localPosition;
+            Game.UI.OnCursorToggled += CursorToggledCallback;
+        }
+
+        void CursorToggledCallback(bool isVisible)
+        {
+            ToggleControls(!isVisible);
         }
 
         void Update()
@@ -53,20 +65,23 @@ namespace UZSG.FPP
             if (!player.Controls.IsGrounded) return;
             if (player.Controls.HorizontalSpeed < MinMoveSpeed) return;
 
-            Vector3 bobbing = Vector3.zero;
-            float sine = Mathf.Sin(Time.time * Frequency);
-            float cosine = Mathf.Cos(Time.time * Frequency / 2);
+            Vector3 camBob = _camOrigin;
+            Vector3 weaponBob = WeaponOrigin;
+            float frequency = Time.time * Frequency;
+            float sine = Mathf.Sin(frequency);
+            float cosine = Mathf.Cos(frequency / 2);
 
-            bobbing += mainCamera.transform.right * (cosine * Amplitude * 2);
-            bobbing += -mainCamera.transform.up * (sine * Amplitude);
-
-            // virtualCamera.transform.localPosition = _origin + bobbing;
+            camBob += mainCamera.transform.right * (cosine * Amplitude * 2f);
+            camBob += -mainCamera.transform.up * (sine * Amplitude);
+            weaponBob += mainCamera.transform.right * (cosine * Amplitude * 0.5f);
+            weaponBob += -mainCamera.transform.up * (sine * Amplitude * 0.5f);
 
             /// This makes the bobbing speed per the TPS
             if (lerpTimer < Game.Tick.SecondsPerTick)
             {
                 lerpTimer += Time.time;                    
-                virtualCamera.transform.localPosition = Vector3.Lerp(_origin, bobbing, lerpTimer / Game.Tick.SecondsPerTick);
+                virtualCamera.transform.localPosition = Vector3.Lerp(_camOrigin, camBob, lerpTimer / Game.Tick.SecondsPerTick);
+                WeaponHolder.transform.localPosition = Vector3.Lerp(WeaponOrigin, weaponBob, lerpTimer / Game.Tick.SecondsPerTick);
             } else
             {
                 lerpTimer = 0f;
@@ -75,9 +90,9 @@ namespace UZSG.FPP
         
         void ResetPosition()
         {
-            if (virtualCamera.transform.localPosition == _origin) return;
+            if (virtualCamera.transform.localPosition == _camOrigin) return;
 
-            virtualCamera.transform.localPosition = Vector3.Lerp(virtualCamera.transform.localPosition, _origin, 1f * Time.deltaTime);
+            virtualCamera.transform.localPosition = Vector3.Lerp(virtualCamera.transform.localPosition, _camOrigin, 1f * Time.deltaTime);
         }
 
         public void ToggleBobbing(bool enabled)

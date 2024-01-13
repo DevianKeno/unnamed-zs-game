@@ -10,7 +10,7 @@ namespace UZSG.Inventory
             public int Index;
             public ItemSlot Equipped;
         }
-
+        public override int SlotsCount { get; set; }
         public static int MainhandIndex = 1;
         public static int OffhandIndex = 2;
         public static int[] SlotsIndex = { 3, 4, 5, 6, 7, 8, 9, 0 };
@@ -36,8 +36,16 @@ namespace UZSG.Inventory
                 return _slots[i];
             }
         }
+               
+        ~Hotbar()
+        {
+            foreach (var slot in Slots)
+            {
+                slot.OnContentChanged -= SlotContentChanged;
+            }
+        }
 
-        void Awake() 
+        internal void Initialize()
         {
             _slots = new ItemSlot[11];
 

@@ -10,6 +10,7 @@ namespace UZSG
     /// </summary>
     public abstract class Container : MonoBehaviour
     {
+        public abstract int SlotsCount { get; set; }
         public abstract ItemSlot[] Slots { get; }
         /// <summary>
         /// Called whenever the content of a Slot is changed.

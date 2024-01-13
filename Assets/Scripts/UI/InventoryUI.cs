@@ -5,14 +5,17 @@ using UnityEngine.EventSystems;
 using UZSG.Systems;
 using UZSG.Inventory;
 using UZSG.Items;
+using UnityEngine.InputSystem;
 
 namespace UZSG.UI
 {
-    public class InventoryUI : MonoBehaviour
+    public class InventoryUI : MonoBehaviour, IInitializable
     {
         [SerializeField] InventoryHandler _inventory;
         [SerializeField] Dictionary<int, ItemSlotUI> _bagSlotUIs = new();
         [SerializeField] Dictionary<int, ItemSlotUI> _hotbarSlotUIs = new();
+        bool _isInitialized;
+        public bool IsInitialized => _isInitialized;
         bool _isVisible = true;
         public bool IsVisible { get => _isVisible; }
         bool _isHolding = false;
@@ -25,50 +28,50 @@ namespace UZSG.UI
         ItemDisplayUI _displayedItem;
         Selector selector;
 
-        [Header("Bag")]
+        [Header("Inventory Components")]
         [SerializeField] GameObject bag;
         [SerializeField] GameObject hotbar;
 
+        [Header("Inventory Components")]
+        [SerializeField] PlayerInput input;
+        InputActionMap actionMap;
+        InputAction shiftInput;
+        InputAction closeInput;
+
+
         [Header("Prefabs")]
         [SerializeField] GameObject slotPrefab;
+        [SerializeField] GameObject weaponSlotPrefab;
         [SerializeField] GameObject itemDisplayPrefab;
         [SerializeField] GameObject selectorPrefab;
 
         void Awake()
         {
-            // Bag slots
-            int i = 0;
-            foreach (Transform t in bag.transform)
-            {
-                ItemSlotUI s = t.GetComponent<ItemSlotUI>();
-                s.Index = i;
-                s.OnClick += OnClickBagSlot;
-                s.OnStartHover += OnStartHoverSlot;
-                s.OnEndHover += OnEndHoverSlot;
-                _bagSlotUIs.Add(i, s);
-                i++;
-            }
+            input = GetComponent<PlayerInput>();
 
-            // Hotbar slots
-            i = 1;
-            foreach (Transform t in hotbar.transform)
-            {
-                ItemSlotUI s = t.GetComponent<ItemSlotUI>();
-                s.Index = i;
-                s.OnClick += OnClickHotbarSlot;
-                s.OnStartHover += OnStartHoverSlot;
-                s.OnEndHover += OnEndHoverSlot;
-                _hotbarSlotUIs.Add(i, s);
-                i++;
-            }
-            _hotbarSlotUIs[10].Index = 0;
+            actionMap = input.actions.FindActionMap("Inventory Window");
+            shiftInput = actionMap.FindAction("Shift Click");
+            closeInput = actionMap.FindAction("Close");
         }
 
         void Start()
         {
-            selector = Instantiate(selectorPrefab, transform).GetComponent<Selector>();
-            selector.Hide();
-            Hide();
+            shiftInput.performed += (context) =>
+            {
+
+            };
+            
+            closeInput.performed += (context) =>
+            {
+                ToggleVisibility(false);
+            };
+        }
+
+        void OnDestroy()
+        {
+            _inventory.Hotbar.OnSlotContentChanged -= HotbarSlotChangedCallback;
+            _inventory.Hotbar.OnChangeEquipped -= HotbarChangeEquippedCallback;
+            _inventory.Bag.OnSlotContentChanged -= BagSlotChangedCallback;
         }
 
         void Update()
@@ -78,13 +81,51 @@ namespace UZSG.UI
                 _displayedItem.transform.position = Input.mousePosition;
             }
         }
-
-        void OnEnable()
+        
+        public void Initialize()
         {
+            if (_isInitialized) return;
+            _isInitialized = true;
+
+            // Bag slots
+            for (int i = 0; i < _inventory.Bag.SlotsCount; i++)
+            {
+                var go = Instantiate(slotPrefab);
+                go.name = $"Slot ({i})";
+                go.transform.SetParent(bag.transform);
+
+                ItemSlotUI slot = go.GetComponent<ItemSlotUI>();
+                slot.Index = i;
+                slot.OnClick += OnClickBagSlot;
+                slot.OnStartHover += OnStartHoverSlot;
+                slot.OnEndHover += OnEndHoverSlot;
+                _bagSlotUIs.Add(i, slot);
+            }
+
+            // Hotbar slots
+            for (int i = 0; i < _inventory.Hotbar.SlotsCount; i++)
+            {
+                var go = Instantiate(i == 0 ? weaponSlotPrefab : slotPrefab);
+                go.name = $"Hotbar Slot ({i})";
+                go.transform.SetParent(hotbar.transform);
+            
+                ItemSlotUI slot = go.GetComponent<ItemSlotUI>();
+                slot.Index = i;
+                slot.OnClick += OnClickHotbarSlot;
+                slot.OnStartHover += OnStartHoverSlot;
+                slot.OnEndHover += OnEndHoverSlot;
+                _hotbarSlotUIs.Add(i, slot);
+            }
+            // _hotbarSlotUIs[10].Index = 0;
+            
             _inventory.Hotbar.OnSlotContentChanged += HotbarSlotChangedCallback;
             _inventory.Hotbar.OnChangeEquipped += HotbarChangeEquippedCallback;
             _inventory.Bag.OnSlotContentChanged += BagSlotChangedCallback;
+
+            selector = Instantiate(selectorPrefab, transform).GetComponent<Selector>();
+            Hide();
         }
+
         
         public void BindInventory(InventoryHandler inventory)
         {
@@ -98,7 +139,7 @@ namespace UZSG.UI
         {
             if (slotIndex > 18 )
             {
-                Debug.Log("Slot index out of bounds.");
+                Game.Console.LogDebug("Slot index out of bounds.");
                 return;
             }
             _bagSlotUIs[slotIndex].SetDisplay(item);
@@ -107,13 +148,17 @@ namespace UZSG.UI
         public void Show()
         {
             gameObject.SetActive(true);
+            selector.Hide();
             Game.UI.ToggleCursor(true);
+            actionMap.Enable();
         }
 
         public void Hide()
         {
+            actionMap.Disable();
             _selectedSlotUI?.SetState(UIState.Normal);
             _selectedSlotUI = null;
+            selector.Hide();
             gameObject.SetActive(false);
             Game.UI.ToggleCursor(false);
         }

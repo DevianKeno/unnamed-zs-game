@@ -1,49 +1,59 @@
 using System;
 using System.Collections.Generic;
+using UZSG.Entities;
 using UZSG.Systems;
 
 namespace UZSG.Attributes
 {
-    [Serializable]
-    public struct AttributeIdPair
-    {
-        public string Id;
-        public Attribute Attribute;
-    }
-
     /// <summary>
-    /// Represents a collection of attributes for an entity. Individual attributes can be indexed
+    /// Represents a collection of attributes for an entity.
+    /// For performance, you can cache an Attribute first, then subscribe to events for tracking changes in its value.
+    /// Individual attributes can also be indexed.
     /// </summary>
     [Serializable]
-    public class AttributeCollection
+    public class AttributeCollection<T> where T : Attribute
     {
-        Dictionary<string, Attribute> _attributes = new();
-        public Dictionary<string, Attribute> Attributes => _attributes;
-        public List<AttributeIdPair> AttributeList = new();
+        public List<T> Attributes = new();
+        Dictionary<string, T> _attributesDict = new();
         
-        public Attribute this[string id]
+        public T this[string id]
         {
-            get
+            get => GetAttributeFromId(id);
+        }
+
+        /// <summary>
+        /// Just a way to combine grouped attributes.
+        /// </summary>
+        public AttributeCollection(AttributeCollection<T> collection)
+        {
+            Attributes = collection.Attributes;
+        }
+
+        /// <summary>
+        /// Just a way to combine grouped attributes.
+        /// </summary>
+        public AttributeCollection(AttributeCollection<T>[] attrCollections)
+        {
+            foreach (var collection in attrCollections)
             {
-                if (Attributes.ContainsKey(id))
-                {
-                    return _attributes[id];
-                }
-                Game.Console?.Log($"Unable to retrieve Attribute [{id}] as it's not in the collection.");
-                return null;
+                Attributes.AddRange(collection.Attributes);
             }
         }
 
-        public void AddAttribute(Attribute attribute)
+        public void Initialize()
         {
-            if (!Attributes.ContainsKey(attribute.Data.Id))
+            foreach (T attr in Attributes)
+            {                
+                AddAttribute(attr);
+                attr.Initialize();
+            }
+        }
+
+        public void AddAttribute(T attribute)
+        {
+            if (!_attributesDict.ContainsKey(attribute.Data.Id))
             {
-                Attributes[attribute.Data.Id] = attribute;
-                AttributeList.Add(new()
-                {
-                    Id = attribute.Data.Id,
-                    Attribute = attribute
-                });
+                _attributesDict[attribute.Data.Id] = attribute;
             } else
             {
                 Game.Console?.Log($"Attribute [{attribute.Data.Id}] already exists within the collection.");
@@ -52,58 +62,58 @@ namespace UZSG.Attributes
 
         public void RemoveAttribute(string id)
         {
-            if (Attributes.TryGetValue(id, out Attribute attr))
+            if (_attributesDict.ContainsKey(id))
             {
-                Attributes.Remove(id, out Attribute attrs);
-                var attrIdPair = AttributeList.Find(part => part.Id == id);
-                AttributeList.Remove(attrIdPair);
+                _attributesDict.Remove(id);
             } else
             {
                 Game.Console?.Log($"Unable to remove Attribute [{id}] as it does not exist within the collection.");
             }
         }
 
-        public void RemoveAttribute(string id, out Attribute attribute)
+        public bool RemoveAttribute(string id, out T attribute)
         {
-            if (Attributes.TryGetValue(id, out Attribute attr))
+            if (_attributesDict.ContainsKey(id))
             {
-                Attributes.Remove(id, out Attribute attrs);
-                var attrIdPair = AttributeList.Find(part => part.Id == id);
-                AttributeList.Remove(attrIdPair);
-                attribute = attr;
+                _attributesDict.Remove(id, out attribute);
+                return true;
+            } else
+            {
+                attribute = null;
+                Game.Console?.Log($"Unable to remove Attribute [{id}] as it does not exist within the collection.");
+                return false;
+            }
+        }
+
+        public T GetAttributeFromId(string id)
+        {
+            if (_attributesDict.ContainsKey(id))
+            {
+                return _attributesDict[id];
+            } else
+            {
+                Game.Console?.Log($"Unable to retrieve Attribute [{id}] as it's not in the collection.");
+                return null;
+            }
+        }
+
+        public bool TryGetAttributeFromId(string id, out Attribute attribute)
+        {
+            if (_attributesDict.ContainsKey(id))
+            {
+                attribute = _attributesDict[id];
+                return true;
             } else
             {
                 attribute = Attribute.None;
-                Game.Console?.Log($"Unable to remove Attribute [{id}] as it does not exist within the collection.");
+                Game.Console?.Log($"Unable to retrieve Attribute [{id}] as it's not in the collection.");
+                return false;
             }
         }
 
-        public Attribute GetAttributeFromId(string id)
+        public void Combine(AttributeCollection<T> other)
         {
-            if (Attributes.ContainsKey(id))
-            {
-                return _attributes[id];
-            }
-
-            Game.Console?.Log($"Unable to retrieve Attribute [{id}] as it's not in the collection.");
-            return Attribute.None;
+            Attributes.AddRange(other.Attributes);
         }
-
-        // public Attribute GetAttributeFromName(string name)
-        // {
-        //     // if (Attributes.ContainsKey(id))
-        //     // {
-        //     //     return _attributes[id];
-        //     // } else // try searching for the name
-        //     // {
-        //     //     foreach (Attribute attr in _attributes.Values)
-        //     //     {
-        //     //         if (id != attr.Data.Name) continue;
-        //     //         return attr;
-        //     //     }
-        //     //     Game.Console?.Log($"Unable to retrieve Attribute [{id}] as it's not in the collection.");
-        //     //     return null;
-        //     // }
-        // }
     }
 }

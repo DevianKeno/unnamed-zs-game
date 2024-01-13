@@ -182,7 +182,18 @@ namespace UZSG.Player
             crouchInput.performed += OnCrouchInput;             // LCtrl (default)
 
             Game.UI.ConsoleUI.OnToggle += ConsoleWindowToggledCallback;
+            Game.Tick.OnTick += Tick;
             _previousPosition = transform.position;
+        }
+
+        void Tick(object sender, TickEventArgs e)
+        {
+            if (IsMoving && isRunning)
+            {
+                // Cache attributes for better performance
+                var runStaminaCost = player.Generic.GetAttributeFromId("run_stamina_cost").Value;
+                player.Vitals.GetAttributeFromId("stamina").Remove(runStaminaCost);
+            }
         }
 
         void ConsoleWindowToggledCallback(bool value)
@@ -214,9 +225,10 @@ namespace UZSG.Player
 
         void RetrieveAttributes()
         {
-            MoveSpeed = player.Attributes.GetAttributeFromId("move_speed").Value;
-            RunSpeed = player.Attributes.GetAttributeFromId("run_speed").Value;
-            CrouchSpeed = player.Attributes.GetAttributeFromId("crouch_speed").Value;
+            // These can be cached and track changes using events
+            MoveSpeed = player.Generic.GetAttributeFromId("move_speed").Value;
+            RunSpeed = player.Generic.GetAttributeFromId("run_speed").Value;
+            CrouchSpeed = player.Generic.GetAttributeFromId("crouch_speed").Value;
             
             _currentSpeed = MoveSpeed;
         }
@@ -310,6 +322,7 @@ namespace UZSG.Player
             if (!_jumped) return;
             _jumped = false;
             
+            player.sm.ToState(player.sm.States[PlayerStates.Jump]);
             // The time required to reach the highest point of the jump
             float timeToApex = JumpTime / 2;
             _frameVelocity.y = (2 * JumpHeight) / timeToApex; // this should be cached

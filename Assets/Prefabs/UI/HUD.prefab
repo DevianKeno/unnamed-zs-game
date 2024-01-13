@@ -461,23 +461,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Attribute:
-    _data: {fileID: 0}
+    Data: {fileID: 0}
     Value: 0
-    PreviousValue: 0
-    Minimum: 0
     BaseMaximum: 0
-    CurrentMaximum: 0
-    _baseMaxMultiplier: 0
-    BaseChangeValue: 0
-    CurrentChangeValue: 0
-    _changeValueMultiplier: 0
+    Bonus: 0
+    _multiplier: 0
+    Minimum: 0
     LimitOverflow: 0
     LimitUnderflow: 0
-    AllowChange: 0
-    Change: 0
-    Cycle: 0
-    DelayedChange: 0
-    DelayedChangeDuration: 0
   Container: {fileID: 8386870504987915606}
   Bar: {fileID: 8115690520543961952}
   Buffer: {fileID: 566622700925668846}
@@ -633,7 +624,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &7415917859886938487
 RectTransform:
   m_ObjectHideFlags: 0
@@ -687,7 +678,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4740276815803224831
 RectTransform:
   m_ObjectHideFlags: 0

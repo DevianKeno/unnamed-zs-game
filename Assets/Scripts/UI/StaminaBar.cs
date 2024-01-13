@@ -1,5 +1,6 @@
 using UnityEngine;
 using UZSG.Attributes;
+using UZSG.Systems;
 
 namespace UZSG.UI
 {
@@ -26,29 +27,69 @@ namespace UZSG.UI
         {
             Attribute attr = (Attribute) sender;
             BarValue = attr.Value;
-            var barOffset = Mathf.InverseLerp(attr.Minimum, attr.CurrentMaximum, attr.Value);
+            var barOffset = Mathf.InverseLerp(attr.Minimum, attr.Maximum, attr.Value);
 
             Bar.offsetMax = new(
                 -Mathf.Lerp(_emptySizeDelta, _fullSizeDelta, barOffset),
                 Bar.offsetMax.y
             );
 
-            if (BarValue != BufferValue)
-            {
-                LeanTween.cancel(Buffer.gameObject);
+            // if (BarValue != BufferValue)
+            // {
+            //     LeanTween.cancel(Buffer.gameObject);
                 
-                LeanTween.value(Buffer.gameObject, BufferValue, BarValue, 0.5f)
-                .setOnUpdate((i) =>
-                {
-                    var bufferOffset = Mathf.InverseLerp(Attribute.Minimum, attr.CurrentMaximum, i);
+            //     LeanTween.value(Buffer.gameObject, BufferValue, BarValue, 0.5f)
+            //     .setOnUpdate((i) =>
+            //     {
 
-                    Buffer.offsetMax = new(
-                        -Mathf.Lerp(_emptySizeDelta, _fullSizeDelta, bufferOffset),
-                        Buffer.offsetMax.y
-                    );
-                });
-                BufferValue = BarValue;
-            }
+            //         Buffer.offsetMax = new(
+            //             -Mathf.Lerp(_emptySizeDelta, _fullSizeDelta, bufferOffset),
+            //             Buffer.offsetMax.y
+            //         );
+            //     });
+            //     BufferValue = BarValue;
+            // }
+
+            // if (BarValue != BufferValue)
+            // {
+            //     LeanTween.cancel(Buffer.gameObject);
+                
+            //     LeanTween.value(Buffer.gameObject, BufferValue, BarValue, 0.5f)
+            //     .setOnUpdate((i) =>
+            //     {
+            //         var bufferOffset = Mathf.InverseLerp(Attribute.Minimum, attr.Maximum, i);
+
+            //         Buffer.offsetMax = new(
+            //             -Mathf.Lerp(_emptySizeDelta, _fullSizeDelta, bufferOffset),
+            //             Buffer.offsetMax.y
+            //         );
+            //     });
+            // }
+        }
+
+        float lerpTimer;
+        void Update()
+        {
+            // if (BarValue < BufferValue)
+            // {
+            //     var barCurrentX = Bar.offsetMax.x;
+            //     var bufferCurrentX = Buffer.offsetMax.x;
+
+            //     if (lerpTimer < Game.Tick.SecondsPerTick)
+            //     {
+            //         lerpTimer += Time.time;
+
+            //         Buffer.offsetMax = new(
+            //             -Mathf.Lerp(barCurrentX, bufferCurrentX, lerpTimer / Game.Tick.SecondsPerTick),
+            //             Buffer.offsetMax.y 
+            //         );
+
+            //     } else
+            //     {
+            //         lerpTimer = 0f;
+            //         BufferValue = BarValue;
+            //     }
+            // }
         }
 
         public void SetAttribute(Attribute attribute)

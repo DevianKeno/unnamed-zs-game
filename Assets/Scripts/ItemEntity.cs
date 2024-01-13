@@ -14,6 +14,8 @@ namespace UZSG.Entities
     /// </summary>
     public class ItemEntity : Entity, IInteractable
     {
+        EntityData _entityData;
+        public override EntityData Data => _entityData;
         public ItemData ItemData;
         public int ItemCount;
         public string Name => ItemData.Name;
@@ -26,6 +28,7 @@ namespace UZSG.Entities
                     ItemData.Type == ItemType.Equipment ||
                     ItemData.Type == ItemType.Accessory) return "Pick Up";
                 if (ItemData.Type == ItemType.Weapon) return "Equip";
+                
                 return "Interact with";
             }
         }
@@ -62,7 +65,6 @@ namespace UZSG.Entities
                 {
                     GameObject obj = a.Result;
 
-                    // obj.transform.SetParent(transform);
                     transform.localScale = obj.transform.localScale;
                     meshFilter.sharedMesh = obj.GetComponent<MeshFilter>().sharedMesh;
                     meshRenderer.sharedMaterial = obj.GetComponent<MeshRenderer>().sharedMaterial;
@@ -85,8 +87,14 @@ namespace UZSG.Entities
             Age -= 1;
             if (Age < 0)
             {
-                Game.Entity.Kill(this);
+                Despawn();
             }
+        }
+
+        public void Despawn()
+        {
+            Game.Tick.OnSecond -= Second;
+            Game.Entity.Kill(this);
         }
 
         /// <summary>

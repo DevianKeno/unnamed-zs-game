@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UZSG.Entities;
-using UZSG.Items;
 
 namespace UZSG.Systems
 {

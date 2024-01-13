@@ -13,7 +13,8 @@ namespace UZSG.Systems
         public bool IsInitialized => _isInitialized;
         Dictionary<string, ItemData> _itemList = new();
         Dictionary<string, GameObject> _cachedModels = new();
-        [SerializeField] AssetLabelReference assetLabelReference;
+        [SerializeField] AssetLabelReference itemsLabelReference;
+        [SerializeField] AssetLabelReference weaponsLabelReference;
 
         public event EventHandler<string> OnDoneLoadModel;
 
@@ -25,7 +26,7 @@ namespace UZSG.Systems
             var startTime = Time.time;
             Game.Console.LogDebug("Initializing item database...");
 
-            Addressables.LoadAssetsAsync<ItemData>(assetLabelReference, (a) =>
+            Addressables.LoadAssetsAsync<ItemData>(itemsLabelReference, (a) =>
             {
                 Game.Console?.LogDebug($"Loading data for item {a.Id}");
                 _itemList[a.Id] = a;

@@ -30,17 +30,5 @@ namespace UZSG.Systems
                 _attributeList[a.Id] = a;
             });
         }
-
-        public Attribute CreateAttribute(string id)
-        {
-            if (_attributeList.ContainsKey(id))
-            {
-                Attribute attr = new(_attributeList[id]);
-                return attr;
-            }
-
-            Game.Console?.LogDebug($"Unable to create Attribute. There exists no Attribute of id {id}!");
-            return null;
-        }
     }
 }

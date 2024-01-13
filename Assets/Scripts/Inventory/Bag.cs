@@ -4,7 +4,7 @@ namespace UZSG.Inventory
 {
     public class Bag : Container
     {
-        public static int MaxBagSlots = 16;
+        public override int SlotsCount { get; set; }
         [SerializeField] ItemSlot[] _slots;
         bool _isFull;
         public bool IsFull => _isFull;
@@ -14,14 +14,22 @@ namespace UZSG.Inventory
         {
             get
             {
-                if (i < 0 || i > MaxBagSlots) return null;
+                if (i < 0 || i > SlotsCount) return null;
                 return _slots[i];
             }
         }
-
-        void Awake()
+        
+        ~Bag()
         {
-            _slots = new ItemSlot[MaxBagSlots];
+            foreach (var slot in Slots)
+            {
+                slot.OnContentChanged -= SlotContentChanged;
+            }
+        }
+
+        internal void Initialize()
+        {
+            _slots = new ItemSlot[SlotsCount];
 
             for (int i = 0; i < _slots.Length; i++)
             {

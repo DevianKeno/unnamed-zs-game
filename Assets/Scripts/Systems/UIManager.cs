@@ -40,8 +40,11 @@ namespace UZSG.UI
         
         #endregion
         
+        #region Inputs
         PlayerInput input;
         InputAction toggleCursorInput;
+        InputAction closeCurrentWindowInput;
+        #endregion
 
         [Header("UI Prefabs")]
         [SerializeField] GameObject consoleWindowPrefab;
@@ -53,6 +56,19 @@ namespace UZSG.UI
         void Awake()
         {
             input = GetComponent<PlayerInput>();
+            toggleCursorInput = input.actions.FindAction("Toggle Cursor");
+            closeCurrentWindowInput = input.actions.FindAction("Close Current Window");
+        }
+
+        public void InitializeInventoryWindow(InventoryHandler inventory)
+        {
+            GameObject go = Instantiate(inventoryPrefab, canvas.transform);
+            go.name = "Inventory Window";
+
+            _inventoryUI = go.GetComponent<InventoryUI>();
+            _inventoryUI.BindInventory(inventory);
+            _inventoryUI.Initialize();
+            _inventoryUI.Hide();
         }
 
         internal void Initialize()
@@ -63,8 +79,6 @@ namespace UZSG.UI
             GameObject go;            
             Game.Console?.Log("Initializing UI...");
 
-            input.actions.FindActionMap("Global").Enable();
-            toggleCursorInput = input.actions.FindAction("Toggle Cursor");
             toggleCursorInput.performed += ToggleCursor;
 
             go = Instantiate(consoleWindowPrefab, canvas.transform);
@@ -78,10 +92,12 @@ namespace UZSG.UI
             _HUD.Initialize();
 
             #region Should only appear inside worlds
-            _inventoryUI?.Hide();
+
             _interactIndicator = Instantiate(interactIndicatorPrefab, canvas.transform).GetComponent<InteractionIndicator>();
             _interactIndicator.Hide();
             #endregion
+            
+            input.actions.FindActionMap("Global").Enable();
         }
 
         void ToggleCursor(InputAction.CallbackContext context)

@@ -5,8 +5,8 @@ namespace UZSG.UI
 {
     public class Selector : MonoBehaviour
     {
-        public RectTransform rect;
-        Image image;
+        [SerializeField] RectTransform rect;
+        [SerializeField] Image image;
 
         void Awake()
         {

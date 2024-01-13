@@ -23,19 +23,10 @@ namespace UZSG.UI
         {
         }
 
-        void Start()
-        {
-            Player.OnDoneInit += PlayerDoneInitCallback;
-        }
-
-        void PlayerDoneInitCallback(object sender, System.EventArgs e)
-        {
-            StaminaBar.SetAttribute(Player.Attributes["Stamina"]);
-        }
-
-        public void SetPlayer(PlayerEntity player)
+        public void BindPlayer(PlayerEntity player)
         {
             Player = player;
+            StaminaBar.SetAttribute(Player.Vitals.GetAttributeFromId("stamina"));
         }        
 
         public void ToggleVisibility()

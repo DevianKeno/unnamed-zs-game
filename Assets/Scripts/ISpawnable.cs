@@ -4,6 +4,6 @@ namespace UZSG.Entities
 {
     public interface ISpawnable
     {
-        public virtual void Spawn() {}
+        public abstract void Spawn();
     }
 }

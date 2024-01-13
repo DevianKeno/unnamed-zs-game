@@ -48,6 +48,7 @@ namespace UZSG.Systems
         /// Total number of ticks.
         /// </summary>
         public int TotalTicks => _totalTicks;
+        [SerializeField] int _secondsElapsed = 0;
 
         float _deltaTick = 0f;
         /// <summary>
@@ -86,8 +87,10 @@ namespace UZSG.Systems
 
                 if (_currentTick >= _ticksPerSecond)
                 {
-                    _currentTick = 0;
                     OnSecond?.Invoke(this, new SecondEventArgs());
+
+                    _currentTick -= _ticksPerSecond;
+                    _secondsElapsed++;
                 }
             }
         }

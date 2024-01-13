@@ -20,7 +20,7 @@ MonoBehaviour:
   Id: bandage
   Name: Bandage
   Description: Stops bleeding.
-  Sprite: {fileID: 0}
+  Sprite: {fileID: 21300000, guid: 0b41dee45f3265f48b75a1cf6b8f34e1, type: 3}
   StackSize: 999
   Type: 0
   Subtype: 1

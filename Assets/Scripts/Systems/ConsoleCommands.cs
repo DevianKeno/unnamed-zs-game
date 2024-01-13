@@ -20,6 +20,14 @@ namespace UZSG.Systems
         {
             Messages.Clear();
         }
+        
+        /// <summary>
+        /// Spawns an entity.
+        /// </summary>
+        void CDamage(object sender, string[] args)
+        {
+            
+        }
 
         /// <summary>
         /// Clears the console messages.

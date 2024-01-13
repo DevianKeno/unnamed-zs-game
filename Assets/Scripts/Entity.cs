@@ -6,9 +6,9 @@ namespace UZSG.Entities
     /// <summary>
     /// Represent dynamic objects that appear in the World.
     /// </summary>
-    public class Entity : MonoBehaviour, ISpawnable//, IAlive
+    public abstract class Entity : MonoBehaviour
     {
-        public EntityData Data;
-        public virtual void OnSpawn() {}
+        public abstract EntityData Data { get; }
+        public abstract void OnSpawn();
     }
 }

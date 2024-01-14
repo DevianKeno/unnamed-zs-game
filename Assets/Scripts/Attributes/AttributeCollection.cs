@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using UZSG.Entities;
 using UZSG.Systems;
+using UZSG.Data;
 
 namespace UZSG.Attributes
 {
@@ -40,13 +40,23 @@ namespace UZSG.Attributes
             }
         }
 
-        public void Initialize()
+        public void Init()
         {
             foreach (T attr in Attributes)
             {                
                 AddAttribute(attr);
-                attr.Initialize();
+                attr.Init();
             }
+        }
+
+        public void LoadData(AttributeCollectionData<T> data)
+        {
+            //
+        }
+        
+        public void SaveData(AttributeCollectionData<T> data)
+        {
+            // 
         }
 
         public void AddAttribute(T attribute)

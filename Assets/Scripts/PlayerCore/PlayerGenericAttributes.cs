@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UZSG.Attributes;
 
-namespace UZSG.Player
+namespace UZSG.PlayerCore
 {
     [System.Serializable]
     public class PlayerGenericAttributes

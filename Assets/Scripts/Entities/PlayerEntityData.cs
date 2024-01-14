@@ -1,9 +1,8 @@
 using System;
 using UnityEngine;
 using UZSG.Attributes;
-using UZSG.Entities;
 
-namespace UZSG.Player
+namespace UZSG.Entities
 {
     /// <summary>
     /// EntityData class made specifically for Player entities.

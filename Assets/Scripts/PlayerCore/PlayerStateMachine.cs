@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UZSG.Systems;
 
-namespace UZSG.Player
+namespace UZSG.PlayerCore
 {
     public class PlayerStateMachine : StateMachine<PlayerStates>
     {

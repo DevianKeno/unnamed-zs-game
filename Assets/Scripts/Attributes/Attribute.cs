@@ -100,7 +100,7 @@ namespace UZSG.Attributes
         {
         }
 
-        internal virtual void Initialize() {}
+        internal virtual void Init() {}
 
         public static void ToMax(Attribute attr)
         {

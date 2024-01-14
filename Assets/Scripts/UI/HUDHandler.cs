@@ -1,6 +1,5 @@
 using UnityEngine;
-using UnityEngine.UI;
-using UZSG.Player;
+using UZSG.Entities;
 
 namespace UZSG.UI
 {
@@ -14,7 +13,7 @@ namespace UZSG.UI
         bool _isVisible;
         public bool IsVisible => _isVisible;
 
-        public PlayerEntity Player;
+        public Entities.Player Player;
 
         [Header("Elements")]
         public StaminaBar StaminaBar;
@@ -23,7 +22,7 @@ namespace UZSG.UI
         {
         }
 
-        public void BindPlayer(PlayerEntity player)
+        public void BindPlayer(Entities.Player player)
         {
             Player = player;
             StaminaBar.SetAttribute(Player.Vitals.GetAttributeFromId("stamina"));

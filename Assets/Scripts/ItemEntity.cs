@@ -1,4 +1,4 @@
-using UZSG.Player;
+using UZSG.PlayerCore;
 using UZSG.Interactions;
 using UZSG.Items;
 using System;
@@ -15,7 +15,7 @@ namespace UZSG.Entities
     public class ItemEntity : Entity, IInteractable
     {
         EntityData _entityData;
-        public override EntityData Data => _entityData;
+        public override EntityData EntityData => _entityData;
         public ItemData ItemData;
         public int ItemCount;
         public string Name => ItemData.Name;

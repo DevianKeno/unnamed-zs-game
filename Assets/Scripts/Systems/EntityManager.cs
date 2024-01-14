@@ -52,12 +52,11 @@ namespace UZSG.Systems
                         
                         if (go.TryGetComponent(out Entity entity))
                         {
-                            go.name = entity.Data.Name;
-                            entity.OnSpawn();
+                            go.name = entity.EntityData.Name;
+                            // entity.OnSpawn();
                         }
 
                         Game.Console?.Log($"Spawned entity {entityId} at ({position.x}, {position.y}, {position.z})");
-                        return;
                     }
 
                     Game.Console?.LogDebug($"Failed to spawn entity {entityId}");
@@ -84,7 +83,7 @@ namespace UZSG.Systems
                         
                         if (go.TryGetComponent(out Entity entity))
                         {
-                            go.name = entity.Data.Name;
+                            go.name = entity.EntityData.Name;
                             entity.OnSpawn();
                         }                        
 

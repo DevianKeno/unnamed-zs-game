@@ -60,7 +60,7 @@ namespace UZSG.UI
             closeCurrentWindowInput = input.actions.FindAction("Close Current Window");
         }
 
-        public void InitializeInventoryWindow(InventoryHandler inventory)
+        public void InitInventoryWindow(InventoryHandler inventory)
         {
             GameObject go = Instantiate(inventoryPrefab, canvas.transform);
             go.name = "Inventory Window";

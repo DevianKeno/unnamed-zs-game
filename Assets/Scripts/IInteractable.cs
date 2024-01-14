@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-using UZSG.Player;
+using UZSG.PlayerCore;
 
 namespace UZSG.Interactions
 {

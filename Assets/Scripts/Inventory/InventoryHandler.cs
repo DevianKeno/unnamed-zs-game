@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UZSG.Data;
 
 namespace UZSG.Inventory
 {
@@ -31,10 +32,14 @@ namespace UZSG.Inventory
             _hotbar = GetComponent<Hotbar>();
         }
 
-        public void Initialize()
+        public void Init()
         {
-            _bag.Initialize();
-            _hotbar.Initialize();
+            _bag.Init();
+            _hotbar.Init();
+        }
+
+        public void LoadData(InventoryData data)
+        {
         }
 
         public void SelectHotbarSlot(int index)

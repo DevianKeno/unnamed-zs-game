@@ -9,9 +9,11 @@ using UZSG.FPP;
 using Cinemachine;
 using UZSG.Inventory;
 
-namespace UZSG.Player
+namespace UZSG.PlayerCore
 {
-    public enum PlayerStates { Idle, Run, Jump, Walk, Crouch, Equip, PerformPrimary, PerformSecondary, Hold }
+    public enum PlayerStates {
+        Idle, Run, Jump, Walk, Crouch, Equip, PerformPrimary, PerformSecondary, Hold
+    }
 
     /// <summary>
     /// Handles the different actions the Player can do.
@@ -30,7 +32,7 @@ namespace UZSG.Player
         Ray ray;
         
         [field: Header("Components")]
-        PlayerEntity player;
+        Entities.Player player;
         PlayerInput input;
         InputAction primaryInput;
         InputAction secondaryInput;
@@ -38,13 +40,13 @@ namespace UZSG.Player
         InputAction inventoryInput;
         InputAction hotbarInput;
 
-        internal void Initialize()
+        internal void Init()
         {
         }
 
         void Awake()
         {
-            player = GetComponent<PlayerEntity>();
+            player = GetComponent<Entities.Player>();
             input = GetComponent<PlayerInput>();
             
             primaryInput = input.actions.FindAction("Primary");

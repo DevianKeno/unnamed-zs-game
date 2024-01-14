@@ -4,8 +4,9 @@ using UnityEngine.InputSystem;
 using Cinemachine;
 using UZSG.Systems;
 using UZSG.FPP;
+using UZSG.Entities;
 
-namespace UZSG.Player
+namespace UZSG.PlayerCore
 {
     public struct FrameInput
     {
@@ -126,10 +127,10 @@ namespace UZSG.Player
         public event EventHandler OnMoveStop;
         #endregion
 
-        public PlayerEntity Player { get => player; }
+        public Player Player { get => player; }
 
         [Header("Components")]
-        [SerializeField] PlayerEntity player;
+        [SerializeField] Player player;
         /// <summary>
         /// The Player's 3D model.
         /// </summary>
@@ -145,7 +146,7 @@ namespace UZSG.Player
 
         void Awake()
         {
-            player = GetComponent<PlayerEntity>();
+            player = GetComponent<Player>();
             input = GetComponent<PlayerInput>();
             
             moveInput = input.actions.FindAction("Move");
@@ -159,7 +160,7 @@ namespace UZSG.Player
         //     Gizmos.DrawLine(groundChecker.transform.position, groundChecker.transform.position + Vector3.down * GroundDistance);
         // }
 
-        internal void Initialize()
+        internal void Init()
         {
             InitializeControls();
             RetrieveAttributes();

@@ -45,7 +45,7 @@ namespace UZSG.Inventory
             }
         }
 
-        internal void Initialize()
+        internal void Init()
         {
             _slots = new ItemSlot[11];
 

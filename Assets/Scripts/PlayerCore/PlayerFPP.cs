@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor.Animations;
-using UZSG.FPP;
 using UZSG.Systems;
+using UZSG.Entities;
+using UZSG.FPP;
 using UZSG.Items;
 using Cinemachine;
 
-namespace UZSG.Player
+namespace UZSG.PlayerCore
 {
     /// <summary>
     /// Handles the functionalities of the Player's first-person view.
@@ -20,18 +20,18 @@ namespace UZSG.Player
         Dictionary<int, GameObject> _cachedModels = new();
         Dictionary<int, IFPPVisible> _anims = new();
         
-        PlayerEntity player;
+        Player player;
         [SerializeField] FPPCamera _camera;
         public FPPCamera Camera => _camera;
         public Transform WeaponHolder;
 
-        internal void Initialize()
+        internal void Init()
         {
         }
 
         void Awake()
         {
-            player = GetComponent<PlayerEntity>();
+            player = GetComponent<Player>();
         }
 
         void Start()

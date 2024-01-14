@@ -1,8 +1,8 @@
+using System;
 using UnityEngine;
 using Cinemachine;
 using UZSG.Systems;
-using UZSG.Player;
-using System;
+using UZSG.Entities;
 
 namespace UZSG.FPP
 {
@@ -29,7 +29,7 @@ namespace UZSG.FPP
         float lerpTimer;
         
         [Header("Components")]
-        public PlayerEntity player;
+        public Player player;
         public Transform WeaponHolder;
         [SerializeField] Camera mainCamera;
         [SerializeField] CinemachineVirtualCamera virtualCamera;

@@ -11,8 +11,8 @@ namespace UZSG.FPP
     {
         public GameObject ArmsModel { get; }
         public GameObject Model { get; }
-        public AnimatorController ArmsController { get; }
-        public AnimatorController ModelController { get; }
+        // public AnimatorController ArmsController { get; }
+        // public AnimatorController ModelController { get; }
         public FPPAnimations Anims { get; }
     }
 

@@ -5,6 +5,6 @@ namespace UZSG
 {
     public interface IStateMachine<T> where T : Enum
     {
-        public StateMachine<T> sm { get; }
+        public StateMachine<T> smAction { get; }
     }
 }

@@ -350,8 +350,9 @@ GameObject:
   m_Component:
   - component: {fileID: 526294803212380139}
   - component: {fileID: 2173557868176501593}
+  - component: {fileID: -1935695103105434911}
   m_Layer: 0
-  m_Name: katana
+  m_Name: katana_arms
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -395,6 +396,19 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &-1935695103105434911
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 866405238396681553}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7f4d612af8823d45ad233f351027dd0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Animator: {fileID: 2173557868176501593}
 --- !u!1 &1135126593920072506
 GameObject:
   m_ObjectHideFlags: 0

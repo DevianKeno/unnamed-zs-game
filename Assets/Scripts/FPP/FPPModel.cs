@@ -10,16 +10,11 @@ namespace UZSG.FPP
     [RequireComponent(typeof(Animator))]
     public class FPPModel : MonoBehaviour
     {
-        /// <summary>
-        /// This camera is the Camera that is animated in the animations.
-        /// </summary>
-        public Transform CameraAnims;
-        public float HitstopDuration = 0.25f;
-        Animator _animator;
+        public Animator Animator;
 
         void Awake()
         {            
-            _animator = GetComponent<Animator>();
+            Animator = GetComponent<Animator>();
         }
         
         /// <summary>
@@ -27,24 +22,24 @@ namespace UZSG.FPP
         /// </summary>
         public void Load(IFPPVisible obj)
         {
-            _animator.runtimeAnimatorController = obj?.ModelController;
+            // Animator.runtimeAnimatorController = obj.ModelController;
         }
 
         public void Play(string name)
         {
-            _animator.Play(name);
+            Animator.Play(name);
         }
 
         public void PauseUntil(float time)
         {
-            _animator.speed = 0f;
+            Animator.speed = 0f;
             StartCoroutine(ResumeAnim(time));
         }
 
         IEnumerator ResumeAnim(float duration)
         {
             yield return new WaitForSeconds(duration);
-            _animator.speed = 1f;
+            Animator.speed = 1f;
         }
     }
 }

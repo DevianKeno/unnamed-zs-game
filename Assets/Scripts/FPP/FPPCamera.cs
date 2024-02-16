@@ -195,45 +195,45 @@ namespace UZSG.FPP
 
         void ApplyCameraAnims()
         {
-            if (FPPModel == null) return;
-            /// This makes the camera animation speed per the TPS
-            if (camLerpTimer < Game.Tick.SecondsPerTick)
-            {
-                camLerpTimer += Time.time;
+            // if (FPPModel == null) return;
+            // /// This makes the camera animation speed per the TPS
+            // if (camLerpTimer < Game.Tick.SecondsPerTick)
+            // {
+            //     camLerpTimer += Time.time;
 
-                /// This is fucked up idk, coulda used some help                
-                var source = FPPModel.CameraAnims.transform.rotation; 
-                var origin = virtualCamera.transform.parent.transform.localRotation;
+            //     /// This is fucked up idk, coulda used some help                
+            //     var source = FPPModel.CameraAnims.transform.rotation; 
+            //     var origin = virtualCamera.transform.parent.transform.localRotation;
 
-                var x = source.x - initialCamRot.x;
-                var y = source.y - initialCamRot.y;
-                var z = source.z - initialCamRot.z;
-                var w = source.w - initialCamRot.w;
+            //     var x = source.x - initialCamRot.x;
+            //     var y = source.y - initialCamRot.y;
+            //     var z = source.z - initialCamRot.z;
+            //     var w = source.w - initialCamRot.w;
 
-                Quaternion target = new(
-                    origin.x + x,
-                    origin.y + y,
-                    origin.z + z,
-                    origin.w + w
-                );
+            //     Quaternion target = new(
+            //         origin.x + x,
+            //         origin.y + y,
+            //         origin.z + z,
+            //         origin.w + w
+            //     );
 
-                virtualCamera.transform.parent.transform.localRotation = Quaternion.Lerp(
-                    origin,
-                    target,
-                    camLerpTimer / Game.Tick.SecondsPerTick
-                );
+            //     virtualCamera.transform.parent.transform.localRotation = Quaternion.Lerp(
+            //         origin,
+            //         target,
+            //         camLerpTimer / Game.Tick.SecondsPerTick
+            //     );
 
-            } else
-            {
-                camLerpTimer = 0f;
-            }
+            // } else
+            // {
+            //     camLerpTimer = 0f;
+            // }
         }
 
         Quaternion initialCamRot;
         public void LoadModel(FPPModel model)
         {
             FPPModel = model;
-            initialCamRot = model.CameraAnims.transform.localRotation;
+            // initialCamRot = model.CameraAnims.transform.localRotation;
         }
 
         public void ToggleBobbing(bool enabled)

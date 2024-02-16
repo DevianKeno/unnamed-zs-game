@@ -64,7 +64,7 @@ namespace UZSG.PlayerCore
         /// <summary>
         /// Check if holding [Run] key and speed is greater than run threshold
         /// </summary>
-        public bool isRunning { get => _isRunning; }
+        public bool IsRunning { get => _isRunning; }
         bool _isCrouching;
         public bool isCrouching { get => _isCrouching; }
 
@@ -189,7 +189,7 @@ namespace UZSG.PlayerCore
 
         void Tick(object sender, TickEventArgs e)
         {
-            if (IsMoving && isRunning)
+            if (IsMoving && IsRunning)
             {
                 // Cache attributes for better performance
                 var runStaminaCost = player.Generic.GetAttributeFromId("run_stamina_cost").Value;
@@ -237,6 +237,24 @@ namespace UZSG.PlayerCore
         void FixedUpdate()
         {
             HandleMovement();
+            CheckState();
+        }
+
+        void CheckState()
+        {
+            if (_isMovePressed)
+            {
+                if (IsRunning)
+                {
+                    player.smMove.ToState(MoveStates.Run);
+                } else
+                {
+                    player.smMove.ToState(MoveStates.Walk);
+                }
+            } else
+            {
+                player.smMove.ToState(MoveStates.Idle);
+            }
         }
 
         void OnMoveInput(InputAction.CallbackContext context)
@@ -275,11 +293,11 @@ namespace UZSG.PlayerCore
             if (value)
             {
                 _currentSpeed = RunSpeed;
-                player.sm.ToState(player.sm.States[PlayerStates.Run]);
+                player.smMove.ToState(MoveStates.Run);
             } else
             {
                 _currentSpeed = MoveSpeed;
-                player.sm.ToState(player.sm.States[PlayerStates.Idle]);
+                player.smMove.ToState(MoveStates.Idle);
             }
         }
 
@@ -323,7 +341,7 @@ namespace UZSG.PlayerCore
             if (!_jumped) return;
             _jumped = false;
             
-            player.sm.ToState(player.sm.States[PlayerStates.Jump]);
+            player.smMove.ToState(MoveStates.Jump);
             // The time required to reach the highest point of the jump
             float timeToApex = JumpTime / 2;
             _frameVelocity.y = (2 * JumpHeight) / timeToApex; // this should be cached
@@ -365,7 +383,7 @@ namespace UZSG.PlayerCore
         {
             if (_isTransitioning) return;
 
-            player.sm.ToState(player.sm.States[PlayerStates.Crouch]);
+            player.smMove.ToState(MoveStates.Crouch);
 
             _isTransitioning = !_isTransitioning;
             _isCrouching = !_isCrouching;

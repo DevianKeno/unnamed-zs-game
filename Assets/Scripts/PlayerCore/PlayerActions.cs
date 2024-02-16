@@ -11,10 +11,6 @@ using UZSG.Inventory;
 
 namespace UZSG.PlayerCore
 {
-    public enum PlayerStates {
-        Idle, Run, Jump, Walk, Crouch, Equip, PerformPrimary, PerformSecondary, Hold
-    }
-
     /// <summary>
     /// Handles the different actions the Player can do.
     /// </summary>
@@ -23,7 +19,12 @@ namespace UZSG.PlayerCore
         [Header("Interact Size")]
         public float Radius;
         public float MaxInteractDistance;
-
+        public float HoldThresholdMs = 200f;
+        float _holdTimer;
+        bool leftClicked;
+        bool rightClicked;
+        bool heldClick;
+        
         /// <summary>
         /// The interactable object the Player is currently looking at.
         /// </summary>
@@ -70,12 +71,15 @@ namespace UZSG.PlayerCore
                 started = Pressed
                 canceled = Released
             */
-            interactInput.performed += OnPerformInteract;         // F (default)
-            inventoryInput.performed += OnPerformInventory;       // Tab/E (default)
-            hotbarInput.performed += OnHotbarSelect;        // Tab/E (default)
-            primaryInput.performed += OnPerformPrimary;           // LMB (default)
-            secondaryInput.started += OnPerformSecondary;         // RMB (default)
-            secondaryInput.canceled += OnPerformSecondary;         // RMB (default)
+            interactInput.performed += OnPerformInteract;        // F (default)
+            inventoryInput.performed += OnPerformInventory;      // Tab/E (default)
+            hotbarInput.performed += OnHotbarSelect;             // Tab/E (default)
+
+            primaryInput.started += OnStartPrimary;          // LMB (default)
+            primaryInput.canceled += OnCancelPrimary;          // LMB (default)
+
+            secondaryInput.started += OnStartSecondary;        // RMB (default)
+            secondaryInput.canceled += OnCancelSecondary;       // RMB (default)
 
             // player.Inventory.Hotbar.OnChangeEquipped += HotbarChangeEquippedCallback;
         }
@@ -113,15 +117,59 @@ namespace UZSG.PlayerCore
             Game.UI.InventoryUI.ToggleVisibility();
             // ToggleCameraControls(!Game.UI.InventoryUI.IsVisible);
         }
-
-        void OnPerformPrimary(InputAction.CallbackContext context)
+  
+        void Update()
         {
-            player.sm.ToState(player.sm.States[PlayerStates.PerformPrimary]);
+            if (leftClicked)
+            {
+                _holdTimer += Time.deltaTime;
+
+                if (_holdTimer > HoldThresholdMs / 1000f)
+                {
+                    leftClicked = false;
+                    player.smAction.ToState(ActionStates.PrimaryHold);
+                }
+
+            } else if (rightClicked)
+            {
+                _holdTimer += Time.deltaTime;
+
+                if (_holdTimer > HoldThresholdMs / 1000f)
+                {
+                    rightClicked = false;
+                    player.smAction.ToState(ActionStates.SecondaryHold);
+                }
+            }
         }
 
-        void OnPerformSecondary(InputAction.CallbackContext context)
+        void OnStartPrimary(InputAction.CallbackContext c)
         {
-            player.sm.ToState(player.sm.States[PlayerStates.PerformSecondary]);
+            leftClicked = true;
+            _holdTimer = 0f;
+        }
+
+        void OnCancelPrimary(InputAction.CallbackContext c)
+        {
+            if (_holdTimer < HoldThresholdMs / 1000f)
+            {
+                leftClicked = false;
+                player.smAction.ToState(ActionStates.Primary);
+            }
+        }
+
+        void OnStartSecondary(InputAction.CallbackContext c)
+        {
+            rightClicked = true;
+            _holdTimer = 0f;
+        }
+
+        void OnCancelSecondary(InputAction.CallbackContext c)
+        {
+            if (_holdTimer < HoldThresholdMs / 1000f)
+            {
+                rightClicked = false;
+                player.smAction.ToState(ActionStates.Secondary);
+            }
         }
         #endregion
 
@@ -182,6 +230,7 @@ namespace UZSG.PlayerCore
                     if (WeaponData.TryGetWeaponData(item.Data, out WeaponData weaponData))
                     {
                         player.FPP.LoadModel(weaponData, 1);
+                        player.FPP.Equip(1);
                     }
                 }
             } else if (item.Type == ItemType.Tool)

@@ -37,13 +37,11 @@ MonoBehaviour:
     BaseCritDamage: 0
   _armsModel: {fileID: 866405238396681553, guid: 7653a06c5f1a4534b87baf375ac0624e, type: 3}
   _model: {fileID: 4640365115084580276, guid: a064e54e664b2994f8f669767166bed1, type: 3}
-  _armsController: {fileID: 9100000, guid: 30a025ed3985f824e8a28caeebac1501, type: 2}
-  _modelController: {fileID: 9100000, guid: e135f9ceb3ddefa48ba169a9aed0608d, type: 2}
   _anims:
     Equip: equip
     Idle: idle
     Run: 
     Primary:
     - attack_left
-    Secondary: 
-    Hold: stance
+    Secondary: stance
+    Hold: 

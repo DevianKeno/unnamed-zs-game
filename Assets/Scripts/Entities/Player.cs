@@ -6,13 +6,14 @@ using UZSG.Attributes;
 using UZSG.PlayerCore;
 using UZSG.Data;
 using UZSG.FPP;
+using TMPro;
 
 namespace UZSG.Entities
 {
     /// <summary>
     /// Player entity.
     /// </summary>
-    public class Player : Entity, IStateMachine<PlayerStates>
+    public class Player : Entity
     {
         public bool CanPickUpItems = true;
         
@@ -34,14 +35,13 @@ namespace UZSG.Entities
         /// Unity camera tagged "MainCamera"
         /// </summary>
         public Camera MainCamera { get; private set; }
-        StateMachine<PlayerStates> _stateMachine;
-        /// <summary>
-        /// Player state machine.
-        /// </summary>
-        public StateMachine<PlayerStates> sm => _stateMachine;
+        public MovementStateMachine smMove { get; private set; }
+        public ActionStateMachine smAction { get; private set; }
         public PlayerControls Controls { get; private set; }
         public PlayerActions Actions { get; private set; }
-        public PlayerFPP FPP { get; private set; }
+        public FPPController FPP { get; private set; }
+
+        [SerializeField] TextMeshProUGUI stateLabel;
 
         public override void OnSpawn()
         {
@@ -51,10 +51,11 @@ namespace UZSG.Entities
         void Awake()
         {
             MainCamera = Camera.main;
-            _stateMachine = GetComponent<StateMachine<PlayerStates>>();
+            smMove = GetComponent<MovementStateMachine>();
+            smAction = GetComponent<ActionStateMachine>();
             Controls = GetComponent<PlayerControls>();
             Actions = GetComponent<PlayerActions>();
-            FPP = GetComponent<PlayerFPP>();
+            FPP = GetComponent<FPPController>();
         }
 
         void Init()
@@ -66,7 +67,7 @@ namespace UZSG.Entities
 
             InitAttributes();
             InitInventory();
-            InitStateMachine();
+            InitStateMachines();
             
             Controls.Init();
             Actions.Init();
@@ -111,33 +112,33 @@ namespace UZSG.Entities
             Game.UI.InitInventoryWindow(_inventory);
         }
         
-        void InitStateMachine()
+        void InitStateMachines()
         {
-            sm.InitialState = sm.States[PlayerStates.Idle];
+            smMove.InitialState = smMove.States[MoveStates.Idle];
 
-            sm.States[PlayerStates.Idle].OnEnter += OnIdleEnter;
-            sm.States[PlayerStates.Run].OnEnter += OnRunEnter;
-            sm.States[PlayerStates.Jump].OnEnter += OnJumpEnter;
-            sm.States[PlayerStates.Crouch].OnEnter += OnCrouchEnter;
+            smMove.States[MoveStates.Idle].OnEnter += OnIdleEnter;
+            smMove.States[MoveStates.Run].OnEnter += OnRunEnter;
+            smMove.States[MoveStates.Jump].OnEnter += OnJumpEnter;
+            smMove.States[MoveStates.Crouch].OnEnter += OnCrouchEnter;      
         }
 
         void Tick(object sender, TickEventArgs e)
         {
         }
 
-        void OnIdleEnter(object sender, State<PlayerStates>.ChangedContext e)
+        void OnIdleEnter(object sender, State<MoveStates>.ChangedContext e)
         {
         }
 
-        void OnRunEnter(object sender, State<PlayerStates>.ChangedContext e)
+        void OnRunEnter(object sender, State<MoveStates>.ChangedContext e)
         {
         }
 
-        void OnCrouchEnter(object sender, State<PlayerStates>.ChangedContext e)
+        void OnCrouchEnter(object sender, State<MoveStates>.ChangedContext e)
         {
         }
 
-        void OnJumpEnter(object sender, State<PlayerStates>.ChangedContext e)
+        void OnJumpEnter(object sender, State<MoveStates>.ChangedContext e)
         {
             if (Vitals.TryGetAttributeFromId("stamina", out Attributes.Attribute attr))
             {

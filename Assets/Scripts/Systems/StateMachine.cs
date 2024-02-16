@@ -9,10 +9,10 @@ namespace UZSG.Systems
     /// </summary>
     public abstract class StateMachine<E> : MonoBehaviour where E : Enum
     {
-        public struct StateChangedArgs
+        public struct StateChanged
         {
-            public E Current;
-            public E Next;
+            public E From;
+            public E To;
         }
         
         Dictionary<E, State<E>> _states = new();
@@ -29,7 +29,7 @@ namespace UZSG.Systems
         /// <summary>
         /// Calles everytime before the State changes.
         /// </summary>
-        public event EventHandler<StateChangedArgs> OnStateChanged;
+        public event EventHandler<StateChanged> OnStateChanged;
 
         void Awake()
         {
@@ -59,6 +59,12 @@ namespace UZSG.Systems
             TrySwitchState(state);
         }
 
+        public virtual void ToState(E state)
+        {
+            if (!_states.ContainsKey(state)) return;
+            TrySwitchState(_states[state]);
+        }
+
         /// <summary>
         /// Transition to state and prevent from transitioning to other states for a certain amount of seconds.
         /// </summary>
@@ -76,8 +82,8 @@ namespace UZSG.Systems
 
             OnStateChanged?.Invoke(this, new()
             {
-                Current = _currentState.Key,
-                Next = state.Key
+                From = _currentState.Key,
+                To = state.Key
             });
             _currentState.Exit();
             _currentState = state;

@@ -80,10 +80,10 @@ namespace UZSG.Items
         [SerializeField] GameObject _model;
         public GameObject Model => _model;
 
-        [SerializeField] AnimatorController _armsController;
-        public AnimatorController ArmsController => _armsController;
-        [SerializeField] AnimatorController _modelController;
-        public AnimatorController ModelController => _modelController;
+        // [SerializeField] AnimatorController _armsController;
+        // public AnimatorController ArmsController => _armsController;
+        // [SerializeField] AnimatorController _modelController;
+        // public AnimatorController ModelController => _modelController;
 
         [SerializeField] FPPAnimations _anims;
         public FPPAnimations Anims => _anims;
@@ -93,8 +93,7 @@ namespace UZSG.Items
             weaponData = item as WeaponData;
             return weaponData != null;
         }
-    }
-    
+    }    
 
     // [CustomEditor(typeof(WeaponData))]
     // public class WeaponDataEditor : ItemDataEditor

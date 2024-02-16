@@ -7,7 +7,8 @@ namespace UZSG.FPP
     /// </summary>
     public class FPPAnimationHandler : MonoBehaviour
     {
-        FPPAnimatable _obj;
+        FPPModel _obj;
+        
         
         public void Load(IFPPVisible obj)
         {

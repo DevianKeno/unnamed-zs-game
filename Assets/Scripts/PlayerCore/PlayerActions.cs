@@ -32,7 +32,7 @@ namespace UZSG.PlayerCore
         Ray ray;
         
         [field: Header("Components")]
-        Entities.Player player;
+        Player player;
         PlayerInput input;
         InputAction primaryInput;
         InputAction secondaryInput;
@@ -46,7 +46,7 @@ namespace UZSG.PlayerCore
 
         void Awake()
         {
-            player = GetComponent<Entities.Player>();
+            player = GetComponent<Player>();
             input = GetComponent<PlayerInput>();
             
             primaryInput = input.actions.FindAction("Primary");
@@ -175,13 +175,15 @@ namespace UZSG.PlayerCore
 
             if (item.Type == ItemType.Weapon)
             {
-                gotItem = player.Inventory.Hotbar.Mainhand.TryPutItem(item);
+                gotItem = player.Inventory.Mainhand.TryPutItem(item);
 
-                if (WeaponData.TryGetWeaponData(item.Data, out WeaponData weaponData))
+                if (gotItem)
                 {
-                    player.FPP.Load(weaponData, 1);
+                    if (WeaponData.TryGetWeaponData(item.Data, out WeaponData weaponData))
+                    {
+                        player.FPP.LoadModel(weaponData, 1);
+                    }
                 }
-
             } else if (item.Type == ItemType.Tool)
             {
                 gotItem = player.Inventory.Hotbar.Offhand.TryPutItem(item);                

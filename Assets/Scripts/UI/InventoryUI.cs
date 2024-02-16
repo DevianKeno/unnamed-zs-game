@@ -18,7 +18,10 @@ namespace UZSG.UI
         public bool IsInitialized => _isInitialized;
         bool _isVisible = true;
         public bool IsVisible { get => _isVisible; }
-        bool _isHolding = false;
+        /// <summary>
+        /// If the cursor is currently holding an item.
+        /// </summary>
+        bool _isHoldingItem = false;
         int _fromIndex;
         Item _heldItem;
         ItemSlot _selectedSlot;
@@ -231,7 +234,7 @@ namespace UZSG.UI
 
             if (e.button == PointerEventData.InputButton.Left)
             {
-                if (_isHolding)
+                if (_isHoldingItem)
                 {
                     if (_inventory.Bag.TryPut(_selectedSlot.Index, _heldItem))
                     {
@@ -248,7 +251,7 @@ namespace UZSG.UI
             
             } else if (e.button == PointerEventData.InputButton.Right)
             {                
-                if (_isHolding) // put 1 to selected slot
+                if (_isHoldingItem) // put 1 to selected slot
                 {                    
                     _isPutting = true;
                     
@@ -260,18 +263,20 @@ namespace UZSG.UI
                     {
                         Item tookItem = _inventory.Bag.Take(_selectedSlot.Index);
                         _inventory.Bag.TryPut(_selectedSlot.Index, SwapHeld(tookItem));
-                    }
+                    }                    
+                    _isPutting = false;
                 } else // get 1 from selected slot
                 {
                     _isGetting = true;
                     HoldItem(_inventory.Bag.TakeItems(_selectedSlot.Index, 1));
+                    _isGetting = false;
                 }
             }
         }
 
         Item SwapHeld(Item item)
         {
-            if (!_isHolding) return Item.None;
+            if (!_isHoldingItem) return Item.None;
 
             Item prevHeld = _heldItem;
             _heldItem = item;
@@ -288,7 +293,7 @@ namespace UZSG.UI
                 return;
             }
 
-            _isHolding = true;
+            _isHoldingItem = true;
             _heldItem = item;
             if (_displayedItem == null) _displayedItem = Instantiate(itemDisplayPrefab, Game.UI.Canvas.transform).GetComponent<ItemDisplayUI>();
             _displayedItem.SetDisplay(_heldItem);
@@ -296,7 +301,7 @@ namespace UZSG.UI
 
         void ReleaseItem()
         {
-            _isHolding = false;
+            _isHoldingItem = false;
             _heldItem = null;
             Destroy(_displayedItem.gameObject);
         }

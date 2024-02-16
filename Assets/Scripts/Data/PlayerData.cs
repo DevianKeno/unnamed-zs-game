@@ -1,5 +1,6 @@
 using System;
 using UZSG.Attributes;
+using UZSG.Crafting;
 
 namespace UZSG.Data
 {

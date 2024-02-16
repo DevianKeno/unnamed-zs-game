@@ -16,13 +16,7 @@ MonoBehaviour:
   m_Data:
     m_SerializedData: []
   m_GUID: 7178d45f57ea8c444a456810fadebaaf
-  m_SerializeEntries:
-  - m_GUID: b5dee53a18eca5745b507edd5c8f9d7c
-    m_Address: Assets/Models/weapons/katana/katana.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - weapon
-    FlaggedDuringContentUpdateRestriction: 0
+  m_SerializeEntries: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: d6b1e406a4a37f140ab8a82b4ab55278, type: 2}
   m_SchemaSet:

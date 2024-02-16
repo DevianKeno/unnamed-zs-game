@@ -9,8 +9,10 @@ namespace UZSG.FPP
     /// </summary>
     public interface IFPPVisible
     {
-        public GameObject FPPModel { get; }
-        public AnimatorController Controller { get; }
+        public GameObject ArmsModel { get; }
+        public GameObject Model { get; }
+        public AnimatorController ArmsController { get; }
+        public AnimatorController ModelController { get; }
         public FPPAnimations Anims { get; }
     }
 

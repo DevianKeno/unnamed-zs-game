@@ -5,6 +5,7 @@ using UZSG.Inventory;
 using UZSG.Attributes;
 using UZSG.PlayerCore;
 using UZSG.Data;
+using UZSG.FPP;
 
 namespace UZSG.Entities
 {
@@ -84,13 +85,13 @@ namespace UZSG.Entities
             Vitals = new(playerEntityData.Vitals);
 
             // Overwrite base with data from file
-            Vitals.LoadData(Data.Vitals);
+            // Vitals.LoadData(Data.Vitals);
 
             // Initialize
             Vitals.Init();
 
             Generic = new(playerEntityData.Generic);
-            Generic.LoadData(Data.Generic);
+            // Generic.LoadData(Data.Generic);
             Generic.Init();
 
             #region Temporary
@@ -101,7 +102,7 @@ namespace UZSG.Entities
 
         void InitInventory()
         {
-            Inventory.LoadData(Data.Inventory);
+            // Inventory.LoadData(Data.Inventory);
 
             Inventory.Bag.SlotsCount = (int) Generic.GetAttributeFromId("pockets_size").Value;
             Inventory.Hotbar.SlotsCount = (int) Generic.GetAttributeFromId("hotbar_size").Value;

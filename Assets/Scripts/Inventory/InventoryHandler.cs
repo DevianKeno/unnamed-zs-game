@@ -25,6 +25,8 @@ namespace UZSG.Inventory
         Bag _bag;
         public Bag Bag => _bag;
         public ItemSlot Equipped => Hotbar.Equipped;
+        public ItemSlot Mainhand => Hotbar.Mainhand;
+        public ItemSlot Offhand => Hotbar.Offhand;
 
         void Awake()
         {

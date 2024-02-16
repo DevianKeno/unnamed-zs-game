@@ -36,7 +36,7 @@ MonoBehaviour:
       _changeMultiplier: 1
       DelayChange: 0
       DelayedChangeSeconds: 0
-      delayTimer: 75.828125
+      delayTimer: 318.6737
     - Data: {fileID: 11400000, guid: 03beca28745658c48a7358ce536b9573, type: 2}
       Value: 100
       BaseMaximum: 100
@@ -52,7 +52,23 @@ MonoBehaviour:
       _changeMultiplier: 1
       DelayChange: 1
       DelayedChangeSeconds: 1.5
-      delayTimer: 11.671875
+      delayTimer: 5.515625
+    - Data: {fileID: 11400000, guid: 7483f2347fa993845a34e0f8c8bbe2a5, type: 2}
+      Value: 100
+      BaseMaximum: 100
+      Bonus: 0
+      _multiplier: 1
+      Minimum: 0
+      LimitOverflow: 1
+      LimitUnderflow: 1
+      AllowChange: 1
+      Change: 1
+      Cycle: 0
+      BaseChange: 1
+      _changeMultiplier: 1
+      DelayChange: 1
+      DelayedChangeSeconds: 1.5
+      delayTimer: 5.515625
   Generic:
     Attributes:
     - Data: {fileID: 11400000, guid: fe9f66b79d95e7948a4dfcb4512568c7, type: 2}

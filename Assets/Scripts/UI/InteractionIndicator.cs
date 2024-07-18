@@ -5,7 +5,7 @@ using UZSG.Interactions;
 
 namespace UZSG.UI
 {
-    public class InteractionIndicator : MonoBehaviour
+    public class InteractionIndicator : Window
     {
         [SerializeField] GameObject indicator;
         [SerializeField] TextMeshProUGUI actionText;
@@ -17,19 +17,14 @@ namespace UZSG.UI
             objectText = transform.Find("Object (TMP)").gameObject.GetComponentInChildren<TextMeshProUGUI>(true);
         }
 
-        public void Show(IInteractable obj)
+        public void Indicate(IInteractable obj)
         {
             if (obj == null) return;
             
             actionText.text = obj.Action;
             objectText.text = obj.Name;
-            indicator.SetActive(true);
+            Show();
             LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
-        }
-
-        public void Hide()
-        {
-            indicator.SetActive(false);
         }
     }
 }

@@ -1,12 +1,17 @@
 using System;
+using System.Collections.Generic;
+
 using UnityEngine;
+using UnityEngine.InputSystem;
+using TMPro;
+
 using UZSG.Systems;
 using UZSG.Inventory;
 using UZSG.Attributes;
-using UZSG.PlayerCore;
+using UZSG.Players;
 using UZSG.Data;
 using UZSG.FPP;
-using TMPro;
+using UZSG.UI;
 
 namespace UZSG.Entities
 {
@@ -16,18 +21,23 @@ namespace UZSG.Entities
     public class Player : Entity
     {
         public bool CanPickUpItems = true;
-        
-        [field: Header("Flags")]
         public PlayerData Data { get; private set; }
         public override EntityData EntityData { get => playerEntityData; }
         [SerializeField] PlayerEntityData playerEntityData;
-        [field: SerializeField] public AttributeCollection<VitalAttribute> Vitals { get; private set; }
-        [field: SerializeField] public AttributeCollection<GenericAttribute> Generic { get; private set; }
-        [SerializeField] InventoryHandler _inventory;
-        public InventoryHandler Inventory => _inventory;
+        [SerializeField] AttributeCollection<VitalAttribute> vitals;
+        public AttributeCollection<VitalAttribute> Vitals => vitals;
+        [SerializeField] AttributeCollection<GenericAttribute> generic;
+        public AttributeCollection<GenericAttribute> Generic => generic;
+        [SerializeField] InventoryHandler inventory;
+        public InventoryHandler Inventory => inventory;
+        
+        PlayerInventoryWindow invUI;
+        PlayerHUD HUD;
+        
 
         #region Events
         public event EventHandler<EventArgs> OnDoneInit;
+
         #endregion
 
         [field: Header("Components")]
@@ -41,11 +51,9 @@ namespace UZSG.Entities
         public PlayerActions Actions { get; private set; }
         public FPPController FPP { get; private set; }
 
-        [SerializeField] TextMeshProUGUI stateLabel;
-
         public override void OnSpawn()
         {
-            Init();
+            Initialize();
         }
 
         void Awake()
@@ -58,61 +66,88 @@ namespace UZSG.Entities
             FPP = GetComponent<FPPController>();
         }
 
-        void Init()
+        void Initialize()
         {
             Game.Console.Log("I, player, has been spawned!");
 
             // Load PlayerData from file
             // Data.LoadFromFile("/path");
 
-            InitAttributes();
-            InitInventory();
-            InitStateMachines();
+            InitializeAttributes();
+            InitializeStateMachines();
+            InitializeInventory();
+            InitializeHUD();
+            InitializeInputs();
             
-            Controls.Init();
-            Actions.Init();
-            FPP.Init();
+            Controls.Initialize();
+            Actions.Initialize();
+            FPP.Initialize();
             
-            Game.UI.HUD.BindPlayer(this);
-            Game.UI.HUD.ToggleVisibility(true);
+            // Game.UI.HUD.BindPlayer(this);
+            // Game.UI.HUD.ToggleVisibility(true);
             Game.Tick.OnTick += Tick;
             
             OnDoneInit?.Invoke(this, new());
         }
 
-        void InitAttributes()
-        {
-            // Get blueprint base
-            Vitals = new(playerEntityData.Vitals);
+        InputActionMap actionMap;
+        Dictionary<string, InputAction> inputs = new();
 
-            // Overwrite base with data from file
+        void InitializeInputs()
+        {
+            actionMap = Game.Main.GetActionMap("Player");
+            foreach (var action in actionMap.actions)
+            {
+                inputs[action.name] = action;
+                action.Enable();
+            }
+            
+            inputs["Inventory"].performed += OnPerformInventory;        // Tab/E (default)
+        }
+
+        void InitializeAttributes()
+        {
+            /// Get blueprint base
+            vitals = new(playerEntityData.Vitals);
+
+            /// Overwrite base with data from file
             // Vitals.LoadData(Data.Vitals);
 
-            // Initialize
-            Vitals.Init();
+            /// Initialize
+            vitals.Init();
 
-            Generic = new(playerEntityData.Generic);
+            generic = new(playerEntityData.Generic);
             // Generic.LoadData(Data.Generic);
-            Generic.Init();
+            generic.Init();
 
             #region Temporary
-            // These should be read from file
-            // e.g. Attributes.LoadData();
+            /// These should be read from file
+            /// e.g. Attributes.LoadData();
             #endregion
         }
 
-        void InitInventory()
+        void InitializeInventory()
         {
             // Inventory.LoadData(Data.Inventory);
 
             Inventory.Bag.SlotsCount = (int) Generic.GetAttributeFromId("pockets_size").Value;
             Inventory.Hotbar.SlotsCount = (int) Generic.GetAttributeFromId("hotbar_size").Value;
-            Inventory.Init();
+            Inventory.Initialize();
 
-            Game.UI.InitInventoryWindow(_inventory);
+            invUI = Game.UI.Create<PlayerInventoryWindow>("player_inventory");
+            invUI.BindPlayer(this);
+            invUI.Initialize();
+            invUI.Hide();
+        }
+
+        void InitializeHUD()
+        {
+            HUD = Game.UI.Create<PlayerHUD>("player_hud");
+            HUD.BindPlayer(this);
+            HUD.Initialize();
         }
         
-        void InitStateMachines()
+        void InitializeStateMachines()
         {
             smMove.InitialState = smMove.States[MoveStates.Idle];
 
@@ -145,6 +180,19 @@ namespace UZSG.Entities
                 float jumpStaminaCost = Generic.GetAttributeFromId("jump_stamina_cost").Value;
                 attr.Remove(jumpStaminaCost);
             }
+        }
+        
+        /// <summary>
+        /// I want the cam to lock and cursor to appear only when the key is released :P
+        /// </summary>    
+        void OnPerformInventory(InputAction.CallbackContext context)
+        {
+            ToggleInventory();
+        }
+
+        public void ToggleInventory()
+        {
+            invUI.ToggleVisibility();
         }
     }
 }

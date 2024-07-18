@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UZSG.Interactions;
 using UZSG.Items;
-using UZSG.PlayerCore;
+using UZSG.Players;
 
 namespace UZSG
 {

@@ -54,16 +54,8 @@ namespace UZSG
             transform.position += movement * (MoveSpeed * Time.deltaTime);
         }
 
-        void ConsoleWindowToggledCallback(bool isVisible)
+        public void InitializeInputs()
         {
-            ToggleControls(!isVisible);
-        }
-
-        public void Initialize()
-        {
-            Game.UI.OnCursorToggled += CursorToggledCallback;            
-            Game.UI.ConsoleUI.OnToggle += ConsoleWindowToggledCallback;
-            
             moveInput.Enable();
             jumpInput.Enable();
             runInput.Enable();
@@ -80,11 +72,6 @@ namespace UZSG
             };
         }
 
-        public void ToggleControls()
-        {
-            ToggleControls(!EnableControls);
-        }
-
         public void ToggleControls(bool enabled)
         {
             EnableControls = enabled;
@@ -93,7 +80,8 @@ namespace UZSG
             {
                 POV.m_VerticalAxis.m_MaxSpeed = Sensitivity;
                 POV.m_HorizontalAxis.m_MaxSpeed = Sensitivity;
-            } else
+            }
+            else
             {
                 POV.m_VerticalAxis.m_MaxSpeed = 0f;
                 POV.m_HorizontalAxis.m_MaxSpeed = 0f;

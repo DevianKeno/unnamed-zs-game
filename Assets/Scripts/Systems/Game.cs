@@ -1,50 +1,60 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+
 using UZSG.UI;
 using UZSG.WorldBuilder;
 
 namespace UZSG.Systems
 {
-    public sealed class Game : MonoBehaviour
+    public class Game : MonoBehaviour
     {
         public static Game Main { get; private set; }
 
+
         #region Core
-        static Console _console;
-        public static Console Console { get => _console; }
-        static UIManager _UI;
-        public static UIManager UI { get => _UI; }
-        static AudioManager _audioManager;
-        public static AudioManager Audio { get => _audioManager; }
-        static WorldManager _worldManager;
-        public static WorldManager World { get => _worldManager; }
+        static Console console;
+        public static Console Console { get => console; }
+        static UIManager UIManager;
+        public static UIManager UI { get => UIManager; }
+        static AudioManager audioManager;
+        public static AudioManager Audio { get => audioManager; }
+        static WorldManager worldManager;
+        public static WorldManager World { get => worldManager; }
+
         #endregion
 
+
         #region World-entry
-        static TickSystem _tick;
-        public static TickSystem Tick { get => _tick; }
-        static AttributesManager _attrManager;
-        public static AttributesManager Attributes { get => _attrManager; }
-        static ItemManager _itemManager;
-        public static ItemManager Items { get => _itemManager; }
-        static RecipeManager _recipeManager;
-        public static RecipeManager Recipes { get => _recipeManager; }
-        static EntityManager _entityManager;
-        public static EntityManager Entity { get => _entityManager; }
+        static TickSystem tickSystem;
+        public static TickSystem Tick { get => tickSystem; }
+        static AttributesManager attrManager;
+        public static AttributesManager Attributes { get => attrManager; }
+        static ItemManager itemManager;
+        public static ItemManager Items { get => itemManager; }
+        static RecipeManager recipeManager;
+        public static RecipeManager Recipes { get => recipeManager; }
+        static EntityManager entityManager;
+        public static EntityManager Entity { get => entityManager; }
+
         #endregion
+
         
         #region Debug
         public FreeLookCamera FreeLookCamera;
+
         #endregion
 
-        PlayerInput input;
-        InputAction toggleConsoleInput;
-        
         /// <summary>
         /// Called after all Managers have been initialized.
         /// </summary>
-        public event Action OnLateInit;
+        internal event Action OnLateInit;
+
+        PlayerInput mainInput;
+        public PlayerInput MainInput { get => mainInput; }
+        InputAction toggleConsoleInput;
+        
 
         void Awake()
         {
@@ -56,80 +66,80 @@ namespace UZSG.Systems
             } else
             {
                 Main = this;
-                _console = GetComponentInChildren<Console>();
+
+                console = GetComponentInChildren<Console>();                
+                UIManager = GetComponentInChildren<UIManager>();
+                audioManager = GetComponentInChildren<AudioManager>();
+                worldManager = GetComponentInChildren<WorldManager>();
                 
-                _UI = GetComponentInChildren<UIManager>();
-                _audioManager = GetComponentInChildren<AudioManager>();
-                _worldManager = GetComponentInChildren<WorldManager>();
-                
-                _tick = GetComponentInChildren<TickSystem>();
-                _attrManager = GetComponentInChildren<AttributesManager>();
-                _itemManager = GetComponentInChildren<ItemManager>();
-                _entityManager = GetComponentInChildren<EntityManager>();
+                tickSystem = GetComponentInChildren<TickSystem>();
+                attrManager = GetComponentInChildren<AttributesManager>();
+                itemManager = GetComponentInChildren<ItemManager>();
+                entityManager = GetComponentInChildren<EntityManager>();
             }
 
-            input = GetComponent<PlayerInput>();
+            mainInput = GetComponent<PlayerInput>();
         }
 
         void Start()
         {
             InitializeManagers();
-            InitializeGlobalControls();
             
-            FreeLookCamera.Initialize();
+            FreeLookCamera.InitializeInputs(); /// DEBUGGING ONLY
         }
 
         void InitializeManagers()
         {
-            // The console is initialized first thing
-            _console.Initialize();
+            /// The console is initialized first thing
+            console.Initialize();
 
-            _UI.Initialize();
-            _audioManager.Initialize();
-            _worldManager.Initialize();
+            UI.Initialize();
+            audioManager.Initialize();
+            worldManager.Initialize();
 
             #region These should be only initialized upon entering worlds
             /// These are run only on scenes that are already "worlds"           
-            _tick.Initialize();
-            _attrManager.Initialize();
-            _itemManager.Initialize();
-            _entityManager.Initialize();
+            tickSystem.Initialize();
+            attrManager.Initialize();
+            itemManager.Initialize();
+            entityManager.Initialize();
 
             #endregion            
 
             OnLateInit?.Invoke();
         }
 
-        void InitializeGlobalControls()
-        {
-            toggleConsoleInput = input.actions.FindAction("Toggle Console Window");
-
-            toggleConsoleInput.performed += ToggleConsole;
-        }
-
-        /// <summary>
-        /// Honestly, these callbacks can be in a different partial file
-        /// </summary>
-        #region Input action callbacks
-
-        void ToggleConsole(InputAction.CallbackContext context)
-        {
-            ToggleConsole(!_UI.ConsoleUI.IsVisible);
-        }
-
-        #endregion
         
-        #region Public methods        
-        /// <summary>
-        /// Shows/hide the console window.
-        /// </summary>
-        public void ToggleConsole(bool isVisible)
+        #region Public methods
+        
+        public InputActionMap GetActionMap(string name)
         {
-            _UI.ConsoleUI.ToggleWindow(isVisible);
+            return MainInput.actions.FindActionMap(name);
         }
-        public void ToggleConsole()
+
+        public Dictionary<string, InputAction> GetActions(string actionMapName)
         {
-            ToggleConsole(!_UI.ConsoleUI.IsVisible);
+            var inputs = new Dictionary<string, InputAction>();
+            var actionMap = GetActionMap(actionMapName);
+
+            foreach (var action in actionMap.actions)
+            {
+                inputs[action.name] = action;
+            }
+
+            return inputs;
+        }
+
+        public Dictionary<string, InputAction> GetActionsFromMap(InputActionMap map)
+        {
+            var inputs = new Dictionary<string, InputAction>();
+            
+            foreach (var action in map.actions)
+            {
+                inputs[action.name] = action;
+            }
+
+            return inputs;
         }
 
         #endregion

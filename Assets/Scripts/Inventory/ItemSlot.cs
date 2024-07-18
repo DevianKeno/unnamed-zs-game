@@ -28,15 +28,18 @@ namespace UZSG.Inventory
         
         public static ItemSlot Empty { get => null; }
 
-        [SerializeField] int _index;
-        public int Index => _index;
-
-        [SerializeField] Item _item;
-        public Item Item => _item;
-
-        [SerializeField] bool _isEmpty;
-        public bool IsEmpty => _isEmpty;
+        [SerializeField] int index;
+        public int Index => index;
+        [SerializeField] Item item;
+        public Item Item => item;
         public SlotType Type;
+        [SerializeField] public bool IsEmpty
+        {
+            get
+            {
+                return item == Item.None;
+            }
+        }
 
         /// <summary>
         /// Called whenever the content of this Slot is changed.
@@ -45,17 +48,15 @@ namespace UZSG.Inventory
 
         public ItemSlot(int index)
         {
-            _index = index;
-            _item = Item.None;
-            _isEmpty = true;
+            this.index = index;
+            item = Item.None;
             Type = SlotType.All;
         }
         
         public ItemSlot(int index, SlotType slotType)
         {
-            _index = index;
-            _item = Item.None;
-            _isEmpty = true;
+            this.index = index;
+            item = Item.None;
             Type = slotType;
         }
 
@@ -63,13 +64,13 @@ namespace UZSG.Inventory
         {        
             OnContentChanged?.Invoke(this, new()
             {
-                Item = _item
+                Item = item
             });
         }
 
         public Item View()
         {
-            return new(_item);
+            return new(item);
         }
 
         public bool TryPut(Item item)
@@ -81,24 +82,24 @@ namespace UZSG.Inventory
 
         public void PutItem(Item item)
         {
-            _item = item;
-            _isEmpty = false;
+            this.item = item;
             ContentChanged();
         }
 
         public bool TryPutItem(Item item)
         {
-            if (!_isEmpty) return false;
-            _item = item;
-            _isEmpty = false;
+            if (!IsEmpty)
+            {
+                return false;
+            }
+            this.item = item;
             ContentChanged();
             return true;
         }
         
         public void Clear()
         {
-            _item = Item.None;
-            _isEmpty = true;
+            item = Item.None;
             ContentChanged();
         }
 
@@ -110,21 +111,21 @@ namespace UZSG.Inventory
         /// <returns></returns>
         public Item TakeItems(int amount = -1)
         {
-            if (amount > _item.Count || _item.Count <= 1 || amount < 1)
+            if (amount > item.Count || item.Count <= 1 || amount < 1)
             {
                 return TakeAll();
             }
 
-            int remaining = _item.Count - amount;
-            Item toTake = new(_item, amount);
-            _item = new(_item, remaining);
+            int remaining = item.Count - amount;
+            Item toTake = new(item, amount);
+            item = new(item, remaining);
             ContentChanged();
             return toTake;
         }
 
         public Item TakeAll()
         {
-            Item toTake = new(_item, _item.Count);
+            Item toTake = new(item, item.Count);
             Clear();
             return toTake;
         }
@@ -135,23 +136,23 @@ namespace UZSG.Inventory
         /// </summary>
         public bool TryCombine(Item toAdd, out Item excess)
         {
-            if (!_item.CompareTo(toAdd))
+            if (!item.CompareTo(toAdd))
             {
                 excess = toAdd;
                 return false;
             }
         
             // Stack overflow when stack size is 0, needs fix
-            int newCount = _item.Count + toAdd.Count;
-            int excessCount = newCount - _item.StackSize;
+            int newCount = item.Count + toAdd.Count;
+            int excessCount = newCount - item.StackSize;
 
             if (excessCount > 0)
             {
-                _item = new(_item, _item.StackSize);
-                excess = new(_item, excessCount);
+                item = new(item, item.StackSize);
+                excess = new(item, excessCount);
             } else
             {
-                _item = new(_item, newCount);
+                item = new(item, newCount);
                 excess = Item.None;
             }
             ContentChanged();

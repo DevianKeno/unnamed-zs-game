@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UZSG.PlayerCore;
+using UZSG.Players;
 using UZSG.Systems;
 
 namespace UZSG.FPP

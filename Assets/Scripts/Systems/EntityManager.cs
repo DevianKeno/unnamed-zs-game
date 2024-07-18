@@ -12,14 +12,21 @@ namespace UZSG.Systems
     /// </summary>
     public class EntityManager : MonoBehaviour, IInitializable
     {
+        public struct EntitySpawnedContext
+        {
+            public Entity Entity;
+        }
+
         bool _isInitialized;
         public bool IsInitialized => _isInitialized;
         /// <summary>
         /// Contains the list of all spawnable entities in the game.
         /// </summary>
-        Dictionary<string, EntityData> _entityList = new();
+        Dictionary<string, EntityData> _entitiesDict = new();
         [SerializeField] AssetLabelReference assetLabelReference;
+        
         public Vector3 SpawnCoordinates = new(0f, 0f, 0f);
+        public event EventHandler<EntitySpawnedContext> OnEntitySpawn;
         
         internal void Initialize()
         {
@@ -27,13 +34,18 @@ namespace UZSG.Systems
             _isInitialized = true;
 
             var startTime = Time.time;
-            Game.Console?.Log("Initializing Entity database...");
-
-            Addressables.LoadAssetsAsync<EntityData>(assetLabelReference, (a) =>
+            Game.Console.Log("Initializing Entity database...");
+            var ettys = Resources.LoadAll<EntityData>("Data/Entities");
+            foreach (var etty in ettys)
             {
-                Game.Console?.LogDebug($"Loading data for Entity {a.Id}");
-                _entityList[a.Id] = a;
-            });
+                _entitiesDict[etty.Id] = etty;
+            }
+
+            // Addressables.LoadAssetsAsync<EntityData>(assetLabelReference, (a) =>
+            // {
+            //     Game.Console?.LogDebug($"Loading data for Entity {a.Id}");
+            //     _entityList[a.Id] = a;
+            // });
         }
 
         /// <summary>
@@ -41,26 +53,31 @@ namespace UZSG.Systems
         /// </summary>
         public void Spawn(string entityId)
         {
-            if (_entityList.ContainsKey(entityId))
+            if (_entitiesDict.ContainsKey(entityId))
             {
-                Addressables.LoadAssetAsync<GameObject>(_entityList[entityId].AssetReference).Completed += (a) =>
-                {
-                    if (a.Status == AsyncOperationStatus.Succeeded)
+                    Addressables.LoadAssetAsync<GameObject>(_entitiesDict[entityId].AssetReference).Completed += (a) =>
                     {
-                        Vector3 position = new(0f, 1f, 0f);
-                        var go = Instantiate(a.Result, position, Quaternion.identity);
-                        
-                        if (go.TryGetComponent(out Entity entity))
+                        if (a.Status == AsyncOperationStatus.Succeeded)
                         {
-                            go.name = entity.EntityData.Name;
-                            entity.OnSpawn();
+                            Vector3 position = new(0f, 1f, 0f);
+                            var go = Instantiate(a.Result, position, Quaternion.identity);
+                            
+                            if (go.TryGetComponent(out Entity entity))
+                            {
+                                go.name = entity.EntityData.Name;
+                                entity.OnSpawn();
+                            }
+
+                            OnEntitySpawn?.Invoke(this, new()
+                            {
+                                Entity = entity
+                            });
+                            Game.Console?.Log($"Spawned entity {entityId} at ({position.x}, {position.y}, {position.z})");
+                            return;
                         }
 
-                        Game.Console?.Log($"Spawned entity {entityId} at ({position.x}, {position.y}, {position.z})");
-                    }
-
-                    Game.Console?.LogDebug($"Failed to spawn entity {entityId}");
-                };
+                        Game.Console?.LogDebug($"Failed to spawn entity {entityId}");
+                    };
             }            
         }
 
@@ -71,9 +88,9 @@ namespace UZSG.Systems
         {
             GameObject loadedObj = null;
 
-            if (_entityList.ContainsKey(entityId))
+            if (_entitiesDict.ContainsKey(entityId))
             {
-                Addressables.LoadAssetAsync<GameObject>(_entityList[entityId].AssetReference).Completed += (a) =>
+                Addressables.LoadAssetAsync<GameObject>(_entitiesDict[entityId].AssetReference).Completed += (a) =>
                 {
                     if (a.Status == AsyncOperationStatus.Succeeded)
                     {
@@ -85,8 +102,12 @@ namespace UZSG.Systems
                         {
                             go.name = entity.EntityData.Name;
                             entity.OnSpawn();
-                        }                        
+                        }
 
+                        OnEntitySpawn?.Invoke(this, new()
+                        {
+                            Entity = entity
+                        });
                         Game.Console?.Log($"Spawned entity {entityId} at ({position.x}, {position.y}, {position.z})");
                         return;
                     }
@@ -100,10 +121,10 @@ namespace UZSG.Systems
 
         public void SpawnItem(string itemId)
         {            
-            if (_entityList.ContainsKey("item"))
+            if (_entitiesDict.ContainsKey("item"))
             {
                 // Load Item (Entity) model
-                Addressables.LoadAssetAsync<GameObject>(_entityList["item"].AssetReference).Completed += (a) =>
+                Addressables.LoadAssetAsync<GameObject>(_entitiesDict["item"].AssetReference).Completed += (a) =>
                 {
                     if (a.Status == AsyncOperationStatus.Succeeded)
                     {
@@ -118,6 +139,10 @@ namespace UZSG.Systems
                             itemEntity.OnSpawn();
                         }
 
+                        OnEntitySpawn?.Invoke(this, new()
+                        {
+                            Entity = itemEntity
+                        });
                         Game.Console?.LogDebug($"Spawned item {itemId} at ({position.x}, {position.y}, {position.z})");
                         return;
                         

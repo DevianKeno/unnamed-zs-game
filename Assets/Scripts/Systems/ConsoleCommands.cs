@@ -42,13 +42,13 @@ namespace UZSG.Systems
         /// </summary>
         void CHelp(object sender, string[] args)
         {
-            if (_commands.ContainsKey(args[0]))
+            if (commandsDict.ContainsKey(args[0]))
             {
-                Log(_commands[args[0]].Description);
+                Log(commandsDict[args[0]].Description);
             } else
             {
                 WriteLine("List of available commands");
-                foreach (var c in _commands)
+                foreach (var c in commandsDict)
                 {
                     ///TECHNICAL DEBT
                 }

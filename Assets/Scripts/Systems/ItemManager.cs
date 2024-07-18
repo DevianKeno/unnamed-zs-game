@@ -11,8 +11,9 @@ namespace UZSG.Systems
     {
         bool _isInitialized;
         public bool IsInitialized => _isInitialized;
-        Dictionary<string, ItemData> _itemList = new();
-        Dictionary<string, GameObject> _cachedModels = new();
+        Dictionary<string, ItemData> _itemsDict = new();
+        Dictionary<string, GameObject> _cachedItemModels = new();
+
         [SerializeField] AssetLabelReference itemsLabelReference;
         [SerializeField] AssetLabelReference weaponsLabelReference;
 
@@ -24,45 +25,52 @@ namespace UZSG.Systems
             _isInitialized = true;
             
             var startTime = Time.time;
-            Game.Console.LogDebug("Initializing item database...");
-
-            Addressables.LoadAssetsAsync<ItemData>(itemsLabelReference, (a) =>
+            Game.Console.LogDebug("Initializing Item database...");
+            var items = Resources.LoadAll<ItemData>("Data/Items");
+            foreach (var item in items)
             {
-                Game.Console?.LogDebug($"Loading data for item {a.Id}");
-                _itemList[a.Id] = a;
-            });
+                _itemsDict[item.Id] = item;
+            }
+
+            // Addressables.LoadAssetsAsync<ItemData>(itemsLabelReference, (a) =>
+            // {
+            //     Game.Console?.LogDebug($"Loading data for item {a.Id}");
+            //     _itemList[a.Id] = a;
+            // });
         }
 
         /// <summary>
         /// Loads and caches the model.
         /// </summary>
-        public bool LoadModel(string id)
+        public bool LoadItemModel(string itemId)
         {
-            if (_itemList.ContainsKey(id))
+            if (_itemsDict.ContainsKey(itemId))
             {
-                var itemData = _itemList[id];
+                var itemData = _itemsDict[itemId];
 
                 if (itemData.AssetReference != null)
                 {
-                    // Load model
+                    /// Load model
                     Addressables.LoadAssetAsync<GameObject>(itemData.AssetReference).Completed += (a) =>
                     {
                         if (a.Status == AsyncOperationStatus.Succeeded)
                         {
-                            _cachedModels[id] = a.Result;
+                            _cachedItemModels[itemId] = a.Result;
                             OnDoneLoadModel?.Invoke(this, itemData.Id);
                         }
                     };
                     
                     return true;
-                } else
+                }
+                else
                 {
-                    Game.Console.LogWarning($"There is no asset assigned to item {id}.");
+                    Game.Console.LogWarning($"There is no Addressable Asset assigned to item {itemId}.");
                     return false;
                 }
-            } else
+            }
+            else
             {
-                Game.Console.Log($"Failed to load item id {id} as it does not exist.");
+                Game.Console.Log($"Failed to load item id {itemId} as it does not exist.");
                 return false;
             }            
         }
@@ -72,20 +80,20 @@ namespace UZSG.Systems
         /// </summary>
         public Item CreateItem(string id, int amount = 1)
         {
-            if (_itemList.ContainsKey(id))
+            if (_itemsDict.ContainsKey(id))
             {
-                return new Item(_itemList[id], amount);
+                return new Item(_itemsDict[id], amount);
             }
             
-            Game.Console?.Log("Invalid item id");
+            Game.Console.Log("Invalid item id");
             return Item.None;
         }
 
         public ItemData GetItemData(string id)
         {
-            if (_itemList.ContainsKey(id))
+            if (_itemsDict.ContainsKey(id))
             {
-                return _itemList[id];
+                return _itemsDict[id];
             }
             
             Game.Console?.Log("Invalid item id");
@@ -94,9 +102,9 @@ namespace UZSG.Systems
         
         public bool TryGetItemData(string id, out ItemData itemData)
         {
-            if (_itemList.ContainsKey(id))
+            if (_itemsDict.ContainsKey(id))
             {
-                itemData = _itemList[id];
+                itemData = _itemsDict[id];
                 return true;
             }
             

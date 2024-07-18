@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UZSG.Inventory;
@@ -10,8 +11,22 @@ namespace UZSG.UI
     /// <summary>
     /// UI Manager for UZSG.
     /// </summary>
-    public sealed class UIManager : MonoBehaviour
+    public class UIManager : MonoBehaviour
     {
+        [Serializable]
+        public struct PrefabId
+        {
+            public string Id;
+            public GameObject Prefab;
+        }
+
+        [Serializable]
+        public struct IconId
+        {
+            public string Id;
+            public Sprite Sprite;
+        }
+
         bool _isInitialized;
 
         [SerializeField] Canvas canvas;
@@ -20,89 +35,49 @@ namespace UZSG.UI
         bool _isCursorVisible;
         public bool IsCursorVisible => _isCursorVisible;
 
-        [Header("UIs")]
-        [SerializeField] ConsoleUI _consoleUI;
-        public ConsoleUI ConsoleUI => _consoleUI;
-        [SerializeField] InteractionIndicator _interactIndicator;
-        public InteractionIndicator InteractIndicator => _interactIndicator;
-        [SerializeField] HUDHandler _HUD;
-        public HUDHandler HUD => _HUD;
-        [SerializeField] InventoryUI _inventoryUI;
-        public InventoryUI InventoryUI => _inventoryUI;
 
         #region UI Events
-        /// <summary>
-        /// Called everytime the visibility of the cursor changes.
-        /// Params:
-        ///   bool: isVisible
-        /// </summary>
         public event Action<bool> OnCursorToggled;
         
         #endregion
+
         
         #region Inputs
         PlayerInput input;
         InputAction toggleCursorInput;
         InputAction closeCurrentWindowInput;
+
         #endregion
 
+
         [Header("UI Prefabs")]
-        [SerializeField] GameObject consoleWindowPrefab;
-        [SerializeField] GameObject interactIndicatorPrefab;
-        [SerializeField] GameObject HUDPrefab;
-        [SerializeField] GameObject inventoryPrefab;
-        [SerializeField] GameObject itemDisplayPrefab;
-        
-        void Awake()
-        {
-            input = GetComponent<PlayerInput>();
-            toggleCursorInput = input.actions.FindAction("Toggle Cursor");
-            closeCurrentWindowInput = input.actions.FindAction("Close Current Window");
-        }
-
-        public void InitInventoryWindow(InventoryHandler inventory)
-        {
-            GameObject go = Instantiate(inventoryPrefab, canvas.transform);
-            go.name = "Inventory Window";
-
-            _inventoryUI = go.GetComponent<InventoryUI>();
-            _inventoryUI.BindInventory(inventory);
-            _inventoryUI.Initialize();
-            _inventoryUI.Hide();
-        }
+        public List<PrefabId> Prefabs;
 
         internal void Initialize()
         {
             if (_isInitialized) return;
             _isInitialized = true;
 
-            GameObject go;            
-            Game.Console?.Log("Initializing UI...");
+            Game.Main.OnLateInit += OnLateInit;
+            
+            Game.Console.Log("Initializing UI...");
 
+            input = Game.Main.MainInput;
+            toggleCursorInput = input.actions.FindAction("Toggle Cursor");
+            closeCurrentWindowInput = input.actions.FindAction("Close Current Window");
+                     
             toggleCursorInput.performed += ToggleCursor;
-
-            go = Instantiate(consoleWindowPrefab, canvas.transform);
-            go.name = "Console Window";
-            _consoleUI = go.GetComponent<ConsoleUI>();
-            _consoleUI.Initialize();
-            
-            go = Instantiate(HUDPrefab, canvas.transform);
-            go.name = "HUD";
-            _HUD = go.GetComponent<HUDHandler>();
-            _HUD.Initialize();
-
-            #region Should only appear inside worlds
-
-            _interactIndicator = Instantiate(interactIndicatorPrefab, canvas.transform).GetComponent<InteractionIndicator>();
-            _interactIndicator.Hide();
-            #endregion
-            
+                        
             input.actions.FindActionMap("Global").Enable();
+        }
+      
+        void OnLateInit()
+        {
         }
 
         void ToggleCursor(InputAction.CallbackContext context)
         {
-            ToggleCursor(!_isCursorVisible);
+            ToggleCursor();
         }
 
         public void ToggleCursor()
@@ -122,9 +97,42 @@ namespace UZSG.UI
             OnCursorToggled?.Invoke(isVisible);
         }
 
-        public ItemDisplayUI CreateItemDisplay(Item item)
+        // public ItemDisplayUI CreateItemDisplay(Item item)
+        // {
+        //     return Instantiate(itemDisplayPrefab, Canvas.transform).GetComponent<ItemDisplayUI>();
+        // }
+
+        // public void InitInventoryWindow(InventoryHandler inventory)
+        // {
+        //     GameObject go = Instantiate(inventoryPrefab, canvas.transform);
+        //     go.name = "Inventory Window";
+
+        //     _inventoryUI = go.GetComponent<PlayerInventoryWindow>();
+        //     _inventoryUI.BindInventory(inventory);
+        //     _inventoryUI.Initialize();
+        //     _inventoryUI.Hide();
+        // }
+
+        public T Create<T>(string id, bool inSafeArea = true) where T : IUIElement
         {
-            return Instantiate(itemDisplayPrefab, Canvas.transform).GetComponent<ItemDisplayUI>();
+            Transform parent = Canvas.transform;
+            if (!inSafeArea) parent = Canvas.transform;
+            foreach (PrefabId p in Prefabs)
+            {
+                if (p.Id == id)
+                {
+                    var go = Instantiate(p.Prefab, parent);
+                    go.name = p.Prefab.name;
+
+                    if (go.TryGetComponent(out T element))
+                    {
+                        return element;
+                    }
+                }
+            }
+            Game.Console.Log("Unable to create UI element, it does not exist");
+            Debug.LogWarning("Unable to create UI element, it does not exist");
+            return default;
         }
     }
 }

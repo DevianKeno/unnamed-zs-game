@@ -17,38 +17,13 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: 4df500ee1f95bb542be6e196e4ad9a8d
   m_SerializeEntries:
-  - m_GUID: c8a8e49113fae5b40b045ce0f2eeb0c3
-    m_Address: Assets/Prefabs/Player (Entity).prefab
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 2854f2aec8afd8346a4719ca90550ad8
-    m_Address: Assets/Data
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 060ee24a7bd1cc241ab25ba7dfdcdbff
-    m_Address: Assets/Data/Masteries
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: ccea5945f4750e048930c3dfdda097aa
-    m_Address: Assets/Models/items/bandage/bandage.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 40f96aaff95f534479b911626edf87ba
-    m_Address: Assets/Models/entities/box/box.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2f4d5fc6ba2a38246accad4c09188c98
     m_Address: Assets/Sprites
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 6826bbfc6468b29479005f0e22608a36
-    m_Address: Assets/Models/weapons/katana/katana.prefab
+  - m_GUID: c9dad82ad54450641ba90ad44e5b219f
+    m_Address: Assets/AddressableAssets
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

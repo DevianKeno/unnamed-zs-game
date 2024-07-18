@@ -3,21 +3,25 @@ using UZSG.Entities;
 
 namespace UZSG.FPP
 {
-    public sealed class ArmsController: MonoBehaviour
+    public sealed class ArmsController : MonoBehaviour
     {
         public Player player;
-        public Animator animator;
-        FPPModel _model;
+        [SerializeField] GameObject rig;
+        [SerializeField] Animator animator;
         
-        public void BindPlayer(Player p)
+        void Start()
         {
-            player = p;
+            animator = rig.GetComponent<Animator>();
         }
 
-        public void LoadModel(FPPModel model)
+        public void LoadAnimationController(RuntimeAnimatorController controller)
         {
-            _model = model;
-            
+            animator.runtimeAnimatorController = controller;
+        }
+
+        public void PlayAnimation(string name)
+        {
+            animator.Play(name);
         }
     }
 }

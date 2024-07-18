@@ -2,7 +2,7 @@ using System;
 using UZSG.Entities;
 using UZSG.Systems;
 
-namespace UZSG.PlayerCore
+namespace UZSG.Players
 {
     public enum MoveStates {
         Idle, Walk, Run, Jump, Crouch, CrouchWalk,

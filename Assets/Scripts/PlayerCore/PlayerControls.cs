@@ -1,12 +1,13 @@
 using System;
+using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Cinemachine;
+
 using UZSG.Systems;
-using UZSG.FPP;
 using UZSG.Entities;
 
-namespace UZSG.PlayerCore
+namespace UZSG.Players
 {
     public struct FrameInput
     {
@@ -21,6 +22,8 @@ namespace UZSG.PlayerCore
     /// </summary>
     public class PlayerControls : MonoBehaviour
     {
+        public Player Player;
+
         #region These should be read as attributes
         /// <summary>
         /// Cached movement values from the Player. This should subscribe to the OnValueChanged event.
@@ -127,10 +130,7 @@ namespace UZSG.PlayerCore
         public event EventHandler OnMoveStop;
         #endregion
 
-        public Player Player { get => player; }
-
         [Header("Components")]
-        [SerializeField] Player player;
         /// <summary>
         /// The Player's 3D model.
         /// </summary>
@@ -138,53 +138,45 @@ namespace UZSG.PlayerCore
         [SerializeField] Rigidbody rb;
         [SerializeField] Transform groundChecker;
         [SerializeField] LayerMask groundMask;
-        [SerializeField] PlayerInput input;
-        InputAction moveInput;
-        InputAction jumpInput;
-        InputAction runInput;
-        InputAction crouchInput;
+        
+        InputActionMap actionMap;
+        Dictionary<string, InputAction> inputs = new();
 
         void Awake()
         {
-            player = GetComponent<Player>();
-            input = GetComponent<PlayerInput>();
-            
-            moveInput = input.actions.FindAction("Move");
-            jumpInput = input.actions.FindAction("Jump");
-            runInput = input.actions.FindAction("Run");
-            crouchInput = input.actions.FindAction("Crouch");
+            Player = GetComponent<Player>();
         }
-
+        
         // void OnDrawGizmos()
         // {            
         //     Gizmos.DrawLine(groundChecker.transform.position, groundChecker.transform.position + Vector3.down * GroundDistance);
         // }
 
-        internal void Init()
+        internal void Initialize()
         {
-            InitializeControls();
+            InitializeInputs();
             RetrieveAttributes();
-        }
-
-        void InitializeControls()
-        {            
-            SetControlsEnabled(true);
-
-            moveInput.performed += OnMoveInput;
-            moveInput.started += OnMoveInput;
-            moveInput.canceled += OnMoveInput;
-
-            jumpInput.performed += OnJumpInput;                 // Space (default)
-
-            runInput.started += OnRunInput;                     // Shift (default)  
-
-            runInput.canceled += OnRunInput;                    // Shift
-
-            crouchInput.performed += OnCrouchInput;             // LCtrl (default)
-
-            Game.UI.ConsoleUI.OnToggle += ConsoleWindowToggledCallback;
+            
             Game.Tick.OnTick += Tick;
             _previousPosition = transform.position;
+        }
+
+        void InitializeInputs()
+        {
+            actionMap = Game.Main.GetActionMap("Player");
+            inputs = Game.Main.GetActionsFromMap(actionMap);
+            
+            inputs["Move"].performed += OnMoveInput;
+            inputs["Move"].started += OnMoveInput;
+            inputs["Move"].canceled += OnMoveInput;
+
+            inputs["Jump"].performed += OnJumpInput;        // Space (default)
+            inputs["Jump"].started += OnRunInput;           // Shift (default)
+            inputs["Jump"].canceled += OnRunInput;          // Shift (default)
+
+            inputs["Crouch"].performed += OnCrouchInput;    // LCtrl (default)
+
+            SetControlsEnabled(true);
         }
 
         void Tick(object sender, TickEventArgs e)
@@ -192,8 +184,8 @@ namespace UZSG.PlayerCore
             if (IsMoving && IsRunning)
             {
                 // Cache attributes for better performance
-                var runStaminaCost = player.Generic.GetAttributeFromId("run_stamina_cost").Value;
-                player.Vitals.GetAttributeFromId("stamina").Remove(runStaminaCost);
+                var runStaminaCost = Player.Generic.GetAttributeFromId("run_stamina_cost").Value;
+                Player.Vitals.GetAttributeFromId("stamina").Remove(runStaminaCost);
             }
         }
 
@@ -206,30 +198,20 @@ namespace UZSG.PlayerCore
         {
             if (value)
             {
-                moveInput.Enable();
-                jumpInput.Enable();
-                runInput.Enable();
-                crouchInput.Enable();
-            } else
-            {
-                moveInput.Disable();
-                jumpInput.Disable();
-                runInput.Disable();
-                crouchInput.Disable();
+                actionMap.Enable();
             }
-        }
-
-        void OnDisable()
-        {
-            SetControlsEnabled(false);
+            else
+            {
+                actionMap.Disable();
+            }
         }
 
         void RetrieveAttributes()
         {
             // These can be cached and track changes using events
-            MoveSpeed = player.Generic.GetAttributeFromId("move_speed").Value;
-            RunSpeed = player.Generic.GetAttributeFromId("run_speed").Value;
-            CrouchSpeed = player.Generic.GetAttributeFromId("crouch_speed").Value;
+            MoveSpeed = Player.Generic.GetAttributeFromId("move_speed").Value;
+            RunSpeed = Player.Generic.GetAttributeFromId("run_speed").Value;
+            CrouchSpeed = Player.Generic.GetAttributeFromId("crouch_speed").Value;
             
             _currentSpeed = MoveSpeed;
         }
@@ -246,14 +228,16 @@ namespace UZSG.PlayerCore
             {
                 if (IsRunning)
                 {
-                    player.smMove.ToState(MoveStates.Run);
-                } else
-                {
-                    player.smMove.ToState(MoveStates.Walk);
+                    Player.smMove.ToState(MoveStates.Run);
                 }
-            } else
+                else
+                {
+                    Player.smMove.ToState(MoveStates.Walk);
+                }
+            }
+            else
             {
-                player.smMove.ToState(MoveStates.Idle);
+                Player.smMove.ToState(MoveStates.Idle);
             }
         }
 
@@ -293,11 +277,12 @@ namespace UZSG.PlayerCore
             if (value)
             {
                 _currentSpeed = RunSpeed;
-                player.smMove.ToState(MoveStates.Run);
-            } else
+                Player.smMove.ToState(MoveStates.Run);
+            }
+            else
             {
                 _currentSpeed = MoveSpeed;
-                player.smMove.ToState(MoveStates.Idle);
+                Player.smMove.ToState(MoveStates.Idle);
             }
         }
 
@@ -310,7 +295,7 @@ namespace UZSG.PlayerCore
 
         Vector3 GetCameraForward()
         {
-            Vector3 camForward = player.MainCamera.transform.forward;
+            Vector3 camForward = Player.MainCamera.transform.forward;
             camForward.y = 0f;
             return camForward;
         }
@@ -327,7 +312,7 @@ namespace UZSG.PlayerCore
 
         void HandleDirection()
         {
-            _frameVelocity = (_frameInput.move.x * player.MainCamera.transform.right) + (_frameInput.move.y * GetCameraForward().normalized);
+            _frameVelocity = (_frameInput.move.x * Player.MainCamera.transform.right) + (_frameInput.move.y * GetCameraForward().normalized);
             _frameVelocity.Normalize();
         }
 
@@ -341,25 +326,25 @@ namespace UZSG.PlayerCore
             if (!_jumped) return;
             _jumped = false;
             
-            player.smMove.ToState(MoveStates.Jump);
-            // The time required to reach the highest point of the jump
+            Player.smMove.ToState(MoveStates.Jump);
+            /// The time required to reach the highest point of the jump
             float timeToApex = JumpTime / 2;
-            _frameVelocity.y = (2 * JumpHeight) / timeToApex; // this should be cached
+            _frameVelocity.y = (2 * JumpHeight) / timeToApex; /// this should be cached
         }
 
         void HandleGravity()
         {            
-            // Calculates the player's internal gravity
+            /// Calculates the player's internal gravity
             Gravity = (-2 * JumpHeight) / Mathf.Pow(JumpTime / 2, 2); // this should be cached
 
-            if (IsGrounded) // grounding force only
+            if (IsGrounded) /// grounding force only
             {
                 _frameVelocity.y = GroundingForce;
 
-            } else if (IsFalling) // increasing fall speed
+            } else if (IsFalling) /// increasing fall speed
             {
                 _frameVelocity.y += Gravity * FallSpeedMultiplier * Time.fixedDeltaTime;
-            } else // normal gravity
+            } else /// normal gravity
             {
                 _frameVelocity.y += Gravity * Time.fixedDeltaTime;
             }
@@ -383,7 +368,7 @@ namespace UZSG.PlayerCore
         {
             if (_isTransitioning) return;
 
-            player.smMove.ToState(MoveStates.Crouch);
+            Player.smMove.ToState(MoveStates.Crouch);
 
             _isTransitioning = !_isTransitioning;
             _isCrouching = !_isCrouching;
@@ -393,43 +378,42 @@ namespace UZSG.PlayerCore
             if (_isCrouching)
             {            
                 _currentSpeed = CrouchSpeed;
-                CrouchPosition = player.FPP.Camera.transform.position.y - 1f;
+                CrouchPosition = Player.FPP.CameraController.transform.position.y - 1f;
                 TransitionSpeed = 0.3f;
-            } else
+            }
+            else
             {
                 _currentSpeed = MoveSpeed;
-                CrouchPosition = player.FPP.Camera.transform.position.y + 1f;
+                CrouchPosition = Player.FPP.CameraController.transform.position.y + 1f;
                 TransitionSpeed = 0.3f;
             }
 
-            LeanTween.value(gameObject, player.FPP.Camera.transform.position.y, CrouchPosition, TransitionSpeed)
-                .setOnUpdate( (i) =>
-                {   
-                    player.FPP.Camera.transform.position = new Vector3(
-                        player.FPP.Camera.transform.position.x,
-                        i,
-                        player.FPP.Camera.transform.position.z
-                    );
-                }).setOnComplete( () =>
-                {
-                    _isTransitioning = false;
-                }).setEaseOutExpo();
+            LeanTween.value(gameObject, Player.FPP.CameraController.transform.position.y, CrouchPosition, TransitionSpeed)
+            .setOnUpdate((i) =>
+            {   
+                Player.FPP.CameraController.transform.position = new Vector3(
+                    Player.FPP.CameraController.transform.position.x,
+                    i,
+                    Player.FPP.CameraController.transform.position.z
+                );
+            }).setOnComplete(() =>
+            {
+                _isTransitioning = false;
+            }).setEaseOutExpo();
         }
 
-        public void ToggleMovementControls()
+        public void SetControl(string name, bool enabled)
         {
-            ToggleMovementControls(!EnableMovementControls);
-        }
-        
-        public void ToggleMovementControls(bool value)
-        {
-            EnableMovementControls = value;
-            if (value)
+            if (inputs.ContainsKey(name))
             {
-                moveInput.Enable();
-            } else
-            {
-                moveInput.Disable();
+                if (enabled)
+                {
+                    inputs[name].Enable();
+                }
+                else
+                {
+                    inputs[name].Disable();
+                }
             }
         }
     }

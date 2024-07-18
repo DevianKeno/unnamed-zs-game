@@ -75,16 +75,13 @@ namespace UZSG.Items
         public WeaponMeleeAttributes Attributes;
 
         [Header("FPP")]
-        [SerializeField] GameObject _armsModel;
-        public GameObject ArmsModel => _armsModel;
         [SerializeField] GameObject _model;
         public GameObject Model => _model;
-
-        // [SerializeField] AnimatorController _armsController;
-        // public AnimatorController ArmsController => _armsController;
-        // [SerializeField] AnimatorController _modelController;
-        // public AnimatorController ModelController => _modelController;
-
+        [SerializeField] AnimatorController _armsAnimController;
+        public AnimatorController ArmsAnimController => _armsAnimController;
+        [SerializeField] AnimatorController _modelAnimController;
+        public AnimatorController ModelAnimController => _modelAnimController;
+        
         [SerializeField] FPPAnimations _anims;
         public FPPAnimations Anims => _anims;
         

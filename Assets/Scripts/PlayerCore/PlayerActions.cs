@@ -1,21 +1,25 @@
 using System;
+using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.InputSystem;
+
 using UZSG.Systems;
 using UZSG.Items;
 using UZSG.Interactions;
 using UZSG.Entities;
-using UZSG.FPP;
-using Cinemachine;
 using UZSG.Inventory;
+using UZSG.UI;
 
-namespace UZSG.PlayerCore
+namespace UZSG.Players
 {
     /// <summary>
     /// Handles the different actions the Player can do.
     /// </summary>
     public class PlayerActions : MonoBehaviour
     {
+        public Player Player;
+
         [Header("Interact Size")]
         public float Radius;
         public float MaxInteractDistance;
@@ -31,91 +35,22 @@ namespace UZSG.PlayerCore
         IInteractable lookingAt;
         RaycastHit hit;
         Ray ray;
+        InteractionIndicator interactionIndicator;
         
-        [field: Header("Components")]
-        Player player;
-        PlayerInput input;
-        InputAction primaryInput;
-        InputAction secondaryInput;
-        InputAction interactInput;
-        InputAction inventoryInput;
-        InputAction hotbarInput;
-
-        internal void Init()
-        {
-        }
-
+        InputActionMap actionMap;
+        Dictionary<string, InputAction> inputs = new();
+        
         void Awake()
         {
-            player = GetComponent<Player>();
-            input = GetComponent<PlayerInput>();
-            
-            primaryInput = input.actions.FindAction("Primary");
-            secondaryInput = input.actions.FindAction("Secondary");
-            interactInput = input.actions.FindAction("Interact");
-            inventoryInput = input.actions.FindAction("Inventory");
-            hotbarInput = input.actions.FindAction("Hotbar");
+            Player = GetComponent<Player>();
         }
 
-        void Start()
+        internal void Initialize()
         {
+            InitializeInputs();
+            interactionIndicator = Game.UI.Create<InteractionIndicator>("interaction_indicator");
+
             Game.Tick.OnTick += Tick;
-            
-            primaryInput.Enable();
-            secondaryInput.Enable();
-            interactInput.Enable();
-            inventoryInput.Enable();
-            hotbarInput.Enable();
-
-            /*  performed = Pressed or released
-                started = Pressed
-                canceled = Released
-            */
-            interactInput.performed += OnPerformInteract;        // F (default)
-            inventoryInput.performed += OnPerformInventory;      // Tab/E (default)
-            hotbarInput.performed += OnHotbarSelect;             // Tab/E (default)
-
-            primaryInput.started += OnStartPrimary;          // LMB (default)
-            primaryInput.canceled += OnCancelPrimary;          // LMB (default)
-
-            secondaryInput.started += OnStartSecondary;        // RMB (default)
-            secondaryInput.canceled += OnCancelSecondary;       // RMB (default)
-
-            // player.Inventory.Hotbar.OnChangeEquipped += HotbarChangeEquippedCallback;
-        }
-
-        void OnDisable()
-        {
-            Game.Tick.OnTick -= Tick;
-            interactInput.Disable();
-            inventoryInput.Disable();
-        }
-
-        #region Callbacks
-        void OnHotbarSelect(InputAction.CallbackContext context)
-        {
-            if (!int.TryParse(context.control.displayName, out int index)) return;
-            player.Inventory.SelectHotbarSlot(index);
-        }
-
-        void HotbarChangeEquippedCallback(object sender, Hotbar.ChangeEquippedArgs e)
-        {
-            player.FPP.Equip(e.Index);
-        }
-        
-        void OnPerformInteract(InputAction.CallbackContext context)
-        {
-            if (lookingAt == null) return;            
-            lookingAt.Interact(this, new InteractArgs());
-        }
-
-        /// <summary>
-        /// I want the cam to lock and cursor to appear only when the key is released :P
-        /// </summary>    
-        void OnPerformInventory(InputAction.CallbackContext context)
-        {
-            Game.UI.InventoryUI.ToggleVisibility();
-            // ToggleCameraControls(!Game.UI.InventoryUI.IsVisible);
         }
   
         void Update()
@@ -127,19 +62,56 @@ namespace UZSG.PlayerCore
                 if (_holdTimer > HoldThresholdMs / 1000f)
                 {
                     leftClicked = false;
-                    player.smAction.ToState(ActionStates.PrimaryHold);
+                    Player.smAction.ToState(ActionStates.PrimaryHold);
                 }
 
-            } else if (rightClicked)
+            }
+            else if (rightClicked)
             {
                 _holdTimer += Time.deltaTime;
 
                 if (_holdTimer > HoldThresholdMs / 1000f)
                 {
                     rightClicked = false;
-                    player.smAction.ToState(ActionStates.SecondaryHold);
+                    Player.smAction.ToState(ActionStates.SecondaryHold);
                 }
             }
+        }
+
+        void InitializeInputs()
+        {
+            actionMap = Game.Main.GetActionMap("Player");
+            inputs = Game.Main.GetActionsFromMap(actionMap);
+        
+            inputs["Primary Action"].started += OnStartPrimary;         // LMB (default)
+            inputs["Primary Action"].canceled += OnCancelPrimary;       // LMB (default)
+
+            inputs["Secondary Action"].started += OnStartSecondary;     // RMB (default)
+            inputs["Secondary Action"].canceled += OnCancelSecondary;   // RMB (default)
+
+            inputs["Interact"].performed += OnPerformInteract;          // F (default)
+            inputs["Hotbar"].performed += OnHotbarSelect;               // Tab/E (default)
+        }
+
+
+        #region Callbacks
+
+        void OnHotbarSelect(InputAction.CallbackContext context)
+        {
+            if (!int.TryParse(context.control.displayName, out int index)) return;
+            Player.Inventory.SelectHotbarSlot(index);
+        }
+
+        void HotbarChangeEquippedCallback(object sender, Hotbar.ChangeEquippedArgs e)
+        {
+            Player.FPP.Equip(e.Index);
+        }
+        
+        void OnPerformInteract(InputAction.CallbackContext context)
+        {
+            if (lookingAt == null) return;
+
+            lookingAt.Interact(this, new InteractArgs());
         }
 
         void OnStartPrimary(InputAction.CallbackContext c)
@@ -153,7 +125,7 @@ namespace UZSG.PlayerCore
             if (_holdTimer < HoldThresholdMs / 1000f)
             {
                 leftClicked = false;
-                player.smAction.ToState(ActionStates.Primary);
+                Player.smAction.ToState(ActionStates.Primary);
             }
         }
 
@@ -168,9 +140,10 @@ namespace UZSG.PlayerCore
             if (_holdTimer < HoldThresholdMs / 1000f)
             {
                 rightClicked = false;
-                player.smAction.ToState(ActionStates.Secondary);
+                Player.smAction.ToState(ActionStates.Secondary);
             }
         }
+
         #endregion
 
         void Tick(object sender, TickEventArgs e)
@@ -183,20 +156,22 @@ namespace UZSG.PlayerCore
         /// </summary>
         void CheckLookingAt()
         {
-            // Cast a ray from the center of the screen
-            ray = player.MainCamera.ScreenPointToRay(new Vector2(Screen.width / 2, Screen.height / 2));
+            /// Cast a ray from the center of the screen
+            ray = Player.MainCamera.ScreenPointToRay(new Vector2(Screen.width / 2, Screen.height / 2));
 
             if (Physics.SphereCast(ray, Radius, out RaycastHit hit, MaxInteractDistance, LayerMask.GetMask("Interactable")))
-            // if (Physics.Raycast(ray, out RaycastHit hit, MaxInteractDistance, LayerMask.GetMask("Interactable")))
             {
                 lookingAt = hit.collider.gameObject.GetComponent<IInteractable>();
 
-                Game.UI.InteractIndicator.Show(lookingAt);
-
-            } else
+                if (lookingAt != null)
+                {
+                    interactionIndicator.Indicate(lookingAt);
+                }
+            }
+            else
             {
                 lookingAt = null;
-                Game.UI.InteractIndicator.Hide();
+                interactionIndicator.Hide();
             }
         }        
         
@@ -211,43 +186,55 @@ namespace UZSG.PlayerCore
 
         /// <summary>
         /// Pick up item from ItemEntity and put in the inventory.
-        /// There is currently no checking if inventory is full.
+        /// TODO: There is currently no checking if inventory is full.
         /// </summary>
         public void PickUpItem(ItemEntity itemEntity)
         {
-            if (!player.CanPickUpItems) return;
-            if (player.Inventory == null) return;
+            if (!Player.CanPickUpItems) return;
+            if (Player.Inventory == null) return;
+            if (Player.Inventory.IsFull)
+            {
+                /// Prompt inventory full
+                Game.Console.Log($"Can't pick up item. Inventory full");
+                Debug.Log($"Can't pick up item. Inventory full");
+                return;
+            }
 
-            bool gotItem;
+            bool gotItem; /// if the player had picked up the item
             Item item = itemEntity.AsItem();
 
             if (item.Type == ItemType.Weapon)
             {
-                gotItem = player.Inventory.Mainhand.TryPutItem(item);
+                gotItem = Player.Inventory.Mainhand.TryPutItem(item);
 
                 if (gotItem)
                 {
                     if (WeaponData.TryGetWeaponData(item.Data, out WeaponData weaponData))
                     {
-                        player.FPP.LoadModel(weaponData, 1);
-                        player.FPP.Equip(1);
+                        Player.FPP.LoadModel(weaponData, HotbarIndex.Mainhand);
+                        Player.FPP.Equip(HotbarIndex.Mainhand);
                     }
                 }
-            } else if (item.Type == ItemType.Tool)
+            }
+            else if (item.Type == ItemType.Tool)
             {
-                gotItem = player.Inventory.Hotbar.Offhand.TryPutItem(item);                
+                gotItem = Player.Inventory.Hotbar.Offhand.TryPutItem(item);                
 
                 // if (ToolData.TryGetToolData(item.Data, out ToolData toolData))
                 // {
                 //     _FPP.Load(toolData, 1);
                 // }
                 // // else try to put in other hotbar slots (3-0) and only if available
-            } else
+            }
+            else /// generic item
             {
-                gotItem = player.Inventory.Bag.TryPutNearest(item);
+                gotItem = Player.Inventory.Bag.TryPutNearest(item);
             }
 
-            if (gotItem) Destroy(itemEntity.gameObject);
+            if (gotItem)
+            {
+                Game.Entity.Kill(itemEntity);
+            }
         }
     }
 }

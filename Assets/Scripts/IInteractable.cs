@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-using UZSG.PlayerCore;
+using UZSG.Players;
 
 namespace UZSG.Interactions
 {
@@ -13,12 +13,12 @@ namespace UZSG.Interactions
     /// </summary>
     public interface IInteractable
     {
-        public abstract string Name { get; }
+        public string Name { get; }
         /// <summary>
         /// Text displayed when looking at the Interactable.
         /// </summary>
-        public abstract string Action { get; }
-        public abstract void Interact(PlayerActions actor, InteractArgs args);
+        public string Action { get; }
         public event EventHandler<InteractArgs> OnInteract;
+        public void Interact(PlayerActions actor, InteractArgs args);
     }
 }

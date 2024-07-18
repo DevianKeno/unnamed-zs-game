@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+
 using UnityEngine;
+using UnityEngine.InputSystem;
+
 using UZSG.UI;
 
 namespace UZSG.Systems
@@ -25,22 +28,39 @@ namespace UZSG.Systems
         bool _isInitialized;
         public bool IsInitialized => _isInitialized;
         public bool EnableDebugMode = true;
-        Dictionary<string, Command> _commands = new();
+        Dictionary<string, Command> commandsDict = new();
         public List<string> Messages;
 
+        ConsoleWindow UI;
         /// <summary>
         /// Called everytime the Console logs a message.
         /// </summary>
         public event Action<string> OnLogMessage;
         public event Action<Command> OnInvokeCommand;
 
+        PlayerInput input;
+        InputActionMap actionMap;
+        InputAction hideShow;
+        InputAction navUp;
+        InputAction navDown;
+        
         internal void Initialize()
         {
             if (_isInitialized) return;
             _isInitialized = true;
+            
+            Game.Main.OnLateInit += OnLateInit;
 
             LogDebug("Initializing console...");
             InitializeCommands();
+        }        
+
+        void OnLateInit()
+        {
+            UI = Game.UI.Create<ConsoleWindow>("console_window");
+            UI.Initialize();
+            
+            // inputField.onEndEdit.AddListener(InputSubmit);
         }
 
         void InitializeCommands()
@@ -109,12 +129,12 @@ namespace UZSG.Systems
             {
                 if (arg.Contains("|"))
                 {
-                    // Represents AND arguments
-                    // Currently unhandled logic
+                    /// Represents AND arguments
+                    /// Currently unhandled logic
                     string[] split = arg.Split("|");
                 }
 
-                if (arg.StartsWith("<") && arg.EndsWith(">")) // Required argument
+                if (arg.StartsWith("<") && arg.EndsWith(">")) /// Required argument
                 {
                     substr = arg[1..^1];
                     newCommand.Arguments.Add(new()
@@ -122,7 +142,7 @@ namespace UZSG.Systems
                         Type = Command.ArgumentType.Required
                     });
 
-                } else if (arg.StartsWith("[") && arg.EndsWith("]")) // Optional argument
+                } else if (arg.StartsWith("[") && arg.EndsWith("]")) /// Optional argument
                 {
                     substr = arg[1..^1];
                     newCommand.Arguments.Add(new()
@@ -132,13 +152,13 @@ namespace UZSG.Systems
                 }
             }
 
-            _commands[args[0]] = newCommand; 
+            commandsDict[args[0]] = newCommand; 
             return newCommand;           
         }
 
         public void Run(string input)
         {
-            if (input.StartsWith("/")) input = input[1..]; // Remove '/' if present
+            if (input.StartsWith("/")) input = input[1..]; /// Remove '/' if present
             string[] split = input.Split(' ');
 
             RunCommand(split[0], split[1..]);
@@ -146,10 +166,10 @@ namespace UZSG.Systems
 
         void RunCommand(string command, string[] args)
         {
-            if (_commands.ContainsKey(command))
+            if (commandsDict.ContainsKey(command))
             {
-                // Invalid command arguments are currently unhandled
-                _commands[command].Invoke(args);
+                /// Invalid command arguments are currently unhandled
+                commandsDict[command].Invoke(args);
             } else
             {
                 PromptInvalid();
@@ -166,7 +186,7 @@ namespace UZSG.Systems
 
         void PromptInvalid(string command)
         {
-            if (_commands.ContainsKey(command))
+            if (commandsDict.ContainsKey(command))
             {
                 Log($"Invalid command usage. Try '/help {command}'");
             } else

@@ -11,6 +11,8 @@ namespace UZSG.FPP
     public class FPPModel : MonoBehaviour
     {
         public Animator Animator;
+        public bool HasCameraAnims;
+        public Transform Camera;
 
         void Awake()
         {            

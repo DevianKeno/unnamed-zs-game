@@ -1,10 +1,11 @@
 using System.Collections.Generic;
+
 using UnityEngine;
+
 using UZSG.Systems;
 using UZSG.Entities;
-using UZSG.PlayerCore;
-using UnityEditor.Animations;
-using System;
+using UZSG.Players;
+using UZSG.Inventory;
 
 namespace UZSG.FPP
 {
@@ -15,54 +16,70 @@ namespace UZSG.FPP
     {
         public class CachedModel
         {
-            public FPPModel ArmsModel;
             public FPPModel Model;
         }
-        public bool ModelFollowsCamera = true;
+        
         CachedModel _equipped;
-        Animator _animator;
         Dictionary<int, CachedModel> _cachedModels = new();
-        Dictionary<int, IFPPVisible> _anims = new();
-        FPPModel currentModel;
-        Player _player;
-        public Player Player => _player;
-        ArmsController _arms;
-        public ArmsController Arms => _arms;
-        Animator _armsAnimator;
-        FPPCamera _camera;
-        public FPPCamera Camera => _camera;
-        [SerializeField] Transform CameraHolder;
-        [SerializeField] Transform ArmsHolder;
-        [SerializeField] Transform ModelHolder;
 
-        internal void Init()
+        [Header("Components")]
+        public Player Player;
+        [SerializeField] FPPCameraController camController;
+        public FPPCameraController CameraController => camController;
+        [SerializeField] ArmsController armsController;
+        public ArmsController ArmsController => armsController;
+        [SerializeField] Transform modelHolder;
+
+        internal void Initialize()
         {
         }
 
         void Awake()
         {
-            _player = GetComponent<Player>();
-            _arms = GetComponent<ArmsController>();
-            _camera = GetComponent<FPPCamera>();
-        }
-
-        void Update()
-        {
-            if (ModelFollowsCamera)
-            {
-                /// For some unknown reason, this causes a smooth "follow" effect
-                /// for the FPP model in relation to the camera's movement
-                var follow = _player.MainCamera.transform.rotation;
-                CameraHolder.transform.rotation = follow;
-                ArmsHolder.transform.rotation = follow;
-                ModelHolder.transform.rotation = follow;
-            }
+            Player = GetComponent<Player>();
         }
 
         void Start()
         {
-            _player.smAction.OnStateChanged += ActionStateChanged;
+            Player.smMove.OnStateChanged += MoveStateChanged;
+            Player.smAction.OnStateChanged += ActionStateChanged;
+            Game.Entity.OnEntitySpawn += PlayerSpawnedCallback;
+
             Game.UI.ToggleCursor(false);
+        }
+
+        void MoveStateChanged(object sender, StateMachine<MoveStates>.StateChanged e)
+        {
+            switch (e.To)
+            {                
+                case MoveStates.Idle:
+                    camController.Animator.CrossFade("idle", 0.1f);
+                    break;
+
+                case MoveStates.Walk:
+                    camController.Animator.speed = 1f;
+                    camController.Animator.CrossFade("forward_bob", 0.1f);
+                    break;
+
+                case MoveStates.Run:
+                    camController.Animator.speed = 1.6f;
+                    camController.Animator.CrossFade("forward_bob", 0.1f);
+                    break;
+            }
+        }
+
+        void PlayerSpawnedCallback(object sender, EntityManager.EntitySpawnedContext e)
+        {
+            if (e.Entity is Player player)
+            {
+                BindPlayer(player);
+            }
+        }
+
+        public void BindPlayer(Player player)
+        {
+            Player = player;
+            Game.Console.LogDebug($"Bound player {player} to FPP controller");
         }
 
         private void ActionStateChanged(object sender, StateMachine<ActionStates>.StateChanged e)
@@ -71,59 +88,76 @@ namespace UZSG.FPP
 
             if (e.To == ActionStates.Primary)
             {
-                PlayAnimation(_equipped, "attack_left");
+                PlayAnimation("attack_left");
 
             } else if (e.To == ActionStates.SecondaryHold)
             {
-                PlayAnimation(_equipped, "stance");
+                PlayAnimation("stance");
             }
         }
 
         /// <summary>
         /// Plays an animation for the currently equipped.
         /// </summary>
-        public void PlayAnimation(CachedModel model, string anim)
+        public void PlayAnimation(string anim)
         {
-            _equipped.ArmsModel.Play(anim);
-            _equipped.Model.Play(anim);
+            armsController.PlayAnimation(anim);
+            // _equipped.ArmsModel.Animator.Play(anim);
+            // _equipped.Model.Animator.Play(anim);
+            // camAnimator.Play(anim);
         }
 
         /// <summary>
         /// Cache model and data.
         /// </summary>
-        public void LoadModel(IFPPVisible obj, int slot)
+        public void LoadModel(IFPPVisible obj, HotbarIndex value)
         {
             if (obj == null) return;
- 
-            var armsModel = Instantiate(obj.ArmsModel, ArmsHolder);
-            var model = Instantiate(obj.Model, ModelHolder);
+            // if (obj.Model == null) return;
             
-            _cachedModels.Add(slot, new CachedModel()
+            var model = Instantiate(obj.Model);
+            model.transform.SetParent(modelHolder.transform);
+            
+            FPPModel fppModel = model.GetComponent<FPPModel>();
+            _cachedModels.Add((int) value, new CachedModel()
             {
-                ArmsModel = armsModel.GetComponent<FPPModel>(),
-                Model = model.GetComponent<FPPModel>()
+                Model = fppModel
             });
-
+            
+            armsController.LoadAnimationController(obj.ArmsAnimController);
             // _animator = armsModel.GetComponent<Animator>();
             // _anims.Add(slot, armsModel.GetComponent<IFPPVisible>());
         }
 
-        public void Equip(int slot)
+        public void Equip(HotbarIndex value)
         {
-            if (_cachedModels.ContainsKey(slot))
+            Equip((int) value);
+        }
+
+        public void Equip(int slotIndex)
+        {
+            if (_cachedModels.ContainsKey(slotIndex))
             {
-                var toEquip = _cachedModels[slot];
+                var toEquip = _cachedModels[slotIndex];
+
+                // cameraOffset = Vector3.zero;
+                // if (toEquip.ArmsModel.HasCameraAnims)
+                // {
+                //     cameraOffset = toEquip.ArmsModel.Camera.transform.rotation.eulerAngles;
+                // }
 
                 if (_equipped == null)
                 {
                     _equipped = toEquip;
-                    PlayAnimation(_equipped, "equip");
-                } else
+                    PlayAnimation("equip");
+                }
+                else
                 {
                     if (_equipped.Equals(toEquip))
                     {
                         Debug.Log("dequip");
-                    } else
+                    }
+                    else
                     {
                         Debug.Log("switched");
                     }

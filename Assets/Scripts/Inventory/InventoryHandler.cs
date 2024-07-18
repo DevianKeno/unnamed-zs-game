@@ -1,21 +1,17 @@
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UZSG.Data;
 
 namespace UZSG.Inventory
 {
+    public enum HotbarIndex { Mainhand, Offhand, Three, Four, Five, Six, Seven, Eight, Nine, Ten, }
+
     public struct SlotContentChangedArgs
     {
-        ItemSlot _slot;
         /// <summary>
         /// The Slot that has changed.
         /// </summary>
-        public readonly ItemSlot Slot => _slot;
-
-        public SlotContentChangedArgs(ItemSlot slot)
-        {
-            _slot = slot;
-        }
+        public ItemSlot Slot { get; set; }
     }
 
     public class InventoryHandler : MonoBehaviour
@@ -24,9 +20,25 @@ namespace UZSG.Inventory
         public Hotbar Hotbar => _hotbar;
         Bag _bag;
         public Bag Bag => _bag;
+
         public ItemSlot Equipped => Hotbar.Equipped;
         public ItemSlot Mainhand => Hotbar.Mainhand;
         public ItemSlot Offhand => Hotbar.Offhand;
+
+        public bool IsFull
+        {
+            get
+            {
+                foreach (var slot in _bag.Slots)
+                {
+                    if (slot.IsEmpty) return false;
+                    continue;
+                }
+                return true;
+            }
+        }
+
+        [SerializeField] HotbarUIHandler hotbarUI;
 
         void Awake()
         {
@@ -34,7 +46,43 @@ namespace UZSG.Inventory
             _hotbar = GetComponent<Hotbar>();
         }
 
-        public void Init()
+        public static int SlotToIndex(HotbarIndex value)
+        {
+            return value switch
+            {
+                HotbarIndex.Mainhand => 1,
+                HotbarIndex.Offhand => 2,
+                HotbarIndex.Three => 3,
+                HotbarIndex.Four => 4,
+                HotbarIndex.Five => 5,
+                HotbarIndex.Six => 6,
+                HotbarIndex.Seven => 7,
+                HotbarIndex.Eight => 8,
+                HotbarIndex.Nine => 9,
+                HotbarIndex.Ten => 0,
+                _ => -1,
+            };
+        }
+
+        public static HotbarIndex IndexToSlot(int value)
+        {
+            return value switch
+            {
+                1 => HotbarIndex.Mainhand,
+                2 => HotbarIndex.Offhand,
+                3 => HotbarIndex.Three,
+                4 => HotbarIndex.Four,
+                5 => HotbarIndex.Five,
+                6 => HotbarIndex.Six,
+                7 => HotbarIndex.Seven,
+                8 => HotbarIndex.Eight,
+                9 => HotbarIndex.Nine,
+                0 => HotbarIndex.Ten,
+                _ => throw new ArgumentException("Invalid value"),
+            };
+        }
+        
+        public void Initialize()
         {
             _bag.Init();
             _hotbar.Init();

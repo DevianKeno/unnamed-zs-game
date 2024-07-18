@@ -14,9 +14,10 @@ namespace UZSG.Items
     [Serializable]
     public class Item : IComparable<Item>
     {
-        public static Item None { get => null; }
+        public static Item None => null;
+        
         [SerializeField] ItemData _itemData;
-        public ItemData Data { get => _itemData; }
+        public ItemData Data => _itemData;
         public string Id { get => _itemData.Id; }
         public string Name { get => _itemData.Name; }
         public int StackSize { get => _itemData.StackSize; }

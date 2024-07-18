@@ -16,8 +16,9 @@ namespace UZSG.UI
 
         public void Select(ItemSlotUI element)
         {
-            rect.position = element.rect.position;
-            rect.sizeDelta = element.rect.sizeDelta;
+            var elementRect = element.GetComponent<RectTransform>();
+            rect.position = elementRect.position;
+            rect.sizeDelta = elementRect.sizeDelta;
             image.enabled = true;
         }
 

@@ -1,4 +1,4 @@
-using UZSG.PlayerCore;
+using UZSG.Players;
 using UZSG.Interactions;
 using UZSG.Items;
 using System;
@@ -148,6 +148,11 @@ namespace UZSG.Entities
         public void Interact(PlayerActions actor, InteractArgs args)
         {
             actor.PickUpItem(this);
+        }
+
+        public void Destroy()
+        {
+            Game.Entity.Kill(this);
         }
     }
 }

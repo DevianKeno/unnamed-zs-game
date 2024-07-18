@@ -62,7 +62,7 @@ namespace UZSG.Systems
         public virtual void ToState(E state)
         {
             if (!_states.ContainsKey(state)) return;
-            TrySwitchState(_states[state]);
+            ToState(_states[state]);
         }
 
         /// <summary>

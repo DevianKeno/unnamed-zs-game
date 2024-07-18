@@ -19,7 +19,10 @@ namespace UZSG
 
         protected virtual void SlotContentChanged(object slot, ItemSlot.ContentChangedArgs e)
         {
-            OnSlotContentChanged?.Invoke(this, new((ItemSlot) slot));
+            OnSlotContentChanged?.Invoke(this, new()
+            {
+                Slot = (ItemSlot) slot
+            });
         }
 
         public ItemSlot GetSlot(int index)

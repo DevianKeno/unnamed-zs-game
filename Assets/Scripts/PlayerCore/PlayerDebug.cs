@@ -5,7 +5,7 @@ using UZSG.Entities;
 using UZSG.Systems;
 using UZSG.UI;
 
-namespace UZSG.PlayerCore
+namespace UZSG.Players
 {
     public class PlayerDebug : MonoBehaviour
     {

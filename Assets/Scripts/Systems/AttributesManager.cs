@@ -13,7 +13,7 @@ namespace UZSG.Systems
         /// <summary>
         /// Contains the list of all attributes in the game.
         /// </summary>
-        Dictionary<string, AttributeData> _attributeList = new();
+        Dictionary<string, AttributeData> _attributesDict = new();
         [SerializeField] AssetLabelReference assetLabelReference;
 
         internal void Initialize()
@@ -22,13 +22,18 @@ namespace UZSG.Systems
             _isInitialized = true;
 
             var startTime = Time.time;
-            Game.Console?.Log("Initializing Attribute database...");
-
-            Addressables.LoadAssetsAsync<AttributeData>(assetLabelReference, (a) =>
+            Game.Console.Log("Initializing Attribute database...");
+            var attrs = Resources.LoadAll<AttributeData>("Data/Attributes");
+            foreach (var attr in attrs)
             {
-                Game.Console?.LogDebug($"Loading data for Attribute {a.Id}");
-                _attributeList[a.Id] = a;
-            });
+                _attributesDict[attr.Id] = attr;
+            }
+
+            // Addressables.LoadAssetsAsync<AttributeData>(assetLabelReference, (a) =>
+            // {
+            //     Game.Console?.LogDebug($"Loading data for Attribute {a.Id}");
+            //     _attributeList[a.Id] = a;
+            // });
         }
     }
 }

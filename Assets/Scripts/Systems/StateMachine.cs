@@ -9,10 +9,10 @@ namespace UZSG.Systems
     /// </summary>
     public abstract class StateMachine<E> : MonoBehaviour where E : Enum
     {
-        public struct StateChanged
+        public struct StateChangedContext
         {
-            public E From;
-            public E To;
+            public E From { get; set; }
+            public E To { get; set; }
         }
         
         Dictionary<E, State<E>> _states = new();
@@ -20,16 +20,18 @@ namespace UZSG.Systems
         public State<E> InitialState;
         [SerializeField] State<E> _currentState;
         public State<E> CurrentState => _currentState;
-        [SerializeField] float _lockedUntil;
+        [SerializeField] protected float _lockedUntil;
         public float LockedUntil => _lockedUntil;
-        [SerializeField] bool _isTransitioning = false;
+        [SerializeField] protected bool _isTransitioning = false;
         public bool IsTransitioning => _isTransitioning;
+
+        public E InState;
         public bool DebugMode = false;
         
         /// <summary>
         /// Calles everytime before the State changes.
         /// </summary>
-        public event EventHandler<StateChanged> OnStateChanged;
+        public event EventHandler<StateChangedContext> OnStateChanged;
 
         void Awake()
         {
@@ -55,7 +57,6 @@ namespace UZSG.Systems
         /// </summary>
         public virtual void ToState(State<E> state)
         {
-            if (_currentState == state) return;            
             TrySwitchState(state);
         }
 
@@ -70,13 +71,26 @@ namespace UZSG.Systems
         /// </summary>
         public virtual void ToState(State<E> state, float lockForSeconds)
         {
-            if (_currentState == state) return;
             TrySwitchState(state, lockForSeconds);
+        }
+        
+        public virtual void ToState(E state, float lockForSeconds)
+        {
+            if (!_states.ContainsKey(state)) return;
+            ToState(_states[state], lockForSeconds);
+        }
+
+        public virtual void LockForSeconds(float seconds)
+        {
+            _lockedUntil = Time.time + seconds;
         }
 
         bool TrySwitchState(State<E> state, float lockForSeconds = 0f)
         {
-            if (Time.time < LockedUntil) return false;
+            if (Time.time < _lockedUntil)
+            {
+                return false;
+            }
             _isTransitioning = true;
             _lockedUntil = Time.time + lockForSeconds;
 
@@ -87,9 +101,13 @@ namespace UZSG.Systems
             });
             _currentState.Exit();
             _currentState = state;
+            InState = state.Key;
             _currentState.Enter();
             _isTransitioning = false;
-            if (DebugMode) Debug.Log("Switched to state " + state);
+            if (DebugMode) 
+            {
+                Debug.Log("Switched to state " + state);
+            }
             return true;
         }
     }

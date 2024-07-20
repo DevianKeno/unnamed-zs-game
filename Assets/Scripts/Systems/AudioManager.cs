@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace UZSG.Systems
 {
@@ -23,10 +24,31 @@ namespace UZSG.Systems
             }
         }
 
+        public struct LoadAudioAssetContext
+        {
+            public AudioClip AudioClip { get; set; }
+        }
+
+        public delegate void OnLoadAudioAssetCompleted(LoadAudioAssetContext context);
+
+        public void LoadAudioAsset(AssetReference assetReference, OnLoadAudioAssetCompleted completed = null)
+        {
+            Addressables.LoadAssetAsync<AudioClip>(assetReference).Completed += (a) =>
+            {
+                if (a.Status == AsyncOperationStatus.Succeeded)
+                {
+                    completed?.Invoke(new()
+                    {
+                        AudioClip = a.Result,
+                    });
+                }
+            };
+        }
+
 
         #region Public methods
 
-        public void Play(string name, bool newSource = false)
+        public void Play(string name)
         {
             if (_audioClipsDict.ContainsKey(name))
             {

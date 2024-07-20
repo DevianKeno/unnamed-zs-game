@@ -35,6 +35,7 @@ namespace UZSG.UI
         Selector selector;
 
         [Header("Inventory Components")]
+        [SerializeField] FrameController frameController;
         [SerializeField] GameObject bag;
         [SerializeField] GameObject hotbar;
 
@@ -66,6 +67,11 @@ namespace UZSG.UI
             {
                 SetVisible(false);
             };
+        }
+
+        void Start()
+        {
+            frameController.SwitchToFrame("bag");
         }
 
         void Update()

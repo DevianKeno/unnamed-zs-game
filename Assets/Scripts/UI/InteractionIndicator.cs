@@ -19,7 +19,10 @@ namespace UZSG.UI
 
         public void Indicate(IInteractable obj)
         {
-            if (obj == null) return;
+            if (obj == null)
+            {
+                Hide();
+            }
             
             actionText.text = obj.Action;
             objectText.text = obj.Name;

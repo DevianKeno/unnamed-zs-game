@@ -226,7 +226,7 @@ GameObject:
   - component: {fileID: 272929652}
   - component: {fileID: 272929653}
   m_Layer: 0
-  m_Name: Item Manager
+  m_Name: ITEMS
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1991,7 +1991,7 @@ GameObject:
   - component: {fileID: 1094905006}
   - component: {fileID: 1094905007}
   m_Layer: 0
-  m_Name: Attributes Manager
+  m_Name: ATTRIBUTES
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2111,7 +2111,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1175024838}
   m_Layer: 0
-  m_Name: Recipe Manager
+  m_Name: RECIPES
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2166,8 +2166,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.000012398, y: -0.000012219}
-  m_SizeDelta: {x: 3.9954, y: 3.9954}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 5, y: 5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1355726198
 MonoBehaviour:

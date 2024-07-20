@@ -48,10 +48,10 @@ namespace UZSG.Systems
             {
                 var itemData = _itemsDict[itemId];
 
-                if (itemData.AssetReference != null)
+                if (itemData.Model != null)
                 {
                     /// Load model
-                    Addressables.LoadAssetAsync<GameObject>(itemData.AssetReference).Completed += (a) =>
+                    Addressables.LoadAssetAsync<GameObject>(itemData.Model).Completed += (a) =>
                     {
                         if (a.Status == AsyncOperationStatus.Succeeded)
                         {

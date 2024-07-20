@@ -1,6 +1,6 @@
-using UnityEditor.Animations;
-using UnityEngine;
-using UZSG.Items;
+using UnityEngine.AddressableAssets;
+
+using UZSG.Items.Weapons;
 
 namespace UZSG.FPP
 {
@@ -9,11 +9,9 @@ namespace UZSG.FPP
     /// </summary>
     public interface IFPPVisible
     {
-        public GameObject Model { get; }
-        public AnimatorController ArmsAnimController { get; }
-        // public AnimatorController ArmsController { get; }
-        public AnimatorController ModelAnimController { get; }
-        public FPPAnimations Anims { get; }
+        public AssetReference ArmsViewmodel { get; }
+        public AssetReference WeaponViewmodel { get; }
+        public EquipmentAnimationData Anims { get; }
     }
 
 }

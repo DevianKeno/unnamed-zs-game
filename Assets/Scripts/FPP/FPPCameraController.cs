@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
+
 using UnityEngine;
-using Cinemachine;
+using UnityEngine.InputSystem;
+
 using UZSG.Systems;
 using UZSG.Entities;
-using UnityEngine.InputSystem;
 using UZSG.Players;
 
 namespace UZSG.FPP
@@ -20,24 +22,26 @@ namespace UZSG.FPP
         [SerializeField] Player player;
         [SerializeField] Animator animator;
         public Animator Animator => animator;
-        PlayerInput input;
-        InputAction look;
 
-        internal void Init()
+        InputAction look;
+        InputActionMap actionMap;
+        Dictionary<string, InputAction> inputs;
+
+        internal void Initialize()
         {
+            InitializeInputs();
         }
 
-        void Awake()
+        void InitializeInputs()
         {
-            input = GetComponent<PlayerInput>();
+            actionMap = Game.Main.GetActionMap("Player");
+            inputs = Game.Main.GetActionsFromMap(actionMap);
         }
 
         void Start()
         {
-            look = input.actions.FindAction("Look");
-
+            look = inputs["Look"];
             look.Enable();
-            Game.UI.OnCursorToggled += CursorToggledCallback;
         }
 
         void Update()
@@ -45,11 +49,6 @@ namespace UZSG.FPP
             HandleLook();
         }
         
-        public void ToggleControls()
-        {
-            ToggleControls(!EnableControls);
-        }
-
         public void ToggleControls(bool enabled)
         {
             EnableControls = enabled;

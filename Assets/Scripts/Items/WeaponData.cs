@@ -1,57 +1,89 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
-using UnityEditor.Animations;
-using UnityEngine;
-using UZSG.FPP;
 
-namespace UZSG.Items
+using UnityEngine;
+using UnityEditor.Animations;
+
+using UZSG.FPP;
+using UnityEngine.AddressableAssets;
+using UZSG.Players;
+
+namespace UZSG.Items.Weapons
 {
     /// <summary>
     /// List of possible animations an FPP model have.
     /// </summary>
     [Serializable]
-    public struct FPPAnimations : IEnumerable
+    public struct EquipmentAnimationData : IEnumerable
     {
-        public string Equip;
         public string Idle;
-        public string Run;
-        public string[] Primary;
+        public string Move;
+        public string Primary;
+        public string PrimaryHold;
+        public string PrimaryRelease;
+        public string[] PrimaryVariant;
         public string Secondary;
-        public string Hold;
+        public string SecondaryHold;
+        public string SecondaryRelease;
+        public string Equip;
+        public string Dequip;
 
-        public readonly string this[int i]
+        public readonly string GetAnimHashFromState(ActionStates state)
         {
-            get
+            return state switch
             {
-                return "null";
-            }
+                ActionStates.Idle => Idle,
+                ActionStates.Primary => Primary,
+                ActionStates.PrimaryHold => PrimaryHold,
+                ActionStates.PrimaryRelease => PrimaryRelease,
+                ActionStates.Secondary => Secondary,
+                ActionStates.SecondaryHold => SecondaryHold,
+                ActionStates.SecondaryRelease => SecondaryRelease,
+                ActionStates.Equip => Equip,
+                ActionStates.Dequip => Dequip,
+                
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
 
         public readonly IEnumerator GetEnumerator()
         {
-            List<string> s = new()
+            List<string> list = new()
             {
                 Equip,
                 Idle,
-                Run,
+                Move,
+                Primary,
                 Secondary,
-                Hold
+                SecondaryHold
             };
-            s.AddRange(Primary);
-            return s.GetEnumerator();
+            list.AddRange(PrimaryVariant);
+            return list.GetEnumerator();
         }
 
         /// <summary>
-        /// Get a random animation.
+        /// Get a random primary animation.
         /// </summary>
-        public readonly string GetRandomPrimary()
+        public readonly string GetRandomPrimaryVariant()
         {
-            if (Primary.Length == 0) return null;
-            // There's no actual randomness happening, fix
-            return Primary[1];
+            if (PrimaryVariant.Length == 0) return null;
+            /// There's no actual randomness happening, fix
+            return PrimaryVariant[1];
         }
+    }
+
+    [Serializable]
+    public struct AudioAssetId
+    {
+        public string Id;
+        public AssetReference AudioAsset;
+    }
+
+    [Serializable]
+    public struct EquipmentAudioData
+    {
+        public List<AudioAssetId> AudioAssetIds;
     }
 
     public enum WeaponCategory { Melee, Ranged }
@@ -63,7 +95,8 @@ namespace UZSG.Items
     /// <summary>
     /// Represents the various data a Weapon has.
     /// </summary>
-    [CreateAssetMenu(fileName = "Weapon", menuName = "URMG/Weapon")]
+    [CreateAssetMenu(fileName = "Weapon", menuName = "UZSG/Weapon")]
+    [Serializable]
     public class WeaponData : ItemData, IFPPVisible
     {
         public float Weight;
@@ -72,116 +105,23 @@ namespace UZSG.Items
         public WeaponBluntType BluntType;
         public WeaponBladedType BladedType;
         public WeaponRangedType RangedType;
-        public WeaponMeleeAttributes Attributes;
+        public WeaponMeleeAttributes MeleeAttributes;
+        public WeaponRangedAttributes RangedAttributes;
 
         [Header("FPP")]
-        [SerializeField] GameObject _model;
-        public GameObject Model => _model;
-        [SerializeField] AnimatorController _armsAnimController;
-        public AnimatorController ArmsAnimController => _armsAnimController;
-        [SerializeField] AnimatorController _modelAnimController;
-        public AnimatorController ModelAnimController => _modelAnimController;
-        
-        [SerializeField] FPPAnimations _anims;
-        public FPPAnimations Anims => _anims;
+        [SerializeField] AssetReference armsViewmodel;
+        public AssetReference ArmsViewmodel => armsViewmodel;
+        [SerializeField] AssetReference weaponViewmodel;
+        public AssetReference WeaponViewmodel => weaponViewmodel;       
+        [SerializeField] EquipmentAnimationData anims;
+        public EquipmentAnimationData Anims => anims;
+        [SerializeField] EquipmentAudioData audioData;
+        public EquipmentAudioData AudioData => audioData;
         
         public static bool TryGetWeaponData(ItemData item, out WeaponData weaponData)
         {
             weaponData = item as WeaponData;
             return weaponData != null;
         }
-    }    
-
-    // [CustomEditor(typeof(WeaponData))]
-    // public class WeaponDataEditor : ItemDataEditor
-    // {
-    //     SerializedProperty weight,
-    //         category,
-    //         meleeType,
-    //         bluntType,
-    //         bladedType,
-    //         rangedType,
-    //         attributes,
-    //         FPPmodel,
-    //         controller,
-    //         anims;
-        
-    //     void OnEnable()
-    //     {
-    //         weight = serializedObject.FindProperty("Weight");
-    //         category = serializedObject.FindProperty("Category");
-    //         meleeType = serializedObject.FindProperty("MeleeType");
-    //         bluntType = serializedObject.FindProperty("BluntType");
-    //         bladedType = serializedObject.FindProperty("BladedType");
-    //         rangedType = serializedObject.FindProperty("RangedType");
-    //         attributes = serializedObject.FindProperty("Attributes");
-    //         FPPmodel = serializedObject.FindProperty("_FPPModel");
-    //         controller = serializedObject.FindProperty("_controller");
-    //         anims = serializedObject.FindProperty("_anims");
-    //     }
-
-    //     public override void OnInspectorGUI()
-    //     {
-    //         base.OnInspectorGUI();
-    //         serializedObject.Update();
-    //         WeaponData attributeData = (WeaponData)target;
-
-    //         EditorGUILayout.Space();
-    //         EditorGUILayout.LabelField("Weapon Attributes", EditorStyles.boldLabel);
-    //         EditorGUILayout.PropertyField(weight);
-    //         EditorGUILayout.PropertyField(category);
-            
-    //         EditorGUI.indentLevel++;
-    //         if (attributeData.Category == WeaponCategory.Melee)
-    //         {
-    //             EditorGUILayout.PropertyField(meleeType);
-
-    //             EditorGUI.indentLevel++;
-    //             if (attributeData.MeleeType == WeaponMeleeType.Blunt)
-    //             {
-    //                 EditorGUILayout.PropertyField(bluntType);
-    //             } else if (attributeData.MeleeType == WeaponMeleeType.Bladed)
-    //             {
-    //                 EditorGUILayout.PropertyField(bladedType);
-    //             }
-
-    //         } else if (attributeData.Category == WeaponCategory.Ranged)
-    //         {
-    //             EditorGUILayout.PropertyField(rangedType);
-
-    //             EditorGUI.indentLevel++;
-    //             if (attributeData.RangedType == WeaponRangedType.Handgun)
-    //             {
-
-    //             } else if (attributeData.RangedType == WeaponRangedType.Shotgun)
-    //             {
-
-    //             } else if (attributeData.RangedType == WeaponRangedType.SMG)
-    //             {
-                    
-    //             } else if (attributeData.RangedType == WeaponRangedType.AssaultRifle)
-    //             {
-                    
-    //             } else if (attributeData.RangedType == WeaponRangedType.SniperRifle)
-    //             {
-                    
-    //             } else if (attributeData.RangedType == WeaponRangedType.MachineGun)
-    //             {
-                    
-    //             }
-    //         }            
-    //         EditorGUI.indentLevel -= 2;
-            
-    //         EditorGUILayout.PropertyField(attributes);
-
-    //         EditorGUILayout.Space();
-    //         EditorGUILayout.LabelField("Animations", EditorStyles.boldLabel);
-    //         EditorGUILayout.PropertyField(FPPmodel);
-    //         EditorGUILayout.PropertyField(controller);
-    //         EditorGUILayout.PropertyField(anims);
-
-
-    //         serializedObject.ApplyModifiedProperties();
-    //     }
-    // }
+    }
 }

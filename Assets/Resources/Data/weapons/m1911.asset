@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72e1d5853de97a54aa491bcf19eb9d39, type: 3}
   m_Name: m1911
   m_EditorClassIdentifier: 
-  AssetReference:
+  Model:
     m_AssetGUID: 3dbf071563be27742a20db8adaaf9e83
     m_SubObjectName: 
     m_SubObjectType: 
@@ -31,18 +31,61 @@ MonoBehaviour:
   BluntType: 0
   BladedType: 3
   RangedType: 1
-  Attributes:
+  MeleeAttributes:
     BaseDamage: 0
     BaseCritStrike: 0
     BaseCritDamage: 0
-  _model: {fileID: 2247079398305525471, guid: 3dbf071563be27742a20db8adaaf9e83, type: 3}
-  _armsAnimController: {fileID: 0}
-  _modelAnimController: {fileID: 0}
-  _anims:
-    Equip: equip
+  RangedAttributes:
+    BaseDamage: 12
+    FireType: 0
+    RoundsPerMinute: 310
+    ClipSize: 10
+    ReloadSpeed: 1
+  armsViewmodel:
+    m_AssetGUID: 44f9ffb8aff207e4ab5f7f6a582e4cdb
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  weaponViewmodel:
+    m_AssetGUID: 673174a4ca7c95547a7b39bc3454331c
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  anims:
     Idle: idle
-    Run: 
-    Primary:
-    - attack_left
-    Secondary: stance
-    Hold: 
+    Move: 
+    Primary: primary
+    PrimaryHold: 
+    PrimaryRelease: 
+    PrimaryVariant: []
+    Secondary: 
+    SecondaryHold: ads
+    SecondaryRelease: 
+    Equip: 
+    Dequip: 
+  audioData:
+    AudioAssetIds:
+    - Id: fire0
+      AudioAsset:
+        m_AssetGUID: 9c05719cc12949a4f8234760643bd983
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_EditorAssetChanged: 0
+    - Id: fire1
+      AudioAsset:
+        m_AssetGUID: 40908e54f86684143a1537c35fff3848
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_EditorAssetChanged: 0
+    - Id: fire2
+      AudioAsset:
+        m_AssetGUID: 42e2450453447e841b64f162c1db13ca
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_EditorAssetChanged: 0
+    - Id: fire3
+      AudioAsset:
+        m_AssetGUID: ae4e98a26a5dd5b499c4a039c93cac26
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_EditorAssetChanged: 0

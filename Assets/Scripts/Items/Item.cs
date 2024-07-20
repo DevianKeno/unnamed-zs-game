@@ -16,7 +16,7 @@ namespace UZSG.Items
     {
         public static Item None => null;
         
-        [SerializeField] ItemData _itemData;
+        [SerializeField] protected ItemData _itemData;
         public ItemData Data => _itemData;
         public string Id { get => _itemData.Id; }
         public string Name { get => _itemData.Name; }

@@ -13,7 +13,7 @@ namespace UZSG.Items
     public class ItemData : ScriptableObject
     {
         [Header("Item Attributes")]
-        public AssetReference AssetReference;
+        public AssetReference Model;
         public string Id;
         public string Name;
         [TextArea] public string Description;

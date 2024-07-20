@@ -12,6 +12,7 @@ using UZSG.Players;
 using UZSG.Data;
 using UZSG.FPP;
 using UZSG.UI;
+using UZSG.StatusEffects;
 
 namespace UZSG.Entities
 {
@@ -21,15 +22,18 @@ namespace UZSG.Entities
     public class Player : Entity
     {
         public bool CanPickUpItems = true;
-        public PlayerData Data { get; private set; }
-        public override EntityData EntityData { get => playerEntityData; }
+        [SerializeField] PlayerData playerData;
+        public PlayerData PlayerData => playerData;
         [SerializeField] PlayerEntityData playerEntityData;
+        public override EntityData EntityData { get => playerEntityData; }
         [SerializeField] AttributeCollection<VitalAttribute> vitals;
         public AttributeCollection<VitalAttribute> Vitals => vitals;
         [SerializeField] AttributeCollection<GenericAttribute> generic;
         public AttributeCollection<GenericAttribute> Generic => generic;
         [SerializeField] InventoryHandler inventory;
         public InventoryHandler Inventory => inventory;
+        StatusEffectCollection statusEffects;
+        public StatusEffectCollection StatusEffects => statusEffects;
         
         PlayerInventoryWindow invUI;
         PlayerHUD HUD;
@@ -45,10 +49,10 @@ namespace UZSG.Entities
         /// Unity camera tagged "MainCamera"
         /// </summary>
         public Camera MainCamera { get; private set; }
-        public MovementStateMachine smMove { get; private set; }
-        public ActionStateMachine smAction { get; private set; }
         public PlayerControls Controls { get; private set; }
         public PlayerActions Actions { get; private set; }
+        public MovementStateMachine smMove { get; private set; }
+        public ActionStateMachine smAction { get; private set; }
         public FPPController FPP { get; private set; }
 
         public override void OnSpawn()

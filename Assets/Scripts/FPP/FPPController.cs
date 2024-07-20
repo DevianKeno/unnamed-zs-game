@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -6,6 +7,7 @@ using UZSG.Systems;
 using UZSG.Entities;
 using UZSG.Players;
 using UZSG.Inventory;
+using UZSG.Items.Weapons;
 
 namespace UZSG.FPP
 {
@@ -14,41 +16,57 @@ namespace UZSG.FPP
     /// </summary>
     public class FPPController : MonoBehaviour
     {
-        public class CachedModel
-        {
-            public FPPModel Model;
-        }
-        
-        CachedModel _equipped;
-        Dictionary<int, CachedModel> _cachedModels = new();
-
-        [Header("Components")]
         public Player Player;
+        
+        Dictionary<HotbarIndex, Viewmodel> _cachedViewmodels = new();
+        HotbarIndex currentlyEquippedIndex;
+        public HotbarIndex CurrentlyEquippedIndex => currentlyEquippedIndex;
+        HotbarIndex lastEquippedIndex;
+        WeaponEquipped _currentlyEquippedWeapon;
+        WeaponCategory _equippedWeaponCategory;
+
+        [SerializeField] GameObject currentArms;
+        public GameObject CurrentArms => currentArms;
+        [SerializeField] GameObject currentWeapon;
+        public GameObject CurrentModel => currentWeapon;
+        [SerializeField] WeaponData currentWeaponData;
+        public WeaponData CurrentWeaponData => _currentlyEquippedWeapon.WeaponData;
+
+        MeleeWeaponStateMachine meleeWeaponStateMachine;
+        RangedWeaponStateMachine rangedWeaponStateMachine;
+        
+        [Header("Controllers")]
         [SerializeField] FPPCameraController camController;
         public FPPCameraController CameraController => camController;
-        [SerializeField] ArmsController armsController;
-        public ArmsController ArmsController => armsController;
-        [SerializeField] Transform modelHolder;
+        [SerializeField] ViewmodelController viewmodelController;
+        public ViewmodelController ViewmodelController => viewmodelController;
 
-        internal void Initialize()
-        {
-        }
-
+        Animator armsAnimator;
+        Animator weaponAnimator;
+        Animator cameraAnimator;
+        
         void Awake()
         {
             Player = GetComponent<Player>();
         }
 
-        void Start()
+        internal void Initialize()
         {
-            Player.smMove.OnStateChanged += MoveStateChanged;
-            Player.smAction.OnStateChanged += ActionStateChanged;
-            Game.Entity.OnEntitySpawn += PlayerSpawnedCallback;
-
+            InitializeEvents();
+            camController.Initialize();
+            
+            var handsWeaponData = Resources.Load<WeaponData>("Data/weapons/hands");
+            LoadAndEquip(handsWeaponData, HotbarIndex.Hands);
             Game.UI.ToggleCursor(false);
         }
 
-        void MoveStateChanged(object sender, StateMachine<MoveStates>.StateChanged e)
+        void InitializeEvents()
+        {
+            Player.smMove.OnStateChanged += OnPlayerMoveStateChanged;
+            Player.smAction.OnStateChanged += OnPlayerActionStateChanged;
+        }
+
+        void OnPlayerMoveStateChanged(object sender, StateMachine<MoveStates>.StateChangedContext e)
         {
             switch (e.To)
             {                
@@ -67,106 +85,159 @@ namespace UZSG.FPP
                     break;
             }
         }
-
-        void PlayerSpawnedCallback(object sender, EntityManager.EntitySpawnedContext e)
+        
+        void OnPlayerActionStateChanged(object sender, StateMachine<ActionStates>.StateChangedContext e)
         {
-            if (e.Entity is Player player)
+            if (_currentlyEquippedWeapon == null) return;
+
+            if (_currentlyEquippedWeapon is MeleeWeapon meleeWeapon)
             {
-                BindPlayer(player);
+                meleeWeapon.SetWeaponStateFromPlayerAction(e.To);
+            }
+            else if (_currentlyEquippedWeapon is RangedWeapon rangedWeapon)
+            {
+                rangedWeapon.SetWeaponStateFromPlayerAction(e.To);
             }
         }
 
-        public void BindPlayer(Player player)
-        {
-            Player = player;
-            Game.Console.LogDebug($"Bound player {player} to FPP controller");
-        }
-
-        private void ActionStateChanged(object sender, StateMachine<ActionStates>.StateChanged e)
-        {
-            if (_equipped == null) return;
-
-            if (e.To == ActionStates.Primary)
-            {
-                PlayAnimation("attack_left");
-
-            } else if (e.To == ActionStates.SecondaryHold)
-            {
-                PlayAnimation("stance");
-            }
-        }
-
+        public delegate void OnLoadViewModelCompleted(Viewmodel viewmodel);
+        
         /// <summary>
-        /// Plays an animation for the currently equipped.
+        /// Cache FPP model and data.
         /// </summary>
-        public void PlayAnimation(string anim)
+        public void LoadAndEquip(IFPPVisible obj, HotbarIndex index, OnLoadViewModelCompleted callback = null)
         {
-            armsController.PlayAnimation(anim);
-            // _equipped.ArmsModel.Animator.Play(anim);
-            // _equipped.Model.Animator.Play(anim);
-            // camAnimator.Play(anim);
-        }
-
-        /// <summary>
-        /// Cache model and data.
-        /// </summary>
-        public void LoadModel(IFPPVisible obj, HotbarIndex value)
-        {
-            if (obj == null) return;
-            // if (obj.Model == null) return;
-            
-            var model = Instantiate(obj.Model);
-            model.transform.SetParent(modelHolder.transform);
-            
-            FPPModel fppModel = model.GetComponent<FPPModel>();
-            _cachedModels.Add((int) value, new CachedModel()
+            viewmodelController.LoadViewmodelAsync(obj, (viewmodel) =>
             {
-                Model = fppModel
+                if (!_cachedViewmodels.ContainsKey(index))
+                {
+                    _cachedViewmodels[index] = viewmodel;
+                }
+
+                EquipIndex(index);
+                callback?.Invoke(viewmodel);
             });
-            
-            armsController.LoadAnimationController(obj.ArmsAnimController);
-            // _animator = armsModel.GetComponent<Animator>();
-            // _anims.Add(slot, armsModel.GetComponent<IFPPVisible>());
-        }
+        }      
 
-        public void Equip(HotbarIndex value)
+        public void EquipIndex(HotbarIndex index)
         {
-            Equip((int) value);
-        }
-
-        public void Equip(int slotIndex)
-        {
-            if (_cachedModels.ContainsKey(slotIndex))
+            if (_cachedViewmodels.ContainsKey(index))
             {
-                var toEquip = _cachedModels[slotIndex];
-
-                // cameraOffset = Vector3.zero;
-                // if (toEquip.ArmsModel.HasCameraAnims)
-                // {
-                //     cameraOffset = toEquip.ArmsModel.Camera.transform.rotation.eulerAngles;
-                // }
-
-                if (_equipped == null)
-                {
-                    _equipped = toEquip;
-                    PlayAnimation("equip");
-                }
-                else
-                {
-                    if (_equipped.Equals(toEquip))
-                    {
-                        Debug.Log("dequip");
-                    }
-                    else
-                    {
-                        Debug.Log("switched");
-                    }
-                }
+                currentlyEquippedIndex = index;
+                EquipViewmodel(_cachedViewmodels[index]);
             }
-            // _equipped?.SetActive(false);
-            // _equipped = _cachedModels[slot] ?? _equipped;
+        }
+
+        void ReplaceViewmodelArms(Viewmodel viewmodel)
+        {
+            if (currentArms != null)
+            {
+                currentArms.gameObject.SetActive(false);
+            }
             
-            // _equipped.SetActive(true);
+            currentArms = viewmodel.Arms;
+            if (viewmodel.Arms != null && viewmodel.Arms.TryGetComponent(out Animator component))
+            {
+                armsAnimator = component;
+            }
+            else
+            {
+                Game.Console.Log($"Arms viewmodel is missing an Animator component. No animations would be shown.");
+                Debug.LogWarning($"Arms viewmodel is missing an Animator component. No animations would be shown.");
+            }
+        }
+
+        void ReplaceViewmodelWeapon(Viewmodel viewmodel)
+        {
+            if (currentWeapon != null)
+            {
+                currentWeapon.gameObject.SetActive(false);
+            }
+
+            currentWeapon = viewmodel.Weapon;
+            if (viewmodel.Weapon != null && viewmodel.Weapon.TryGetComponent(out Animator component))
+            {
+                weaponAnimator = component;
+            }
+            else
+            {
+                Game.Console.Log($"Weapon viewmodel is missing an Animator component. No animations would be shown.");
+                Debug.LogWarning($"Weapon viewmodel is missing an Animator component. No animations would be shown.");
+            }
+
+            if (viewmodel.Weapon != null && viewmodel.Weapon.TryGetComponent(out WeaponEquipped weapon))
+            {
+                _currentlyEquippedWeapon = weapon;
+                _currentlyEquippedWeapon.Initialize();
+            }
+            else
+            {
+                Game.Console.Log($"Weapon viewmodel is missing an Animator component. No animations would be shown.");
+                Debug.LogWarning($"Weapon viewmodel is missing an Animator component. No animations would be shown.");
+            }
+        }
+
+        void EquipViewmodel(Viewmodel viewmodel)
+        {
+            ReplaceViewmodelArms(viewmodel);
+            ReplaceViewmodelWeapon(viewmodel);
+
+            currentWeaponData = viewmodel.WeaponData;
+
+            viewmodelController.ReplaceViewmodel(viewmodel);
+            if (currentWeaponData != null)
+            {
+                _equippedWeaponCategory = currentWeaponData.Category;
+            }
+
+            armsAnimator?.CrossFade("equip", 0.1f, 0, 0f);
+            weaponAnimator?.CrossFade("equip", 0.1f, 0, 0f);
+
+            if (_currentlyEquippedWeapon is MeleeWeapon meleeWeapon)
+            {
+                meleeWeapon.StateMachine.OnStateChanged -= OnMeleeWeaponStateChanged;
+                meleeWeapon.StateMachine.OnStateChanged += OnMeleeWeaponStateChanged;
+            }
+            else if (_currentlyEquippedWeapon is RangedWeapon rangedWeapon)
+            {
+                rangedWeapon.StateMachine.OnStateChanged -= OnRangedWeaponStateChanged;
+                rangedWeapon.StateMachine.OnStateChanged += OnRangedWeaponStateChanged;
+            }
+        }
+
+        void OnMeleeWeaponStateChanged(object sender, StateMachine<MeleeWeaponStates>.StateChangedContext e)
+        {
+            throw new NotImplementedException();
+        }
+
+        void OnRangedWeaponStateChanged(object sender, StateMachine<RangedWeaponStates>.StateChangedContext e)
+        {
+            if (_currentlyEquippedWeapon == null) return;
+
+            var animId = GetAnimIdFromState(e.To);
+            if (!string.IsNullOrEmpty(animId))
+            {
+                armsAnimator.CrossFade(animId, 0.1f, 0, 0f);
+                weaponAnimator.CrossFade(animId, 0.1f, 0, 0f);
+            }
+        }
+
+        string GetAnimIdFromState(Enum value)
+        {
+            return value.ToString().ToLower();
+        }
+
+        public void Unholster()
+        {
+            if (currentlyEquippedIndex == HotbarIndex.Hands)
+            {
+                EquipIndex(lastEquippedIndex);
+            }
+            else
+            {
+                lastEquippedIndex = currentlyEquippedIndex;
+                EquipIndex(HotbarIndex.Hands);
+            }
         }
     }
 }

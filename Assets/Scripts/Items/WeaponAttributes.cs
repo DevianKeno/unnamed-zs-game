@@ -1,7 +1,7 @@
 using System;
 using UnityEngine.Rendering;
 
-namespace UZSG.Items
+namespace UZSG.Items.Weapons
 {
     [Serializable]
     public struct WeaponMeleeAttributes
@@ -10,13 +10,18 @@ namespace UZSG.Items
         public float BaseCritStrike;
         public float BaseCritDamage;
     }
+
+    public enum FireType {
+        SemiAuto, Automatic, Burst
+    }
     
     [Serializable]
     public struct WeaponRangedAttributes
     {
         public float BaseDamage;
-        public int Capacity;
+        public FireType FireType;
+        public int RoundsPerMinute;
+        public int ClipSize;
         public float ReloadSpeed;
-        public float ReloadSpeedMultiplier;
     }
 }

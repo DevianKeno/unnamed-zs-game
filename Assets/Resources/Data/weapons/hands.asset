@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72e1d5853de97a54aa491bcf19eb9d39, type: 3}
+  m_Name: hands
+  m_EditorClassIdentifier: 
+  Model:
+    m_AssetGUID: 
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  Id: hands
+  Name: Hands
+  Description: 
+  Sprite: {fileID: 0}
+  StackSize: 1
+  Type: 1
+  Subtype: 3
+  IsMaterial: 0
+  Weight: 0
+  Category: 0
+  MeleeType: 0
+  BluntType: 0
+  BladedType: 0
+  RangedType: 0
+  Attributes:
+    BaseDamage: 0
+    BaseCritStrike: 0
+    BaseCritDamage: 0
+  armsViewmodel:
+    m_AssetGUID: a908bcda09e0e71439386cf700a9cfc0
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  weaponViewmodel:
+    m_AssetGUID: 
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  anims:
+    Idle: idle
+    Move: 
+    Primary: primary
+    PrimaryHold: 
+    PrimaryRelease: 
+    PrimaryVariant: []
+    Secondary: secondary
+    SecondaryHold: 
+    SecondaryRelease: 
+    Equip: 
+    Dequip: 
+  audioData:
+    Equip: {fileID: 0}
+    Dequip: {fileID: 0}
+    Fire: {fileID: 0}
+    FireVariant: []
+    ADSDown: {fileID: 0}
+    ADSUp: {fileID: 0}
+    Reload: {fileID: 0}

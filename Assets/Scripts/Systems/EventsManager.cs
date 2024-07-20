@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace UZSG.Systems
 {
-    public sealed class EventsManager : MonoBehaviour
+    public class EventsManager : MonoBehaviour
     {
         public event EventHandler OnPlayerMove;
 

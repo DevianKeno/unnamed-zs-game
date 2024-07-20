@@ -1,10 +1,13 @@
 using System;
 using UnityEngine;
 using UZSG.Data;
+using UZSG.Items;
 
 namespace UZSG.Inventory
 {
-    public enum HotbarIndex { Mainhand, Offhand, Three, Four, Five, Six, Seven, Eight, Nine, Ten, }
+    public enum HotbarIndex {
+        Hands, Mainhand, Offhand, Three, Four, Five, Six, Seven, Eight, Nine, //Ten,
+    }
 
     public struct SlotContentChangedArgs
     {
@@ -59,7 +62,7 @@ namespace UZSG.Inventory
                 HotbarIndex.Seven => 7,
                 HotbarIndex.Eight => 8,
                 HotbarIndex.Nine => 9,
-                HotbarIndex.Ten => 0,
+                // HotbarIndex.Ten => 0,
                 _ => -1,
             };
         }
@@ -77,7 +80,7 @@ namespace UZSG.Inventory
                 7 => HotbarIndex.Seven,
                 8 => HotbarIndex.Eight,
                 9 => HotbarIndex.Nine,
-                0 => HotbarIndex.Ten,
+                // 0 => HotbarIndex.Hands,
                 _ => throw new ArgumentException("Invalid value"),
             };
         }
@@ -96,6 +99,27 @@ namespace UZSG.Inventory
         {            
             if (index < 0 || index > 9) return; // Should be index > Hotbar.MaxSlots
             Hotbar.SelectSlot(index);
+        }
+
+        /// <summary>
+        /// Tries to put a Weapon item in either the Mainhand or Offhand.
+        /// </summary>
+        public bool TryPutWeapon(Item item, out HotbarIndex putOnIndex)
+        {
+            if (Mainhand.TryPutItem(item))
+            {
+                putOnIndex = HotbarIndex.Mainhand;
+                return true;
+            }
+
+            if (Offhand.TryPutItem(item))
+            {
+                putOnIndex = HotbarIndex.Offhand;
+                return true;
+            }
+
+            putOnIndex = default;
+            return false;
         }
     }
 }

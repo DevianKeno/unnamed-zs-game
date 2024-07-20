@@ -76,7 +76,8 @@ namespace UZSG
             {
                 slot.PutItem(item);
                 return true;
-            } else
+            }
+            else
             {
                 return slot.TryCombine(item, out Item excess);
             }
@@ -106,12 +107,12 @@ namespace UZSG
 
         public virtual Item Swap(int slotIndex)
         {
-            return Item.None;
+            throw new NotImplementedException();
         }
 
         public virtual Item ThrowItem(int index)
         {
-            return Item.None;
+            throw new NotImplementedException();
         }
 
         public virtual void ClearItem(ItemSlot slot)

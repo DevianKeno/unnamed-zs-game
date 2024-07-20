@@ -1094,8 +1094,8 @@ MonoBehaviour:
     _itemData: {fileID: 0}
     _count: 0
   image: {fileID: 0}
-  itemDisplayUI: {fileID: 0}
   indexTMP: {fileID: 0}
+  itemDisplayUI: {fileID: 0}
 --- !u!1 &3935125152809388314
 GameObject:
   m_ObjectHideFlags: 0
@@ -1468,8 +1468,8 @@ MonoBehaviour:
     _itemData: {fileID: 0}
     _count: 0
   image: {fileID: 0}
-  itemDisplayUI: {fileID: 0}
   indexTMP: {fileID: 0}
+  itemDisplayUI: {fileID: 0}
 --- !u!114 &3402334597362664776
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1662,8 +1662,8 @@ MonoBehaviour:
     _itemData: {fileID: 0}
     _count: 0
   image: {fileID: 0}
-  itemDisplayUI: {fileID: 0}
   indexTMP: {fileID: 0}
+  itemDisplayUI: {fileID: 0}
 --- !u!1 &7353896208176508581
 GameObject:
   m_ObjectHideFlags: 0
@@ -1724,7 +1724,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71237f68c061f8a4e827243d6c922785, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Player: {fileID: 0}
   inventory: {fileID: 0}
+  frameController: {fileID: 6864834813706343539}
   bag: {fileID: 9108677017342296465}
   hotbar: {fileID: 0}
   slotPrefab: {fileID: 7226684566756821322, guid: 218b3dd085eba5c40820caed6b8fc32e, type: 3}

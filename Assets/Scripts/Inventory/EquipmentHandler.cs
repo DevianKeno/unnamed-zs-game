@@ -3,6 +3,14 @@ using UZSG.Inventory;
 
 namespace UZSG
 {
+    public enum EquipmentStates {
+        Idle, Move,
+        Primary, PrimaryHold, PrimaryRelease,
+        Secondary, SecondaryHold, SecondaryRelease,
+        ADSDown, ADSUp,
+        Reload, ReloadClip, Melee, Equip, Dequip,
+    }
+    
     public class EquipmentHandler : MonoBehaviour
     {
         public int MaxAccessorySlots = 5;

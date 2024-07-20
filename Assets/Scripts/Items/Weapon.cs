@@ -1,8 +1,8 @@
 using System;
-using UnityEngine;
-using UZSG.Items;
 
-namespace UZSG
+using UnityEngine;
+
+namespace UZSG.Items.Weapons
 {
     public class Tool
     {
@@ -14,11 +14,11 @@ namespace UZSG
     /// </summary>
     public class Weapon : Item
     {
-        WeaponData _data;
-
-        public Weapon(ItemData itemData, int count) : base(itemData, count)
+        protected WeaponData weaponData;
+        
+        public Weapon(ItemData itemData) : base(itemData, 1) /// 1, since Weapons are not stackable
         {
-            _data = (WeaponData) itemData;
+            weaponData = (WeaponData) itemData;
         }
     }
 }

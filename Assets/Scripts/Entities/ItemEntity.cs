@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UZSG.Systems;
+using UZSG.Items.Weapons;
 
 namespace UZSG.Entities
 {
@@ -64,7 +65,7 @@ namespace UZSG.Entities
                 return;
             };
 
-            Addressables.LoadAssetAsync<GameObject>(ItemData.AssetReference).Completed += (a) =>
+            Addressables.LoadAssetAsync<GameObject>(ItemData.Model).Completed += (a) =>
             {
                 if (a.Status == AsyncOperationStatus.Succeeded)
                 {
@@ -111,7 +112,7 @@ namespace UZSG.Entities
 
             if (ItemData is WeaponData data)
             {
-                item = new Weapon(data, 1);
+                item = new Weapon(data);
             }
             return item;
         }

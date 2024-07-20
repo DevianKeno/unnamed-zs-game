@@ -14,7 +14,7 @@ namespace UZSG.Systems
     {
         public struct EntitySpawnedContext
         {
-            public Entity Entity;
+            public Entity Entity { get; set; }
         }
 
         bool _isInitialized;

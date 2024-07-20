@@ -31,7 +31,7 @@ namespace UZSG.Players
         public float MoveSpeed;
         public float RunSpeed;
         public float CrouchSpeed;
-        public float JumpTime = 1f;
+        public float JumpTime = 5f;
         public float JumpHeight = 2f;
         public float Gravity = -9.81f;
         public float FallSpeedMultiplier = 2f;
@@ -60,7 +60,7 @@ namespace UZSG.Players
         float _currentSpeed;
         bool _isMovePressed;
         float initialJumpVelocity;
-        bool _jumped;
+        bool _hasJumped;
         float CrouchPosition;
         bool _isTransitioning;
         bool _isRunning;
@@ -142,16 +142,7 @@ namespace UZSG.Players
         InputActionMap actionMap;
         Dictionary<string, InputAction> inputs = new();
 
-        void Awake()
-        {
-            Player = GetComponent<Player>();
-        }
         
-        // void OnDrawGizmos()
-        // {            
-        //     Gizmos.DrawLine(groundChecker.transform.position, groundChecker.transform.position + Vector3.down * GroundDistance);
-        // }
-
         internal void Initialize()
         {
             InitializeInputs();
@@ -166,24 +157,30 @@ namespace UZSG.Players
             actionMap = Game.Main.GetActionMap("Player");
             inputs = Game.Main.GetActionsFromMap(actionMap);
             
-            inputs["Move"].performed += OnMoveInput;
-            inputs["Move"].started += OnMoveInput;
-            inputs["Move"].canceled += OnMoveInput;
+            inputs["Move"].performed += OnStartMove;
+            inputs["Move"].started += OnStartMove;
+            inputs["Move"].canceled += OnStartMove;
 
             inputs["Jump"].performed += OnJumpInput;        // Space (default)
-            inputs["Jump"].started += OnRunInput;           // Shift (default)
-            inputs["Jump"].canceled += OnRunInput;          // Shift (default)
+
+            inputs["Run"].started += OnStartRun;            // Shift (default)
+            inputs["Run"].canceled += OnStartRun;           // Shift (default)
 
             inputs["Crouch"].performed += OnCrouchInput;    // LCtrl (default)
 
             SetControlsEnabled(true);
+        }
+        
+        void Awake()
+        {
+            Player = GetComponent<Player>();
         }
 
         void Tick(object sender, TickEventArgs e)
         {
             if (IsMoving && IsRunning)
             {
-                // Cache attributes for better performance
+                /// Cache attributes for better performance
                 var runStaminaCost = Player.Generic.GetAttributeFromId("run_stamina_cost").Value;
                 Player.Vitals.GetAttributeFromId("stamina").Remove(runStaminaCost);
             }
@@ -208,7 +205,7 @@ namespace UZSG.Players
 
         void RetrieveAttributes()
         {
-            // These can be cached and track changes using events
+            /// These can be cached and track changes using events
             MoveSpeed = Player.Generic.GetAttributeFromId("move_speed").Value;
             RunSpeed = Player.Generic.GetAttributeFromId("run_speed").Value;
             CrouchSpeed = Player.Generic.GetAttributeFromId("crouch_speed").Value;
@@ -241,7 +238,7 @@ namespace UZSG.Players
             }
         }
 
-        void OnMoveInput(InputAction.CallbackContext context)
+        void OnStartMove(InputAction.CallbackContext context)
         {
             if (!EnableMovementControls) return;
 
@@ -255,11 +252,11 @@ namespace UZSG.Players
 
             if (IsGrounded)
             {
-                _jumped = true;
+                _hasJumped = true;
             }
         }
 
-        void OnRunInput(InputAction.CallbackContext context)
+        void OnStartRun(InputAction.CallbackContext context)
         {            
             if (!EnableMovementControls) return;
 
@@ -305,7 +302,7 @@ namespace UZSG.Players
             HandleDirection();
             HandleRotation();
             HandleGravity();
-            HandleJump();
+            // HandleJump();
 
             ApplyMovement();
         }
@@ -323,28 +320,30 @@ namespace UZSG.Players
 
         void HandleJump()
         {
-            if (!_jumped) return;
-            _jumped = false;
+            if (!_hasJumped) return;
+            _hasJumped = false;
             
             Player.smMove.ToState(MoveStates.Jump);
             /// The time required to reach the highest point of the jump
             float timeToApex = JumpTime / 2;
-            _frameVelocity.y = (2 * JumpHeight) / timeToApex; /// this should be cached
+            _frameVelocity.y = 2 * JumpHeight / timeToApex; /// this should be cached
         }
 
         void HandleGravity()
         {            
             /// Calculates the player's internal gravity
-            Gravity = (-2 * JumpHeight) / Mathf.Pow(JumpTime / 2, 2); // this should be cached
+            Gravity = -2 * JumpHeight / Mathf.Pow(JumpTime / 2, 2); /// this should be cached
 
             if (IsGrounded) /// grounding force only
             {
                 _frameVelocity.y = GroundingForce;
 
-            } else if (IsFalling) /// increasing fall speed
+            }
+            else if (IsFalling) /// increasing fall speed
             {
                 _frameVelocity.y += Gravity * FallSpeedMultiplier * Time.fixedDeltaTime;
-            } else /// normal gravity
+            }
+            else /// normal gravity
             {
                 _frameVelocity.y += Gravity * Time.fixedDeltaTime;
             }
@@ -358,7 +357,8 @@ namespace UZSG.Players
             {
                 Vector3 displacement = _targetPosition - _previousPosition;
                 rb.velocity = displacement / Game.Tick.SecondsPerTick; // Will break if SecondsPerTick is 0
-            } else
+            }
+            else
             {
                 rb.velocity = Vector3.zero;
             }

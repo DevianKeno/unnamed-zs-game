@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72e1d5853de97a54aa491bcf19eb9d39, type: 3}
   m_Name: katana
   m_EditorClassIdentifier: 
-  AssetReference:
+  Model:
     m_AssetGUID: 6826bbfc6468b29479005f0e22608a36
     m_SubObjectName: 
     m_SubObjectType: 
@@ -39,10 +39,14 @@ MonoBehaviour:
   _armsAnimController: {fileID: 9100000, guid: 9a062cade3b292d4c8d462d6bbe2e160, type: 2}
   _modelAnimController: {fileID: 9100000, guid: fc63709a1ba05724b9b54b56a010c05a, type: 2}
   _anims:
-    Equip: equip
     Idle: idle
-    Run: 
-    Primary:
-    - attack_left
+    Move: 
+    Primary: 
+    PrimaryHold: 
+    PrimaryRelease: 
+    PrimaryVariant: []
     Secondary: stance
-    Hold: 
+    SecondaryHold: 
+    SecondaryRelease: 
+    Equip: equip
+    Dequip: 

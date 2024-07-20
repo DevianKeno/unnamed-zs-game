@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 
 using UZSG.Systems;
 using UZSG.Items;
+using UZSG.Items.Weapons;
 using UZSG.Interactions;
 using UZSG.Entities;
 using UZSG.Inventory;
@@ -20,20 +21,21 @@ namespace UZSG.Players
     {
         public Player Player;
 
-        [Header("Interact Size")]
+        [Header("Interaction Size")]
         public float Radius;
         public float MaxInteractDistance;
-        public float HoldThresholdMs = 200f;
+        public float HoldThresholdMilliseconds = 200f;
+        
         float _holdTimer;
-        bool leftClicked;
-        bool rightClicked;
-        bool heldClick;
+        bool _hadLeftClicked;
+        bool _hadRightClicked;
+        bool _isHoldingLeftClick;
+        bool _isHoldingRightClick;
         
         /// <summary>
         /// The interactable object the Player is currently looking at.
         /// </summary>
         IInteractable lookingAt;
-        RaycastHit hit;
         Ray ray;
         InteractionIndicator interactionIndicator;
         
@@ -52,59 +54,70 @@ namespace UZSG.Players
 
             Game.Tick.OnTick += Tick;
         }
-  
-        void Update()
-        {
-            if (leftClicked)
-            {
-                _holdTimer += Time.deltaTime;
-
-                if (_holdTimer > HoldThresholdMs / 1000f)
-                {
-                    leftClicked = false;
-                    Player.smAction.ToState(ActionStates.PrimaryHold);
-                }
-
-            }
-            else if (rightClicked)
-            {
-                _holdTimer += Time.deltaTime;
-
-                if (_holdTimer > HoldThresholdMs / 1000f)
-                {
-                    rightClicked = false;
-                    Player.smAction.ToState(ActionStates.SecondaryHold);
-                }
-            }
-        }
 
         void InitializeInputs()
         {
             actionMap = Game.Main.GetActionMap("Player");
             inputs = Game.Main.GetActionsFromMap(actionMap);
         
-            inputs["Primary Action"].started += OnStartPrimary;         // LMB (default)
-            inputs["Primary Action"].canceled += OnCancelPrimary;       // LMB (default)
+            inputs["Primary Action"].started += OnStartPrimaryAction;           // LMB (default)
+            inputs["Primary Action"].canceled += OnCancelPrimaryAction;         // LMB (default)
 
-            inputs["Secondary Action"].started += OnStartSecondary;     // RMB (default)
-            inputs["Secondary Action"].canceled += OnCancelSecondary;   // RMB (default)
+            inputs["Secondary Action"].started += OnStartSecondaryAction;       // RMB (default)
+            inputs["Secondary Action"].canceled += OnCancelSecondaryAction;     // RMB (default)
 
-            inputs["Interact"].performed += OnPerformInteract;          // F (default)
+            inputs["Interact"].performed += OnPerformInteract;                  // F (default)
+            inputs["Interact"].Enable();
             inputs["Hotbar"].performed += OnHotbarSelect;               // Tab/E (default)
+
+            inputs["Unholster"].performed += OnUnholster;               // X (default)
         }
 
+        void Update()
+        {
+            if (_hadLeftClicked)
+            {
+                _holdTimer += Time.deltaTime;
+
+                if (_holdTimer > HoldThresholdMilliseconds / 1000f)
+                {
+                    _isHoldingLeftClick = true;
+                    Player.smAction.ToState(ActionStates.PrimaryHold);
+                }
+            }
+            else if (_hadRightClicked)
+            {
+                _holdTimer += Time.deltaTime;
+
+                if (_holdTimer > HoldThresholdMilliseconds / 1000f)
+                {
+                    _isHoldingRightClick = true;
+                    Player.smAction.ToState(ActionStates.SecondaryHold);
+                }
+            }
+        }
 
         #region Callbacks
 
         void OnHotbarSelect(InputAction.CallbackContext context)
         {
             if (!int.TryParse(context.control.displayName, out int index)) return;
-            Player.Inventory.SelectHotbarSlot(index);
+
+            if (Player.FPP.CurrentlyEquippedIndex == (HotbarIndex) index)
+            {
+                // Player.Inventory.SelectHotbarSlot(0);
+                Player.FPP.Unholster();
+            }
+            else
+            {
+                // Player.Inventory.SelectHotbarSlot(index);
+                Player.FPP.EquipIndex((HotbarIndex) index);
+            }
         }
 
-        void HotbarChangeEquippedCallback(object sender, Hotbar.ChangeEquippedArgs e)
+        void OnUnholster(InputAction.CallbackContext context)
         {
-            Player.FPP.Equip(e.Index);
+            Player.FPP.Unholster();
         }
         
         void OnPerformInteract(InputAction.CallbackContext context)
@@ -114,32 +127,42 @@ namespace UZSG.Players
             lookingAt.Interact(this, new InteractArgs());
         }
 
-        void OnStartPrimary(InputAction.CallbackContext c)
+        void OnStartPrimaryAction(InputAction.CallbackContext c)
         {
-            leftClicked = true;
             _holdTimer = 0f;
+            _hadLeftClicked = true;
         }
 
-        void OnCancelPrimary(InputAction.CallbackContext c)
+        void OnCancelPrimaryAction(InputAction.CallbackContext c)
         {
-            if (_holdTimer < HoldThresholdMs / 1000f)
+            _hadLeftClicked = false;
+            if (_isHoldingLeftClick)
             {
-                leftClicked = false;
+                _isHoldingLeftClick = false;
+                Player.smAction.ToState(ActionStates.PrimaryRelease);
+            }
+            else
+            {
                 Player.smAction.ToState(ActionStates.Primary);
             }
         }
 
-        void OnStartSecondary(InputAction.CallbackContext c)
+        void OnStartSecondaryAction(InputAction.CallbackContext c)
         {
-            rightClicked = true;
             _holdTimer = 0f;
+            _hadRightClicked = true;
         }
 
-        void OnCancelSecondary(InputAction.CallbackContext c)
+        void OnCancelSecondaryAction(InputAction.CallbackContext c)
         {
-            if (_holdTimer < HoldThresholdMs / 1000f)
+            _hadRightClicked = false;
+            if (_isHoldingRightClick)
             {
-                rightClicked = false;
+                _isHoldingRightClick = false;
+                Player.smAction.ToState(ActionStates.SecondaryRelease);
+            }
+            else
+            {
                 Player.smAction.ToState(ActionStates.Secondary);
             }
         }
@@ -157,13 +180,12 @@ namespace UZSG.Players
         void CheckLookingAt()
         {
             /// Cast a ray from the center of the screen
-            ray = Player.MainCamera.ScreenPointToRay(new Vector2(Screen.width / 2, Screen.height / 2));
+            var viewportRect = new Vector2(Screen.width / 2, Screen.height / 2);
+            ray = Player.MainCamera.ScreenPointToRay(viewportRect);
 
             if (Physics.SphereCast(ray, Radius, out RaycastHit hit, MaxInteractDistance, LayerMask.GetMask("Interactable")))
             {
-                lookingAt = hit.collider.gameObject.GetComponent<IInteractable>();
-
-                if (lookingAt != null)
+                if (hit.collider.gameObject.TryGetComponent(out lookingAt))
                 {
                     interactionIndicator.Indicate(lookingAt);
                 }
@@ -205,14 +227,13 @@ namespace UZSG.Players
 
             if (item.Type == ItemType.Weapon)
             {
-                gotItem = Player.Inventory.Mainhand.TryPutItem(item);
+                gotItem = Player.Inventory.TryPutWeapon(item, out HotbarIndex index);
 
                 if (gotItem)
                 {
                     if (WeaponData.TryGetWeaponData(item.Data, out WeaponData weaponData))
                     {
-                        Player.FPP.LoadModel(weaponData, HotbarIndex.Mainhand);
-                        Player.FPP.Equip(HotbarIndex.Mainhand);
+                        Player.FPP.LoadAndEquip(weaponData, index);
                     }
                 }
             }

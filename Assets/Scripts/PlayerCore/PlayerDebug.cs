@@ -27,12 +27,12 @@ namespace UZSG.Players
             Player.smAction.OnStateChanged += ActionStateChanged;
         }
 
-        private void ActionStateChanged(object sender, StateMachine<ActionStates>.StateChanged e)
+        private void ActionStateChanged(object sender, StateMachine<ActionStates>.StateChangedContext e)
         {
             UI.actionStateText.text = e.To.ToString();
         }
 
-        private void MovementStateChanged(object sender, StateMachine<MoveStates>.StateChanged e)
+        private void MovementStateChanged(object sender, StateMachine<MoveStates>.StateChangedContext e)
         {
             UI.movementStateText.text = e.To.ToString();
         }

@@ -65,6 +65,8 @@ namespace UZSG.Players
 
             inputs["Secondary Action"].started += OnStartSecondaryAction;       // RMB (default)
             inputs["Secondary Action"].canceled += OnCancelSecondaryAction;     // RMB (default)
+            
+            inputs["Reload"].performed += OnPerformReload;       // R (default)
 
             inputs["Interact"].performed += OnPerformInteract;                  // F (default)
             inputs["Interact"].Enable();
@@ -113,6 +115,11 @@ namespace UZSG.Players
                 // Player.Inventory.SelectHotbarSlot(index);
                 Player.FPP.EquipIndex((HotbarIndex) index);
             }
+        }
+
+        void OnPerformReload(InputAction.CallbackContext context)
+        {
+            Player.FPP.PerformReload();
         }
 
         void OnUnholster(InputAction.CallbackContext context)

@@ -36,18 +36,21 @@ MonoBehaviour:
     BaseCritStrike: 0
     BaseCritDamage: 0
   RangedAttributes:
-    BaseDamage: 12
+    Damage: 11
     FireType: 0
     RoundsPerMinute: 310
     ClipSize: 10
     ReloadSpeed: 1
+    VerticalRecoilFactor: 1.2
+    HorizontalRecoilFactor: 1.1
+    RecoilRecoveryFactor: 1.25
   armsViewmodel:
-    m_AssetGUID: 44f9ffb8aff207e4ab5f7f6a582e4cdb
+    m_AssetGUID: cf23f63267f248b44ba581cfe94e58c1
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
   weaponViewmodel:
-    m_AssetGUID: 673174a4ca7c95547a7b39bc3454331c
+    m_AssetGUID: ad8e9ed2095dd2c41917084df4f1734f
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0

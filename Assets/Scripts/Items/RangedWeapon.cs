@@ -17,12 +17,19 @@ namespace UZSG.Items.Weapons
 
     public class RangedWeapon : WeaponEquipped
     {
-        int rounds = 9999; /// TEST
+        int _currentRounds; /// TEST
+        public int CurrentRounds
+        {
+            get { return _currentRounds; }
+            set { _currentRounds = value; }
+        }
         float _fireDelta;
         float _fireRateThreshold;
         bool _hasFired;
         bool _isReloading;
         bool _isAimingDownSights;
+
+        public event Action OnFire;
 
         RangedWeaponStateMachine stateMachine;
         public RangedWeaponStateMachine StateMachine => stateMachine;
@@ -37,6 +44,8 @@ namespace UZSG.Items.Weapons
         {
             audioSourceController ??= gameObject.AddComponent<AudioSourceController>();
             audioSourceController.LoadAudioAssetIds(weaponData.AudioData.AudioAssetIds);
+
+            _currentRounds = weaponData.RangedAttributes.ClipSize;
         }
 
         void Update()
@@ -58,22 +67,29 @@ namespace UZSG.Items.Weapons
             if (_isReloading) return false;
             if (_hasFired) return false;
 
-            _hasFired = true;
-            if (rounds > 0)
+            if (_currentRounds > 0)
             {
+                _hasFired = true;
                 /// Summon bullet?
                 int randIndex = UnityEngine.Random.Range(0, 4); /// magic number, subject to change
                 string audioName = $"fire{randIndex}";
                 audioSourceController.PlaySound(audioName);
-                rounds--;
+                _currentRounds--;
+                OnFire?.Invoke();
                 return true;
             }
             else
             {
                 /// Play no ammo sound "click"
+                Debug.Log("No ammo");
                 // audioSourceController.PlaySound("dryfire");
                 return false;
             }
+        }
+
+        public void SetWeaponState(RangedWeaponStates state)
+        {
+            stateMachine.ToState(state);
         }
 
         public void SetWeaponStateFromPlayerAction(ActionStates state)
@@ -91,34 +107,48 @@ namespace UZSG.Items.Weapons
                     stateMachine.ToState(RangedWeaponStates.Fire, _fireRateThreshold);
                 }
             }
-            /// ADS controls, assumes ADS is "hold"
-            else if (state == ActionStates.SecondaryHold)
+            else if (state == ActionStates.Secondary)
+            {
+                /// ADS controls, assuming ADS is "toggle"
+                ToggleAimDownSights();
+            }
+        }
+
+        void ToggleAimDownSights()
+        {
+            if (_isAimingDownSights)
+            {
+                _isAimingDownSights = false;
+                stateMachine.ToState(RangedWeaponStates.ADS_Down);
+            } else
             {
                 _isAimingDownSights = true;
                 stateMachine.ToState(RangedWeaponStates.ADS_Up);
             }
-            else if (state == ActionStates.SecondaryRelease)
+        }
+
+        public bool TryReload(float durationSeconds)
+        {
+            if (_currentRounds == weaponData.RangedAttributes.ClipSize || _isReloading)
             {
-                _isAimingDownSights = false;
-                stateMachine.ToState(RangedWeaponStates.ADS_Down);
+                return false;
             }
+
+            StartCoroutine(ReloadCoroutine(durationSeconds));
+            return true;
         }
 
-        public void StartReload()
+        IEnumerator ReloadCoroutine(float durationSeconds)
         {
-            StartCoroutine(ReloadCoroutine());
-        }
-
-        IEnumerator ReloadCoroutine()
-        {
-            if (_isReloading) yield return null;
-
+            Debug.Log("Reloading weapon...");
             _isReloading = true;
             stateMachine.ToState(RangedWeaponStates.Reload);
 
-            yield return new WaitForSeconds(1f);
-            rounds = 10; 
+            yield return new WaitForSeconds(durationSeconds);
+
+            _currentRounds = 10; 
             _isReloading = false;
+            Debug.Log("Completed reload");
         }
     }
 }

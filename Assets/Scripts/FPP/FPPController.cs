@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -24,12 +25,13 @@ namespace UZSG.FPP
         HotbarIndex lastEquippedIndex;
         WeaponEquipped _currentlyEquippedWeapon;
         WeaponCategory _equippedWeaponCategory;
+        bool _isPlayingAnimation;
 
-        [SerializeField] GameObject currentArms;
+        GameObject currentArms;
         public GameObject CurrentArms => currentArms;
-        [SerializeField] GameObject currentWeapon;
+        GameObject currentWeapon;
         public GameObject CurrentModel => currentWeapon;
-        [SerializeField] WeaponData currentWeaponData;
+        WeaponData currentWeaponData;
         public WeaponData CurrentWeaponData => _currentlyEquippedWeapon.WeaponData;
 
         MeleeWeaponStateMachine meleeWeaponStateMachine;
@@ -66,40 +68,6 @@ namespace UZSG.FPP
             Player.smAction.OnStateChanged += OnPlayerActionStateChanged;
         }
 
-        void OnPlayerMoveStateChanged(object sender, StateMachine<MoveStates>.StateChangedContext e)
-        {
-            switch (e.To)
-            {                
-                case MoveStates.Idle:
-                    camController.Animator.CrossFade("idle", 0.1f);
-                    break;
-
-                case MoveStates.Walk:
-                    camController.Animator.speed = 1f;
-                    camController.Animator.CrossFade("forward_bob", 0.1f);
-                    break;
-
-                case MoveStates.Run:
-                    camController.Animator.speed = 1.6f;
-                    camController.Animator.CrossFade("forward_bob", 0.1f);
-                    break;
-            }
-        }
-        
-        void OnPlayerActionStateChanged(object sender, StateMachine<ActionStates>.StateChangedContext e)
-        {
-            if (_currentlyEquippedWeapon == null) return;
-
-            if (_currentlyEquippedWeapon is MeleeWeapon meleeWeapon)
-            {
-                meleeWeapon.SetWeaponStateFromPlayerAction(e.To);
-            }
-            else if (_currentlyEquippedWeapon is RangedWeapon rangedWeapon)
-            {
-                rangedWeapon.SetWeaponStateFromPlayerAction(e.To);
-            }
-        }
-
         public delegate void OnLoadViewModelCompleted(Viewmodel viewmodel);
         
         /// <summary>
@@ -125,6 +93,32 @@ namespace UZSG.FPP
             {
                 currentlyEquippedIndex = index;
                 EquipViewmodel(_cachedViewmodels[index]);
+            }
+        }
+
+        public void PerformReload()
+        {
+            if (_isPlayingAnimation) return;
+            if (_currentlyEquippedWeapon is RangedWeapon weapon)
+            {
+                var animLengthSeconds = GetAnimationClipLength(weaponAnimator, "reload");
+                weapon.TryReload(animLengthSeconds);
+            }
+        }
+
+        public void Unholster()
+        {
+            if (_isPlayingAnimation) return;
+
+            /// Swaps
+            if (currentlyEquippedIndex == HotbarIndex.Hands)
+            {
+                EquipIndex(lastEquippedIndex);
+            }
+            else
+            {
+                lastEquippedIndex = currentlyEquippedIndex;
+                EquipIndex(HotbarIndex.Hands);
             }
         }
 
@@ -161,7 +155,7 @@ namespace UZSG.FPP
             }
             else
             {
-                Game.Console.Log($"Weapon viewmodel is missing an Animator component. No animations would be shown.");
+                // Game.Console.Log($"Weapon viewmodel is missing an Animator component. No animations would be shown.");
                 Debug.LogWarning($"Weapon viewmodel is missing an Animator component. No animations would be shown.");
             }
 
@@ -172,7 +166,7 @@ namespace UZSG.FPP
             }
             else
             {
-                Game.Console.Log($"Weapon viewmodel is missing an Animator component. No animations would be shown.");
+                // Game.Console.Log($"Weapon viewmodel is missing an Animator component. No animations would be shown.");
                 Debug.LogWarning($"Weapon viewmodel is missing an Animator component. No animations would be shown.");
             }
         }
@@ -193,15 +187,55 @@ namespace UZSG.FPP
             armsAnimator?.CrossFade("equip", 0.1f, 0, 0f);
             weaponAnimator?.CrossFade("equip", 0.1f, 0, 0f);
 
+            /// Idk if I really need to unsubscribe so it "resets"
             if (_currentlyEquippedWeapon is MeleeWeapon meleeWeapon)
             {
                 meleeWeapon.StateMachine.OnStateChanged -= OnMeleeWeaponStateChanged;
+
                 meleeWeapon.StateMachine.OnStateChanged += OnMeleeWeaponStateChanged;
             }
             else if (_currentlyEquippedWeapon is RangedWeapon rangedWeapon)
             {
                 rangedWeapon.StateMachine.OnStateChanged -= OnRangedWeaponStateChanged;
+                rangedWeapon.OnFire -= OnWeaponFired;
+
                 rangedWeapon.StateMachine.OnStateChanged += OnRangedWeaponStateChanged;
+                rangedWeapon.OnFire += OnWeaponFired;
+            }
+        }
+
+        void OnPlayerMoveStateChanged(object sender, StateMachine<MoveStates>.StateChangedContext e)
+        {
+            switch (e.To)
+            {                
+                case MoveStates.Idle:
+                    camController.Animator.CrossFade("idle", 0.1f);
+                    break;
+
+                case MoveStates.Walk:
+                    camController.Animator.speed = 1f;
+                    camController.Animator.CrossFade("forward_bob", 0.1f);
+                    break;
+
+                case MoveStates.Run:
+                    camController.Animator.speed = 1.6f;
+                    camController.Animator.CrossFade("forward_bob", 0.1f);
+                    break;
+            }
+        }
+        
+        void OnPlayerActionStateChanged(object sender, StateMachine<ActionStates>.StateChangedContext e)
+        {
+            if (_currentlyEquippedWeapon == null) return;
+            if (_isPlayingAnimation) return;
+
+            if (_currentlyEquippedWeapon is MeleeWeapon meleeWeapon)
+            {
+                meleeWeapon.SetWeaponStateFromPlayerAction(e.To);
+            }
+            else if (_currentlyEquippedWeapon is RangedWeapon rangedWeapon)
+            {
+                rangedWeapon.SetWeaponStateFromPlayerAction(e.To);
             }
         }
 
@@ -217,9 +251,59 @@ namespace UZSG.FPP
             var animId = GetAnimIdFromState(e.To);
             if (!string.IsNullOrEmpty(animId))
             {
-                armsAnimator.CrossFade(animId, 0.1f, 0, 0f);
-                weaponAnimator.CrossFade(animId, 0.1f, 0, 0f);
+                _isPlayingAnimation = true;
+                armsAnimator.Play(animId, 0, 0f);
+                weaponAnimator.Play(animId, 0, 0f);
+
+                var animLengthSeconds = GetAnimationClipLength(weaponAnimator, animId);
+                StartCoroutine(FinishAnimation(animLengthSeconds));
             }
+        }
+        
+        void OnWeaponFired()
+        {
+            HandleWeaponRecoil();
+            UpdateHUD();
+        }
+
+        void HandleWeaponRecoil()
+        {
+            if (_currentlyEquippedWeapon is RangedWeapon weapon)
+            {
+                /// TECHNICAL DEBT
+                // var attrs = currentWeaponData.RangedAttributes;
+                // camController.RecoilRecoveryFactor = attrs.RecoilRecoveryFactor;
+                // camController.AddVerticalRecoilMotion(attrs.VerticalRecoilFactor);
+                // camController.AddHorizontaRecoilMotion(attrs.HorizontalRecoilFactor);
+                /// camController should automatically reset the added recoil motion
+            }
+        }
+
+        void UpdateHUD()
+        {
+            if (_currentlyEquippedWeapon is RangedWeapon weapon)
+            {
+                int ammoCount = weapon.CurrentRounds;
+            }
+        }
+
+        IEnumerator FinishAnimation(float durationSeconds)
+        {
+            yield return new WaitForSeconds(durationSeconds);
+            _isPlayingAnimation = false;
+            yield return null;
+        }
+
+
+        #region Helper functions
+
+        float GetAnimationClipLength(Animator animator, string name)
+        {
+            foreach (var clip in animator.runtimeAnimatorController.animationClips)
+            {
+                if (clip.name == name) return clip.length;
+            }
+            return 0f;
         }
 
         string GetAnimIdFromState(Enum value)
@@ -227,17 +311,6 @@ namespace UZSG.FPP
             return value.ToString().ToLower();
         }
 
-        public void Unholster()
-        {
-            if (currentlyEquippedIndex == HotbarIndex.Hands)
-            {
-                EquipIndex(lastEquippedIndex);
-            }
-            else
-            {
-                lastEquippedIndex = currentlyEquippedIndex;
-                EquipIndex(HotbarIndex.Hands);
-            }
-        }
+        #endregion
     }
 }

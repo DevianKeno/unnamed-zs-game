@@ -155,6 +155,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Reload",
+                    "type": "Button",
+                    "id": "49852f63-321e-4dfd-80fd-a50c8e93f69f",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Hotbar",
                     "type": "Button",
                     "id": "3a648a16-04b0-4ad3-8198-6d128199b604",
@@ -452,7 +461,7 @@
                 {
                     "name": "",
                     "id": "f751af83-b129-4bf0-9562-ad11b815b484",
-                    "path": "<Gamepad>/buttonWest",
+                    "path": "<Gamepad>/buttonSouth",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -666,6 +675,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Unholster",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "25fa8bd9-2551-483b-ae96-733cdcd2cf4c",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Reload",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "64e900c2-eb8a-4f62-b821-9a59de45e254",
+                    "path": "<Gamepad>/buttonWest",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Reload",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

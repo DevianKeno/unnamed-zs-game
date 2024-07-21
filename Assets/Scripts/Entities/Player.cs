@@ -35,6 +35,9 @@ namespace UZSG.Entities
         StatusEffectCollection statusEffects;
         public StatusEffectCollection StatusEffects => statusEffects;
         
+        public Vector3 Forward => MainCamera.transform.forward;
+        public Vector3 EyeLevel => MainCamera.transform.position;
+
         PlayerInventoryWindow invUI;
         PlayerHUD HUD;
         
@@ -141,7 +144,6 @@ namespace UZSG.Entities
             invUI = Game.UI.Create<PlayerInventoryWindow>("player_inventory");
             invUI.BindPlayer(this);
             invUI.Initialize();
-            invUI.Hide();
         }
 
         void InitializeHUD()

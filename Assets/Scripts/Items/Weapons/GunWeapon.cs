@@ -1,21 +1,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
 
-using UZSG.Players;
 using UZSG.Systems;
+using UZSG.Players;
+using UZSG.Entities;
 
 namespace UZSG.Items.Weapons
 {
-    public abstract class WeaponEquipped : MonoBehaviour
-    {
-        [SerializeField] protected WeaponData weaponData;
-        public WeaponData WeaponData => weaponData;
-        public abstract void Initialize();
-    }
-
-    public class RangedWeapon : WeaponEquipped
+    public class GunWeapon : EquippedWeapon
     {
         int _currentRounds; /// TEST
         public int CurrentRounds
@@ -31,13 +26,13 @@ namespace UZSG.Items.Weapons
 
         public event Action OnFire;
 
-        RangedWeaponStateMachine stateMachine;
-        public RangedWeaponStateMachine StateMachine => stateMachine;
+        GunWeaponStateMachine stateMachine;
+        public GunWeaponStateMachine StateMachine => stateMachine;
         AudioSourceController audioSourceController;
         
         void Awake()
         {
-            stateMachine = GetComponent<RangedWeaponStateMachine>();
+            stateMachine = GetComponent<GunWeaponStateMachine>();
         }
 
         public override void Initialize()
@@ -64,18 +59,29 @@ namespace UZSG.Items.Weapons
 
         public bool TryFire()
         {
-            if (_isReloading) return false;
             if (_hasFired) return false;
+            if (_isReloading) return false;
 
             if (_currentRounds > 0)
             {
                 _hasFired = true;
-                /// Summon bullet?
-                int randIndex = UnityEngine.Random.Range(0, 4); /// magic number, subject to change
-                string audioName = $"fire{randIndex}";
-                audioSourceController.PlaySound(audioName);
+                PlayRandomFireSound();
+                SpawnBullet();
                 _currentRounds--;
                 OnFire?.Invoke();
+
+                if (weaponData.RangedAttributes.FireType == FireType.SemiAuto)
+                {
+                    return true;
+                }
+                else if (weaponData.RangedAttributes.FireType == FireType.Automatic)
+                {
+                    throw new NotImplementedException("Unhandled automatic fire type");
+                }
+                else if (weaponData.RangedAttributes.FireType == FireType.Burst)
+                {
+                    throw new NotImplementedException("Unhandled burst fire type");
+                }
                 return true;
             }
             else
@@ -87,12 +93,38 @@ namespace UZSG.Items.Weapons
             }
         }
 
-        public void SetWeaponState(RangedWeaponStates state)
+        void PlayRandomFireSound()
+        {
+            int randIndex = UnityEngine.Random.Range(0, 4); /// magic number, subject to change
+            string audioName = $"fire{randIndex}";
+            audioSourceController.PlaySound(audioName);
+        }
+
+        void SpawnBullet()
+        {
+            var player = Owner as Player;
+            var attr = weaponData.RangedAttributes;
+
+            Game.Entity.Spawn("bullet", (info) =>
+            {
+                var bullet = info.Entity as Bullet;
+                bullet.SetTrajectoryFromPlayer(player);
+                bullet.SetBulletEntityOptions(new()
+                {
+                    Damage = attr.Damage,
+                    Velocity = player.Forward,
+                    Speed = attr.BulletVelocity <= 0f ? 100f : attr.BulletVelocity,
+                });
+                bullet.Shoot();
+            });
+        }
+
+        public void SetWeaponState(GunWeaponStates state)
         {
             stateMachine.ToState(state);
         }
 
-        public void SetWeaponStateFromPlayerAction(ActionStates state)
+        public override void SetWeaponStateFromPlayerAction(ActionStates state)
         {
             if (state == ActionStates.Primary)
             {
@@ -100,11 +132,11 @@ namespace UZSG.Items.Weapons
                 
                 if (_isAimingDownSights)
                 {
-                    stateMachine.ToState(RangedWeaponStates.ADS_Shoot, _fireRateThreshold);
+                    stateMachine.ToState(GunWeaponStates.ADS_Shoot, _fireRateThreshold);
                 }
                 else
                 {
-                    stateMachine.ToState(RangedWeaponStates.Fire, _fireRateThreshold);
+                    stateMachine.ToState(GunWeaponStates.Fire, _fireRateThreshold);
                 }
             }
             else if (state == ActionStates.Secondary)
@@ -119,11 +151,11 @@ namespace UZSG.Items.Weapons
             if (_isAimingDownSights)
             {
                 _isAimingDownSights = false;
-                stateMachine.ToState(RangedWeaponStates.ADS_Down);
+                stateMachine.ToState(GunWeaponStates.ADS_Down);
             } else
             {
                 _isAimingDownSights = true;
-                stateMachine.ToState(RangedWeaponStates.ADS_Up);
+                stateMachine.ToState(GunWeaponStates.ADS_Up);
             }
         }
 
@@ -142,7 +174,7 @@ namespace UZSG.Items.Weapons
         {
             Debug.Log("Reloading weapon...");
             _isReloading = true;
-            stateMachine.ToState(RangedWeaponStates.Reload);
+            stateMachine.ToState(GunWeaponStates.Reload);
 
             yield return new WaitForSeconds(durationSeconds);
 

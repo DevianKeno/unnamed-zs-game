@@ -72,10 +72,10 @@ namespace UZSG.UI
         {
             if (visible)
             {
-                Hide();
+                Show();
             } else
             {
-                Show();
+                Hide();
             }
             IsVisible = visible;
         }

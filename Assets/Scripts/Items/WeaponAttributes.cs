@@ -23,6 +23,7 @@ namespace UZSG.Items.Weapons
         public int RoundsPerMinute;
         public int ClipSize;
         public float ReloadSpeed;
+        public float BulletVelocity;
         public float VerticalRecoilFactor;
         public float HorizontalRecoilFactor;
         public float RecoilRecoveryFactor;

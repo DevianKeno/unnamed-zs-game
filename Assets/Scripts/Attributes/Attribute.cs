@@ -27,7 +27,6 @@ namespace UZSG.Attributes
             /// </summary>
             public float Change;
             public ChangedType ChangedType;
-
         }
 
         public static Attribute None => null;

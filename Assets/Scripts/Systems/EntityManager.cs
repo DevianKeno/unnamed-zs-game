@@ -12,11 +12,6 @@ namespace UZSG.Systems
     /// </summary>
     public class EntityManager : MonoBehaviour, IInitializable
     {
-        public struct EntitySpawnedContext
-        {
-            public Entity Entity { get; set; }
-        }
-
         bool _isInitialized;
         public bool IsInitialized => _isInitialized;
         /// <summary>
@@ -26,7 +21,6 @@ namespace UZSG.Systems
         [SerializeField] AssetLabelReference assetLabelReference;
         
         public Vector3 SpawnCoordinates = new(0f, 0f, 0f);
-        public event EventHandler<EntitySpawnedContext> OnEntitySpawn;
         
         internal void Initialize()
         {
@@ -35,17 +29,11 @@ namespace UZSG.Systems
 
             var startTime = Time.time;
             Game.Console.Log("Initializing Entity database...");
-            var ettys = Resources.LoadAll<EntityData>("Data/Entities");
+            var ettys = Resources.LoadAll<EntityData>("Data/entities");
             foreach (var etty in ettys)
             {
                 _entitiesDict[etty.Id] = etty;
             }
-
-            // Addressables.LoadAssetsAsync<EntityData>(assetLabelReference, (a) =>
-            // {
-            //     Game.Console?.LogDebug($"Loading data for Entity {a.Id}");
-            //     _entityList[a.Id] = a;
-            // });
         }
 
         /// <summary>
@@ -55,39 +43,39 @@ namespace UZSG.Systems
         {
             if (_entitiesDict.ContainsKey(entityId))
             {
-                    Addressables.LoadAssetAsync<GameObject>(_entitiesDict[entityId].AssetReference).Completed += (a) =>
+                Addressables.LoadAssetAsync<GameObject>(_entitiesDict[entityId].AssetReference).Completed += (a) =>
+                {
+                    if (a.Status == AsyncOperationStatus.Succeeded)
                     {
-                        if (a.Status == AsyncOperationStatus.Succeeded)
+                        Vector3 position = new(0f, 1f, 0f);
+                        var go = Instantiate(a.Result, position, Quaternion.identity);
+                        
+                        if (go.TryGetComponent(out Entity entity))
                         {
-                            Vector3 position = new(0f, 1f, 0f);
-                            var go = Instantiate(a.Result, position, Quaternion.identity);
-                            
-                            if (go.TryGetComponent(out Entity entity))
-                            {
-                                go.name = entity.EntityData.Name;
-                                entity.OnSpawn();
-                            }
-
-                            OnEntitySpawn?.Invoke(this, new()
-                            {
-                                Entity = entity
-                            });
-                            Game.Console?.Log($"Spawned entity {entityId} at ({position.x}, {position.y}, {position.z})");
-                            return;
+                            go.name = $"{entity.EntityData.Name} (Entity)";
+                            entity.OnSpawn();
                         }
+                        Game.Console.Log($"Spawned entity {entityId} at ({position.x}, {position.y}, {position.z})");
+                        return;
+                    }
 
-                        Game.Console?.LogDebug($"Failed to spawn entity {entityId}");
-                    };
+                    Game.Console.LogDebug($"Failed to spawn entity {entityId}");
+                };
             }            
         }
+        
+        public struct EntitySpawnedInfo
+        {
+            public Entity Entity { get; set; }
+        }
+
+        public delegate void OnEntitySpawnComplete(EntitySpawnedInfo info);
 
         /// <summary>
         /// Spawn an entity in the game world.
         /// </summary>
-        public void Spawn(string entityId, out GameObject obj)
+        public void Spawn(string entityId, OnEntitySpawnComplete callback = null)
         {
-            GameObject loadedObj = null;
-
             if (_entitiesDict.ContainsKey(entityId))
             {
                 Addressables.LoadAssetAsync<GameObject>(_entitiesDict[entityId].AssetReference).Completed += (a) =>
@@ -96,7 +84,6 @@ namespace UZSG.Systems
                     {
                         Vector3 position = new(0f, 1f, 0f);
                         var go = Instantiate(a.Result, position, Quaternion.identity);
-                        loadedObj = go;
                         
                         if (go.TryGetComponent(out Entity entity))
                         {
@@ -104,19 +91,17 @@ namespace UZSG.Systems
                             entity.OnSpawn();
                         }
 
-                        OnEntitySpawn?.Invoke(this, new()
+                        callback?.Invoke(new()
                         {
                             Entity = entity
                         });
-                        Game.Console?.Log($"Spawned entity {entityId} at ({position.x}, {position.y}, {position.z})");
+                        Game.Console.Log($"Spawned entity {entityId} at ({position.x}, {position.y}, {position.z})");
                         return;
                     }
 
-                    Game.Console?.LogDebug($"Failed to spawn entity {entityId}");
+                    Game.Console.LogDebug($"Failed to spawn entity {entityId}");
                 };
             }
-
-            obj = loadedObj;
         }
 
         public void SpawnItem(string itemId)
@@ -138,23 +123,18 @@ namespace UZSG.Systems
                             go.name = itemEntity.ItemData.Name;
                             itemEntity.OnSpawn();
                         }
-
-                        OnEntitySpawn?.Invoke(this, new()
-                        {
-                            Entity = itemEntity
-                        });
-                        Game.Console?.LogDebug($"Spawned item {itemId} at ({position.x}, {position.y}, {position.z})");
+                        Game.Console.LogDebug($"Spawned item {itemId} at ({position.x}, {position.y}, {position.z})");
                         return;
                         
                     } else
                     {
-                        Game.Console?.Log($"Failed to spawn item {itemId}");
+                        Game.Console.Log($"Failed to spawn item {itemId}");
                     }
                 };
             } else
             {
-                // Force load item asset
-                Game.Console?.Log($"Missing asset for Item (Entity)");
+                /// Force load item asset
+                Game.Console.Log($"Missing asset for Item (Entity)");
             }
             
             // obj = loadedObj;
@@ -175,16 +155,16 @@ namespace UZSG.Systems
             //                 itemEntity.OnSpawn();
             //             }
 
-            //             Game.Console?.LogDebug($"Spawned item at ({position.x}, {position.y}, {position.z})");
+            //             Game.Console.LogDebug($"Spawned item at ({position.x}, {position.y}, {position.z})");
             //             return;
             //         } else
             //         {
-            //             Game.Console?.Log($"Failed to spawn item {itemId}");
+            //             Game.Console.Log($"Failed to spawn item {itemId}");
             //         }
             //     };
             // } else
             // {
-            //     Game.Console?.Log($"Failed to spawn item {itemId} as it does not exists");
+            //     Game.Console.Log($"Failed to spawn item {itemId} as it does not exists");
             // }
         }
 

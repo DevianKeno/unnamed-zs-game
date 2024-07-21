@@ -3,8 +3,8 @@ using UZSG.Systems;
 
 namespace UZSG
 {
-    public interface IStateMachine<T> where T : Enum
+    public interface IStateMachine<E> where E : Enum
     {
-        public StateMachine<T> smAction { get; }
+        public StateMachine<E> StateMachine { get; }
     }
 }

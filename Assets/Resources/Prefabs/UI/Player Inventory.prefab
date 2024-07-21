@@ -604,7 +604,7 @@ GameObject:
   - component: {fileID: 6890029664816355300}
   - component: {fileID: 6864834813706343539}
   m_Layer: 5
-  m_Name: Frame Controller (Script)
+  m_Name: Frame Controller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -644,7 +644,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6674a480febcd3b4db887f9fc7a15171, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isTransitioning: 0
+  _isTransitioning: 0
   currentFrame: {fileID: 8600972160088097853}
   AnimationFactor: 0.5
   TweenType: 18
@@ -1184,7 +1184,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: bag
   size: {x: 1920, y: 1080}
-  <rect>k__BackingField: {fileID: 2416554142431172294}
+  rect: {fileID: 0}
 --- !u!1 &4643183950311644283
 GameObject:
   m_ObjectHideFlags: 0
@@ -1240,7 +1240,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: crafting
   size: {x: 1920, y: 1080}
-  <rect>k__BackingField: {fileID: 7320609207999582006}
+  rect: {fileID: 0}
 --- !u!1 &5228233672866077596
 GameObject:
   m_ObjectHideFlags: 0
@@ -1785,7 +1785,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: equipment
   size: {x: 1920, y: 1080}
-  <rect>k__BackingField: {fileID: 8148007497670560763}
+  rect: {fileID: 0}
 --- !u!1 &8301076522937847519
 GameObject:
   m_ObjectHideFlags: 0

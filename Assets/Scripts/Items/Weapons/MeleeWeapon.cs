@@ -5,7 +5,7 @@ using UZSG.Players;
 
 namespace UZSG.Items.Weapons
 {
-    public class MeleeWeapon : WeaponEquipped
+    public class MeleeWeapon : EquippedWeapon
     {
         MeleeWeaponStateMachine stateMachine;
         public MeleeWeaponStateMachine StateMachine => stateMachine;
@@ -20,7 +20,7 @@ namespace UZSG.Items.Weapons
             throw new NotImplementedException();
         }
 
-        public void SetWeaponStateFromPlayerAction(ActionStates state)
+        public override void SetWeaponStateFromPlayerAction(ActionStates state)
         {
             throw new NotImplementedException();
         }

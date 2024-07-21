@@ -12,7 +12,7 @@ namespace UZSG.UI
 {
     public enum UIState { Normal, Hovered }
 
-    public class ItemSlotUI : MonoBehaviour, IUIElement, ISelectable, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler
+    public class ItemSlotUI : MonoBehaviour, IUIElement, ISelectable, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
     {
         public static Color Opaque { get => new(1f, 1f, 1f, 1f); }
         public static Color Transparent { get => new(1f, 1f, 1f, 0f); }
@@ -22,7 +22,8 @@ namespace UZSG.UI
         public bool IsVisible { get; set; }
         public int Index;
 
-        public event EventHandler<PointerEventData> OnClick;
+        public event EventHandler<PointerEventData> OnMouseDown;
+        public event EventHandler<PointerEventData> OnMouseUp;
         public event EventHandler<PointerEventData> OnStartHover;
         public event EventHandler<PointerEventData> OnEndHover;
 
@@ -88,7 +89,12 @@ namespace UZSG.UI
 
         public void OnPointerDown(PointerEventData e)
         {
-            OnClick?.Invoke(this, e);
+            OnMouseDown?.Invoke(this, e);
+        }
+
+        public void OnPointerUp(PointerEventData e)
+        {
+            OnMouseUp?.Invoke(this, e);
         }
 
         public void ToggleVisibility()

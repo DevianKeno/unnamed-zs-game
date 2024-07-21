@@ -2,21 +2,18 @@ using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.UI;
-using UZSG.Systems;
 
 namespace UZSG.UI
 {
     public class FrameController : MonoBehaviour
     {
-        [SerializeField] bool isTransitioning;
-        public bool IsTransitioning => isTransitioning;
+        [SerializeField] bool _isTransitioning;
+        public bool IsTransitioning => _isTransitioning;
         [SerializeField] Frame currentFrame;
         public Frame CurrentFrame => currentFrame;
         public float AnimationFactor = 0.5f;
         public LeanTweenType TweenType = LeanTweenType.easeOutExpo;
         public List<Frame> Frames = new();
-
-        // [SerializeField] GameObject inactive;
 
 #region Editor
         [SerializeField] string switchTo;
@@ -24,60 +21,66 @@ namespace UZSG.UI
 
         void Start()
         {
-            // (inactive.transform as RectTransform).anchoredPosition = new(0, 1080f);
-            currentFrame ??= GetComponentInChildren<Frame>();
-
-            foreach (Frame frame in Frames)
+            if (currentFrame == null && transform.childCount > 0)
             {
-                LayoutRebuilder.ForceRebuildLayoutImmediate(frame.rect);
+                currentFrame = transform.GetChild(0).GetComponent<Frame>();
             }
         }
 
         public void SwitchToFrame(string name)
         {
+            SwitchToFrame(name, force: false);
+        }
+
+        public void SwitchToFrame(string name, bool force = false)
+        {
             Frame frame = GetFrame(name);
             if (frame == null) return;
 
-            if (currentFrame != null)
-            {
-                if (currentFrame.Name == name) return; /// Same frame to switch to
-                if (isTransitioning) return;
-                isTransitioning = true;
+            if (_isTransitioning) return;
+            _isTransitioning = true;
 
-                // if (Game.Main.Settings.EnableAnimations)
-                // {
-                    /// Move old frame out of the way
-                    /// The value -1920 moves the frame one screen wide to the left
-                    LeanTween.move(currentFrame.rect, new Vector2(-currentFrame.rect.rect.width, 0f), AnimationFactor)
+            // if (Game.Main.Settings.EnableAnimations)
+            // {
+                if (currentFrame != null && currentFrame.Name != frame.Name)
+                {
+                    /// Move current frame out of the way
+                    LeanTween.move(currentFrame.Rect, new Vector2(-currentFrame.Rect.rect.width, 0f), AnimationFactor)
                     .setEase(TweenType)
                     .setOnComplete(() =>
                     {
-                        currentFrame.rect.anchoredPosition = new Vector2(currentFrame.rect.rect.width, 0f);
+                        currentFrame.Rect.anchoredPosition = new Vector2(currentFrame.Rect.rect.width, 0f);
                     });
+                }
+                else if (!force)
+                {
+                    _isTransitioning = false;
+                    return;
+                }
 
-                    /// Move new frame into view
-                    LeanTween.move(frame.rect, Vector2.zero, AnimationFactor)
-                    .setEase(TweenType)
-                    .setOnComplete(() =>
-                    {
-                        currentFrame = frame;
-                        isTransitioning = false;
-                    });
-                    LayoutRebuilder.ForceRebuildLayoutImmediate(frame.transform as RectTransform);
-                // }
-                // else
-                // {
-                //     CurrentFrame.transform.SetParent(inactive.transform);
-                //     CurrentFrame.rect.anchoredPosition = Vector2.zero;
+                /// Move new frame into view
+                LeanTween.move(frame.Rect, Vector2.zero, AnimationFactor)
+                .setEase(TweenType)
+                .setOnComplete(() =>
+                {
+                    currentFrame = frame;
+                    currentFrame.transform.SetAsLastSibling();
+                    _isTransitioning = false;
+                });
+                LayoutRebuilder.ForceRebuildLayoutImmediate(frame.transform as RectTransform);
+            // }
+            // else
+            // {
+            //     CurrentFrame.transform.SetParent(inactive.transform);
+            //     CurrentFrame.rect.anchoredPosition = Vector2.zero;
 
-                //     frame.transform.SetParent(transform);
-                //     frame.gameObject.SetActive(true);
-                //     frame.rect.anchoredPosition = Vector2.zero;
-                //     LayoutRebuilder.ForceRebuildLayoutImmediate(frame.transform as RectTransform);
-                    
-                //     CurrentFrame = frame;
-                // }
-            }
+            //     frame.transform.SetParent(transform);
+            //     frame.gameObject.SetActive(true);
+            //     frame.rect.anchoredPosition = Vector2.zero;
+            //     LayoutRebuilder.ForceRebuildLayoutImmediate(frame.transform as RectTransform);
+                
+            //     CurrentFrame = frame;
+            // }
         }
 
         public Frame GetFrame(string name)
@@ -90,11 +93,13 @@ namespace UZSG.UI
             return null;
         }
 
+
         #region Editor
 
         public void SwitchFrameEditor(string frameId)
         {
             switchTo = frameId;
+            SwitchFrameEditor();
         }
 
         public void SwitchFrameEditor()
@@ -106,20 +111,17 @@ namespace UZSG.UI
                 {
                     frame = Frames[index];
                 }
-            } else
+            }
+            else
             {
                 frame = GetFrame(switchTo);
             }
             if (frame == null) return;
-            if (currentFrame.Name == name) return;
-
-            /// Hide current frame
-            currentFrame.rect.anchoredPosition = new Vector2(currentFrame.rect.rect.width, 0f);
-
-            /// Show new frame
-            frame.rect.anchoredPosition = Vector2.zero;
-
+            
+            currentFrame.Rect.anchoredPosition = new Vector2(currentFrame.Rect.rect.width, 0f); /// Hide current frame
+            frame.Rect.anchoredPosition = Vector2.zero; /// Show new frame
             currentFrame = frame;
+            currentFrame.transform.SetAsLastSibling();
             LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
         }
 

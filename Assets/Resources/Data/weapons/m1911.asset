@@ -41,6 +41,7 @@ MonoBehaviour:
     RoundsPerMinute: 310
     ClipSize: 10
     ReloadSpeed: 1
+    BulletVelocity: 150
     VerticalRecoilFactor: 1.2
     HorizontalRecoilFactor: 1.1
     RecoilRecoveryFactor: 1.25

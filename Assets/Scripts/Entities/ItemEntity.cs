@@ -15,8 +15,8 @@ namespace UZSG.Entities
     /// </summary>
     public class ItemEntity : Entity, IInteractable
     {
-        EntityData _entityData;
-        public override EntityData EntityData => _entityData;
+        [SerializeField] EntityData entityData;
+        public override EntityData EntityData => entityData;
         public ItemData ItemData;
         public int ItemCount;
         public string Name => ItemData.Name;

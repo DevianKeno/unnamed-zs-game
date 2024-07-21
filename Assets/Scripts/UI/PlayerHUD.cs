@@ -52,7 +52,7 @@ namespace UZSG.UI
                 slotUI.transform.SetParent(container.transform);
                 slotUI.Index = i;
                 
-                slotUI.OnClick += OnClickHotbarSlot;
+                slotUI.OnMouseDown += OnClickHotbarSlot;
                 slotUI.OnStartHover += OnStartHoverSlot;
                 slotUI.OnEndHover += OnEndHoverSlot;
                 _hotbarSlotUIs.Add(i, slotUI);

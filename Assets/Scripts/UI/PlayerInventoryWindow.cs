@@ -27,6 +27,7 @@ namespace UZSG.UI
         Item _heldItem;
         ItemSlot _selectedSlot;
         ItemSlotUI _selectedSlotUI;
+        bool _isHoldingShift;
         bool _isPutting;
         bool _isGetting;
         Dictionary<int, ItemSlotUI> _bagSlotUIs = new();
@@ -47,32 +48,6 @@ namespace UZSG.UI
         
         InputActionMap actionMap;
         Dictionary<string, InputAction> inputs = new();
-
-        void InitializeInputs()
-        {
-            actionMap = Game.Main.GetActionMap("Inventory");
-            inputs = Game.Main.GetActionsFromMap(actionMap);
-
-            inputs["Shift Click"].performed += (context) =>
-            {
-
-            };
-
-            inputs["Hide/Show"].performed += (context) =>
-            {
-                ToggleVisibility();
-            };
-
-            inputs["Hide"].performed += (context) =>
-            {
-                SetVisible(false);
-            };
-        }
-
-        void Start()
-        {
-            frameController.SwitchToFrame("bag");
-        }
 
         void Update()
         {
@@ -103,18 +78,39 @@ namespace UZSG.UI
 
                 ItemSlotUI slot = go.GetComponent<ItemSlotUI>();
                 slot.Index = i;
-                slot.OnClick += OnClickBagSlot;
+                slot.OnMouseUp += OnClickBagSlot;
                 slot.OnStartHover += OnStartHoverSlot;
                 slot.OnEndHover += OnEndHoverSlot;
                 _bagSlotUIs.Add(i, slot);
             }
-            
             inventory.Hotbar.OnChangeEquipped += HotbarChangeEquippedCallback;
             inventory.Bag.OnSlotContentChanged += BagSlotChangedCallback;
-
             selector = Instantiate(selectorPrefab, transform).GetComponent<Selector>();
+
+            frameController.SwitchToFrame("bag", force: true);
             InitializeInputs();
             Hide();
+        }
+
+        void InitializeInputs()
+        {
+            actionMap = Game.Main.GetActionMap("Inventory");
+            inputs = Game.Main.GetActionsFromMap(actionMap);
+
+            inputs["Shift Click"].performed += (context) =>
+            {
+                _isHoldingShift = context.ReadValue<float>() > 0; /// unsure
+            };
+
+            inputs["Hide/Show"].performed += (context) =>
+            {
+                ToggleVisibility();
+            };
+
+            inputs["Hide"].performed += (context) =>
+            {
+                SetVisible(false);
+            };
         }
 
         
@@ -211,7 +207,6 @@ namespace UZSG.UI
                     if (inventory.Bag.TryPut(_selectedSlot.Index, new(_heldItem, 1)))
                     {
                         HoldItem(new(_heldItem, _heldItem.Count - 1));
-                        _displayedItem?.SetDisplay(_heldItem);
                     }
                     else /// swap items
                     {
@@ -250,7 +245,7 @@ namespace UZSG.UI
 
             _isHoldingItem = true;
             _heldItem = item;
-            _displayedItem = Game.UI.Create<ItemDisplayUI>("item_display");
+            _displayedItem ??= Game.UI.Create<ItemDisplayUI>("item_display");
             _displayedItem.SetDisplay(_heldItem);
         }
 

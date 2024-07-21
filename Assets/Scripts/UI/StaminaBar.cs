@@ -1,21 +1,22 @@
 using UnityEngine;
+
 using UZSG.Attributes;
-using UZSG.Systems;
 
 namespace UZSG.UI
 {
     public class StaminaBar : MonoBehaviour
     {
         public Attribute Attribute;
-        public RectTransform Container;
-        public RectTransform Bar;
-        public RectTransform Buffer;
 
         float _fullSizeDelta;
         float _emptySizeDelta;
 
         public float BarValue;
         public float BufferValue;
+
+        public RectTransform Container;
+        public RectTransform Bar;
+        public RectTransform Buffer;
 
         void Start()
         {
@@ -67,7 +68,6 @@ namespace UZSG.UI
             // }
         }
 
-        float lerpTimer;
         void Update()
         {
             // if (BarValue < BufferValue)
@@ -92,6 +92,7 @@ namespace UZSG.UI
             // }
         }
 
+        /// TESTING ONLY
         public void SetAttribute(Attribute attribute)
         {
             Attribute = attribute;

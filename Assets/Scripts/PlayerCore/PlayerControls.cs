@@ -216,25 +216,25 @@ namespace UZSG.Players
         void FixedUpdate()
         {
             HandleMovement();
-            CheckState();
+            UpdateStates();
         }
 
-        void CheckState()
+        void UpdateStates()
         {
             if (_isMovePressed)
             {
                 if (IsRunning)
                 {
-                    Player.smMove.ToState(MoveStates.Run);
+                    Player.MoveStateMachine.ToState(MoveStates.Run);
                 }
                 else
                 {
-                    Player.smMove.ToState(MoveStates.Walk);
+                    Player.MoveStateMachine.ToState(MoveStates.Walk);
                 }
             }
             else
             {
-                Player.smMove.ToState(MoveStates.Idle);
+                Player.MoveStateMachine.ToState(MoveStates.Idle);
             }
         }
 
@@ -274,12 +274,12 @@ namespace UZSG.Players
             if (value)
             {
                 _currentSpeed = RunSpeed;
-                Player.smMove.ToState(MoveStates.Run);
+                Player.MoveStateMachine.ToState(MoveStates.Run);
             }
             else
             {
                 _currentSpeed = MoveSpeed;
-                Player.smMove.ToState(MoveStates.Idle);
+                Player.MoveStateMachine.ToState(MoveStates.Idle);
             }
         }
 
@@ -323,7 +323,7 @@ namespace UZSG.Players
             if (!_hasJumped) return;
             _hasJumped = false;
             
-            Player.smMove.ToState(MoveStates.Jump);
+            Player.MoveStateMachine.ToState(MoveStates.Jump);
             /// The time required to reach the highest point of the jump
             float timeToApex = JumpTime / 2;
             _frameVelocity.y = 2 * JumpHeight / timeToApex; /// this should be cached
@@ -368,7 +368,7 @@ namespace UZSG.Players
         {
             if (_isTransitioning) return;
 
-            Player.smMove.ToState(MoveStates.Crouch);
+            Player.MoveStateMachine.ToState(MoveStates.Crouch);
 
             _isTransitioning = !_isTransitioning;
             _isCrouching = !_isCrouching;

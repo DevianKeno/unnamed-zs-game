@@ -1,11 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
-
+using System.Linq;
 using UnityEngine;
 using UZSG.Items.Weapons;
 
 namespace UZSG.Systems
 {
+    /// <summary>
+    /// Audio sources pool.
+    /// </summary>
     public class AudioSourceController : MonoBehaviour
     {
         [SerializeField] int poolSize = 8;
@@ -14,7 +17,9 @@ namespace UZSG.Systems
             get { return poolSize; }
             set { poolSize = value; }
         }
+
         Dictionary<string, AudioClip> audioClips = new();
+        public List<AudioClip> AudioClips => audioClips.Values.ToList();
         Queue<AudioSource> availableSources = new();
 
         void Start()
@@ -23,10 +28,7 @@ namespace UZSG.Systems
             parent.transform.parent = transform;
             for (int i = 0; i < poolSize; i++)
             {
-                var go = new GameObject("")
-                {
-                    name = $"Audio Source ({i})"
-                };
+                var go = new GameObject($"Audio Source ({i})");
                 var audioSource = go.AddComponent<AudioSource>();
                 go.transform.parent = parent.transform;
                 audioSource.playOnAwake = false;
@@ -34,9 +36,9 @@ namespace UZSG.Systems
             }
         }
 
-        public void LoadAudioAssetIds(List<AudioAssetId> audioAssetIdlist)
+        public void LoadAudioAssetIds(List<AudioAssetId> content)
         {
-            foreach (var item in audioAssetIdlist)
+            foreach (var item in content)
             {
                 Game.Audio.LoadAudioAsset(item.AudioAsset, (result) =>
                 {
@@ -57,9 +59,9 @@ namespace UZSG.Systems
                     StartCoroutine(ReturnToPoolWhenFinished(source));
                 };
             }
-            /// else still try to play sound, exceeding the pool size
+            /// else maybe still try to play sound, exceeding the pool size
             /// but delete the extra source after.
-            /// Can also add a flag whether to allow overflows
+            /// Can also add a flag whether to allow to exceed pool size
         }
 
         IEnumerator ReturnToPoolWhenFinished(AudioSource source)

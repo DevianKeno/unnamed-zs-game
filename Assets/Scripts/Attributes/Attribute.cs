@@ -17,24 +17,29 @@ namespace UZSG.Attributes
             /// <summary>
             /// The value before the change.
             /// </summary>
-            public float Previous;
+            public float Previous { get; set; }
             /// <summary>
             /// The value after the change.
             /// </summary>
-            public float New;
+            public float New { get; set; }
             /// <summary>
             /// The amount of value changed.
             /// </summary>
-            public float Change;
-            public ChangedType ChangedType;
+            public float Change { get; set; }
+            public ChangedType ChangedType { get; set; }
         }
 
         public static Attribute None => null;
-        public AttributeData Data;
+        [SerializeField] protected AttributeData data;
+        public AttributeData Data => data;
         /// <summary>
         /// Represents the current value.
         /// </summary>
         public float Value;
+        public float ValueMaxRatio
+        {
+            get { return Value / Maximum; }
+        }
         /// <summary>
         /// Represents the base maximum value, without any multipliers.
         /// </summary>
@@ -74,12 +79,22 @@ namespace UZSG.Attributes
             }
         }
         
-        public float Minimum = 0f;
+        protected float _minimum = 0f;
+        public float Minimum => _minimum;
         public bool LimitOverflow = true;
         public bool LimitUnderflow = true;
-        protected float previousValue;
+        protected float _previousValue;
+        public bool IsValid
+        {
+            get
+            {
+                return data != null;
+            }
+        }
+
 
         #region Events        
+
         /// <summary>
         /// Fired everytime ONLY IF the value of this attribute is changed.
         /// </summary>
@@ -88,36 +103,34 @@ namespace UZSG.Attributes
         /// Called when the value reaches zero.
         /// </summary>
         public event EventHandler<ValueChangedArgs> OnReachZero;
+
         #endregion
+
 
         public Attribute(AttributeData data)
         {
-            Data = data;
-        }
-
-        ~Attribute()
-        {
+            this.data = data;
         }
 
         internal virtual void Init() {}
 
         public static void ToMax(Attribute attr)
         {
-            attr.previousValue = attr.Value;
+            attr._previousValue = attr.Value;
             attr.Value = attr.Maximum;            
             attr.ValueChanged();
         }
         
         public static void ToMin(Attribute attr)
         {
-            attr.previousValue = attr.Value;
+            attr._previousValue = attr.Value;
             attr.Value = attr.Minimum;
             attr.ValueChanged();
         }
         
         public static void ToZero(Attribute attr)
         {
-            attr.previousValue = attr.Value;
+            attr._previousValue = attr.Value;
             attr.Value = 0f;
             attr.ValueChanged();
         }
@@ -127,8 +140,9 @@ namespace UZSG.Attributes
         /// </summary>
         public virtual void Add(float value)
         {
-            previousValue = Value;
+            _previousValue = Value;
             Value += value;
+            if (_previousValue == Value) return;
             CheckOverflow();
             ValueChanged();
         }
@@ -138,8 +152,9 @@ namespace UZSG.Attributes
         /// </summary>
         public virtual void Remove(float value)
         {
-            previousValue = Value;
+            _previousValue = Value;
             Value -= value;
+            if (_previousValue == Value) return;
             CheckUnderflow();
             ValueChanged();
         }
@@ -152,7 +167,7 @@ namespace UZSG.Attributes
         {
             if (value < Value)
             {
-                previousValue = Value;
+                _previousValue = Value;
                 Value -= value;
                 CheckUnderflow();
                 ValueChanged();
@@ -160,31 +175,24 @@ namespace UZSG.Attributes
             }
             return false;
         }
-
-        public void LoadValuesFromJSON(AttributeJSON data)
-        {
-            if (data == null) return;
-
-            Value = data.Value;
-        }
         
         protected virtual void ValueChanged()
         {
-            if (Value == previousValue) return;
+            if (Value == _previousValue) return;
             
-            float value = Mathf.Abs(Value - previousValue);
+            float value = Mathf.Abs(Value - _previousValue);
             OnValueChanged?.Invoke(this, new()
             {
-                Previous = previousValue,
+                Previous = _previousValue,
                 Change = value,
-                ChangedType = Value > previousValue ? ChangedType.Increased : ChangedType.Decreased
+                ChangedType = Value > _previousValue ? ChangedType.Increased : ChangedType.Decreased
             });
 
             if (Value <= 0)
             {
                 OnReachZero?.Invoke(this, new()
                 {
-                    Previous = previousValue,
+                    Previous = _previousValue,
                     Change = value,
                     New = Value
                 });

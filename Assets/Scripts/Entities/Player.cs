@@ -22,6 +22,7 @@ namespace UZSG.Entities
     public class Player : Entity
     {
         public bool CanPickUpItems = true;
+
         [SerializeField] PlayerData playerData;
         public PlayerData PlayerData => playerData;
         [SerializeField] PlayerEntityData playerEntityData;
@@ -43,6 +44,7 @@ namespace UZSG.Entities
         
 
         #region Events
+
         public event EventHandler<EventArgs> OnDoneInit;
 
         #endregion
@@ -54,8 +56,8 @@ namespace UZSG.Entities
         public Camera MainCamera { get; private set; }
         public PlayerControls Controls { get; private set; }
         public PlayerActions Actions { get; private set; }
-        public MovementStateMachine smMove { get; private set; }
-        public ActionStateMachine smAction { get; private set; }
+        public MovementStateMachine MoveStateMachine { get; private set; }
+        public ActionStateMachine ActionStateMachine { get; private set; }
         public FPPController FPP { get; private set; }
 
         public override void OnSpawn()
@@ -66,8 +68,8 @@ namespace UZSG.Entities
         void Awake()
         {
             MainCamera = Camera.main;
-            smMove = GetComponent<MovementStateMachine>();
-            smAction = GetComponent<ActionStateMachine>();
+            MoveStateMachine = GetComponent<MovementStateMachine>();
+            ActionStateMachine = GetComponent<ActionStateMachine>();
             Controls = GetComponent<PlayerControls>();
             Actions = GetComponent<PlayerActions>();
             FPP = GetComponent<FPPController>();
@@ -155,12 +157,12 @@ namespace UZSG.Entities
         
         void InitializeStateMachines()
         {
-            smMove.InitialState = smMove.States[MoveStates.Idle];
+            MoveStateMachine.InitialState = MoveStateMachine.States[MoveStates.Idle];
 
-            smMove.States[MoveStates.Idle].OnEnter += OnIdleEnter;
-            smMove.States[MoveStates.Run].OnEnter += OnRunEnter;
-            smMove.States[MoveStates.Jump].OnEnter += OnJumpEnter;
-            smMove.States[MoveStates.Crouch].OnEnter += OnCrouchEnter;      
+            MoveStateMachine.States[MoveStates.Idle].OnEnter += OnIdleEnter;
+            MoveStateMachine.States[MoveStates.Run].OnEnter += OnRunEnter;
+            MoveStateMachine.States[MoveStates.Jump].OnEnter += OnJumpEnter;
+            MoveStateMachine.States[MoveStates.Crouch].OnEnter += OnCrouchEnter;      
         }
 
         void Tick(object sender, TickEventArgs e)

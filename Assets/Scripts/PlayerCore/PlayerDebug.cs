@@ -23,8 +23,8 @@ namespace UZSG.Players
         {
             UI = Instantiate(UIPrefab, Game.UI.Canvas.transform).GetComponent<PlayerDebugUI>();
 
-            Player.smMove.OnStateChanged += MovementStateChanged;
-            Player.smAction.OnStateChanged += ActionStateChanged;
+            Player.MoveStateMachine.OnStateChanged += MovementStateChanged;
+            Player.ActionStateMachine.OnStateChanged += ActionStateChanged;
         }
 
         private void ActionStateChanged(object sender, StateMachine<ActionStates>.StateChangedContext e)
@@ -40,8 +40,8 @@ namespace UZSG.Players
         void OnDisable()
         {
             Player.OnDoneInit -= Init;
-            Player.smMove.OnStateChanged -= MovementStateChanged;
-            Player.smAction.OnStateChanged -= ActionStateChanged;
+            Player.MoveStateMachine.OnStateChanged -= MovementStateChanged;
+            Player.ActionStateMachine.OnStateChanged -= ActionStateChanged;
         }
     }
 }

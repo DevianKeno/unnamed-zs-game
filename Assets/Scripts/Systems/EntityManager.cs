@@ -48,7 +48,7 @@ namespace UZSG.Systems
                     if (a.Status == AsyncOperationStatus.Succeeded)
                     {
                         Vector3 position = new(0f, 1f, 0f);
-                        var go = Instantiate(a.Result, position, Quaternion.identity);
+                        var go = Instantiate(a.Result, position, Quaternion.identity, transform);
                         
                         if (go.TryGetComponent(out Entity entity))
                         {
@@ -83,7 +83,7 @@ namespace UZSG.Systems
                     if (a.Status == AsyncOperationStatus.Succeeded)
                     {
                         Vector3 position = new(0f, 1f, 0f);
-                        var go = Instantiate(a.Result, position, Quaternion.identity);
+                        var go = Instantiate(a.Result, position, Quaternion.identity, transform);
                         
                         if (go.TryGetComponent(out Entity entity))
                         {
@@ -114,7 +114,7 @@ namespace UZSG.Systems
                     if (a.Status == AsyncOperationStatus.Succeeded)
                     {
                         Vector3 position = new(0f, 1f, 0f);
-                        var go = Instantiate(a.Result, position, Quaternion.identity);
+                        var go = Instantiate(a.Result, position, Quaternion.identity, transform);
 
                         // Load item data
                         if (go.TryGetComponent(out ItemEntity itemEntity)) // this has a zero chance to fail >:(

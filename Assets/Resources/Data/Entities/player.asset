@@ -21,12 +21,11 @@ MonoBehaviour:
   Name: Player
   Vitals:
     Attributes:
-    - Data: {fileID: 11400000, guid: e1db9201565269c4caebcb12298f0665, type: 2}
+    - data: {fileID: 11400000, guid: e1db9201565269c4caebcb12298f0665, type: 2}
       Value: 100
       BaseMaximum: 100
       Bonus: 0
       _multiplier: 1
-      Minimum: 0
       LimitOverflow: 1
       LimitUnderflow: 1
       AllowChange: 1
@@ -36,94 +35,93 @@ MonoBehaviour:
       _changeMultiplier: 1
       DelayChange: 0
       DelayedChangeSeconds: 0
-      delayTimer: 318.6737
-    - Data: {fileID: 11400000, guid: 03beca28745658c48a7358ce536b9573, type: 2}
-      Value: 100
+      delayTimer: 674.18933
+    - data: {fileID: 11400000, guid: 03beca28745658c48a7358ce536b9573, type: 2}
+      Value: 0
       BaseMaximum: 100
       Bonus: 0
       _multiplier: 1
-      Minimum: 0
       LimitOverflow: 1
       LimitUnderflow: 1
-      AllowChange: 1
+      AllowChange: 0
       Change: 1
       Cycle: 1
-      BaseChange: 0.2
+      BaseChange: 0.25
       _changeMultiplier: 1
       DelayChange: 1
       DelayedChangeSeconds: 1.5
-      delayTimer: 5.515625
-    - Data: {fileID: 11400000, guid: 7483f2347fa993845a34e0f8c8bbe2a5, type: 2}
-      Value: 100
+      delayTimer: 1.421875
+    - data: {fileID: 11400000, guid: a256a1de972d93b4b88e0ee04c8d2aa5, type: 2}
+      Value: 60
       BaseMaximum: 100
       Bonus: 0
       _multiplier: 1
-      Minimum: 0
       LimitOverflow: 1
       LimitUnderflow: 1
       AllowChange: 1
-      Change: 1
+      Change: 2
       Cycle: 0
       BaseChange: 1
       _changeMultiplier: 1
-      DelayChange: 1
-      DelayedChangeSeconds: 1.5
-      delayTimer: 5.515625
+      DelayChange: 0
+      DelayedChangeSeconds: 0
+      delayTimer: 132.29688
+    - data: {fileID: 11400000, guid: 1163b94315ee82b43880f69e4567d600, type: 2}
+      Value: 60
+      BaseMaximum: 100
+      Bonus: 0
+      _multiplier: 1
+      LimitOverflow: 1
+      LimitUnderflow: 1
+      AllowChange: 1
+      Change: 2
+      Cycle: 0
+      BaseChange: 1
+      _changeMultiplier: 1
+      DelayChange: 0
+      DelayedChangeSeconds: 0
+      delayTimer: 132.29688
   Generic:
     Attributes:
-    - Data: {fileID: 11400000, guid: fe9f66b79d95e7948a4dfcb4512568c7, type: 2}
-      Value: 8.5
+    - data: {fileID: 11400000, guid: fe9f66b79d95e7948a4dfcb4512568c7, type: 2}
+      Value: 7
       BaseMaximum: 0
       Bonus: 0
       _multiplier: 1
-      Minimum: 0
-      LimitOverflow: 0
-      LimitUnderflow: 0
-    - Data: {fileID: 11400000, guid: 1ca754ca1365db04c87c8de19db59ede, type: 2}
-      Value: 14
-      BaseMaximum: 0
-      Bonus: 0
-      _multiplier: 1
-      Minimum: 0
-      LimitOverflow: 0
-      LimitUnderflow: 0
-    - Data: {fileID: 11400000, guid: 2d61d3236698a6a4e81d503fae1c7421, type: 2}
-      Value: 4
-      BaseMaximum: 0
-      Bonus: 0
-      _multiplier: 1
-      Minimum: 0
       LimitOverflow: 1
       LimitUnderflow: 0
-    - Data: {fileID: 11400000, guid: 91ee287a94e4d854093201e92000c189, type: 2}
+    - data: {fileID: 11400000, guid: 1ca754ca1365db04c87c8de19db59ede, type: 2}
+      Value: 11
+      BaseMaximum: 0
+      Bonus: 0
+      _multiplier: 1
+      LimitOverflow: 0
+      LimitUnderflow: 0
+    - data: {fileID: 11400000, guid: 2d61d3236698a6a4e81d503fae1c7421, type: 2}
+      Value: 3
+      BaseMaximum: 0
+      Bonus: 0
+      _multiplier: 1
+      LimitOverflow: 1
+      LimitUnderflow: 0
+    - data: {fileID: 11400000, guid: 91ee287a94e4d854093201e92000c189, type: 2}
       Value: 12
       BaseMaximum: 0
       Bonus: 0
       _multiplier: 1
-      Minimum: 0
       LimitOverflow: 0
-      LimitUnderflow: 1
-    - Data: {fileID: 11400000, guid: 5210e33413593884eaaf994b5d314d40, type: 2}
+      LimitUnderflow: 0
+    - data: {fileID: 11400000, guid: 5210e33413593884eaaf994b5d314d40, type: 2}
       Value: 2
       BaseMaximum: 0
       Bonus: 0
       _multiplier: 1
-      Minimum: 0
-      LimitOverflow: 0
-      LimitUnderflow: 1
-    - Data: {fileID: 11400000, guid: fe7432cf6f0d40c4bb3556a4ad3b22ab, type: 2}
-      Value: 15
+      LimitOverflow: 1
+      LimitUnderflow: 0
+    - data: {fileID: 11400000, guid: a27faf74b47c0664091a44ac647f437d, type: 2}
+      Value: 0.25
       BaseMaximum: 0
       Bonus: 0
       _multiplier: 1
-      Minimum: 0
-      LimitOverflow: 0
-      LimitUnderflow: 1
-    - Data: {fileID: 11400000, guid: a27faf74b47c0664091a44ac647f437d, type: 2}
-      Value: 0.4
-      BaseMaximum: 0
-      Bonus: 0
-      _multiplier: 1
-      Minimum: 0
-      LimitOverflow: 0
-      LimitUnderflow: 1
+      LimitOverflow: 1
+      LimitUnderflow: 0

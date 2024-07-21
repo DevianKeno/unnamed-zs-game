@@ -84,7 +84,7 @@ namespace UZSG.Players
                 if (_holdTimer > HoldThresholdMilliseconds / 1000f)
                 {
                     _isHoldingLeftClick = true;
-                    Player.smAction.ToState(ActionStates.PrimaryHold);
+                    Player.ActionStateMachine.ToState(ActionStates.PrimaryHold);
                 }
             }
             else if (_hadRightClicked)
@@ -94,7 +94,7 @@ namespace UZSG.Players
                 if (_holdTimer > HoldThresholdMilliseconds / 1000f)
                 {
                     _isHoldingRightClick = true;
-                    Player.smAction.ToState(ActionStates.SecondaryHold);
+                    Player.ActionStateMachine.ToState(ActionStates.SecondaryHold);
                 }
             }
         }
@@ -146,11 +146,11 @@ namespace UZSG.Players
             if (_isHoldingLeftClick)
             {
                 _isHoldingLeftClick = false;
-                Player.smAction.ToState(ActionStates.PrimaryRelease);
+                Player.ActionStateMachine.ToState(ActionStates.PrimaryRelease);
             }
             else
             {
-                Player.smAction.ToState(ActionStates.Primary);
+                Player.ActionStateMachine.ToState(ActionStates.Primary);
             }
         }
 
@@ -166,11 +166,11 @@ namespace UZSG.Players
             if (_isHoldingRightClick)
             {
                 _isHoldingRightClick = false;
-                Player.smAction.ToState(ActionStates.SecondaryRelease);
+                Player.ActionStateMachine.ToState(ActionStates.SecondaryRelease);
             }
             else
             {
-                Player.smAction.ToState(ActionStates.Secondary);
+                Player.ActionStateMachine.ToState(ActionStates.Secondary);
             }
         }
 

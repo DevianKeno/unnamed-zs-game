@@ -16,24 +16,27 @@ namespace UZSG.UI
 
     public class PlayerHUD : Window, IToggleable
     {
-        [SerializeField] InventoryHandler inventory;
-        public Player Player;
-
+        public Player Player { get; private set; }
         Dictionary<int, ItemSlotUI> _hotbarSlotUIs = new();
+        [SerializeField] InventoryHandler inventory;
         
         [Header("Elements")]
-        public StaminaBar StaminaBar;
+        public AttributeBar HealthBar;
+        public AttributeBar StaminaBar;
+        public AttributeBar HungerBar;
+        public AttributeBar HydrationBar;
+        public AttributeBar XPBar;
 
         [Header("Layout")]
         [SerializeField] GameObject container;
-
 
         internal void Initialize()
         {
             if (Player == null)
             {
-                Game.Console.Log($"Failed to initialize Player HUD. Bind a Player first!");
-                Debug.LogWarning($"Failed to initialize Player HUD. Bind a Player first!");
+                var msg = $"Failed to initialize Player HUD. Bind a Player first!";
+                Game.Console.Log(msg);
+                Debug.LogWarning(msg);
                 return;
             }
 
@@ -68,8 +71,17 @@ namespace UZSG.UI
         public void BindPlayer(Player player)
         {
             Player = player;
-            inventory ??= player.Inventory;
+            inventory = player.Inventory;
+            BindPlayerAttributes();
             // StaminaBar.SetAttribute(Player.Vitals.GetAttributeFromId("stamina"));
+        }
+
+        void BindPlayerAttributes()
+        {
+            HealthBar.BindAttribute(Player.Vitals.GetAttributeFromId("health"));
+            StaminaBar.BindAttribute(Player.Vitals.GetAttributeFromId("stamina"));
+            HungerBar.BindAttribute(Player.Vitals.GetAttributeFromId("hunger"));
+            HydrationBar.BindAttribute(Player.Vitals.GetAttributeFromId("hydration"));
         }
 
         #region Callbacks

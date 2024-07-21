@@ -66,7 +66,7 @@ namespace UZSG.Attributes
         
         public VitalAttribute(AttributeData data) : base(data)
         {
-            Data = data;
+            this.data = data;
         }
 
         ~VitalAttribute()
@@ -157,12 +157,12 @@ namespace UZSG.Attributes
         {
             base.ValueChanged();
                        
-            float value = Mathf.Abs(Value - previousValue);
-            if (Value <= Minimum)
+            float value = Mathf.Abs(Value - _previousValue);
+            if (Value <= _minimum)
             {
                 OnReachMinimum?.Invoke(this, new()
                 {
-                    Previous = previousValue,
+                    Previous = _previousValue,
                     Change = value,
                 });
                 return;
@@ -172,7 +172,7 @@ namespace UZSG.Attributes
             {
                 OnReachMaximum?.Invoke(this, new()
                 {
-                    Previous = previousValue,
+                    Previous = _previousValue,
                     Change = value,
                     New = Value
                 });

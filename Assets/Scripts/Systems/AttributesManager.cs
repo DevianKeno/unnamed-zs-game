@@ -22,18 +22,26 @@ namespace UZSG.Systems
             _isInitialized = true;
 
             var startTime = Time.time;
+            LoadResources();
+        }
+
+        void LoadResources()
+        {
             Game.Console.Log("Initializing Attribute database...");
-            var attrs = Resources.LoadAll<AttributeData>("Data/Attributes");
+            var attrs = Resources.LoadAll<AttributeData>("Data/attributes");
             foreach (var attr in attrs)
             {
                 _attributesDict[attr.Id] = attr;
             }
+        }
 
-            // Addressables.LoadAssetsAsync<AttributeData>(assetLabelReference, (a) =>
-            // {
-            //     Game.Console?.LogDebug($"Loading data for Attribute {a.Id}");
-            //     _attributeList[a.Id] = a;
-            // });
+        public Attribute Create(string id)
+        {
+            if (_attributesDict.ContainsKey(id))
+            {
+                return new Attribute(_attributesDict[id]);
+            }
+            return Attribute.None;
         }
     }
 }

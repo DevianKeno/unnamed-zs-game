@@ -8,7 +8,7 @@ namespace UZSG.Attributes
     {
         public GenericAttribute(AttributeData data) : base(data)
         {
-            Data = data;
+            this.data = data;
         }
     }
 }

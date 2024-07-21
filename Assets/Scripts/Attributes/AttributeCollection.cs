@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UZSG.Systems;
 using UZSG.Data;
+using UnityEngine;
 
 namespace UZSG.Attributes
 {
@@ -61,12 +62,15 @@ namespace UZSG.Attributes
 
         public void AddAttribute(T attribute)
         {
+            if (!attribute.IsValid) return;
+
             if (!_attributesDict.ContainsKey(attribute.Data.Id))
             {
                 _attributesDict[attribute.Data.Id] = attribute;
-            } else
+            }
+            else
             {
-                Game.Console?.Log($"Attribute [{attribute.Data.Id}] already exists within the collection.");
+                Game.Console.Log($"Attribute [{attribute.Data.Id}] already exists within the collection.");
             }
         }
 
@@ -75,7 +79,8 @@ namespace UZSG.Attributes
             if (_attributesDict.ContainsKey(id))
             {
                 _attributesDict.Remove(id);
-            } else
+            }
+            else
             {
                 Game.Console?.Log($"Unable to remove Attribute [{id}] as it does not exist within the collection.");
             }
@@ -87,7 +92,8 @@ namespace UZSG.Attributes
             {
                 _attributesDict.Remove(id, out attribute);
                 return true;
-            } else
+            }
+            else
             {
                 attribute = null;
                 Game.Console?.Log($"Unable to remove Attribute [{id}] as it does not exist within the collection.");
@@ -100,9 +106,12 @@ namespace UZSG.Attributes
             if (_attributesDict.ContainsKey(id))
             {
                 return _attributesDict[id];
-            } else
+            }
+            else
             {
-                Game.Console?.Log($"Unable to retrieve Attribute [{id}] as it's not in the collection.");
+                string msg = $"Unable to retrieve Attribute [{id}] as it's not in the collection.";
+                Game.Console.Log(msg);
+                Debug.LogWarning(msg);
                 return null;
             }
         }
@@ -113,10 +122,13 @@ namespace UZSG.Attributes
             {
                 attribute = _attributesDict[id];
                 return true;
-            } else
+            } 
+            else
             {
                 attribute = Attribute.None;
-                Game.Console?.Log($"Unable to retrieve Attribute [{id}] as it's not in the collection.");
+                string msg = $"Unable to retrieve Attribute [{id}] as it's not in the collection.";
+                Game.Console.Log(msg);
+                Debug.LogWarning(msg);
                 return false;
             }
         }

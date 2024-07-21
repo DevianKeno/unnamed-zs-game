@@ -61,8 +61,8 @@ namespace UZSG.FPP
 
         void InitializeEvents()
         {
-            Player.smMove.OnStateChanged += OnPlayerMoveStateChanged;
-            Player.smAction.OnStateChanged += OnPlayerActionStateChanged;
+            Player.MoveStateMachine.OnStateChanged += OnPlayerMoveStateChanged;
+            Player.ActionStateMachine.OnStateChanged += OnPlayerActionStateChanged;
         }
 
         public delegate void OnLoadViewModelCompleted(Viewmodel viewmodel);

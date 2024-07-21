@@ -12,15 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e18afb883e1451a4c82eb24298dc52e1, type: 3}
   m_Name: crouch_speed
   m_EditorClassIdentifier: 
+  Type: 0
   Id: crouch_speed
   Name: Crouch Speed
   Description: 
-  Minimum: 0
-  BaseValue: 5
-  Multiplier: 1
-  IsVital: 0
-  AllowChange: 0
-  Type: 0
+  Change: 0
   Cycle: 0
-  ChangeAmount: 0
-  ChangeMultiplier: 1

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UZSG.Inventory;
 using UZSG.Items;
@@ -11,7 +12,7 @@ namespace UZSG
     public abstract class Container : MonoBehaviour
     {
         public abstract int SlotsCount { get; set; }
-        public abstract ItemSlot[] Slots { get; }
+        public abstract List<ItemSlot> Slots { get; }
         /// <summary>
         /// Called whenever the content of a Slot is changed.
         /// </summary>
@@ -27,13 +28,13 @@ namespace UZSG
 
         public ItemSlot GetSlot(int index)
         {
-            if (index < 0 || index > Slots.Length) return null;
+            if (index < 0 || index > Slots.Count) return null;
             return Slots[index];
         }
 
         public virtual Item ViewItem(int slotIndex)
         {
-            if (slotIndex < 0 || slotIndex > Slots.Length) return Item.None;
+            if (slotIndex < 0 || slotIndex > Slots.Count) return Item.None;
             return Slots[slotIndex].Item;
         }
 
@@ -47,9 +48,9 @@ namespace UZSG
 
             foreach (ItemSlot slot in Slots)
             {
-                if (slot.IsEmpty) // just put
+                if (slot.IsEmpty) /// just put
                 {
-                    slot.PutItem(item);
+                    slot.Put(item);
                     return true;
                 }
                 
@@ -67,15 +68,14 @@ namespace UZSG
         /// </summary>
         public virtual bool TryPut(int slotIndex, Item item)
         {
-            if (slotIndex < 0 || slotIndex > Slots.Length) return false;
+            if (slotIndex < 0 || slotIndex > Slots.Count) return false;
             if (item == Item.None) return true;
 
             ItemSlot slot = Slots[slotIndex];
 
             if (slot.IsEmpty)
             {
-                slot.PutItem(item);
-                return true;
+                return slot.TryPut(item);
             }
             else
             {

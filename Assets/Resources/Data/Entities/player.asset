@@ -35,24 +35,24 @@ MonoBehaviour:
       _changeMultiplier: 1
       DelayChange: 0
       DelayedChangeSeconds: 0
-      delayTimer: 674.18933
+      delayTimer: 781.45496
     - data: {fileID: 11400000, guid: 03beca28745658c48a7358ce536b9573, type: 2}
-      Value: 0
+      Value: 100
       BaseMaximum: 100
       Bonus: 0
       _multiplier: 1
       LimitOverflow: 1
       LimitUnderflow: 1
-      AllowChange: 0
+      AllowChange: 1
       Change: 1
       Cycle: 1
       BaseChange: 0.25
       _changeMultiplier: 1
       DelayChange: 1
       DelayedChangeSeconds: 1.5
-      delayTimer: 1.421875
+      delayTimer: 9.4375
     - data: {fileID: 11400000, guid: a256a1de972d93b4b88e0ee04c8d2aa5, type: 2}
-      Value: 60
+      Value: 0
       BaseMaximum: 100
       Bonus: 0
       _multiplier: 1
@@ -65,9 +65,9 @@ MonoBehaviour:
       _changeMultiplier: 1
       DelayChange: 0
       DelayedChangeSeconds: 0
-      delayTimer: 132.29688
+      delayTimer: 239.5625
     - data: {fileID: 11400000, guid: 1163b94315ee82b43880f69e4567d600, type: 2}
-      Value: 60
+      Value: 0
       BaseMaximum: 100
       Bonus: 0
       _multiplier: 1
@@ -80,7 +80,7 @@ MonoBehaviour:
       _changeMultiplier: 1
       DelayChange: 0
       DelayedChangeSeconds: 0
-      delayTimer: 132.29688
+      delayTimer: 239.5625
   Generic:
     Attributes:
     - data: {fileID: 11400000, guid: fe9f66b79d95e7948a4dfcb4512568c7, type: 2}
@@ -112,7 +112,7 @@ MonoBehaviour:
       LimitOverflow: 0
       LimitUnderflow: 0
     - data: {fileID: 11400000, guid: 5210e33413593884eaaf994b5d314d40, type: 2}
-      Value: 2
+      Value: 1
       BaseMaximum: 0
       Bonus: 0
       _multiplier: 1

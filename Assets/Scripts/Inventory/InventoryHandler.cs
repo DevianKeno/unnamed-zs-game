@@ -21,12 +21,11 @@ namespace UZSG.Inventory
     {
         Hotbar _hotbar;
         public Hotbar Hotbar => _hotbar;
+        public ItemSlot Mainhand => Hotbar.Mainhand;
+        public ItemSlot Offhand => Hotbar.Offhand;
         Bag _bag;
         public Bag Bag => _bag;
 
-        public ItemSlot Equipped => Hotbar.Equipped;
-        public ItemSlot Mainhand => Hotbar.Mainhand;
-        public ItemSlot Offhand => Hotbar.Offhand;
 
         public bool IsFull
         {
@@ -87,8 +86,8 @@ namespace UZSG.Inventory
         
         public void Initialize()
         {
-            _bag.Init();
-            _hotbar.Init();
+            _bag.Initialize();
+            _hotbar.Initialize();
         }
 
         public void LoadData(InventoryData data)
@@ -97,22 +96,22 @@ namespace UZSG.Inventory
 
         public void SelectHotbarSlot(int index)
         {            
-            if (index < 0 || index > 9) return; // Should be index > Hotbar.MaxSlots
+            if (index < 0 || index > Hotbar.SlotsCount) return;
             Hotbar.SelectSlot(index);
         }
 
         /// <summary>
         /// Tries to put a Weapon item in either the Mainhand or Offhand.
         /// </summary>
-        public bool TryPutWeapon(Item item, out HotbarIndex putOnIndex)
+        public bool TryEquipWeapon(Item item, out HotbarIndex putOnIndex)
         {
-            if (Mainhand.TryPutItem(item))
+            if (Mainhand.TryPut(item))
             {
                 putOnIndex = HotbarIndex.Mainhand;
                 return true;
             }
 
-            if (Offhand.TryPutItem(item))
+            if (Offhand.TryPut(item))
             {
                 putOnIndex = HotbarIndex.Offhand;
                 return true;

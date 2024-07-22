@@ -5,9 +5,17 @@ using UnityEngine;
 
 namespace UZSG.UI
 {
-    public class PlayerDebugUI : MonoBehaviour
+    public class PlayerDebugUI : Window
     {
         public TextMeshProUGUI movementStateText;
         public TextMeshProUGUI actionStateText;
+
+        void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.F2))
+            {
+                ToggleVisibility();
+            }
+        }
     }
 }

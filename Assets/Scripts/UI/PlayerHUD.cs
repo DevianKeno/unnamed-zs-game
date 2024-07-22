@@ -3,9 +3,12 @@ using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.EventSystems;
+using TMPro;
+
 using UZSG.Entities;
 using UZSG.Inventory;
 using UZSG.Systems;
+using UZSG.Items;
 
 namespace UZSG.UI
 {
@@ -27,8 +30,10 @@ namespace UZSG.UI
         public AttributeBar HydrationBar;
         public AttributeBar XPBar;
 
-        [Header("Layout")]
-        [SerializeField] GameObject container;
+        public GameObject weapons;
+        public TextMeshProUGUI equippedWeaponTMP;
+        public GameObject hotbar;
+        public GameObject pickupsIndicatorContainer;
 
         internal void Initialize()
         {
@@ -40,32 +45,58 @@ namespace UZSG.UI
                 return;
             }
 
-            InitializeSlots();
+            InitializeHotbarSlots();
             InitializeEvents();
         }
 
-        void InitializeSlots()
+        void InitializeHotbarSlots()
         {
-            /// Hotbar slots
+            InitializeWeaponSlots();
+            InitializeToolSlots();
+        }
+
+        void InitializeWeaponSlots()
+        {
+            int i = 1;
+            foreach (Transform child in weapons.transform)
+            {
+                if (child.TryGetComponent<ItemSlotUI>(out var slotUI))
+                {
+                    _hotbarSlotUIs.Add(i, slotUI);
+                    i++;
+                }
+            }
+        }
+
+        void InitializeToolSlots()
+        {
             int maxSlots = inventory.Hotbar.SlotsCount;
             for (int i = 0; i < maxSlots; i++)
             {
+                int index = 3 + i; /// 3 is hotbar starting index
                 var slotUI = Game.UI.Create<ItemSlotUI>("item_slot");
                 slotUI.name = $"Hotbar Slot ({i})";
-                slotUI.transform.SetParent(container.transform);
-                slotUI.Index = i;
+                slotUI.transform.SetParent(hotbar.transform);
+                slotUI.Index = index;
                 
                 slotUI.OnMouseDown += OnClickHotbarSlot;
                 slotUI.OnStartHover += OnStartHoverSlot;
                 slotUI.OnEndHover += OnEndHoverSlot;
-                _hotbarSlotUIs.Add(i, slotUI);
+                _hotbarSlotUIs.Add(index, slotUI);
             }
-            // _hotbarSlotUIs.transform.SetAsLastSibling();
         }
 
         void InitializeEvents()
         {
-            Player.Inventory.Hotbar.OnSlotContentChanged += HotbarSlotChangedCallback;
+            Player.Inventory.Hotbar.OnSlotContentChanged += OnHotbarSlotChanged;
+            Player.Inventory.Hotbar.OnChangeEquipped += OnHotbarChangeEquipped;
+            Player.Actions.OnPickupItem += (item) =>
+            {
+                var indicator = Game.UI.Create<PickupsIndicator>("pickups_indicator");
+                indicator.transform.SetParent(pickupsIndicatorContainer.transform); 
+                indicator.SetDisplayedItem(item);
+                indicator.PlayAnimation();
+            };
         }
 
         public void BindPlayer(Player player)
@@ -86,9 +117,15 @@ namespace UZSG.UI
 
         #region Callbacks
 
-        void HotbarSlotChangedCallback(object sender, SlotContentChangedArgs e)
+        void OnHotbarSlotChanged(object sender, SlotContentChangedArgs e)
         {
             _hotbarSlotUIs[e.Slot.Index].SetDisplayedItem(e.Slot.Item);
+        }
+
+        void OnHotbarChangeEquipped(object sender, Hotbar.ChangeEquippedArgs e)
+        {
+            if (e.ItemSlot.Item == Item.None) return;
+            equippedWeaponTMP.text = e.ItemSlot.Item.Name;
         }
         
         void OnStartHoverSlot(object sender, PointerEventData e)

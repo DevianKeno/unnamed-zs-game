@@ -129,17 +129,17 @@ namespace UZSG.Entities
             // Generic.LoadData(Data.Generic);
             generic.Init();
 
-            #region Temporary
+#region Temporary
             /// These should be read from file
             /// e.g. Attributes.LoadData();
-            #endregion
+#endregion
         }
 
         void InitializeInventory()
         {
             // Inventory.LoadData(Data.Inventory);
 
-            Inventory.Bag.SlotsCount = (int) Generic.GetAttributeFromId("pockets_size").Value;
+            Inventory.Bag.SlotsCount = (int) Generic.GetAttributeFromId("bag_slots_count").Value;
             Inventory.Hotbar.SlotsCount = (int) Generic.GetAttributeFromId("hotbar_size").Value;
             Inventory.Initialize();
 

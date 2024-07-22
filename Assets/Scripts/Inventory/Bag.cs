@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace UZSG.Inventory
@@ -5,10 +6,10 @@ namespace UZSG.Inventory
     public class Bag : Container
     {
         public override int SlotsCount { get; set; }
-        [SerializeField] ItemSlot[] _slots;
+        [SerializeField] List<ItemSlot> _slots = new();
         bool _isFull;
         public bool IsFull => _isFull;
-        public override ItemSlot[] Slots => _slots;
+        public override List<ItemSlot> Slots => _slots;
 
         public ItemSlot this[int i]
         {
@@ -19,27 +20,16 @@ namespace UZSG.Inventory
             }
         }
         
-        ~Bag()
+        internal void Initialize()
         {
-            foreach (var slot in Slots)
-            {
-                slot.OnContentChanged -= SlotContentChanged;
-            }
-        }
+            _slots = new();
 
-        internal void Init()
-        {
-            _slots = new ItemSlot[SlotsCount];
-
-            for (int i = 0; i < _slots.Length; i++)
+            for (int i = 0; i < SlotsCount; i++)
             {
-                ItemSlot newSlot = new(i)
-                {
-                    Type = SlotType.Item | SlotType.Equipment | SlotType.Accessory
-                };
+                ItemSlot newSlot = new(i, SlotType.All);
                 newSlot.OnContentChanged += SlotContentChanged;
-                _slots[i] = newSlot;
-            }            
+                _slots.Add(newSlot);
+            }   
         }
     }
 }

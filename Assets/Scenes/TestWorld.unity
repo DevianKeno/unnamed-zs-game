@@ -897,6 +897,8 @@ MonoBehaviour:
     Prefab: {fileID: 5993031782858655458, guid: 69f9d656166c5f343947161e86d926db, type: 3}
   - Id: item_slot
     Prefab: {fileID: 7226684566756821322, guid: 218b3dd085eba5c40820caed6b8fc32e, type: 3}
+  - Id: pickups_indicator
+    Prefab: {fileID: 6082794761968572716, guid: c436a25d2bd12b34182a0a50f0bc04f7, type: 3}
 --- !u!114 &618836776
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2297,8 +2299,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1447818190}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 16.96, y: 0, z: 1.8}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

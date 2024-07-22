@@ -70,6 +70,18 @@ namespace UZSG.UI
                         
             input.actions.FindActionMap("Global").Enable();
         }
+
+        void InitializeUIPrefabs()
+        {
+            var a = Resources.LoadAll<GameObject>("Prefabs/UI");
+            foreach (var b in a)
+            {
+                if (b.TryGetComponent<IUIElement>(out var element))
+                {
+
+                }
+            }
+        }
       
         void OnLateInit()
         {
@@ -116,7 +128,7 @@ namespace UZSG.UI
         public T Create<T>(string id, bool inSafeArea = true) where T : IUIElement
         {
             Transform parent = Canvas.transform;
-            if (!inSafeArea) parent = Canvas.transform;
+            if (!inSafeArea) parent = Canvas.transform; /// lewl
             foreach (PrefabId p in Prefabs)
             {
                 if (p.Id == id)
@@ -128,10 +140,13 @@ namespace UZSG.UI
                     {
                         return element;
                     }
+                    return default;
                 }
             }
-            Game.Console.Log("Unable to create UI element, it does not exist");
-            Debug.LogWarning("Unable to create UI element, it does not exist");
+
+            var msg = $"Unable to create UI element, it does not exist";
+            Game.Console.Log(msg);
+            Debug.LogWarning(msg);
             return default;
         }
     }

@@ -38,7 +38,7 @@ namespace UZSG
             {
                 ItemSlot newSlot = new(i);
                 newSlot.OnContentChanged += SlotContentChanged;
-                newSlot.Type = SlotType.Accessory;
+                newSlot.SlotType = SlotType.Accessory;
                 accessorySlots[i] = newSlot;
             }
         }

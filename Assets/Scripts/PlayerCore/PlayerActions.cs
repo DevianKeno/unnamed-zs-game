@@ -38,6 +38,8 @@ namespace UZSG.Players
         IInteractable lookingAt;
         Ray ray;
         InteractionIndicator interactionIndicator;
+
+        public event Action<Item> OnPickupItem;
         
         InputActionMap actionMap;
         Dictionary<string, InputAction> inputs = new();
@@ -107,12 +109,12 @@ namespace UZSG.Players
 
             if (Player.FPP.CurrentlyEquippedIndex == (HotbarIndex) index)
             {
-                // Player.Inventory.SelectHotbarSlot(0);
+                Player.Inventory.SelectHotbarSlot(0);
                 Player.FPP.Unholster();
             }
             else
             {
-                // Player.Inventory.SelectHotbarSlot(index);
+                Player.Inventory.SelectHotbarSlot(index);
                 Player.FPP.EquipIndex((HotbarIndex) index);
             }
         }
@@ -221,20 +223,13 @@ namespace UZSG.Players
         {
             if (!Player.CanPickUpItems) return;
             if (Player.Inventory == null) return;
-            if (Player.Inventory.IsFull)
-            {
-                /// Prompt inventory full
-                Game.Console.Log($"Can't pick up item. Inventory full");
-                Debug.Log($"Can't pick up item. Inventory full");
-                return;
-            }
 
             bool gotItem; /// if the player had picked up the item
             Item item = itemEntity.AsItem();
 
             if (item.Type == ItemType.Weapon)
             {
-                gotItem = Player.Inventory.TryPutWeapon(item, out HotbarIndex index);
+                gotItem = Player.Inventory.TryEquipWeapon(item, out HotbarIndex index);
 
                 if (gotItem)
                 {
@@ -244,23 +239,22 @@ namespace UZSG.Players
                     }
                 }
             }
-            else if (item.Type == ItemType.Tool)
-            {
-                gotItem = Player.Inventory.Hotbar.Offhand.TryPutItem(item);                
-
-                // if (ToolData.TryGetToolData(item.Data, out ToolData toolData))
-                // {
-                //     _FPP.Load(toolData, 1);
-                // }
-                // // else try to put in other hotbar slots (3-0) and only if available
-            }
             else /// generic item
             {
+                if (Player.Inventory.IsFull)
+                {
+                    /// Prompt inventory full
+                    var msg = $"Can't pick up item. Inventory full";
+                    Game.Console.Log(msg);
+                    Debug.Log(msg);
+                    return;
+                }
                 gotItem = Player.Inventory.Bag.TryPutNearest(item);
             }
 
             if (gotItem)
             {
+                OnPickupItem?.Invoke(item);
                 Game.Entity.Kill(itemEntity);
             }
         }

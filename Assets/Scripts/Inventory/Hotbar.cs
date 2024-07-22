@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace UZSG.Inventory
@@ -7,63 +8,59 @@ namespace UZSG.Inventory
     {
         public struct ChangeEquippedArgs
         {
-            public int Index;
-            public ItemSlot Equipped;
+            public int Index { get; set; }
+            public ItemSlot ItemSlot { get; set; }
         }
+
+        public const int MainhandIndex = 1;
+        public const int OffhandIndex = 2;
+
         public override int SlotsCount { get; set; }
-        public static int MainhandIndex = 1;
-        public static int OffhandIndex = 2;
-        public static int[] SlotsIndex = { 3, 4, 5, 6, 7, 8, 9, 0 };
         [SerializeField] ItemSlot _mainhand;
         public ItemSlot Mainhand { get => _mainhand; }
         [SerializeField] ItemSlot _offhand;
         public ItemSlot Offhand { get => _offhand; }
-        [SerializeField] ItemSlot[] _slots;
-        public override ItemSlot[] Slots => _slots;
-        public int _equippedIndex = -1;
-        public ItemSlot _equipped;
+        [SerializeField] List<ItemSlot> _slots = new();
+        public override List<ItemSlot> Slots => _slots;
+        ItemSlot _equipped;
         public ItemSlot Equipped { get => _equipped; }
+        public int _equippedIndex = -1;
+
         public event EventHandler<ChangeEquippedArgs> OnChangeEquipped;
 
         public ItemSlot this[int i]
         {
             get
             {
-                if (i < 0 || i > 9) return null;
-                if (i == 1) return _mainhand;
-                if (i == 2) return _offhand;
-
+                if (i < 0 || i > SlotsCount) return null;
+                if (i == MainhandIndex) return _mainhand;
+                if (i == OffhandIndex) return _offhand;
                 return _slots[i];
             }
         }
-               
-        ~Hotbar()
+        
+        internal void Initialize()
         {
-            foreach (var slot in Slots)
-            {
-                slot.OnContentChanged -= SlotContentChanged;
-            }
-        }
-
-        internal void Init()
-        {
-            _slots = new ItemSlot[11];
-
-            _mainhand = new (MainhandIndex, SlotType.Weapon);
+            _mainhand = new(MainhandIndex, SlotType.Weapon);
             _mainhand.OnContentChanged += SlotContentChanged;
-            _slots[1] = _mainhand;
 
-            _offhand = new (OffhandIndex, SlotType.Tool);
+            _offhand = new(OffhandIndex, SlotType.Weapon);
             _offhand.OnContentChanged += SlotContentChanged;
-            _slots[2] = _offhand;
 
-            for (int i = 3; i < 11; i++)
+            _slots = new()
             {
-                ItemSlot newSlot = new(i) { Type = SlotType.Tool };
+                new(0), /// Empty hand slot
+                _mainhand,
+                _offhand
+            };
+
+            for (int i = 0; i < SlotsCount; i++)
+            {
+                int index = 3 + i;
+                ItemSlot newSlot = new(index, SlotType.All);
                 newSlot.OnContentChanged += SlotContentChanged;
-                _slots[i] = newSlot;
+                _slots.Add(newSlot);
             }
-            _slots[0] = _slots[10]; // Hotbar slot 0 pertains to the 10th index
         }
 
         public void SelectSlot(int index)
@@ -72,7 +69,8 @@ namespace UZSG.Inventory
             {
                 _equippedIndex = -1;
                 _equipped = null;
-            } else
+            }
+            else
             {
                 _equippedIndex = index;
                 _equipped = _slots[index];
@@ -81,7 +79,7 @@ namespace UZSG.Inventory
             OnChangeEquipped?.Invoke(this, new()
             {
                 Index = index,
-                Equipped = _equipped
+                ItemSlot = _equipped
             });
         }
     }

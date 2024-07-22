@@ -32,13 +32,10 @@ namespace UZSG.Inventory
         public int Index => index;
         [SerializeField] Item item;
         public Item Item => item;
-        public SlotType Type;
+        public SlotType SlotType;
         [SerializeField] public bool IsEmpty
         {
-            get
-            {
-                return item == Item.None;
-            }
+            get { return item == Item.None; }
         }
 
         /// <summary>
@@ -50,14 +47,14 @@ namespace UZSG.Inventory
         {
             this.index = index;
             item = Item.None;
-            Type = SlotType.All;
+            SlotType = SlotType.All;
         }
         
         public ItemSlot(int index, SlotType slotType)
         {
             this.index = index;
             item = Item.None;
-            Type = slotType;
+            SlotType = slotType;
         }
 
         void ContentChanged()
@@ -73,28 +70,25 @@ namespace UZSG.Inventory
             return new(item);
         }
 
+        public void Put(Item item)
+        {
+            this.item = item;
+            ContentChanged();
+        }
+
         public bool TryPut(Item item)
         {
-            if ((int) Type + 1 != (int) item.Type) return false;
-            PutItem(item);
-            return true;
-        }
-
-        public void PutItem(Item item)
-        {
-            this.item = item;
-            ContentChanged();
-        }
-
-        public bool TryPutItem(Item item)
-        {
-            if (!IsEmpty)
-            {
-                return false;
-            }
+            /// Have trouble checking if the item's type fits the slot's type
+            // if (!IsEmpty || !IsFits(item)) return false;
+            if (!IsEmpty) return false;
             this.item = item;
             ContentChanged();
             return true;
+        }
+
+        public bool IsFits(Item item)
+        {
+            return (SlotType & MapItemTypeToSlotType(item.Type)) != 0;
         }
         
         public void Clear()
@@ -111,14 +105,14 @@ namespace UZSG.Inventory
         /// <returns></returns>
         public Item TakeItems(int amount = -1)
         {
-            if (amount > item.Count || item.Count <= 1 || amount < 1)
+            if (IsTakingAll(amount))
             {
                 return TakeAll();
             }
 
             int remaining = item.Count - amount;
-            Item toTake = new(item, amount);
-            item = new(item, remaining);
+            Item toTake = new(item, amount);        /// Return a copy of the item with amount taken
+            item = new(item, remaining);            /// Re-assign left items
             ContentChanged();
             return toTake;
         }
@@ -128,6 +122,13 @@ namespace UZSG.Inventory
             Item toTake = new(item, item.Count);
             Clear();
             return toTake;
+        }
+
+        bool IsTakingAll(int value)
+        {
+            return value > item.Count   /// Tried to take greater than current amount
+                || item.Count == 1      /// One item left
+                || value < 1;           /// Value is 0 or -1 (take entire stack)
         }
 
         /// <summary>
@@ -142,7 +143,7 @@ namespace UZSG.Inventory
                 return false;
             }
         
-            // Stack overflow when stack size is 0, needs fix
+            /// Stack overflow when stack size is 0, needs fix
             int newCount = item.Count + toAdd.Count;
             int excessCount = newCount - item.StackSize;
 
@@ -157,6 +158,19 @@ namespace UZSG.Inventory
             }
             ContentChanged();
             return true;
+        }
+        
+        SlotType MapItemTypeToSlotType(ItemType itemType)
+        {
+            return itemType switch
+            {
+                ItemType.Item => SlotType.Item,
+                ItemType.Weapon => SlotType.Weapon,
+                ItemType.Tool => SlotType.Tool,
+                ItemType.Equipment => SlotType.Equipment,
+                ItemType.Accessory => SlotType.Accessory,
+                _ => SlotType.All
+            };
         }
     }
 }

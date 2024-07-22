@@ -39,7 +39,7 @@ MonoBehaviour:
     Damage: 11
     FireType: 0
     RoundsPerMinute: 310
-    ClipSize: 10
+    ClipSize: 9999
     ReloadSpeed: 1
     BulletVelocity: 150
     VerticalRecoilFactor: 1.2

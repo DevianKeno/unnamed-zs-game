@@ -7,6 +7,7 @@ TagManager:
   - Interactable
   - Pickupable
   - Item
+  - Bullet
   layers:
   - Default
   - TransparentFX
@@ -19,7 +20,7 @@ TagManager:
   - Player
   - Ground
   - FPP
-  - 
+  - Hitbox
   - 
   - 
   - 

@@ -17,9 +17,9 @@ namespace UZSG.Entities
     [RequireComponent(typeof(BoxCollider))]
     public class Bullet : Entity
     {
-        [SerializeField] EntityData entityData;
-        public override EntityData EntityData => entityData;
         public BulletEntityOptions BulletEntityOptions;
+
+        Vector3 _previousPosition;
 
         Rigidbody rb;
         BoxCollider coll;
@@ -35,6 +35,32 @@ namespace UZSG.Entities
             /// Despawn after 5 seconds
             Destroy(gameObject, 5f); 
         }
+        
+        void Update()
+        {
+            RaycastForCollisions();
+            _previousPosition = transform.position;
+        }
+
+        void RaycastForCollisions()
+        {
+            Vector3 direction = rb.velocity.normalized;
+            float distance = (transform.position - _previousPosition).magnitude;
+            Ray ray = new(_previousPosition, direction);
+            if (Physics.Raycast(ray, out var hit, distance, LayerMask.GetMask("Hitbox")))
+            {
+                OnHit(hit.collider);
+            }
+        }
+
+        void OnHit(Collider other)
+        {
+            if (other.TryGetComponent<Hitbox>(out var hitbox))
+            {
+                hitbox.Collision(coll);
+                Destroy(gameObject);
+            }
+        }
 
         public override void OnSpawn()
         {
@@ -46,6 +72,7 @@ namespace UZSG.Entities
                 player.EyeLevel,
                 Quaternion.LookRotation(player.Forward)
             );
+            _previousPosition = transform.position;
         }
 
         public void SetBulletEntityOptions(BulletEntityOptions options)
@@ -57,11 +84,6 @@ namespace UZSG.Entities
         {
             var attr = BulletEntityOptions;
             rb.AddForce(attr.Velocity * attr.Speed, ForceMode.Impulse);
-        }
-
-        public void OnCollisionEnter(Collision collision)
-        {
-            throw new NotImplementedException();
         }
     }
 }

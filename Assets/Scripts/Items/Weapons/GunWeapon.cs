@@ -181,7 +181,7 @@ namespace UZSG.Items.Weapons
 
             yield return new WaitForSeconds(durationSeconds);
 
-            _currentRounds = 10; 
+            _currentRounds = weaponData.RangedAttributes.ClipSize; 
             _isReloading = false;
             Debug.Log("Completed reload");
         }

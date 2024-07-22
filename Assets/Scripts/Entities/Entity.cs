@@ -9,8 +9,8 @@ namespace UZSG.Entities
     /// </summary>
     public abstract class Entity : MonoBehaviour
     {
-        public abstract EntityData EntityData { get; }
-        public EntityData Data => EntityData;
-        public abstract void OnSpawn();
+        [SerializeField] protected EntityData entityData;
+        public EntityData EntityData => entityData;
+        public virtual void OnSpawn() { }
     }
 }

@@ -71,7 +71,7 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: 5dbe44b4d9a9a2a40b7a9d7ab53b65cd, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 136ca0fddf16de54e80cf85f92c8d362, type: 2}
+      objectReference: {fileID: 2100000, guid: 678cf29f3fecc0143849e7ebc3ef4471, type: 2}
     - target: {fileID: 919132149155446097, guid: 5dbe44b4d9a9a2a40b7a9d7ab53b65cd, type: 3}
       propertyPath: m_Name
       value: Item (Entity)
@@ -160,7 +160,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b0fc83af09fe2549bd4cf68475cdf03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Data: {fileID: 11400000, guid: b430ab7081e218e42953878032ad89d7, type: 2}
+  entityData: {fileID: 11400000, guid: b430ab7081e218e42953878032ad89d7, type: 2}
   ItemData: {fileID: 0}
   ItemCount: 0
   Age: 3600

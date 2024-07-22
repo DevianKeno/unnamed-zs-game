@@ -26,7 +26,7 @@ namespace UZSG.Entities
         [SerializeField] PlayerData playerData;
         public PlayerData PlayerData => playerData;
         [SerializeField] PlayerEntityData playerEntityData;
-        public override EntityData EntityData { get => playerEntityData; }
+        public PlayerEntityData PlayerEntityData => playerEntityData;
         [SerializeField] AttributeCollection<VitalAttribute> vitals;
         public AttributeCollection<VitalAttribute> Vitals => vitals;
         [SerializeField] AttributeCollection<GenericAttribute> generic;

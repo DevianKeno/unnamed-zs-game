@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: katana
   m_EditorClassIdentifier: 
   Model:
-    m_AssetGUID: 6826bbfc6468b29479005f0e22608a36
+    m_AssetGUID: 0840685262ad3a34b90a03b43e221dc3
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
@@ -31,22 +31,41 @@ MonoBehaviour:
   BluntType: 0
   BladedType: 3
   RangedType: 0
-  Attributes:
+  MeleeAttributes:
     BaseDamage: 0
     BaseCritStrike: 0
     BaseCritDamage: 0
-  _model: {fileID: 6373689206886188734, guid: 6826bbfc6468b29479005f0e22608a36, type: 3}
-  _armsAnimController: {fileID: 9100000, guid: 9a062cade3b292d4c8d462d6bbe2e160, type: 2}
-  _modelAnimController: {fileID: 9100000, guid: fc63709a1ba05724b9b54b56a010c05a, type: 2}
-  _anims:
-    Idle: idle
+  RangedAttributes:
+    Damage: 0
+    FireType: 0
+    RoundsPerMinute: 0
+    ClipSize: 0
+    ReloadSpeed: 0
+    BulletVelocity: 0
+    VerticalRecoilFactor: 0
+    HorizontalRecoilFactor: 0
+    RecoilRecoveryFactor: 0
+  armsViewmodel:
+    m_AssetGUID: 
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  weaponViewmodel:
+    m_AssetGUID: 
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  anims:
+    Idle: 
     Move: 
     Primary: 
     PrimaryHold: 
     PrimaryRelease: 
     PrimaryVariant: []
-    Secondary: stance
+    Secondary: 
     SecondaryHold: 
     SecondaryRelease: 
-    Equip: equip
+    Equip: 
     Dequip: 
+  audioData:
+    AudioAssetIds: []

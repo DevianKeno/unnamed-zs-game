@@ -29,6 +29,8 @@ namespace UZSG.Items.Weapons
         GunWeaponStateMachine stateMachine;
         public GunWeaponStateMachine StateMachine => stateMachine;
         AudioSourceController audioSourceController;
+
+        [SerializeField] GunMuzzleController muzzleController;
         
         void Awake()
         {
@@ -68,6 +70,7 @@ namespace UZSG.Items.Weapons
                 PlayRandomFireSound();
                 SpawnBullet();
                 _currentRounds--;
+                muzzleController.OnFire();
                 OnFire?.Invoke();
 
                 if (weaponData.RangedAttributes.FireType == FireType.SemiAuto)

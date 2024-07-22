@@ -138,14 +138,21 @@ namespace UZSG.Entities
         void InitializeInventory()
         {
             // Inventory.LoadData(Data.Inventory);
-
-            Inventory.Bag.SlotsCount = (int) Generic.GetAttributeFromId("bag_slots_count").Value;
-            Inventory.Hotbar.SlotsCount = (int) Generic.GetAttributeFromId("hotbar_size").Value;
-            Inventory.Initialize();
+            inventory.Bag.SlotsCount = (int) Generic.GetAttributeFromId("bag_slots_count").Value;
+            inventory.Hotbar.SlotsCount = (int) Generic.GetAttributeFromId("hotbar_size").Value;
+            inventory.Initialize();
 
             invUI = Game.UI.Create<PlayerInventoryWindow>("player_inventory");
             invUI.BindPlayer(this);
             invUI.Initialize();
+            invUI.OnOpen += () =>
+            {
+                TogglePlayerControlsOnInventory(false);
+            };
+            invUI.OnClose += () =>
+            {
+                TogglePlayerControlsOnInventory(true);
+            };
         }
 
         void InitializeHUD()
@@ -201,6 +208,16 @@ namespace UZSG.Entities
         public void ToggleInventory()
         {
             invUI.ToggleVisibility();
+        }
+
+        void TogglePlayerControlsOnInventory(bool enable)
+        {
+            Controls.SetControl("Look", enable);
+            Controls.SetControl("Primary Action", enable);
+            Controls.SetControl("Secondary Action", enable);
+            Controls.SetControl("Reload", enable);
+            Controls.SetControl("Hotbar", enable);
+            Controls.SetControl("Unholster", enable);
         }
     }
 }

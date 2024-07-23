@@ -271,12 +271,8 @@ namespace UZSG.FPP
         {
             if (_currentlyEquippedWeapon is GunWeapon weapon)
             {
-                /// TECHNICAL DEBT
-                // var attrs = currentWeaponData.RangedAttributes;
-                // camController.RecoilRecoveryFactor = attrs.RecoilRecoveryFactor;
-                // camController.AddVerticalRecoilMotion(attrs.VerticalRecoilFactor);
-                // camController.AddHorizontaRecoilMotion(attrs.HorizontalRecoilFactor);
-                /// camController should automatically reset the added recoil motion
+                var recoilInfo = currentWeaponData.RangedAttributes.RecoilAttributes;
+                camController.AddRecoilMotion(recoilInfo);
             }
         }
 

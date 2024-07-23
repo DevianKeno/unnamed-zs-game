@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7493046415997759286}
   - component: {fileID: 2157984525049126996}
   m_Layer: 0
-  m_Name: Leaves/001
+  m_Name: leaves
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -61,7 +61,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 84bee9bb7c7cd804f88c37cb6dcdc0cd, type: 2}
+  - {fileID: 2100000, guid: f295f950f97eb824b8d9af89ed331070, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -96,7 +96,7 @@ GameObject:
   - component: {fileID: 9064718061431471925}
   - component: {fileID: 4406699270362442526}
   m_Layer: 0
-  m_Name: Trank.001
+  m_Name: trunk
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -145,7 +145,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f665fcf294fa0df4d92bd5bf1d654f64, type: 2}
+  - {fileID: 2100000, guid: 432954c580e29844ab9946dca6783e86, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

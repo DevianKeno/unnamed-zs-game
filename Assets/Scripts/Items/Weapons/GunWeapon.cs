@@ -1,9 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-
 using UnityEngine;
-
 using UZSG.Systems;
 using UZSG.Players;
 using UZSG.Entities;
@@ -12,7 +10,7 @@ namespace UZSG.Items.Weapons
 {
     public class GunWeapon : EquippedWeapon
     {
-        int _currentRounds; /// TEST
+        int _currentRounds;
         public int CurrentRounds
         {
             get { return _currentRounds; }
@@ -31,7 +29,8 @@ namespace UZSG.Items.Weapons
         AudioSourceController audioSourceController;
 
         [SerializeField] GunMuzzleController muzzleController;
-        
+        [SerializeField] int burstCount = 3; // Number of rounds per burst
+
         void Awake()
         {
             stateMachine = GetComponent<GunWeaponStateMachine>();
@@ -68,22 +67,24 @@ namespace UZSG.Items.Weapons
             {
                 _hasFired = true;
                 PlayRandomFireSound();
-                SpawnBullet();
+                SpawnBulletEntity();
                 _currentRounds--;
                 muzzleController.OnFire();
                 OnFire?.Invoke();
 
-                if (weaponData.RangedAttributes.FireType == FireType.SemiAuto)
+                if ((weaponData.RangedAttributes.FiringModes & FiringModes.Single) == FiringModes.Single)
                 {
                     return true;
                 }
-                else if (weaponData.RangedAttributes.FireType == FireType.Automatic)
+                else if ((weaponData.RangedAttributes.FiringModes & FiringModes.Automatic) == FiringModes.Automatic)
                 {
-                    throw new NotImplementedException("Unhandled automatic fire type");
+                    StartCoroutine(AutomaticFire());
+                    return true;
                 }
-                else if (weaponData.RangedAttributes.FireType == FireType.Burst)
+                else if ((weaponData.RangedAttributes.FiringModes & FiringModes.Burst) == FiringModes.Burst)
                 {
-                    throw new NotImplementedException("Unhandled burst fire type");
+                    StartCoroutine(BurstFire());
+                    return true;
                 }
                 return true;
             }
@@ -96,6 +97,34 @@ namespace UZSG.Items.Weapons
             }
         }
 
+        IEnumerator AutomaticFire()
+        {
+            while ((weaponData.RangedAttributes.FiringModes & FiringModes.Automatic) == FiringModes.Automatic)
+            {
+                if (_currentRounds <= 0 || _isReloading) break;
+                PlayRandomFireSound();
+                SpawnBulletEntity();
+                _currentRounds--;
+                muzzleController.OnFire();
+                OnFire?.Invoke();
+                yield return new WaitForSeconds(60f / weaponData.RangedAttributes.RoundsPerMinute);
+            }
+        }
+
+        IEnumerator BurstFire()
+        {
+            for (int i = 0; i < burstCount; i++)
+            {
+                if (_currentRounds <= 0 || _isReloading) break;
+                PlayRandomFireSound();
+                SpawnBulletEntity();
+                _currentRounds--;
+                muzzleController.OnFire();
+                OnFire?.Invoke();
+                yield return new WaitForSeconds(60f / weaponData.RangedAttributes.RoundsPerMinute);
+            }
+        }
+
         void PlayRandomFireSound()
         {
             int randIndex = UnityEngine.Random.Range(0, 4); /// magic number, subject to change
@@ -103,22 +132,15 @@ namespace UZSG.Items.Weapons
             audioSourceController.PlaySound(audioName);
         }
 
-        void SpawnBullet()
+        void SpawnBulletEntity()
         {
             var player = Owner as Player;
-            var attr = weaponData.RangedAttributes;
-
+            var bulletInfo = weaponData.RangedAttributes.BulletAttributes;
             Game.Entity.Spawn("bullet", (info) =>
             {
                 var bullet = info.Entity as Bullet;
-                bullet.SetTrajectoryFromPlayer(player);
-                bullet.SetBulletEntityOptions(new()
-                {
-                    Damage = attr.Damage,
-                    Velocity = player.Forward,
-                    Speed = attr.BulletVelocity <= 0f ? 100f : attr.BulletVelocity,
-                });
-                bullet.Shoot();
+                bullet.SetBulletAttributes(bulletInfo);
+                bullet.SetTrajectoryFromPlayerAndShoot(player);
             });
         }
 

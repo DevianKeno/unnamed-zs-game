@@ -112,6 +112,11 @@ namespace UZSG.Systems
         
         #region Public methods
         
+        public InputAction GetAction(string actionName, string actionMapName)
+        {
+            return GetActionMap(actionMapName).FindAction(actionName);
+        }
+
         public InputActionMap GetActionMap(string name)
         {
             return MainInput.actions.FindActionMap(name);

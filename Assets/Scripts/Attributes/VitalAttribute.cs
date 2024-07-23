@@ -89,7 +89,7 @@ namespace UZSG.Attributes
             Game.Tick.OnTick += Tick;
         }
         
-        void Tick(object sender, TickEventArgs e)
+        void Tick(TickInfo e)
         {
             delayTimer += Game.Tick.SecondsPerTick;
             
@@ -99,12 +99,12 @@ namespace UZSG.Attributes
             }
         }
 
-        void CycleTick(object sender, TickEventArgs e)
+        void CycleTick(TickInfo e)
         {
             PerformCycle();
         }
 
-        void CycleSecond(object sender, SecondEventArgs e)
+        void CycleSecond(SecondInfo e)
         {
             PerformCycle();
         }

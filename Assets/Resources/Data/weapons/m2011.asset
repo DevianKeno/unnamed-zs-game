@@ -36,15 +36,38 @@ MonoBehaviour:
     BaseCritStrike: 0
     BaseCritDamage: 0
   RangedAttributes:
-    Damage: 11
-    FireType: 0
+    FiringModes: 2
     RoundsPerMinute: 310
-    ClipSize: 9999
+    ClipSize: 7
     ReloadSpeed: 1
-    BulletVelocity: 150
-    VerticalRecoilFactor: 1.2
-    HorizontalRecoilFactor: 1.1
-    RecoilRecoveryFactor: 1.25
+    Spread: 0
+    BulletDamage:
+      BaseDamage: 10
+      IsPartDamage: 0
+      UseMultiplier: 0
+      HeadDamage: 0
+      HeadDamageMultiplier: 1
+      BodyDamage: 0
+      BodyDamageMultiplier: 1
+      ArmsDamage: 0
+      ArmsDamageMultiplier: 1
+      LegsDamage: 0
+      LegsDamageMultiplier: 1
+    BulletAttributes:
+      Scale: 1
+      Speed: 370
+      Spread: 4
+      GravityScale: 0
+      MinRenderDistance: 16
+    RecoilAttributes:
+      VerticalRecoilAmount: 2
+      VerticalRecoilRandomness: 0
+      HorizontalRecoilAmount: 0
+      HorizontalRecoilRandomness: 0
+      HorizontalRecoilDirection: 0
+      RecoilDamping: 1
+      RecoilRecoverySpeed: 1
+      RecoilRecoveryDelay: 1
   armsViewmodel:
     m_AssetGUID: cf23f63267f248b44ba581cfe94e58c1
     m_SubObjectName: 

@@ -109,13 +109,15 @@ namespace UZSG.Systems
         {
             if (args[0] == "freeze")
             {
-                Game.Tick.SetFreezed(!Game.Tick.IsFrozen);
-            } else if (args[0] == "set")
+                Game.Tick.SetFrozen(!Game.Tick.IsFrozen);
+            }
+            else if (args[0] == "set")
             {
                 if (int.TryParse(args[1], out int value))
                 {
                     Game.Tick.SetTPS(value);
-                } else
+                }
+                else
                 {
                     Game.Console.Log("TPS must be a positive integer value.");
                 }

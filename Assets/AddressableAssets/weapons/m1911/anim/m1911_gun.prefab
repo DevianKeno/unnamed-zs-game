@@ -119,7 +119,7 @@ PrefabInstance:
     - target: {fileID: 612318929138632651, guid: d9130f12d24ceaa4f83b68acc982fc3f, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 4b67768fd782e78469c5b23ae92cdcac, type: 2}
+      objectReference: {fileID: 2100000, guid: bf83f74d4820d284a89a8bc4d4bfdfee, type: 2}
     - target: {fileID: 919132149155446097, guid: d9130f12d24ceaa4f83b68acc982fc3f, type: 3}
       propertyPath: m_Name
       value: m1911_gun
@@ -290,10 +290,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: Muzzle Controller
       objectReference: {fileID: 0}
+    - target: {fileID: 7272272108420531117, guid: 979104421f81ce1488940e6f4467d9f9, type: 3}
+      propertyPath: m_Intensity
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4168234299756681310, guid: 979104421f81ce1488940e6f4467d9f9, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8099589135419978675}
   m_SourcePrefab: {fileID: 100100000, guid: 979104421f81ce1488940e6f4467d9f9, type: 3}
 --- !u!114 &835843320587046994 stripped
 MonoBehaviour:
@@ -306,6 +313,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc6a816dcfdc53841b8f91ac39d86f99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &5687199300806105280 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4168234299756681310, guid: 979104421f81ce1488940e6f4467d9f9, type: 3}
+  m_PrefabInstance: {fileID: 8589620832341147806}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8099589135419978675
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5687199300806105280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Version: 3
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_RenderingLayers: 1
+  m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_ShadowRenderingLayers: 1
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
 --- !u!4 &6765674456012859731 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3085238086383823309, guid: 979104421f81ce1488940e6f4467d9f9, type: 3}

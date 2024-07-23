@@ -67,7 +67,7 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: 1a71a55d936af9047905000b9f419161, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 928d3ff04f33ba042a2ba2baacb0bbd3, type: 2}
+      objectReference: {fileID: 2100000, guid: f3615e9715da1d24386954796a65e400, type: 2}
     - target: {fileID: 919132149155446097, guid: 1a71a55d936af9047905000b9f419161, type: 3}
       propertyPath: m_Name
       value: bandage

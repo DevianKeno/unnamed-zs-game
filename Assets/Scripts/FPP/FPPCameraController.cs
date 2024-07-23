@@ -1,30 +1,36 @@
 using System;
 using System.Collections.Generic;
-
 using UnityEngine;
 using UnityEngine.InputSystem;
-
 using UZSG.Systems;
 using UZSG.Entities;
 using UZSG.Players;
+using UZSG.Items.Weapons;
 
 namespace UZSG.FPP
 {
     public class FPPCameraController : MonoBehaviour
     {
+        public Player Player;
+
         [Header("Camera Settings")]
         public float Sensitivity;
         public bool EnableControls = true;
         public bool EnableBobbing = true;
-        float verticalRotation = 0f;
-        
+        float _verticalRotation = 0f;
+        float _horizontalRotation = 0f;
+
+        bool _isRecoiling;
+        float _currentVerticalRecoil;
+        float _currentHorizontalRecoil;
+        float _recoilRecoverySpeedCached = 0f;
+
         [Header("Components")]
-        [SerializeField] Player player;
         [SerializeField] Animator animator;
         public Animator Animator => animator;
-
-        InputAction look;
+        
         InputActionMap actionMap;
+        InputAction look;
         Dictionary<string, InputAction> inputs;
 
         internal void Initialize()
@@ -47,8 +53,9 @@ namespace UZSG.FPP
         void Update()
         {
             HandleLook();
+            HandleRecoilRecovery();
         }
-        
+
         public void ToggleControls(bool enabled)
         {
             EnableControls = enabled;
@@ -56,7 +63,8 @@ namespace UZSG.FPP
             if (enabled)
             {
                 look.Enable();
-            } else
+            }
+            else
             {
                 look.Disable();
             }
@@ -70,52 +78,45 @@ namespace UZSG.FPP
             float mouseX = lookInput.x * Sensitivity * Time.deltaTime;
             float mouseY = lookInput.y * Sensitivity * Time.deltaTime;
 
-            verticalRotation -= mouseY;
-            verticalRotation = Mathf.Clamp(verticalRotation, -89f, 89f); 
-            transform.localEulerAngles = new Vector3(verticalRotation, transform.localEulerAngles.y + mouseX, 0f);
+            _verticalRotation -= mouseY;
+            _verticalRotation = Mathf.Clamp(_verticalRotation, -89f, 89f);
+            _horizontalRotation += mouseX;
+
+            transform.localEulerAngles = new Vector3(
+                _verticalRotation + _currentVerticalRecoil,
+                _horizontalRotation + _currentHorizontalRecoil,
+                0f
+            );
+        }
+
+        void HandleRecoilRecovery()
+        {
+            if (_isRecoiling)
+            {
+                var time = Time.deltaTime;
+                // var time = Game.Tick.SecondsPerTick * Time.deltaTime;
+                _currentVerticalRecoil = Mathf.Lerp(_currentVerticalRecoil, 0f, time / _recoilRecoverySpeedCached);
+                _currentHorizontalRecoil = Mathf.Lerp(_currentHorizontalRecoil, 0f, time / _recoilRecoverySpeedCached);
+
+                if (Mathf.Abs(_currentVerticalRecoil) < 0.01f && Mathf.Abs(_currentHorizontalRecoil) < 0.01f)
+                {
+                    _recoilRecoverySpeedCached = 0f;
+                    _isRecoiling = false;
+                }
+            }
+        }
+
+        public void AddRecoilMotion(RecoilAttributes recoilInfo)
+        {
+            _currentVerticalRecoil += -recoilInfo.VerticalRecoilAmount;
+            _currentHorizontalRecoil += recoilInfo.HorizontalRecoilAmount * recoilInfo.HorizontalRecoilDirection;
+            _recoilRecoverySpeedCached = recoilInfo.RecoilRecoverySpeed;
+            _isRecoiling = true;
         }
 
         void CursorToggledCallback(bool isVisible)
         {
             ToggleControls(!isVisible);
         }
-
-        // public void SetBob(BobSetting b)
-        // {
-        //     Amplitude = b.Amplitude;
-        //     Frequency = b.Frequency;
-        // }
-
-        // void ApplyForwardBob()
-        // {
-        //     if (!EnableBobbing) return;
-        //     if (!Player.Controls.IsGrounded) return;
-        //     if (Player.Controls.HorizontalSpeed < MinMoveSpeed) return;
-
-        //     Vector3 camBob = _origin;
-        //     Vector3 weaponBob = WeaponOrigin;
-        //     float frequency = Time.time * Frequency;
-        //     float sine = Mathf.Sin(frequency);
-        //     float cosine = Mathf.Cos(frequency / 2);
-
-        //     camBob += mainCamera.transform.right * (cosine * Amplitude * 2f);
-        //     camBob += mainCamera.transform.up * (sine * Amplitude);
-        //     // weaponBob += mainCamera.transform.right * (cosine * Amplitude * 0.5f);
-        //     // weaponBob += -mainCamera.transform.up * (sine * Amplitude * 0.5f);
-            
-        //     // _framePosition += camBob;
-        //     LocMotion(camBob);
-
-        //     /// This makes the bobbing speed per the TPS
-        //     // if (bobLerpTimer < Game.Tick.SecondsPerTick)
-        //     // {
-        //     //     bobLerpTimer += Time.time;                    
-        //     //     virtualCamera.transform.localPosition = Vector3.Lerp(_camOrigin, camBob, bobLerpTimer / Game.Tick.SecondsPerTick);
-        //     //     // WeaponHolder.transform.localPosition = Vector3.Lerp(WeaponOrigin, weaponBob, bobLerpTimer / Game.Tick.SecondsPerTick);
-        //     // } else
-        //     // {
-        //     //     bobLerpTimer = 0f;
-        //     // }
-        // }
     }
 }

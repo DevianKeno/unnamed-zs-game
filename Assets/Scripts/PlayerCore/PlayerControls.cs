@@ -176,7 +176,7 @@ namespace UZSG.Players
             Player = GetComponent<Player>();
         }
 
-        void Tick(object sender, TickEventArgs e)
+        void Tick(TickInfo e)
         {
             if (IsMoving && IsRunning)
             {
@@ -356,7 +356,7 @@ namespace UZSG.Players
             if (_previousPosition != _targetPosition)
             {
                 Vector3 displacement = _targetPosition - _previousPosition;
-                rb.velocity = displacement / Game.Tick.SecondsPerTick; // Will break if SecondsPerTick is 0
+                rb.velocity = displacement / Game.Tick.SecondsPerTick;
             }
             else
             {

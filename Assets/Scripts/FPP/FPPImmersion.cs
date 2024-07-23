@@ -34,7 +34,7 @@ namespace UZSG.FPP
             _startPos = _camera.localPosition;
         }
 
-        void Tick(object sender, TickEventArgs e)
+        void Tick(TickInfo e)
         {
             if (!_enable) return;
             CheckMotion();

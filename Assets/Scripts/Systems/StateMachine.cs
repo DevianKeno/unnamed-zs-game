@@ -47,7 +47,7 @@ namespace UZSG.Systems
             Game.Tick.OnTick += Tick;
         }
 
-        void Tick(object sender, TickEventArgs e)
+        void Tick(TickInfo e)
         {
             if (InitialState != null) _currentState.Tick();
         }

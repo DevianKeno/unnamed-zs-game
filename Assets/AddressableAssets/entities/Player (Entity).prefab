@@ -1,5 +1,38 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1696359609177967074
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2415535297879970657}
+  m_Layer: 10
+  m_Name: Viewmodel Holder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2415535297879970657
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1696359609177967074}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.115, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 829306144335900370}
+  - {fileID: 575518672668688267}
+  m_Father: {fileID: 1873134562759721657}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2866568475717327878
 GameObject:
   m_ObjectHideFlags: 0
@@ -10,6 +43,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2533865650662642097}
   - component: {fileID: 4657274095525333481}
+  - component: {fileID: 7571976851007408587}
   - component: {fileID: 7376258563001316179}
   m_Layer: 10
   m_Name: Viewmodel Controller
@@ -31,8 +65,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 829306144335900370}
-  - {fileID: 575518672668688267}
   - {fileID: 1873134562759721657}
   m_Father: {fileID: 7699380848211720457}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -48,11 +80,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26a10ca446ef4fc4790d9971f66da6e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Player: {fileID: 0}
   Sensitivity: 10
   EnableControls: 1
   EnableBobbing: 1
-  player: {fileID: 8107631895800867322}
   animator: {fileID: 5673032007966455148}
+--- !u!114 &7571976851007408587
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2866568475717327878}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ff42c43a49741e47924e7285b0697bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Enable: 1
+  Smoothness: 3
+  Multiplier: 1
+  MaxSwayAngleX: 15
+  MaxSwayAngleY: 10
+  RotationOffset: {x: 0, y: 0, z: 0}
+  viewmodelHolder: {fileID: 2415535297879970657}
 --- !u!114 &7376258563001316179
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -344,7 +395,7 @@ GameObject:
   - component: {fileID: 1873134562759721657}
   - component: {fileID: 5673032007966455148}
   m_Layer: 0
-  m_Name: Camera Holder
+  m_Name: Camera Controller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -364,6 +415,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7017140821926563795}
+  - {fileID: 2415535297879970657}
   m_Father: {fileID: 2533865650662642097}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &5673032007966455148
@@ -786,7 +838,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2533865650662642097}
+  m_Father: {fileID: 2415535297879970657}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7057467972537837280
 GameObject:
@@ -817,7 +869,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2533865650662642097}
+  m_Father: {fileID: 2415535297879970657}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &9031321928697203625
 GameObject:

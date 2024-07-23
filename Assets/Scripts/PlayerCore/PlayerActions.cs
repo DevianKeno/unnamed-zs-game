@@ -178,7 +178,7 @@ namespace UZSG.Players
 
         #endregion
 
-        void Tick(object sender, TickEventArgs e)
+        void Tick(TickInfo e)
         {
             CheckLookingAt();
         }

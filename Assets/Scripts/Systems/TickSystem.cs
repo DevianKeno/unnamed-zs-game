@@ -3,18 +3,19 @@ using UnityEngine;
 
 namespace UZSG.Systems
 {
-    public struct TickEventArgs
+    public struct TickInfo
     {
-        public int _tick;
-        public readonly int Tick => _tick;
-        public float _deltaTime;
+        /// <summary>
+        /// The current tick progress index, which ranges from 0 to max TPS.
+        /// </summary>
+        public int Tick { get; set; }
         /// <summary>
         /// The time it took to complete this tick.
         /// </summary>
-        public readonly float DeltaTime => _deltaTime;
+        public float DeltaTime  { get; set; }
     }
 
-    public struct SecondEventArgs
+    public struct SecondInfo
     {
     }
 
@@ -23,19 +24,20 @@ namespace UZSG.Systems
     /// </summary>
     public sealed class TickSystem : MonoBehaviour
     {
-        [Header("Defaults")]
-        [SerializeField] int DefaultTPS = 60;
-        [SerializeField] int MaxTPS = 10000;
-        
-        [Header("Current")]
-        [SerializeField] bool _isFrozen = false;
-        public bool IsFrozen => _isFrozen;
+        public const int MaxTPS = 10000;
+
         [SerializeField] int _ticksPerSecond;
-        public int TicksPerSecond => _ticksPerSecond;
-        public int TPS => _ticksPerSecond;
+        public int TPS
+        {
+            get { return _ticksPerSecond; }
+            set
+            {
+                SetTPS(value);
+            }
+        }
+        
         [SerializeField] float _secondsPerTick;
         public float SecondsPerTick => _secondsPerTick;
-        int _cachedTicksPerSecond;
 
         [Header("Lifetime")]
         [SerializeField] int _currentTick;
@@ -56,17 +58,27 @@ namespace UZSG.Systems
         /// </summary>
         public float DeltaTick => _deltaTick;
 
+        [SerializeField] bool _isFrozen = false;
+        public bool IsFrozen => _isFrozen;
+
+
         #region Events
         /// <summary>
         /// Called every game tick.
         /// </summary>
-        public event EventHandler<TickEventArgs> OnTick;
+        public event Action<TickInfo> OnTick;
         /// <summary>
         /// Called every real-time second.
         /// </summary>
-        public event EventHandler<SecondEventArgs> OnSecond;
+        public event Action<SecondInfo> OnSecond;
         
         #endregion
+
+
+        void OnValidate()
+        {
+            _secondsPerTick = 1 / (_ticksPerSecond <= 0f ? 0.01f : _ticksPerSecond);
+        }
 
         void Update()
         {
@@ -76,9 +88,10 @@ namespace UZSG.Systems
 
             if (_deltaTick >= _secondsPerTick)
             {
-                OnTick?.Invoke(this, new TickEventArgs{
-                    _tick = _currentTick,
-                    _deltaTime = _deltaTick
+                OnTick?.Invoke(new()
+                {
+                    Tick = _currentTick,
+                    DeltaTime = _deltaTick,
                 });
 
                 _deltaTick -= _secondsPerTick;
@@ -87,7 +100,7 @@ namespace UZSG.Systems
 
                 if (_currentTick >= _ticksPerSecond)
                 {
-                    OnSecond?.Invoke(this, new SecondEventArgs());
+                    OnSecond?.Invoke(new());
 
                     _currentTick -= _ticksPerSecond;
                     _secondsElapsed++;
@@ -97,52 +110,39 @@ namespace UZSG.Systems
 
         internal void Initialize()
         {
-            _ticksPerSecond = DefaultTPS;
-            _secondsPerTick = 1f / DefaultTPS;
+            SetTPS(TPS);
         }
 
         public void SetTPS(int value)
         {
-            if (value < 0)
-            {
-                Debug.LogWarning("TPS cannot be a negative value.");
-                return;
-            }
-
+            value = Mathf.Clamp(value, 0, MaxTPS);
             if (value == 0)
             {
-                SetFreezed(true);
+                SetFrozen(true);
                 return;
             }
 
-            if (_isFrozen) SetFreezed(false);
-
-            if (value > MaxTPS)
+            if (_isFrozen)
             {
-                _ticksPerSecond = MaxTPS;
-            } else
-            {
-                _ticksPerSecond = value;
+                SetFrozen(false);
             }
+            _ticksPerSecond = value;
             _secondsPerTick = 1f / _ticksPerSecond;
         }
 
-        public void SetFreezed(bool value)
+        public void SetFrozen(bool value)
         {
             _isFrozen = value;
 
             if (value)
             {
-                _cachedTicksPerSecond = _ticksPerSecond;
-                _ticksPerSecond = 0;
-                _secondsPerTick = 0f;
                 _deltaTick = 0f;
-            } else
+            }
+            else
             {
-                _ticksPerSecond = _cachedTicksPerSecond;
+                /// Reinitialize tick settings if not frozen
                 _secondsPerTick = 1f / _ticksPerSecond;
             }
         }
     }
 }
-

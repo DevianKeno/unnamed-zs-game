@@ -86,7 +86,7 @@ namespace UZSG.Entities
             Game.Tick.OnSecond += Second;
         }
 
-        void Second(object sender, SecondEventArgs e)
+        void Second(SecondInfo e)
         {
             Age -= 1;
             if (Age < 0)

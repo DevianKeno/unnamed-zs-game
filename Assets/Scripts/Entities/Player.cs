@@ -172,7 +172,7 @@ namespace UZSG.Entities
             MoveStateMachine.States[MoveStates.Crouch].OnEnter += OnCrouchEnter;      
         }
 
-        void Tick(object sender, TickEventArgs e)
+        void Tick(TickInfo e)
         {
         }
 

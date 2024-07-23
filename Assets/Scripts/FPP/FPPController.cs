@@ -35,10 +35,10 @@ namespace UZSG.FPP
         public WeaponData CurrentWeaponData => _currentlyEquippedWeapon.WeaponData;
         
         [Header("Controllers")]
-        [SerializeField] FPPCameraController camController;
-        public FPPCameraController CameraController => camController;
-        [SerializeField] ViewmodelController viewmodelController;
-        public ViewmodelController ViewmodelController => viewmodelController;
+        [SerializeField] FPPCameraController cameraController;
+        public FPPCameraController CameraController => cameraController;
+        [SerializeField] FPPViewmodelController viewmodelController;
+        public FPPViewmodelController ViewmodelController => viewmodelController;
 
         Animator armsAnimator;
         Animator weaponAnimator;
@@ -52,7 +52,7 @@ namespace UZSG.FPP
         internal void Initialize()
         {
             InitializeEvents();
-            camController.Initialize();
+            cameraController.Initialize();
             
             var handsWeaponData = Resources.Load<WeaponData>("Data/weapons/hands");
             LoadAndEquip(handsWeaponData, HotbarIndex.Hands);
@@ -215,17 +215,17 @@ namespace UZSG.FPP
             switch (e.To)
             {                
                 case MoveStates.Idle:
-                    camController.Animator.CrossFade("idle", 0.1f);
+                    cameraController.Animator.CrossFade("idle", 0.1f);
                     break;
 
                 case MoveStates.Walk:
-                    camController.Animator.speed = 1f;
-                    camController.Animator.CrossFade("forward_bob", 0.1f);
+                    cameraController.Animator.speed = 1f;
+                    cameraController.Animator.CrossFade("forward_bob", 0.1f);
                     break;
 
                 case MoveStates.Run:
-                    camController.Animator.speed = 1.6f;
-                    camController.Animator.CrossFade("forward_bob", 0.1f);
+                    cameraController.Animator.speed = 1.6f;
+                    cameraController.Animator.CrossFade("forward_bob", 0.1f);
                     break;
             }
         }
@@ -272,7 +272,7 @@ namespace UZSG.FPP
             if (_currentlyEquippedWeapon is GunWeapon weapon)
             {
                 var recoilInfo = currentWeaponData.RangedAttributes.RecoilAttributes;
-                camController.AddRecoilMotion(recoilInfo);
+                cameraController.AddRecoilMotion(recoilInfo);
             }
         }
 

@@ -17,11 +17,6 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: 4df500ee1f95bb542be6e196e4ad9a8d
   m_SerializeEntries:
-  - m_GUID: 2f4d5fc6ba2a38246accad4c09188c98
-    m_Address: Assets/Sprites
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c9dad82ad54450641ba90ad44e5b219f
     m_Address: Assets/AddressableAssets
     m_ReadOnly: 0

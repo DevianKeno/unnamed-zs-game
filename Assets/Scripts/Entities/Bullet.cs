@@ -162,7 +162,6 @@ namespace UZSG.Entities
             _previousPosition = transform.position;
             _velocity = ApplySpread(player.Forward, Attributes.Spread);
             _checkDistance = Attributes.MinRenderDistance > 0;
-            // rb.velocity = ApplySpread(player.Forward, Attributes.Spread) * Attributes.Speed;
             
             transform.SetPositionAndRotation(
                 player.EyeLevel,

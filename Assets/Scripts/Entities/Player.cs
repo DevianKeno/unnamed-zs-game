@@ -91,11 +91,9 @@ namespace UZSG.Entities
             Controls.Initialize();
             Actions.Initialize();
             FPP.Initialize();
-            
-            // Game.UI.HUD.BindPlayer(this);
-            // Game.UI.HUD.ToggleVisibility(true);
+            ParentMainCameraToFPPController();
+
             Game.Tick.OnTick += Tick;
-            
             OnDoneInit?.Invoke(this, new());
         }
 
@@ -170,6 +168,11 @@ namespace UZSG.Entities
             MoveStateMachine.States[MoveStates.Run].OnEnter += OnRunEnter;
             MoveStateMachine.States[MoveStates.Jump].OnEnter += OnJumpEnter;
             MoveStateMachine.States[MoveStates.Crouch].OnEnter += OnCrouchEnter;      
+        }
+
+        void ParentMainCameraToFPPController()
+        {
+            Camera.main.transform.parent = FPP.CameraController.Camera.transform;
         }
 
         void Tick(TickInfo e)

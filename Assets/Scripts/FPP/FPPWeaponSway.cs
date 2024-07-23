@@ -6,6 +6,8 @@ namespace UZSG.FPP
 {
     public class FPPWeaponSway : MonoBehaviour
     {
+        [SerializeField] Transform viewmodelHolder;
+        
         [Header("Sway Settings")]
         public bool Enable = true;
         [Tooltip("How smooth the sway transitions are.")]
@@ -24,7 +26,6 @@ namespace UZSG.FPP
         public Vector3 RotationOffset = Vector3.zero;
 
         InputAction lookInput;
-        [SerializeField] Transform viewmodelHolder;
 
         void Start()
         {

@@ -6,6 +6,7 @@ using UZSG.Systems;
 using UZSG.Entities;
 using UZSG.Players;
 using UZSG.Items.Weapons;
+using UnityEngine.Rendering.Universal;
 
 namespace UZSG.FPP
 {
@@ -17,24 +18,27 @@ namespace UZSG.FPP
         public float Sensitivity;
         public bool EnableControls = true;
         public bool EnableBobbing = true;
+
         float _verticalRotation = 0f;
         float _horizontalRotation = 0f;
-
         bool _isRecoiling;
         float _currentVerticalRecoil;
         float _currentHorizontalRecoil;
         float _recoilRecoverySpeedCached = 0f;
 
+        Dictionary<string, InputAction> inputs;
+        InputActionMap actionMap;
+        InputAction look;
+
         [Header("Components")]
+        [SerializeField] Camera FPPCamera;
+        public Camera Camera => FPPCamera;
         [SerializeField] Animator animator;
         public Animator Animator => animator;
         
-        InputActionMap actionMap;
-        InputAction look;
-        Dictionary<string, InputAction> inputs;
-
         internal void Initialize()
         {
+            Camera.main.GetUniversalAdditionalCameraData().cameraStack.Add(FPPCamera);
             InitializeInputs();
         }
 

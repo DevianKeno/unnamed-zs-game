@@ -56,9 +56,9 @@ MonoBehaviour:
     BulletAttributes:
       Scale: 1
       Speed: 370
-      Spread: 4
+      Spread: 3
       GravityScale: 0
-      MinRenderDistance: 16
+      MinRenderDistance: 10
     RecoilAttributes:
       VerticalRecoilAmount: 2
       VerticalRecoilRandomness: 0

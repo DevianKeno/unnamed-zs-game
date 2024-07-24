@@ -128,6 +128,7 @@ namespace UZSG.Systems
             }
             _ticksPerSecond = value;
             _secondsPerTick = 1f / _ticksPerSecond;
+            _currentTick = 0;
         }
 
         public void SetFrozen(bool value)

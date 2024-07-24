@@ -88,6 +88,8 @@ namespace UZSG.Systems
             FreeLookCamera.InitializeInputs(); /// DEBUGGING ONLY
         }
 
+        public TimeController timeController;
+
         void InitializeManagers()
         {
             /// The console is initialized first thing
@@ -103,6 +105,9 @@ namespace UZSG.Systems
             attrManager.Initialize();
             itemManager.Initialize();
             entityManager.Initialize();
+
+            /// DEBUGGING ONLY
+            timeController.Initialize();
 
             #endregion            
 

@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53e3907a83a91d44fafffcd5e59dab0d, type: 3}
+  m_Name: apple
+  m_EditorClassIdentifier: 
+  Model:
+    m_AssetGUID: 
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  Id: apple
+  Name: 
+  Description: A shiny red apple
+  Sprite: {fileID: 0}
+  Type: 0
+  StackSize: 999
+  Subtype: 1
+  IsMaterial: 1
+  recoveredAttributes:
+  - Attribute: {fileID: 11400000, guid: e1db9201565269c4caebcb12298f0665, type: 2}
+    Restore: 5
+    IsOverTime: 0
+  - Attribute: {fileID: 11400000, guid: 1163b94315ee82b43880f69e4567d600, type: 2}
+    Restore: 10
+    IsOverTime: 1
+  foodStatus:
+    CanBeCooked: 1
+    IsBurnt: 0
+    CanSpoil: 1

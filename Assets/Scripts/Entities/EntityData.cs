@@ -7,7 +7,7 @@ using UZSG.Attributes;
 namespace UZSG.Entities
 {
     [Serializable]
-    [CreateAssetMenu(fileName = "EntityData", menuName = "URMG/Entity Data/Entity Data")]
+    [CreateAssetMenu(fileName = "New Entity Data", menuName = "UZSG/Entity/Entity Data")]
     public class EntityData : ScriptableObject
     {
         public AssetReference AssetReference;

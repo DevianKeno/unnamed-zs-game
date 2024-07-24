@@ -38,7 +38,6 @@ namespace UZSG.FPP
         [SerializeField] FPPCameraController cameraController;
         public FPPCameraController CameraController => cameraController;
         [SerializeField] FPPViewmodelController viewmodelController;
-        public FPPViewmodelController ViewmodelController => viewmodelController;
 
         Animator armsAnimator;
         Animator weaponAnimator;

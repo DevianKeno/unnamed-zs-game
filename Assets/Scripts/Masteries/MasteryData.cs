@@ -5,7 +5,7 @@ using UnityEngine;
 namespace UZSG.Masteries
 {
     [Serializable]
-    [CreateAssetMenu(fileName = "Mastery Data", menuName = "URMG/Mastery Data")]
+[CreateAssetMenu(fileName = "New Mastery Data", menuName = "UZSG/Mastery Data")]
     public class MasteryData : ScriptableObject
     {
         public string Id;

@@ -9,7 +9,7 @@ namespace UZSG.Items
     public enum ItemSubtype { None, Consumable, Tool, Weapon, Equipable, Accessory }
 
     [Serializable]
-    [CreateAssetMenu(fileName = "Item", menuName = "URMG/Item")]
+    [CreateAssetMenu(fileName = "New Item Data", menuName = "UZSG/Item Data")]
     public class ItemData : ScriptableObject
     {
         [Header("Item Attributes")]
@@ -18,8 +18,8 @@ namespace UZSG.Items
         public string Name;
         [TextArea] public string Description;
         public Sprite Sprite;
-        public int StackSize;
         public ItemType Type;
+        public int StackSize;
         public ItemSubtype Subtype;
         public bool IsMaterial;
     }

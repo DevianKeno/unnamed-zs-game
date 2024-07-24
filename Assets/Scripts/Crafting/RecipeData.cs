@@ -3,7 +3,7 @@ using UZSG.Items;
 
 namespace UZSG.Crafting
 {
-    [CreateAssetMenu(fileName = "Recipe Data", menuName = "URMG/Recipe Data")]
+    [CreateAssetMenu(fileName = "New Recipe Data", menuName = "UZSG/Recipe Data")]
     public class RecipeData : ScriptableObject
     {
         public string Id;

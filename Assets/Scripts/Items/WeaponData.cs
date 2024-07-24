@@ -87,7 +87,7 @@ namespace UZSG.Items.Weapons
     }
 
     public enum WeaponCategory { Melee, Ranged }
-    public enum WeaponMeleeType { Blunt, Bladed }
+    public enum WeaponMeleeType { None, Blunt, Bladed }
     public enum WeaponBluntType { None, Bat, Hammer }
     public enum WeaponBladedType { None, Sword, Knife, Katana, Axe }
     public enum WeaponRangedType { None, Handgun, Shotgun, SMG, AssaultRifle, SniperRifle, MachineGun }
@@ -95,7 +95,7 @@ namespace UZSG.Items.Weapons
     /// <summary>
     /// Represents the various data a Weapon has.
     /// </summary>
-    [CreateAssetMenu(fileName = "Weapon", menuName = "UZSG/Weapon")]
+    [CreateAssetMenu(fileName = "New Weapon Data", menuName = "UZSG/Weapon Data")]
     [Serializable]
     public class WeaponData : ItemData, IFPPVisible
     {

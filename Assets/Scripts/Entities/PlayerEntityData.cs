@@ -8,7 +8,7 @@ namespace UZSG.Entities
     /// EntityData class made specifically for Player entities.
     /// </summary>
     [Serializable]
-    [CreateAssetMenu(fileName = "EntityData", menuName = "URMG/Entity Data/Player Entity Data")]
+    [CreateAssetMenu(fileName = "New Player Entity Data", menuName = "UZSG/Entity/Player Entity Data")]
     public class PlayerEntityData : EntityData
     {        
         [Header("Attributes")]

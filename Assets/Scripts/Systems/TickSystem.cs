@@ -57,6 +57,11 @@ namespace UZSG.Systems
         /// The interval in seconds from the last tick to the current tick.
         /// </summary>
         public float DeltaTick => _deltaTick;
+        [SerializeField] float _deltaSPT;
+        public float DeltaSPT
+        {
+            get => Mathf.Lerp(0, _secondsPerTick, _currentTick / _ticksPerSecond);
+        }
 
         [SerializeField] bool _isFrozen = false;
         public bool IsFrozen => _isFrozen;

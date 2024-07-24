@@ -38,8 +38,8 @@ namespace UZSG.FPP
             GameObject arms = null;
             GameObject weapon = null;
 
-            var armsTask = IsAssetReferenceSet(obj.ArmsViewmodel) ? LoadAssetReferenceAsync(obj.ArmsViewmodel) : Task.FromResult(new LoadAssetReferenceContext());
-            var weaponTask = IsAssetReferenceSet(obj.WeaponViewmodel) ? LoadAssetReferenceAsync(obj.WeaponViewmodel) : Task.FromResult(new LoadAssetReferenceContext());
+            var armsTask = Utils.IsAssetReferenceSet(obj.ArmsViewmodel) ? LoadAssetReferenceAsync(obj.ArmsViewmodel) : Task.FromResult(new LoadAssetReferenceContext());
+            var weaponTask = Utils.IsAssetReferenceSet(obj.WeaponViewmodel) ? LoadAssetReferenceAsync(obj.WeaponViewmodel) : Task.FromResult(new LoadAssetReferenceContext());
 
             var armsResult = await armsTask;
             if (armsResult.Status == AsyncOperationStatus.Succeeded)
@@ -83,11 +83,6 @@ namespace UZSG.FPP
             {
                 other.Weapon.SetActive(true);
             }
-        }
-        
-        public bool IsAssetReferenceSet(AssetReference assetReference)
-        {
-            return assetReference != null && assetReference.RuntimeKeyIsValid() && !string.IsNullOrEmpty(assetReference.AssetGUID);
         }
     }
 }

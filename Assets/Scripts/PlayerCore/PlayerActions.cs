@@ -235,7 +235,12 @@ namespace UZSG.Players
                 {
                     if (WeaponData.TryGetWeaponData(item.Data, out WeaponData weaponData))
                     {
-                        Player.FPP.LoadAndEquip(weaponData, index);
+                        if (weaponData.HasViewmodel())
+                        {
+                            Player.FPP.LoadViewmodel(weaponData, index);
+                        }
+
+                        Player.FPP.EquipIndex(index);
                     }
                 }
             }

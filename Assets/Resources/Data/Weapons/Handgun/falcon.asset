@@ -36,7 +36,7 @@ MonoBehaviour:
     BaseCritStrike: 0
     BaseCritDamage: 0
   RangedAttributes:
-    FiringModes: 2
+    FiringModes: -1
     RoundsPerMinute: 267
     ClipSize: 7
     ReloadSpeed: 1

@@ -54,7 +54,7 @@ namespace UZSG.FPP
             cameraController.Initialize();
             
             var handsWeaponData = Resources.Load<WeaponData>("Data/weapons/hands");
-            LoadAndEquip(handsWeaponData, HotbarIndex.Hands);
+            LoadViewmodel(handsWeaponData, HotbarIndex.Hands);
             Game.UI.ToggleCursor(false);
         }
 
@@ -69,7 +69,7 @@ namespace UZSG.FPP
         /// <summary>
         /// Cache FPP model and data.
         /// </summary>
-        public void LoadAndEquip(IFPPVisible obj, HotbarIndex index, OnLoadViewModelCompleted callback = null)
+        public void LoadViewmodel(IFPPVisible obj, HotbarIndex index, OnLoadViewModelCompleted callback = null)
         {
             viewmodelController.LoadViewmodelAsync(obj, (viewmodel) =>
             {

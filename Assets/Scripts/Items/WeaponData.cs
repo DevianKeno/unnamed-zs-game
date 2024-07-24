@@ -123,5 +123,11 @@ namespace UZSG.Items.Weapons
             weaponData = item as WeaponData;
             return weaponData != null;
         }
+
+        public bool HasViewmodel()
+        {
+            return Utils.IsAssetReferenceSet(armsViewmodel)
+                || Utils.IsAssetReferenceSet(weaponViewmodel);
+        }
     }
 }

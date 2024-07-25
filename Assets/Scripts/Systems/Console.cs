@@ -99,6 +99,10 @@ namespace UZSG.Systems
             CreateCommand("tick <set|freeze> [value]",
                           "Manipulate in-game tick system.")
                           .OnInvoke += CTick;
+                          
+            CreateCommand("time <set> <value>",
+                          "")
+                          .OnInvoke += CTime;
 
             CreateCommand("world <create|load> <world_name>",
                           "")

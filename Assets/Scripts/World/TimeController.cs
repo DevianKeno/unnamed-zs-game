@@ -12,69 +12,81 @@ namespace UZSG.WorldBuilder
         public Light MoonLight;
         public Gradient DayColors;
         public Gradient NightColors;
-        public float CurrentTime;
-        public int CurrentDay;
-        public int DayLength = 2160;
+        public Color DayFogColor;
+        public Color NightFogColor;
+        public int TwentyFourHourTime;
+        [SerializeField] float _currentTime;
+        public float CurrentTime
+        {
+            get { return _currentTime; } 
+        }
 
+        public int CurrentDay;
+        int _dayLength = 2160;
+
+        
         public void Initialize()
         {
             Game.Tick.OnTick += OnTick;
-            CurrentTime = 0;
+            _currentTime = 0;
             CurrentDay = 0;
         }
 
-        private void OnTick(TickInfo info)
+        void OnValidate()
+        {
+            if (Application.isPlaying) return;
+            if (_currentTime > _dayLength)
+            {
+                TwentyFourHourTime = 0;
+                CurrentDay++;
+            }
+
+            UpdateCelestialBodies();
+
+            SetTime(TwentyFourHourTime);
+        }
+
+        void OnTick(TickInfo info)
         {
             float tickThreshold = Game.Tick.TPS / 64f;
 
-            CurrentTime += ((Game.Tick.SecondsPerTick * (Game.Tick.CurrentTick / 32f)) * tickThreshold);
-            CalculateDay();
+            _currentTime += ((Game.Tick.SecondsPerTick * (Game.Tick.CurrentTick / 32f)) * tickThreshold);
+            TwentyFourHourTime = Mathf.FloorToInt(_currentTime / _dayLength * 2400f);
+            IncrementDay();
             UpdateCelestialBodies();
         }
 
-        public void CalculateDay()
+        void IncrementDay()
         {
-            if (CurrentTime > DayLength)
+            if (_currentTime > _dayLength)
             {
-                CurrentTime = 0;
+                _currentTime = 0;
                 CurrentDay++;
             }
         }
 
-        private void OnValidate()
+        void UpdateCelestialBodies()
         {
-            if (CurrentTime > DayLength)
-            {
-                CurrentTime = 0;
-                CurrentDay++;
-            }
+            float time = _currentTime / _dayLength;
+            float sunAngle = (time * 360f + 270f) % 360f;
+            float moonAngle = (sunAngle + 180f) % 360f;
 
-            UpdateCelestialBodies();
-        }
-
-        public void UpdateCelestialBodies()
-        {
-            float timeOfDay = CurrentTime / DayLength;
-            float timeOfNight = CurrentTime / DayLength;
-            float sunAngle = timeOfDay * 360f;
-            float moonAngle = (timeOfDay + 0.5f) % 1f * 360f;
-
-            // Update Sun
             Vector3 sunRotation = new Vector3(sunAngle, 0, 0);
             SunLight.transform.rotation = Quaternion.Euler(sunRotation);
 
-            // Update Moon
             Vector3 moonRotation = new Vector3(moonAngle, 0, 0);
             MoonLight.transform.rotation = Quaternion.Euler(moonRotation);
 
-            /// Sample the color from the gradient for the Sun
+            UpdateSunLight(sunAngle, time);
+            UpdateMoonLight(moonAngle, time);
+            UpdateFogColor(time);
+        }
+
+        void UpdateSunLight(float sunAngle, float timeOfDay)
+        {
             Color sunColor = DayColors.Evaluate(timeOfDay);
             SunLight.color = sunColor;
 
-            Color moonColor = NightColors.Evaluate(timeOfNight);
-            MoonLight.color = moonColor;
-
-            /// Sun emits light between 0 and 180 degrees
             if (sunAngle >= 0 && sunAngle <= 180)
             {
                 SunLight.intensity = 4;
@@ -83,8 +95,12 @@ namespace UZSG.WorldBuilder
             {
                 SunLight.intensity = 0;
             }
+        }
+        void UpdateMoonLight(float moonAngle, float timeOfNight)
+        {
+            Color moonColor = NightColors.Evaluate(timeOfNight);
+            MoonLight.color = moonColor;
 
-            /// Moon emits light between 180 and 360 degrees
             if (moonAngle >= 0 && moonAngle <= 180)
             {
                 MoonLight.intensity = 1;
@@ -93,6 +109,55 @@ namespace UZSG.WorldBuilder
             {
                 MoonLight.intensity = 0;
             }
+        }
+
+        void UpdateFogColor(float time)
+        {
+            const float dayStart = 0.25f;
+            const float dayEnd = 0.75f;
+
+            Color fogColor;
+            float fogDensity;
+
+            if (time >= dayStart && time < dayEnd)
+            {
+                fogColor = DayFogColor;
+                fogDensity = 0.005f;
+            }
+            else
+            {
+                fogColor = NightFogColor;
+                fogDensity = 0.05f;
+            }
+
+            if (time < dayStart)
+            {
+                float t = Mathf.InverseLerp(0f, dayStart, time);
+                fogColor = Color.Lerp(NightFogColor, DayFogColor, t);
+                fogDensity = Mathf.Lerp(0.05f, 0.005f, t);
+            }
+            else if (time >= dayEnd)
+            {
+                float t = Mathf.InverseLerp(dayEnd, 1f, time);
+                fogColor = Color.Lerp(DayFogColor, NightFogColor, t);
+                fogDensity = Mathf.Lerp(0.005f, 0.05f, t);
+            }
+
+            RenderSettings.fogColor = fogColor;
+            RenderSettings.fogDensity = fogDensity;
+        }
+
+        public void SetTime(int time)
+        {
+            float dayFraction = (float)time / 2400f;
+            _currentTime = dayFraction * _dayLength;
+
+            UpdateCelestialBodies();
+        }
+
+        public void ShowTime()
+        {
+            Debug.Log("Current Time: " + TwentyFourHourTime);
         }
     }
 }

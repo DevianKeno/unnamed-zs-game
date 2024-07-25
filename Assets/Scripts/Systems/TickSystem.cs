@@ -5,23 +5,14 @@ namespace UZSG.Systems
 {
     public struct TickInfo
     {
-        /// <summary>
-        /// The current tick progress index, which ranges from 0 to max TPS.
-        /// </summary>
         public int Tick { get; set; }
-        /// <summary>
-        /// The time it took to complete this tick.
-        /// </summary>
-        public float DeltaTime  { get; set; }
+        public float DeltaTime { get; set; }
     }
 
     public struct SecondInfo
     {
     }
 
-    /// <summary>
-    /// Game's internal Tick system.
-    /// </summary>
     public sealed class TickSystem : MonoBehaviour
     {
         public const int MaxTPS = 10000;
@@ -30,85 +21,76 @@ namespace UZSG.Systems
         public int TPS
         {
             get { return _ticksPerSecond; }
-            set
-            {
-                SetTPS(value);
-            }
+            set { SetTPS(value); }
         }
-        
+
         [SerializeField] float _secondsPerTick;
         public float SecondsPerTick => _secondsPerTick;
 
         [Header("Lifetime")]
         [SerializeField] int _currentTick;
-        /// <summary>
-        /// The tick in the current second, which is a number between 0 and TicksPerSecond.
-        /// </summary>
         public int CurrentTick => _currentTick;
         [SerializeField] int _totalTicks;
-        /// <summary>
-        /// Total number of ticks.
-        /// </summary>
         public int TotalTicks => _totalTicks;
         [SerializeField] int _secondsElapsed = 0;
 
         float _deltaTick = 0f;
-        /// <summary>
-        /// The interval in seconds from the last tick to the current tick.
-        /// </summary>
         public float DeltaTick => _deltaTick;
         [SerializeField] float _deltaSPT;
-        public float DeltaSPT
-        {
-            get => Mathf.Lerp(0, _secondsPerTick, _currentTick / _ticksPerSecond);
-        }
+        public float DeltaSPT => Mathf.Lerp(0, _secondsPerTick, (float)_currentTick / _ticksPerSecond);
 
         [SerializeField] bool _isFrozen = false;
         public bool IsFrozen => _isFrozen;
 
+        private float _lastRealTime;
 
         #region Events
-        /// <summary>
-        /// Called every game tick.
-        /// </summary>
         public event Action<TickInfo> OnTick;
-        /// <summary>
-        /// Called every real-time second.
-        /// </summary>
         public event Action<SecondInfo> OnSecond;
-        
         #endregion
-
 
         void OnValidate()
         {
-            _secondsPerTick = 1 / (_ticksPerSecond <= 0f ? 0.01f : _ticksPerSecond);
+            _secondsPerTick = 1f / (_ticksPerSecond <= 0 ? 0.01f : _ticksPerSecond);
+        }
+
+        void Start()
+        {
+            _lastRealTime = Time.realtimeSinceStartup;
         }
 
         void Update()
         {
             if (_isFrozen) return;
 
-            _deltaTick += Time.deltaTime;
+            float currentTime = Time.realtimeSinceStartup;
+            float elapsedTime = currentTime - _lastRealTime;
+            _lastRealTime = currentTime;
 
-            if (_deltaTick >= _secondsPerTick)
+            _deltaTick += elapsedTime;
+
+            int ticksToProcess = Mathf.FloorToInt(_deltaTick / _secondsPerTick);
+            if (ticksToProcess > 0)
             {
-                OnTick?.Invoke(new()
+                _deltaTick -= ticksToProcess * _secondsPerTick;
+                for (int i = 0; i < ticksToProcess; i++)
                 {
-                    Tick = _currentTick,
-                    DeltaTime = _deltaTick,
-                });
+                    OnTick?.Invoke(new TickInfo
+                    {
+                        Tick = _currentTick,
+                        DeltaTime = _secondsPerTick,
+                    });
 
-                _deltaTick -= _secondsPerTick;
-                _currentTick++;
-                _totalTicks++;
+                    _currentTick++;
+                    _totalTicks++;
 
-                if (_currentTick >= _ticksPerSecond)
-                {
-                    OnSecond?.Invoke(new());
+                    if (_currentTick >= _ticksPerSecond)
+                    {
+                        OnSecond?.Invoke(new SecondInfo());
 
-                    _currentTick -= _ticksPerSecond;
-                    _secondsElapsed++;
+                        _currentTick = 0;
+                        _secondsElapsed++;
+                    }
                 }
             }
         }
@@ -146,7 +128,6 @@ namespace UZSG.Systems
             }
             else
             {
-                /// Reinitialize tick settings if not frozen
                 _secondsPerTick = 1f / _ticksPerSecond;
             }
         }

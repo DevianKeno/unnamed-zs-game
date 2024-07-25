@@ -8,8 +8,14 @@ using UZSG.Entities;
 
 namespace UZSG.Items.Weapons
 {
-    public class GunWeapon : EquippedWeapon
+    public interface IReloadable
     {
+        public bool TryReload(float durationSeconds);
+    }
+
+    public class GunWeaponController : WeaponController, IReloadable
+    {
+        public WeaponData WeaponData => ItemData as WeaponData;
         int _currentRounds;
         public int CurrentRounds
         {
@@ -23,25 +29,49 @@ namespace UZSG.Items.Weapons
         bool _isAimingDownSights;
 
         public event Action OnFire;
+        public event Action OnReload;
 
         GunWeaponStateMachine stateMachine;
         public GunWeaponStateMachine StateMachine => stateMachine;
         AudioSourceController audioSourceController;
 
-        [SerializeField] GunMuzzleController muzzleController;
-        [SerializeField] int burstCount = 3; // Number of rounds per burst
+        public GunMuzzleController MuzzleController;
+        [SerializeField] int burstFireCount = 3; /// Number of rounds per burst
 
         void Awake()
         {
             stateMachine = GetComponent<GunWeaponStateMachine>();
+            audioSourceController ??= gameObject.AddComponent<AudioSourceController>();
+        }
+
+        public void Initialize(GunItemEntityInfo info)
+        {
+            Initialize();
+            _currentRounds = info.Rounds;
         }
 
         public override void Initialize()
         {
-            audioSourceController ??= gameObject.AddComponent<AudioSourceController>();
-            audioSourceController.LoadAudioAssetIds(weaponData.AudioData.AudioAssetIds);
+            audioSourceController.LoadAudioAssetIds(WeaponData.AudioData, () =>
+            {
+                InitializeGunSounds();
+            });
 
-            _currentRounds = weaponData.RangedAttributes.ClipSize;
+            _currentRounds = WeaponData.RangedAttributes.ClipSize;
+        }
+
+        List<string> fireSoundIds = new();
+
+        void InitializeGunSounds()
+        {
+            foreach (AudioClip clip in audioSourceController.AudioClips)
+            {
+                var soundString = clip.name.Split('_');
+                if (soundString[0] == "fire")
+                {
+                    fireSoundIds.Add(clip.name);
+                }
+            }
         }
 
         void Update()
@@ -50,7 +80,7 @@ namespace UZSG.Items.Weapons
             {
                 _fireDelta += Time.deltaTime;
 
-                if (_fireDelta > 60f / weaponData.RangedAttributes.RoundsPerMinute)
+                if (_fireDelta > 60f / WeaponData.RangedAttributes.RoundsPerMinute)
                 {
                     _hasFired = false;
                     _fireDelta = 0f;
@@ -69,19 +99,19 @@ namespace UZSG.Items.Weapons
                 PlayRandomFireSound();
                 SpawnBulletEntity();
                 _currentRounds--;
-                muzzleController.OnFire();
+                MuzzleController?.Fire();
                 OnFire?.Invoke();
 
-                if ((weaponData.RangedAttributes.FiringModes & FiringModes.Single) == FiringModes.Single)
+                if ((WeaponData.RangedAttributes.FiringModes & FiringModes.Single) == FiringModes.Single)
                 {
                     return true;
                 }
-                else if ((weaponData.RangedAttributes.FiringModes & FiringModes.Automatic) == FiringModes.Automatic)
+                else if ((WeaponData.RangedAttributes.FiringModes & FiringModes.Automatic) == FiringModes.Automatic)
                 {
                     StartCoroutine(AutomaticFire());
                     return true;
                 }
-                else if ((weaponData.RangedAttributes.FiringModes & FiringModes.Burst) == FiringModes.Burst)
+                else if ((WeaponData.RangedAttributes.FiringModes & FiringModes.Burst) == FiringModes.Burst)
                 {
                     StartCoroutine(BurstFire());
                     return true;
@@ -99,43 +129,42 @@ namespace UZSG.Items.Weapons
 
         IEnumerator AutomaticFire()
         {
-            while ((weaponData.RangedAttributes.FiringModes & FiringModes.Automatic) == FiringModes.Automatic)
+            while ((WeaponData.RangedAttributes.FiringModes & FiringModes.Automatic) == FiringModes.Automatic)
             {
                 if (_currentRounds <= 0 || _isReloading) break;
                 PlayRandomFireSound();
                 SpawnBulletEntity();
                 _currentRounds--;
-                muzzleController.OnFire();
+                MuzzleController.Fire();
                 OnFire?.Invoke();
-                yield return new WaitForSeconds(60f / weaponData.RangedAttributes.RoundsPerMinute);
+                yield return new WaitForSeconds(60f / WeaponData.RangedAttributes.RoundsPerMinute);
             }
         }
 
         IEnumerator BurstFire()
         {
-            for (int i = 0; i < burstCount; i++)
+            for (int i = 0; i < burstFireCount; i++)
             {
                 if (_currentRounds <= 0 || _isReloading) break;
                 PlayRandomFireSound();
                 SpawnBulletEntity();
                 _currentRounds--;
-                muzzleController.OnFire();
+                MuzzleController.Fire();
                 OnFire?.Invoke();
-                yield return new WaitForSeconds(60f / weaponData.RangedAttributes.RoundsPerMinute);
+                yield return new WaitForSeconds(60f / WeaponData.RangedAttributes.RoundsPerMinute);
             }
         }
 
         void PlayRandomFireSound()
         {
-            int randIndex = UnityEngine.Random.Range(0, 4); /// magic number, subject to change
-            string audioName = $"fire{randIndex}";
-            audioSourceController.PlaySound(audioName);
+            int randIndex = UnityEngine.Random.Range(0, fireSoundIds.Count - 1);
+            audioSourceController.PlaySound(fireSoundIds[randIndex]);
         }
 
         void SpawnBulletEntity()
         {
             var player = Owner as Player;
-            var bulletInfo = weaponData.RangedAttributes.BulletAttributes;
+            var bulletInfo = WeaponData.RangedAttributes.BulletAttributes;
             Game.Entity.Spawn("bullet", (info) =>
             {
                 var bullet = info.Entity as Bullet;
@@ -149,7 +178,7 @@ namespace UZSG.Items.Weapons
             stateMachine.ToState(state);
         }
 
-        public override void SetWeaponStateFromPlayerAction(ActionStates state)
+        public override void SetStateFromAction(ActionStates state)
         {
             if (state == ActionStates.Primary)
             {
@@ -186,7 +215,7 @@ namespace UZSG.Items.Weapons
 
         public bool TryReload(float durationSeconds)
         {
-            if (_currentRounds == weaponData.RangedAttributes.ClipSize || _isReloading)
+            if (_currentRounds == WeaponData.RangedAttributes.ClipSize || _isReloading)
             {
                 return false;
             }
@@ -203,7 +232,7 @@ namespace UZSG.Items.Weapons
 
             yield return new WaitForSeconds(durationSeconds);
 
-            _currentRounds = weaponData.RangedAttributes.ClipSize; 
+            _currentRounds = WeaponData.RangedAttributes.ClipSize; 
             _isReloading = false;
             Debug.Log("Completed reload");
         }

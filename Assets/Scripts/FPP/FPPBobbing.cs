@@ -31,7 +31,7 @@ namespace UZSG.FPP
         
         void Start()
         {
-            startPosition = Vector3.zero;
+            startPosition = transform.localPosition;
             Game.Tick.OnTick += Tick;
         }
 

@@ -14,56 +14,47 @@ namespace UZSG.UI
         [SerializeField] TextMeshProUGUI countText;
         [SerializeField] TextMeshProUGUI altText;
 
-
         void Start()
         {
             image.preserveAspect = true;
-            image.color = ItemSlotUI.Transparent;
-
-            if (Item != null)
-            {
-                SetDisplay(Item);
-            }
         }
         
-        public void SetDisplay(Item item)
-        {
+        public void SetDisplayedItem(Item item)
+        {            
             Item = item;
             
-            if (item != Item.None)
+            if (item == null || item.IsNone)
             {
-                if (item.Data != null)
+                image.sprite = null;
+                image.color = ItemSlotUI.Transparent;
+                countText.text = "";
+                altText.enabled = false;
+            }
+            else
+            {
+                image.sprite = item.Data.Sprite;
+                if (item.Data.Sprite != null)
                 {
-                    if (item.Data.Sprite != null)
-                    {
-                        altText.enabled = false;
-                        image.sprite = item.Data.Sprite;
-                        image.color = ItemSlotUI.Opaque;
-                    }
-                    else
-                    {
-                        altText.enabled = true;
-                        altText.text = item.Data.Name;
-                        image.color = ItemSlotUI.Transparent;
-                    }
+                    image.color = ItemSlotUI.Opaque;
+                    altText.text = "";
+                    altText.enabled = false;
+                }
+                else
+                {
+                    image.color = ItemSlotUI.Transparent;
+                    altText.enabled = true;
+                    altText.text = item.Data.Name;
+                }
 
-                    if (item.Count <= 1)
-                    {
-                        countText.text = "";
-                    }
-                    else
-                    {
-                        countText.text = item.Count.ToString();
-                    }
-
-                    return;
+                if (item.Count <= 1)
+                {
+                    countText.text = "";
+                }
+                else
+                {
+                    countText.text = item.Count.ToString();
                 }
             }
-            
-            altText.enabled = false;
-            image.sprite = null;
-            image.color = ItemSlotUI.Transparent;
-            countText.text = "";
         }
 
         public void ToggleVisibility()

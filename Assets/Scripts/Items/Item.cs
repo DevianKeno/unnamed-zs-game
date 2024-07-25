@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UZSG.Systems;
 
 namespace UZSG.Items
 {
@@ -24,43 +25,67 @@ namespace UZSG.Items
         public ItemType Type { get => _itemData.Type; }
         [SerializeField] int _count;
         public int Count { get => _count; }
+        public bool IsNone => _itemData == null;
+
+
+        #region Item constructors
 
         /// <summary>
         /// Create an Item object from ItemData.
         /// </summary>
-        public Item(ItemData itemData, int count)
+        public Item(ItemData data)
         {
-            _itemData = itemData;
-            
-            if (count < 0)
-            {
-                count = StackSize;
-            }
-            _count = count;
+            _itemData = data;
+            _count = 1;
+        }
+
+        /// <summary>
+        /// Create an Item object from ItemData with count.
+        /// </summary>
+        public Item(ItemData data, int count)
+        {
+            _itemData = data;
+            _count = Math.Clamp(count, 1, Data.StackSize);
+        }
+        
+        /// <summary>
+        /// Create an item by id.
+        /// </summary>
+        public Item(string id)
+        {
+            _itemData = Game.Items.GetItemData(id);
+            _count = 1;
+        }
+        
+        /// <summary>
+        /// Create an item by id with count.
+        /// </summary>
+        public Item(string id, int count)
+        {
+            _itemData = Game.Items.GetItemData(id);
+            _count = Math.Clamp(count, 1, Data.StackSize);
         }
 
         /// <summary>
         /// Create a copy of the Item.
         /// </summary>
-        public Item(Item item)
+        public Item(Item other)
         {
-            _itemData = item.Data;
-            _count = item.Count;
+            _itemData = other.Data;
+            _count = other.Count;
         }
         
         /// <summary>
         /// Create a copy of the Item with a new count.
         /// </summary>
-        public Item(Item item, int count)
+        public Item(Item other, int count)
         {
-            _itemData = item.Data;
-
-            if (count < 0)
-            {
-                count = StackSize;
-            }
-            _count = count;
+            _itemData = other.Data;
+            _count = Math.Clamp(count, 1, Data.StackSize);
         }
+
+        #endregion
+        
         
         public void SetCount(int value)
         {
@@ -86,12 +111,11 @@ namespace UZSG.Items
         }
 
         /// <summary>
-        /// Returns true if the items have the same id.
+        /// Returns true if the items are the same.
         /// </summary>
         public bool CompareTo(Item other)
         {
-            if (_itemData.Id == other.Id) return true;
-            return false;
+            return _itemData == other.Data;
         }
     }
 }

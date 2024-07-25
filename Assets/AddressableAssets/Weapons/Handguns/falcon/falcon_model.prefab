@@ -67,5 +67,28 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: db633b86ce6943545bdba8d6da7440c5, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6032388342112838803}
   m_SourcePrefab: {fileID: 100100000, guid: db633b86ce6943545bdba8d6da7440c5, type: 3}
+--- !u!1 &7757449747338268625 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: db633b86ce6943545bdba8d6da7440c5, type: 3}
+  m_PrefabInstance: {fileID: 7450808248225477248}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6032388342112838803
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7757449747338268625}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 279d72a7d070b7f49b0d4ba0f33c2fdf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponData: {fileID: 11400000, guid: ba780c82b239d0043aa2dfdeb7a7b4a3, type: 2}
+  muzzleController: {fileID: 0}
+  burstCount: 3

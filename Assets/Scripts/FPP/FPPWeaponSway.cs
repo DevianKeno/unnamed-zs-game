@@ -1,11 +1,15 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+
 using UZSG.Systems;
+using UZSG.Entities;
 
 namespace UZSG.FPP
 {
     public class FPPWeaponSway : MonoBehaviour
     {
+        public Player Player;
+
         [SerializeField] Transform viewmodelHolder;
         
         [Header("Sway Settings")]

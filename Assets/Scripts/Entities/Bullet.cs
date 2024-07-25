@@ -16,20 +16,21 @@ namespace UZSG.Entities
         public Vector3 Velocity { get; set; }
         public float Speed { get; set; }
     }
-
+    
     /// <summary>
     /// Bullet entity.
     /// This bullet entity is a suitable candidate for practicing Entity Component System.
     /// </summary>
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(BoxCollider))]
-    public class Bullet : Entity
+    public class Bullet : Entity, IProjectile
     {
         public const float DefaultBulletScale = 0.1f;
         public BulletDamageAttributes DamageAttributes;
         public BulletAttributes Attributes;
         public float CalculatedDamage;
         
+        public Vector3 Point;
         Vector3 _velocity;
         Vector3 _origin;
         Vector3 _previousPosition;
@@ -74,6 +75,7 @@ namespace UZSG.Entities
             Vector3 direction = rb.velocity.normalized;
             float distance = (transform.position - _previousPosition).magnitude;
             Ray ray = new(_previousPosition, direction);
+            
             if (Physics.Raycast(ray, out var hit, distance, LayerMask.GetMask("Hitbox")))
             {
                 OnHit(hit.collider);
@@ -118,7 +120,7 @@ namespace UZSG.Entities
             if (other.TryGetComponent<Hitbox>(out var hitbox))
             {
                 CalculatedDamage = CalculateDamage(hitbox.Part);
-                hitbox.Collision(coll);
+                hitbox.Hit(coll);
                 Destroy(gameObject);
             }
         }

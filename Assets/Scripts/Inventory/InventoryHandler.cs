@@ -79,7 +79,7 @@ namespace UZSG.Inventory
                 7 => HotbarIndex.Seven,
                 8 => HotbarIndex.Eight,
                 9 => HotbarIndex.Nine,
-                // 0 => HotbarIndex.Hands,
+                0 => HotbarIndex.Hands,
                 _ => throw new ArgumentException("Invalid value"),
             };
         }
@@ -97,7 +97,8 @@ namespace UZSG.Inventory
         public void SelectHotbarSlot(int index)
         {            
             if (index < 0 || index > Hotbar.SlotsCount) return;
-            Hotbar.SelectSlot(index);
+            
+            /// update ui if any 
         }
 
         /// <summary>

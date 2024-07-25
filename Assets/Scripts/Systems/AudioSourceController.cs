@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.ResourceManagement.AsyncOperations;
 using UZSG.Items.Weapons;
 
 namespace UZSG.Systems
@@ -36,15 +38,17 @@ namespace UZSG.Systems
             }
         }
 
-        public void LoadAudioAssetIds(List<AudioAssetId> content)
+        public async void LoadAudioAssetIds(EquipmentAudioData data, Action onCompleted = null)
         {
-            foreach (var item in content)
+            var loadAudioTask = Game.Audio.LoadAudioAssets(data.AudioAssetIds, (result) =>
             {
-                Game.Audio.LoadAudioAsset(item.AudioAsset, (result) =>
+                foreach (var audio in result)
                 {
-                    audioClips[item.Id] = result.AudioClip;
-                });
-            }
+                    audioClips[audio.name] = audio;
+                }
+            });
+            await loadAudioTask;
+            onCompleted?.Invoke();
         }
 
         public void PlaySound(string name)

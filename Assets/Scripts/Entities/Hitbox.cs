@@ -3,6 +3,12 @@ using UnityEngine;
 
 namespace UZSG.Entities
 {
+    public struct CollisionHitInfo
+    {
+        public IProjectile Projectile { get; set; }
+        public RaycastHit Hit { get; set; }
+    }
+
     [Serializable]
     public class Hitbox : MonoBehaviour
     {
@@ -16,7 +22,7 @@ namespace UZSG.Entities
             boxCollider = GetComponent<BoxCollider>();
         }
 
-        public void Collision(Collider other)
+        public void Hit(Collider other)
         {
             OnCollision?.Invoke(this, other);
         }

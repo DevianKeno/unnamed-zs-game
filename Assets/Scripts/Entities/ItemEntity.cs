@@ -1,11 +1,13 @@
-using UZSG.Players;
-using UZSG.Interactions;
-using UZSG.Items;
 using System;
+
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
+
 using UZSG.Systems;
+using UZSG.Players;
+using UZSG.Interactions;
+using UZSG.Items;
 using UZSG.Items.Weapons;
 
 namespace UZSG.Entities
@@ -43,23 +45,23 @@ namespace UZSG.Entities
         MeshRenderer meshRenderer;
         MeshCollider meshCollider;
 
-        void Awake()
+        protected virtual void Awake()
         {
             meshFilter = GetComponent<MeshFilter>();
             meshRenderer = GetComponent<MeshRenderer>();
             meshCollider = GetComponent<MeshCollider>();
         }
 
-        void Start()
+        protected virtual void Start()
         {
             LoadModel();
         }
 
         void LoadModel()
         {
-            if (ItemData == null)
+            if (!Utils.IsAssetReferenceSet(ItemData.Model))
             {
-                Game.Console.LogWarning($"This item has no ItemData, there will be no model to load.");
+                Game.Console.LogWarning($"The item {ItemData.Id} has no model to load.");
                 return;
             };
 
@@ -82,7 +84,10 @@ namespace UZSG.Entities
 
         public override void OnSpawn()
         {
-            if (ItemData != null) LoadModel();
+            if (ItemData != null)
+            {
+                LoadModel();
+            }
             Game.Tick.OnSecond += Second;
         }
 

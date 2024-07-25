@@ -26,10 +26,22 @@ namespace UZSG
             });
         }
 
+        [Obsolete("You are advised to use TryGetSlot() instead.")]
         public ItemSlot GetSlot(int index)
         {
             if (index < 0 || index > Slots.Count) return null;
             return Slots[index];
+        }
+        
+        public bool TryGetSlot(int index, out ItemSlot slot)
+        {
+            if (index < 0 || index > Slots.Count)
+            {
+                slot = null;
+                return false;
+            }
+            slot = Slots[index];
+            return true;
         }
 
         public virtual Item ViewItem(int slotIndex)
@@ -69,7 +81,7 @@ namespace UZSG
         public virtual bool TryPut(int slotIndex, Item item)
         {
             if (slotIndex < 0 || slotIndex > Slots.Count) return false;
-            if (item == Item.None) return true;
+            if (item.IsNone) return false;
 
             ItemSlot slot = Slots[slotIndex];
 

@@ -18,7 +18,7 @@ MonoBehaviour:
     m_SubObjectType: 
     m_EditorAssetChanged: 0
   Id: apple
-  Name: 
+  Name: Apple
   Description: A shiny red apple
   Sprite: {fileID: 0}
   Type: 0

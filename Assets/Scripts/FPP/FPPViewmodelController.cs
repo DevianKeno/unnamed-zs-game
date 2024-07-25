@@ -39,7 +39,7 @@ namespace UZSG.FPP
             GameObject weapon = null;
 
             var armsTask = Utils.IsAssetReferenceSet(obj.ArmsViewmodel) ? LoadAssetReferenceAsync(obj.ArmsViewmodel) : Task.FromResult(new LoadAssetReferenceContext());
-            var weaponTask = Utils.IsAssetReferenceSet(obj.WeaponViewmodel) ? LoadAssetReferenceAsync(obj.WeaponViewmodel) : Task.FromResult(new LoadAssetReferenceContext());
+            var weaponTask = Utils.IsAssetReferenceSet(obj.ModelViewmodel) ? LoadAssetReferenceAsync(obj.ModelViewmodel) : Task.FromResult(new LoadAssetReferenceContext());
 
             var armsResult = await armsTask;
             if (armsResult.Status == AsyncOperationStatus.Succeeded)
@@ -61,7 +61,7 @@ namespace UZSG.FPP
             });
         }
 
-        public void ReplaceViewmodel(Viewmodel other)
+        public void ReplaceViewmodel(Viewmodel viewmodel)
         {
             if (armsHolder.childCount > 0)
             {
@@ -69,9 +69,9 @@ namespace UZSG.FPP
                 armsModel.gameObject.SetActive(false);
 
             }
-            if (other.Arms != null)
+            if (viewmodel.Arms != null)
             {
-                other.Arms.SetActive(true);
+                viewmodel.Arms.SetActive(true);
             }
             
             if (weaponHolder.childCount > 0)
@@ -79,9 +79,9 @@ namespace UZSG.FPP
                 var weaponModel = weaponHolder.GetChild(0);
                 weaponModel.gameObject.SetActive(false);
             }
-            if (other.Weapon != null)
+            if (viewmodel.Weapon != null)
             {
-                other.Weapon.SetActive(true);
+                viewmodel.Weapon.SetActive(true);
             }
         }
     }

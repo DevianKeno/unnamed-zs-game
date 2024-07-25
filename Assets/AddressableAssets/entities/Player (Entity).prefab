@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2415535297879970657}
+  - component: {fileID: 3017492281859795305}
   m_Layer: 0
   m_Name: Viewmodel Holder
   m_TagString: Untagged
@@ -33,6 +34,26 @@ Transform:
   - {fileID: 575518672668688267}
   m_Father: {fileID: 1873134562759721657}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3017492281859795305
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1696359609177967074}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32b84b459ef0ac341aff25d2a871bb0c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Player: {fileID: 8107631895800867322}
+  Enabled: 1
+  MinSpeed: 0.3
+  Amplitude: -0.1
+  Frequency: 0.7
+  Recovery: 10
+  MaintainForwardLook: 0
+  LookDistance: 16
 --- !u!1 &2866568475717327878
 GameObject:
   m_ObjectHideFlags: 0
@@ -66,6 +87,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1873134562759721657}
+  - {fileID: 1762222224130438581}
   m_Father: {fileID: 7699380848211720457}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4657274095525333481
@@ -112,13 +134,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ff42c43a49741e47924e7285b0697bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Player: {fileID: 0}
   viewmodelHolder: {fileID: 2415535297879970657}
   Enable: 1
-  Smoothness: 3
-  Multiplier: 1
+  Smoothness: 8
+  Multiplier: 0.1
   MaxSwayAngleX: 15
   MaxSwayAngleY: 10
-  RotationOffset: {x: 0, y: 0, z: 0}
+  RotationOffset: {x: 1, y: 0, z: 0}
 --- !u!1 &4205740759332681714
 GameObject:
   m_ObjectHideFlags: 0
@@ -350,8 +373,8 @@ MonoBehaviour:
   Enabled: 1
   MinSpeed: 0.3
   Amplitude: 1
-  Frequency: 0.69
-  Recovery: 1
+  Frequency: 0.7
+  Recovery: 16
   MaintainForwardLook: 1
   LookDistance: 16
 --- !u!1 &5771848841049438004
@@ -786,6 +809,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2415535297879970657}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8334059616362085046
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1762222224130438581}
+  m_Layer: 10
+  m_Name: Held Items
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1762222224130438581
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8334059616362085046}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2533865650662642097}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &9031321928697203625
 GameObject:
   m_ObjectHideFlags: 0
@@ -916,6 +970,12 @@ MonoBehaviour:
   heldItem: {fileID: 0}
   cameraController: {fileID: 4657274095525333481}
   viewmodelController: {fileID: 7376258563001316179}
+  heldItems: {fileID: 8334059616362085046}
+  gunWeaponControllerPrefab:
+    m_AssetGUID: 7bf816374faf0a44f8a0520f423fd2a8
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
 --- !u!114 &510820268512717889
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -101,32 +101,28 @@ namespace UZSG.Players
             }
         }
 
+
         #region Callbacks
 
         void OnHotbarSelect(InputAction.CallbackContext context)
         {
             if (!int.TryParse(context.control.displayName, out int index)) return;
 
-            if (Player.FPP.CurrentlyEquippedIndex == (HotbarIndex) index)
-            {
-                Player.Inventory.SelectHotbarSlot(0);
-                Player.FPP.Unholster();
-            }
-            else
-            {
-                Player.Inventory.SelectHotbarSlot(index);
-                Player.FPP.EquipIndex((HotbarIndex) index);
-            }
+            var hotbarIndex = (HotbarIndex) index;
+
+            // Player.Inventory.SelectHotbarSlot(index);
+            Player.FPP.EquipHotbarIndex(hotbarIndex);
+        }
+
+        void OnUnholster(InputAction.CallbackContext context)
+        {
+            // Player.Inventory.SelectHotbarSlot(0);
+            Player.FPP.Unholster();
         }
 
         void OnPerformReload(InputAction.CallbackContext context)
         {
             Player.FPP.PerformReload();
-        }
-
-        void OnUnholster(InputAction.CallbackContext context)
-        {
-            Player.FPP.Unholster();
         }
         
         void OnPerformInteract(InputAction.CallbackContext context)
@@ -224,7 +220,7 @@ namespace UZSG.Players
             if (!Player.CanPickUpItems) return;
             if (Player.Inventory == null) return;
 
-            bool gotItem; /// if the player had picked up the item
+            bool gotItem; /// whether if the player had successfully picked up the item
             Item item = itemEntity.AsItem();
 
             if (item.Type == ItemType.Weapon)
@@ -233,15 +229,11 @@ namespace UZSG.Players
 
                 if (gotItem)
                 {
-                    if (WeaponData.TryGetWeaponData(item.Data, out WeaponData weaponData))
+                    Player.FPP.LoadViewmodel(item.Data, index);
+                    Player.FPP.InitializeHeldItem(item, index, () =>
                     {
-                        if (weaponData.HasViewmodel())
-                        {
-                            Player.FPP.LoadViewmodel(weaponData, index);
-                        }
-
-                        Player.FPP.EquipIndex(index);
-                    }
+                        Player.FPP.EquipHotbarIndex(index);
+                    });
                 }
             }
             else /// generic item

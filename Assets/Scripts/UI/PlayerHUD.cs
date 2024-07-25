@@ -124,7 +124,9 @@ namespace UZSG.UI
 
         void OnHotbarChangeEquipped(object sender, Hotbar.ChangeEquippedArgs e)
         {
+            if (e.ItemSlot == null) return;
             if (e.ItemSlot.Item == Item.None) return;
+
             equippedWeaponTMP.text = e.ItemSlot.Item.Name;
         }
         
@@ -150,6 +152,11 @@ namespace UZSG.UI
             {
 
             }
+        }
+
+        void UpdateAmmoCounter()
+        {
+            
         }
 
         #endregion

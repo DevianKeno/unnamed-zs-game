@@ -25,7 +25,7 @@ namespace UZSG.UI
         /// If the cursor is currently holding an item.
         /// </summary>
         bool _isHoldingItem = false;
-        int _fromIndex;
+        int _lastSelectedSlotIndex;
         Item _heldItem;
         ItemSlot _selectedSlot;
         ItemSlotUI _selectedSlotUI;
@@ -186,6 +186,7 @@ namespace UZSG.UI
 
         public override void OnHide()
         {
+            PutBackHeldItem();
             actionMap.Disable();
             _selectedSlotUI?.Refresh();
             _selectedSlotUI = null;
@@ -239,10 +240,11 @@ namespace UZSG.UI
                 }
                 else
                 {
+                    if (_selectedSlot.IsEmpty) return;
+
                     HoldItem(inventory.Bag.Take(_selectedSlot.Index));
-                    _selectedSlotUI.Refresh();
+                    _lastSelectedSlotIndex = _selectedSlot.Index;
                 }
-            
             }
             else if (e.button == PointerEventData.InputButton.Right)
             {                
@@ -276,7 +278,7 @@ namespace UZSG.UI
 
             Item prevHeld = _heldItem;
             _heldItem = item;
-            _displayedItem.SetDisplay(_heldItem);
+            _displayedItem.SetDisplayedItem(_heldItem);
             return prevHeld;
         }
 
@@ -292,7 +294,7 @@ namespace UZSG.UI
             _isHoldingItem = true;
             _heldItem = item;
             _displayedItem ??= Game.UI.Create<ItemDisplayUI>("item_display");
-            _displayedItem.SetDisplay(_heldItem);
+            _displayedItem.SetDisplayedItem(_heldItem);
         }
 
         void ReleaseItem()
@@ -301,6 +303,15 @@ namespace UZSG.UI
             _heldItem = null;
             Destroy(_displayedItem.gameObject);
             _displayedItem = null;
+        }
+
+        void PutBackHeldItem()
+        {
+            if (_heldItem == null) return;
+            
+            inventory.Bag.TryPut(_lastSelectedSlotIndex, _heldItem);
+            ReleaseItem();
+            _lastSelectedSlotIndex = -1;
         }
     }
 }

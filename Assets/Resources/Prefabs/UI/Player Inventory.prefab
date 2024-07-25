@@ -688,7 +688,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 400, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &646801841688002024
 CanvasRenderer:
@@ -1183,7 +1183,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Name: bag
-  size: {x: 1920, y: 1080}
   rect: {fileID: 0}
 --- !u!1 &4643183950311644283
 GameObject:
@@ -1239,7 +1238,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Name: crafting
-  size: {x: 1920, y: 1080}
   rect: {fileID: 0}
 --- !u!1 &5228233672866077596
 GameObject:
@@ -1784,7 +1782,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Name: equipment
-  size: {x: 1920, y: 1080}
   rect: {fileID: 0}
 --- !u!1 &8301076522937847519
 GameObject:

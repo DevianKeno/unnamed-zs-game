@@ -10,8 +10,9 @@ namespace UZSG.FPP
     public interface IFPPVisible
     {
         public AssetReference ArmsViewmodel { get; }
-        public AssetReference WeaponViewmodel { get; }
+        public AssetReference ModelViewmodel { get; }
         public EquipmentAnimationData Anims { get; }
+        public bool HasViewmodel { get; }
     }
 
 }

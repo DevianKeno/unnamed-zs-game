@@ -65,7 +65,7 @@ namespace UZSG.UI
 
         public void SetDisplayedItem(Item item)
         {
-            itemDisplayUI?.SetDisplay(item);
+            itemDisplayUI?.SetDisplayedItem(item);
         }
 
         public void Refresh()

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UZSG.Items.Weapons;
 
 namespace UZSG.Inventory
 {
@@ -12,19 +13,19 @@ namespace UZSG.Inventory
             public ItemSlot ItemSlot { get; set; }
         }
 
+        public const int HandsIndex = 0;
         public const int MainhandIndex = 1;
         public const int OffhandIndex = 2;
 
         public override int SlotsCount { get; set; }
+        ItemSlot _hands;
+        public ItemSlot Hands { get => _hands; }
         [SerializeField] ItemSlot _mainhand;
         public ItemSlot Mainhand { get => _mainhand; }
         [SerializeField] ItemSlot _offhand;
         public ItemSlot Offhand { get => _offhand; }
         [SerializeField] List<ItemSlot> _slots = new();
         public override List<ItemSlot> Slots => _slots;
-        ItemSlot _equipped;
-        public ItemSlot Equipped { get => _equipped; }
-        public int _equippedIndex = -1;
 
         public event EventHandler<ChangeEquippedArgs> OnChangeEquipped;
 
@@ -41,6 +42,9 @@ namespace UZSG.Inventory
         
         internal void Initialize()
         {
+            _hands = new(HandsIndex, SlotType.Weapon);
+            // _hands.OnContentChanged += SlotContentChanged;
+
             _mainhand = new(MainhandIndex, SlotType.Weapon);
             _mainhand.OnContentChanged += SlotContentChanged;
 
@@ -49,7 +53,7 @@ namespace UZSG.Inventory
 
             _slots = new()
             {
-                new(0), /// Empty hand slot
+                _hands,
                 _mainhand,
                 _offhand
             };
@@ -61,26 +65,8 @@ namespace UZSG.Inventory
                 newSlot.OnContentChanged += SlotContentChanged;
                 _slots.Add(newSlot);
             }
-        }
 
-        public void SelectSlot(int index)
-        {
-            if (_equippedIndex == index)
-            {
-                _equippedIndex = -1;
-                _equipped = null;
-            }
-            else
-            {
-                _equippedIndex = index;
-                _equipped = _slots[index];
-            }
-
-            OnChangeEquipped?.Invoke(this, new()
-            {
-                Index = index,
-                ItemSlot = _equipped
-            });
+            _hands.Put(new("hands"));
         }
     }
 }

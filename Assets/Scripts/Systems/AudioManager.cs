@@ -1,7 +1,10 @@
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using UZSG.Items.Weapons;
 
 namespace UZSG.Systems
 {
@@ -44,8 +47,31 @@ namespace UZSG.Systems
                 }
             };
         }
+        
+        public async Task LoadAudioAssets(List<AudioAssetId> assetReference, Action<List<AudioClip>> onComplete = null)
+        {
+            var audioClips = new List<AudioClip>();
+            var loadTasks = new List<Task>();
 
+            foreach (var audioAssetId in assetReference)
+            {
+                var tcs = new TaskCompletionSource<AudioClip>();
+                loadTasks.Add(tcs.Task);
 
+                Addressables.LoadAssetAsync<AudioClip>(audioAssetId.AudioAsset).Completed += (a) =>
+                {
+                    if (a.Status == AsyncOperationStatus.Succeeded)
+                    {
+                        audioClips.Add(a.Result);
+                        tcs.SetResult(a.Result);
+                    }
+                };
+            }
+            await Task.WhenAll(loadTasks);
+            onComplete?.Invoke(audioClips);
+        }
+
+        
         #region Public methods
 
         public void Play(string name)

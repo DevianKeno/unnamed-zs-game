@@ -1,7 +1,11 @@
 using System;
+using System.Collections.Generic;
+
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+
+using UZSG.Crafting;
 
 namespace UZSG.Items
 {
@@ -21,9 +25,13 @@ namespace UZSG.Items
         public ItemType Type;
         public int StackSize;
         public ItemSubtype Subtype;
-        public bool IsMaterial;
-    }
 
+        [Header("Crafting")]
+        public bool IsMaterial;
+        public bool IsCraftable;
+        public List<RecipeData> Recipes;
+    }
+    
     [CustomEditor(typeof(ItemData))]
     public class ItemDataEditor : Editor
     {

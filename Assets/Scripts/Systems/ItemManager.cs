@@ -95,8 +95,8 @@ namespace UZSG.Systems
             {
                 return _itemsDict[id];
             }
-            
-            Game.Console?.Log("Invalid item id");
+
+            Game.Console.Log("Invalid item id");
             return null;
         }
         
@@ -108,7 +108,7 @@ namespace UZSG.Systems
                 return true;
             }
             
-            Game.Console?.Log("Invalid item id");
+            Game.Console.Log("Invalid item id");
             itemData = null;
             return false;
         }

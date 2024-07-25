@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &2950469125537865513
+--- !u!1001 &269769459422983222
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -38,15 +38,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5dbe44b4d9a9a2a40b7a9d7ab53b65cd, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5dbe44b4d9a9a2a40b7a9d7ab53b65cd, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5dbe44b4d9a9a2a40b7a9d7ab53b65cd, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5dbe44b4d9a9a2a40b7a9d7ab53b65cd, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -71,10 +71,10 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: 5dbe44b4d9a9a2a40b7a9d7ab53b65cd, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 678cf29f3fecc0143849e7ebc3ef4471, type: 2}
+      objectReference: {fileID: 2100000, guid: 2c785fd09531cd84999e94b49fedd366, type: 2}
     - target: {fileID: 919132149155446097, guid: 5dbe44b4d9a9a2a40b7a9d7ab53b65cd, type: 3}
       propertyPath: m_Name
-      value: Item
+      value: Gun Item
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 5dbe44b4d9a9a2a40b7a9d7ab53b65cd, type: 3}
       propertyPath: m_Layer
@@ -86,26 +86,26 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5dbe44b4d9a9a2a40b7a9d7ab53b65cd, type: 3}
       insertIndex: -1
-      addedObject: {fileID: -1863591240185832663}
+      addedObject: {fileID: 1944276862346839256}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5dbe44b4d9a9a2a40b7a9d7ab53b65cd, type: 3}
       insertIndex: -1
-      addedObject: {fileID: -1206448945910842711}
+      addedObject: {fileID: 2993075292655908674}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5dbe44b4d9a9a2a40b7a9d7ab53b65cd, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 3166414620110874377}
+      addedObject: {fileID: 2726578995083789888}
   m_SourcePrefab: {fileID: 100100000, guid: 5dbe44b4d9a9a2a40b7a9d7ab53b65cd, type: 3}
---- !u!1 &2608505405080085112 stripped
+--- !u!1 &1116611460314351975 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 5dbe44b4d9a9a2a40b7a9d7ab53b65cd, type: 3}
-  m_PrefabInstance: {fileID: 2950469125537865513}
+  m_PrefabInstance: {fileID: 269769459422983222}
   m_PrefabAsset: {fileID: 0}
---- !u!64 &-1863591240185832663
+--- !u!64 &1944276862346839256
 MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2608505405080085112}
+  m_GameObject: {fileID: 1116611460314351975}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -121,13 +121,13 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -3262789968867269347, guid: 5dbe44b4d9a9a2a40b7a9d7ab53b65cd, type: 3}
---- !u!54 &-1206448945910842711
+--- !u!54 &2993075292655908674
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2608505405080085112}
+  m_GameObject: {fileID: 1116611460314351975}
   serializedVersion: 4
   m_Mass: 1
   m_Drag: 0
@@ -148,19 +148,22 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &3166414620110874377
+--- !u!114 &2726578995083789888
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2608505405080085112}
+  m_GameObject: {fileID: 1116611460314351975}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b0fc83af09fe2549bd4cf68475cdf03, type: 3}
+  m_Script: {fileID: 11500000, guid: 3f7a9ee68795b1e4d832cdc06f01d3a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  entityData: {fileID: 11400000, guid: b430ab7081e218e42953878032ad89d7, type: 2}
-  ItemData: {fileID: 0}
-  ItemCount: 0
+  entityData: {fileID: 11400000, guid: 4a11073f428079c4c8438da24f507185, type: 2}
+  ItemData: {fileID: 11400000, guid: ba780c82b239d0043aa2dfdeb7a7b4a3, type: 2}
+  ItemCount: 1
   Age: 3600
+  Attributes:
+    Rounds: 0
+    HasMagazine: 0

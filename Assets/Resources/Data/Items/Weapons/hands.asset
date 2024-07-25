@@ -21,20 +21,54 @@ MonoBehaviour:
   Name: Hands
   Description: 
   Sprite: {fileID: 0}
-  StackSize: 1
   Type: 1
+  StackSize: 1
   Subtype: 3
   IsMaterial: 0
   Weight: 0
   Category: 0
-  MeleeType: 0
+  MeleeType: 1
   BluntType: 0
   BladedType: 0
   RangedType: 0
-  Attributes:
+  MeleeAttributes:
     BaseDamage: 0
     BaseCritStrike: 0
     BaseCritDamage: 0
+  RangedAttributes:
+    FiringModes: 0
+    RoundsPerMinute: 0
+    ClipSize: 0
+    ReloadSpeed: 0
+    Spread: 0
+    BurstFireCount: 0
+    BulletDamage:
+      BaseDamage: 0
+      IsPartDamage: 0
+      UseMultiplier: 0
+      HeadDamage: 0
+      HeadDamageMultiplier: 0
+      BodyDamage: 0
+      BodyDamageMultiplier: 0
+      ArmsDamage: 0
+      ArmsDamageMultiplier: 0
+      LegsDamage: 0
+      LegsDamageMultiplier: 0
+    BulletAttributes:
+      Scale: 0
+      Speed: 0
+      Spread: 0
+      GravityScale: 0
+      MinRenderDistance: 0
+    RecoilAttributes:
+      VerticalRecoilAmount: 0
+      VerticalRecoilRandomness: 0
+      HorizontalRecoilAmount: 0
+      HorizontalRecoilRandomness: 0
+      HorizontalRecoilDirection: 0
+      RecoilDamping: 0
+      RecoilRecoverySpeed: 0
+      RecoilRecoveryDelay: 0
   armsViewmodel:
     m_AssetGUID: a908bcda09e0e71439386cf700a9cfc0
     m_SubObjectName: 
@@ -58,10 +92,4 @@ MonoBehaviour:
     Equip: 
     Dequip: 
   audioData:
-    Equip: {fileID: 0}
-    Dequip: {fileID: 0}
-    Fire: {fileID: 0}
-    FireVariant: []
-    ADSDown: {fileID: 0}
-    ADSUp: {fileID: 0}
-    Reload: {fileID: 0}
+    AudioAssetIds: []

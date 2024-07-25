@@ -112,22 +112,25 @@ namespace UZSG.Items.Weapons
         [SerializeField] AssetReference armsViewmodel;
         public AssetReference ArmsViewmodel => armsViewmodel;
         [SerializeField] AssetReference weaponViewmodel;
-        public AssetReference WeaponViewmodel => weaponViewmodel;       
+        public AssetReference ModelViewmodel => weaponViewmodel;       
         [SerializeField] EquipmentAnimationData anims;
         public EquipmentAnimationData Anims => anims;
         [SerializeField] EquipmentAudioData audioData;
         public EquipmentAudioData AudioData => audioData;
         
-        public static bool TryGetWeaponData(ItemData item, out WeaponData weaponData)
+        public static bool IsWeaponData(ItemData data, out WeaponData weaponData)
         {
-            weaponData = item as WeaponData;
+            weaponData = data as WeaponData;
             return weaponData != null;
         }
 
-        public bool HasViewmodel()
+        public bool HasViewmodel
         {
-            return Utils.IsAssetReferenceSet(armsViewmodel)
-                || Utils.IsAssetReferenceSet(weaponViewmodel);
+            get
+            {
+                return Utils.IsAssetReferenceSet(armsViewmodel)
+                    || Utils.IsAssetReferenceSet(weaponViewmodel);
+            }
         }
     }
 }

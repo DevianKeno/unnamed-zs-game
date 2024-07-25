@@ -35,7 +35,10 @@ namespace UZSG.Inventory
         public SlotType SlotType;
         [SerializeField] public bool IsEmpty
         {
-            get { return item == Item.None; }
+            get
+            {
+                return item == null || item.Data == null;
+            }
         }
 
         /// <summary>
@@ -143,7 +146,6 @@ namespace UZSG.Inventory
                 return false;
             }
         
-            /// Stack overflow when stack size is 0, needs fix
             int newCount = item.Count + toAdd.Count;
             int excessCount = newCount - item.StackSize;
 
@@ -151,7 +153,8 @@ namespace UZSG.Inventory
             {
                 item = new(item, item.StackSize);
                 excess = new(item, excessCount);
-            } else
+            }
+            else
             {
                 item = new(item, newCount);
                 excess = Item.None;

@@ -2,6 +2,7 @@ using System;
 
 using UnityEngine;
 using UnityEngine.UI;
+using UZSG.Systems;
 
 namespace UZSG.UI
 {
@@ -20,11 +21,12 @@ namespace UZSG.UI
                 rect.transform.position = value;
             }
         }
+        public float AnimationFactor = 0.3f;
 
         public event Action OnOpen;
         public event Action OnClose;
 
-        RectTransform rect;
+        protected RectTransform rect;
 
         void Awake()
         {
@@ -55,6 +57,16 @@ namespace UZSG.UI
             IsVisible = false;
             OnClose?.Invoke();
         }
+
+        // public void FadeIn()
+        // {
+
+        // }
+
+        // public void FadeOut()
+        // {
+
+        // }
 
         public void Destroy(float delay = 0f)
         {

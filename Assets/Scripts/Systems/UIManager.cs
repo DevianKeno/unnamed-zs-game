@@ -29,6 +29,8 @@ namespace UZSG.UI
 
         bool _isInitialized;
 
+        public bool EnableScreenAnimations = true;
+
         [SerializeField] Canvas canvas;
         public Canvas Canvas => canvas;
 
@@ -97,16 +99,16 @@ namespace UZSG.UI
             ToggleCursor(!_isCursorVisible);
         }
 
-        public void ToggleCursor(bool isVisible)
+        public void ToggleCursor(bool enabled)
         {
-            if (isVisible)            
+            if (enabled)            
                 Cursor.lockState = CursorLockMode.None;
             else            
                 Cursor.lockState = CursorLockMode.Locked;            
             
-            _isCursorVisible = isVisible;
-            Cursor.visible = isVisible;
-            OnCursorToggled?.Invoke(isVisible);
+            _isCursorVisible = enabled;
+            Cursor.visible = enabled;
+            OnCursorToggled?.Invoke(enabled);
         }
 
         // public ItemDisplayUI CreateItemDisplay(Item item)

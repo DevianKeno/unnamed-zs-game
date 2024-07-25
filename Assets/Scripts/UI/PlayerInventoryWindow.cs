@@ -9,6 +9,8 @@ using UZSG.Systems;
 using UZSG.Inventory;
 using UZSG.Items;
 using UZSG.Entities;
+using UnityEngine.UI;
+using System.Collections;
 
 namespace UZSG.UI
 {
@@ -34,6 +36,8 @@ namespace UZSG.UI
 
         ItemDisplayUI _displayedItem;
         Selector selector;
+        Graphic[] _UIElements;
+        float[] _UIInitialAlphas;
 
         [Header("Inventory Components")]
         [SerializeField] FrameController frameController;
@@ -59,6 +63,8 @@ namespace UZSG.UI
         
         public void Initialize()
         {
+            InitializeElements();
+            
             if (Player == null)
             {
                 Game.Console.Log($"Failed to initialize Player HUD. Bind a Player first!");
@@ -68,7 +74,27 @@ namespace UZSG.UI
             if (_isInitialized) return;
             _isInitialized = true;
 
-            /// Bag slots
+            InitializeBag();
+            selector = Instantiate(selectorPrefab, transform).GetComponent<Selector>();
+            frameController.SwitchToFrame("bag", force: true);
+            InitializeInputs();
+            Hide();
+        }
+
+        void InitializeElements()
+        {
+            foreach (Graphic graphic in GetComponentsInChildren<Graphic>())
+            {
+                if (!graphic.TryGetComponent<FadeableElement>(out var fadeableElement))
+                {
+                    fadeableElement = graphic.gameObject.AddComponent<FadeableElement>();
+                }
+                fadeableElement.Initialize();
+            }
+        }
+
+        void InitializeBag()
+        {
             int maxSlots = inventory.Bag.SlotsCount;
             for (int i = 0; i < maxSlots; i++)
             {
@@ -85,11 +111,6 @@ namespace UZSG.UI
             }
             inventory.Hotbar.OnChangeEquipped += HotbarChangeEquippedCallback;
             inventory.Bag.OnSlotContentChanged += BagSlotChangedCallback;
-            selector = Instantiate(selectorPrefab, transform).GetComponent<Selector>();
-
-            frameController.SwitchToFrame("bag", force: true);
-            InitializeInputs();
-            Hide();
         }
 
         void InitializeInputs()
@@ -132,10 +153,35 @@ namespace UZSG.UI
 
         public override void OnShow()
         {
-            gameObject.SetActive(true);
+            if (Game.UI.EnableScreenAnimations)
+            {
+                LeanTween.cancel(gameObject);
+                FadeIn();
+                AnimateEntry();
+            }
+            else
+            {
+                rect.localScale = Vector3.one;
+            }
             selector.Hide();
-            Game.UI.ToggleCursor(true);
             actionMap.Enable();
+            Game.UI.ToggleCursor(true);
+        }
+
+
+        void FadeIn()
+        {
+            foreach (var element in GetComponentsInChildren<FadeableElement>())
+            {
+                element.FadeIn(AnimationFactor);
+            }
+        }
+
+        void AnimateEntry()
+        {
+            rect.localScale = new(0.95f, 0.95f, 0.95f);
+            LeanTween.scale(gameObject, Vector3.one, AnimationFactor)
+            .setEase(LeanTweenType.easeOutExpo);
         }
 
         public override void OnHide()

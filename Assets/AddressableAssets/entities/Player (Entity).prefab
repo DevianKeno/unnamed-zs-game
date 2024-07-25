@@ -288,6 +288,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1873134562759721657}
   - component: {fileID: 5673032007966455148}
+  - component: {fileID: 6073486126791691618}
   m_Layer: 0
   m_Name: Camera Holder
   m_TagString: Untagged
@@ -320,9 +321,9 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5496084965249798624}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 8e7a8f82a6436e943b11c756c7b6549a, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -333,6 +334,26 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &6073486126791691618
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5496084965249798624}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32b84b459ef0ac341aff25d2a871bb0c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Player: {fileID: 8107631895800867322}
+  Enabled: 1
+  MinSpeed: 0.3
+  Amplitude: 1
+  Frequency: 0.69
+  Recovery: 1
+  MaintainForwardLook: 1
+  LookDistance: 16
 --- !u!1 &5771848841049438004
 GameObject:
   m_ObjectHideFlags: 0
@@ -892,6 +913,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Player: {fileID: 8107631895800867322}
+  heldItem: {fileID: 0}
   cameraController: {fileID: 4657274095525333481}
   viewmodelController: {fileID: 7376258563001316179}
 --- !u!114 &510820268512717889

@@ -124,6 +124,21 @@ namespace UZSG.Systems
             }
         }
 
+        void CTime(object sender, string[] args)
+        {
+            if (args[0] == "set")
+            {
+                if (int.TryParse(args[1], out int value))
+                {
+                    Game.World.Time.SetTime(value);
+                }
+                else
+                {
+                    Game.Console.Log("Time must be a positive integer value.");
+                }
+            }
+        }
+
         /// <summary>
         /// World commands.
         /// </summary>

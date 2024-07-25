@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UZSG.WorldBuilder;
 
 namespace UZSG.Systems
 {
@@ -30,12 +31,15 @@ namespace UZSG.Systems
 
         public void CreateWorld(string name)
         {
-            
+
         }
 
         public void LoadWorld(string name)
         {
             // Game.Entity.Spawn("player", new (0f, 1f, 0f));
         }
+
+        public TimeController Time;
+        
     }
 }

@@ -12,6 +12,11 @@ namespace UZSG.Systems
     /// </summary>
     public class EntityManager : MonoBehaviour, IInitializable
     {
+        public struct EntitySpawnedContext
+        {
+            public Entity Entity { get; set; }
+        }
+
         bool _isInitialized;
         public bool IsInitialized => _isInitialized;
         /// <summary>
@@ -20,6 +25,8 @@ namespace UZSG.Systems
         Dictionary<string, EntityData> _entitiesDict = new();
         [SerializeField] AssetLabelReference assetLabelReference;
         
+        public event EventHandler<EntitySpawnedContext> OnEntitySpawn;
+
         public Vector3 SpawnCoordinates = new(0f, 0f, 0f);
         
         internal void Initialize()
@@ -55,6 +62,11 @@ namespace UZSG.Systems
                             go.name = $"{entity.EntityData.Name} (Entity)";
                             entity.OnSpawn();
                         }
+                        
+                        OnEntitySpawn?.Invoke(this, new()
+                        {
+                            Entity = entity
+                        });
                         Game.Console.Log($"Spawned entity {entityId} at ({position.x}, {position.y}, {position.z})");
                         return;
                     }
@@ -91,6 +103,11 @@ namespace UZSG.Systems
                             entity.OnSpawn();
                         }
 
+                        
+                        OnEntitySpawn?.Invoke(this, new()
+                        {
+                            Entity = entity
+                        });
                         callback?.Invoke(new()
                         {
                             Entity = entity

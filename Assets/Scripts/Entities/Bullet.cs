@@ -158,11 +158,15 @@ namespace UZSG.Entities
             return damage;
         }
 
-        public void SetTrajectoryFromPlayerAndShoot(Player player)
+        public void SetTrajectory(Vector3 direction)
+        {
+            _velocity = direction;
+        }
+
+        public void SetPlayerAndShoot(Player player)
         {
             _origin = transform.position;
             _previousPosition = transform.position;
-            _velocity = ApplySpread(player.Forward, Attributes.Spread);
             _checkDistance = Attributes.MinRenderDistance > 0;
             
             transform.SetPositionAndRotation(
@@ -172,23 +176,7 @@ namespace UZSG.Entities
             
             _isMoving = true;
         }
-
-        Vector3 ApplySpread(Vector3 direction, float spreadAngle)
-        {
-            float spreadX = UnityEngine.Random.Range(-spreadAngle / 2, spreadAngle / 2);
-            float spreadY = UnityEngine.Random.Range(-spreadAngle / 2, spreadAngle / 2);
-
-            Quaternion spreadRotation = Quaternion.Euler(spreadY, spreadX, 0);
-            Vector3 spreadDirection = spreadRotation * direction;
-
-            return spreadDirection.normalized;
-        }
  
-        public void SetDamageAttributes(BulletDamageAttributes damageAttributes)
-        {
-            DamageAttributes = damageAttributes;
-        }
-
         public void SetBulletAttributes(BulletAttributes options)
         {
             Attributes = options;

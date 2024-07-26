@@ -7,7 +7,14 @@ namespace UZSG.Items.Weapons
     {
         All = 1,
         Single = 2,
-        Automatic = 4,
+        FullAuto = 4,
         Burst = 8,
+    }
+
+    public enum FiringMode
+    {
+        Single,
+        FullAuto,
+        Burst,
     }
 }

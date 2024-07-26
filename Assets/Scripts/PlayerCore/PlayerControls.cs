@@ -141,7 +141,7 @@ namespace UZSG.Players
         
         InputActionMap actionMap;
         Dictionary<string, InputAction> inputs = new();
-
+        public Dictionary<string, InputAction> Inputs => inputs;
         
         internal void Initialize()
         {
@@ -152,10 +152,17 @@ namespace UZSG.Players
             _previousPosition = transform.position;
         }
 
+        Dictionary<string, Action> inputEvents;
+
         void InitializeInputs()
         {
             actionMap = Game.Main.GetActionMap("Player");
             inputs = Game.Main.GetActionsFromMap(actionMap);
+
+            foreach (var input in inputs)
+            {
+                input.Value.performed += OnPerformInput;
+            }
             
             inputs["Move"].performed += OnStartMove;
             inputs["Move"].started += OnStartMove;
@@ -170,6 +177,13 @@ namespace UZSG.Players
 
             SetControlsEnabled(true);
         }
+
+        void OnPerformInput(InputAction.CallbackContext context)
+        {
+            OnInput?.Invoke(context);
+        }
+
+        public event Action<InputAction.CallbackContext> OnInput; 
         
         void Awake()
         {

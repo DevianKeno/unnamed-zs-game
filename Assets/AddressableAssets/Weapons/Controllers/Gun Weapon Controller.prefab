@@ -176,8 +176,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ItemData: {fileID: 11400000, guid: e6475b3ee53eb474e8017247b71d763d, type: 2}
-  muzzleController: {fileID: 0}
-  burstFireCount: 3
+  stateMachine: {fileID: 6967395181125910395}
+  MuzzleController: {fileID: 0}
+  audioSourceController: {fileID: 2726077485849005911}
 --- !u!114 &6967395181125910395
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -206,7 +207,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91fd57dad2e3b8844889a99ae9e028d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  poolSize: 8
 --- !u!1 &1804872665885607403
 GameObject:
   m_ObjectHideFlags: 0

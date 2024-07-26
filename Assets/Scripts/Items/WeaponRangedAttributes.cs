@@ -11,6 +11,7 @@ namespace UZSG.Items.Weapons
         public float ReloadSpeed;
         public float Spread;
         public int BurstFireCount;
+        public float BurstFireInterval;
         public BulletDamageAttributes BulletDamage;
         public BulletAttributes BulletAttributes;
         public RecoilAttributes RecoilAttributes;

@@ -10,7 +10,7 @@ namespace UZSG.Items.Weapons
     public abstract class HeldItemController : MonoBehaviour
     {
         public ItemData ItemData;
-        Entity owner;
+        protected Entity owner;
         public Entity Owner
         {
             get { return owner; }

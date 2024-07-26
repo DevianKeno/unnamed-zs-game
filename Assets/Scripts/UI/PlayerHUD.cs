@@ -9,6 +9,7 @@ using UZSG.Entities;
 using UZSG.Inventory;
 using UZSG.Systems;
 using UZSG.Items;
+using UZSG.UI.HUD;
 
 namespace UZSG.UI
 {
@@ -29,6 +30,7 @@ namespace UZSG.UI
         public AttributeBar HungerBar;
         public AttributeBar HydrationBar;
         public AttributeBar XPBar;
+        public AmmoCounterHUD AmmoCounter;
 
         public GameObject weapons;
         public TextMeshProUGUI equippedWeaponTMP;

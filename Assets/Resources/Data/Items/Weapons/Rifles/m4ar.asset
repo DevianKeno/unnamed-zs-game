@@ -1,0 +1,100 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72e1d5853de97a54aa491bcf19eb9d39, type: 3}
+  m_Name: m4ar
+  m_EditorClassIdentifier: 
+  Model:
+    m_AssetGUID: bd37de9a26fb81742b146ef04ea049ee
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  Id: m4ar
+  Name: M4AR
+  Description: Non-standard assault rifle.
+  Sprite: {fileID: 0}
+  Type: 1
+  StackSize: 1
+  Subtype: 3
+  IsMaterial: 0
+  IsCraftable: 0
+  Recipes: []
+  Weight: 16.2
+  Category: 1
+  MeleeType: 0
+  BluntType: 0
+  BladedType: 0
+  RangedType: 4
+  MeleeAttributes:
+    BaseDamage: 0
+    BaseCritStrike: 0
+    BaseCritDamage: 0
+  RangedAttributes:
+    FiringModes: 14
+    RoundsPerMinute: 660
+    ClipSize: 30
+    ReloadSpeed: 1
+    Spread: 5
+    BurstFireCount: 3
+    BurstFireInterval: 0.1
+    BulletDamage:
+      BaseDamage: 0
+      IsPartDamage: 0
+      UseMultiplier: 0
+      HeadDamage: 0
+      HeadDamageMultiplier: 1
+      BodyDamage: 0
+      BodyDamageMultiplier: 1
+      ArmsDamage: 0
+      ArmsDamageMultiplier: 1
+      LegsDamage: 0
+      LegsDamageMultiplier: 0
+    BulletAttributes:
+      Scale: 1
+      Speed: 500
+      GravityScale: 0
+      MinRenderDistance: 10
+    RecoilAttributes:
+      VerticalRecoilAmount: 1
+      VerticalRecoilRandomness: 0
+      HorizontalRecoilAmount: 0
+      HorizontalRecoilRandomness: 0
+      HorizontalRecoilDirection: 0
+      RecoilDamping: 1
+      RecoilRecoverySpeed: 0.5
+      RecoilRecoveryDelay: 0
+  armsAnimations: {fileID: 9100000, guid: 57d7336a04175d34a89f51d4a249c9e5, type: 2}
+  viewmodel:
+    m_AssetGUID: 103a0d85c5dc90144a9ff57d8971ec27
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  offset: {x: 0, y: 0, z: 0}
+  anims:
+    Idle: 
+    Move: 
+    Primary: fire
+    PrimaryHold: 
+    PrimaryRelease: 
+    PrimaryVariant: []
+    Secondary: 
+    SecondaryHold: 
+    SecondaryRelease: 
+    Equip: 
+    Dequip: 
+  audioData:
+    AudioAssetIds:
+    - Id: fire0
+      AudioAsset:
+        m_AssetGUID: 0405abf5a1004d8428f38cd3b8488770
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_EditorAssetChanged: 0

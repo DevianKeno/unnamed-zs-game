@@ -10,8 +10,6 @@ namespace UZSG.Items.Weapons
         public float Scale;
         [Tooltip("Bullet travel speed in meters per second.")]
         public float Speed;
-        [Tooltip("Spread angle in degrees.")]
-        public float Spread;
         [Tooltip("Bullet drop.")]
         public float GravityScale;
         [Tooltip("Minimum distance in meters to render bullet entity.")]

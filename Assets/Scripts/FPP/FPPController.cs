@@ -126,7 +126,7 @@ namespace UZSG.FPP
                         _cachedHeldItems[index] = gunWeapon;
 
                         HoldItemByIndex(index);
-                        InitializeHeldItemEvents(heldItem);
+                        InitializeHeldItem();
                         onDoneInitialize?.Invoke();
                     }));
                 }
@@ -139,14 +139,21 @@ namespace UZSG.FPP
 
         void HoldItemByIndex(HotbarIndex index)
         {
+            if (heldItem != null)
+            {
+                heldItem.gameObject.SetActive(false);
+            }
+
             if (_cachedHeldItems.ContainsKey(index))
             {
                 heldItem = _cachedHeldItems[index];
+                heldItem.gameObject.SetActive(true);
             }
             else
             {
                 heldItem = null;
             }
+            InitializeHeldItem();
         }
         
         T LoadHeldItemController<T>(Action<T> callback = null) where T : HeldItemController
@@ -229,35 +236,56 @@ namespace UZSG.FPP
                 if (currentViewmodel.Model != null)
                 {
                     currentViewmodel.Model.SetActive(true);
+                                
+                    if (currentViewmodel.Model.TryGetComponent(out Animator component))
+                    {
+                        viewmodelAnimator = component;
+                    }
+                    else
+                    {
+                        var msg = $"Item {currentViewmodel.ItemData.Id} has no Animator. No animations would be shown.";
+                        Game.Console.Log(msg);
+                        Debug.LogWarning(msg);
+                    }
+
+                    /// Attach Gun Muzzle Controller
+                    if (currentViewmodel.Model.TryGetComponent(out FPPGunModel gunModel))
+                    {
+                        gunMuzzleController = gunModel.MuzzleController;
+                    }
                 }
-            }
-
-            if (viewmodel.Model.TryGetComponent(out Animator component))
-            {
-                viewmodelAnimator = component;
-            }
-            else
-            {
-                var msg = $"Item {viewmodel.ItemData.Id} has no Animator. No animations would be shown.";
-                Game.Console.Log(msg);
-                Debug.LogWarning(msg);
-            }
-
-            /// Attach Gun Muzzle Controller
-            if (viewmodel.Model.TryGetComponent(out FPPGunModel gunModel))
-            {
-                gunMuzzleController = gunModel.MuzzleController;
+                else
+                {
+                    var msg = $"Item {viewmodel.ItemData.Id} has no viewmodel.";
+                    Game.Console.Log(msg);
+                    Debug.LogWarning(msg);
+                }
             }
         }
 
-        void InitializeHeldItemEvents(HeldItemController heldItem)
+        void InitializeHeldItem()
+        {
+            if (heldItem is GunWeaponController gunWeapon)
+            {
+                Player.HUD.AmmoCounter.Initialize(gunWeapon);
+            }
+            
+            InitializeHeldItemEvents();
+        }
+
+        void InitializeHeldItemEvents()
         {
             if (heldItem is MeleeWeaponController meleeWeapon)
             {
+                meleeWeapon.StateMachine.OnStateChanged -= OnMeleeWeaponStateChanged;
+                
                 meleeWeapon.StateMachine.OnStateChanged += OnMeleeWeaponStateChanged;
             }
             else if (heldItem is GunWeaponController rangedWeapon)
             {
+                rangedWeapon.StateMachine.OnStateChanged -= OnRangedWeaponStateChanged;
+                rangedWeapon.OnFire -= OnWeaponFired;
+
                 rangedWeapon.StateMachine.OnStateChanged += OnRangedWeaponStateChanged;
                 rangedWeapon.OnFire += OnWeaponFired;
             }
@@ -286,10 +314,10 @@ namespace UZSG.FPP
             if (heldItem == null) return;
             if (_isPlayingAnimation) return;
 
-            if (heldItem != null)
-            {
-                heldItem.SetStateFromAction(e.To);
-            }
+            // if (heldItem != null)
+            // {
+            //     heldItem.SetStateFromAction(e.To);
+            // }
         }
 
         void OnMeleeWeaponStateChanged(object sender, StateMachine<MeleeWeaponStates>.StateChangedContext e)
@@ -304,8 +332,8 @@ namespace UZSG.FPP
             var animId = GetAnimIdFromState(e.To);
             if (!string.IsNullOrEmpty(animId))
             {
-                armsController.PlayAnimation(animId);
-                viewmodelAnimator.Play(animId, 0, 0f);
+                armsController?.PlayAnimation(animId);
+                viewmodelAnimator?.Play(animId, 0, 0f);
 
                 var animLengthSeconds = GetAnimationClipLength(viewmodelAnimator, animId);
                 StartCoroutine(FinishAnimation(animLengthSeconds));
@@ -353,6 +381,8 @@ namespace UZSG.FPP
 
         float GetAnimationClipLength(Animator animator, string name)
         {
+            if (animator == null) return 0f;
+
             foreach (var clip in animator.runtimeAnimatorController.animationClips)
             {
                 if (clip.name == name) return clip.length;

@@ -39,8 +39,8 @@ namespace UZSG.Entities
         public Vector3 Forward => MainCamera.transform.forward;
         public Vector3 EyeLevel => MainCamera.transform.position;
 
-        PlayerInventoryWindow invUI;
-        PlayerHUD HUD;
+        public PlayerInventoryWindow invUI;
+        public PlayerHUD HUD;
         
 
         #region Events

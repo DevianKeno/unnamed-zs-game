@@ -13,22 +13,20 @@ namespace UZSG.Systems
     /// </summary>
     public class AudioSourceController : MonoBehaviour
     {
-        [SerializeField] int poolSize = 8;
-        public int PoolSize
-        {
-            get { return poolSize; }
-            set { poolSize = value; }
-        }
+        bool _hasAudioPool;
 
         Dictionary<string, AudioClip> audioClips = new();
         public List<AudioClip> AudioClips => audioClips.Values.ToList();
         Queue<AudioSource> availableSources = new();
 
-        void Start()
+        public void CreateAudioPool(int size)
         {
+            if (_hasAudioPool) return;
+            _hasAudioPool = true;
+            
             var parent = new GameObject("Audio Source Pool");
             parent.transform.parent = transform;
-            for (int i = 0; i < poolSize; i++)
+            for (int i = 0; i < size; i++)
             {
                 var go = new GameObject($"Audio Source ({i})");
                 var audioSource = go.AddComponent<AudioSource>();
@@ -36,6 +34,28 @@ namespace UZSG.Systems
                 audioSource.playOnAwake = false;
                 availableSources.Enqueue(audioSource);
             }
+        }
+        
+        public void CreateAudioPool(WeaponData data)
+        {
+            if (_hasAudioPool) return;
+            _hasAudioPool = true;
+            
+            CreateAudioPool(CalculateOptimalAudioPoolSize(
+                data.RangedAttributes.ClipSize,
+                data.RangedAttributes.RoundsPerMinute,
+                2f)
+            );
+        }
+
+        int CalculateOptimalAudioPoolSize(int clipSize, float roundsPerMinute, float maxAudioDurationSeconds)
+        {
+            float roundsPerSecond = roundsPerMinute / 60f;
+            float maxShotsWithinAudioClipDuration = roundsPerSecond * maxAudioDurationSeconds;
+            int optimalPoolSize = Mathf.CeilToInt(maxShotsWithinAudioClipDuration);
+            optimalPoolSize = Mathf.Min(optimalPoolSize, 30);
+
+            return optimalPoolSize;
         }
 
         public async void LoadAudioAssetIds(EquipmentAudioData data, Action onCompleted = null)

@@ -1,0 +1,118 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72e1d5853de97a54aa491bcf19eb9d39, type: 3}
+  m_Name: m2011
+  m_EditorClassIdentifier: 
+  Model:
+    m_AssetGUID: 3dbf071563be27742a20db8adaaf9e83
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  Id: m2011
+  Name: M2011
+  Description: 
+  Sprite: {fileID: 21300000, guid: ca3cb0cac5969244f8780cff14397619, type: 3}
+  Type: 1
+  StackSize: 1
+  Subtype: 3
+  IsMaterial: 0
+  IsCraftable: 0
+  Recipes: []
+  Weight: 0
+  Category: 1
+  MeleeType: 1
+  BluntType: 0
+  BladedType: 3
+  RangedType: 1
+  MeleeAttributes:
+    BaseDamage: 0
+    BaseCritStrike: 0
+    BaseCritDamage: 0
+  RangedAttributes:
+    FiringModes: 2
+    RoundsPerMinute: 310
+    ClipSize: 999
+    ReloadSpeed: 1
+    Spread: 3
+    BurstFireCount: 0
+    BurstFireInterval: 0
+    BulletDamage:
+      BaseDamage: 10
+      IsPartDamage: 0
+      UseMultiplier: 0
+      HeadDamage: 0
+      HeadDamageMultiplier: 1
+      BodyDamage: 0
+      BodyDamageMultiplier: 1
+      ArmsDamage: 0
+      ArmsDamageMultiplier: 1
+      LegsDamage: 0
+      LegsDamageMultiplier: 1
+    BulletAttributes:
+      Scale: 1
+      Speed: 370
+      GravityScale: 0
+      MinRenderDistance: 10
+    RecoilAttributes:
+      VerticalRecoilAmount: 2
+      VerticalRecoilRandomness: 0
+      HorizontalRecoilAmount: 0
+      HorizontalRecoilRandomness: 0
+      HorizontalRecoilDirection: 0
+      RecoilDamping: 1
+      RecoilRecoverySpeed: 1
+      RecoilRecoveryDelay: 1
+  armsAnimations: {fileID: 9100000, guid: 8e0310dde16ff384aac66b0c2ec912fb, type: 2}
+  viewmodel:
+    m_AssetGUID: ad8e9ed2095dd2c41917084df4f1734f
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  offset: {x: 0, y: 0, z: 0}
+  anims:
+    Idle: idle
+    Move: 
+    Primary: primary
+    PrimaryHold: 
+    PrimaryRelease: 
+    PrimaryVariant: []
+    Secondary: 
+    SecondaryHold: ads
+    SecondaryRelease: 
+    Equip: 
+    Dequip: 
+  audioData:
+    AudioAssetIds:
+    - Id: fire0
+      AudioAsset:
+        m_AssetGUID: 9c05719cc12949a4f8234760643bd983
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_EditorAssetChanged: 0
+    - Id: fire1
+      AudioAsset:
+        m_AssetGUID: 40908e54f86684143a1537c35fff3848
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_EditorAssetChanged: 0
+    - Id: fire2
+      AudioAsset:
+        m_AssetGUID: 42e2450453447e841b64f162c1db13ca
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_EditorAssetChanged: 0
+    - Id: fire3
+      AudioAsset:
+        m_AssetGUID: ae4e98a26a5dd5b499c4a039c93cac26
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_EditorAssetChanged: 0

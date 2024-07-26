@@ -1,3 +1,5 @@
+using UnityEditor.Animations;
+using UnityEngine;
 using UnityEngine.AddressableAssets;
 
 using UZSG.Items.Weapons;
@@ -9,8 +11,9 @@ namespace UZSG.FPP
     /// </summary>
     public interface IFPPVisible
     {
-        public AssetReference ArmsViewmodel { get; }
-        public AssetReference ModelViewmodel { get; }
+        public AnimatorController ArmsAnimations { get; }
+        public AssetReference Viewmodel { get; }
+        public Vector3 Offset { get; }
         public EquipmentAnimationData Anims { get; }
         public bool HasViewmodel { get; }
     }

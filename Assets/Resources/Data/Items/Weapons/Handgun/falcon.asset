@@ -20,11 +20,13 @@ MonoBehaviour:
   Id: falcon
   Name: WL Falcon
   Description: Big pistol.
-  Sprite: {fileID: 0}
+  Sprite: {fileID: 21300000, guid: 75a04606deb60ed40ac1bdf3e4dd36e2, type: 3}
   Type: 1
   StackSize: 1
   Subtype: 3
   IsMaterial: 0
+  IsCraftable: 0
+  Recipes: []
   Weight: 4.2
   Category: 1
   MeleeType: 0
@@ -36,9 +38,9 @@ MonoBehaviour:
     BaseCritStrike: 0
     BaseCritDamage: 0
   RangedAttributes:
-    FiringModes: -1
-    RoundsPerMinute: 267
-    ClipSize: 7
+    FiringModes: 4
+    RoundsPerMinute: 999
+    ClipSize: 999
     ReloadSpeed: 1
     Spread: 0
     BurstFireCount: 0
@@ -69,20 +71,17 @@ MonoBehaviour:
       RecoilDamping: 1
       RecoilRecoverySpeed: 0.5
       RecoilRecoveryDelay: 0
-  armsViewmodel:
-    m_AssetGUID: 
+  armsAnimations: {fileID: 9100000, guid: 90b9a7adc1ec7d441af891b9381f35bf, type: 2}
+  viewmodel:
+    m_AssetGUID: 171df8b86bf63e840b394436641ca2f8
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  weaponViewmodel:
-    m_AssetGUID: 
-    m_SubObjectName: 
-    m_SubObjectType: 
-    m_EditorAssetChanged: 0
+  offset: {x: 0, y: 0, z: 0}
   anims:
-    Idle: 
+    Idle: idle
     Move: 
-    Primary: 
+    Primary: fire
     PrimaryHold: 
     PrimaryRelease: 
     PrimaryVariant: []

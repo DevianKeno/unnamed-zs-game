@@ -4,7 +4,9 @@ namespace UZSG
     {
         public static bool IsAssetReferenceSet(UnityEngine.AddressableAssets.AssetReference assetReference)
         {
-            return assetReference != null && assetReference.RuntimeKeyIsValid() && !string.IsNullOrEmpty(assetReference.AssetGUID);
+            return assetReference != null
+                && assetReference.RuntimeKeyIsValid()
+                && !string.IsNullOrEmpty(assetReference.AssetGUID);
         }
     }
 }

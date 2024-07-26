@@ -25,6 +25,8 @@ MonoBehaviour:
   StackSize: 1
   Subtype: 3
   IsMaterial: 0
+  IsCraftable: 0
+  Recipes: []
   Weight: 0
   Category: 1
   MeleeType: 1
@@ -69,16 +71,13 @@ MonoBehaviour:
       RecoilDamping: 1
       RecoilRecoverySpeed: 1
       RecoilRecoveryDelay: 1
-  armsViewmodel:
-    m_AssetGUID: cf23f63267f248b44ba581cfe94e58c1
-    m_SubObjectName: 
-    m_SubObjectType: 
-    m_EditorAssetChanged: 0
-  weaponViewmodel:
+  armsAnimations: {fileID: 9100000, guid: 8e0310dde16ff384aac66b0c2ec912fb, type: 2}
+  viewmodel:
     m_AssetGUID: ad8e9ed2095dd2c41917084df4f1734f
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
+  offset: {x: 0, y: 0, z: 0}
   anims:
     Idle: idle
     Move: 

@@ -14,11 +14,11 @@ namespace UZSG.Items.Weapons
     /// </summary>
     public class Weapon : Item
     {
-        protected WeaponData weaponData;
+        protected ItemData weaponData;
         
         public Weapon(ItemData itemData) : base(itemData, 1) /// 1, since Weapons are not stackable
         {
-            weaponData = (WeaponData) itemData;
+            weaponData = (ItemData) itemData;
         }
     }
 }

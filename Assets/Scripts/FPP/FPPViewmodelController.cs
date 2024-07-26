@@ -4,85 +4,86 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
-using UZSG.Items.Weapons;
+using UZSG.Systems;
+using UZSG.Items;
+using UZSG.Entities;
+using UZSG.Players;
+using System;
 
 namespace UZSG.FPP
 {
     public class FPPViewmodelController : MonoBehaviour
     {
-        [SerializeField] Transform armsHolder;
-        [SerializeField] Transform weaponHolder;
+        public Player Player;
 
-        public struct LoadAssetReferenceContext
+        [SerializeField] FPPCameraBobbing viewmodelBobbing;
+        [SerializeField] FPPViewmodelBreathe viewmodelBreathe;
+        [SerializeField] FPPViewmodelSway viewmodelSway;
+
+        [SerializeField] Transform viewmodelHolder;
+
+        internal void Initialize()
+        {
+            Player.MoveStateMachine.OnStateChanged += OnPlayerMoveStateChanged;
+        }
+
+        void OnPlayerMoveStateChanged(object sender, StateMachine<MoveStates>.StateChangedContext e)
+        {
+            if (e.To == MoveStates.Idle)
+            {
+                viewmodelBobbing.Enabled = false;
+                viewmodelBreathe.Enabled = true;
+            }
+            else if (e.To == MoveStates.Walk)
+            {
+                viewmodelBreathe.Enabled = false;
+                viewmodelBobbing.Enabled = true;
+            }
+        }
+
+        public struct LoadAssetReferenceInfo
         {
             public GameObject GameObject { get; set; }
             public AsyncOperationStatus Status { get; set; }
         }
 
-        public delegate void OnLoadAssetReferenceCompleted(LoadAssetReferenceContext context);
-        public delegate void OnLoadViewmodelCompleted(Viewmodel viewmodel);
-
-        public async Task<LoadAssetReferenceContext> LoadAssetReferenceAsync(AssetReference asset)
+        public async Task<Viewmodel> LoadViewmodelAssetAsync(IFPPVisible fPPVisible)
         {
-            AsyncOperationHandle<GameObject> handle = Addressables.LoadAssetAsync<GameObject>(asset);
-            await handle.Task;
-            return new LoadAssetReferenceContext
+            GameObject model = null;
+
+            if (fPPVisible.HasViewmodel)
             {
-                GameObject = handle.Status == AsyncOperationStatus.Succeeded ? handle.Result : null,
-                Status = handle.Status
+                LoadAssetReferenceInfo result = await LoadAssetReferenceAsync(fPPVisible.Viewmodel);
+                
+                if (result.Status == AsyncOperationStatus.Succeeded)
+                {
+                    model = Instantiate(result.GameObject, viewmodelHolder.transform);
+                }
+            }
+            else
+            {
+                var msg = $"Item {(fPPVisible as ItemData).Id} has no viewmodel set.";
+                Game.Console.Log(msg);
+                Debug.LogWarning(msg);
+            }
+
+            return new Viewmodel
+            {
+                ArmsAnimations = fPPVisible.ArmsAnimations,
+                Model = model,
+                ItemData = fPPVisible as ItemData,
             };
         }
 
-        public async void LoadViewmodelAsync(IFPPVisible obj, OnLoadViewmodelCompleted callback = null)
+        public async Task<LoadAssetReferenceInfo> LoadAssetReferenceAsync(AssetReference asset)
         {
-            GameObject arms = null;
-            GameObject weapon = null;
-
-            var armsTask = Utils.IsAssetReferenceSet(obj.ArmsViewmodel) ? LoadAssetReferenceAsync(obj.ArmsViewmodel) : Task.FromResult(new LoadAssetReferenceContext());
-            var weaponTask = Utils.IsAssetReferenceSet(obj.ModelViewmodel) ? LoadAssetReferenceAsync(obj.ModelViewmodel) : Task.FromResult(new LoadAssetReferenceContext());
-
-            var armsResult = await armsTask;
-            if (armsResult.Status == AsyncOperationStatus.Succeeded)
+            var op = Addressables.LoadAssetAsync<GameObject>(asset);
+            await op.Task;
+            return new LoadAssetReferenceInfo
             {
-                arms = Instantiate(armsResult.GameObject, armsHolder.transform);
-            }
-
-            var weaponResult = await weaponTask;
-            if (weaponResult.Status == AsyncOperationStatus.Succeeded)
-            {
-                weapon = Instantiate(weaponResult.GameObject, weaponHolder.transform);
-            }
-
-            callback?.Invoke(new()
-            {
-                Arms = arms,
-                Weapon = weapon,
-                WeaponData = obj as WeaponData,
-            });
-        }
-
-        public void ReplaceViewmodel(Viewmodel viewmodel)
-        {
-            if (armsHolder.childCount > 0)
-            {
-                var armsModel = armsHolder.GetChild(0);
-                armsModel.gameObject.SetActive(false);
-
-            }
-            if (viewmodel.Arms != null)
-            {
-                viewmodel.Arms.SetActive(true);
-            }
-            
-            if (weaponHolder.childCount > 0)
-            {
-                var weaponModel = weaponHolder.GetChild(0);
-                weaponModel.gameObject.SetActive(false);
-            }
-            if (viewmodel.Weapon != null)
-            {
-                viewmodel.Weapon.SetActive(true);
-            }
+                GameObject = op.Result,
+                Status = op.Status
+            };
         }
     }
 }

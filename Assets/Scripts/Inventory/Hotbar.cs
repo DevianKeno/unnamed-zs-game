@@ -66,7 +66,7 @@ namespace UZSG.Inventory
                 _slots.Add(newSlot);
             }
 
-            _hands.Put(new("hands"));
+            _hands.Put(new("arms"));
         }
     }
 }

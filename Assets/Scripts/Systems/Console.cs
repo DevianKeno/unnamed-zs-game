@@ -221,7 +221,7 @@ namespace UZSG.Systems
                 Debug.Log(message);
             }
         }
-        
+                
         /// <summary>
         /// Log a debug message into the game's console.
         /// </summary>

@@ -12,4 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e17289ee7a2e6cf41a659f97ecedf26e, type: 3}
   m_Name: rainy
   m_EditorClassIdentifier: 
-  WeatherTypes: []
+  weatherAttributes:
+  - Name: 
+    Strength: 0
+    Duration: 0
+    Temperature: 0
+  weatherProperties:
+    isWahahaha: 0

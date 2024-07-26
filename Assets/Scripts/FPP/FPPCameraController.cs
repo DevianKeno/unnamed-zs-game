@@ -17,7 +17,6 @@ namespace UZSG.FPP
         [Header("Camera Settings")]
         public float Sensitivity;
         public bool EnableControls = true;
-        public bool EnableBobbing = true;
 
         float _verticalRotation = 0f;
         float _horizontalRotation = 0f;

@@ -213,7 +213,6 @@ namespace UZSG.Players
 
         /// <summary>
         /// Pick up item from ItemEntity and put in the inventory.
-        /// TODO: There is currently no checking if inventory is full.
         /// </summary>
         public void PickUpItem(ItemEntity itemEntity)
         {
@@ -223,13 +222,13 @@ namespace UZSG.Players
             bool gotItem; /// whether if the player had successfully picked up the item
             Item item = itemEntity.AsItem();
 
-            if (item.Type == ItemType.Weapon)
+            if (item.Data.Type == ItemType.Weapon)
             {
                 gotItem = Player.Inventory.TryEquipWeapon(item, out HotbarIndex index);
 
                 if (gotItem)
                 {
-                    Player.FPP.LoadViewmodel(item.Data, index);
+                    Player.FPP.LoadFPPItem(item.Data, index, equip: true);
                     Player.FPP.InitializeHeldItem(item, index, () =>
                     {
                         Player.FPP.EquipHotbarIndex(index);

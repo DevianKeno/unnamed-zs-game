@@ -135,7 +135,7 @@ namespace UZSG.Items.Weapons
                 PlayRandomFireSound();
                 SpawnBulletEntity();
                 _currentRounds--;
-                MuzzleController.Fire();
+                MuzzleController?.Fire();
                 OnFire?.Invoke();
                 yield return new WaitForSeconds(60f / WeaponData.RangedAttributes.RoundsPerMinute);
             }
@@ -149,7 +149,7 @@ namespace UZSG.Items.Weapons
                 PlayRandomFireSound();
                 SpawnBulletEntity();
                 _currentRounds--;
-                MuzzleController.Fire();
+                MuzzleController?.Fire();
                 OnFire?.Invoke();
                 yield return new WaitForSeconds(60f / WeaponData.RangedAttributes.RoundsPerMinute);
             }

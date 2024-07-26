@@ -1,16 +1,17 @@
 using System;
 
+using UnityEditor.Animations;
 using UnityEngine;
 
-using UZSG.Items.Weapons;
+using UZSG.Items;
 
 namespace UZSG.FPP
 {
     [Serializable]
-    public struct Viewmodel
+    public class Viewmodel
     {
-        [field: SerializeField] public GameObject Arms { get; set; }
-        [field: SerializeField] public GameObject Weapon { get; set; }
-        [field: SerializeField] public WeaponData WeaponData { get; set; }
+        [field: SerializeField] public AnimatorController ArmsAnimations { get; set; }
+        [field: SerializeField] public GameObject Model { get; set; }
+        [field: SerializeField] public ItemData ItemData { get; set; }
     }
 }

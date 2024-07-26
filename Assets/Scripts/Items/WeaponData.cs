@@ -109,10 +109,12 @@ namespace UZSG.Items.Weapons
         public WeaponRangedAttributes RangedAttributes;
 
         [Header("FPP")]
-        [SerializeField] AssetReference armsViewmodel;
-        public AssetReference ArmsViewmodel => armsViewmodel;
-        [SerializeField] AssetReference weaponViewmodel;
-        public AssetReference ModelViewmodel => weaponViewmodel;       
+        [SerializeField] AnimatorController armsAnimations;
+        public AnimatorController ArmsAnimations => armsAnimations;
+        [SerializeField] AssetReference viewmodel;
+        public AssetReference Viewmodel => viewmodel;       
+        [SerializeField] Vector3 offset;
+        public Vector3 Offset => offset;
         [SerializeField] EquipmentAnimationData anims;
         public EquipmentAnimationData Anims => anims;
         [SerializeField] EquipmentAudioData audioData;
@@ -128,8 +130,7 @@ namespace UZSG.Items.Weapons
         {
             get
             {
-                return Utils.IsAssetReferenceSet(armsViewmodel)
-                    || Utils.IsAssetReferenceSet(weaponViewmodel);
+                return Utils.IsAssetReferenceSet(viewmodel);
             }
         }
     }

@@ -12,8 +12,18 @@ namespace UZSG.WorldBuilder
         public Light MoonLight;
         public Gradient DayColors;
         public Gradient NightColors;
-        public Color DayFogColor;
-        public Color NightFogColor;
+        [SerializeField] Color _dayFogColor;
+        public Color DayFogColor
+        {
+            get { return _dayFogColor; }
+            set { _dayFogColor = value; }
+        } 
+        [SerializeField] Color _nightFogColor;
+        public Color NightFogColor
+        {
+            get { return _nightFogColor; }
+            set { _nightFogColor = value; }
+        }
         public int TwentyFourHourTime;
         [SerializeField] float _currentTime;
         public float CurrentTime
@@ -121,25 +131,25 @@ namespace UZSG.WorldBuilder
 
             if (time >= dayStart && time < dayEnd)
             {
-                fogColor = DayFogColor;
+                fogColor = _dayFogColor;
                 fogDensity = 0.005f;
             }
             else
             {
-                fogColor = NightFogColor;
+                fogColor = _nightFogColor;
                 fogDensity = 0.05f;
             }
 
             if (time < dayStart)
             {
                 float t = Mathf.InverseLerp(0f, dayStart, time);
-                fogColor = Color.Lerp(NightFogColor, DayFogColor, t);
+                fogColor = Color.Lerp(_nightFogColor, _dayFogColor, t);
                 fogDensity = Mathf.Lerp(0.05f, 0.005f, t);
             }
             else if (time >= dayEnd)
             {
                 float t = Mathf.InverseLerp(dayEnd, 1f, time);
-                fogColor = Color.Lerp(DayFogColor, NightFogColor, t);
+                fogColor = Color.Lerp(_dayFogColor, _nightFogColor, t);
                 fogDensity = Mathf.Lerp(0.005f, 0.05f, t);
             }
 

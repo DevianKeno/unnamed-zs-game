@@ -88,5 +88,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a35992c1c4181546ac39d2d609a2147, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  AnimationFactor: 0.1
+  TweenType: 18
   rect: {fileID: 6202822361691163051}
   image: {fileID: 2813167882506705619}

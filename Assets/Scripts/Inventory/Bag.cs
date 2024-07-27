@@ -26,7 +26,7 @@ namespace UZSG.Inventory
 
             for (int i = 0; i < SlotsCount; i++)
             {
-                ItemSlot newSlot = new(i, SlotType.All);
+                ItemSlot newSlot = new(i, ItemSlotType.All);
                 newSlot.OnContentChanged += SlotContentChanged;
                 _slots.Add(newSlot);
             }   

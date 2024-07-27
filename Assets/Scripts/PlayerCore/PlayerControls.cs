@@ -11,10 +11,10 @@ namespace UZSG.Players
 {
     public struct FrameInput
     {
-        public Vector2 move;
-        public bool pressedJump;
-        public bool pressedInteract;
-        public bool pressedInventory;
+        public Vector2 Move { get; set; }
+        public bool HasPressedJump { get; set; }
+        public bool HasPressedInteract { get; set; }
+        public bool HasPressedInventory { get; set; }
     }
 
     /// <summary>
@@ -57,13 +57,16 @@ namespace UZSG.Players
         Vector3 _previousPosition;
         Vector3 _targetPosition;
 
+        StrafeDirection strafeDirection;
+        public StrafeDirection StrafeDirection => strafeDirection;
         float _currentSpeed;
-        bool _isMovePressed;
         float initialJumpVelocity;
-        bool _hasJumped;
         float CrouchPosition;
+
         bool _isTransitioning;
         bool _isRunning;
+        bool _hasJumped;
+        bool _isMovePressed;
         /// <summary>
         /// Check if holding [Run] key and speed is greater than run threshold
         /// </summary>
@@ -256,8 +259,21 @@ namespace UZSG.Players
         {
             if (!EnableMovementControls) return;
 
-            _frameInput.move = context.ReadValue<Vector2>();
-            _isMovePressed = _frameInput.move.x != 0 || _frameInput.move.y != 0;
+            _frameInput.Move = context.ReadValue<Vector2>();
+            _isMovePressed = _frameInput.Move.x != 0 || _frameInput.Move.y != 0;
+
+            if (_frameInput.Move.x < 0)
+            {
+                strafeDirection = StrafeDirection.Left;
+            }
+            else if (_frameInput.Move.x > 0)
+            {
+                strafeDirection = StrafeDirection.Right;
+            }
+            else
+            {
+                strafeDirection = StrafeDirection.None;
+            }
         }
 
         void OnJumpInput(InputAction.CallbackContext context)
@@ -323,7 +339,7 @@ namespace UZSG.Players
 
         void HandleDirection()
         {
-            _frameVelocity = (_frameInput.move.x * Player.MainCamera.transform.right) + (_frameInput.move.y * GetCameraForward().normalized);
+            _frameVelocity = (_frameInput.Move.x * Player.MainCamera.transform.right) + (_frameInput.Move.y * GetCameraForward().normalized);
             _frameVelocity.Normalize();
         }
 

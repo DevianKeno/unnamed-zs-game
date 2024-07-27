@@ -5,7 +5,7 @@ using UZSG.Attributes;
 
 namespace UZSG.Systems
 {
-    public class AttributesManager : MonoBehaviour, IInitializable
+    public class AttributesManager : MonoBehaviour, IInitializeable
     {
         bool _isInitialized;
         public bool IsInitialized => _isInitialized;

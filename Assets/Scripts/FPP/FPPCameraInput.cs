@@ -1,16 +1,16 @@
-using System;
 using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering.Universal;
+
 using UZSG.Systems;
 using UZSG.Entities;
-using UZSG.Players;
 using UZSG.Items.Weapons;
-using UnityEngine.Rendering.Universal;
 
 namespace UZSG.FPP
 {
-    public class FPPCameraController : MonoBehaviour
+    public class FPPCameraInput : MonoBehaviour
     {
         public Player Player;
 
@@ -20,9 +20,9 @@ namespace UZSG.FPP
 
         float _verticalRotation = 0f;
         float _horizontalRotation = 0f;
-        bool _isRecoiling;
-        float _currentVerticalRecoil;
-        float _currentHorizontalRecoil;
+        bool _hasRecoil;
+        float _addedVerticalRecoil;
+        float _addedHorizontalRecoil;
         float _recoilRecoverySpeedCached = 0f;
 
         Dictionary<string, InputAction> inputs;
@@ -78,6 +78,7 @@ namespace UZSG.FPP
             if (!EnableControls) return;
 
             var lookInput = look.ReadValue<Vector2>();
+            print(lookInput);
             float mouseX = lookInput.x * Sensitivity * Time.deltaTime;
             float mouseY = lookInput.y * Sensitivity * Time.deltaTime;
 
@@ -85,36 +86,36 @@ namespace UZSG.FPP
             _verticalRotation = Mathf.Clamp(_verticalRotation, -89f, 89f);
             _horizontalRotation += mouseX;
 
-            transform.localEulerAngles = new Vector3(
-                _verticalRotation + _currentVerticalRecoil,
-                _horizontalRotation + _currentHorizontalRecoil,
+            transform.localEulerAngles = new(
+                _verticalRotation + _addedVerticalRecoil,
+                _horizontalRotation + _addedHorizontalRecoil,
                 0f
             );
         }
 
         void HandleRecoilRecovery()
         {
-            if (_isRecoiling)
+            if (_hasRecoil)
             {
                 var time = Time.deltaTime;
                 // var time = Game.Tick.SecondsPerTick * Time.deltaTime;
-                _currentVerticalRecoil = Mathf.Lerp(_currentVerticalRecoil, 0f, time / _recoilRecoverySpeedCached);
-                _currentHorizontalRecoil = Mathf.Lerp(_currentHorizontalRecoil, 0f, time / _recoilRecoverySpeedCached);
+                _addedVerticalRecoil = Mathf.Lerp(_addedVerticalRecoil, 0f, time / _recoilRecoverySpeedCached);
+                _addedHorizontalRecoil = Mathf.Lerp(_addedHorizontalRecoil, 0f, time / _recoilRecoverySpeedCached);
 
-                if (Mathf.Abs(_currentVerticalRecoil) < 0.01f && Mathf.Abs(_currentHorizontalRecoil) < 0.01f)
+                if (Mathf.Abs(_addedVerticalRecoil) < 0.01f && Mathf.Abs(_addedHorizontalRecoil) < 0.01f)
                 {
                     _recoilRecoverySpeedCached = 0f;
-                    _isRecoiling = false;
+                    _hasRecoil = false;
                 }
             }
         }
 
         public void AddRecoilMotion(RecoilAttributes recoilInfo)
         {
-            _currentVerticalRecoil += -recoilInfo.VerticalRecoilAmount;
-            _currentHorizontalRecoil += recoilInfo.HorizontalRecoilAmount * recoilInfo.HorizontalRecoilDirection;
-            _recoilRecoverySpeedCached = recoilInfo.RecoilRecoverySpeed;
-            _isRecoiling = true;
+            _addedVerticalRecoil += -recoilInfo.VerticalRecoilAmount;
+            _addedHorizontalRecoil += recoilInfo.HorizontalRecoilAmount * recoilInfo.HorizontalRecoilDirection;
+            _recoilRecoverySpeedCached = recoilInfo.Speed;
+            _hasRecoil = true;
         }
 
         void CursorToggledCallback(bool isVisible)

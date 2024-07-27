@@ -40,8 +40,8 @@ namespace UZSG.FPP
         [Header("Controllers")]
         [SerializeField] FPPArmsController armsController;
         [SerializeField] FPPViewmodelController viewmodelController;
-        [SerializeField] FPPCameraController cameraController;
-        public FPPCameraController CameraController => cameraController;
+        [SerializeField] FPPCameraInput cameraController;
+        public FPPCameraInput CameraController => cameraController;
         [SerializeField] GunMuzzleController gunMuzzleController;
 
         Animator viewmodelAnimator;
@@ -349,13 +349,13 @@ namespace UZSG.FPP
 
         #endregion
 
-
         void HandleWeaponRecoil()
         {
             if (heldItem is GunWeaponController weapon)
             {
                 var weaponData = weapon.ItemData as WeaponData;
                 var recoilInfo = weaponData.RangedAttributes.RecoilAttributes;
+
                 cameraController.AddRecoilMotion(recoilInfo);
             }
         }

@@ -4,17 +4,6 @@ using UZSG.Items;
 
 namespace UZSG.Inventory
 {
-    [Flags]
-    public enum SlotType
-    {
-        All = 1,
-        Item = 2,
-        Tool = 4,
-        Weapon = 8,
-        Equipment = 16,
-        Accessory = 32
-    }
-
     /// <summary>
     /// Represents a container where Items can be put in.
     /// </summary>
@@ -26,13 +15,11 @@ namespace UZSG.Inventory
             public Item Item;
         }
         
-        public static ItemSlot Empty { get => null; }
-
         [SerializeField] int index;
         public int Index => index;
         [SerializeField] Item item;
         public Item Item => item;
-        public SlotType SlotType;
+        public ItemSlotType SlotType;
         [SerializeField] public bool IsEmpty
         {
             get
@@ -50,10 +37,10 @@ namespace UZSG.Inventory
         {
             this.index = index;
             item = Item.None;
-            SlotType = SlotType.All;
+            SlotType = ItemSlotType.All;
         }
         
-        public ItemSlot(int index, SlotType slotType)
+        public ItemSlot(int index, ItemSlotType slotType)
         {
             this.index = index;
             item = Item.None;
@@ -140,39 +127,24 @@ namespace UZSG.Inventory
         /// </summary>
         public bool TryCombine(Item toAdd, out Item excess)
         {
-            if (!item.CompareTo(toAdd))
+            if (item.Combine(toAdd, out excess))
             {
-                excess = toAdd;
-                return false;
+                ContentChanged();
+                return true;
             }
-        
-            int newCount = item.Count + toAdd.Count;
-            int excessCount = newCount - item.StackSize;
-
-            if (excessCount > 0)
-            {
-                item = new(item, item.StackSize);
-                excess = new(item, excessCount);
-            }
-            else
-            {
-                item = new(item, newCount);
-                excess = Item.None;
-            }
-            ContentChanged();
-            return true;
+            return false;
         }
         
-        SlotType MapItemTypeToSlotType(ItemType itemType)
+        ItemSlotType MapItemTypeToSlotType(ItemType itemType)
         {
             return itemType switch
             {
-                ItemType.Item => SlotType.Item,
-                ItemType.Weapon => SlotType.Weapon,
-                ItemType.Tool => SlotType.Tool,
-                ItemType.Equipment => SlotType.Equipment,
-                ItemType.Accessory => SlotType.Accessory,
-                _ => SlotType.All
+                ItemType.Item => ItemSlotType.Item,
+                ItemType.Weapon => ItemSlotType.Weapon,
+                ItemType.Tool => ItemSlotType.Tool,
+                ItemType.Equipment => ItemSlotType.Equipment,
+                ItemType.Accessory => ItemSlotType.Accessory,
+                _ => ItemSlotType.All
             };
         }
     }

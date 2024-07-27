@@ -10,7 +10,7 @@ namespace UZSG.Systems
     /// <summary>
     /// The entities should be only initialized upon entering a world.
     /// </summary>
-    public class EntityManager : MonoBehaviour, IInitializable
+    public class EntityManager : MonoBehaviour, IInitializeable
     {
         public struct EntitySpawnedContext
         {

@@ -6,7 +6,7 @@ namespace UZSG.Systems
     /// <summary>
     /// Developer console for invoking system commands.
     /// </summary>
-    public sealed partial class Console : MonoBehaviour, IInitializable
+    public sealed partial class Console : MonoBehaviour, IInitializeable
     {
         /// The args parameters represent the arguments WITHOUT the actual command.
         /// ex. "/spawn item bandage"

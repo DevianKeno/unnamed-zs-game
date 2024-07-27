@@ -2,14 +2,21 @@ using System;
 
 using UnityEngine;
 using UnityEngine.UI;
+
 using UZSG.Systems;
 
 namespace UZSG.UI
 {
+    /// <summary>
+    /// Windows are UI elements that can be shown or hidden.
+    /// </summary>
     public class Window : MonoBehaviour, IUIElement
     {
-        public bool IsVisible { get; set; }
+        [SerializeField] protected RectTransform rect;
+        public RectTransform Rect => rect;
+        [field: Space]
 
+        public bool IsVisible { get; set; }
         public Vector3 Position
         {
             get
@@ -23,39 +30,65 @@ namespace UZSG.UI
         }
         public float AnimationFactor = 0.3f;
 
+        protected GameObject blocker;
+
         public event Action OnOpen;
         public event Action OnClose;
 
-        protected RectTransform rect;
-
-        void Awake()
+        void Start()
         {
             rect = GetComponent<RectTransform>();
         }
 
-        public virtual void OnShow()
-        {
-        }
+        /// <summary>
+        /// Executes once ONLY IF the window is previously hidden, then made visible.
+        /// </summary>
+        public virtual void OnShow() { }
+        /// <summary>
+        /// Executes once ONLY IF the window is previously visible, then made hidden.
+        /// </summary>
+        public virtual void OnHide() { }
 
-        public virtual void OnHide()
-        {
-        }
-
+        /// <summary>
+        /// Shows the window.
+        /// </summary>
         public void Show()
         {
             gameObject.SetActive(true);
             LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
-            OnShow();
+            
+            if (!IsVisible)
+            {
+                OnShow();
+                OnOpen?.Invoke();
+            }
             IsVisible = true;
-            OnOpen?.Invoke();
         }
 
+        bool _destroyOnBlockerClick;
+
+        public void CreateBlocker(bool destroyOnClick = true)
+        {
+            _destroyOnBlockerClick = destroyOnClick;
+            blocker = Game.UI.CreateBlocker(forElement: this, onClick: () =>
+            {
+                if (_destroyOnBlockerClick) Destroy();
+            });
+        }
+
+        /// <summary>
+        /// Hides the window. Does not destroy.
+        /// </summary>
         public void Hide()
         {
-            OnHide();
-            gameObject.SetActive(false);
+            if (IsVisible)
+            {
+                OnHide();
+                OnClose?.Invoke();
+            };
             IsVisible = false;
-            OnClose?.Invoke();
+            
+            gameObject.SetActive(false);
         }
 
         // public void FadeIn()
@@ -84,7 +117,8 @@ namespace UZSG.UI
             if (visible)
             {
                 Show();
-            } else
+            }
+            else
             {
                 Hide();
             }
@@ -101,7 +135,7 @@ namespace UZSG.UI
 
         public void SetScale(float width, float height)
         {
-            rect.localScale = new Vector2(width, height);
+            rect.localScale = new(width, height);
         }
         
         public void Move(Vector3 position)

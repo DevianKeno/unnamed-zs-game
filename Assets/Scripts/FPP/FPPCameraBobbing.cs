@@ -1,12 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
-
 using UnityEngine;
 
 using UZSG.Systems;
-using UZSG.Players;
 using UZSG.Entities;
-using System;
 
 namespace UZSG.FPP
 {
@@ -45,7 +40,7 @@ namespace UZSG.FPP
 
         void Bob()
         {
-            if (Player.Controls.Speed < MinSpeed) return;
+            if (Player.Controls.HorizontalSpeed < MinSpeed) return;
             if (!Player.Controls.IsGrounded) return;
 
             AddPosition(FootStepMotion());
@@ -80,7 +75,11 @@ namespace UZSG.FPP
         {
             if (transform.localPosition == Vector3.zero) return;
 
-            transform.localPosition = Vector3.Lerp(transform.localPosition, startPosition, Recovery * NormalRecoveryFactor * Time.deltaTime);
+            transform.localPosition = Vector3.Lerp(
+                transform.localPosition,
+                startPosition,
+                Recovery * NormalRecoveryFactor * Time.deltaTime
+            );
         }
     }
 }

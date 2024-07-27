@@ -51,42 +51,30 @@ namespace UZSG.UI
 
         #endregion
 
-
-        [Header("UI Prefabs")]
-        public List<PrefabId> Prefabs;
+        Dictionary<string, GameObject> prefabsDict = new();
 
         internal void Initialize()
         {
             if (_isInitialized) return;
             _isInitialized = true;
-
-            Game.Main.OnLateInit += OnLateInit;
             
             Game.Console.Log("Initializing UI...");
+            InitializeUIPrefabs();
 
             input = Game.Main.MainInput;
             toggleCursorInput = input.actions.FindAction("Toggle Cursor");
             closeCurrentWindowInput = input.actions.FindAction("Close Current Window");
-                     
             toggleCursorInput.performed += ToggleCursor;
-                        
+
             input.actions.FindActionMap("Global").Enable();
         }
 
         void InitializeUIPrefabs()
         {
-            var a = Resources.LoadAll<GameObject>("Prefabs/UI");
-            foreach (var b in a)
+            foreach (GameObject element in Resources.LoadAll<GameObject>("Prefabs/UI"))
             {
-                if (b.TryGetComponent<IUIElement>(out var element))
-                {
-
-                }
+                prefabsDict[element.name] = element;
             }
-        }
-      
-        void OnLateInit()
-        {
         }
 
         void ToggleCursor(InputAction.CallbackContext context)
@@ -111,45 +99,63 @@ namespace UZSG.UI
             OnCursorToggled?.Invoke(enabled);
         }
 
-        // public ItemDisplayUI CreateItemDisplay(Item item)
-        // {
-        //     return Instantiate(itemDisplayPrefab, Canvas.transform).GetComponent<ItemDisplayUI>();
-        // }
-
-        // public void InitInventoryWindow(InventoryHandler inventory)
-        // {
-        //     GameObject go = Instantiate(inventoryPrefab, canvas.transform);
-        //     go.name = "Inventory Window";
-
-        //     _inventoryUI = go.GetComponent<PlayerInventoryWindow>();
-        //     _inventoryUI.BindInventory(inventory);
-        //     _inventoryUI.Initialize();
-        //     _inventoryUI.Hide();
-        // }
-
-        public T Create<T>(string id, bool inSafeArea = true) where T : IUIElement
+        public GameObject Create(string prefabName, bool inSafeArea = true)
         {
-            Transform parent = Canvas.transform;
-            if (!inSafeArea) parent = Canvas.transform; /// lewl
-            foreach (PrefabId p in Prefabs)
+            if (prefabsDict.ContainsKey(prefabName))
             {
-                if (p.Id == id)
-                {
-                    var go = Instantiate(p.Prefab, parent);
-                    go.name = p.Prefab.name;
+                var go = Instantiate(prefabsDict[prefabName], Canvas.transform);
+                go.name = prefabName;
+                return go;
+            }
 
-                    if (go.TryGetComponent(out T element))
-                    {
-                        return element;
-                    }
-                    return default;
+            var msg = $"UI Prefab '{prefabName}' does not exist.";
+            Game.Console.Log(msg);
+            Debug.LogWarning(msg);
+            return null;
+        }
+
+        public T Create<T>(string prefabName, bool show = true) where T : Window
+        {            
+            if (prefabsDict.ContainsKey(prefabName))
+            {
+                var go = Instantiate(prefabsDict[prefabName], Canvas.transform);
+                go.name = prefabName;
+
+                if (go.TryGetComponent(out T element))
+                {
+                    if (!show) element.Hide();
+                    return element;
                 }
+                return default;
             }
 
             var msg = $"Unable to create UI element, it does not exist";
             Game.Console.Log(msg);
             Debug.LogWarning(msg);
             return default;
+        }
+
+        public GameObject CreateBlocker(IUIElement forElement = null, Action onClick = null)
+        {
+            var blocker = Create("Blocker");
+            blocker.transform.SetParent(Canvas.transform);
+
+            if (forElement != null)
+            {
+                blocker.transform.SetSiblingIndex((forElement as MonoBehaviour).transform.GetSiblingIndex());
+            }
+            else
+            {
+                blocker.transform.SetAsLastSibling();
+            }
+
+            blocker.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>
+            {
+                Destroy(blocker);
+                onClick.Invoke();
+            });
+
+            return blocker;
         }
     }
 }

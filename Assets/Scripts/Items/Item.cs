@@ -15,34 +15,34 @@ namespace UZSG.Items
     [Serializable]
     public class Item : IComparable<Item>
     {
-        public static Item None => null;
+        public static Item None => new(data: null);
         
         [SerializeField] protected ItemData _itemData;
         public ItemData Data => _itemData;
-        public string Id { get => _itemData.Id; }
-        public string Name { get => _itemData.Name; }
-        public int StackSize { get => _itemData.StackSize; }
-        public ItemType Type { get => _itemData.Type; }
+        public string Id => _itemData.Id;
+        public string Name => _itemData.Name;
+        public int StackSize => _itemData.StackSize;
+        public ItemType Type => _itemData.Type;
+        public ItemSubtype Subtype => _itemData.Subtype;
         [SerializeField] int _count;
-        public int Count { get => _count; }
+        public int Count => _count;
         public bool IsNone => _itemData == null;
 
 
         #region Item constructors
 
         /// <summary>
-        /// Create an Item object from ItemData.
+        /// None item.
         /// </summary>
-        public Item(ItemData data)
+        public Item(ItemData data = null)
         {
             _itemData = data;
-            _count = 1;
         }
 
         /// <summary>
         /// Create an Item object from ItemData with count.
         /// </summary>
-        public Item(ItemData data, int count)
+        public Item(ItemData data, int count = 1)
         {
             _itemData = data;
             _count = Math.Clamp(count, 1, Data.StackSize);
@@ -51,34 +51,16 @@ namespace UZSG.Items
         /// <summary>
         /// Create an item by id.
         /// </summary>
-        public Item(string id)
-        {
-            _itemData = Game.Items.GetItemData(id);
-            _count = 1;
-        }
-        
-        /// <summary>
-        /// Create an item by id with count.
-        /// </summary>
-        public Item(string id, int count)
+        public Item(string id, int count = 1)
         {
             _itemData = Game.Items.GetItemData(id);
             _count = Math.Clamp(count, 1, Data.StackSize);
         }
-
-        /// <summary>
-        /// Create a copy of the Item.
-        /// </summary>
-        public Item(Item other)
-        {
-            _itemData = other.Data;
-            _count = other.Count;
-        }
-        
+                
         /// <summary>
         /// Create a copy of the Item with a new count.
         /// </summary>
-        public Item(Item other, int count)
+        public Item(Item other, int count = 1)
         {
             _itemData = other.Data;
             _count = Math.Clamp(count, 1, Data.StackSize);
@@ -92,22 +74,34 @@ namespace UZSG.Items
             _count = value;
         }
 
+        /// <summary>
+        /// Take an amount from this item.
+        /// </summary>
         public Item Take(int amount)
         {
-            if (amount > _count) return Take();
+            if (amount >= _count)
+            {
+                return this;
+            }
+
+            _count -= amount;
             return new(_itemData, amount);
         }
-
-        public Item Take()
-        {
-            Item toTake = new(_itemData, _count);
-            return toTake;
-        }
         
-        public void Combine(Item item)
+        public bool Combine(Item item, out Item excess)
         {
-            if (!CompareTo(item)) return;
+            excess = None;
+            if (!CompareTo(item))
+            {
+                return false;
+            }
+
             _count += item.Count;
+            if (_count > Data.StackSize)
+            {
+                excess = new(this, _count - Data.StackSize);
+            }
+            return true;
         }
 
         /// <summary>

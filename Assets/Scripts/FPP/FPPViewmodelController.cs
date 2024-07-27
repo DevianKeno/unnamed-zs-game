@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using UnityEngine;
@@ -8,19 +10,48 @@ using UZSG.Systems;
 using UZSG.Items;
 using UZSG.Entities;
 using UZSG.Players;
-using System;
 
 namespace UZSG.FPP
 {
+    public interface IViewmodelModifier
+    {
+        public Vector3 GetPositionOffset();
+        public Quaternion GetRotationOffset();
+    }
+
     public class FPPViewmodelController : MonoBehaviour
     {
         public Player Player;
+        [Space]
 
-        [SerializeField] FPPCameraBobbing viewmodelBobbing;
-        [SerializeField] FPPViewmodelBreathe viewmodelBreathe;
-        [SerializeField] FPPViewmodelSway viewmodelSway;
+        FPPViewmodelBobbing viewmodelBobbing;
+        FPPViewmodelBreathe viewmodelBreathe;
+        FPPViewmodelSway viewmodelSway;
 
-        [SerializeField] Transform viewmodelHolder;
+        void Awake()
+        {
+            viewmodelBobbing = GetComponent<FPPViewmodelBobbing>();
+            viewmodelBreathe = GetComponent<FPPViewmodelBreathe>();
+            viewmodelSway = GetComponent<FPPViewmodelSway>();
+        }
+
+        List<IViewmodelModifier> modifiers = new();
+        Vector3 positionOffset;
+        Quaternion rotationOffset;
+
+        void Update()
+        {
+            // positionOffset = Vector3.zero;
+            // rotationOffset = Quaternion.identity;
+
+            // foreach (var modifier in modifiers)
+            // {
+            //     positionOffset += modifier.GetPositionOffset();
+            //     rotationOffset *= modifier.GetRotationOffset();
+            // }
+
+            // transform.SetLocalPositionAndRotation(positionOffset, rotationOffset);
+        }
 
         internal void Initialize()
         {
@@ -29,16 +60,16 @@ namespace UZSG.FPP
 
         void OnPlayerMoveStateChanged(object sender, StateMachine<MoveStates>.StateChangedContext e)
         {
-            if (e.To == MoveStates.Idle)
-            {
-                viewmodelBobbing.Enabled = false;
-                viewmodelBreathe.Enabled = true;
-            }
-            else if (e.To == MoveStates.Walk)
-            {
-                viewmodelBreathe.Enabled = false;
-                viewmodelBobbing.Enabled = true;
-            }
+            // if (e.To == MoveStates.Idle)
+            // {
+            //     viewmodelBobbing.Enabled = false;
+            //     viewmodelBreathe.Enabled = true;
+            // }
+            // else if (e.To == MoveStates.Walk)
+            // {
+            //     viewmodelBreathe.Enabled = false;
+            //     viewmodelBobbing.Enabled = true;
+            // }
         }
 
         public struct LoadAssetReferenceInfo
@@ -57,7 +88,7 @@ namespace UZSG.FPP
                 
                 if (result.Status == AsyncOperationStatus.Succeeded)
                 {
-                    model = Instantiate(result.GameObject, viewmodelHolder.transform);
+                    model = Instantiate(result.GameObject, transform);
                 }
             }
             else

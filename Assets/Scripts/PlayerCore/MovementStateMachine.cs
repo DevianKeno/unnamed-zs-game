@@ -8,6 +8,10 @@ namespace UZSG.Players
         Idle, Walk, Run, Jump, Crouch, CrouchWalk,
     }
 
+    public enum StrafeDirection {
+        None, Left, Right
+    }
+
     public class MovementStateMachine : StateMachine<MoveStates>
     {        
     }

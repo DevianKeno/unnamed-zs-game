@@ -4,17 +4,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 using UZSG.Systems;
 using UZSG.Inventory;
 using UZSG.Items;
 using UZSG.Entities;
-using UnityEngine.UI;
-using System.Collections;
 
 namespace UZSG.UI
 {
-    public class PlayerInventoryWindow : Window, IInitializable
+    public class PlayerInventoryWindow : Window, IInitializeable
     {
         public Player Player;
         [SerializeField] InventoryHandler inventory;
@@ -33,21 +32,16 @@ namespace UZSG.UI
         bool _isPutting;
         bool _isGetting;
         Dictionary<int, ItemSlotUI> _bagSlotUIs = new();
-
-        ItemDisplayUI _displayedItem;
+        
+        ChoiceWindow itemOptions;
+        ItemDisplayUI displayedItem;
         Selector selector;
-        Graphic[] _UIElements;
-        float[] _UIInitialAlphas;
 
         [Header("Inventory Components")]
         [SerializeField] FrameController frameController;
         [SerializeField] GameObject bag;
-        [SerializeField] GameObject hotbar;
-
+        
         [Header("Prefabs")]
-        [SerializeField] GameObject slotPrefab;
-        [SerializeField] GameObject weaponSlotPrefab;
-        [SerializeField] GameObject itemDisplayPrefab;
         [SerializeField] GameObject selectorPrefab;
         
         InputActionMap actionMap;
@@ -55,9 +49,9 @@ namespace UZSG.UI
 
         void Update()
         {
-            if (_displayedItem != null)
+            if (displayedItem != null)
             {
-                _displayedItem.transform.position = Input.mousePosition;
+                displayedItem.transform.position = Input.mousePosition;
             }
         }
         
@@ -74,6 +68,7 @@ namespace UZSG.UI
             if (_isInitialized) return;
             _isInitialized = true;
 
+            InitializeEvents();
             InitializeBag();
             selector = Instantiate(selectorPrefab, transform).GetComponent<Selector>();
             frameController.SwitchToFrame("bag", force: true);
@@ -93,21 +88,37 @@ namespace UZSG.UI
             }
         }
 
+        void InitializeEvents()
+        {
+            frameController.OnSwitchFrame += OnSwitchFrame;
+        }
+
+
+        #region Callbacks
+
+        void OnSwitchFrame(string frame)
+        {
+            PutBackHeldItem();
+            DestroyItemOptions();
+        }
+
+        #endregion
+
+
         void InitializeBag()
         {
             int maxSlots = inventory.Bag.SlotsCount;
             for (int i = 0; i < maxSlots; i++)
             {
-                var go = Instantiate(slotPrefab);
-                go.name = $"Slot ({i})";
-                go.transform.SetParent(bag.transform);
-
-                ItemSlotUI slot = go.GetComponent<ItemSlotUI>();
+                var slot = Game.UI.Create<ItemSlotUI>("Item Slot");
+                slot.name = $"Slot ({i})";
+                slot.transform.SetParent(bag.transform);
                 slot.Index = i;
                 slot.OnMouseUp += OnClickBagSlot;
                 slot.OnStartHover += OnStartHoverSlot;
                 slot.OnEndHover += OnEndHoverSlot;
                 _bagSlotUIs.Add(i, slot);
+                slot.Show();
             }
             inventory.Hotbar.OnChangeEquipped += HotbarChangeEquippedCallback;
             inventory.Bag.OnSlotContentChanged += BagSlotChangedCallback;
@@ -186,9 +197,10 @@ namespace UZSG.UI
 
         public override void OnHide()
         {
-            PutBackHeldItem();
             actionMap.Disable();
-            _selectedSlotUI?.Refresh();
+            PutBackHeldItem();
+            DestroyItemOptions();
+            if (_selectedSlotUI != null) _selectedSlotUI.Refresh();
             _selectedSlotUI = null;
             selector.Hide();
             gameObject.SetActive(false);
@@ -197,9 +209,10 @@ namespace UZSG.UI
 
         void OnStartHoverSlot(object sender, PointerEventData e)
         {
-            selector.Select((ItemSlotUI) sender);
-            _selectedSlotUI = (ItemSlotUI) sender;
-            // other animation stuff
+            var slot = sender as ItemSlotUI;
+            selector.Select(slot.transform as RectTransform);
+            _selectedSlotUI = slot;
+            /// other animation stuff
         }
 
         void OnEndHoverSlot(object sender, PointerEventData e)
@@ -226,83 +239,137 @@ namespace UZSG.UI
 
             if (e.button == PointerEventData.InputButton.Left)
             {
+                DestroyItemOptions();
+
                 if (_isHoldingItem)
                 {
                     if (inventory.Bag.TryPut(_selectedSlot.Index, _heldItem))
                     {
-                        ReleaseItem();
+                        ReleaseHeldItem();
                     }
                     else /// swap items
                     {
                         Item tookItem = inventory.Bag.Take(_selectedSlot.Index);
-                        inventory.Bag.TryPut(_selectedSlot.Index, SwapHeld(tookItem));
+                        inventory.Bag.TryPut(_selectedSlot.Index, SwapItemWithHeldItem(tookItem));
                     }
                 }
                 else
                 {
                     if (_selectedSlot.IsEmpty) return;
 
-                    HoldItem(inventory.Bag.Take(_selectedSlot.Index));
+                    Item tookItem = inventory.Bag.Take(_selectedSlot.Index);
+                    HoldItem(tookItem);
                     _lastSelectedSlotIndex = _selectedSlot.Index;
                 }
             }
             else if (e.button == PointerEventData.InputButton.Right)
-            {                
+            {
                 if (_isHoldingItem) /// put 1 to selected slot
-                {                    
-                    _isPutting = true;
-                    
-                    if (inventory.Bag.TryPut(_selectedSlot.Index, new(_heldItem, 1)))
+                {
+                    if (_selectedSlot.IsEmpty)
                     {
-                        HoldItem(new(_heldItem, _heldItem.Count - 1));
+                        _isPutting = true;
+
+                        Item toPut = _heldItem.Take(1);
+                        if (inventory.Bag.TryPut(_selectedSlot.Index, toPut))
+                        {
+                            HoldItem(_heldItem);
+                        }
+                        return;
+                    }
+
+                    if (_selectedSlot.Item.CompareTo(_heldItem))
+                    {
+                        if (_selectedSlot.TryCombine(_heldItem, out Item excess)) 
+                        {
+                            HoldItem(excess);
+                        }
                     }
                     else /// swap items
                     {
                         Item tookItem = inventory.Bag.Take(_selectedSlot.Index);
-                        inventory.Bag.TryPut(_selectedSlot.Index, SwapHeld(tookItem));
-                    }                    
+                        var itemToPut = SwapItemWithHeldItem(tookItem);
+                        inventory.Bag.TryPut(_selectedSlot.Index, itemToPut);
+                    }
                     _isPutting = false;
                 }
-                else /// get 1 from selected slot
+                else
                 {
-                    _isGetting = true;
-                    HoldItem(inventory.Bag.TakeItems(_selectedSlot.Index, 1));
-                    _isGetting = false;
+                    if (_selectedSlot.IsEmpty)
+                    {
+                        DestroyItemOptions();
+                        return;
+                    }
+
+                    CreateItemOptions(_selectedSlot);
+                    
+                    // _isGetting = true;
+                    // HoldItem(inventory.Bag.TakeItems(_selectedSlot.Index, 1));
+                    // _isGetting = false;
                 }
             }
         }
 
-        Item SwapHeld(Item item)
+        void CreateItemOptions(ItemSlot slot)
+        {
+            if (itemOptions)
+            {
+                itemOptions.Destroy();
+            }
+            itemOptions = Game.UI.Create<ChoiceWindow>("Choice Window", show: false);
+            itemOptions.Position = Input.mousePosition;
+            itemOptions.Label = slot.Item.Name;
+
+            var item = slot.Item;
+            if (item.Subtype == ItemSubtype.Useable)
+            {
+                itemOptions.AddChoice("Use");
+            }
+            if (item.Subtype == ItemSubtype.Food)
+            {
+                itemOptions.AddChoice("Eat");
+            }
+            if (item.Subtype == ItemSubtype.Consumable)
+            {
+                itemOptions.AddChoice("Consumable");
+            }
+
+            itemOptions.Show();
+        }
+
+        void DestroyItemOptions()
+        {
+            if (itemOptions != null) itemOptions.Destroy();
+        }
+
+        Item SwapItemWithHeldItem(Item item)
         {
             if (!_isHoldingItem) return Item.None;
 
             Item prevHeld = _heldItem;
             _heldItem = item;
-            _displayedItem.SetDisplayedItem(_heldItem);
+            displayedItem.SetDisplayedItem(_heldItem);
             return prevHeld;
         }
 
         void HoldItem(Item item)
         {
-            if (item == Item.None) return;
-            if (item.Count < 1)
+            if (item.IsNone)
             {
-                ReleaseItem();
+                ReleaseHeldItem();
                 return;
             }
 
             _isHoldingItem = true;
             _heldItem = item;
-            _displayedItem ??= Game.UI.Create<ItemDisplayUI>("item_display");
-            _displayedItem.SetDisplayedItem(_heldItem);
+            CreateItemDisplay(item);
         }
 
-        void ReleaseItem()
+        void ReleaseHeldItem()
         {
             _isHoldingItem = false;
             _heldItem = null;
-            Destroy(_displayedItem.gameObject);
-            _displayedItem = null;
+            DestroyItemDisplay();
         }
 
         void PutBackHeldItem()
@@ -310,8 +377,20 @@ namespace UZSG.UI
             if (_heldItem == null) return;
             
             inventory.Bag.TryPut(_lastSelectedSlotIndex, _heldItem);
-            ReleaseItem();
+            ReleaseHeldItem();
             _lastSelectedSlotIndex = -1;
+        }
+
+        void CreateItemDisplay(Item item)
+        {
+            DestroyItemDisplay();
+            displayedItem = Game.UI.Create<ItemDisplayUI>("Item Display");
+            displayedItem.SetDisplayedItem(item);
+        }
+
+        void DestroyItemDisplay()
+        {
+            if (displayedItem != null) displayedItem.Destroy();
         }
     }
 }

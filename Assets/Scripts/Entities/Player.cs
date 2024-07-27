@@ -144,7 +144,7 @@ namespace UZSG.Entities
             inventory.Hotbar.SlotsCount = (int) Generic.GetAttributeFromId("hotbar_size").Value;
             inventory.Initialize();
 
-            invUI = Game.UI.Create<PlayerInventoryWindow>("player_inventory");
+            invUI = Game.UI.Create<PlayerInventoryWindow>("Player Inventory", show: false);
             invUI.BindPlayer(this);
             invUI.Initialize();
             invUI.OnOpen += () =>
@@ -159,7 +159,7 @@ namespace UZSG.Entities
 
         void InitializeHUD()
         {
-            HUD = Game.UI.Create<PlayerHUD>("player_hud");
+            HUD = Game.UI.Create<PlayerHUD>("Player HUD");
             HUD.BindPlayer(this);
             HUD.Initialize();
         }

@@ -28,17 +28,17 @@ namespace UZSG
 
         void Start()
         {
-            headSlot = new(0, SlotType.Equipment);
-            chestSlot = new(1, SlotType.Equipment);
-            handSlot = new(2, SlotType.Equipment);
-            legsSlot = new(3, SlotType.Equipment);
-            feetSlot = new(4, SlotType.Equipment);
+            headSlot = new(0, ItemSlotType.Equipment);
+            chestSlot = new(1, ItemSlotType.Equipment);
+            handSlot = new(2, ItemSlotType.Equipment);
+            legsSlot = new(3, ItemSlotType.Equipment);
+            feetSlot = new(4, ItemSlotType.Equipment);
 
             for (int i = 5; i < accessorySlots.Length; i++)
             {
                 ItemSlot newSlot = new(i);
                 newSlot.OnContentChanged += SlotContentChanged;
-                newSlot.SlotType = SlotType.Accessory;
+                newSlot.SlotType = ItemSlotType.Accessory;
                 accessorySlots[i] = newSlot;
             }
         }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.InputSystem;
-
+using UZSG.Entities;
 using UZSG.UI;
 
 namespace UZSG.Systems
@@ -43,6 +43,7 @@ namespace UZSG.Systems
         InputAction hideShow;
         InputAction navUp;
         InputAction navDown;
+        Player _player;
         
         internal void Initialize()
         {
@@ -59,8 +60,16 @@ namespace UZSG.Systems
         {
             UI = Game.UI.Create<ConsoleWindow>("console_window");
             UI.Initialize();
-            
+
             // inputField.onEndEdit.AddListener(InputSubmit);
+
+            Game.Entity.OnEntitySpawn += (sender, info) =>
+            {
+                if (info.Entity is Player player)
+                {
+                    _player = player;
+                }
+            };
         }
 
         void InitializeCommands()
@@ -75,6 +84,10 @@ namespace UZSG.Systems
             CreateCommand("freecam",
                           "Toggle Free Look Camera.")
                           .OnInvoke += CFreecam;
+
+            CreateCommand("craft <item_id>",
+                          "Crafts item given the item_id")
+                          .OnInvoke += CCraft;
             
             CreateCommand("help",
                           "Prints help message.")

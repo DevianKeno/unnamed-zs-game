@@ -75,6 +75,7 @@ namespace UZSG.Systems
                 tickSystem = GetComponentInChildren<TickSystem>();
                 attrManager = GetComponentInChildren<AttributesManager>();
                 itemManager = GetComponentInChildren<ItemManager>();
+                recipeManager = GetComponentInChildren<RecipeManager>();
                 entityManager = GetComponentInChildren<EntityManager>();
             }
 
@@ -105,6 +106,7 @@ namespace UZSG.Systems
             attrManager.Initialize();
             itemManager.Initialize();
             entityManager.Initialize();
+            recipeManager.Initialize();
 
             /// DEBUGGING ONLY
             timeController.Initialize();

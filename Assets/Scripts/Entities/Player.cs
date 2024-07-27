@@ -13,6 +13,7 @@ using UZSG.Data;
 using UZSG.FPP;
 using UZSG.UI;
 using UZSG.StatusEffects;
+using UZSG.Crafting;
 
 namespace UZSG.Entities
 {
@@ -41,6 +42,9 @@ namespace UZSG.Entities
 
         public PlayerInventoryWindow invUI;
         public PlayerHUD HUD;
+
+        [SerializeField]
+        public Crafter CraftingAgent;
         
 
         #region Events

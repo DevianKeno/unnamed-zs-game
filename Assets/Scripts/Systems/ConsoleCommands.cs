@@ -20,10 +20,18 @@ namespace UZSG.Systems
         {
             Messages.Clear();
         }
+
+        
         
         /// <summary>
         /// Spawns an entity.
         /// </summary>
+        void CCraft(object sender, string[] args)
+        {
+            var newItem = new Item(Game.Items.GetItemData("m4ar"));
+            _player.CraftingAgent.CraftItem(newItem);
+        }
+
         void CDamage(object sender, string[] args)
         {
             

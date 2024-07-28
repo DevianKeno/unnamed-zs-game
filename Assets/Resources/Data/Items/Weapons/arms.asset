@@ -44,6 +44,7 @@ MonoBehaviour:
     ReloadSpeed: 0
     Spread: 0
     BurstFireCount: 0
+    BurstFireInterval: 0
     BulletDamage:
       BaseDamage: 0
       IsPartDamage: 0
@@ -59,24 +60,21 @@ MonoBehaviour:
     BulletAttributes:
       Scale: 0
       Speed: 0
-      Spread: 0
       GravityScale: 0
       MinRenderDistance: 0
     RecoilAttributes:
+      Type: 0
       VerticalRecoilAmount: 0
       VerticalRecoilRandomness: 0
       HorizontalRecoilAmount: 0
       HorizontalRecoilRandomness: 0
       HorizontalRecoilDirection: 0
-      RecoilDamping: 0
-      RecoilRecoverySpeed: 0
-      RecoilRecoveryDelay: 0
-  armsViewmodel:
-    m_AssetGUID: 4494d796b17db674e826142a9b6262fa
-    m_SubObjectName: 
-    m_SubObjectType: 
-    m_EditorAssetChanged: 0
-  weaponViewmodel:
+      Speed: 0
+      Duration: 0
+      RecoverySpeed: 0
+      RecoveryDuration: 0
+  armsAnimations: {fileID: 9100000, guid: 4ce682f0546f0cb44a74b9daab84bccb, type: 2}
+  viewmodel:
     m_AssetGUID: 
     m_SubObjectName: 
     m_SubObjectType: 
@@ -95,3 +93,5 @@ MonoBehaviour:
     Dequip: 
   audioData:
     AudioAssetIds: []
+  positionOffset: {x: 0, y: 0, z: 0}
+  rotationOffset: {x: 0, y: 0, z: 0}

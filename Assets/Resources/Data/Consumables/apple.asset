@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: apple
   m_EditorClassIdentifier: 
   Model:
-    m_AssetGUID: 
+    m_AssetGUID: 865d6d9e74f68334983e183232507f5d
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
@@ -25,6 +25,8 @@ MonoBehaviour:
   StackSize: 999
   Subtype: 1
   IsMaterial: 1
+  IsCraftable: 0
+  Recipes: []
   recoveredAttributes:
   - Attribute: {fileID: 11400000, guid: e1db9201565269c4caebcb12298f0665, type: 2}
     Restore: 5

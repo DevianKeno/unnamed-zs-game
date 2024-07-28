@@ -11,6 +11,7 @@ namespace UZSG.Entities
     {
         [SerializeField] protected EntityData entityData;
         public EntityData EntityData => entityData;
+
         public virtual void OnSpawn() { }
     }
 }

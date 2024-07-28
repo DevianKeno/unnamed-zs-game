@@ -1,4 +1,5 @@
 using System;
+using UZSG.Interactions;
 using UZSG.Items.Weapons;
 
 namespace UZSG.Entities
@@ -13,13 +14,6 @@ namespace UZSG.Entities
 
     public class GunItemEntity : ItemEntity
     {
-        public GunWeaponController GunWeapon;
         public GunItemEntityInfo Info;
-
-        protected override void Awake()
-        {
-            base.Awake();
-            GunWeapon = GetComponent<GunWeaponController>();
-        }
     }
 }

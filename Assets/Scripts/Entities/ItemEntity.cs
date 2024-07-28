@@ -17,18 +17,28 @@ namespace UZSG.Entities
     /// </summary>
     public class ItemEntity : Entity, IInteractable
     {
-        public ItemData ItemData;
-        public int ItemCount;
-        public string Name => ItemData.Name;
-        public string Action
+        [SerializeField] Item item;
+        public Item Item
         {
             get
             {
-                if (ItemData.Type == ItemType.Item ||
-                    ItemData.Type == ItemType.Tool || 
-                    ItemData.Type == ItemType.Equipment ||
-                    ItemData.Type == ItemType.Accessory) return "Pick Up";
-                if (ItemData.Type == ItemType.Weapon) return "Equip";
+                return item;
+            }
+            set
+            {
+                item = value;
+            }
+        }
+        public string Name => item.Name;
+        public string ActionText
+        {
+            get
+            {
+                if (item.Type == ItemType.Item ||
+                    item.Type == ItemType.Tool || 
+                    item.Type == ItemType.Equipment ||
+                    item.Type == ItemType.Accessory) return "Pick Up";
+                if (item.Type == ItemType.Weapon) return "Equip";
                 
                 return "Interact with";
             }
@@ -40,16 +50,13 @@ namespace UZSG.Entities
         /// </summary>
         public float Age = 3600;
 
+        int _originalLayer;
         GameObject model;
-        MeshFilter meshFilter;
-        MeshRenderer meshRenderer;
-        MeshCollider meshCollider;
 
         protected virtual void Awake()
         {
-            meshFilter = GetComponent<MeshFilter>();
-            meshRenderer = GetComponent<MeshRenderer>();
-            meshCollider = GetComponent<MeshCollider>();
+            model = transform.Find("box").gameObject;
+            _originalLayer = model.layer;
         }
 
         protected virtual void Start()
@@ -59,32 +66,31 @@ namespace UZSG.Entities
 
         void LoadModel()
         {
-            if (!Utils.IsAssetReferenceSet(ItemData.Model))
+            if (item == null || item.IsNone)
             {
-                Game.Console.LogWarning($"The item {ItemData.Id} has no model to load.");
+                Game.Console.LogWarning($"Item in {transform.position} is not set.");
                 return;
-            };
+            }
+            if (!item.Data.Model.IsSet())
+            {
+                Game.Console.LogWarning($"The item {item.Id} has no model to load.");
+                return;
+            }
 
-            Addressables.LoadAssetAsync<GameObject>(ItemData.Model).Completed += (a) =>
+            Addressables.LoadAssetAsync<GameObject>(item.Data.Model).Completed += (a) =>
             {
                 if (a.Status == AsyncOperationStatus.Succeeded)
                 {
-                    GameObject obj = a.Result;
-
-                    transform.localScale = obj.transform.localScale;
-                    meshFilter.sharedMesh = obj.GetComponent<MeshFilter>().sharedMesh;
-                    meshRenderer.sharedMaterial = obj.GetComponent<MeshRenderer>().sharedMaterial;
-                    meshCollider.sharedMesh = meshFilter.sharedMesh;
-                } else
-                {
-                    Game.Console.LogWarning($"There is no model for this item");
+                    Destroy(model);
+                    model = Instantiate(a.Result, transform);
+                    model.ChangeTag("Interactable");
                 }
             };            
         }
 
         public override void OnSpawn()
         {
-            if (ItemData != null)
+            if (item != null)
             {
                 LoadModel();
             }
@@ -100,10 +106,9 @@ namespace UZSG.Entities
             }
         }
 
-        public void Despawn()
+        public void Interact(PlayerActions actor, InteractArgs args)
         {
-            Game.Tick.OnSecond -= Second;
-            Game.Entity.Kill(this);
+            actor.PickUpItem(this);
         }
 
         /// <summary>
@@ -111,51 +116,27 @@ namespace UZSG.Entities
         /// </summary>
         public Item AsItem()
         {
-            Item item = new(ItemData, ItemCount);
-
-            if (ItemData is WeaponData data)
+            if (item == null || item.IsNone)
             {
-                item = new Weapon(data);
+                return Item.None;
             }
-            return item;
+            
+            return new(item, item.Count);
         }
 
-        public ItemData GetItemData()
+        public void OnLookEnter()
         {
-            return ItemData;
-        }
-        
-        public void SetItemData(ItemData data)
-        {
-            ItemData = data;
+            model.layer = LayerMask.NameToLayer("Outline");
         }
 
-        public void SetItemData(string id)
+        public void OnLookExit()
         {
-            if (Game.Items.TryGetItemData(id, out ItemData itemData))
-            {
-                ItemData = itemData;
-            } else
-            {
-                Game.Console.LogDebug($"Unable to set Item Data. There is no item with an id of {id}.");
-            }
+            model.layer = _originalLayer;
         }
 
-        /// <summary>
-        /// Gets a Weapon object from the entity.
-        /// </summary>
-        // public Weapon AsWeapon()
-        // {
-        //     // return new Weapon();
-        // }
-
-        public void Interact(PlayerActions actor, InteractArgs args)
+        public void Despawn()
         {
-            actor.PickUpItem(this);
-        }
-
-        public void Destroy()
-        {
+            Game.Tick.OnSecond -= Second;
             Game.Entity.Kill(this);
         }
     }

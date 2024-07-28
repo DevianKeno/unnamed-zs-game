@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UZSG.Entities;
+using UZSG.Items;
 
 namespace UZSG.Systems
 {
@@ -35,7 +36,7 @@ namespace UZSG.Systems
             _isInitialized = true;
 
             var startTime = Time.time;
-            Game.Console.Log("Initializing Entity database...");
+            Game.Console.Log("Reading data: Entities...");
             var ettys = Resources.LoadAll<EntityData>("Data/entities");
             foreach (var etty in ettys)
             {
@@ -121,11 +122,10 @@ namespace UZSG.Systems
             }
         }
 
-        public void SpawnItem(string itemId)
+        public void SpawnItem(string itemId, int count = 1)
         {            
-            if (_entitiesDict.ContainsKey("item"))
+            if (_entitiesDict.ContainsKey("item")) /// this has a zero chance to fail >:(
             {
-                // Load Item (Entity) model
                 Addressables.LoadAssetAsync<GameObject>(_entitiesDict["item"].AssetReference).Completed += (a) =>
                 {
                     if (a.Status == AsyncOperationStatus.Succeeded)
@@ -133,60 +133,32 @@ namespace UZSG.Systems
                         Vector3 position = new(0f, 1f, 0f);
                         var go = Instantiate(a.Result, position, Quaternion.identity, transform);
 
-                        // Load item data
-                        if (go.TryGetComponent(out ItemEntity itemEntity)) // this has a zero chance to fail >:(
+                        if (go.TryGetComponent(out ItemEntity itemEntity)) /// this has a zero chance to fail >:(
                         {
-                            itemEntity.SetItemData(itemId);
-                            go.name = itemEntity.ItemData.Name;
+                            var item = new Item(itemId, count);
+                            go.name = $"Item ({item.Name})";
+                            itemEntity.Item = item;
                             itemEntity.OnSpawn();
                         }
                         Game.Console.LogDebug($"Spawned item {itemId} at ({position.x}, {position.y}, {position.z})");
                         return;
-                        
-                    } else
+                    }
+                    else
                     {
                         Game.Console.Log($"Failed to spawn item {itemId}");
                     }
                 };
-            } else
+            }
+            else
             {
                 /// Force load item asset
                 Game.Console.Log($"Missing asset for Item (Entity)");
             }
-            
-            // obj = loadedObj;
-
-            // if (Game.Items.TryGetItemData(itemId, out ItemData itemData))
-            // {
-            //     Addressables.LoadAssetAsync<GameObject>(itemData.AssetReference).Completed += (a) =>
-            //     {
-            //         if (a.Status == AsyncOperationStatus.Succeeded)
-            //         {
-            //             Vector3 position = new(0f, 1f, 0f);
-            //             var go = Instantiate(a.Result, position, Quaternion.identity);
-
-            //             if (go.TryGetComponent(out ItemEntity itemEntity)) // this has a zero chance to fail >:(
-            //             {
-            //                 go.name = itemEntity.Data.Name;
-            //                 itemEntity.SetItemData(itemId);
-            //                 itemEntity.OnSpawn();
-            //             }
-
-            //             Game.Console.LogDebug($"Spawned item at ({position.x}, {position.y}, {position.z})");
-            //             return;
-            //         } else
-            //         {
-            //             Game.Console.Log($"Failed to spawn item {itemId}");
-            //         }
-            //     };
-            // } else
-            // {
-            //     Game.Console.Log($"Failed to spawn item {itemId} as it does not exists");
-            // }
         }
 
         public void Kill(Entity entity)
         {
+            if (entity == null) return;
             Destroy(entity.gameObject);
         }
     }

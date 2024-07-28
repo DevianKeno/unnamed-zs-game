@@ -25,7 +25,7 @@ namespace UZSG.Systems
             _isInitialized = true;
             
             var startTime = Time.time;
-            Game.Console.LogDebug("Initializing Item database...");
+            Game.Console.Log("Reading data: Items...");
             var items = Resources.LoadAll<ItemData>("Data/Items");
             foreach (var item in items)
             {

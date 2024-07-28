@@ -162,8 +162,15 @@ namespace UZSG.FPP
             {
                 if (a.Status == AsyncOperationStatus.Succeeded)
                 {
-                    var controller = Instantiate(a.Result).GetComponent<T>();
-                    callback.Invoke(controller);
+                    var go = Instantiate(a.Result);
+                    if (go.TryGetComponent<T>(out var controller))
+                    {
+                        callback.Invoke(controller);
+                        return;
+                    }
+                    var msg = $"{heldItem.ItemData.Id} is a Held Item, but has no Held Item component.";
+                    Game.Console.LogWarning(msg);
+                    return;
                 }
             };
             return default;

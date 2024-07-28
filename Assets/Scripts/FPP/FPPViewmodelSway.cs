@@ -33,7 +33,7 @@ namespace UZSG.FPP
 
         void Start()
         {
-            lookInput = Game.Main.GetAction("Look", "Player");
+            lookInput = Game.Main.GetInputAction("Look", "Player");
             originalRotation = transform.localRotation;
         }
 

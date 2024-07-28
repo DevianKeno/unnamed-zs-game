@@ -563,6 +563,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de8a7329ca3379e4f8a044f2c6477526, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rect: {fileID: 0}
+  AnimationFactor: 0.3
   itemImage: {fileID: 5931189683917283447}
   itemNameTMP: {fileID: 3455420724861008092}
   countTMP: {fileID: 6254431416030659958}

@@ -30,10 +30,10 @@ namespace UZSG.UI
                 Hide();
             }
             
-            actionText.text = obj.Action;
+            actionText.text = obj.ActionText;
             objectText.text = obj.Name;
-            Show();
             LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
+            Show();
         }
 
         public void Indicate(IInteractable obj, IndicateOptions options)

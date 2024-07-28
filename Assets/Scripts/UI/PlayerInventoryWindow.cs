@@ -258,6 +258,10 @@ namespace UZSG.UI
                     if (_selectedSlot.IsEmpty) return;
 
                     Item tookItem = inventory.Bag.Take(_selectedSlot.Index);
+                    if (tookItem == _selectedSlot.Item)
+                    {
+                        
+                    }
                     HoldItem(tookItem);
                     _lastSelectedSlotIndex = _selectedSlot.Index;
                 }

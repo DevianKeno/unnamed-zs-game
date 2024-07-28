@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
+
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UZSG.Inventory;
-using UZSG.Items;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
+
 using UZSG.Systems;
 
 namespace UZSG.UI
@@ -30,6 +33,17 @@ namespace UZSG.UI
         bool _isInitialized;
 
         public bool EnableScreenAnimations = true;
+        [SerializeField] Color interactionColor;
+        public Color InteractionColor
+        {
+            get { return interactionColor; }
+            set
+            {
+                var renderer = (GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset).GetRenderer(0);
+                var property = typeof(ScriptableRenderer).GetProperty("rendererFeatures", BindingFlags.NonPublic | BindingFlags.Instance);
+                List<ScriptableRendererFeature> features = property.GetValue(renderer) as List<ScriptableRendererFeature>;
+            }
+        }
 
         [SerializeField] Canvas canvas;
         public Canvas Canvas => canvas;

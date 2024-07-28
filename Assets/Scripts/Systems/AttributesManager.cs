@@ -27,7 +27,7 @@ namespace UZSG.Systems
 
         void LoadResources()
         {
-            Game.Console.Log("Initializing Attribute database...");
+            Game.Console.Log("Reading data: Attributes...");
             var attrs = Resources.LoadAll<AttributeData>("Data/attributes");
             foreach (var attr in attrs)
             {

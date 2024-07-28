@@ -78,7 +78,6 @@ namespace UZSG.FPP
             if (!EnableControls) return;
 
             var lookInput = look.ReadValue<Vector2>();
-            print(lookInput);
             float mouseX = lookInput.x * Sensitivity * Time.deltaTime;
             float mouseY = lookInput.y * Sensitivity * Time.deltaTime;
 

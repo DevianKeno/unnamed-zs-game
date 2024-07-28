@@ -34,9 +34,11 @@ namespace UZSG.Players
         bool _isHoldingLeftClick;
         bool _isHoldingRightClick;
         
+        [SerializeField] PlayerLookRaycaster lookRaycaster;
         /// <summary>
         /// The interactable object the Player is currently looking at.
         /// </summary>
+        IInteractable lastLookedAt;
         IInteractable lookingAt;
         Ray ray;
         InteractionIndicator interactionIndicator;
@@ -54,7 +56,9 @@ namespace UZSG.Players
         internal void Initialize()
         {
             InitializeInputs();
-            interactionIndicator = Game.UI.Create<InteractionIndicator>("Interaction Indicator");
+            interactionIndicator = Game.UI.Create<InteractionIndicator>("Interaction Indicator", show: false);
+            lookRaycaster.OnLookEnter += HandleLookEnter;
+            lookRaycaster.OnLookExit += HandleLookExit;
 
             Game.Tick.OnTick += Tick;
         }
@@ -101,6 +105,26 @@ namespace UZSG.Players
                     Player.ActionStateMachine.ToState(ActionStates.SecondaryHold);
                 }
             }
+        }
+        
+        void HandleLookEnter(Collider collider)
+        {
+            if (collider.CompareTag("Interactable"))
+            {
+                lookingAt?.OnLookExit();
+                lookingAt = collider.GetComponentInParent<IInteractable>(); /// look at new
+                if (lookingAt == null) return; /// what are you doing setting an object's layer in interactable but not add a IInteractable component???
+                lookingAt.OnLookEnter();
+                interactionIndicator.Indicate(lookingAt);
+                return;
+            }
+        }
+
+        void HandleLookExit(Collider collider)
+        {
+            interactionIndicator.Hide();
+            lookingAt?.OnLookExit();
+            lookingAt = null;
         }
 
 
@@ -180,35 +204,12 @@ namespace UZSG.Players
 
         void Tick(TickInfo e)
         {
-            CheckLookingAt();
-        }
-
-        /// <summary>
-        /// Maybe instead of firing every tick, this can just fire everytime the player's ray collides with an IInteractable object
-        /// </summary>
-        void CheckLookingAt()
-        {
-            /// Cast a ray from the center of the screen
-            var viewportRect = new Vector2(Screen.width / 2, Screen.height / 2);
-            ray = Player.MainCamera.ScreenPointToRay(viewportRect);
-
-            if (Physics.SphereCast(ray, Radius, out RaycastHit hit, MaxInteractDistance, LayerMask.GetMask("Interactable")))
-            {
-                if (hit.collider.gameObject.TryGetComponent(out lookingAt))
-                {
-                    interactionIndicator.Indicate(lookingAt);
-                }
-            }
-            else
-            {
-                lookingAt = null;
-                interactionIndicator.Hide();
-            }
         }
         
         IEnumerator InteractCoroutine()
         {
             _inhibitActions = true;
+            interactionIndicator.Hide();
             lookingAt.Interact(this, new());
             yield return new WaitForSeconds(0.1f); /// interact cooldown
             _inhibitActions = false;
@@ -223,7 +224,7 @@ namespace UZSG.Players
             if (Player.Inventory == null) return;
 
             bool gotItem; /// whether if the player had successfully picked up the item
-            Item item = itemEntity.AsItem();
+            Item item = itemEntity.Item;
 
             if (item.Data.Type == ItemType.Weapon)
             {

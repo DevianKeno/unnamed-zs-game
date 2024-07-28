@@ -23,18 +23,14 @@ namespace UZSG.UI
         {
             actionMap = Game.Main.GetActionMap("Console Window");
             inputs = Game.Main.GetActionsFromMap(actionMap);
-
-            inputs["Hide/Show"].performed += (ctx) =>
-            {
-                ToggleVisibility();
-            };
+            
             inputs["Navigate Entry Up"].performed += NavigatePreviousEntry;
             inputs["Navigate Entry Down"].performed += NavigateNextEntry;
 
             inputField.onEndEdit.AddListener(InputSubmit);
             
             Game.Console.OnLogMessage += UpdateMessages;
-            messages.text = string.Join('\n', Game.Console.Messages);
+            messages.text = string.Join(' ', Game.Console.Messages);
         }
 
         void NavigatePreviousEntry(InputAction.CallbackContext context)

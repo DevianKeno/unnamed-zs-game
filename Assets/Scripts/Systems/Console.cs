@@ -38,11 +38,7 @@ namespace UZSG.Systems
         public event Action<string> OnLogMessage;
         public event Action<Command> OnInvokeCommand;
 
-        PlayerInput input;
-        InputActionMap actionMap;
-        InputAction hideShow;
-        InputAction navUp;
-        InputAction navDown;
+        InputAction toggleUI;
         Player _player;
         
         internal void Initialize()
@@ -52,9 +48,10 @@ namespace UZSG.Systems
             
             Game.Main.OnLateInit += OnLateInit;
 
-            LogDebug("Initializing console...");
+            Log("Initializing console...");
             InitializeCommands();
-        }        
+            InitializeInputs();
+        }
 
         void OnLateInit()
         {
@@ -71,7 +68,7 @@ namespace UZSG.Systems
 
         void InitializeCommands()
         {
-            LogDebug("Initializing command registry...");
+            Log("Initializing command registry...");
             /// Arguments enclosed in <> are required, [] are optional
             
             CreateCommand("clear",
@@ -122,6 +119,15 @@ namespace UZSG.Systems
 
             // CreateCommand("tick <freeze|set> <value>",
             //               "Control the game's tick rate.").AddCallback(Command_Tick);
+        }
+
+        void InitializeInputs()
+        {
+            toggleUI = Game.Main.GetInputAction("Hide/Show", "Console Window");
+            toggleUI.performed += (ctx) =>
+            {
+                UI.ToggleVisibility();
+            };
         }
 
         /// <summary>
@@ -226,7 +232,8 @@ namespace UZSG.Systems
             try
             {
                 WriteLine($"{message}");
-            } catch
+            }
+            catch
             {
                 Debug.Log(message);
             }
@@ -237,8 +244,7 @@ namespace UZSG.Systems
         /// </summary>
         public void LogDebug(object message)
         {
-            if (!EnableDebugMode) return;
-            Log(message);
+            Log($"[DEBUG]: {message}");
         }
         
         /// <summary>
@@ -246,8 +252,15 @@ namespace UZSG.Systems
         /// </summary>
         public void LogWarning(object message)
         {
-            if (!EnableDebugMode) return;
-            Log($"[WARNING]: {message}");
+            Log($"<color=\"orange\">[WARN]: {message}</color>");
+        }
+
+        /// <summary>
+        /// Log a debug message into the game's console.
+        /// </summary>
+        public void LogError(object message)
+        {
+            Log($"<color=\"red\">[ERR]: {message}</color>");
         }
     }
 }

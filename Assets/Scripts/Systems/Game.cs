@@ -123,7 +123,7 @@ namespace UZSG.Systems
         
         #region Public methods
         
-        public InputAction GetAction(string actionName, string actionMapName)
+        public InputAction GetInputAction(string actionName, string actionMapName)
         {
             return GetActionMap(actionMapName).FindAction(actionName);
         }

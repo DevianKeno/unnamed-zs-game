@@ -17,8 +17,10 @@ namespace UZSG.Interactions
         /// <summary>
         /// Text displayed when looking at the Interactable.
         /// </summary>
-        public string Action { get; }
+        public string ActionText { get; }
         public event EventHandler<InteractArgs> OnInteract;
         public void Interact(PlayerActions actor, InteractArgs args);
+        public virtual void OnLookEnter() { }
+        public virtual void OnLookExit() { }
     }
 }

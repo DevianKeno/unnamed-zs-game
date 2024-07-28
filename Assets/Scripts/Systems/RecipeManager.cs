@@ -18,7 +18,7 @@ namespace UZSG.Systems
             _isInitialized = true;
 
             var startTime = Time.time;
-            Game.Console.LogDebug("Initializing recipes...");
+            Game.Console.Log("Reading data: Recipes...");
 
             var recipes = Resources.LoadAll<RecipeData>("Data/Recipes");
 

@@ -1,0 +1,103 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72e1d5853de97a54aa491bcf19eb9d39, type: 3}
+  m_Name: falcon
+  m_EditorClassIdentifier: 
+  Model:
+    m_AssetGUID: 2bfce7f0d0d144744a5184c040ecaf73
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  Id: falcon
+  Name: WL Falcon
+  Description: Big pistol.
+  Sprite: {fileID: 21300000, guid: 75a04606deb60ed40ac1bdf3e4dd36e2, type: 3}
+  Type: 1
+  StackSize: 1
+  Subtype: 3
+  IsMaterial: 0
+  IsCraftable: 0
+  Recipes: []
+  Weight: 4.2
+  Category: 1
+  MeleeType: 0
+  BluntType: 0
+  BladedType: 0
+  RangedType: 1
+  MeleeAttributes:
+    BaseDamage: 0
+    BaseCritStrike: 0
+    BaseCritDamage: 0
+  RangedAttributes:
+    FiringModes: 2
+    RoundsPerMinute: 300
+    ClipSize: 7
+    ReloadSpeed: 1
+    Spread: 7
+    BurstFireCount: 0
+    BurstFireInterval: 0
+    BulletDamage:
+      BaseDamage: 0
+      IsPartDamage: 0
+      UseMultiplier: 0
+      HeadDamage: 0
+      HeadDamageMultiplier: 1
+      BodyDamage: 0
+      BodyDamageMultiplier: 1
+      ArmsDamage: 0
+      ArmsDamageMultiplier: 1
+      LegsDamage: 0
+      LegsDamageMultiplier: 0
+    BulletAttributes:
+      Scale: 1
+      Speed: 470
+      GravityScale: 0
+      MinRenderDistance: 10
+    RecoilAttributes:
+      Type: 0
+      VerticalRecoilAmount: 7
+      VerticalRecoilRandomness: 0
+      HorizontalRecoilAmount: 0
+      HorizontalRecoilRandomness: 0
+      HorizontalRecoilDirection: 0
+      Speed: 1
+      Duration: 0
+      RecoverySpeed: 1
+      RecoveryDuration: 0
+  armsAnimations: {fileID: 9100000, guid: 90b9a7adc1ec7d441af891b9381f35bf, type: 2}
+  viewmodel:
+    m_AssetGUID: 171df8b86bf63e840b394436641ca2f8
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  anims:
+    Idle: idle
+    Move: 
+    Primary: fire
+    PrimaryHold: 
+    PrimaryRelease: 
+    PrimaryVariant: []
+    Secondary: 
+    SecondaryHold: 
+    SecondaryRelease: 
+    Equip: 
+    Dequip: 
+  audioData:
+    AudioAssetIds:
+    - Id: fire0
+      AudioAsset:
+        m_AssetGUID: b4617965520eb1f4795ed9a1ed19f6c8
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_EditorAssetChanged: 0
+  positionOffset: {x: 0, y: 0, z: 0}
+  rotationOffset: {x: 0, y: 0, z: 0}

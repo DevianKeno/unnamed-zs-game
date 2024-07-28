@@ -27,7 +27,7 @@ namespace UZSG.World.Weather
     [Serializable]
     public class WeatherData : ScriptableObject
     {
-        public ParticleSystem particles;
+        public ParticleSystem particleSystem;
         public WeatherAttributes weatherAttributes;
         public WeatherProperties weatherProperties;
     }

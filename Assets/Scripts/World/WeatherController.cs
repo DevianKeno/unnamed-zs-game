@@ -18,9 +18,14 @@ namespace UZSG.World.Weather
         float _weatherDuration;
         [SerializeField] float _weatherCountdown;
 
+        ///TEMPORARY UNTIL WEATHER SYSTEM IS IMPLEMENTED
+        public GameObject ParticleParent;
+        ParticleSystem _currentParticleSystem;
+
         public void Initialize()
         {
             CurrentWeather = CurrentWeather == null ? DefaultWeather : CurrentWeather;
+            _currentParticleSystem = CurrentWeather.particleSystem;
             SetWeather(CurrentWeather);
             Game.Tick.OnTick += OnTick;
             
@@ -28,6 +33,7 @@ namespace UZSG.World.Weather
         void OnValidate()
         {
             CurrentWeather = CurrentWeather == null ? DefaultWeather : CurrentWeather;
+            _currentParticleSystem = CurrentWeather.particleSystem;
             SetWeather(CurrentWeather);
         }
         void OnTick(TickInfo info)
@@ -45,7 +51,10 @@ namespace UZSG.World.Weather
         {
             if (_weatherCountdown <= 0f || _weatherCountdown == -1f)
             {
-                if (_currentWeather != _defaultWeather) SetWeather(_defaultWeather);
+                if (_currentWeather != _defaultWeather)
+                {
+                    SetWeather(_defaultWeather);
+                }
             }
 
             Time.DayFogColor = Color.Lerp(Time.DayFogColor, _currentWeather.weatherProperties.DayFogColor, 1f);
@@ -58,6 +67,13 @@ namespace UZSG.World.Weather
             CurrentWeather = weather;
             _weatherDuration = _currentWeather.weatherAttributes.DurationSeconds;
             _weatherCountdown = _weatherDuration;
+            _currentParticleSystem = weather.particleSystem;
+            
+            if (ParticleParent.transform.childCount > 0) Destroy(ParticleParent.transform.GetChild(0).gameObject);
+
+            ParticleSystem particle = _currentParticleSystem;
+            Instantiate(particle, ParticleParent.transform);
+            
             HandleChange();
 
         }

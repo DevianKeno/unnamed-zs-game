@@ -5,7 +5,7 @@ using UZSG.Items;
 
 namespace UZSG.UI
 {
-    public class PickupsIndicator : MonoBehaviour, IUIElement
+    public class PickupsIndicator : Window
     {
         [SerializeField] Image itemImage;
         [SerializeField] TextMeshProUGUI itemNameTMP;

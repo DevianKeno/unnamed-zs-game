@@ -3,9 +3,14 @@ using UnityEngine;
 
 namespace UZSG.Items.Weapons
 {
+    public enum RecoilType {
+        Additive, Recovered
+    }
+
     [Serializable]
     public struct RecoilAttributes
     {
+        public RecoilType Type;
         /// Vertical Recoil
         public float VerticalRecoilAmount;
         public float VerticalRecoilRandomness;
@@ -16,10 +21,11 @@ namespace UZSG.Items.Weapons
         [Range(-1, 1)]
         public float HorizontalRecoilDirection; /// Positive for right, negative for left
 
-        /// Recoil Damping
-        public float RecoilDamping;
-        public float RecoilRecoverySpeed;
-        public float RecoilRecoveryDelay;
+        /// Recoil
+        public float Speed;
+        public float Duration;
+        public float RecoverySpeed;
+        public float RecoveryDuration;
 
 #region Unused
         // /// Recoil Pattern

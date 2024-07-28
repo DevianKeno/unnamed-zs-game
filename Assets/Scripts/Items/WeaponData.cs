@@ -112,13 +112,15 @@ namespace UZSG.Items.Weapons
         [SerializeField] AnimatorController armsAnimations;
         public AnimatorController ArmsAnimations => armsAnimations;
         [SerializeField] AssetReference viewmodel;
-        public AssetReference Viewmodel => viewmodel;       
-        [SerializeField] Vector3 offset;
-        public Vector3 Offset => offset;
+        public AssetReference Viewmodel => viewmodel;
         [SerializeField] EquipmentAnimationData anims;
         public EquipmentAnimationData Anims => anims;
         [SerializeField] EquipmentAudioData audioData;
         public EquipmentAudioData AudioData => audioData;
+        [SerializeField] Vector3 positionOffset;
+        public Vector3 PositionOffset => positionOffset;
+        [SerializeField] Vector3 rotationOffset;
+        public Vector3 RotationOffset => rotationOffset;
         
         public static bool IsWeaponData(ItemData data, out WeaponData weaponData)
         {

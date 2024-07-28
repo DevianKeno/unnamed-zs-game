@@ -13,22 +13,27 @@ namespace UZSG.Items.Weapons
     {
         public Player Player => owner as Player;
         public WeaponData WeaponData => ItemData as WeaponData;
+
         int _currentRounds;
         public int CurrentRounds
         {
             get { return _currentRounds; }
             set { _currentRounds = value; }
         }
+
         public bool HasAmmo => _currentRounds > 0;
-        float _fireDelta;
-        float _fireRateThreshold => 60f / WeaponData.RangedAttributes.RoundsPerMinute;
         bool _inhibitActions;
         bool _isHoldingFire;
-        bool _hasFired;
         bool _isReloading;
         bool _hasBulletChambered;
+        bool _isFiring;
+        bool _hasFired;
         bool _isAimingDownSights;
         public bool IsAimingDownSights => _isAimingDownSights;
+
+        float _fireDelta;
+        float _fireRateThreshold => 60f / WeaponData.RangedAttributes.RoundsPerMinute;
+        
         FiringMode _currentFiringMode;
         public FiringMode CurrentFiringMode => _currentFiringMode;
 
@@ -37,7 +42,7 @@ namespace UZSG.Items.Weapons
         public event Action OnFire;
         public event Action OnReload;
 
-        [Space(10)]
+        [Space]
         [SerializeField] GunWeaponStateMachine stateMachine;
         public GunWeaponStateMachine StateMachine => stateMachine;
         public GunMuzzleController MuzzleController;

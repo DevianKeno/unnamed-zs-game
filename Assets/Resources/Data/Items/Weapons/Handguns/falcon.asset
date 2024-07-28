@@ -39,8 +39,8 @@ MonoBehaviour:
     BaseCritDamage: 0
   RangedAttributes:
     FiringModes: 2
-    RoundsPerMinute: 999
-    ClipSize: 999
+    RoundsPerMinute: 300
+    ClipSize: 7
     ReloadSpeed: 1
     Spread: 7
     BurstFireCount: 0
@@ -63,7 +63,7 @@ MonoBehaviour:
       GravityScale: 0
       MinRenderDistance: 10
     RecoilAttributes:
-      VerticalRecoilAmount: 5
+      VerticalRecoilAmount: 7
       VerticalRecoilRandomness: 0
       HorizontalRecoilAmount: 0
       HorizontalRecoilRandomness: 0

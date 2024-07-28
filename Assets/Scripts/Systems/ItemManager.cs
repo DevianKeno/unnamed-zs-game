@@ -7,7 +7,7 @@ using UZSG.Items;
 
 namespace UZSG.Systems
 {
-    public class ItemManager : MonoBehaviour, IInitializable
+    public class ItemManager : MonoBehaviour, IInitializeable
     {
         bool _isInitialized;
         public bool IsInitialized => _isInitialized;

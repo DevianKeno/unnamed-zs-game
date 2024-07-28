@@ -13,9 +13,10 @@ namespace UZSG.FPP
     {
         public AnimatorController ArmsAnimations { get; }
         public AssetReference Viewmodel { get; }
-        public Vector3 Offset { get; }
         public EquipmentAnimationData Anims { get; }
         public bool HasViewmodel { get; }
+        public Vector3 PositionOffset { get; }
+        public Vector3 RotationOffset { get; }
     }
 
 }

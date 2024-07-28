@@ -8,7 +8,7 @@ using UZSG.WorldBuilder;
 
 namespace UZSG.Systems
 {
-    public class WorldManager : MonoBehaviour, IInitializable
+    public class WorldManager : MonoBehaviour, IInitializeable
     {
         bool _isInitialized;
         public bool IsInitialized => _isInitialized;

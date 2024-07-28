@@ -8,7 +8,7 @@ using UZSG.Items.Weapons;
 
 namespace UZSG.Systems
 {
-    public class AudioManager : MonoBehaviour, IInitializable
+    public class AudioManager : MonoBehaviour, IInitializeable
     {        
         bool _isInitialized;
         public bool IsInitialized => _isInitialized;

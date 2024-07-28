@@ -13,12 +13,7 @@ using UZSG.UI.HUD;
 
 namespace UZSG.UI
 {
-    public interface IToggleable
-    {
-        public bool IsVisible { get; }
-    }
-
-    public class PlayerHUD : Window, IToggleable
+    public class PlayerHUD : Window
     {
         public Player Player { get; private set; }
         Dictionary<int, ItemSlotUI> _hotbarSlotUIs = new();
@@ -76,7 +71,7 @@ namespace UZSG.UI
             for (int i = 0; i < maxSlots; i++)
             {
                 int index = 3 + i; /// 3 is hotbar starting index
-                var slotUI = Game.UI.Create<ItemSlotUI>("item_slot");
+                var slotUI = Game.UI.Create<ItemSlotUI>("Item Slot");
                 slotUI.name = $"Hotbar Slot ({i})";
                 slotUI.transform.SetParent(hotbar.transform);
                 slotUI.Index = index;
@@ -94,7 +89,7 @@ namespace UZSG.UI
             Player.Inventory.Hotbar.OnChangeEquipped += OnHotbarChangeEquipped;
             Player.Actions.OnPickupItem += (item) =>
             {
-                var indicator = Game.UI.Create<PickupsIndicator>("pickups_indicator");
+                var indicator = Game.UI.Create<PickupsIndicator>("Pickups Indicator");
                 indicator.transform.SetParent(pickupsIndicatorContainer.transform); 
                 indicator.SetDisplayedItem(item);
                 indicator.PlayAnimation();

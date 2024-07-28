@@ -450,6 +450,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 074db51fdf6072745bf284b884d4e556, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  AnimationFactor: 0.3
+  rect: {fileID: 2756202216640487994}
   movementStateText: {fileID: 3911872938589875800}
   actionStateText: {fileID: 2349246972556023083}
 --- !u!222 &5692737004945859137

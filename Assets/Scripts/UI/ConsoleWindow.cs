@@ -9,8 +9,8 @@ namespace UZSG.UI
 {
     public class ConsoleWindow : Window
     {
-        string buffer;
-        int currentIndex = 0;
+        string _inputBuffer;
+        int _navigatingIndex = 0;
         List<string> _previousInputs = new();
 
         [SerializeField] TextMeshProUGUI messages;
@@ -19,14 +19,10 @@ namespace UZSG.UI
         InputActionMap actionMap;
         Dictionary<string, InputAction> inputs = new();
 
-        public void Initialize()
+        void Start()
         {
             actionMap = Game.Main.GetActionMap("Console Window");
-            foreach (var action in actionMap.actions)
-            {
-                inputs[action.name] = action;
-                action.Enable();            
-            }
+            inputs = Game.Main.GetActionsFromMap(actionMap);
 
             inputs["Hide/Show"].performed += (ctx) =>
             {
@@ -43,34 +39,34 @@ namespace UZSG.UI
 
         void NavigatePreviousEntry(InputAction.CallbackContext context)
         {
-            if (currentIndex == 0)
+            if (_navigatingIndex == 0)
             {
-                currentIndex = _previousInputs.Count;
+                _navigatingIndex = _previousInputs.Count;
 
                 if (inputField.text != "")
                 {
-                    buffer = inputField.text;
+                    _inputBuffer = inputField.text;
                 }                
             }
 
-            if (currentIndex - 1 >= 0)
+            if (_navigatingIndex - 1 >= 0)
             {
-                currentIndex--;
-                inputField.text = _previousInputs[currentIndex];
+                _navigatingIndex--;
+                inputField.text = _previousInputs[_navigatingIndex];
             }
         }
 
         void NavigateNextEntry(InputAction.CallbackContext context)
         {
-            if (currentIndex + 1 < _previousInputs.Count)
+            if (_navigatingIndex + 1 < _previousInputs.Count)
             {
-                currentIndex++;
-                inputField.text = _previousInputs[currentIndex];
+                _navigatingIndex++;
+                inputField.text = _previousInputs[_navigatingIndex];
             }
             else
             {
-                currentIndex = 0;
-                inputField.text = buffer;
+                _navigatingIndex = 0;
+                inputField.text = _inputBuffer;
             }            
         }
 
@@ -82,8 +78,8 @@ namespace UZSG.UI
         public override void OnHide()
         {
             actionMap.Disable();
-            buffer = "";
-            currentIndex = 0;
+            _inputBuffer = "";
+            _navigatingIndex = 0;
         }
         
         void UpdateMessages(string message)
@@ -96,8 +92,8 @@ namespace UZSG.UI
             if (input == "") return;
             
             _previousInputs.Add(inputField.text);
-            buffer = "";
-            currentIndex = 0;
+            _inputBuffer = "";
+            _navigatingIndex = 0;
             inputField.text = "";
             inputField.Select();
             Game.Console.Run(input);

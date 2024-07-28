@@ -9,11 +9,10 @@ namespace UZSG.FPP
     public class FPPViewmodelSway : MonoBehaviour
     {
         public Player Player;
-
-        [SerializeField] Transform viewmodelHolder;
+        [Space]
         
         [Header("Sway Settings")]
-        public bool Enable = true;
+        public bool Enabled = true;
         [Tooltip("How smooth the sway transitions are.")]
         [Range(0.1f, 10f)]
         public float Smoothness = 5f;
@@ -28,17 +27,19 @@ namespace UZSG.FPP
         public float MaxSwayAngleY = 10f;
         [Tooltip("Invert the horizontal sway.")]
         public Vector3 RotationOffset = Vector3.zero;
-
+        
+        Quaternion originalRotation;
         InputAction lookInput;
 
         void Start()
         {
             lookInput = Game.Main.GetAction("Look", "Player");
+            originalRotation = transform.localRotation;
         }
 
         void Update()
         {
-            if (!Enable) return;
+            if (!Enabled) return;
 
             Vector2 deltaMouse = lookInput.ReadValue<Vector2>() * Multiplier;
 
@@ -48,8 +49,15 @@ namespace UZSG.FPP
             Quaternion rotationX = Quaternion.AngleAxis(-deltaMouse.y, Vector3.right);
             Quaternion rotationY = Quaternion.AngleAxis(deltaMouse.x, Vector3.up);
             Quaternion pivotAdjustment = Quaternion.Euler(RotationOffset);
-            Quaternion targetRotation = rotationX * rotationY * pivotAdjustment;
-            viewmodelHolder.localRotation = Quaternion.Slerp(viewmodelHolder.localRotation, targetRotation, Smoothness * Time.deltaTime);
+            Quaternion swayRotation = rotationX * rotationY * pivotAdjustment;
+
+            Quaternion targetRotation = originalRotation * swayRotation;
+
+            transform.localRotation = Quaternion.Slerp(
+                transform.localRotation,
+                targetRotation,
+                Smoothness * Time.deltaTime
+            );
         }
     }
 }

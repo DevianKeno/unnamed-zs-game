@@ -1,7 +1,10 @@
+using System;
 using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.UI;
+
+using UZSG.Systems;
 
 namespace UZSG.UI
 {
@@ -14,6 +17,8 @@ namespace UZSG.UI
         public float AnimationFactor = 0.5f;
         public LeanTweenType TweenType = LeanTweenType.easeOutExpo;
         public List<Frame> Frames = new();
+
+        public event Action<string> OnSwitchFrame;
 
 #region Editor
         [SerializeField] string switchTo;
@@ -40,8 +45,8 @@ namespace UZSG.UI
             if (_isTransitioning) return;
             _isTransitioning = true;
 
-            // if (Game.Main.Settings.EnableAnimations)
-            // {
+            if (Game.UI.EnableScreenAnimations)
+            {
                 if (currentFrame != null && currentFrame.Name != frame.Name)
                 {
                     /// Move current frame out of the way
@@ -68,19 +73,17 @@ namespace UZSG.UI
                     _isTransitioning = false;
                 });
                 LayoutRebuilder.ForceRebuildLayoutImmediate(frame.transform as RectTransform);
-            // }
-            // else
-            // {
-            //     CurrentFrame.transform.SetParent(inactive.transform);
-            //     CurrentFrame.rect.anchoredPosition = Vector2.zero;
-
-            //     frame.transform.SetParent(transform);
-            //     frame.gameObject.SetActive(true);
-            //     frame.rect.anchoredPosition = Vector2.zero;
-            //     LayoutRebuilder.ForceRebuildLayoutImmediate(frame.transform as RectTransform);
-                
-            //     CurrentFrame = frame;
-            // }
+            }
+            else
+            {
+                currentFrame.Rect.anchoredPosition = new Vector2(currentFrame.Rect.rect.width, 0f); /// Hide current frame
+                frame.Rect.anchoredPosition = Vector2.zero; /// Show new frame
+                currentFrame = frame;
+                currentFrame.transform.SetAsLastSibling();
+                LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
+            }
+            
+            OnSwitchFrame?.Invoke(currentFrame.Name);
         }
 
         public Frame GetFrame(string name)

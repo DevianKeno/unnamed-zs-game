@@ -15,6 +15,7 @@ namespace UZSG.Systems
 
 
         #region Core
+
         static Console console;
         public static Console Console { get => console; }
         static UIManager UIManager;
@@ -47,15 +48,14 @@ namespace UZSG.Systems
 
         #endregion
 
+
         /// <summary>
         /// Called after all Managers have been initialized.
         /// </summary>
         internal event Action OnLateInit;
 
         PlayerInput mainInput;
-        public PlayerInput MainInput { get => mainInput; }
-        InputAction toggleConsoleInput;
-        
+        public PlayerInput MainInput { get => mainInput; }        
 
         void Awake()
         {
@@ -137,24 +137,22 @@ namespace UZSG.Systems
         {
             var inputs = new Dictionary<string, InputAction>();
             var actionMap = GetActionMap(actionMapName);
-
             foreach (var action in actionMap.actions)
             {
                 inputs[action.name] = action;
             }
-
             return inputs;
         }
 
-        public Dictionary<string, InputAction> GetActionsFromMap(InputActionMap map)
+        public Dictionary<string, InputAction> GetActionsFromMap(InputActionMap map, bool enable = true)
         {
             var inputs = new Dictionary<string, InputAction>();
-            
             foreach (var action in map.actions)
             {
                 inputs[action.name] = action;
+                if (enable) action.Enable();
+                else action.Disable();
             }
-
             return inputs;
         }
 

@@ -1,6 +1,6 @@
 namespace UZSG.Systems
 {
-    public interface IInitializable
+    public interface IInitializeable
     {
         public bool IsInitialized { get; }
     }

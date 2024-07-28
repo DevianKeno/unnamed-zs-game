@@ -703,6 +703,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   AnimationFactor: 0.3
+  rect: {fileID: 4842610381706415447}
   inventory: {fileID: 0}
   HealthBar: {fileID: 2290362011424768747}
   StaminaBar: {fileID: 6441483392727630303}

@@ -58,10 +58,7 @@ namespace UZSG.Systems
 
         void OnLateInit()
         {
-            UI = Game.UI.Create<ConsoleWindow>("console_window");
-            UI.Initialize();
-
-            // inputField.onEndEdit.AddListener(InputSubmit);
+            UI = Game.UI.Create<ConsoleWindow>("Console Window");
 
             Game.Entity.OnEntitySpawn += (sender, info) =>
             {

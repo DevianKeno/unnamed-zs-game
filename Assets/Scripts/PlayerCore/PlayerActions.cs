@@ -11,6 +11,7 @@ using UZSG.Interactions;
 using UZSG.Entities;
 using UZSG.Inventory;
 using UZSG.UI;
+using System.Collections;
 
 namespace UZSG.Players
 {
@@ -26,6 +27,7 @@ namespace UZSG.Players
         public float MaxInteractDistance;
         public float HoldThresholdMilliseconds = 200f;
         
+        bool _inhibitActions;
         float _holdTimer;
         bool _hadLeftClicked;
         bool _hadRightClicked;
@@ -52,7 +54,7 @@ namespace UZSG.Players
         internal void Initialize()
         {
             InitializeInputs();
-            interactionIndicator = Game.UI.Create<InteractionIndicator>("interaction_indicator");
+            interactionIndicator = Game.UI.Create<InteractionIndicator>("Interaction Indicator");
 
             Game.Tick.OnTick += Tick;
         }
@@ -102,7 +104,7 @@ namespace UZSG.Players
         }
 
 
-        #region Callbacks
+        #region Input callbacks
 
         void OnHotbarSelect(InputAction.CallbackContext context)
         {
@@ -127,9 +129,10 @@ namespace UZSG.Players
         
         void OnPerformInteract(InputAction.CallbackContext context)
         {
+            if (_inhibitActions) return;
             if (lookingAt == null) return;
 
-            lookingAt.Interact(this, new InteractArgs());
+            StartCoroutine(InteractCoroutine());
         }
 
         void OnStartPrimaryAction(InputAction.CallbackContext c)
@@ -174,6 +177,7 @@ namespace UZSG.Players
 
         #endregion
 
+
         void Tick(TickInfo e)
         {
             CheckLookingAt();
@@ -200,15 +204,14 @@ namespace UZSG.Players
                 lookingAt = null;
                 interactionIndicator.Hide();
             }
-        }        
+        }
         
-        /// <summary>
-        /// Visualizes the interaction size.
-        /// </summary>
-        void OnDrawGizmos()
+        IEnumerator InteractCoroutine()
         {
-            Gizmos.DrawLine(ray.origin, ray.origin + ray.direction * (MaxInteractDistance));
-            Gizmos.DrawWireSphere(ray.origin + ray.direction * (MaxInteractDistance + Radius), Radius);
+            _inhibitActions = true;
+            lookingAt.Interact(this, new());
+            yield return new WaitForSeconds(0.1f); /// interact cooldown
+            _inhibitActions = false;
         }
 
         /// <summary>
@@ -253,6 +256,15 @@ namespace UZSG.Players
                 OnPickupItem?.Invoke(item);
                 Game.Entity.Kill(itemEntity);
             }
+        }
+        
+        /// <summary>
+        /// Visualizes the interaction size.
+        /// </summary>
+        void OnDrawGizmos()
+        {
+            Gizmos.DrawLine(ray.origin, ray.origin + ray.direction * (MaxInteractDistance));
+            Gizmos.DrawWireSphere(ray.origin + ray.direction * (MaxInteractDistance + Radius), Radius);
         }
     }
 }

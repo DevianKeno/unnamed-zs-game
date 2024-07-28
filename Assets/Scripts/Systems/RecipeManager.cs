@@ -5,7 +5,7 @@ using UZSG.Crafting;
 
 namespace UZSG.Systems
 {
-    public class RecipeManager : MonoBehaviour, IInitializable
+    public class RecipeManager : MonoBehaviour, IInitializeable
     {
         bool _isInitialized;
         public bool IsInitialized => _isInitialized;

@@ -10,7 +10,7 @@ using UZSG.Crafting;
 namespace UZSG.Items
 {
     public enum ItemType { Item, Weapon, Tool, Equipment, Accessory }
-    public enum ItemSubtype { None, Consumable, Tool, Weapon, Equipable, Accessory }
+    public enum ItemSubtype { None, Useable, Food, Consumable, Tool, Weapon, Equipable, Accessory }
 
     [Serializable]
     [CreateAssetMenu(fileName = "New Item Data", menuName = "UZSG/Item Data")]

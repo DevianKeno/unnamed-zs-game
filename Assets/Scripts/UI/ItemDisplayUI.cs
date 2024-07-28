@@ -5,10 +5,17 @@ using UZSG.Items;
 
 namespace UZSG.UI
 {
-    public class ItemDisplayUI : MonoBehaviour, IUIElement
+    public class ItemDisplayUI : Window, IUIElement
     {
-        public Item Item;
-        public bool IsVisible { get; set; }
+        [SerializeField] Item item;
+        public Item Item
+        {
+            get => item;
+            set
+            {
+                SetDisplayedItem(value);
+            }
+        }
 
         [SerializeField] Image image;
         [SerializeField] TextMeshProUGUI countText;
@@ -21,7 +28,7 @@ namespace UZSG.UI
         
         public void SetDisplayedItem(Item item)
         {            
-            Item = item;
+            this.item = item;
             
             if (item == null || item.IsNone)
             {
@@ -55,16 +62,6 @@ namespace UZSG.UI
                     countText.text = item.Count.ToString();
                 }
             }
-        }
-
-        public void ToggleVisibility()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void SetVisible(bool visible)
-        {
-            throw new System.NotImplementedException();
         }
     }
 }

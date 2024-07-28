@@ -112,7 +112,7 @@ namespace UZSG.Systems
 
             /// DEBUGGING ONLY
             timeController.Initialize();
-            weatherController.Initialize();
+            // weatherController.Initialize();
 
 
             #endregion            

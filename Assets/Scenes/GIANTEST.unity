@@ -4831,6 +4831,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Time: {fileID: 0}
+  Weather: {fileID: 0}
 --- !u!1001 &1807014400
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5019,6 +5020,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   FreeLookCamera: {fileID: 892676884}
   timeController: {fileID: 1948226128}
+  weatherController: {fileID: 0}
 --- !u!4 &1819902023
 Transform:
   m_ObjectHideFlags: 0

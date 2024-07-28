@@ -228,7 +228,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4476341550232632874}
   - component: {fileID: 8288566237762455608}
-  - component: {fileID: 3190170918818680425}
+  - component: {fileID: 6539491705229663684}
   m_Layer: 0
   m_Name: Look Detector
   m_TagString: Untagged
@@ -245,7 +245,7 @@ Transform:
   m_GameObject: {fileID: 4205740759332681714}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 2}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -264,11 +264,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Player: {fileID: 8107631895800867322}
-  Distance: 2
+  Distance: 0
   Radius: 0.2
-  sphereCollider: {fileID: 3190170918818680425}
---- !u!135 &3190170918818680425
-SphereCollider:
+  capsuleCollider: {fileID: 6539491705229663684}
+--- !u!136 &6539491705229663684
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -285,9 +285,11 @@ SphereCollider:
   m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
+  serializedVersion: 2
   m_Radius: 0.2
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Height: 3
+  m_Direction: 2
+  m_Center: {x: 0, y: 0, z: 1.5}
 --- !u!1 &5142996516149911681
 GameObject:
   m_ObjectHideFlags: 0

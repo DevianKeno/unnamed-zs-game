@@ -15,28 +15,31 @@ namespace UZSG.Players
         public event Action<Collider> OnLookStay;
         public event Action<Collider> OnLookExit;
 
-        [SerializeField] SphereCollider sphereCollider;
+        [SerializeField] CapsuleCollider capsuleCollider;
 
         void OnValidate()
         {
             var target = transform.position;
             target.z = Distance;
             transform.position = target;
-            sphereCollider.radius = Radius;
+            capsuleCollider.radius = Radius;
         }
 
         void OnTriggerEnter(Collider other)
         {
+            if (other.gameObject == null) return;
             OnLookEnter?.Invoke(other);
         }
 
         void OnTriggerStay(Collider other)
         {
+            if (other.gameObject == null) return;
             OnLookStay?.Invoke(other);
         }
 
         void OnTriggerExit(Collider other)
         {
+            if (other.gameObject == null) return;
             OnLookExit?.Invoke(other);
         }
     }

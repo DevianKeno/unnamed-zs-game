@@ -126,12 +126,18 @@ namespace UZSG.Entities
 
         public void OnLookEnter()
         {
-            model.layer = LayerMask.NameToLayer("Outline");
+            if (model != null)
+            {
+                model.layer = LayerMask.NameToLayer("Outline");
+            }
         }
 
         public void OnLookExit()
         {
-            model.layer = _originalLayer;
+            if (model != null)
+            {
+                model.layer = _originalLayer;
+            }
         }
 
         public void Despawn()

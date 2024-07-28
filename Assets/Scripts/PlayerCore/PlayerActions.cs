@@ -255,6 +255,7 @@ namespace UZSG.Players
             if (gotItem)
             {
                 OnPickupItem?.Invoke(item);
+                lookingAt = null;
                 Game.Entity.Kill(itemEntity);
             }
         }

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e17289ee7a2e6cf41a659f97ecedf26e, type: 3}
   m_Name: rainy
   m_EditorClassIdentifier: 
+  particleSystem: {fileID: 7503272732920571010, guid: f46b503727ac05f4d8752dc444ef8fe5, type: 3}
   weatherAttributes:
     Name: Rainy
     Strength: 1

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e17289ee7a2e6cf41a659f97ecedf26e, type: 3}
   m_Name: sunny
   m_EditorClassIdentifier: 
+  particleSystem: {fileID: 1865934473100886141, guid: db20236b2cadc7d4881910375af62442, type: 3}
   weatherAttributes:
     Name: Sunny
     Strength: 1

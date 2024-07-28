@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: rainy
   m_EditorClassIdentifier: 
   weatherAttributes:
-  - Name: 
-    Strength: 0
-    Duration: 0
-    Temperature: 0
+    Name: Rainy
+    Strength: 1
+    DurationSeconds: 120
   weatherProperties:
-    isWahahaha: 0
+    DayFogColor: {r: 0.07320221, g: 0.10400674, b: 0.3301887, a: 0}
+    NightFogColor: {r: 0, g: 0, b: 0, a: 0}
+    Temperature: 20

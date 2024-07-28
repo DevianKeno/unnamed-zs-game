@@ -3,11 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UZSG.Systems;
+using UZSG.World.Weather;
 
 namespace UZSG.WorldBuilder
 {
     public class TimeController : MonoBehaviour
-    {
+    {   
         public Light SunLight;
         public Light MoonLight;
         public Gradient DayColors;
@@ -50,7 +51,6 @@ namespace UZSG.WorldBuilder
                 TwentyFourHourTime = 0;
                 CurrentDay++;
             }
-
             UpdateCelestialBodies();
 
             SetTime(TwentyFourHourTime);

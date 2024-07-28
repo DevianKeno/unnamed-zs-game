@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UZSG.World.Weather;
 using UZSG.WorldBuilder;
 
 namespace UZSG.Systems
@@ -40,6 +41,7 @@ namespace UZSG.Systems
         }
 
         public TimeController Time;
+        public WeatherController Weather;
         
     }
 }

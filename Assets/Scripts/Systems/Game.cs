@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 using UZSG.UI;
+using UZSG.World.Weather;
 using UZSG.WorldBuilder;
 
 namespace UZSG.Systems
@@ -90,6 +91,7 @@ namespace UZSG.Systems
         }
 
         public TimeController timeController;
+        public WeatherController weatherController;
 
         void InitializeManagers()
         {
@@ -110,6 +112,8 @@ namespace UZSG.Systems
 
             /// DEBUGGING ONLY
             timeController.Initialize();
+            weatherController.Initialize();
+
 
             #endregion            
 

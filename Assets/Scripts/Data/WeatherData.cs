@@ -11,21 +11,22 @@ namespace UZSG.World.Weather
     {
         public string Name;
         public int Strength;
-        public int Duration;
-        public float Temperature;
+        public int DurationSeconds;
     }
 
     [Serializable]
     public struct WeatherProperties
     {
-        public bool isWahahaha;
+        public Color DayFogColor;
+        public Color NightFogColor;
+        public float Temperature;
     }
 
     [CreateAssetMenu(fileName = "New Weather Data", menuName = "UZSG/Weather Data")]
     [Serializable]
     public class WeatherData : ScriptableObject
     {
-        public List<WeatherAttributes> weatherAttributes;
+        public WeatherAttributes weatherAttributes;
         public WeatherProperties weatherProperties;
     }
 

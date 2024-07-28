@@ -10,6 +10,7 @@ namespace UZSG.World.Weather
     public class WeatherController : MonoBehaviour
     {
 
+        public bool InstantiateWeatherInEditor;
         WeatherData _currentWeather;
         public WeatherData CurrentWeather;
         public WeatherData DefaultWeather;
@@ -24,6 +25,7 @@ namespace UZSG.World.Weather
 
         public void Initialize()
         {
+            DeleteChildren(ParticleParent.transform);
             CurrentWeather = CurrentWeather == null ? DefaultWeather : CurrentWeather;
             _currentParticleSystem = CurrentWeather.particleSystem;
             SetWeather(CurrentWeather);
@@ -34,8 +36,10 @@ namespace UZSG.World.Weather
         {
             CurrentWeather = CurrentWeather == null ? DefaultWeather : CurrentWeather;
             _currentParticleSystem = CurrentWeather.particleSystem;
-            SetWeather(CurrentWeather);
+            
+            if (InstantiateWeatherInEditor) SetWeather(CurrentWeather);
         }
+
         void OnTick(TickInfo info)
         {
             float tickThreshold = Game.Tick.TPS / 64f;
@@ -61,6 +65,13 @@ namespace UZSG.World.Weather
             Time.NightFogColor = Color.Lerp(Time.NightFogColor, _currentWeather.weatherProperties.NightFogColor, 1f);
         }
 
+        void DeleteChildren(Transform parent, bool immediate = false)
+        {
+            if (ParticleParent.transform.childCount <= 0) return;
+            
+            for (int i = 0; i < parent.childCount; i++) Destroy(parent.GetChild(i).gameObject);
+        }
+
         public void SetWeather(WeatherData weather)
         {
             _currentWeather = weather;
@@ -69,7 +80,7 @@ namespace UZSG.World.Weather
             _weatherCountdown = _weatherDuration;
             _currentParticleSystem = weather.particleSystem;
             
-            if (ParticleParent.transform.childCount > 0) Destroy(ParticleParent.transform.GetChild(0).gameObject);
+            DeleteChildren(ParticleParent.transform);
 
             ParticleSystem particle = _currentParticleSystem;
             Instantiate(particle, ParticleParent.transform);

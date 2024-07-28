@@ -22,10 +22,12 @@ namespace UZSG.World.Weather
         public float Temperature;
     }
 
+
     [CreateAssetMenu(fileName = "New Weather Data", menuName = "UZSG/Weather Data")]
     [Serializable]
     public class WeatherData : ScriptableObject
     {
+        public ParticleSystem particles;
         public WeatherAttributes weatherAttributes;
         public WeatherProperties weatherProperties;
     }

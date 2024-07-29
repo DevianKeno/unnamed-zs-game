@@ -12,9 +12,10 @@ namespace UZSG.FPP
         public const float NormalRecoveryFactor = 2f;
 
         public Player Player;
-        public bool Enabled = true;
+        [Space]
 
-        [Header("Bob Settings")]
+        [Header("Settings")]
+        public bool Enabled = true;
         public float MinSpeed = 0.3f;
         public float Amplitude = 1f;
         public float Frequency = 1f;
@@ -27,13 +28,11 @@ namespace UZSG.FPP
         void Start()
         {
             startPosition = transform.localPosition;
-            Game.Tick.OnTick += Tick;
         }
 
-        void Tick(TickInfo info)
+        void Update()
         {
             if (!Enabled) return;
-
             Bob();
             ResetPosition();
         }

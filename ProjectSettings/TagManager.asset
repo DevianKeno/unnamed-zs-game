@@ -8,6 +8,8 @@ TagManager:
   - Pickupable
   - Item
   - Bullet
+  - Melee
+  - Projectile
   layers:
   - Default
   - TransparentFX

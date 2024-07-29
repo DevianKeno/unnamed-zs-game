@@ -5,15 +5,15 @@ namespace UZSG.Entities
 {
     public struct CollisionHitInfo
     {
-        public IProjectile Projectile { get; set; }
-        public RaycastHit Hit { get; set; }
+        public ICollision By { get; set; }
+        public Vector3 ContactPoint { get; set; }
     }
 
     [Serializable]
     public class Hitbox : MonoBehaviour
     {
         public HitboxPart Part;
-        public event EventHandler<Collider> OnCollision;
+        public event EventHandler<CollisionHitInfo> OnCollision;
         
         BoxCollider boxCollider;
 
@@ -22,7 +22,7 @@ namespace UZSG.Entities
             boxCollider = GetComponent<BoxCollider>();
         }
 
-        public void Hit(Collider other)
+        public void HitBy(CollisionHitInfo other)
         {
             OnCollision?.Invoke(this, other);
         }

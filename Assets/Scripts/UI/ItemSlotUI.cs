@@ -67,8 +67,14 @@ namespace UZSG.UI
             itemDisplayUI?.SetDisplayedItem(item);
         }
 
+        public void Reset()
+        {
+            image.color = Normal;
+        }
+
         public void Refresh()
         {
+            Reset();
             SetDisplayedItem(Item);
         }
 
@@ -76,14 +82,14 @@ namespace UZSG.UI
 
         public void OnPointerEnter(PointerEventData e)
         {
-            OnStartHover?.Invoke(this, e);
             image.color = Hovered;
+            OnStartHover?.Invoke(this, e);
         }
 
         public void OnPointerExit(PointerEventData e)
         {
+            Reset();
             OnEndHover?.Invoke(this, e);
-            image.color = Normal;
         }
 
         public void OnPointerDown(PointerEventData e)

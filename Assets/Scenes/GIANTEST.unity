@@ -5563,6 +5563,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: skinwalker
       objectReference: {fileID: 0}
+    - target: {fileID: 4710550939094238023, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: m_Size.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4710550939094238023, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: m_Size.z
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 7937397935011984496, guid: 033481a19307263458a06de1464ac025, type: 3}
       propertyPath: m_LocalPosition.x
       value: -2.56

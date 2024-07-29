@@ -33,24 +33,29 @@ namespace UZSG.Entities
             }
         }
 
-        void OnCollision(object sender, Collider collider)
+        void OnCollision(object sender, CollisionHitInfo info)
         {
-            if (collider.gameObject == null) return;
-
-            if (collider.CompareTag("Bullet"))
+            if (info.By.CollisionTag == "Projectile")
             {
-                if (collider.gameObject.TryGetComponent<Bullet>(out var bullet))
-                {
-                    var hitbox = sender as Hitbox;
-                    Debug.Log($"Shot part {hitbox.Part}");
-                    var target = bullet.transform.position;
-                    Game.Entity.Spawn("blood_splat", (entity) =>
-                    {
-                        entity.Entity.transform.position = target;
-                    });
-                    Destroy(bullet.gameObject);
-                }
-            }   
+                var hitbox = sender as Hitbox;
+                var bullet = info.By as Bullet;
+
+                Debug.Log($"Shot part {hitbox.Part}");
+                SpawnBlood(info.ContactPoint);
+                Destroy(bullet.gameObject);
+            }
+            else if (info.By.CollisionTag == "Melee")
+            {
+                SpawnBlood(info.ContactPoint);
+            }
+        }
+
+        void SpawnBlood(Vector3 location)
+        {
+            Game.Entity.Spawn("blood_splat", (entity) =>
+            {
+                entity.Entity.transform.position = location;
+            });
         }
     }
 }

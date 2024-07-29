@@ -16,6 +16,11 @@ namespace UZSG.Entities
         public Vector3 Velocity { get; set; }
         public float Speed { get; set; }
     }
+
+    public interface ICollision
+    {
+        public string CollisionTag { get; }
+    }
     
     /// <summary>
     /// Bullet entity.
@@ -23,9 +28,11 @@ namespace UZSG.Entities
     /// </summary>
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(BoxCollider))]
-    public class Bullet : Entity, IProjectile
+    public class Bullet : Entity, IProjectile, ICollision
     {
         public const float DefaultBulletScale = 0.1f;
+        
+        public string CollisionTag => "Projectile";
         public BulletDamageAttributes DamageAttributes;
         public BulletAttributes Attributes;
         public float CalculatedDamage;
@@ -78,7 +85,7 @@ namespace UZSG.Entities
             
             if (Physics.Raycast(ray, out var hit, distance, LayerMask.GetMask("Hitbox")))
             {
-                OnHit(hit.collider);
+                OnHit(hit.point, hit.collider);
             }
         }
 
@@ -115,12 +122,16 @@ namespace UZSG.Entities
             }
         }
 
-        void OnHit(Collider other)
+        void OnHit(Vector3 point, Collider other)
         {
             if (other.TryGetComponent<Hitbox>(out var hitbox))
             {
                 CalculatedDamage = CalculateDamage(hitbox.Part);
-                hitbox.Hit(coll);
+                hitbox.HitBy(new()
+                {
+                    By = this,
+                    ContactPoint = point,
+                });
                 Destroy(gameObject);
             }
         }

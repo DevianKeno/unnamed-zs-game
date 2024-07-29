@@ -23,12 +23,12 @@ MonoBehaviour:
   Sprite: {fileID: 21300000, guid: 75a04606deb60ed40ac1bdf3e4dd36e2, type: 3}
   Type: 1
   StackSize: 1
-  Subtype: 0
+  Subtype: 5
   IsMaterial: 0
   IsCraftable: 0
   Recipes: []
   HotbarIcon: {fileID: 0}
-  Weight: 4.2
+  Weight: 2
   Category: 1
   MeleeType: 0
   BluntType: 0

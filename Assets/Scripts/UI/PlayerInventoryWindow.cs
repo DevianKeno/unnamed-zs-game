@@ -217,7 +217,6 @@ namespace UZSG.UI
 
         void OnEndHoverSlot(object sender, PointerEventData e)
         {
-            selector.Hide();
             _selectedSlotUI = null;
             _selectedSlot = null;
         }

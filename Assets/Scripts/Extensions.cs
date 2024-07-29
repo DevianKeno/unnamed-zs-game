@@ -2,6 +2,12 @@ namespace UZSG
 {
     public static class Extensions
     {
+        public static bool IsValidIndex<T>(this System.Collections.Generic.List<T> list, int index)
+        {
+            if (index < 0 && index > list.Count) return false;
+            return true;
+        }
+
         public static bool IsSet(this UnityEngine.AddressableAssets.AssetReference assetReference)
         {
             return assetReference != null

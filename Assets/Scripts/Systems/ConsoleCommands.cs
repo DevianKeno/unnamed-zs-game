@@ -50,15 +50,26 @@ namespace UZSG.Systems
         /// </summary>
         void CHelp(object sender, string[] args)
         {
-            if (commandsDict.ContainsKey(args[0]))
+            if (args.Length <= 1)
             {
-                Log(commandsDict[args[0]].Description);
-            } else
-            {
-                WriteLine("List of available commands");
+                Game.Console.WriteLine("List of available commands: ");
+                string message = "";
                 foreach (var c in commandsDict)
                 {
-                    ///TECHNICAL DEBT
+                    message += $"{c.Value.Name}, "; /// This will have an extra comma, pls fix
+                }
+                Game.Console.Write(message);
+            }
+            else
+            {
+                if (int.TryParse(args[1], out int page))
+                {
+                    Log($"Showing page {page}");
+                }
+                else
+                {
+                    Log($"Usage: " + commandsDict[args[1]].Syntax);
+                    Log(commandsDict[args[1]].Description);
                 }
             }
         }

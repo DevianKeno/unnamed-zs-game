@@ -73,7 +73,7 @@ namespace UZSG.UI
 
         public override void OnHide()
         {
-            actionMap.Disable();
+            // actionMap.Disable();
             _inputBuffer = "";
             _navigatingIndex = 0;
         }

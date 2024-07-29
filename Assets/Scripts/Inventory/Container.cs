@@ -80,7 +80,7 @@ namespace UZSG
         /// </summary>
         public virtual bool TryPut(int slotIndex, Item item)
         {
-            if (slotIndex < 0 || slotIndex > Slots.Count) return false;
+            if (!Slots.IsValidIndex(slotIndex)) return false;
             if (item.IsNone) return false;
 
             ItemSlot slot = Slots[slotIndex];
@@ -116,15 +116,47 @@ namespace UZSG
 
             return slot.TakeItems(amount);
         }
-
-        public virtual Item Swap(int slotIndex)
+        
+        /// <summary>
+        /// Check if the item exists within the container, regardless of amount.
+        /// </summary>
+        public bool Contains(Item item, out ItemSlot slot)
         {
-            throw new NotImplementedException();
+            slot = null;
+            foreach (ItemSlot s in Slots)
+            {
+                if (s.IsEmpty) continue;
+
+                if (s.Item.CompareTo(item))
+                {
+                    slot = s;
+                    return true;
+                }
+            }
+            return false;
         }
 
-        public virtual Item ThrowItem(int index)
+        /// <summary>
+        /// Check if a specified amount of item exists within the container.
+        /// </summary>
+        public bool ContainsCount(Item item, out ItemSlot slot)
         {
-            throw new NotImplementedException();
+            slot = null;
+            foreach (ItemSlot s in Slots)
+            {
+                if (s.IsEmpty) continue;
+
+                if (s.Item.CompareTo(item))
+                {
+                    if (s.Item.Count >= item.Count)
+                    {
+                        slot = s;
+                        return true;
+                    }
+                    return false;
+                }
+            }
+            return false;
         }
 
         public virtual void ClearItem(ItemSlot slot)
@@ -135,6 +167,7 @@ namespace UZSG
 
         public virtual void ClearItem(int slotIndex)
         {
+            if (!Slots.IsValidIndex(slotIndex)) return;
             ClearItem(Slots[slotIndex]);
         }
     }

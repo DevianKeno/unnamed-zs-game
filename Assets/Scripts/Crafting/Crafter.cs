@@ -31,21 +31,14 @@ namespace UZSG.Crafting
         {
             RecipeData recipes = Game.Recipes.GetRecipeData(item.Id);
 
-            //check if sufficient materials is available inside the player inventory
-
+            /// Check if sufficient materials is available inside the player inventory
             foreach (Item material in recipes.Materials)
             {
                 int count = 0;
 
-                foreach (ItemSlot slot in player.Inventory.Bag.Slots)
+                if (player.Inventory.Bag.ContainsCount(item: material, out var slot))
                 {
-                    if (slot.Item == null || slot.Item.Id != material.Id)
-                    {
-                        continue;
-                    }
-
                     count += slot.Item.Count;
-
                 }
 
                 if (count < material.Count)
@@ -54,8 +47,8 @@ namespace UZSG.Crafting
                 }
             }
 
-            //takes item in the inventory
-            //NOTE: ENSURE THAT THE AVAILABILITY OF MATERIALS ARE FULLY CHECKED
+            /// Takes item in the inventory
+            /// NOTE: ENSURE THAT THE AVAILABILITY OF MATERIALS ARE FULLY CHECKED
             foreach (Item material in recipes.Materials)
             {
                 int remainingCount = material.Count;
@@ -90,6 +83,5 @@ namespace UZSG.Crafting
 
             return recipes.Output;
         }
-
     }
 }

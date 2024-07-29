@@ -32,6 +32,7 @@ namespace UZSG.Systems
         public List<string> Messages;
 
         ConsoleWindow UI;
+        
         /// <summary>
         /// Called everytime the Console logs a message.
         /// </summary>

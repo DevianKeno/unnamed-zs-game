@@ -120,7 +120,7 @@ namespace UZSG.UI
                 _bagSlotUIs.Add(i, slot);
                 slot.Show();
             }
-            inventory.Hotbar.OnChangeEquipped += HotbarChangeEquippedCallback;
+            
             inventory.Bag.OnSlotContentChanged += BagSlotChangedCallback;
         }
 
@@ -219,11 +219,6 @@ namespace UZSG.UI
         {
             _selectedSlotUI = null;
             _selectedSlot = null;
-        }
-
-        void HotbarChangeEquippedCallback(object sender, Hotbar.ChangeEquippedArgs e)
-        {
-            
         }
 
         void BagSlotChangedCallback(object sender, SlotContentChangedArgs e)

@@ -239,12 +239,7 @@ namespace UZSG.Players
             {
                 if (Player.Inventory.TryEquipWeapon(item, out HotbarIndex index))
                 {
-                    Player.FPP.LoadFPPItem(item.Data, index, equip: true);
-                    Player.FPP.LoadHeldItem(item, index, () =>
-                    {
-                        Player.FPP.EquipHotbarIndex(index);
-                    });
-
+                    Player.FPP.HoldItem(item, index);
                     DestroyPickupedItem(itemEntity);
                     return;
                 }

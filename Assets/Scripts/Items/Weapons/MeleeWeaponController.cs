@@ -93,6 +93,17 @@ namespace UZSG.Items.Weapons
         #endregion 
 
 
+        void OnEnable()
+        {
+            ResetStates();
+        }
+
+        public void ResetStates()
+        {
+            _isAttacking = false;
+            _inhibitActions = false;
+        }
+
         IEnumerator AttackCoroutine()
         {
             if (_inhibitActions || _isAttacking)

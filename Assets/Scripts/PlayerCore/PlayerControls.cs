@@ -204,11 +204,6 @@ namespace UZSG.Players
             }
         }
 
-        void ConsoleWindowToggledCallback(bool value)
-        {
-            SetControlsEnabled(!value);
-        }
-
         void SetControlsEnabled(bool value)
         {
             if (value)
@@ -391,7 +386,7 @@ namespace UZSG.Players
             }
             else
             {
-                rb.velocity = Vector3.zero;
+                // rb.velocity = Vector3.zero;
             }
         }
 

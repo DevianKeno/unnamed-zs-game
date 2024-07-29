@@ -69,6 +69,7 @@ namespace UZSG.UI
         public override void OnShow()
         {
             actionMap.Enable();
+            Game.UI.ToggleCursor(true);
         }
 
         public override void OnHide()
@@ -76,6 +77,7 @@ namespace UZSG.UI
             // actionMap.Disable();
             _inputBuffer = "";
             _navigatingIndex = 0;
+            Game.UI.ToggleCursor(false);
         }
         
         void UpdateMessages(string message)

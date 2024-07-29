@@ -59,6 +59,7 @@ GameObject:
   - component: {fileID: 7766360178944467007}
   - component: {fileID: 6206635905438684906}
   - component: {fileID: 5902371368100368436}
+  - component: {fileID: 5069990445555364325}
   m_Layer: 0
   m_Name: Viewmodel Holder
   m_TagString: Untagged
@@ -111,8 +112,8 @@ MonoBehaviour:
   Player: {fileID: 8107631895800867322}
   Enabled: 1
   MinSpeed: 0.3
-  Amplitude: -0.1
-  Frequency: 0.7
+  Amplitude: -0.15
+  Frequency: 0.75
   Recovery: 1
   MaintainForwardLook: 0
   LookDistance: 16
@@ -151,6 +152,22 @@ MonoBehaviour:
   MaxSwayAngleX: 15
   MaxSwayAngleY: 10
   RotationOffset: {x: 2, y: 0, z: 0}
+--- !u!114 &5069990445555364325
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1696359609177967074}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0fbe9e877c72d59439e3374c0a4d4714, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Player: {fileID: 8107631895800867322}
+  Enabled: 1
+  Amount: 0.01
+  Speed: 2
 --- !u!1 &2866568475717327878
 GameObject:
   m_ObjectHideFlags: 0
@@ -355,6 +372,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1873134562759721657}
   - component: {fileID: 6073486126791691618}
+  - component: {fileID: 1760353934298345573}
   m_Layer: 0
   m_Name: Camera Holder
   m_TagString: Untagged
@@ -394,11 +412,29 @@ MonoBehaviour:
   Player: {fileID: 8107631895800867322}
   Enabled: 1
   MinSpeed: 0.3
-  Amplitude: 1
-  Frequency: 0.7
+  Amplitude: 1.05
+  Frequency: 0.9
   Recovery: 16
   MaintainForwardLook: 1
   LookDistance: 16
+--- !u!114 &1760353934298345573
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5496084965249798624}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19330044cc8e5534596f557e036c4138, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Player: {fileID: 8107631895800867322}
+  Enabled: 1
+  MinSpeed: 0.3
+  ForwardAngle: 0.5
+  SideAngle: 0.5
+  TiltSpeed: 12
 --- !u!1 &5771848841049438004
 GameObject:
   m_ObjectHideFlags: 0

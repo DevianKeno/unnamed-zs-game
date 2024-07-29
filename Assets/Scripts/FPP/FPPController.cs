@@ -44,6 +44,8 @@ namespace UZSG.FPP
         public FPPCameraInput CameraController => cameraController;
         [SerializeField] GunMuzzleController gunMuzzleController;
 
+        public event Action<HeldItemController> OnChangeHeldItem;
+
         Animator viewmodelAnimator;
         Animator cameraAnimator;
         
@@ -71,10 +73,19 @@ namespace UZSG.FPP
             Player.ActionStateMachine.OnStateChanged += OnPlayerActionStateChanged;
         }
 
+        public void HoldItem(Item item, HotbarIndex index)
+        {
+            LoadFPPItem(item.Data, index, equip: true);
+            LoadHeldItem(item, index, () =>
+            {
+                Player.FPP.EquipHotbarIndex(index);
+            });
+        }
+
         void LoadAndEquipHands()
         {
-            var handsWeaponData = Game.Items.GetItemData("hands");
-            LoadFPPItem(handsWeaponData, HotbarIndex.Hands, equip: true);
+            var armsItem = new Item(Game.Items.GetItemData("arms"));
+            HoldItem(armsItem, HotbarIndex.Hands);
         }
 
         public delegate void OnLoadViewModelCompleted(Viewmodel viewmodel);
@@ -82,7 +93,7 @@ namespace UZSG.FPP
         /// <summary>
         /// Cache FPP model and data.
         /// </summary>
-        public async void LoadFPPItem(ItemData item, HotbarIndex index, bool equip = true)
+        async void LoadFPPItem(ItemData item, HotbarIndex index, bool equip = true)
         {
             if (item is not IFPPVisible fPPObject) return;
             
@@ -107,7 +118,7 @@ namespace UZSG.FPP
             return viewmodel;
         }
 
-        public void LoadHeldItem(Item item, HotbarIndex index, Action onDoneInitialize = null)
+        void LoadHeldItem(Item item, HotbarIndex index, Action onDoneInitialize = null)
         {
             if (item.Data is WeaponData weaponData)
             {
@@ -127,8 +138,10 @@ namespace UZSG.FPP
                         onDoneInitialize?.Invoke();
                     });
                 }
+                return;
             }
-            else if (item.Data.Subtype == ItemSubtype.Consumable)
+
+            if (item.Data.Subtype == ItemSubtype.Consumable)
             {
                 throw new NotImplementedException();
             }
@@ -163,7 +176,9 @@ namespace UZSG.FPP
             {
                 heldItem = null;
             }
+            
             InitializeHeldItem();
+            OnChangeHeldItem?.Invoke(heldItem);
         }
         
         void LoadHeldItemControllerAsync<T>(GameObject prefab, Action<T> onLoadCompleted = null) where T : Component

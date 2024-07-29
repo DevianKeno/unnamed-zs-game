@@ -181,6 +181,17 @@ namespace UZSG.Items.Weapons
         #endregion
 
 
+        void OnEnable()
+        {
+            ResetStates();
+        }
+
+        public void ResetStates()
+        {
+            _isFiring = false;
+            _inhibitActions = false;
+        }
+
         IEnumerator FireCoroutine()
         {
             if (_inhibitActions || _isReloading || !HasAmmo)

@@ -27,8 +27,6 @@ namespace UZSG.Inventory
         [SerializeField] List<ItemSlot> _slots = new();
         public override List<ItemSlot> Slots => _slots;
 
-        public event EventHandler<ChangeEquippedArgs> OnChangeEquipped;
-
         public ItemSlot this[int i]
         {
             get

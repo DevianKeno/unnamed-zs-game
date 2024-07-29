@@ -10,6 +10,7 @@ using UZSG.Inventory;
 using UZSG.Systems;
 using UZSG.Items;
 using UZSG.UI.HUD;
+using UZSG.Items.Weapons;
 
 namespace UZSG.UI
 {
@@ -86,7 +87,8 @@ namespace UZSG.UI
         void InitializeEvents()
         {
             Player.Inventory.Hotbar.OnSlotContentChanged += OnHotbarSlotChanged;
-            Player.Inventory.Hotbar.OnChangeEquipped += OnHotbarChangeEquipped;
+            Player.FPP.OnChangeHeldItem += OnChangeHeldItem;
+
             Player.Actions.OnPickupItem += (item) =>
             {
                 var indicator = Game.UI.Create<PickupsIndicator>("Pickups Indicator");
@@ -119,12 +121,10 @@ namespace UZSG.UI
             _hotbarSlotUIs[e.Slot.Index].SetDisplayedItem(e.Slot.Item);
         }
 
-        void OnHotbarChangeEquipped(object sender, Hotbar.ChangeEquippedArgs e)
+        void OnChangeHeldItem(HeldItemController heldItem)
         {
-            if (e.ItemSlot == null) return;
-            if (e.ItemSlot.Item == Item.None) return;
-
-            equippedWeaponTMP.text = e.ItemSlot.Item.Name;
+            if (heldItem == null) return;
+            equippedWeaponTMP.text = heldItem.ItemData.Name;
         }
         
         void OnStartHoverSlot(object sender, PointerEventData e)

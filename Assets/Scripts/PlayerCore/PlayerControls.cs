@@ -391,7 +391,7 @@ namespace UZSG.Players
             }
             else
             {
-                rb.velocity = Vector3.zero;
+                // rb.velocity = Vector3.zero;
             }
         }
 

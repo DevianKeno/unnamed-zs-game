@@ -204,11 +204,6 @@ namespace UZSG.Players
             }
         }
 
-        void ConsoleWindowToggledCallback(bool value)
-        {
-            SetControlsEnabled(!value);
-        }
-
         void SetControlsEnabled(bool value)
         {
             if (value)

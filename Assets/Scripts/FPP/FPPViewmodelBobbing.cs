@@ -12,9 +12,10 @@ namespace UZSG.FPP
         public const float NormalRecoveryFactor = 2f;
 
         public Player Player;
-        public bool Enabled = true;
+        [Space]
 
         [Header("Bob Settings")]
+        public bool Enabled = true;
         public float MinSpeed = 0.3f;
         public float Amplitude = 1f;
         public float Frequency = 1f;
@@ -22,18 +23,17 @@ namespace UZSG.FPP
         public bool MaintainForwardLook;
         public float LookDistance = 16f;
         
-        Vector3 startPosition;
+        Vector3 _initialPosition;
         
         void Start()
         {
-            startPosition = transform.localPosition;
+            _initialPosition = transform.localPosition;
             Game.Tick.OnTick += Tick;
         }
 
         void Tick(TickInfo info)
         {
             if (!Enabled) return;
-
             Bob();
             RecoverPosition();
         }
@@ -73,7 +73,7 @@ namespace UZSG.FPP
 
         void RecoverPosition()
         {
-            Vector3 motion = Vector3.Lerp(transform.localPosition, startPosition, Recovery * NormalRecoveryFactor * Time.deltaTime) - transform.localPosition;
+            Vector3 motion = Vector3.Lerp(transform.localPosition, _initialPosition, Recovery * NormalRecoveryFactor * Time.deltaTime) - transform.localPosition;
             AddPosition(motion);
         }
     }

@@ -1,10 +1,9 @@
 using System;
-using UZSG.Systems;
 
-namespace UZSG
+namespace UZSG.Systems
 {
-    public interface IStateMachine<E> where E : Enum
+    public interface IStateMachine
     {
-        public StateMachine<E> StateMachine { get; }
+        public event Action OnStateChanged;
     }
 }

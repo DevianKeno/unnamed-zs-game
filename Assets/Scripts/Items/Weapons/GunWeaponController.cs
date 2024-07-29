@@ -52,7 +52,7 @@ namespace UZSG.Items.Weapons
         {
             Initialize();
             _currentRounds = info.Rounds;
-            Player.HUD.AmmoCounter.SetCurrent(_currentRounds);
+            Player.HUD.AmmoCounter.SetClip(_currentRounds);
         }
 
         public override void Initialize()
@@ -85,12 +85,14 @@ namespace UZSG.Items.Weapons
         void InitializeEventsFromOwnerInput()
         {
             if (owner is not Player player) return;
-
             var inputs = player.Controls.Inputs;
+
             inputs["Primary Action"].started += OnPlayerPrimary;
             inputs["Primary Action"].canceled += OnPlayerPrimary;
+
             inputs["Secondary Action"].started += OnPlayerSecondary;
             inputs["Secondary Action"].canceled += OnPlayerSecondary;
+
             inputs["Reload"].performed += OnPlayerReload;
             inputs["Select Fire"].performed += OnPlayerSelectFire;
         }
@@ -143,23 +145,27 @@ namespace UZSG.Items.Weapons
             }
 
             _inhibitActions = true;
-            var currentMode = (int)_currentFiringMode;
             var availableModes = WeaponData.RangedAttributes.FiringModes;
-
+            if (availableModes == FiringModes.None)
+            {
+                Debug.LogWarning($"The weapon '{ItemData.Id}'s firing mode is set to none! It will not fire!");
+                _inhibitActions = false;
+                yield break;
+            }
+    
             do
             {
-                currentMode = (currentMode + 1) % firingModes.Length;
-                _currentFiringMode = (FiringMode)currentMode;
+                _currentFiringMode = SwitchFiringMode(_currentFiringMode);
+            } while ((GetFiringModeFlag(_currentFiringMode) & availableModes) == 0);
 
-                if ((availableModes & GetFiringModeFlag(_currentFiringMode)) != 0)
-                {
-                    Player.HUD.AmmoCounter.SetFiringMode(_currentFiringMode);
-                    break;
-                }
-
-            } while (true);
+            Player.HUD.AmmoCounter.SetFiringMode(_currentFiringMode);
             yield return new WaitForSeconds(0.33f);
             _inhibitActions = false;
+        }
+
+        FiringMode SwitchFiringMode(FiringMode mode)
+        {
+            return (FiringMode) (((int) mode + 1) % firingModes.Length);
         }
 
         FiringModes GetFiringModeFlag(FiringMode mode)
@@ -169,11 +175,11 @@ namespace UZSG.Items.Weapons
                 FiringMode.Single => FiringModes.Single,
                 FiringMode.FullAuto => FiringModes.FullAuto,
                 FiringMode.Burst => FiringModes.Burst,
-                _ => FiringModes.All
             };
         }
 
         #endregion
+
 
         IEnumerator FireCoroutine()
         {
@@ -194,7 +200,7 @@ namespace UZSG.Items.Weapons
             {
                 for (int i = 0; i < WeaponData.RangedAttributes.BurstFireCount; i++)
                 {
-                    if (_currentRounds <= 0 || _isReloading) break;
+                    if (!HasAmmo || _isReloading) break;
 
                     Shoot();
                     yield return new WaitForSeconds(_fireRateThreshold);
@@ -206,7 +212,7 @@ namespace UZSG.Items.Weapons
             {
                 while (_isHoldingFire)
                 {
-                    if (_currentRounds <= 0 || _isReloading) break;
+                    if (!HasAmmo || _isReloading) break;
 
                     Shoot();
                     yield return new WaitForSeconds(_fireRateThreshold);
@@ -223,7 +229,7 @@ namespace UZSG.Items.Weapons
             MuzzleController?.Fire();
             stateMachine.ToState(GunWeaponStates.Fire);
             OnFire?.Invoke();
-            Player.HUD.AmmoCounter.SetCurrent(_currentRounds);
+            Player.HUD.AmmoCounter.SetClip(_currentRounds);
         }
 
         void InitializeGunSounds()
@@ -281,7 +287,7 @@ namespace UZSG.Items.Weapons
             _currentRounds = WeaponData.RangedAttributes.ClipSize;
             _isReloading = false;
             _inhibitActions = false;
-            Player.HUD.AmmoCounter.SetCurrent(_currentRounds);
+            Player.HUD.AmmoCounter.SetClip(_currentRounds);
             Debug.Log("Completed reload");
         }
 

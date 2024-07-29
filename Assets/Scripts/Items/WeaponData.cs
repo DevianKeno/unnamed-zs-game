@@ -99,6 +99,7 @@ namespace UZSG.Items.Weapons
     [Serializable]
     public class WeaponData : ItemData, IFPPVisible
     {
+        public Sprite HotbarIcon;
         public float Weight;
         public WeaponCategory Category;
         public WeaponMeleeType MeleeType;
@@ -113,6 +114,8 @@ namespace UZSG.Items.Weapons
         public AnimatorController ArmsAnimations => armsAnimations;
         [SerializeField] AssetReference viewmodel;
         public AssetReference Viewmodel => viewmodel;
+        [SerializeField] bool isActions;
+        public bool IsActions => IsActions;
         [SerializeField] ViewmodelOffsets viewmodelOffsets;
         public ViewmodelOffsets ViewmodelOffsets => viewmodelOffsets;
         [SerializeField] EquipmentAnimationData anims;

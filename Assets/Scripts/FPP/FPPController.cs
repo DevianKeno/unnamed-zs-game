@@ -47,8 +47,9 @@ namespace UZSG.FPP
         Animator viewmodelAnimator;
         Animator cameraAnimator;
         
-        [Space(10)]
-        [SerializeField] AssetReference gunWeaponControllerPrefab;
+        [Header("Held Item Controller Prefabs")]
+        [SerializeField] GameObject meleeWeaponControllerPrefab;
+        [SerializeField] GameObject gunWeaponControllerPrefab;
         
         void Awake()
         {
@@ -106,35 +107,44 @@ namespace UZSG.FPP
             return viewmodel;
         }
 
-        public void InitializeHeldItem(Item item, HotbarIndex index, Action onDoneInitialize = null)
+        public void LoadHeldItem(Item item, HotbarIndex index, Action onDoneInitialize = null)
         {
             if (item.Data is WeaponData weaponData)
             {
                 if (weaponData.Category == WeaponCategory.Melee)
                 {
-                    LoadHeldItemController<MeleeWeaponController>();
+                    LoadHeldItemControllerAsync<MeleeWeaponController>(meleeWeaponControllerPrefab, (meleeWeapon) =>
+                    {
+                        InitializeHeldItemController(item, meleeWeapon, index);
+                        onDoneInitialize?.Invoke();
+                    });
                 }
                 else if (weaponData.Category == WeaponCategory.Ranged)
                 {
-                    LoadHeldItemController((Action<GunWeaponController>)((gunWeapon) =>
+                    LoadHeldItemControllerAsync<GunWeaponController>(gunWeaponControllerPrefab, (gunWeapon) =>
                     {
-                        gunWeapon.name = $"{item.Name}";
-                        gunWeapon.transform.parent = heldItemsContainer.transform;
-                        gunWeapon.ItemData = item.Data;
-                        gunWeapon.Owner = Player;
-                        gunWeapon.Initialize();
-                        _cachedHeldItems[index] = gunWeapon;
-
-                        HoldItemByIndex(index);
-                        InitializeHeldItem();
+                        InitializeHeldItemController(item, gunWeapon, index);
                         onDoneInitialize?.Invoke();
-                    }));
+                    });
                 }
             }
             else if (item.Data.Subtype == ItemSubtype.Consumable)
             {
                 throw new NotImplementedException();
             }
+        }
+
+        void InitializeHeldItemController(Item item ,HeldItemController controller, HotbarIndex index)
+        {
+            controller.transform.parent = heldItemsContainer.transform;
+            controller.ItemData = item.Data;
+            controller.Owner = Player;
+            controller.Initialize();
+            _cachedHeldItems[index] = controller;
+            controller.name = $"{item.Name} (Held Item)";
+
+            HoldItemByIndex(index);
+            InitializeHeldItem();
         }
 
         void HoldItemByIndex(HotbarIndex index)
@@ -156,26 +166,21 @@ namespace UZSG.FPP
             InitializeHeldItem();
         }
         
-        T LoadHeldItemController<T>(Action<T> callback = null) where T : HeldItemController
+        void LoadHeldItemControllerAsync<T>(GameObject prefab, Action<T> onLoadCompleted = null) where T : Component
         {
-            Addressables.LoadAssetAsync<GameObject>(gunWeaponControllerPrefab).Completed += (a) =>
+            var go = Instantiate(prefab);
+            if (go.TryGetComponent(out T controller))
             {
-                if (a.Status == AsyncOperationStatus.Succeeded)
-                {
-                    var go = Instantiate(a.Result);
-                    if (go.TryGetComponent<T>(out var controller))
-                    {
-                        callback.Invoke(controller);
-                        return;
-                    }
-                    var msg = $"{heldItem.ItemData.Id} is a Held Item, but has no Held Item component.";
-                    Game.Console.LogWarning(msg);
-                    return;
-                }
-            };
-            return default;
-        }
+                onLoadCompleted?.Invoke(controller);
+                return;
+            }
 
+            Destroy(go);
+            var msg = $"Loaded prefab does not contain a component of type {typeof(T)}.";
+            Game.Console.LogWarning(msg);
+            Debug.LogWarning(msg);
+        }
+                
         public void EquipHotbarIndex(HotbarIndex index)
         {
             if (_isPlayingAnimation) return;
@@ -327,9 +332,34 @@ namespace UZSG.FPP
             // }
         }
 
+        void OnWeaponStateChanged(object sender, StateMachine<Enum>.StateChangedContext e)
+        {
+            if (heldItem == null) return;
+
+            var animId = GetAnimIdFromState(e.To);
+            if (!string.IsNullOrEmpty(animId))
+            {
+                armsController?.PlayAnimation(animId);
+                viewmodelAnimator?.Play(animId, 0, 0f);
+
+                var animLengthSeconds = GetAnimationClipLength(viewmodelAnimator, animId);
+                StartCoroutine(FinishAnimation(animLengthSeconds));
+            }
+        }
+
         void OnMeleeWeaponStateChanged(object sender, StateMachine<MeleeWeaponStates>.StateChangedContext e)
         {
-            throw new NotImplementedException();
+            if (heldItem == null) return;
+
+            var animId = GetAnimIdFromState(e.To);
+            if (!string.IsNullOrEmpty(animId))
+            {
+                armsController?.PlayAnimation(animId);
+                viewmodelAnimator?.Play(animId, 0, 0f);
+
+                var animLengthSeconds = GetAnimationClipLength(viewmodelAnimator, animId);
+                StartCoroutine(FinishAnimation(animLengthSeconds));
+            }
         }
 
         void OnRangedWeaponStateChanged(object sender, StateMachine<GunWeaponStates>.StateChangedContext e)

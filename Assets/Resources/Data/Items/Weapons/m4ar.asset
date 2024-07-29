@@ -23,10 +23,11 @@ MonoBehaviour:
   Sprite: {fileID: 0}
   Type: 1
   StackSize: 1
-  Subtype: 3
+  Subtype: 0
   IsMaterial: 0
   IsCraftable: 0
   Recipes: []
+  HotbarIcon: {fileID: 0}
   Weight: 16.2
   Category: 1
   MeleeType: 0
@@ -38,7 +39,7 @@ MonoBehaviour:
     BaseCritStrike: 0
     BaseCritDamage: 0
   RangedAttributes:
-    FiringModes: 14
+    FiringModes: -1
     RoundsPerMinute: 660
     ClipSize: 30
     ReloadSpeed: 1
@@ -79,6 +80,10 @@ MonoBehaviour:
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
+  isActions: 0
+  viewmodelOffsets:
+    Position: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
   anims:
     Idle: 
     Move: 
@@ -99,5 +104,3 @@ MonoBehaviour:
         m_SubObjectName: 
         m_SubObjectType: 
         m_EditorAssetChanged: 0
-  positionOffset: {x: 0, y: 0, z: 0}
-  rotationOffset: {x: 0, y: 0, z: 0}

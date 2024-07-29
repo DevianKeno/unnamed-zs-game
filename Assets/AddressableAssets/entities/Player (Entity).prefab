@@ -182,7 +182,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 4476341550232632874}
   - {fileID: 1873134562759721657}
   - {fileID: 1762222224130438581}
   m_Father: {fileID: 7699380848211720457}
@@ -218,78 +217,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   noAnimations: {fileID: 9100000, guid: 4ce682f0546f0cb44a74b9daab84bccb, type: 2}
   animator: {fileID: 1923179626101220164}
---- !u!1 &4205740759332681714
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4476341550232632874}
-  - component: {fileID: 8288566237762455608}
-  - component: {fileID: 6539491705229663684}
-  m_Layer: 0
-  m_Name: Look Detector
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &4476341550232632874
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4205740759332681714}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 2533865650662642097}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8288566237762455608
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4205740759332681714}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: adaee84132a3d8e489846ebbd25455bc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Player: {fileID: 8107631895800867322}
-  Distance: 0
-  Radius: 0.2
-  capsuleCollider: {fileID: 6539491705229663684}
---- !u!136 &6539491705229663684
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4205740759332681714}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.2
-  m_Height: 3
-  m_Direction: 2
-  m_Center: {x: 0, y: 0, z: 1.5}
 --- !u!1 &5142996516149911681
 GameObject:
   m_ObjectHideFlags: 0
@@ -1052,7 +979,6 @@ MonoBehaviour:
   Radius: 0.2
   MaxInteractDistance: 2.5
   HoldThresholdMilliseconds: 200
-  lookRaycaster: {fileID: 8288566237762455608}
 --- !u!114 &8623776553954527420
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1072,11 +998,8 @@ MonoBehaviour:
   viewmodelController: {fileID: 2004487973244473114}
   cameraController: {fileID: 4657274095525333481}
   gunMuzzleController: {fileID: 0}
-  gunWeaponControllerPrefab:
-    m_AssetGUID: 7bf816374faf0a44f8a0520f423fd2a8
-    m_SubObjectName: 
-    m_SubObjectType: 
-    m_EditorAssetChanged: 0
+  meleeWeaponControllerPrefab: {fileID: 1441765491178271053, guid: e83ed1a86c94c5e43b675ea1a3e947c1, type: 3}
+  gunWeaponControllerPrefab: {fileID: 1441765491178271053, guid: 7bf816374faf0a44f8a0520f423fd2a8, type: 3}
 --- !u!114 &510820268512717889
 MonoBehaviour:
   m_ObjectHideFlags: 0

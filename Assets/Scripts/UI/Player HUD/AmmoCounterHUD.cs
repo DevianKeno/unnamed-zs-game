@@ -16,11 +16,11 @@ namespace UZSG.UI.HUD
         public void Initialize(GunWeaponController gun)
         {
             ClipSize = gun.WeaponData.RangedAttributes.ClipSize;
-            SetCurrent(gun.CurrentRounds);
+            SetClip(gun.CurrentRounds);
             SetFiringMode(gun.CurrentFiringMode);
         }
 
-        public void SetCurrent(int count)
+        public void SetClip(int count)
         {
             clipAmmoText.text = $"{count}";
             clipAmmoText.color = ClipTextColor.Evaluate(1 - (count / (ClipSize <= 0 ? 999f : ClipSize)));

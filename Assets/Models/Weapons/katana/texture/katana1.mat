@@ -139,6 +139,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: bdd8af9067e5ccf40aeb3f6aa148019e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_dbbe8362659b42d3b0339106c15dafd3_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: fd6fe2df21782784b9b2ae5b887930ee, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _SampleTexture2D_ee722ea0f8f8487687af14528ac1931a_Texture_1_Texture2D:
         m_Texture: {fileID: 2800000, guid: bdf2b732f05199441b54082b114bade6, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -276,7 +280,7 @@ Material:
     - _Scroll_EmissiveV: 0
     - _Set_SystemShadowsToBase: 1
     - _ShadeColor_Step: 0
-    - _Smoothness: 0.5
+    - _Smoothness: 0.74
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1

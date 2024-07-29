@@ -321,21 +321,46 @@ namespace UZSG.UI
                 itemOptions.Destroy();
             }
             itemOptions = Game.UI.Create<ChoiceWindow>("Choice Window", show: false);
-            itemOptions.Position = Input.mousePosition;
+            itemOptions.Position = _selectedSlotUI.Rect.position;
             itemOptions.Label = slot.Item.Name;
 
             var item = slot.Item;
+            if (item.Subtype == ItemSubtype.Weapon)
+            {
+                itemOptions.AddChoice("Equip Mainhand")
+                .AddCallback(() =>
+                {
+                    
+                });
+                itemOptions.AddChoice("Equip Offhand")
+                .AddCallback(() =>
+                {
+                    
+                });
+            }
             if (item.Subtype == ItemSubtype.Useable)
             {
-                itemOptions.AddChoice("Use");
+                itemOptions.AddChoice("Use")
+                .AddCallback(() =>
+                {
+                    
+                });
             }
             if (item.Subtype == ItemSubtype.Food)
             {
-                itemOptions.AddChoice("Eat");
+                itemOptions.AddChoice("Eat")
+                .AddCallback(() =>
+                {
+                    
+                });
             }
             if (item.Subtype == ItemSubtype.Consumable)
             {
-                itemOptions.AddChoice("Consumable");
+                itemOptions.AddChoice("Consumable")
+                .AddCallback(() =>
+                {
+                    
+                });
             }
 
             itemOptions.Show();

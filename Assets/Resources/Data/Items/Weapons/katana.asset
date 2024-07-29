@@ -23,10 +23,11 @@ MonoBehaviour:
   Sprite: {fileID: 21300000, guid: e458454d59acac3498fea668968eae06, type: 3}
   Type: 1
   StackSize: 1
-  Subtype: 3
+  Subtype: 0
   IsMaterial: 0
   IsCraftable: 0
   Recipes: []
+  HotbarIcon: {fileID: 0}
   Weight: 0
   Category: 0
   MeleeType: 2
@@ -75,10 +76,13 @@ MonoBehaviour:
       RecoveryDuration: 0
   armsAnimations: {fileID: 0}
   viewmodel:
-    m_AssetGUID: 
+    m_AssetGUID: e9dfbf38b93dce64fa14b779e760622d
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
+  viewmodelOffsets:
+    Position: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
   anims:
     Idle: 
     Move: 
@@ -93,5 +97,3 @@ MonoBehaviour:
     Dequip: 
   audioData:
     AudioAssetIds: []
-  positionOffset: {x: 0, y: 0, z: 0}
-  rotationOffset: {x: 0, y: 0, z: 0}

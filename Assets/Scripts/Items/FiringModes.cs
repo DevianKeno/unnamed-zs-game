@@ -5,16 +5,16 @@ namespace UZSG.Items.Weapons
     [Flags]
     public enum FiringModes
     {
-        All = 1,
-        Single = 2,
-        FullAuto = 4,
-        Burst = 8,
+        None = 0,
+        Single = 1 << 1,
+        Burst = 1 << 2,
+        FullAuto = 1 << 3,
     }
 
     public enum FiringMode
     {
         Single,
-        FullAuto,
         Burst,
+        FullAuto,
     }
 }

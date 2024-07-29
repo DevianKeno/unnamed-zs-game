@@ -24,6 +24,7 @@ namespace UZSG.Players
 
         [Header("Interaction Size")]
         public float Radius;
+        [Range(0.1f, 5f)]
         public float MaxInteractDistance;
         public float HoldThresholdMilliseconds = 200f;
         
@@ -34,7 +35,6 @@ namespace UZSG.Players
         bool _isHoldingLeftClick;
         bool _isHoldingRightClick;
         
-        [SerializeField] PlayerLookRaycaster lookRaycaster;
         /// <summary>
         /// The interactable object the Player is currently looking at.
         /// </summary>
@@ -57,8 +57,6 @@ namespace UZSG.Players
         {
             InitializeInputs();
             interactionIndicator = Game.UI.Create<InteractionIndicator>("Interaction Indicator", show: false);
-            lookRaycaster.OnLookEnter += HandleLookEnter;
-            lookRaycaster.OnLookExit += HandleLookExit;
 
             Game.Tick.OnTick += Tick;
         }
@@ -106,22 +104,33 @@ namespace UZSG.Players
                 }
             }
         }
-        
-        void HandleLookEnter(Collider collider)
-        {
-            if (collider.CompareTag("Interactable"))
-            {
-                lookingAt?.OnLookExit();
-                lookingAt = collider.GetComponentInParent<IInteractable>(); /// look at new
-                if (lookingAt == null) return; /// what are you doing setting an object's layer in interactable but not add a IInteractable component???
-                lookingAt.OnLookEnter();
-                interactionIndicator.Indicate(lookingAt);
-                return;
-            }
-        }
 
-        void HandleLookExit(Collider collider)
+        void FixedUpdate()
         {
+            InteractionSphereCast();
+        }
+        
+        void InteractionSphereCast()
+        {
+            var viewportRect = new Vector2(Screen.width / 2, Screen.height / 2);
+            ray = Player.MainCamera.ScreenPointToRay(viewportRect);
+
+            foreach (var hit in Physics.SphereCastAll(ray, Radius, MaxInteractDistance))
+            {
+                if (hit.collider != null && hit.collider.CompareTag("Interactable"))
+                {
+                    var interactable = hit.collider.GetComponentInParent<IInteractable>();
+                    if (interactable != null)
+                    {
+                        lookingAt?.OnLookExit();
+                        lookingAt = interactable;
+                        lookingAt.OnLookEnter();
+                        interactionIndicator.Indicate(lookingAt);
+                        return;
+                    }
+                }
+            }
+
             interactionIndicator.Hide();
             lookingAt?.OnLookExit();
             lookingAt = null;
@@ -228,36 +237,40 @@ namespace UZSG.Players
 
             if (item.Data.Type == ItemType.Weapon)
             {
-                gotItem = Player.Inventory.TryEquipWeapon(item, out HotbarIndex index);
-
-                if (gotItem)
+                if (Player.Inventory.TryEquipWeapon(item, out HotbarIndex index))
                 {
                     Player.FPP.LoadFPPItem(item.Data, index, equip: true);
-                    Player.FPP.InitializeHeldItem(item, index, () =>
+                    Player.FPP.LoadHeldItem(item, index, () =>
                     {
                         Player.FPP.EquipHotbarIndex(index);
                     });
-                }
-            }
-            else /// generic item
-            {
-                if (Player.Inventory.IsFull)
-                {
-                    /// Prompt inventory full
-                    var msg = $"Can't pick up item. Inventory full";
-                    Game.Console.Log(msg);
-                    Debug.Log(msg);
+
+                    DestroyPickupedItem(itemEntity);
                     return;
                 }
-                gotItem = Player.Inventory.Bag.TryPutNearest(item);
             }
-
+            
+            /// Store generic items or items can't hold
+            if (Player.Inventory.IsFull)
+            {
+                /// Prompt inventory full
+                var msg = $"Can't pick up item. Inventory full";
+                Game.Console.Log(msg);
+                Debug.Log(msg);
+                return;
+            }
+            gotItem = Player.Inventory.Bag.TryPutNearest(item);
+            
             if (gotItem)
             {
-                OnPickupItem?.Invoke(item);
-                lookingAt = null;
-                Game.Entity.Kill(itemEntity);
+                DestroyPickupedItem(itemEntity);
             }
+        }
+
+        void DestroyPickupedItem(Entity item)
+        {
+            lookingAt = null;
+            Game.Entity.Kill(item);
         }
         
         /// <summary>

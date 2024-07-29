@@ -1,6 +1,8 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UZSG.Entities;
 using UZSG.Players;
+using UZSG.Systems;
 
 namespace UZSG.Items.Weapons
 {
@@ -16,6 +18,7 @@ namespace UZSG.Items.Weapons
             get { return owner; }
             set { owner = value; }
         }
+        protected InputActionMap actionMap;
 
         public abstract void Initialize();
         public abstract void SetStateFromAction(ActionStates state);

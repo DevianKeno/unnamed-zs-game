@@ -143,6 +143,7 @@ namespace UZSG.Players
         [SerializeField] LayerMask groundMask;
         
         InputActionMap actionMap;
+        public InputActionMap ActionMap => actionMap;
         Dictionary<string, InputAction> inputs = new();
         public Dictionary<string, InputAction> Inputs => inputs;
         

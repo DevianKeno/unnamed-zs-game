@@ -23,10 +23,11 @@ MonoBehaviour:
   Sprite: {fileID: 21300000, guid: ca3cb0cac5969244f8780cff14397619, type: 3}
   Type: 1
   StackSize: 1
-  Subtype: 3
+  Subtype: 0
   IsMaterial: 0
   IsCraftable: 0
   Recipes: []
+  HotbarIcon: {fileID: 0}
   Weight: 0
   Category: 1
   MeleeType: 1
@@ -79,6 +80,10 @@ MonoBehaviour:
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
+  isActions: 0
+  viewmodelOffsets:
+    Position: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
   anims:
     Idle: idle
     Move: 
@@ -117,5 +122,3 @@ MonoBehaviour:
         m_SubObjectName: 
         m_SubObjectType: 
         m_EditorAssetChanged: 0
-  positionOffset: {x: 0, y: 0, z: 0}
-  rotationOffset: {x: 0, y: 0, z: 0}

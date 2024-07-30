@@ -32,11 +32,12 @@ namespace UZSG.Items
         #region Item constructors
 
         /// <summary>
-        /// None item.
+        /// Create 'None' item.
         /// </summary>
         public Item(ItemData data = null)
         {
             _itemData = data;
+            _count = 0;
         }
 
         /// <summary>

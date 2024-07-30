@@ -984,7 +984,7 @@ MonoBehaviour:
   CrouchSpeed: 0
   JumpTime: 2
   JumpHeight: 4
-  Gravity: -9.81
+  Gravity: 0
   FallSpeedMultiplier: 2
   CrouchSpeedMultiplier: 0.7
   LookRotationSpeed: 100
@@ -1105,7 +1105,7 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 0
+  m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 112

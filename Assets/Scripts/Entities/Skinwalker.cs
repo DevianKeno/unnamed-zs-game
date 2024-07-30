@@ -42,20 +42,24 @@ namespace UZSG.Entities
 
                 Debug.Log($"Shot part {hitbox.Part}");
                 SpawnBlood(info.ContactPoint);
+                // SpawnDamageText(info.ContactPoint);
                 Destroy(bullet.gameObject);
             }
             else if (info.By.CollisionTag == "Melee")
             {
                 SpawnBlood(info.ContactPoint);
+                // SpawnDamageText(info.ContactPoint);
             }
         }
 
-        void SpawnBlood(Vector3 location)
+        void SpawnDamageText(Vector3 position)
         {
-            Game.Entity.Spawn("blood_splat", (entity) =>
-            {
-                entity.Entity.transform.position = location;
-            });
+            Game.Entity.Spawn<DamageText>("damage_text", position);
+        }
+
+        void SpawnBlood(Vector3 position)
+        {
+            Game.Entity.Spawn<BloodSplat>("blood_splat", position);
         }
     }
 }

@@ -265,9 +265,9 @@ namespace UZSG.Items.Weapons
         {
             var player = Owner as Player;
             var bulletInfo = WeaponData.RangedAttributes.BulletAttributes;
-            Game.Entity.Spawn("bullet", (info) =>
+            Game.Entity.Spawn<Bullet>("bullet", callback: (info) =>
             {
-                var bullet = info.Entity as Bullet;
+                var bullet = info.Entity;
                 bullet.SetBulletAttributes(bulletInfo);
                 var trajectory = ApplyBulletSpread(player.Forward, WeaponData.RangedAttributes.Spread);
                 bullet.SetTrajectory(trajectory);

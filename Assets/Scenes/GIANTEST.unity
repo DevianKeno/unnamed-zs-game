@@ -3544,9 +3544,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0567bf2f5ceffad418d015459d090495, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  assetLabelReference:
-    m_LabelString: entities
-  SpawnCoordinates: {x: 0, y: 0, z: 0}
+  EnableLogging: 0
 --- !u!1001 &1455196317
 PrefabInstance:
   m_ObjectHideFlags: 0

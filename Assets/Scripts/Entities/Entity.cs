@@ -11,7 +11,21 @@ namespace UZSG.Entities
     {
         [SerializeField] protected EntityData entityData;
         public EntityData EntityData => entityData;
+        public Vector3 Position
+        {
+            get { return transform.position; }
+            set { transform.position = value; }
+        }
 
+        internal void OnSpawnInternal()
+        {
+            OnSpawn();
+        }
+
+        /// <summary>
+        /// Called after the EntityManager spawned callback.
+        /// You can modify the entity's attributes before this calls.
+        /// </summary>
         public virtual void OnSpawn() { }
     }
 }

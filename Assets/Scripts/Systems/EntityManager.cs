@@ -13,23 +13,16 @@ namespace UZSG.Systems
     /// </summary>
     public class EntityManager : MonoBehaviour, IInitializeable
     {
-        public struct EntitySpawnedContext
-        {
-            public Entity Entity { get; set; }
-        }
-
         bool _isInitialized;
         public bool IsInitialized => _isInitialized;
+        public bool EnableLogging;
         /// <summary>
         /// Contains the list of all spawnable entities in the game.
         /// </summary>
         Dictionary<string, EntityData> _entitiesDict = new();
-        [SerializeField] AssetLabelReference assetLabelReference;
         
-        public event EventHandler<EntitySpawnedContext> OnEntitySpawn;
-
-        public Vector3 SpawnCoordinates = new(0f, 0f, 0f);
-        
+        public event EventHandler<EntitySpawnedInfo> OnEntitySpawn;
+                
         internal void Initialize()
         {
             if (_isInitialized) return;
@@ -44,116 +37,132 @@ namespace UZSG.Systems
             }
         }
 
-        /// <summary>
-        /// Spawn an entity in the game world.
-        /// </summary>
-        public void Spawn(string entityId)
-        {
-            if (_entitiesDict.ContainsKey(entityId))
-            {
-                Addressables.LoadAssetAsync<GameObject>(_entitiesDict[entityId].AssetReference).Completed += (a) =>
-                {
-                    if (a.Status == AsyncOperationStatus.Succeeded)
-                    {
-                        Vector3 position = new(0f, 1f, 0f);
-                        var go = Instantiate(a.Result, position, Quaternion.identity, transform);
-                        
-                        if (go.TryGetComponent(out Entity entity))
-                        {
-                            go.name = $"{entity.EntityData.Name} (Entity)";
-                            entity.OnSpawn();
-                        }
-                        
-                        OnEntitySpawn?.Invoke(this, new()
-                        {
-                            Entity = entity
-                        });
-                        Game.Console.Log($"Spawned entity {entityId} at ({position.x}, {position.y}, {position.z})");
-                        return;
-                    }
 
-                    Game.Console.LogDebug($"Failed to spawn entity {entityId}");
-                };
-            }            
-        }
-        
+        #region Public methods
+    
+        public delegate void OnEntitySpawnComplete(EntitySpawnedInfo info);
         public struct EntitySpawnedInfo
         {
             public Entity Entity { get; set; }
         }
 
-        public delegate void OnEntitySpawnComplete(EntitySpawnedInfo info);
-
         /// <summary>
         /// Spawn an entity in the game world.
         /// </summary>
-        public void Spawn(string entityId, OnEntitySpawnComplete callback = null)
+        public void Spawn(string entityId, Vector3 position = default, OnEntitySpawnComplete callback = null)
         {
-            if (_entitiesDict.ContainsKey(entityId))
+            if (!_entitiesDict.ContainsKey(entityId))
             {
-                Addressables.LoadAssetAsync<GameObject>(_entitiesDict[entityId].AssetReference).Completed += (a) =>
-                {
-                    if (a.Status == AsyncOperationStatus.Succeeded)
-                    {
-                        Vector3 position = new(0f, 1f, 0f);
-                        var go = Instantiate(a.Result, position, Quaternion.identity, transform);
-                        
-                        if (go.TryGetComponent(out Entity entity))
-                        {
-                            go.name = entity.EntityData.Name;
-                            entity.OnSpawn();
-                        }
+                Game.Console.LogDebug($"Entity '{entityId}' does not exist!");
+                return;
+            }
 
-                        
+            var ettyData = _entitiesDict[entityId];
+            Addressables.LoadAssetAsync<GameObject>(ettyData.AssetReference).Completed += (a) =>
+            {
+                if (a.Status == AsyncOperationStatus.Succeeded)
+                {
+                    var go = Instantiate(a.Result, position, Quaternion.identity, transform);
+                    go.name = $"{ettyData.Name} (Entity)";
+                    if (go.TryGetComponent(out Entity entity)) /// what do making entity without an entity component!!
+                    {
+                        var info = new EntitySpawnedInfo()
+                        {
+                            Entity = entity
+                        };
+                        OnEntitySpawn?.Invoke(this, info);
+                        callback?.Invoke(info);
+                        entity.OnSpawnInternal();
+
+                        if (EnableLogging)
+                        {
+                            Game.Console.Log($"Spawned entity {entityId} at ({position.x}, {position.y}, {position.z})");
+                        }
+                        return;
+                    }
+                    Destroy(go);
+                }
+
+                Game.Console.LogDebug($"Tried to spawn entity {entityId}, but failed miserably");
+            };
+        }
+        
+        public delegate void OnEntitySpawnComplete<T>(EntitySpawnedInfo<T> info);
+        public struct EntitySpawnedInfo<T>
+        {
+            public T Entity { get; set; }
+        }
+
+        public void Spawn<T>(string entityId, Vector3 position = default, OnEntitySpawnComplete<T> callback = null) where T : Entity
+        {
+            if (!_entitiesDict.ContainsKey(entityId))
+            {
+                Game.Console.LogDebug($"Entity '{entityId}' does not exist!");
+                return;
+            }
+
+            var ettyData = _entitiesDict[entityId];
+            Addressables.LoadAssetAsync<GameObject>(ettyData.AssetReference).Completed += (a) =>
+            {
+                if (a.Status == AsyncOperationStatus.Succeeded)
+                {
+                    var go = Instantiate(a.Result, position, Quaternion.identity, transform);
+                    go.name = $"{ettyData.Name} (Entity)";
+                    if (go.TryGetComponent(out Entity entity))
+                    {
+                        var info = new EntitySpawnedInfo<T>()
+                        {
+                            Entity = entity as T
+                        };
                         OnEntitySpawn?.Invoke(this, new()
                         {
                             Entity = entity
                         });
-                        callback?.Invoke(new()
+                        callback?.Invoke(info);
+                        entity.OnSpawnInternal();
+                        
+                        if (EnableLogging)
                         {
-                            Entity = entity
-                        });
-                        Game.Console.Log($"Spawned entity {entityId} at ({position.x}, {position.y}, {position.z})");
-                        return;
-                    }
-
-                    Game.Console.LogDebug($"Failed to spawn entity {entityId}");
-                };
-            }
-        }
-
-        public void SpawnItem(string itemId, int count = 1)
-        {            
-            if (_entitiesDict.ContainsKey("item")) /// this has a zero chance to fail >:(
-            {
-                Addressables.LoadAssetAsync<GameObject>(_entitiesDict["item"].AssetReference).Completed += (a) =>
-                {
-                    if (a.Status == AsyncOperationStatus.Succeeded)
-                    {
-                        Vector3 position = new(0f, 1f, 0f);
-                        var go = Instantiate(a.Result, position, Quaternion.identity, transform);
-
-                        if (go.TryGetComponent(out ItemEntity itemEntity)) /// this has a zero chance to fail >:(
-                        {
-                            var item = new Item(itemId, count);
-                            go.name = $"Item ({item.Name})";
-                            itemEntity.Item = item;
-                            itemEntity.OnSpawn();
+                            Game.Console.Log($"Spawned entity {entityId} at ({position.x}, {position.y}, {position.z})");
                         }
-                        Game.Console.LogDebug($"Spawned item {itemId} at ({position.x}, {position.y}, {position.z})");
                         return;
                     }
-                    else
-                    {
-                        Game.Console.Log($"Failed to spawn item {itemId}");
-                    }
-                };
-            }
-            else
+                    Destroy(go);
+                }
+
+                Game.Console.LogDebug($"Tried to spawn entity {entityId}, but failed miserably");
+            };
+        }
+        
+        public void SpawnItem(string id, int count = 1, Vector3 position = default)
+        {            
+            if (!_entitiesDict.ContainsKey("item")) /// this has a zero chance to fail >:(
             {
-                /// Force load item asset
-                Game.Console.Log($"Missing asset for Item (Entity)");
+                Game.Console.LogDebug($"Entity '{id}' does not exist!");
+                return;
             }
+
+            var ettyData = _entitiesDict["item"];
+            Addressables.LoadAssetAsync<GameObject>(ettyData.AssetReference).Completed += (a) =>
+            {
+                if (a.Status == AsyncOperationStatus.Succeeded)
+                {
+                    var go = Instantiate(a.Result, position, Quaternion.identity, transform);
+                    go.name = $"Item '{id}' (Entity)";
+                    if (go.TryGetComponent(out ItemEntity itemEntity)) /// this has a zero chance to fail >:(
+                    {
+                        itemEntity.Item = new Item(id, count);
+                        itemEntity.OnSpawnInternal();
+                        
+                        if (EnableLogging)
+                        {
+                            Game.Console.LogDebug($"Spawned item {id} at ({position.x}, {position.y}, {position.z})");
+                        }
+                        return;
+                    }
+                    Destroy(go);
+                }
+            };
         }
 
         public void Kill(Entity entity)
@@ -161,5 +170,7 @@ namespace UZSG.Systems
             if (entity == null) return;
             Destroy(entity.gameObject);
         }
+
+        #endregion
     }
 }

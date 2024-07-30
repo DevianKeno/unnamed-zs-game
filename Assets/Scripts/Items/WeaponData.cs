@@ -97,7 +97,7 @@ namespace UZSG.Items.Weapons
     /// </summary>
     [CreateAssetMenu(fileName = "New Weapon Data", menuName = "UZSG/Weapon Data")]
     [Serializable]
-    public class WeaponData : ItemData, IFPPVisible
+    public class WeaponData : ItemData, IViewmodel
     {
         public Sprite HotbarIcon;
         public float Weight;
@@ -109,32 +109,17 @@ namespace UZSG.Items.Weapons
         public WeaponMeleeAttributes MeleeAttributes;
         public WeaponRangedAttributes RangedAttributes;
 
-        [Header("FPP")]
+        [Header("Viewmodel Settings")]
         [SerializeField] AnimatorController armsAnimations;
         public AnimatorController ArmsAnimations => armsAnimations;
         [SerializeField] AssetReference viewmodel;
         public AssetReference Viewmodel => viewmodel;
-        [SerializeField] bool isActions;
-        public bool IsActions => IsActions;
         [SerializeField] ViewmodelOffsets viewmodelOffsets;
-        public ViewmodelOffsets ViewmodelOffsets => viewmodelOffsets;
+        public ViewmodelOffsets Offsets => viewmodelOffsets;
         [SerializeField] EquipmentAnimationData anims;
-        public EquipmentAnimationData Anims => anims;
+        public EquipmentAnimationData Animations => anims;
         [SerializeField] EquipmentAudioData audioData;
         public EquipmentAudioData AudioData => audioData;
-        
-        public static bool IsWeaponData(ItemData data, out WeaponData weaponData)
-        {
-            weaponData = data as WeaponData;
-            return weaponData != null;
-        }
-
-        public bool HasViewmodel
-        {
-            get
-            {
-                return viewmodel.IsSet();
-            }
-        }
+        public bool HasViewmodel => viewmodel.IsSet();
     }
 }

@@ -13,8 +13,7 @@ namespace UZSG.UI
 
         public void SetDisplayedItem(Item item)
         {
-            if (item == null) return;
-            if (item.Data == null) return;
+            if (item == null || item.IsNone) return;
 
             itemImage.sprite = item.Data.Sprite;
             itemNameTMP.text = item.Data.Name;
@@ -23,6 +22,7 @@ namespace UZSG.UI
 
         public void PlayAnimation()
         {
+            Show();
             Destroy(gameObject, 3f);
         }
     }

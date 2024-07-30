@@ -7,10 +7,10 @@ namespace UZSG.UI
 {
     public class InteractionIndicator : Window
     {
-        public struct IndicateOptions
+        public struct Options
         {
             public string ActionText { get; set; }
-            public string ObjectText { get; set; }
+            public IInteractable Interactable { get; set; }
         }
 
         [SerializeField] GameObject indicator;
@@ -28,23 +28,25 @@ namespace UZSG.UI
             if (obj == null)
             {
                 Hide();
+                return;
             }
             
             actionText.text = obj.ActionText;
             objectText.text = obj.Name;
-            LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
             Show();
+            LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
         }
 
-        public void Indicate(IInteractable obj, IndicateOptions options)
+        public void Indicate(Options options)
         {
-            if (obj == null)
+            if (options.Interactable == null)
             {
                 Hide();
+                return;
             }
             
             actionText.text = options.ActionText;
-            objectText.text = options.ObjectText;
+            objectText.text = options.Interactable.Name;
             Show();
             LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
 

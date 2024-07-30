@@ -28,7 +28,6 @@ namespace UZSG.Players
         public float MaxInteractDistance;
         public float HoldThresholdMilliseconds = 200f;
         
-        bool _inhibitActions;
         float _holdTimer;
         bool _hadLeftClicked;
         bool _hadRightClicked;
@@ -125,7 +124,19 @@ namespace UZSG.Players
                         lookingAt?.OnLookExit();
                         lookingAt = interactable;
                         lookingAt.OnLookEnter();
-                        interactionIndicator.Indicate(lookingAt);
+
+                        InteractionIndicator.Options options = new()
+                        {
+                            ActionText = "Equip",
+                            Interactable = lookingAt,
+                        };
+
+                        if (!Player.Inventory.HasFreeWeaponSlot)
+                        {
+                            options.ActionText = "Pick Up";
+                        }
+
+                        interactionIndicator.Indicate(options);
                         return;
                     }
                 }
@@ -162,10 +173,10 @@ namespace UZSG.Players
         
         void OnPerformInteract(InputAction.CallbackContext context)
         {
-            if (_inhibitActions) return;
             if (lookingAt == null) return;
 
-            StartCoroutine(InteractCoroutine());
+            interactionIndicator.Hide();
+            lookingAt.Interact(this, new());
         }
 
         void OnStartPrimaryAction(InputAction.CallbackContext c)
@@ -214,15 +225,6 @@ namespace UZSG.Players
         void Tick(TickInfo e)
         {
         }
-        
-        IEnumerator InteractCoroutine()
-        {
-            _inhibitActions = true;
-            interactionIndicator.Hide();
-            lookingAt.Interact(this, new());
-            yield return new WaitForSeconds(0.1f); /// interact cooldown
-            _inhibitActions = false;
-        }
 
         /// <summary>
         /// Pick up item from ItemEntity and put in the inventory.
@@ -230,7 +232,7 @@ namespace UZSG.Players
         public void PickUpItem(ItemEntity itemEntity)
         {
             if (!Player.CanPickUpItems) return;
-            if (Player.Inventory == null) return;
+            if (Player.FPP.IsPerforming) return;
 
             bool gotItem; /// whether if the player had successfully picked up the item
             Item item = itemEntity.Item;
@@ -239,7 +241,10 @@ namespace UZSG.Players
             {
                 if (Player.Inventory.TryEquipWeapon(item, out HotbarIndex index))
                 {
-                    Player.FPP.HoldItem(item, index);
+                    Player.FPP.HoldItem(item.Data, index);
+                    
+                    lookingAt = null;
+                    OnPickupItem?.Invoke(item);
                     DestroyPickupedItem(itemEntity);
                     return;
                 }
@@ -258,13 +263,14 @@ namespace UZSG.Players
             
             if (gotItem)
             {
+                lookingAt = null;
+                OnPickupItem?.Invoke(item);
                 DestroyPickupedItem(itemEntity);
             }
         }
 
         void DestroyPickupedItem(Entity item)
         {
-            lookingAt = null;
             Game.Entity.Kill(item);
         }
         

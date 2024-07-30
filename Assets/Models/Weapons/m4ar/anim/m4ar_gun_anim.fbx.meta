@@ -33,7 +33,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: fire
+      name: m_fire
       takeName: fire_g
       internalID: -4689009406435090387
       firstFrame: 0

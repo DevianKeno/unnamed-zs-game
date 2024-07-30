@@ -24,53 +24,7 @@ namespace UZSG.FPP
         public Player Player;
         [Space]
 
-        FPPViewmodelBobbing viewmodelBobbing;
-        FPPViewmodelBreathe viewmodelBreathe;
-        FPPViewmodelSway viewmodelSway;
-
-        void Awake()
-        {
-            viewmodelBobbing = GetComponent<FPPViewmodelBobbing>();
-            viewmodelBreathe = GetComponent<FPPViewmodelBreathe>();
-            viewmodelSway = GetComponent<FPPViewmodelSway>();
-        }
-
-        List<IViewmodelModifier> modifiers = new();
-        Vector3 positionOffset;
-        Quaternion rotationOffset;
-
-        void Update()
-        {
-            // positionOffset = Vector3.zero;
-            // rotationOffset = Quaternion.identity;
-
-            // foreach (var modifier in modifiers)
-            // {
-            //     positionOffset += modifier.GetPositionOffset();
-            //     rotationOffset *= modifier.GetRotationOffset();
-            // }
-
-            // transform.SetLocalPositionAndRotation(positionOffset, rotationOffset);
-        }
-
-        internal void Initialize()
-        {
-            Player.MoveStateMachine.OnStateChanged += OnPlayerMoveStateChanged;
-        }
-
-        void OnPlayerMoveStateChanged(object sender, StateMachine<MoveStates>.StateChangedContext e)
-        {
-            // if (e.To == MoveStates.Idle)
-            // {
-            //     viewmodelBobbing.Enabled = false;
-            //     viewmodelBreathe.Enabled = true;
-            // }
-            // else if (e.To == MoveStates.Walk)
-            // {
-            //     viewmodelBreathe.Enabled = false;
-            //     viewmodelBobbing.Enabled = true;
-            // }
-        }
+        [SerializeField] Transform modelHolder;
 
         public struct LoadAssetReferenceInfo
         {
@@ -78,32 +32,39 @@ namespace UZSG.FPP
             public AsyncOperationStatus Status { get; set; }
         }
 
-        public async Task<Viewmodel> LoadViewmodelAssetAsync(IFPPVisible fPPVisible)
+        public async Task<Viewmodel> LoadViewmodelAssetAsync(IViewmodel viewmodel)
         {
-            GameObject model = null;
-
-            if (fPPVisible.HasViewmodel)
+            if (!viewmodel.HasViewmodel)
             {
-                LoadAssetReferenceInfo result = await LoadAssetReferenceAsync(fPPVisible.Viewmodel);
-                
-                if (result.Status == AsyncOperationStatus.Succeeded)
+                var msg = $"Item '{(viewmodel as ItemData).Id}' has no viewmodel set.";
+                Game.Console.LogAndUnityLog(msg);
+                return null;
+            }
+
+            LoadAssetReferenceInfo result = await LoadAssetReferenceAsync(viewmodel.Viewmodel);
+            
+            if (result.Status == AsyncOperationStatus.Succeeded)
+            {
+                var model = Instantiate(result.GameObject, modelHolder);
+                if (model.TryGetComponent<ViewmodelComponent>(out var component))
                 {
-                    model = Instantiate(result.GameObject, transform);
+                    return new Viewmodel
+                    {
+                        ArmsAnimations = viewmodel.ArmsAnimations,
+                        Model = model,
+                        ItemData = viewmodel as ItemData,
+                        ModelAnimator = component.ModelAnimator,
+                        CameraAnimator = component.CameraAnimator,
+                        CameraAnimationSource = component.CameraAnimationSource,
+                    };
                 }
-            }
-            else
-            {
-                var msg = $"Item {(fPPVisible as ItemData).Id} has no viewmodel set.";
-                Game.Console.Log(msg);
-                Debug.LogWarning(msg);
+                
+                // Destroy(model);
+                var msg = $"Item '{(viewmodel as ItemData).Id}' is a viewmodel but has no Viewmodel Component.";
+                Game.Console.LogAndUnityLog(msg);
             }
 
-            return new Viewmodel
-            {
-                ArmsAnimations = fPPVisible.ArmsAnimations,
-                Model = model,
-                ItemData = fPPVisible as ItemData,
-            };
+            return null;
         }
 
         public async Task<LoadAssetReferenceInfo> LoadAssetReferenceAsync(AssetReference asset)

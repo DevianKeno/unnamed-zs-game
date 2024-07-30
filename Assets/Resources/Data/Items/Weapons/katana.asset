@@ -76,10 +76,10 @@ MonoBehaviour:
       RecoveryDuration: 0
   armsAnimations: {fileID: 0}
   viewmodel:
-    m_AssetGUID: e9dfbf38b93dce64fa14b779e760622d
+    m_AssetGUID: 002eb34bcdb99af42851b5e064f55b72
     m_SubObjectName: 
     m_SubObjectType: 
-    m_EditorAssetChanged: 0
+    m_EditorAssetChanged: 1
   isActions: 0
   viewmodelOffsets:
     Position: {x: 0, y: 0, z: 0}

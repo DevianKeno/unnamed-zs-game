@@ -30,7 +30,7 @@ namespace UZSG.Entities
     [RequireComponent(typeof(BoxCollider))]
     public class Bullet : Entity, IProjectile, ICollision
     {
-        public const float DefaultBulletScale = 0.1f;
+        public const float DefaultBulletScale = 0.05f;
         
         public string CollisionTag => "Projectile";
         public BulletDamageAttributes DamageAttributes;

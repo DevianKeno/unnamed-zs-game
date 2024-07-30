@@ -91,7 +91,7 @@ namespace UZSG.UI
 
             Player.Actions.OnPickupItem += (item) =>
             {
-                var indicator = Game.UI.Create<PickupsIndicator>("Pickups Indicator");
+                var indicator = Game.UI.Create<PickupsIndicator>("Pickups Indicator", show: false);
                 indicator.transform.SetParent(pickupsIndicatorContainer.transform); 
                 indicator.SetDisplayedItem(item);
                 indicator.PlayAnimation();

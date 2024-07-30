@@ -8,7 +8,6 @@ using UZSG.Systems;
 using UZSG.Players;
 using UZSG.Interactions;
 using UZSG.Items;
-using UZSG.Items.Weapons;
 
 namespace UZSG.Entities
 {

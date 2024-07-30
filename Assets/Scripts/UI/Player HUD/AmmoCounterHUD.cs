@@ -33,6 +33,11 @@ namespace UZSG.UI.HUD
 
         public void SetFiringMode(FiringMode mode)
         {
+            if (mode == FiringMode.FullAuto)
+            {
+                firingModeText.text = "Full-auto"; /// with dash :P
+                return;
+            }
             firingModeText.text = $"{mode}";
         }
     }

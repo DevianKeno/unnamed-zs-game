@@ -78,17 +78,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3085238086383823309, guid: 979104421f81ce1488940e6f4467d9f9, type: 3}
   m_PrefabInstance: {fileID: 1882496974505104197}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &7399991118673986441 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8984106974136504524, guid: 979104421f81ce1488940e6f4467d9f9, type: 3}
-  m_PrefabInstance: {fileID: 1882496974505104197}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc6a816dcfdc53841b8f91ac39d86f99, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &7690767547482725585
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -187,7 +176,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 86eae4f887955174a9bed13929870e10, type: 2}
     - target: {fileID: 919132149155446097, guid: 642ab3cf6694a4a47ae1a4fd787bdc3c, type: 3}
       propertyPath: m_Name
-      value: falcon_gun_anim
+      value: falcon_gun
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 642ab3cf6694a4a47ae1a4fd787bdc3c, type: 3}
       propertyPath: m_Layer
@@ -231,9 +220,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 642ab3cf6694a4a47ae1a4fd787bdc3c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 483942132242595715}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 642ab3cf6694a4a47ae1a4fd787bdc3c, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 3114852657593208716}
   m_SourcePrefab: {fileID: 100100000, guid: 642ab3cf6694a4a47ae1a4fd787bdc3c, type: 3}
 --- !u!1 &7384339366375743872 stripped
 GameObject:
@@ -261,19 +247,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &3114852657593208716
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7384339366375743872}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c95c927735633a84ab43e56a935c0769, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  muzzleController: {fileID: 7399991118673986441}
 --- !u!4 &7868247231045974842 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 642ab3cf6694a4a47ae1a4fd787bdc3c, type: 3}

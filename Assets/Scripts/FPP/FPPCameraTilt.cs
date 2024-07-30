@@ -13,6 +13,7 @@ namespace UZSG.FPP
 
         [Header("Settings")]
         public bool Enabled;
+        public float RunningMultiplier;
         public float MinSpeed;
         public float ForwardAngle;
         public float SideAngle;
@@ -35,7 +36,7 @@ namespace UZSG.FPP
         {
             if (!Enabled) return;
             
-            _targetMultiplier = Player.Controls.IsRunning ? 1.5f : 1f;
+            _targetMultiplier = Player.Controls.IsRunning ? RunningMultiplier : 1f;
             HandleCameraTilt();
         }
 

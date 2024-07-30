@@ -263,5 +263,11 @@ namespace UZSG.Systems
         {
             Log($"<color=\"red\">[ERR]: {message}</color>");
         }
+
+        public void LogAndUnityLog(object message)
+        {
+            Game.Console.Log(message);
+            Debug.LogWarning(message);
+        }
     }
 }

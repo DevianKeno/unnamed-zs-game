@@ -77,7 +77,7 @@ namespace UZSG.UI
         }
 
         /// <summary>
-        /// Hides the window. Does not destroy.
+        /// Hides the window. Does not destroy. Use Destroy() if you need to,
         /// </summary>
         public void Hide()
         {

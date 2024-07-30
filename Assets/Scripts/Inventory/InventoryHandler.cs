@@ -25,8 +25,6 @@ namespace UZSG.Inventory
         public ItemSlot Offhand => Hotbar.Offhand;
         Bag _bag;
         public Bag Bag => _bag;
-
-
         public bool IsFull
         {
             get
@@ -37,6 +35,14 @@ namespace UZSG.Inventory
                     continue;
                 }
                 return true;
+            }
+        }
+        public bool HasFreeWeaponSlot
+        {
+            get
+            {
+                if (Mainhand.IsEmpty || Offhand.IsEmpty) return true;
+                return false;
             }
         }
 

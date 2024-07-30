@@ -112,11 +112,18 @@ MonoBehaviour:
   Player: {fileID: 8107631895800867322}
   Enabled: 1
   MinSpeed: 0.3
-  Amplitude: -0.15
-  Frequency: 0.75
-  Recovery: 1
-  MaintainForwardLook: 0
-  LookDistance: 16
+  WalkBob:
+    Amplitude: -0.15
+    Frequency: 0.75
+    Recovery: 1
+    MaintainForwardLook: 0
+    LookDistance: 16
+  RunBob:
+    Amplitude: -0.2
+    Frequency: 0.9
+    Recovery: 1
+    MaintainForwardLook: 0
+    LookDistance: 16
 --- !u!114 &6206635905438684906
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -412,11 +419,18 @@ MonoBehaviour:
   Player: {fileID: 8107631895800867322}
   Enabled: 1
   MinSpeed: 0.3
-  Amplitude: 1.05
-  Frequency: 0.9
-  Recovery: 16
-  MaintainForwardLook: 1
-  LookDistance: 16
+  WalkBob:
+    Amplitude: 1.05
+    Frequency: 0.9
+    Recovery: 16
+    MaintainForwardLook: 1
+    LookDistance: 16
+  RunBob:
+    Amplitude: 1
+    Frequency: 0.9
+    Recovery: 4
+    MaintainForwardLook: 1
+    LookDistance: 16
 --- !u!114 &1760353934298345573
 MonoBehaviour:
   m_ObjectHideFlags: 0

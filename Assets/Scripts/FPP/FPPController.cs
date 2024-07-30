@@ -4,8 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.AsyncOperations;
 
 using UZSG.Systems;
 using UZSG.Entities;
@@ -22,8 +20,8 @@ namespace UZSG.FPP
     public class FPPController : MonoBehaviour
     {
         public Player Player;
+        [Space]
         
-        [Space(10)]
         [SerializeField] HeldItemController heldItem;
         [SerializeField] GameObject heldItemsContainer;
         Dictionary<HotbarIndex, HeldItemController> _cachedHeldItems = new();

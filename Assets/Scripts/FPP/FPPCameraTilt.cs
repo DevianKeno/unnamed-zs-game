@@ -22,16 +22,20 @@ namespace UZSG.FPP
         float _currentTiltZ;
         float _targetTiltX;
         float _targetTiltZ;
+        float _targetMultiplier;
+
+        Quaternion _originalRotation;
 
         void Start()
         {
-            // Game.Tick.OnTick += Tick;
+            _originalRotation = transform.localRotation;
         }
 
         void Update()
         {
             if (!Enabled) return;
             
+            _targetMultiplier = Player.Controls.IsRunning ? 1.5f : 1f;
             HandleCameraTilt();
         }
 
@@ -65,8 +69,8 @@ namespace UZSG.FPP
                 _targetTiltZ = -SideAngle;
             }
             
-            _currentTiltX = Mathf.Lerp(_currentTiltX, _targetTiltX, Time.deltaTime * TiltSpeed);
-            _currentTiltZ = Mathf.Lerp(_currentTiltZ, _targetTiltZ, Time.deltaTime * TiltSpeed);
+            _currentTiltX = Mathf.Lerp(_currentTiltX, _targetTiltX * _targetMultiplier, Time.deltaTime * TiltSpeed);
+            _currentTiltZ = Mathf.Lerp(_currentTiltZ, _targetTiltZ * _targetMultiplier, Time.deltaTime * TiltSpeed);
             transform.localRotation = Quaternion.Euler(_currentTiltX, 0, _currentTiltZ);
         }
     }

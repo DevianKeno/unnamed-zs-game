@@ -28,13 +28,13 @@ namespace UZSG.FPP
         [Tooltip("Invert the horizontal sway.")]
         public Vector3 RotationOffset = Vector3.zero;
         
-        Quaternion originalRotation;
+        Quaternion _originalRotation;
         InputAction lookInput;
 
         void Start()
         {
             lookInput = Game.Main.GetInputAction("Look", "Player");
-            originalRotation = transform.localRotation;
+            _originalRotation = transform.localRotation;
         }
 
         void Update()
@@ -51,7 +51,7 @@ namespace UZSG.FPP
             Quaternion pivotAdjustment = Quaternion.Euler(RotationOffset);
             Quaternion swayRotation = rotationX * rotationY * pivotAdjustment;
 
-            Quaternion targetRotation = originalRotation * swayRotation;
+            Quaternion targetRotation = _originalRotation * swayRotation;
 
             transform.localRotation = Quaternion.Slerp(
                 transform.localRotation,

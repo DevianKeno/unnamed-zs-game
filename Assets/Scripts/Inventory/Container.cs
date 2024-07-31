@@ -153,7 +153,6 @@ namespace UZSG
                         slot = s;
                         return true;
                     }
-                    return false;
                 }
             }
             return false;

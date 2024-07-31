@@ -176,8 +176,8 @@ namespace UZSG.Entities
 
         public void SetPlayerAndShoot(Player player)
         {
-            _origin = transform.position;
-            _previousPosition = transform.position;
+            _origin = player.Position;
+            _previousPosition = _origin;
             _checkDistance = Attributes.MinRenderDistance > 0;
             
             transform.SetPositionAndRotation(

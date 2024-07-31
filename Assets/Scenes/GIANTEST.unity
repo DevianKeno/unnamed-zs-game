@@ -5537,6 +5537,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6c811d216289b64e916560225841345, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TargetFramerate: -1
   FreeLookCamera: {fileID: 892676884}
   timeController: {fileID: 1948226128}
   weatherController: {fileID: 0}

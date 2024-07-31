@@ -13,6 +13,8 @@ namespace UZSG.Systems
     {
         public static Game Main { get; private set; }
 
+        public int TargetFramerate = -1;
+
 
         #region Core
 
@@ -88,6 +90,11 @@ namespace UZSG.Systems
             InitializeManagers();
             
             FreeLookCamera.InitializeInputs(); /// DEBUGGING ONLY
+        }
+
+        void OnValidate()
+        {
+            Application.targetFrameRate = TargetFramerate;
         }
 
         public TimeController timeController;

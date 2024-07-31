@@ -57,7 +57,15 @@ namespace UZSG.FPP
 
         void ApplyRotation()
         {
-            Target.rotation = _cameraBone.rotation;
+            /// Instant
+            // Target.rotation = _cameraBone.rotation;
+            
+            /// Slerp
+            Quaternion targetRotation = _cameraBone.rotation;
+            var rotationDelta = Quaternion.Slerp(Target.rotation, targetRotation, 1 / Time.deltaTime);
+            Target.rotation = rotationDelta;
+
+            /// idk
             // Target.rotation = Quaternion.Slerp(
             //     _previousRotation,
             //     _cameraBone.rotation,

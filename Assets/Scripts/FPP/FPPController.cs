@@ -287,14 +287,14 @@ namespace UZSG.FPP
                 Game.Console.LogAndUnityLog(msg);
             }
             
-            if (currentViewmodel.Model == null)
+            if (currentViewmodel.Model != null)
             {
-                var msg = $"Item '{currentViewmodel.ItemData.Id}' has no viewmodel.";
-                Game.Console.LogAndUnityLog(msg);
+                currentViewmodel.Model.SetActive(true);
             }
             else
             {
-                currentViewmodel.Model.SetActive(true);
+                var msg = $"Item '{currentViewmodel.ItemData.Id}' has no viewmodel.";
+                Game.Console.LogAndUnityLog(msg);
             }
 
             /// Load model animations

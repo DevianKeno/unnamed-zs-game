@@ -1,4 +1,5 @@
 using UnityEngine;
+using UZSG.Entities;
 using UZSG.Items;
 
 namespace UZSG.Systems
@@ -99,12 +100,18 @@ namespace UZSG.Systems
             if (args.Length == 1)
             {
                 Game.Entity.Spawn(args[0]);
-            } else
+            }
+            else
             {
-                if (args[0] == "item")
+                if (float.TryParse(args[1], out float x) &&
+                    float.TryParse(args[2], out float y) &&
+                    float.TryParse(args[3], out float z))
                 {
-                    Game.Entity.SpawnItem(args[1]);
+                    var position = new Vector3(x, y, z);
+                    Game.Entity.Spawn<Player>(args[0], position);
+                    return;
                 }
+                throw new System.Exception();
             }
         }
 

@@ -35,11 +35,10 @@ namespace UZSG.WorldBuilder
         public int CurrentDay;
         int _dayLength = 2160;
 
-        
         public void Initialize()
         {
             Game.Tick.OnTick += OnTick;
-            _currentTime = 0;
+            _currentTime = 800;
             CurrentDay = 0;
         }
 

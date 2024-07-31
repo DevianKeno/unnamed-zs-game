@@ -176,8 +176,8 @@ namespace UZSG.Entities
 
         void ParentMainCameraToFPPController()
         {
-            Camera.main.transform.parent = FPP.CameraController.Camera.transform;
-            Camera.main.transform.position = new(0f, 1f, 0f);
+            Camera.main.transform.SetParent(FPP.CameraController.Camera.transform, false);
+            Camera.main.transform.localPosition = Vector3.zero;
         }
 
         void Tick(TickInfo e)

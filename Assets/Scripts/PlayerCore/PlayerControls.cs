@@ -28,6 +28,7 @@ namespace UZSG.Players
         /// <summary>
         /// Cached movement values from the Player. This should subscribe to the OnValueChanged event.
         /// </summary>
+        public float Acceleration;
         public float MoveSpeed;
         public float RunSpeed;
         public float CrouchSpeed;
@@ -59,7 +60,7 @@ namespace UZSG.Players
 
         StrafeDirection strafeDirection;
         public StrafeDirection StrafeDirection => strafeDirection;
-        float _currentSpeed;
+        [SerializeField] float _currentSpeed;
         float initialJumpVelocity;
         float CrouchPosition;
 
@@ -67,6 +68,7 @@ namespace UZSG.Players
         bool _isRunning;
         bool _hasJumped;
         bool _isMovePressed;
+        bool _isMovingBackwards;
         /// <summary>
         /// Check if holding [Run] key and speed is greater than run threshold
         /// </summary>
@@ -87,7 +89,7 @@ namespace UZSG.Players
         {
             get
             {
-                return Physics.Raycast(groundChecker.position, Vector3.down, GroundDistance, groundMask);
+                return Physics.Raycast(groundChecker.position, -Vector3.up, GroundDistance, groundMask);
             }
         }
 
@@ -156,8 +158,6 @@ namespace UZSG.Players
             _previousPosition = transform.position;
         }
 
-        Dictionary<string, Action> inputEvents;
-
         void InitializeInputs()
         {
             actionMap = Game.Main.GetActionMap("Player");
@@ -194,6 +194,12 @@ namespace UZSG.Players
             Player = GetComponent<Player>();
         }
 
+        void FixedUpdate()
+        {
+            HandleMovement();
+            UpdateStates();
+        }
+
         void Tick(TickInfo e)
         {
             if (IsMoving && IsRunning)
@@ -226,12 +232,6 @@ namespace UZSG.Players
             _currentSpeed = MoveSpeed;
         }
 
-        void FixedUpdate()
-        {
-            HandleMovement();
-            UpdateStates();
-        }
-
         void UpdateStates()
         {
             if (_isMovePressed)
@@ -257,6 +257,7 @@ namespace UZSG.Players
 
             _frameInput.Move = context.ReadValue<Vector2>();
             _isMovePressed = _frameInput.Move.x != 0 || _frameInput.Move.y != 0;
+            _isMovingBackwards = _frameInput.Move.y < 0;
 
             if (_frameInput.Move.x < 0)
             {
@@ -285,6 +286,8 @@ namespace UZSG.Players
         void OnStartRun(InputAction.CallbackContext context)
         {            
             if (!EnableMovementControls) return;
+            if (Player.FPP.IsPerforming) return;
+            // if (_isMovingBackwards) return;
 
             if (_isCrouching)
             {
@@ -327,7 +330,7 @@ namespace UZSG.Players
         {
             HandleDirection();
             HandleRotation();
-            HandleGravity();
+            // HandleGravity();
             // HandleJump();
 
             ApplyMovement();
@@ -377,17 +380,9 @@ namespace UZSG.Players
         
         void ApplyMovement()
         {
-            _targetPosition = _previousPosition + (_frameVelocity * (_currentSpeed * Time.fixedDeltaTime));
-
-            if (_previousPosition != _targetPosition)
-            {
-                Vector3 displacement = _targetPosition - _previousPosition;
-                rb.velocity = displacement / Game.Tick.SecondsPerTick;
-            }
-            else
-            {
-                // rb.velocity = Vector3.zero;
-            }
+            Vector3 targetVelocity = _frameVelocity * _currentSpeed;
+            var moveVelocity = Vector3.Lerp(rb.velocity, targetVelocity, Acceleration * Game.Tick.SecondsPerTick);
+            rb.velocity = moveVelocity;
         }
 
         void Crouch()

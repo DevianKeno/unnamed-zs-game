@@ -347,9 +347,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   entityData: {fileID: 11400000, guid: 405cf52e16b571e489e63a0bc1f4aff7, type: 2}
+  DamageAttributes:
+    BaseDamage: 0
+    IsPartDamage: 0
+    UseMultiplier: 0
+    HeadDamage: 0
+    HeadDamageMultiplier: 0
+    BodyDamage: 0
+    BodyDamageMultiplier: 0
+    ArmsDamage: 0
+    ArmsDamageMultiplier: 0
+    LegsDamage: 0
+    LegsDamageMultiplier: 0
   Attributes:
     Scale: 0
     Speed: 0
-    Spread: 0
     GravityScale: 0
     MinRenderDistance: 0
+  CalculatedDamage: 0
+  Point: {x: 0, y: 0, z: 0}

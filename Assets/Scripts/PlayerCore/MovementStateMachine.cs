@@ -9,7 +9,7 @@ namespace UZSG.Players
     }
 
     public enum StrafeDirection {
-        None, Left, Right
+        None, Left, Right, Back
     }
 
     public class MovementStateMachine : StateMachine<MoveStates>

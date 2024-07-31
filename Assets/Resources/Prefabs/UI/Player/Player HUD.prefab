@@ -1449,6 +1449,14 @@ PrefabInstance:
       propertyPath: _value
       value: 50
       objectReference: {fileID: 0}
+    - target: {fileID: 4464040806379643172, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4464040806379643172, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5047062835737170004, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
       propertyPath: m_Color.b
       value: 0.83137256
@@ -1464,6 +1472,22 @@ PrefabInstance:
     - target: {fileID: 7209979227544774230, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
       propertyPath: m_Name
       value: Stamina Bar
+      objectReference: {fileID: 0}
+    - target: {fileID: 7547211674368605139, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7547211674368605139, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
+      propertyPath: m_Color.b
+      value: 0.4433962
+      objectReference: {fileID: 0}
+    - target: {fileID: 7547211674368605139, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
+      propertyPath: m_Color.g
+      value: 0.315293
+      objectReference: {fileID: 0}
+    - target: {fileID: 7547211674368605139, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
+      propertyPath: m_Color.r
+      value: 0.094117135
       objectReference: {fileID: 0}
     - target: {fileID: 8963817805981456813, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
       propertyPath: m_Pivot.x

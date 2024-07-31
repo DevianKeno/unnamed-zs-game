@@ -167,8 +167,8 @@ MonoBehaviour:
     MaintainForwardLook: 0
     LookDistance: 16
   RunBob:
-    Amplitude: -0.2
-    Frequency: 0.9
+    Amplitude: -0.15
+    Frequency: 0.85
     Recovery: 1
     MaintainForwardLook: 0
     LookDistance: 16
@@ -250,7 +250,7 @@ Transform:
   m_GameObject: {fileID: 2866568475717327878}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalPosition: {x: 0, y: 2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -272,7 +272,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Player: {fileID: 8107631895800867322}
-  Sensitivity: 5
+  Sensitivity: 0.1
   EnableControls: 1
   FPPCamera: {fileID: 8061303154701812193}
   animator: {fileID: 0}
@@ -473,13 +473,13 @@ MonoBehaviour:
     Frequency: 0.9
     Recovery: 16
     MaintainForwardLook: 1
-    LookDistance: 16
+    LookDistance: 10
   RunBob:
     Amplitude: 1
     Frequency: 0.9
     Recovery: 4
     MaintainForwardLook: 1
-    LookDistance: 16
+    LookDistance: 10
 --- !u!114 &1760353934298345573
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -649,7 +649,7 @@ Transform:
   m_GameObject: {fileID: 5950259277001712762}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.95, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -683,7 +683,7 @@ Transform:
   m_GameObject: {fileID: 6110845800208884272}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -995,7 +995,7 @@ Transform:
   m_GameObject: {fileID: 9031321928697203625}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1043,9 +1043,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Player: {fileID: 8107631895800867322}
-  MoveSpeed: 10
-  RunSpeed: 0
-  CrouchSpeed: 0
+  Acceleration: 10
+  MoveSpeed: 3
+  RunSpeed: 6
+  CrouchSpeed: 2
   JumpTime: 2
   JumpHeight: 4
   Gravity: 0
@@ -1053,10 +1054,11 @@ MonoBehaviour:
   CrouchSpeedMultiplier: 0.7
   LookRotationSpeed: 100
   GroundingForce: -1
-  GroundDistance: 0.4
+  GroundDistance: 0.5
   CameraSensitivity: 0.32
   EnableMovementControls: 1
   EnableCameraControls: 1
+  _currentSpeed: 0
   model: {fileID: 94713427562349016}
   rb: {fileID: 8394152581638175708}
   groundChecker: {fileID: 1807161492040155152}

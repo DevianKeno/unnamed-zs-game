@@ -24,7 +24,7 @@ namespace UZSG.Inventory
         {
             get
             {
-                return item == null || item.Data == null;
+                return item == null || item.IsNone;
             }
         }
 

@@ -1,96 +1,113 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+using UnityEditor;
+using UZSG.Items.Weapons;
 
-// [CustomEditor(typeof(WeaponData))]
-// public class WeaponDataEditor : ItemDataEditor
-// {
-//     SerializedProperty weight,
-//         category,
-//         meleeType,
-//         bluntType,
-//         bladedType,
-//         rangedType,
-//         attributes,
-//         FPPmodel,
-//         controller,
-//         anims;
-    
-//     void OnEnable()
-//     {
-//         weight = serializedObject.FindProperty("Weight");
-//         category = serializedObject.FindProperty("Category");
-//         meleeType = serializedObject.FindProperty("MeleeType");
-//         bluntType = serializedObject.FindProperty("BluntType");
-//         bladedType = serializedObject.FindProperty("BladedType");
-//         rangedType = serializedObject.FindProperty("RangedType");
-//         attributes = serializedObject.FindProperty("Attributes");
-//         FPPmodel = serializedObject.FindProperty("_FPPModel");
-//         controller = serializedObject.FindProperty("_controller");
-//         anims = serializedObject.FindProperty("_anims");
-//     }
-
-//     public override void OnInspectorGUI()
-//     {
-//         base.OnInspectorGUI();
-//         serializedObject.Update();
-//         WeaponData attributeData = (WeaponData)target;
-
-//         EditorGUILayout.Space();
-//         EditorGUILayout.LabelField("Weapon Attributes", EditorStyles.boldLabel);
-//         EditorGUILayout.PropertyField(weight);
-//         EditorGUILayout.PropertyField(category);
+namespace UZSG.UnityEditor
+{
+    [CustomEditor(typeof(WeaponData))]
+    public class WeaponDataEditor : ItemDataEditor
+    {
+        SerializedProperty hotbarIcon,
+            category,
+            meleeType,
+            bluntType,
+            bladedType,
+            rangedType,
+            meleeAttributes,
+            rangedAttributes,
+            armsAnimations,
+            viewmodel,
+            viewmodelOffsets,
+            anims,
+            audioData;
         
-//         EditorGUI.indentLevel++;
-//         if (attributeData.Category == WeaponCategory.Melee)
-//         {
-//             EditorGUILayout.PropertyField(meleeType);
+        protected override void OnEnable()
+        {
+            base.OnEnable();
 
-//             EditorGUI.indentLevel++;
-//             if (attributeData.MeleeType == WeaponMeleeType.Blunt)
-//             {
-//                 EditorGUILayout.PropertyField(bluntType);
-//             } else if (attributeData.MeleeType == WeaponMeleeType.Bladed)
-//             {
-//                 EditorGUILayout.PropertyField(bladedType);
-//             }
+            hotbarIcon = serializedObject.FindProperty("HotbarIcon");
+            category = serializedObject.FindProperty("Category");
+            meleeType = serializedObject.FindProperty("MeleeType");
+            bluntType = serializedObject.FindProperty("BluntType");
+            bladedType = serializedObject.FindProperty("BladedType");
+            rangedType = serializedObject.FindProperty("RangedType");
+            meleeAttributes = serializedObject.FindProperty("MeleeAttributes");
+            rangedAttributes = serializedObject.FindProperty("RangedAttributes");
 
-//         } else if (attributeData.Category == WeaponCategory.Ranged)
-//         {
-//             EditorGUILayout.PropertyField(rangedType);
+            armsAnimations = serializedObject.FindProperty("armsAnimations");
+            viewmodel = serializedObject.FindProperty("viewmodel");
+            viewmodelOffsets = serializedObject.FindProperty("viewmodelOffsets");
+            anims = serializedObject.FindProperty("anims");
+            audioData = serializedObject.FindProperty("audioData");
+        }
 
-//             EditorGUI.indentLevel++;
-//             if (attributeData.RangedType == WeaponRangedType.Handgun)
-//             {
+        public override void OnInspectorGUI()
+        {
+            serializedObject.Update();
+            base.OnInspectorGUI();
+            
+            WeaponData weaponData = (WeaponData) target;
 
-//             } else if (attributeData.RangedType == WeaponRangedType.Shotgun)
-//             {
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("Weapon Attributes", EditorStyles.boldLabel);
+            EditorGUILayout.PropertyField(hotbarIcon);
+            EditorGUILayout.PropertyField(category);
+            WeaponCategory weaponCategory = (WeaponCategory) category.enumValueIndex;
+            if (weaponCategory == WeaponCategory.Melee)
+            {
+                EditorGUILayout.PropertyField(meleeType);
+                WeaponMeleeType type = (WeaponMeleeType) meleeType.enumValueIndex;
+                if (type == WeaponMeleeType.Blunt)
+                {
+                    EditorGUILayout.PropertyField(bluntType);
+                }
+                else if (type == WeaponMeleeType.Bladed)
+                {
+                    EditorGUILayout.PropertyField(bladedType);
+                }
 
-//             } else if (attributeData.RangedType == WeaponRangedType.SMG)
-//             {
-                
-//             } else if (attributeData.RangedType == WeaponRangedType.AssaultRifle)
-//             {
-                
-//             } else if (attributeData.RangedType == WeaponRangedType.SniperRifle)
-//             {
-                
-//             } else if (attributeData.RangedType == WeaponRangedType.MachineGun)
-//             {
-                
-//             }
-//         }            
-//         EditorGUI.indentLevel -= 2;
-        
-//         EditorGUILayout.PropertyField(attributes);
+                EditorGUILayout.PropertyField(meleeAttributes);
+            }
+            else if (weaponCategory == WeaponCategory.Ranged)
+            {
+                EditorGUILayout.PropertyField(rangedType);
+                WeaponRangedType type = (WeaponRangedType) rangedType.enumValueIndex;
+                if (type == WeaponRangedType.Handgun)
+                {
 
-//         EditorGUILayout.Space();
-//         EditorGUILayout.LabelField("Animations", EditorStyles.boldLabel);
-//         EditorGUILayout.PropertyField(FPPmodel);
-//         EditorGUILayout.PropertyField(controller);
-//         EditorGUILayout.PropertyField(anims);
+                }
+                else if (type == WeaponRangedType.Shotgun)
+                {
 
+                }
+                else if (type == WeaponRangedType.SMG)
+                {
+                    
+                }
+                else if (type == WeaponRangedType.AssaultRifle)
+                {
+                    
+                }
+                else if (type == WeaponRangedType.SniperRifle)
+                {
+                    
+                }
+                else if (type == WeaponRangedType.MachineGun)
+                {
+                    
+                }
 
-//         serializedObject.ApplyModifiedProperties();
-//     }
-// }
+                EditorGUILayout.PropertyField(rangedAttributes);
+            }
+
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("Viewmodel Attributes", EditorStyles.boldLabel);
+            EditorGUILayout.PropertyField(armsAnimations);
+            EditorGUILayout.PropertyField(viewmodel);
+            EditorGUILayout.PropertyField(viewmodelOffsets);
+            EditorGUILayout.PropertyField(anims);
+            EditorGUILayout.PropertyField(audioData);
+
+            serializedObject.ApplyModifiedProperties();
+        }
+    }
+}

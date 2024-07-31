@@ -14,48 +14,22 @@ namespace UZSG.Items
 
     [Serializable]
     [CreateAssetMenu(fileName = "New Item Data", menuName = "UZSG/Item Data")]
-    public class ItemData : ScriptableObject
+    public class ItemData : BaseData
     {
-        [Header("Item Attributes")]
-        public AssetReference Model;
-        public string Id;
+        /// Item Attributes
         public string Name;
         [TextArea] public string Description;
+        public AssetReference Model;
         public Sprite Sprite;
         public ItemType Type;
-        public int StackSize;
         public ItemSubtype Subtype;
+        public float Weight;
+        public bool IsStackable;
+        public int StackSize;
 
-        [Header("Crafting")]
+        /// Crafting
         public bool IsMaterial;
         public bool IsCraftable;
         public List<RecipeData> Recipes;
-    }
-    
-    [CustomEditor(typeof(ItemData))]
-    public class ItemDataEditor : Editor
-    {
-        SerializedProperty assetReference,
-            id,
-            nameProperty,
-            description,
-            sprite,
-            stackSize,
-            type,
-            subType,
-            isMaterial;
-        
-        void OnEnable()
-        {
-            assetReference = serializedObject.FindProperty("AssetReference");
-            id = serializedObject.FindProperty("Id");
-            nameProperty = serializedObject.FindProperty("Name");
-            description = serializedObject.FindProperty("Description");
-            sprite = serializedObject.FindProperty("Sprite");
-            stackSize = serializedObject.FindProperty("StackSize");
-            type = serializedObject.FindProperty("Type");
-            subType = serializedObject.FindProperty("SubType");
-            isMaterial = serializedObject.FindProperty("IsMaterial");
-        }
     }
 }

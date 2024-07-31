@@ -100,7 +100,6 @@ namespace UZSG.Items.Weapons
     public class WeaponData : ItemData, IViewmodel
     {
         public Sprite HotbarIcon;
-        public float Weight;
         public WeaponCategory Category;
         public WeaponMeleeType MeleeType;
         public WeaponBluntType BluntType;
@@ -109,7 +108,7 @@ namespace UZSG.Items.Weapons
         public WeaponMeleeAttributes MeleeAttributes;
         public WeaponRangedAttributes RangedAttributes;
 
-        [Header("Viewmodel Settings")]
+        /// Viewmodel Settings
         [SerializeField] AnimatorController armsAnimations;
         public AnimatorController ArmsAnimations => armsAnimations;
         [SerializeField] AssetReference viewmodel;

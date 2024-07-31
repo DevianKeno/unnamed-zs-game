@@ -12,23 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72e1d5853de97a54aa491bcf19eb9d39, type: 3}
   m_Name: katana
   m_EditorClassIdentifier: 
+  Id: katana
+  Name: Katana
+  Description: 
   Model:
     m_AssetGUID: ce0c1c137c546c54ab1b00d6a785a5ef
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 1
-  Id: katana
-  Name: Katana
-  Description: 
   Sprite: {fileID: 21300000, guid: e458454d59acac3498fea668968eae06, type: 3}
   Type: 1
-  StackSize: 1
   Subtype: 5
+  Weight: 1.6
+  IsStackable: 0
+  StackSize: 1
   IsMaterial: 0
   IsCraftable: 0
   Recipes: []
   HotbarIcon: {fileID: 0}
-  Weight: 1.6
   Category: 0
   MeleeType: 2
   BluntType: 0
@@ -80,7 +81,6 @@ MonoBehaviour:
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 1
-  isActions: 0
   viewmodelOffsets:
     Position: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0}

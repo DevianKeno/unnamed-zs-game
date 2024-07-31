@@ -12,23 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72e1d5853de97a54aa491bcf19eb9d39, type: 3}
   m_Name: falcon
   m_EditorClassIdentifier: 
+  Id: falcon
+  Name: WL Falcon
+  Description: Big pistol.
   Model:
     m_AssetGUID: 2bfce7f0d0d144744a5184c040ecaf73
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  Id: falcon
-  Name: WL Falcon
-  Description: Big pistol.
   Sprite: {fileID: 21300000, guid: 75a04606deb60ed40ac1bdf3e4dd36e2, type: 3}
   Type: 1
-  StackSize: 1
   Subtype: 5
+  Weight: 2
+  IsStackable: 0
+  StackSize: 1
   IsMaterial: 0
   IsCraftable: 0
   Recipes: []
   HotbarIcon: {fileID: 0}
-  Weight: 2
   Category: 1
   MeleeType: 0
   BluntType: 0

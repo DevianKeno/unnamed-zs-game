@@ -15,6 +15,17 @@ MonoBehaviour:
   Id: small_pouch
   Name: Small Pouch
   Description: Allows for one tool slot.
+  Model:
+    m_AssetGUID: 
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
   Sprite: {fileID: 0}
-  StackSize: 1
   Type: 0
+  Subtype: 0
+  Weight: 0
+  IsStackable: 1
+  StackSize: 999
+  IsMaterial: 0
+  IsCraftable: 0
+  Recipes: []

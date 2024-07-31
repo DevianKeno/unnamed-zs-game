@@ -12,16 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 873d4c4f155a35a46b4699d35b336ec7, type: 3}
   m_Name: bandage
   m_EditorClassIdentifier: 
+  Id: bandage
+  Name: Bandage
+  Description: Stops bleeding.
   Model:
     m_AssetGUID: ccea5945f4750e048930c3dfdda097aa
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  Id: bandage
-  Name: Bandage
-  Description: Stops bleeding.
   Sprite: {fileID: 21300000, guid: 0b41dee45f3265f48b75a1cf6b8f34e1, type: 3}
-  StackSize: 999
   Type: 0
   Subtype: 1
-  IsMaterial: 1
+  Weight: 0
+  IsStackable: 1
+  StackSize: 999
+  IsMaterial: 0
+  IsCraftable: 0
+  Recipes: []

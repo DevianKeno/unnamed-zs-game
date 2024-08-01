@@ -32,16 +32,16 @@ namespace UZSG.Crafting
         {
             RecipeData recipes = Game.Recipes.GetRecipeData(item.Id);
 
-            var _availableSlot = new List<ItemSlot>(); 
+            var materialSlots = new List<ItemSlot>(); 
 
             /// Check if sufficient materials is available inside the player inventory
             foreach (Item material in recipes.Materials)
             {
                 int count = 0;
 
-                if (player.Inventory.Bag.ContainsCount(item: material, out var slot))
+                if (player.Inventory.Bag.ContainsCount(item: material, out materialSlots))
                 {
-                    count += slot.Item.Count;
+                    // count += slot.Item.Count;
                 }
 
                 if (count < material.Count)

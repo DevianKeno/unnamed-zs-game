@@ -139,23 +139,23 @@ namespace UZSG
         /// <summary>
         /// Check if a specified amount of item exists within the container.
         /// </summary>
-        public bool ContainsCount(Item item, out ItemSlot slot)
+        public bool ContainsCount(Item item, out List<ItemSlot> slots)
         {
-            slot = null;
-            foreach (ItemSlot s in Slots)
-            {
-                if (s.IsEmpty) continue;
+            slots = new();
+            int count = 0;
 
-                if (s.Item.CompareTo(item))
+            foreach (ItemSlot slot in Slots)
+            {
+                if (slot.IsEmpty) continue;
+
+                if (slot.Item.CompareTo(item))
                 {
-                    if (s.Item.Count >= item.Count)
-                    {
-                        slot = s;
-                        return true;
-                    }
+                    count += slot.Item.Count;
+                    slots.Add(slot);
                 }
             }
-            return false;
+
+            return count >= item.Count;
         }
 
         public virtual void ClearItem(ItemSlot slot)

@@ -1,7 +1,9 @@
 using System;
 using UnityEngine;
 using UZSG.Data;
+using UZSG.Entities;
 using UZSG.Items;
+using UZSG.Systems;
 
 namespace UZSG.Inventory
 {
@@ -19,6 +21,11 @@ namespace UZSG.Inventory
 
     public class InventoryHandler : MonoBehaviour
     {
+        public Player Player;
+        [Space]
+
+        public float ThrowForce;
+
         Hotbar _hotbar;
         public Hotbar Hotbar => _hotbar;
         public ItemSlot Mainhand => Hotbar.Mainhand;
@@ -126,6 +133,23 @@ namespace UZSG.Inventory
 
             putOnIndex = default;
             return false;
+        }
+
+        /// <summary>
+        /// Drops item on the ground.
+        /// </summary>
+        public void DropItem(int slotIndex)
+        {
+            if (Bag.TryGetSlot(slotIndex, out var slot))
+            {
+                var position = Player.Position + Vector3.forward;
+                Game.Entity.Spawn<ItemEntity>("item", position, callback: (info) =>
+                {
+                    info.Entity.Item = slot.TakeAll();
+                    var throwForce = (Player.Forward + Vector3.up) * ThrowForce;
+                    info.Entity.Rigidbody.AddForce(throwForce, ForceMode.Impulse);
+                });
+            }
         }
     }
 }

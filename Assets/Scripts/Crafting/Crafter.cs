@@ -39,7 +39,7 @@ namespace UZSG.Crafting
             {
                 int count = 0;
 
-                if (player.Inventory.Bag.ContainsCount(item: material, out materialSlots))
+                if (player.Inventory.Bag.ContainsCount(item: material, material.Count, out materialSlots))
                 {
                     // count += slot.Item.Count;
                 }

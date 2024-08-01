@@ -545,6 +545,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 596c3ac212542b8489d08e2da4116e7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Player: {fileID: 8107631895800867322}
+  ThrowForce: 0
   hotbarUI: {fileID: 0}
 --- !u!114 &7107611863965880641
 MonoBehaviour:
@@ -690,6 +692,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bced2a22ece65740972dd735bb0e765, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isGrounded: 0
   boxCollider: {fileID: 1504893056223954484}
 --- !u!1 &6110845800208884272
 GameObject:
@@ -1079,17 +1082,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Player: {fileID: 8107631895800867322}
+  EnableMovementControls: 1
   Acceleration: 10
   MoveSpeed: 225
   RunSpeed: 350
   CrouchSpeed: 2
   JumpSpeed: 10
   TimeScale: 1
-  CameraSensitivity: 0.32
-  EnableMovementControls: 1
-  EnableCameraControls: 1
-  groundingForce: -1
-  groundDistance: 0.5
   _targetSpeed: 0
   model: {fileID: 94713427562349016}
   rb: {fileID: 8394152581638175708}
@@ -1098,6 +1097,7 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 512
+  _crouchControlIsToggle: 1
 --- !u!114 &5659626291116057010
 MonoBehaviour:
   m_ObjectHideFlags: 0

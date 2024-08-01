@@ -31,17 +31,18 @@ namespace UZSG.Crafting
         public void CraftItem(Item item)
         {
             RecipeData recipes = Game.Recipes.GetRecipeData(item.Id);
-
-            var materialSlots = new List<ItemSlot>(); 
+            var listOfSlots = new List<List<ItemSlot>>();
 
             /// Check if sufficient materials is available inside the player inventory
             foreach (Item material in recipes.Materials)
             {
+                var materialSlots = new List<ItemSlot>();
+                
                 int count = 0;
 
-                if (player.Inventory.Bag.ContainsCount(item: material, out materialSlots))
+                if (player.Inventory.Bag.ContainsCount(item: material, material.Count, out materialSlots))
                 {
-                    // count += slot.Item.Count;
+                    listOfSlots.Add(materialSlots);
                 }
 
                 if (count < material.Count)
@@ -50,6 +51,12 @@ namespace UZSG.Crafting
                     return;
                 }
             }
+
+            // foreach(List<ItemSlot> slots in listOfSlots){
+            //     foreach(ItemSlot slot in slots){
+                    
+            //     }
+            // }
 
             /// Takes item in the inventory
             /// NOTE: ENSURE THAT THE AVAILABILITY OF MATERIALS ARE FULLY CHECKED

@@ -13,11 +13,9 @@ MonoBehaviour:
   m_Name: item
   m_EditorClassIdentifier: 
   AssetReference:
-    m_AssetGUID: 40f96aaff95f534479b911626edf87ba
+    m_AssetGUID: 45fbcb582516cc34e8ab1615ab38b43d
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
   Id: item
   Name: Item (Entity)
-  Attributable: 0
-  Attributes: []

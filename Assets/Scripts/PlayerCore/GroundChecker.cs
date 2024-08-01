@@ -11,18 +11,12 @@ namespace UZSG.Players
 
         public void OnTriggerEnter(Collider other)
         {
-            if (_isGrounded = other.CompareTag("Ground"))
-            {
-                _isGrounded = true;
-            }
+            _isGrounded = true;
         }
 
         public void OnTriggerExit(Collider other)
         {
-            if (_isGrounded = other.CompareTag("Ground"))
-            {
-                _isGrounded = false;
-            }
+            _isGrounded = false;
         }
     }
 }

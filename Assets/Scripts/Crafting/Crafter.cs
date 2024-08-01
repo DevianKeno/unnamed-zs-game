@@ -31,49 +31,29 @@ namespace UZSG.Crafting
         public void CraftItem(Item item)
         {
             RecipeData recipes = Game.Recipes.GetRecipeData(item.Id);
-            var listOfSlots = new List<List<ItemSlot>>();
+            var dictSlots = new Dictionary<Item, List<ItemSlot>>();
 
             /// Check if sufficient materials is available inside the player inventory
             foreach (Item material in recipes.Materials)
             {
                 var materialSlots = new List<ItemSlot>();
-                
-                int count = 0;
 
                 if (player.Inventory.Bag.ContainsCount(item: material, material.Count, out materialSlots))
                 {
-                    listOfSlots.Add(materialSlots);
-                }
-
-                if (count < material.Count)
-                {
+                    dictSlots.Add(material, materialSlots);
+                } else {
                     print("Materials Required does not match players current Inventory");
                     return;
                 }
             }
-
-            // foreach(List<ItemSlot> slots in listOfSlots){
-            //     foreach(ItemSlot slot in slots){
-                    
-            //     }
-            // }
-
             /// Takes item in the inventory
             /// NOTE: ENSURE THAT THE AVAILABILITY OF MATERIALS ARE FULLY CHECKED
             foreach (Item material in recipes.Materials)
             {
                 int remainingCount = material.Count;
 
-                foreach (ItemSlot slot in player.Inventory.Bag.Slots)
+                foreach (ItemSlot slot in dictSlots[material])
                 {
-                    if (slot.IsEmpty)
-                    {
-                        continue;
-                    }
-
-                    if (!material.CompareTo(slot.Item)){
-                        continue;
-                    }
                     /*
                         comparator checks the difference of the remaining count and the
                         required count of the material.

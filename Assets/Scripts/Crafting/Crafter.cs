@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UZSG.Entities;
 using UZSG.Inventory;
@@ -27,9 +28,11 @@ namespace UZSG.Crafting
             print(testText);
         }
 
-        public Item CraftItem(Item item)
+        public void CraftItem(Item item)
         {
             RecipeData recipes = Game.Recipes.GetRecipeData(item.Id);
+
+            var _availableSlot = new List<ItemSlot>(); 
 
             /// Check if sufficient materials is available inside the player inventory
             foreach (Item material in recipes.Materials)
@@ -43,7 +46,8 @@ namespace UZSG.Crafting
 
                 if (count < material.Count)
                 {
-                    return Item.None;
+                    print("Materials Required does not match players current Inventory");
+                    return;
                 }
             }
 
@@ -55,9 +59,12 @@ namespace UZSG.Crafting
 
                 foreach (ItemSlot slot in player.Inventory.Bag.Slots)
                 {
-
-                    if (slot.IsEmpty || material.CompareTo(slot.Item))
+                    if (slot.IsEmpty)
                     {
+                        continue;
+                    }
+
+                    if (!material.CompareTo(slot.Item)){
                         continue;
                     }
 
@@ -81,7 +88,9 @@ namespace UZSG.Crafting
                 }
             }
 
-            return recipes.Output;
+            Item _newItem = new Item(recipes.Output);
+
+            player.Inventory.Bag.TryPutNearest(_newItem);
         }
     }
 }

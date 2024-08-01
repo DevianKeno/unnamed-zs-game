@@ -51,10 +51,13 @@ namespace UZSG.Entities
 
         int _originalLayer;
         GameObject model;
+        Rigidbody rb;
+        public Rigidbody Rigidbody => rb;
 
         protected virtual void Awake()
         {
             model = transform.Find("box").gameObject;
+            rb = GetComponentInChildren<Rigidbody>();
             _originalLayer = model.layer;
         }
 

@@ -67,18 +67,21 @@ namespace UZSG.Crafting
                     if (!material.CompareTo(slot.Item)){
                         continue;
                     }
+                    /*
+                        comparator checks the difference of the remaining count and the
+                        required count of the material.
+                    */
+                    int comparator = slot.Item.Count - remainingCount;
 
-                    int takes = slot.Item.Count - remainingCount;
-
-                    if (takes < remainingCount)
+                    if (comparator > 0)
+                    {
+                        remainingCount -= material.Count;
+                        slot.TakeItems(material.Count);
+                    }
+                    else 
                     {
                         remainingCount -= slot.Item.Count;
                         slot.TakeAll();
-                    }
-                    else
-                    {
-                        remainingCount -= takes;
-                        slot.TakeItems(takes);
                     }
 
                     if (remainingCount <= 0)

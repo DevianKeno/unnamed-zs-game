@@ -33,6 +33,8 @@ namespace UZSG.Systems
         #region World-entry
         static TickSystem tickSystem;
         public static TickSystem Tick { get => tickSystem; }
+        static TimeManager timeManager;
+        public static TimeManager Time { get => timeManager; }
         static AttributesManager attrManager;
         public static AttributesManager Attributes { get => attrManager; }
         static ItemManager itemManager;
@@ -73,6 +75,7 @@ namespace UZSG.Systems
                 console = GetComponentInChildren<Console>();                
                 UIManager = GetComponentInChildren<UIManager>();
                 audioManager = GetComponentInChildren<AudioManager>();
+                timeManager = GetComponentInChildren<TimeManager>();
                 worldManager = GetComponentInChildren<WorldManager>();
                 
                 tickSystem = GetComponentInChildren<TickSystem>();

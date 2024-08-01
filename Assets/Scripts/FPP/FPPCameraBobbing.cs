@@ -31,8 +31,8 @@ namespace UZSG.FPP
 
         void Bob()
         {
-            if (Player.Controls.HorizontalSpeed < MinSpeed) return;
             if (!Player.Controls.IsGrounded) return;
+            if (Player.Controls.HorizontalSpeed < MinSpeed) return;
 
             _bobToUse = Player.Controls.IsRunning ? RunBob : WalkBob;
             AddPosition(FootStepMotion());

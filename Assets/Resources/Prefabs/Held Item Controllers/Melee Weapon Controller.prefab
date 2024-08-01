@@ -185,6 +185,7 @@ MonoBehaviour:
     m_Bits: 2048
   VisualizeAttack: 0
   audioSourceController: {fileID: 2726077485849005911}
+  attackStaminaCost: 10
 --- !u!114 &8354012232475716693
 MonoBehaviour:
   m_ObjectHideFlags: 0

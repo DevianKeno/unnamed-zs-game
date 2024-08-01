@@ -54,11 +54,11 @@ namespace UZSG.Attributes
         /// <summary>
         /// Called when the value reaches its current maximum value.
         /// </summary>
-        public event EventHandler<ValueChangedArgs> OnReachMaximum;
+        public event EventHandler<ValueChangedInfo> OnReachMaximum;
         /// <summary>
         /// Called when the value reaches its minimum value.
         /// </summary>
-        public event EventHandler<ValueChangedArgs> OnReachMinimum;
+        public event EventHandler<ValueChangedInfo> OnReachMinimum;
         /// <summary>
         /// Called when the value reaches zero.
         /// </summary>
@@ -109,9 +109,9 @@ namespace UZSG.Attributes
             PerformCycle();
         }
 
-        public override void Remove(float value)
+        public override void Remove(float value, bool buffer = false)
         {
-            base.Remove(value);
+            base.Remove(value, buffer);
 
             if (DelayChange)
             {
@@ -153,9 +153,9 @@ namespace UZSG.Attributes
             }
         }
 
-        protected override void ValueChanged()
+        protected override void ValueChanged(bool buffer = false)
         {
-            base.ValueChanged();
+            base.ValueChanged(buffer);
                        
             float value = Mathf.Abs(Value - _previousValue);
             if (Value <= _minimum)
@@ -164,6 +164,9 @@ namespace UZSG.Attributes
                 {
                     Previous = _previousValue,
                     Change = value,
+                    New = Value,
+                    ValueChangeType = Value > _previousValue ? ValueChangeType.Increased : ValueChangeType.Decreased,
+                    IsBuffered = buffer,
                 });
                 return;
             }
@@ -174,7 +177,9 @@ namespace UZSG.Attributes
                 {
                     Previous = _previousValue,
                     Change = value,
-                    New = Value
+                    New = Value,
+                    ValueChangeType = Value > _previousValue ? ValueChangeType.Increased : ValueChangeType.Decreased,
+                    IsBuffered = buffer,
                 });
                 return;
             }

@@ -140,8 +140,8 @@ namespace UZSG.Entities
         void InitializeInventory()
         {
             // Inventory.LoadData(Data.Inventory);
-            inventory.Bag.SlotsCount = (int) Generic.GetAttributeFromId("bag_slots_count").Value;
-            inventory.Hotbar.SlotsCount = (int) Generic.GetAttributeFromId("hotbar_size").Value;
+            inventory.Bag.SlotsCount = (int) Generic.GetAttribute("bag_slots_count").Value;
+            inventory.Hotbar.SlotsCount = (int) Generic.GetAttribute("hotbar_size").Value;
             inventory.Initialize();
 
             invUI = Game.UI.Create<PlayerInventoryWindow>("Player Inventory", show: false);
@@ -198,9 +198,9 @@ namespace UZSG.Entities
 
         void OnJumpEnter(object sender, State<MoveStates>.ChangedContext e)
         {
-            if (Vitals.TryGetAttributeFromId("stamina", out Attributes.Attribute attr))
+            if (Vitals.TryGetAttribute("stamina", out Attributes.Attribute attr))
             {
-                float jumpStaminaCost = Generic.GetAttributeFromId("jump_stamina_cost").Value;
+                float jumpStaminaCost = Generic.GetAttribute("jump_stamina_cost").Value;
                 attr.Remove(jumpStaminaCost);
             }
         }

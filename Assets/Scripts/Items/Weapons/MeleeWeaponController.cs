@@ -19,6 +19,7 @@ namespace UZSG.Items.Weapons
         public float attackDuration;
         public int numberOfRays;
         public LayerMask attackLayer;
+        bool _canAttack;
         bool _inhibitActions;
         bool _isAttacking;
 
@@ -39,13 +40,16 @@ namespace UZSG.Items.Weapons
         {
             InitializeAudioController();
             InitializeEventsFromOwnerInput();
+            RetrievePlayerAttributes();
         }
-        
+
         void InitializeAudioController()
         {
             audioSourceController.LoadAudioAssetIds(WeaponData.AudioData);
             audioSourceController.CreateAudioPool(size: 8); 
         }
+
+        Attributes.Attribute playerStamina;
 
         void InitializeEventsFromOwnerInput()
         {
@@ -60,6 +64,20 @@ namespace UZSG.Items.Weapons
             inputs["Secondary Action"].canceled += OnPlayerSecondary;
         }
 
+        void RetrievePlayerAttributes()
+        {
+            if (Player.Vitals.TryGetAttribute("stamina", out var attr))
+            {
+                playerStamina = attr;
+                _canAttack = true;
+            }
+            else
+            {
+                Game.Console.LogWarning($"Player {Player.name} does not have a 'stamina' attribute. Will not be able to attack.");
+                _canAttack = false;
+            }
+        }
+
 
         #region Player input callbacks
 
@@ -69,7 +87,10 @@ namespace UZSG.Items.Weapons
             
             if (context.started)
             {
-                StartCoroutine(AttackCoroutine());
+                if (CanAttack())
+                {
+                    StartCoroutine(AttackCoroutine());
+                }
             }
             else if (context.canceled)
             {
@@ -79,7 +100,8 @@ namespace UZSG.Items.Weapons
 
         void OnPlayerSecondary(InputAction.CallbackContext context)
         {
-            
+            if (!gameObject.activeSelf) return;
+
             if (context.started)
             {
                 
@@ -104,6 +126,18 @@ namespace UZSG.Items.Weapons
             _inhibitActions = false;
         }
 
+        [SerializeField] float attackStaminaCost;
+        bool CanAttack()
+        {
+            if (!_canAttack) return false;
+            if (playerStamina.Value < attackStaminaCost)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         IEnumerator AttackCoroutine()
         {
             if (_inhibitActions || _isAttacking)
@@ -116,11 +150,17 @@ namespace UZSG.Items.Weapons
 
             StartCoroutine(CreateAttackHitbox());
             PlaySound();
+            ConsumeStamina();
             stateMachine.ToState(MeleeWeaponStates.Attack);
             yield return new WaitForSeconds(0.5f); /// SOMETHING ATKSPD THOUGH NOT SO STRAIGHFROWARDS LOTS OF CALCS (short for calculations)
             
             _inhibitActions = false;
             _isAttacking = false;
+        }
+
+        void ConsumeStamina()
+        {
+            playerStamina.Remove(attackStaminaCost, buffer: true);
         }
 
         void PlaySound()

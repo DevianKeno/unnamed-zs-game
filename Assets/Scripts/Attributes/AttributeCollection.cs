@@ -19,7 +19,7 @@ namespace UZSG.Attributes
         
         public T this[string id]
         {
-            get => GetAttributeFromId(id);
+            get => GetAttribute(id);
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace UZSG.Attributes
             }
             else
             {
-                Game.Console?.Log($"Unable to remove Attribute [{id}] as it does not exist within the collection.");
+                Game.Console.Log($"Unable to remove Attribute [{id}] as it does not exist within the collection.");
             }
         }
 
@@ -96,12 +96,12 @@ namespace UZSG.Attributes
             else
             {
                 attribute = null;
-                Game.Console?.Log($"Unable to remove Attribute [{id}] as it does not exist within the collection.");
+                Game.Console.Log($"Unable to remove Attribute [{id}] as it does not exist within the collection.");
                 return false;
             }
         }
 
-        public T GetAttributeFromId(string id)
+        public T GetAttribute(string id)
         {
             if (_attributesDict.ContainsKey(id))
             {
@@ -116,7 +116,7 @@ namespace UZSG.Attributes
             }
         }
 
-        public bool TryGetAttributeFromId(string id, out Attribute attribute)
+        public bool TryGetAttribute(string id, out Attribute attribute)
         {
             if (_attributesDict.ContainsKey(id))
             {

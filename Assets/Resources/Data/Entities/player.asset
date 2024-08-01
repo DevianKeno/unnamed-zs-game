@@ -35,7 +35,7 @@ MonoBehaviour:
       _changeMultiplier: 1
       DelayChange: 0
       DelayedChangeSeconds: 0
-      delayTimer: 2211.9783
+      delayTimer: 2382.9314
     - data: {fileID: 11400000, guid: 03beca28745658c48a7358ce536b9573, type: 2}
       Value: 100
       BaseMaximum: 100
@@ -50,7 +50,7 @@ MonoBehaviour:
       _changeMultiplier: 1
       DelayChange: 1
       DelayedChangeSeconds: 1.5
-      delayTimer: 527.9531
+      delayTimer: 3.34375
     - data: {fileID: 11400000, guid: a256a1de972d93b4b88e0ee04c8d2aa5, type: 2}
       Value: 0
       BaseMaximum: 100
@@ -65,7 +65,7 @@ MonoBehaviour:
       _changeMultiplier: 1
       DelayChange: 0
       DelayedChangeSeconds: 0
-      delayTimer: 1670.127
+      delayTimer: 1841.0801
     - data: {fileID: 11400000, guid: 1163b94315ee82b43880f69e4567d600, type: 2}
       Value: 0
       BaseMaximum: 100
@@ -80,25 +80,25 @@ MonoBehaviour:
       _changeMultiplier: 1
       DelayChange: 0
       DelayedChangeSeconds: 0
-      delayTimer: 1670.127
+      delayTimer: 1841.0801
   Generic:
     Attributes:
     - data: {fileID: 11400000, guid: fe9f66b79d95e7948a4dfcb4512568c7, type: 2}
-      Value: 4
+      Value: 300
       BaseMaximum: 0
       Bonus: 0
       _multiplier: 1
       LimitOverflow: 1
       LimitUnderflow: 0
     - data: {fileID: 11400000, guid: 1ca754ca1365db04c87c8de19db59ede, type: 2}
-      Value: 7
+      Value: 400
       BaseMaximum: 0
       Bonus: 0
       _multiplier: 1
       LimitOverflow: 0
       LimitUnderflow: 0
     - data: {fileID: 11400000, guid: 2d61d3236698a6a4e81d503fae1c7421, type: 2}
-      Value: 2
+      Value: 200
       BaseMaximum: 0
       Bonus: 0
       _multiplier: 1
@@ -120,6 +120,13 @@ MonoBehaviour:
       LimitUnderflow: 0
     - data: {fileID: 11400000, guid: a27faf74b47c0664091a44ac647f437d, type: 2}
       Value: 0.25
+      BaseMaximum: 0
+      Bonus: 0
+      _multiplier: 1
+      LimitOverflow: 1
+      LimitUnderflow: 0
+    - data: {fileID: 11400000, guid: fe7432cf6f0d40c4bb3556a4ad3b22ab, type: 2}
+      Value: 10
       BaseMaximum: 0
       Bonus: 0
       _multiplier: 1

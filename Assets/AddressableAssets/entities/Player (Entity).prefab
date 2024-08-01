@@ -633,8 +633,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1807161492040155152}
+  - component: {fileID: 1504893056223954484}
+  - component: {fileID: 6313547803532779528}
   m_Layer: 0
-  m_Name: Is Grounded
+  m_Name: Ground Checker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -655,6 +657,40 @@ Transform:
   m_Children: []
   m_Father: {fileID: 7699380848211720457}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1504893056223954484
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5950259277001712762}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 0.25, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &6313547803532779528
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5950259277001712762}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0bced2a22ece65740972dd735bb0e765, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  boxCollider: {fileID: 1504893056223954484}
 --- !u!1 &6110845800208884272
 GameObject:
   m_ObjectHideFlags: 0
@@ -1044,24 +1080,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Player: {fileID: 8107631895800867322}
   Acceleration: 10
-  MoveSpeed: 3
-  RunSpeed: 6
+  MoveSpeed: 225
+  RunSpeed: 350
   CrouchSpeed: 2
-  JumpTime: 2
-  JumpHeight: 4
-  Gravity: 0
-  FallSpeedMultiplier: 2
-  CrouchSpeedMultiplier: 0.7
-  LookRotationSpeed: 100
-  GroundingForce: -1
-  GroundDistance: 0.5
+  JumpSpeed: 10
+  TimeScale: 1
   CameraSensitivity: 0.32
   EnableMovementControls: 1
   EnableCameraControls: 1
-  _currentSpeed: 0
+  groundingForce: -1
+  groundDistance: 0.5
+  _targetSpeed: 0
   model: {fileID: 94713427562349016}
   rb: {fileID: 8394152581638175708}
-  groundChecker: {fileID: 1807161492040155152}
+  groundChecker: {fileID: 6313547803532779528}
+  groundCheckerObject: {fileID: 1807161492040155152}
   groundMask:
     serializedVersion: 2
     m_Bits: 512

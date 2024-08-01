@@ -108,10 +108,10 @@ namespace UZSG.UI
 
         void BindPlayerAttributes()
         {
-            HealthBar.BindAttribute(Player.Vitals.GetAttributeFromId("health"));
-            StaminaBar.BindAttribute(Player.Vitals.GetAttributeFromId("stamina"));
-            HungerBar.BindAttribute(Player.Vitals.GetAttributeFromId("hunger"));
-            HydrationBar.BindAttribute(Player.Vitals.GetAttributeFromId("hydration"));
+            HealthBar.BindAttribute(Player.Vitals.GetAttribute("health"));
+            StaminaBar.BindAttribute(Player.Vitals.GetAttribute("stamina"));
+            HungerBar.BindAttribute(Player.Vitals.GetAttribute("hunger"));
+            HydrationBar.BindAttribute(Player.Vitals.GetAttribute("hydration"));
         }
 
         #region Callbacks

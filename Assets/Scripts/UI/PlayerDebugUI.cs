@@ -9,6 +9,7 @@ namespace UZSG.UI
     {
         public TextMeshProUGUI movementStateText;
         public TextMeshProUGUI actionStateText;
+        public TextMeshProUGUI physicsText;
 
         void Update()
         {

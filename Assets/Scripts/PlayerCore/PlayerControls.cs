@@ -23,6 +23,10 @@ namespace UZSG.Players
     public class PlayerControls : MonoBehaviour
     {
         public Player Player;
+        [Space]
+
+        public bool EnableMovementControls = true;
+
 
         #region These should be read as attributes
         /// <summary>
@@ -32,21 +36,12 @@ namespace UZSG.Players
         public float MoveSpeed;
         public float RunSpeed;
         public float CrouchSpeed;
-        public float JumpTime = 5f;
-        public float JumpHeight = 2f;
-        public float Gravity = -9.81f;
-        public float FallSpeedMultiplier = 2f;
-        public float CrouchSpeedMultiplier = 0.7f;
-        public float LookRotationSpeed = 100.0f;
-        #endregion
-        
-        public float GroundingForce = -1f;
-        public float GroundDistance = 0.5f;
+        public float JumpSpeed = 2f;
+        public float TimeScale = 1f;
 
-        [Header("Controls")]
-        public float CameraSensitivity = 0.32f;
-        public bool EnableMovementControls = true;
-        public bool EnableCameraControls = true;
+        #endregion
+
+
         /// <summary>
         /// The input values performed in the current frame.
         /// </summary>
@@ -55,27 +50,21 @@ namespace UZSG.Players
         /// The velocity to be applied for the current frame.
         /// </summary>
         Vector3 _frameVelocity;
-        Vector3 _previousPosition;
-        Vector3 _targetPosition;
 
         StrafeDirection strafeDirection;
         public StrafeDirection StrafeDirection => strafeDirection;
-        [SerializeField] float _currentSpeed;
-        float initialJumpVelocity;
-        float CrouchPosition;
-
-        bool _isTransitioning;
-        bool _isRunning;
-        bool _hasJumped;
+        [SerializeField] float _targetSpeed;
         bool _isMovePressed;
         bool _isMovingBackwards;
+        float _crouchPosition;
+        bool _isTransitioningCrouch;
+        bool _isRunning;
         /// <summary>
         /// Check if holding [Run] key and speed is greater than run threshold
         /// </summary>
         public bool IsRunning { get => _isRunning; }
         bool _isCrouching;
-        public bool isCrouching { get => _isCrouching; }
-
+        public bool IsCrouching { get => _isCrouching; }
         public bool IsMoving
         {
             get
@@ -84,25 +73,15 @@ namespace UZSG.Players
                 return false;
             }
         }
-
-        public bool IsGrounded
-        {
-            get
-            {
-                return Physics.Raycast(groundChecker.position, -Vector3.up, GroundDistance, groundMask);
-            }
-        }
-
+        public bool IsGrounded => groundChecker.IsGrounded;
         public bool IsFalling
         {
-            get => _frameVelocity.y <= 0f && !IsGrounded;
+            get => _frameVelocity.y < 0f && !IsGrounded;
         }
-
         public Vector3 Velocity
         {
             get => rb.velocity;
         }
-
         /// <summary>
         /// Represents how fast the player is moving in any direction.
         /// </summary>
@@ -110,7 +89,6 @@ namespace UZSG.Players
         {
             get => rb.velocity.magnitude;
         }
-
         public float HorizontalSpeed
         {
             get
@@ -119,21 +97,24 @@ namespace UZSG.Players
                 return horizontalVelocity.magnitude;
             }
         }
-
         public float VerticalSpeed
         {
             get => rb.velocity.y;
         }
-
         public float Magnitude
         {
             get => new Vector3(rb.velocity.x, 0, rb.velocity.z).magnitude;   
         }
 
+
         #region Events
+
         public event EventHandler OnMoveStart;
         public event EventHandler OnMoveStop;
+
         #endregion
+
+
 
         [Header("Components")]
         /// <summary>
@@ -141,7 +122,9 @@ namespace UZSG.Players
         /// </summary>
         [SerializeField] Transform model;
         [SerializeField] Rigidbody rb;
-        [SerializeField] Transform groundChecker;
+        public Rigidbody Rigidbody => rb;
+        [SerializeField] GroundChecker groundChecker;
+        [SerializeField] Transform groundCheckerObject;
         [SerializeField] LayerMask groundMask;
         
         InputActionMap actionMap;
@@ -155,7 +138,6 @@ namespace UZSG.Players
             RetrieveAttributes();
             
             Game.Tick.OnTick += Tick;
-            _previousPosition = transform.position;
         }
 
         void InitializeInputs()
@@ -168,16 +150,18 @@ namespace UZSG.Players
                 input.Value.performed += OnPerformInput;
             }
             
-            inputs["Move"].performed += OnStartMove;
-            inputs["Move"].started += OnStartMove;
-            inputs["Move"].canceled += OnStartMove;
+            inputs["Move"].performed += OnMoveInput;
+            inputs["Move"].started += OnMoveInput;
+            inputs["Move"].canceled += OnMoveInput;
 
-            inputs["Jump"].performed += OnJumpInput;        // Space (default)
+            inputs["Jump"].started += OnJumpInput;          // Space (default)
+            inputs["Jump"].canceled += OnJumpInput;        
 
-            inputs["Run"].started += OnStartRun;            // Shift (default)
-            inputs["Run"].canceled += OnStartRun;           // Shift (default)
+            inputs["Run"].started += OnRunInput;            // Shift (default)
+            inputs["Run"].canceled += OnRunInput;           
 
-            inputs["Crouch"].performed += OnCrouchInput;    // LCtrl (default)
+            inputs["Crouch"].started += OnCrouchInput;      // LCtrl (default)
+            inputs["Crouch"].canceled += OnCrouchInput;   
 
             SetControlsEnabled(true);
         }
@@ -205,31 +189,26 @@ namespace UZSG.Players
             if (IsMoving && IsRunning)
             {
                 /// Cache attributes for better performance
-                var runStaminaCost = Player.Generic.GetAttributeFromId("run_stamina_cost").Value;
-                Player.Vitals.GetAttributeFromId("stamina").Remove(runStaminaCost);
+                var runStaminaCost = Player.Generic.GetAttribute("run_stamina_cost").Value;
+                Player.Vitals.GetAttribute("stamina").Remove(runStaminaCost);
             }
         }
 
-        void SetControlsEnabled(bool value)
+        void HandleMovement()
         {
-            if (value)
-            {
-                actionMap.Enable();
-            }
-            else
-            {
-                actionMap.Disable();
-            }
+            HandleDirection();
+            HandleRotation();
+            ApplyMovement();
         }
 
         void RetrieveAttributes()
         {
             /// These can be cached and track changes using events
-            MoveSpeed = Player.Generic.GetAttributeFromId("move_speed").Value;
-            RunSpeed = Player.Generic.GetAttributeFromId("run_speed").Value;
-            CrouchSpeed = Player.Generic.GetAttributeFromId("crouch_speed").Value;
+            MoveSpeed = Player.Generic.GetAttribute("move_speed").Value;
+            RunSpeed = Player.Generic.GetAttribute("run_speed").Value;
+            CrouchSpeed = Player.Generic.GetAttribute("crouch_speed").Value;
             
-            _currentSpeed = MoveSpeed;
+            _targetSpeed = MoveSpeed;
         }
 
         void UpdateStates()
@@ -251,7 +230,10 @@ namespace UZSG.Players
             }
         }
 
-        void OnStartMove(InputAction.CallbackContext context)
+
+        #region Player input callbacks
+
+        void OnMoveInput(InputAction.CallbackContext context)
         {
             if (!EnableMovementControls) return;
 
@@ -273,51 +255,79 @@ namespace UZSG.Players
             }
         }
 
+        void OnRunInput(InputAction.CallbackContext context)
+        {
+            if (!EnableMovementControls) return;
+            if (!IsGrounded) return;
+
+            if (context.started)
+            {
+                if (_isMovingBackwards)
+                {
+                    ToggleRun(false);
+                    return;
+                }
+                if (Player.FPP.IsPerforming) return;
+
+                ToggleRun(true);
+            }
+            else if (context.canceled)
+            {
+                ToggleRun(false);
+            }
+        }
+
         void OnJumpInput(InputAction.CallbackContext context)
         {
             if (!EnableMovementControls) return;
 
-            if (IsGrounded)
+            if (context.started)
             {
-                _hasJumped = true;
+                if (_isRunning)
+                {
+                    ToggleRun(false);
+                }
+                HandleJump();
             }
         }
 
-        void OnStartRun(InputAction.CallbackContext context)
-        {            
-            if (!EnableMovementControls) return;
-            if (Player.FPP.IsPerforming) return;
-            // if (_isMovingBackwards) return;
-
-            if (_isCrouching)
-            {
-                Crouch();
-            }
-
-            ToggleRun(!_isRunning);
-        }
-
-        void ToggleRun(bool value)
+        public bool CanBob
         {
-            _isRunning = value;
-            if (value)
+            get
             {
-                _currentSpeed = RunSpeed;
-                Player.MoveStateMachine.ToState(MoveStates.Run);
-            }
-            else
-            {
-                _currentSpeed = MoveSpeed;
-                Player.MoveStateMachine.ToState(MoveStates.Idle);
+                if (IsGrounded) return true;
+                return false;
             }
         }
+
+        [SerializeField] bool _crouchControlIsToggle = true;
 
         void OnCrouchInput(InputAction.CallbackContext context)
         {            
             if (!EnableMovementControls) return;
 
-            Crouch();
+            if (_crouchControlIsToggle)
+            {
+                if (context.started)
+                {
+                    ToggleCrouch(!_isCrouching);
+                }
+            }
+            else // is hold
+            {
+                if (context.started)
+                {
+                    ToggleCrouch(true);
+                }
+                else if (context.canceled)
+                {
+                    ToggleCrouch(false);
+                }
+            }
         }
+
+        #endregion
+
 
         Vector3 GetCameraForward()
         {
@@ -326,14 +336,34 @@ namespace UZSG.Players
             return camForward;
         }
 
-        void HandleMovement()
+        void ToggleRun(bool run)
         {
-            HandleDirection();
-            HandleRotation();
-            // HandleGravity();
-            // HandleJump();
+            if (_isCrouching)
+            {
+                ToggleCrouch(false);
+            }
 
-            ApplyMovement();
+            if (run)
+            {
+                _targetSpeed = RunSpeed;
+                Player.MoveStateMachine.ToState(MoveStates.Run);
+            }
+            else
+            {
+                _targetSpeed = MoveSpeed;
+                Player.MoveStateMachine.ToState(MoveStates.Idle);
+            }
+            _isRunning = run;
+        }
+
+        void HandleJump()
+        {
+            if (!IsGrounded) return;
+            
+            Vector3 jumpVelocity = rb.velocity;
+            jumpVelocity.y = JumpSpeed * TimeScale;
+            rb.velocity = jumpVelocity;
+            Player.MoveStateMachine.ToState(MoveStates.Jump);
         }
 
         void HandleDirection()
@@ -347,80 +377,58 @@ namespace UZSG.Players
             model.rotation = Quaternion.LookRotation(GetCameraForward().normalized);
         }
 
-        void HandleJump()
-        {
-            if (!_hasJumped) return;
-            _hasJumped = false;
-            
-            Player.MoveStateMachine.ToState(MoveStates.Jump);
-            /// The time required to reach the highest point of the jump
-            float timeToApex = JumpTime / 2;
-            _frameVelocity.y = 2 * JumpHeight / timeToApex; /// this should be cached
-        }
-
-        void HandleGravity()
-        {            
-            /// Calculates the player's internal gravity
-            Gravity = -2 * JumpHeight / Mathf.Pow(JumpTime / 2, 2); /// this should be cached
-
-            if (IsGrounded) /// grounding force only
-            {
-                _frameVelocity.y = GroundingForce;
-
-            }
-            else if (IsFalling) /// increasing fall speed
-            {
-                _frameVelocity.y += Gravity * FallSpeedMultiplier * Time.fixedDeltaTime;
-            }
-            else /// normal gravity
-            {
-                _frameVelocity.y += Gravity * Time.fixedDeltaTime;
-            }
-        }
-        
         void ApplyMovement()
         {
-            Vector3 targetVelocity = _frameVelocity * _currentSpeed;
-            var moveVelocity = Vector3.Lerp(rb.velocity, targetVelocity, Acceleration * Game.Tick.SecondsPerTick);
-            rb.velocity = moveVelocity;
+            var targetVelocity = _frameVelocity * (_targetSpeed * Time.fixedDeltaTime);
+            targetVelocity.y = rb.velocity.y;
+            rb.velocity = targetVelocity * TimeScale;
         }
 
-        void Crouch()
+        void ToggleCrouch(bool crouch)
         {
-            if (_isTransitioning) return;
+            if (_isTransitioningCrouch) return;
+            _isTransitioningCrouch = true;
 
+            float transitionSpeed = 0.66f;
             Player.MoveStateMachine.ToState(MoveStates.Crouch);
-
-            _isTransitioning = !_isTransitioning;
-            _isCrouching = !_isCrouching;
-
-            float TransitionSpeed;
             
-            if (_isCrouching)
+            if (crouch)
             {            
-                _currentSpeed = CrouchSpeed;
-                CrouchPosition = Player.FPP.CameraController.transform.position.y - 1f;
-                TransitionSpeed = 0.3f;
+                _targetSpeed = CrouchSpeed;
+                _crouchPosition = Player.FPP.CameraController.transform.position.y - 1f;
             }
             else
             {
-                _currentSpeed = MoveSpeed;
-                CrouchPosition = Player.FPP.CameraController.transform.position.y + 1f;
-                TransitionSpeed = 0.3f;
+                _targetSpeed = MoveSpeed;
+                _crouchPosition = Player.FPP.CameraController.transform.position.y + 1f;
             }
+            _isCrouching = crouch;
 
-            LeanTween.value(gameObject, Player.FPP.CameraController.transform.position.y, CrouchPosition, TransitionSpeed)
-            .setOnUpdate((i) =>
+            LeanTween.value(gameObject, Player.FPP.CameraController.transform.position.y, _crouchPosition, transitionSpeed)
+            .setOnUpdate((float i) =>
             {   
                 Player.FPP.CameraController.transform.position = new Vector3(
                     Player.FPP.CameraController.transform.position.x,
                     i,
                     Player.FPP.CameraController.transform.position.z
                 );
-            }).setOnComplete(() =>
+            })
+            .setOnComplete(() =>
             {
-                _isTransitioning = false;
+                _isTransitioningCrouch = false;
             }).setEaseOutExpo();
+        }
+
+        void SetControlsEnabled(bool value)
+        {
+            if (value)
+            {
+                actionMap.Enable();
+            }
+            else
+            {
+                actionMap.Disable();
+            }
         }
 
         public void SetControl(string name, bool enabled)

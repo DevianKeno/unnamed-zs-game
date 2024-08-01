@@ -1,12 +1,10 @@
 using UnityEngine;
-using TMPro;
 
 namespace UZSG.UI
 {
     public class ProgressBar : MonoBehaviour
     {
-        [SerializeField]
-        [Range(0, 100)]
+        [SerializeField, Range(0, 100)]
         protected float _value;
         public float Value
         {
@@ -21,21 +19,19 @@ namespace UZSG.UI
             }
         }
         
-        [Space(10)]
-        [SerializeField] RectTransform barRect;
-        [SerializeField] RectTransform fillRect;
+        [Space]
+        [SerializeField] protected RectTransform barRect;
+        [SerializeField] protected RectTransform fillRect;
 
         void OnValidate()
         {
             Refresh();
         }
 
-        public void Refresh()
+        public virtual void Refresh()
         {
-            fillRect.offsetMax = new(
-                -Mathf.Lerp(barRect.rect.width, 0f, Value),
-                fillRect.offsetMax.y
-            );
+            float x = Mathf.Lerp(barRect.rect.width, 0f, Value / 100f);
+            fillRect.offsetMax = new Vector2(-x, fillRect.offsetMax.y);
         }
     }
 }

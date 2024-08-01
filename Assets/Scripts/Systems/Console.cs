@@ -52,6 +52,7 @@ namespace UZSG.Systems
             Log("Initializing console...");
             InitializeCommands();
             InitializeInputs();
+            Log("Press F1 to hide console");
         }
 
         void OnLateInit()

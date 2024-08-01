@@ -27,14 +27,27 @@ namespace UZSG.Players
             Player.ActionStateMachine.OnStateChanged += ActionStateChanged;
         }
 
-        private void ActionStateChanged(object sender, StateMachine<ActionStates>.StateChangedContext e)
-        {
-            UI.actionStateText.text = e.To.ToString();
+        void FixedUpdate()
+        {/*
+            UI.physicsText.text = $@"TPS: {Game.Tick.TPS}
+SPT: {Game.Tick.SecondsPerTick}
+Delta time: {Time.deltaTime}
+Player movement physics:
+  currentV: {Player.Controls.Rigidbody.velocity}
+  targetV: {Player.Controls._targetVelocity}
+  deltaMultiplier: {Player.Controls.deltaTargetDebug}
+  changeV: {Player.Controls._velocityChange}
+";*/
         }
 
-        private void MovementStateChanged(object sender, StateMachine<MoveStates>.StateChangedContext e)
+        void MovementStateChanged(object sender, StateMachine<MoveStates>.StateChangedContext e)
         {
-            UI.movementStateText.text = e.To.ToString();
+            UI.movementStateText.text = $"Move state: {e.To}";
+        }
+
+        void ActionStateChanged(object sender, StateMachine<ActionStates>.StateChangedContext e)
+        {
+            UI.actionStateText.text = $"Action state: {e.To}";
         }
 
         void OnDisable()

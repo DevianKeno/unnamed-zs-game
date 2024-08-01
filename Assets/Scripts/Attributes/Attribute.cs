@@ -10,9 +10,9 @@ namespace UZSG.Attributes
     [Serializable]
     public class Attribute
     {
-        public enum ChangedType { Increased, Decreased }
-        
-        public struct ValueChangedArgs
+        public enum ValueChangeType { Increased, Decreased }
+
+        public struct ValueChangedInfo
         {
             /// <summary>
             /// The value before the change.
@@ -26,7 +26,8 @@ namespace UZSG.Attributes
             /// The amount of value changed.
             /// </summary>
             public float Change { get; set; }
-            public ChangedType ChangedType { get; set; }
+            public bool IsBuffered { get; set; }
+            public ValueChangeType ValueChangeType { get; set; }
         }
 
         public static Attribute None => null;
@@ -98,11 +99,11 @@ namespace UZSG.Attributes
         /// <summary>
         /// Fired everytime ONLY IF the value of this attribute is changed.
         /// </summary>
-        public event EventHandler<ValueChangedArgs> OnValueChanged;
+        public event EventHandler<ValueChangedInfo> OnValueChanged;
         /// <summary>
         /// Called when the value reaches zero.
         /// </summary>
-        public event EventHandler<ValueChangedArgs> OnReachZero;
+        public event EventHandler<ValueChangedInfo> OnReachZero;
 
         #endregion
 
@@ -150,13 +151,13 @@ namespace UZSG.Attributes
         /// <summary>
         /// Remove amount from the attribute's value.
         /// </summary>
-        public virtual void Remove(float value)
+        public virtual void Remove(float value, bool buffer = false)
         {
             _previousValue = Value;
             Value -= value;
             if (_previousValue == Value) return;
             CheckUnderflow();
-            ValueChanged();
+            ValueChanged(buffer);
         }
         
         /// <summary>
@@ -176,7 +177,7 @@ namespace UZSG.Attributes
             return false;
         }
         
-        protected virtual void ValueChanged()
+        protected virtual void ValueChanged(bool buffer = false)
         {
             if (Value == _previousValue) return;
             
@@ -185,7 +186,9 @@ namespace UZSG.Attributes
             {
                 Previous = _previousValue,
                 Change = value,
-                ChangedType = Value > _previousValue ? ChangedType.Increased : ChangedType.Decreased
+                New = Value,
+                ValueChangeType = Value > _previousValue ? ValueChangeType.Increased : ValueChangeType.Decreased,
+                IsBuffered = buffer,
             });
 
             if (Value <= 0)
@@ -194,7 +197,9 @@ namespace UZSG.Attributes
                 {
                     Previous = _previousValue,
                     Change = value,
-                    New = Value
+                    New = Value,
+                    ValueChangeType = Value > _previousValue ? ValueChangeType.Increased : ValueChangeType.Decreased,
+                    IsBuffered = buffer,
                 });
                 return;
             }

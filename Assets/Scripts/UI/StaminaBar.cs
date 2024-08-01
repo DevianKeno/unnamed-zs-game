@@ -24,7 +24,7 @@ namespace UZSG.UI
             _fullSizeDelta = 0f;
         }
 
-        void ValueChangedCallback(object sender, Attribute.ValueChangedArgs e)
+        void ValueChangedCallback(object sender, Attribute.ValueChangedInfo e)
         {
             Attribute attr = (Attribute) sender;
             BarValue = attr.Value;

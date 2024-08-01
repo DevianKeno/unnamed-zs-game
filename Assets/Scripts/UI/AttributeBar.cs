@@ -7,18 +7,45 @@ namespace UZSG.UI
     {
         [SerializeField] protected Attribute attribute;
         public Attribute Attribute => attribute;
+        public float BufferDuration = 0.2f;
+        public LeanTweenType TweenType = LeanTweenType.linear;
 
-        public void BindAttribute(Attribute value)
+        [SerializeField] protected RectTransform bufferRect;
+
+        public void BindAttribute(Attribute attr)
         {
-            if (!value.IsValid) return;
+            if (!attr.IsValid) return;
 
-            attribute = value;
-            attribute.OnValueChanged += (sender, e) =>
-            {
-                Value = attribute.ValueMaxRatio;
-            };
-
+            attribute = attr;
+            attribute.OnValueChanged += OnValueChanged;
             Refresh();
+        }
+
+        void OnValueChanged(object sender, Attribute.ValueChangedInfo info)
+        {
+            Value = attribute.ValueMaxRatio * 100f;
+
+            if (info.IsBuffered)
+            {
+                float start = Mathf.Lerp(barRect.rect.width, 0f, info.Previous / 100f);
+                float end = Mathf.Lerp(barRect.rect.width, 0f, info.New / 100f);
+
+                LeanTween.cancel(gameObject);
+                LeanTween.value(gameObject, start, end, BufferDuration)
+                .setEase(TweenType)
+                .setOnUpdate((float x) =>
+                {
+                    bufferRect.offsetMax = new Vector2(-x, bufferRect.offsetMax.y);
+                });
+            }
+        }
+
+        public override void Refresh()
+        {
+            base.Refresh();
+
+            float x = Mathf.Lerp(barRect.rect.width, 0f, Value / 100f);
+            bufferRect.offsetMax = new Vector2(-x, bufferRect.offsetMax.y);
         }
     }
 }

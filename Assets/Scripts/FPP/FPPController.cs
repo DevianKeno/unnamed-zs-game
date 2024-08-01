@@ -23,6 +23,7 @@ namespace UZSG.FPP
         [Space]
         
         [SerializeField] HeldItemController heldItem;
+        public HeldItemController HeldItem => heldItem;
         [SerializeField] GameObject heldItemsContainer;
         Dictionary<HotbarIndex, HeldItemController> _cachedHeldItems = new();
         Dictionary<string, Viewmodel> _cachedViewmodelsById = new();

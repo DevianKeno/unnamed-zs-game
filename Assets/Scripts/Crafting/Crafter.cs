@@ -11,16 +11,6 @@ namespace UZSG.Crafting
     {
         public List<Container> containers;
 
-        // public void ViewRecipe(Item item)
-        // {
-        //     RecipeData recipes = Game.Recipes.GetRecipeData(item.Id);
-
-        //     foreach (Item material in recipes.Materials)
-        //     {
-        //         print(material.Name);
-        //     }
-        // }
-
         /// <summary>
         /// Consumes items in the container and returns an item whenever the required resource is available. 
         /// Returns a dictionary of slots pertaining to the recipe. 
@@ -34,19 +24,23 @@ namespace UZSG.Crafting
 
             foreach (Item material in item.Data.Recipes[recipeIndex].Materials)
             {
+                var materialSlots = new List<ItemSlot>();
+                
+                int _totalItemCount = 0;
 
                 foreach (Container container in containers)
                 {
-                    var materialSlots = new List<ItemSlot>();
-
-                    if (container.ContainsCount(item: material, material.Count, out materialSlots))
-                    {
-                        dictSlots.Add(material, materialSlots);
-                    } else {
-                        print("Materials Required does not match players current Inventory");
-                        return false;
-                    }
+                    var tempSlots = new List<ItemSlot>();
+                    _totalItemCount += container.ItemCount(material, out tempSlots);
+                    materialSlots.AddRange(tempSlots);
                 }
+
+                if (_totalItemCount < material.Count){
+                    print("Materials required does not match the current container");
+                    return false;
+                } 
+
+                dictSlots.Add(material, materialSlots);
             }
 
             return true;
@@ -66,7 +60,12 @@ namespace UZSG.Crafting
                     /*
                         comparator checks the difference of the remaining count and the
                         required count of the material.
-                    */
+                    */                    
+                    if (remainingCount <= 0)
+                    {
+                        break;
+                    }
+
                     int comparator = slot.Item.Count - remainingCount;
 
                     if (comparator > 0)
@@ -80,10 +79,6 @@ namespace UZSG.Crafting
                         slot.TakeAll();
                     }
 
-                    if (remainingCount <= 0)
-                    {
-                        continue;
-                    }
                 }
             }
         }

@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 using UZSG.UI;
+using UZSG.World;
 using UZSG.World.Weather;
 using UZSG.WorldBuilder;
 
@@ -100,8 +101,7 @@ namespace UZSG.Systems
             Application.targetFrameRate = TargetFramerate;
         }
 
-        public TimeController timeController;
-        public WeatherController weatherController;
+        public WorldEventController worldEventController;
 
         void InitializeManagers()
         {
@@ -120,10 +120,7 @@ namespace UZSG.Systems
             entityManager.Initialize();
             recipeManager.Initialize();
 
-            /// DEBUGGING ONLY
-            // timeController.Initialize();
-            // weatherController.Initialize();
-
+            worldEventController.Initialize();
 
             #endregion            
 

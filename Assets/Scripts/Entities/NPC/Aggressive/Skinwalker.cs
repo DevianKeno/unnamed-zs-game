@@ -9,6 +9,7 @@ namespace UZSG.Entities
     public class Skinwalker : Entity
     {
         EntityHitboxController hitboxes;
+        EnemyActionStates actionState;
 
         void Awake()
         {
@@ -18,6 +19,12 @@ namespace UZSG.Entities
         void Start()
         {
             InitializeHitboxEvents();
+        }
+
+        void LateUpdate()
+        {
+            actionState = handleTransition();
+            executeAction(actionState);
         }
 
         public override void OnSpawn()

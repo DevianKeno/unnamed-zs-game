@@ -22,6 +22,7 @@ namespace UZSG.FPP
         public Player Player;
         [Space]
         
+        bool _isEnabled;
         [SerializeField] HeldItemController heldItem;
         public HeldItemController HeldItem => heldItem;
         [SerializeField] GameObject heldItemsContainer;
@@ -95,6 +96,14 @@ namespace UZSG.FPP
             HoldItem(armsData, HotbarIndex.Hands);
         }
 
+
+        #region Public
+
+        public void ToggleControls(bool enabled)
+        {
+            cameraController.ToggleControls(enabled);
+        }
+
         /// <summary>
         /// Hold an item in FPP perspective. Does nothing if the item is not holdable.
         /// </summary>
@@ -108,6 +117,9 @@ namespace UZSG.FPP
             });
         }
 
+        #endregion
+
+        
         /// <summary>
         /// Load view model from addressables.
         /// </summary>

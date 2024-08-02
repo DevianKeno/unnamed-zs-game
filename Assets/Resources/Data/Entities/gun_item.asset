@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: gun_item
   m_EditorClassIdentifier: 
   AssetReference:
-    m_AssetGUID: 40f96aaff95f534479b911626edf87ba
+    m_AssetGUID: 4250953196aaf1a48bdabe997cd930c5
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0

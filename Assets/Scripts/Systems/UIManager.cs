@@ -31,7 +31,6 @@ namespace UZSG.UI
         }
 
         bool _isInitialized;
-
         public bool EnableScreenAnimations = true;
         [SerializeField] Color interactionColor;
         public Color InteractionColor
@@ -45,6 +44,7 @@ namespace UZSG.UI
             }
         }
 
+        Window _currentWindow;
         [SerializeField] Canvas canvas;
         public Canvas Canvas => canvas;
 
@@ -128,6 +128,21 @@ namespace UZSG.UI
             return null;
         }
 
+        public GameObject Create(string prefabName, Transform parent, bool inSafeArea = true)
+        {
+            if (prefabsDict.ContainsKey(prefabName))
+            {
+                var go = Instantiate(prefabsDict[prefabName], parent);
+                go.name = prefabName;
+                return go;
+            }
+
+            var msg = $"UI Prefab '{prefabName}' does not exist.";
+            Game.Console.Log(msg);
+            Debug.LogWarning(msg);
+            return null;
+        }
+
         public T Create<T>(string prefabName, bool show = true) where T : Window
         {            
             if (prefabsDict.ContainsKey(prefabName))
@@ -147,6 +162,36 @@ namespace UZSG.UI
             Game.Console.Log(msg);
             Debug.LogWarning(msg);
             return default;
+        }
+
+        public T Create<T>(string prefabName, Transform parent, bool show = true) where T : Window
+        {            
+            if (prefabsDict.ContainsKey(prefabName))
+            {
+                var go = Instantiate(prefabsDict[prefabName], parent);
+                go.name = prefabName;
+
+                if (go.TryGetComponent(out T element))
+                {
+                    if (!show) element.Hide();
+                    return element;
+                }
+                return default;
+            }
+
+            var msg = $"Unable to create UI element, it does not exist";
+            Game.Console.Log(msg);
+            Debug.LogWarning(msg);
+            return default;
+        }
+
+        public void DisplaySolo(Window window)
+        {
+            if (_currentWindow == window) return;
+
+            _currentWindow.Hide();
+            _currentWindow = window;
+            window.Show(); 
         }
 
         public GameObject CreateBlocker(IUIElement forElement = null, Action onClick = null)

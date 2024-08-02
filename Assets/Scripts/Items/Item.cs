@@ -94,10 +94,7 @@ namespace UZSG.Items
             excess = None;
             if (item.IsNone) return false;
             if (!item.Data.IsStackable) return false;
-            if (!CompareTo(item))
-            {
-                return false;
-            }
+            if (!CompareTo(item)) return false;
 
             _count += item.Count;
             if (_count > Data.StackSize)

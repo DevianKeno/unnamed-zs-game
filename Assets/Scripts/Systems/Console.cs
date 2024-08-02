@@ -267,7 +267,7 @@ namespace UZSG.Systems
 
         public void LogAndUnityLog(object message)
         {
-            Game.Console.Log(message);
+            Game.Console.LogWarning(message);
             Debug.LogWarning(message);
         }
     }

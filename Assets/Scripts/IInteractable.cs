@@ -1,6 +1,5 @@
 using System;
-using UnityEngine;
-using UZSG.Players;
+using UZSG.Entities;
 
 namespace UZSG.Interactions
 {
@@ -19,7 +18,7 @@ namespace UZSG.Interactions
         public string ActionText { get; }
         public string Name { get; }
         public event EventHandler<InteractArgs> OnInteract;
-        public void Interact(PlayerActions actor, InteractArgs args);
+        public void Interact(IInteractActor actor, InteractArgs args);
         public virtual void OnLookEnter() { }
         public virtual void OnLookExit() { }
     }

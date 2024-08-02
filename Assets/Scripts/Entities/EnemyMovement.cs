@@ -9,7 +9,7 @@ namespace UZSG.Entities
 {
     public class EnemyMovement : MonoBehaviour
     {
-        public Entity entity;
+        //public Entity entity;
         public Transform player; // used for player position
         private NavMeshAgent enemyEntity; // the entity's agent movement
         public float triggerDistance; // minimum distance from player before entity follows it

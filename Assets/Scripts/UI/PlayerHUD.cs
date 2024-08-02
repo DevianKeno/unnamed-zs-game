@@ -33,6 +33,8 @@ namespace UZSG.UI
         public GameObject hotbar;
         public GameObject pickupsIndicatorContainer;
 
+        public DynamicCrosshair crosshair;
+
         internal void Initialize()
         {
             if (Player == null)
@@ -45,6 +47,7 @@ namespace UZSG.UI
 
             InitializeHotbarSlots();
             InitializeEvents();
+            crosshair.player = Player;
         }
 
         void InitializeHotbarSlots()
@@ -157,5 +160,7 @@ namespace UZSG.UI
         }
 
         #endregion
+
+
     }
 }

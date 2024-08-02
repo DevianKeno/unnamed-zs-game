@@ -14,6 +14,11 @@ namespace UZSG.Players
             _isGrounded = true;
         }
 
+        public void OnTriggerStay(Collider other)
+        {
+            _isGrounded = true;
+        }
+
         public void OnTriggerExit(Collider other)
         {
             _isGrounded = false;

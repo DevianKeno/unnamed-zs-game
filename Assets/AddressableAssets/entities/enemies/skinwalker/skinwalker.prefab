@@ -137,7 +137,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7937397935011984496}
   - component: {fileID: 7130552272056748472}
-  - component: {fileID: 5212347924052863708}
+  - component: {fileID: 5636306330842002441}
   - component: {fileID: 6820198976887448944}
   - component: {fileID: 4342932713843885093}
   - component: {fileID: 4710550939094238023}
@@ -188,7 +188,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &5212347924052863708
+--- !u!114 &5636306330842002441
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -275,7 +275,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.6, y: 2, z: 0.6}
   m_Center: {x: 0, y: 1, z: 0}
---- !u!195 &5570571676706201943
 NavMeshAgent:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

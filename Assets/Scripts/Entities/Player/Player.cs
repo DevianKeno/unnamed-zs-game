@@ -17,10 +17,14 @@ using UZSG.Crafting;
 
 namespace UZSG.Entities
 {
+    public interface IInteractActor
+    {
+    }
+
     /// <summary>
     /// Player entity.
     /// </summary>
-    public class Player : Entity
+    public class Player : Entity, IInteractActor
     {
         public bool CanPickUpItems = true;
 
@@ -34,18 +38,18 @@ namespace UZSG.Entities
         public AttributeCollection<GenericAttribute> Generic => generic;
         [SerializeField] InventoryHandler inventory;
         public InventoryHandler Inventory => inventory;
+        [SerializeField] InventoryCrafting craftingAgent;
+        public Crafter CraftingAgent => craftingAgent;
         StatusEffectCollection statusEffects;
         public StatusEffectCollection StatusEffects => statusEffects;
         
         public Vector3 Forward => MainCamera.transform.forward;
         public Vector3 EyeLevel => MainCamera.transform.position;
 
-        public PlayerInventoryWindow invUI;
-        public PlayerHUD HUD;
-
-        [SerializeField]
-        public Crafter CraftingAgent;
-        
+        PlayerInventoryWindow invUI;
+        public PlayerInventoryWindow InventoryGUI => invUI;
+        PlayerHUD _HUD;
+        public PlayerHUD HUD => _HUD;
 
         #region Events
 
@@ -93,7 +97,10 @@ namespace UZSG.Entities
             InitializeInputs();
             
             Controls.Initialize();
+            Controls.Enable();
             Actions.Initialize();
+            Actions.Enable();
+            
             FPP.Initialize();
             ParentMainCameraToFPPController();
 
@@ -149,19 +156,19 @@ namespace UZSG.Entities
             invUI.Initialize();
             invUI.OnOpen += () =>
             {
-                TogglePlayerControlsOnInventory(false);
+                ToggleControlsOnGUI(false);
             };
             invUI.OnClose += () =>
             {
-                TogglePlayerControlsOnInventory(true);
+                ToggleControlsOnGUI(true);
             };
         }
 
         void InitializeHUD()
         {
-            HUD = Game.UI.Create<PlayerHUD>("Player HUD");
-            HUD.BindPlayer(this);
-            HUD.Initialize();
+            _HUD = Game.UI.Create<PlayerHUD>("Player HUD");
+            _HUD.BindPlayer(this);
+            _HUD.Initialize();
         }
         
         void InitializeStateMachines()
@@ -201,7 +208,7 @@ namespace UZSG.Entities
             if (Vitals.TryGetAttribute("stamina", out Attributes.Attribute attr))
             {
                 float jumpStaminaCost = Generic.GetAttribute("jump_stamina_cost").Value;
-                attr.Remove(jumpStaminaCost);
+                attr.Remove(jumpStaminaCost, buffer: true);
             }
         }
         
@@ -218,13 +225,14 @@ namespace UZSG.Entities
             invUI.ToggleVisibility();
         }
 
-        void TogglePlayerControlsOnInventory(bool enable)
+        public void ToggleControlsOnGUI(bool enable)
         {
             Controls.SetControl("Look", enable);
             Controls.SetControl("Primary Action", enable);
             Controls.SetControl("Secondary Action", enable);
             Controls.SetControl("Reload", enable);
             Controls.SetControl("Hotbar", enable);
+            Controls.SetControl("Interact", enable);
             Controls.SetControl("Unholster", enable);
         }
     }

@@ -41,7 +41,7 @@ namespace UZSG.Players
 
         #endregion
 
-
+        bool _isEnabled;
         /// <summary>
         /// The input values performed in the current frame.
         /// </summary>
@@ -235,6 +235,7 @@ namespace UZSG.Players
 
         void OnMoveInput(InputAction.CallbackContext context)
         {
+            if (!_isEnabled) return;
             if (!EnableMovementControls) return;
 
             _frameInput.Move = context.ReadValue<Vector2>();
@@ -257,6 +258,7 @@ namespace UZSG.Players
 
         void OnRunInput(InputAction.CallbackContext context)
         {
+            if (!_isEnabled) return;
             if (!EnableMovementControls) return;
             if (!IsGrounded) return;
 
@@ -279,6 +281,7 @@ namespace UZSG.Players
 
         void OnJumpInput(InputAction.CallbackContext context)
         {
+            if (!_isEnabled) return;
             if (!EnableMovementControls) return;
 
             if (context.started)
@@ -303,7 +306,8 @@ namespace UZSG.Players
         [SerializeField] bool _crouchControlIsToggle = true;
 
         void OnCrouchInput(InputAction.CallbackContext context)
-        {            
+        {
+            if (!_isEnabled) return;
             if (!EnableMovementControls) return;
 
             if (_crouchControlIsToggle)
@@ -417,6 +421,16 @@ namespace UZSG.Players
             {
                 _isTransitioningCrouch = false;
             }).setEaseOutExpo();
+        }
+
+        public void Enable()
+        {
+            _isEnabled = true;
+        }
+
+        public void Disable()
+        {
+            _isEnabled = false;
         }
 
         void SetControlsEnabled(bool value)

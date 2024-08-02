@@ -6,7 +6,7 @@ using UZSG.Systems;
 
 namespace UZSG.Entities
 {
-    public class Skinwalker : Enemy
+    public class Skinwalker : Entity
     {
         EntityHitboxController hitboxes;
         EnemyActionStates actionState;

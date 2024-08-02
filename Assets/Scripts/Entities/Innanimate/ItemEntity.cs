@@ -108,9 +108,11 @@ namespace UZSG.Entities
             }
         }
 
-        public void Interact(PlayerActions actor, InteractArgs args)
+        public void Interact(IInteractActor actor, InteractArgs args)
         {
-            actor.PickUpItem(this);
+            if (actor is not Player player) return;
+
+            player.Actions.PickUpItem(this);
         }
 
         /// <summary>

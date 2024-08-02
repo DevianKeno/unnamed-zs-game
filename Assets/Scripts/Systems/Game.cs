@@ -121,7 +121,7 @@ namespace UZSG.Systems
             recipeManager.Initialize();
 
             /// DEBUGGING ONLY
-            timeController.Initialize();
+            // timeController.Initialize();
             // weatherController.Initialize();
 
 

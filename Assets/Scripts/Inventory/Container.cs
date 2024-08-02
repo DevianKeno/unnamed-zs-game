@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UZSG.Inventory;
 using UZSG.Items;
+using UZSG.Systems;
 
 namespace UZSG
 {
@@ -165,9 +166,37 @@ namespace UZSG
             return count >= item.Count;
         }
 
+        /// <summary>
+        /// Combines this container to another container. <Read Only>
+        /// Returns a combined COPY of the slots of both containers.
+        /// </summary>
+        public List<ItemSlot> Combine(Container other)
+        {
+            List<ItemSlot> slots = new();
+            slots.AddRange(Slots);
+            slots.AddRange(other.Slots);
+            return slots;
+        }
+
+        /// <summary>
+        /// Prints the items inside the container
+        /// </summary>
+        public virtual void PrintItems()
+        {
+            foreach(ItemSlot slot in Slots){
+
+                if(slot.Item.CompareTo(Item.None)){
+                    continue;
+                }
+                print($"Slot {slot.Index}: {slot.Item.Name} ({slot.Item.Count})");
+            }
+        }
+
+
         public virtual void RemoveItems(List<Item> items)
         {
         }
+
 
         public virtual void ClearItem(ItemSlot slot)
         {

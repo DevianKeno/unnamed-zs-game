@@ -356,6 +356,11 @@ namespace UZSG.UI
                     
                 });
             }
+            itemOptions.AddChoice("Drop")
+            .AddCallback(() =>
+            {
+                Player.Inventory.DropItem(slot.Index);
+            });
 
             itemOptions.Show();
         }

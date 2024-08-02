@@ -92,6 +92,8 @@ namespace UZSG.Items
         public bool Combine(Item item, out Item excess)
         {
             excess = None;
+            if (item.IsNone) return false;
+            if (!item.Data.IsStackable) return false;
             if (!CompareTo(item))
             {
                 return false;

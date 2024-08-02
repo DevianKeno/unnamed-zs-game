@@ -82,7 +82,7 @@ namespace UZSG.FPP
             float mouseY = lookInput.y * Sensitivity;// * Time.deltaTime;
 
             _verticalRotation -= mouseY;
-            _verticalRotation = Mathf.Clamp(_verticalRotation, -89f, 89f);
+            _verticalRotation = Mathf.Clamp(_verticalRotation, -80f, 80f);
             _horizontalRotation += mouseX;
 
             transform.localEulerAngles = new(

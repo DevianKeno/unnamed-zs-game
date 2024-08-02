@@ -13,7 +13,7 @@ namespace UZSG.World
         [SerializeField] protected WorldEventData data;
         public WorldEventData Data => data;
         bool _isActive;
-        public bool IsActive => _isActive;
+        public bool Ongoing => _isActive;
 
         public event EventHandler<string> OnEventStart;
         public event EventHandler<string> OnEventOccur;

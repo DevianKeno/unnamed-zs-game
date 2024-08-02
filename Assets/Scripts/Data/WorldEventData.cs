@@ -16,16 +16,14 @@ namespace UZSG.World
         public float ChanceToOccur;
     }
 
-    public enum EventType { Weather, World, Attack }
-
     [Serializable]
     [CreateAssetMenu(fileName = "New World Event Data", menuName = "UZSG/World Event Data")]
     public class WorldEventData : BaseData
     {
         public string Name;
-        public EventType EventType;
         public float ChanceToOccur;
         public int OccurEverySecond;
+
         public List<EventPrefab> EventPrefab;
     }
 

@@ -13,10 +13,10 @@ namespace UZSG.World
     public class WorldEventsController : MonoBehaviour
     {
         public int InternalCountdown = 0;
+        [SerializeField] int _countdown = 0;
         public List<WorldEvent> WorldEvents;
         public List<WorldEventData> worldEventsData;
 
-        [SerializeField] int _countdown = 0;
         float _currentTime = 0;
         int _maxCountdown = 0;
         int tempCount = 0;
@@ -33,14 +33,6 @@ namespace UZSG.World
             _weatherController.Initialize();
 
             Game.Tick.OnTick += OnTick;
-            
-            // foreach (var worldEvent in WorldEvents)
-            // {
-            //     if (worldEvent.Data.OccurEverySecond > _maxCountdown) 
-            //     {
-            //         _maxCountdown = worldEvent.Data.OccurEverySecond;
-            //     }
-            // }
             
             foreach (var worldEventData in worldEventsData)
             {
@@ -82,7 +74,7 @@ namespace UZSG.World
         {
             foreach (WorldEvent worldEvent in WorldEvents)
             {
-                if (worldEvent.IsActive)
+                if (!worldEvent.Ongoing)
                 {
                     SpawnEvent(worldEvent);
                 }
@@ -91,8 +83,6 @@ namespace UZSG.World
 
         void InitializeEvent(WorldEvent worldEvent)
         {
-            // worldEvent.OnEventStart += _weatherController.OnEventStart;
-
             worldEvent.OnEventStart += OnEventStart;
             worldEvent.OnEventStart += _timeController.OnEventStart;
             worldEvent.OnEventStart += _weatherController.OnEventStart;
@@ -115,29 +105,27 @@ namespace UZSG.World
             /// 
         }
 
+        EventPrefab SelectEvent(WorldEvent worldEvent)
+        {
+            List<EventPrefab> eventPrefabs = new();
+            
+            int chance = UnityEngine.Random.Range(1, 100);
+
+            foreach (EventPrefab eventPrefab in worldEvent.Data.EventPrefab)
+            {
+                if (worldEvent.Data.ChanceToOccur >= chance) eventPrefabs.Add(eventPrefab);
+            }
+            EventPrefab selectedEvent = eventPrefabs.Count > 1 ? eventPrefabs[UnityEngine.Random.Range(0, eventPrefabs.Count)] : eventPrefabs[0];
+
+            return selectedEvent;
+        }
         void SpawnEvent(WorldEvent worldEvent)
         {
-            if (worldEvent.IsActive) return;
-
             if (_countdown == worldEvent.Data.OccurEverySecond)
             {
+                EventPrefab selectedEvent = SelectEvent(worldEvent);
                 InitializeEvent(worldEvent);
-   
-                List<EventPrefab> eventPrefabs = new();
-                EventPrefab selectedEvent;
-                int chance = UnityEngine.Random.Range(1, 100);
-
-                foreach (EventPrefab eventPrefab in worldEvent.Data.EventPrefab)
-                {
-                    if (eventPrefab.ChanceToOccur >= chance) eventPrefabs.Add(eventPrefab);
-                }
-
-                if (eventPrefabs.Count > 1)
-                    selectedEvent = eventPrefabs[UnityEngine.Random.Range(0, eventPrefabs.Count)];
-                else
-                    selectedEvent = eventPrefabs[0];
-
-                // worldEvent.EndEvent();
+                print(selectedEvent.Name);
             }
         }
     }

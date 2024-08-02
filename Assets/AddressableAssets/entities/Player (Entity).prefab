@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7266182500231018910}
-  - component: {fileID: 2762181692375980180}
+  - component: {fileID: 3776927174533104677}
   m_Layer: 0
   m_Name: Crafting Controller
   m_TagString: Untagged
@@ -32,7 +32,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 7699380848211720457}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2762181692375980180
+--- !u!114 &3776927174533104677
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,11 +41,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 875597890616857745}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9ddf594ea1efd5f4299ebdfbbf3cbe75, type: 3}
+  m_Script: {fileID: 11500000, guid: 10484e71a6ffec04ea5b1c696cede02a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Amount: 0
-  player: {fileID: 8107631895800867322}
+  containers:
+  - {fileID: 2347074114045292195}
+  - {fileID: 7107611863965880641}
+  PlayerEntity: {fileID: 8107631895800867322}
 --- !u!1 &1560824521149795163
 GameObject:
   m_ObjectHideFlags: 0
@@ -509,8 +511,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7011254150909436731}
   - component: {fileID: 6573940630714393000}
-  - component: {fileID: 7107611863965880641}
   - component: {fileID: 2347074114045292195}
+  - component: {fileID: 7107611863965880641}
   m_Layer: 0
   m_Name: Inventory Handler
   m_TagString: Untagged
@@ -548,6 +550,19 @@ MonoBehaviour:
   Player: {fileID: 8107631895800867322}
   ThrowForce: 0
   hotbarUI: {fileID: 0}
+--- !u!114 &2347074114045292195
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5771848841049438004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2532ef3f0ae602d45a0ecf4de32fb1f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _slots: []
 --- !u!114 &7107611863965880641
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -613,19 +628,6 @@ MonoBehaviour:
       _itemData: {fileID: 0}
       _count: 0
     SlotType: 0
---- !u!114 &2347074114045292195
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5771848841049438004}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2532ef3f0ae602d45a0ecf4de32fb1f4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _slots: []
 --- !u!1 &5950259277001712762
 GameObject:
   m_ObjectHideFlags: 0
@@ -1066,7 +1068,9 @@ MonoBehaviour:
   generic:
     Attributes: []
   inventory: {fileID: 6573940630714393000}
-  craftingAgent: {fileID: 2762181692375980180}
+  invUI: {fileID: 0}
+  HUD: {fileID: 0}
+  CraftingAgent: {fileID: 3776927174533104677}
 --- !u!114 &7617903866874250683
 MonoBehaviour:
   m_ObjectHideFlags: 0

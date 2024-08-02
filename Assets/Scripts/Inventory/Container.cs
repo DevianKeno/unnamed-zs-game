@@ -167,6 +167,18 @@ namespace UZSG
         }
 
         /// <summary>
+        /// Combines this container to another container. <Read Only>
+        /// Returns a combined COPY of the slots of both containers.
+        /// </summary>
+        public List<ItemSlot> Combine(Container other)
+        {
+            List<ItemSlot> slots = new();
+            slots.AddRange(Slots);
+            slots.AddRange(other.Slots);
+            return slots;
+        }
+
+        /// <summary>
         /// Prints the items inside the container
         /// </summary>
         public virtual void PrintItems()

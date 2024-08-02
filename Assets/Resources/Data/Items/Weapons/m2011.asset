@@ -12,23 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72e1d5853de97a54aa491bcf19eb9d39, type: 3}
   m_Name: m2011
   m_EditorClassIdentifier: 
+  Id: m2011
+  Name: M2011
+  Description: 
   Model:
     m_AssetGUID: 2d4b380b88abd7f4996072ae38e10918
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  Id: m2011
-  Name: M2011
-  Description: 
   Sprite: {fileID: 21300000, guid: ca3cb0cac5969244f8780cff14397619, type: 3}
   Type: 1
-  StackSize: 1
   Subtype: 5
+  Weight: 1.2
+  IsStackable: 0
+  StackSize: 1
   IsMaterial: 0
   IsCraftable: 0
   Recipes: []
   HotbarIcon: {fileID: 0}
-  Weight: 1.2
   Category: 1
   MeleeType: 1
   BluntType: 0
@@ -43,7 +44,7 @@ MonoBehaviour:
     RoundsPerMinute: 310
     ClipSize: 999
     ReloadSpeed: 1
-    Spread: 3
+    Spread: 2.1
     BurstFireCount: 0
     BurstFireInterval: 0
     BulletDamage:

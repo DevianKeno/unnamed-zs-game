@@ -12,23 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72e1d5853de97a54aa491bcf19eb9d39, type: 3}
   m_Name: m4ar
   m_EditorClassIdentifier: 
+  Id: m4ar
+  Name: M4AR
+  Description: Non-standard assault rifle.
   Model:
     m_AssetGUID: 99fbd5fe86faab14fb04b2913e622956
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 1
-  Id: m4ar
-  Name: M4AR
-  Description: Non-standard assault rifle.
   Sprite: {fileID: 0}
   Type: 1
-  StackSize: 1
   Subtype: 5
+  Weight: 3.5
+  IsStackable: 0
+  StackSize: 1
   IsMaterial: 0
   IsCraftable: 0
   Recipes: []
   HotbarIcon: {fileID: 0}
-  Weight: 3.5
   Category: 1
   MeleeType: 0
   BluntType: 0
@@ -43,7 +44,7 @@ MonoBehaviour:
     RoundsPerMinute: 660
     ClipSize: 30
     ReloadSpeed: 1
-    Spread: 5
+    Spread: 1.9
     BurstFireCount: 3
     BurstFireInterval: 0.1
     BulletDamage:

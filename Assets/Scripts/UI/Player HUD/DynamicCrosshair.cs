@@ -12,27 +12,50 @@ using UZSG.Systems;
 public class DynamicCrosshair : MonoBehaviour
 {
     [Header("Crosshair")]
+    public Player player;
     public float restingSize;
     public float maxSize;
     public float speed;
-    public Player player;
+    [Range(0.00f, 0.10f)]
+    public float addedFiringFactor;
+
     private RectTransform _crosshair;
-    private int _isFiring;
     private float _currentSize;
+    private float _moveSize = 0.0f;
+    private float _jumpMultiplier = 1.0f;
     private float _crouchMultiplier = 1.0f;
     private float _recoilMultiplier = 1.0f;
-    private float _addedFiringFactor = 0.0f;
+    private float _baseRecoilValue = 1.0f;
+    private float _addedTotalFiringFactor = 0.0f;
 
     // Start is called before the first frame update
     void Start()
     {
+        player.FPP.OnChangeHeldItem += OnChangeHeldItem;
         _crosshair = GetComponent<RectTransform>();
+    }
+
+    private void OnChangeHeldItem(HeldItemController controller)
+    {
+        // Set recoilMultiplier based on a fixed arbitrary number; experimental, scuffed, and subject to change
+        if (player.FPP.HeldItem is GunWeaponController gunWeapon)
+        {
+            _baseRecoilValue = CalculateBaseRecoilMultiplier(gunWeapon.WeaponData.RangedAttributes.Spread);
+
+            gunWeapon.StateMachine.OnStateChanged += OnGunWeaponStateChanged;
+            //print($"FF: {addedFiringFactor}, addedTFF: {_addedTotalFiringFactor}, baseRecoil: {_baseRecoilValue}, recMult: {_recoilMultiplier}");
+        }
+        else
+        {
+            print("called");
+            _recoilMultiplier = 1.0f;
+        }
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        //Debug.Log($"{player.Controls.Rigidbody.velocity.sqrMagnitude}, {player.Controls.Rigidbody.velocity.sqrMagnitude > 0}");
         CrosshairChange();
 
         _crosshair.sizeDelta = new Vector2(_currentSize, _currentSize);
@@ -40,15 +63,25 @@ public class DynamicCrosshair : MonoBehaviour
 
     void CrosshairChange()
     {
-        float moveSize = 0f;
+        
         // Set moveSize to maxSize if the player is moving, restingSize if otherwise
         if (isMoving)
         {
-            moveSize = maxSize;
+            _moveSize = maxSize;
         }
         else
         {
-            moveSize = restingSize;
+            _moveSize = restingSize;
+        }
+
+        // Set jumpMultiplier to a fixed value if the player is jumping or in the air
+        if (!player.Controls.IsGrounded || isJumping)
+        {
+            _jumpMultiplier = 1.3f;
+        }
+        else
+        {
+            _jumpMultiplier = 1.0f;
         }
 
         // Set crouchMultiplier to a fixed value if the player is crouching
@@ -61,27 +94,20 @@ public class DynamicCrosshair : MonoBehaviour
             _crouchMultiplier = 1.0f;
         }
 
-        // Set recoilMultiplier based on a fixed arbitrary number, experimental, scuffed, and subject to change
-        if (player.FPP.HeldItem is GunWeaponController gunWeapon)
-        {
-            gunWeapon.StateMachine.OnStateChanged += OnGunWeaponStateChanged;
-        }
-        else
-        {
-            _recoilMultiplier = 1.0f;
-        }
+        
+        // Set effectiveMaxSize depending if the player is moving, standing still, jumping, crouched, and firing
+        float _effectiveMaxSize = _moveSize * _jumpMultiplier * _crouchMultiplier * _recoilMultiplier;
 
-        // Set effectiveMaxSize depending if the player is moving, standing still, crouched, and firing
-        float _effectiveMaxSize = moveSize * _crouchMultiplier * _recoilMultiplier;
-        Debug.Log($"moveSize: {moveSize}, crouchMult: {_crouchMultiplier}, recMult: {_recoilMultiplier}, effective: {_effectiveMaxSize}");
+        //print($"moveSize: {_moveSize}, jumpMult: {_jumpMultiplier}, crouchMult: {_crouchMultiplier}, recMult: {_recoilMultiplier}, effective: {_effectiveMaxSize}");
 
         if (_effectiveMaxSize > restingSize)
         {
             _currentSize = Mathf.Lerp(_currentSize, _effectiveMaxSize, Time.deltaTime * speed);
 
             // Reset the addedFiringFactor and recoilMultiplier to reset crosshair after firing
-            _recoilMultiplier -= _addedFiringFactor;
-            _addedFiringFactor = 0.0f;
+            _recoilMultiplier = 1.0f;
+            // _baseRecoilValue = 1.0f;
+            _addedTotalFiringFactor = 0; // test/tracker
         }
         else
         {
@@ -93,10 +119,16 @@ public class DynamicCrosshair : MonoBehaviour
     {
         if (e.To == GunWeaponStates.Fire)
         {
-            _addedFiringFactor += 0.01f;
-            _recoilMultiplier += 0.01f;
+            print($"FF: {addedFiringFactor}, addedTFF: {_addedTotalFiringFactor}, baseRecoil: {_baseRecoilValue}, recMult: {_recoilMultiplier}");
+            _recoilMultiplier = _baseRecoilValue + addedFiringFactor;
+            print($"AFTER FF: {addedFiringFactor}, addedTFF: {_addedTotalFiringFactor}, baseRecoil: {_baseRecoilValue}, recMult: {_recoilMultiplier}");
         }
-        
+
+    }
+
+    float CalculateBaseRecoilMultiplier(float _baseGunSpread)
+    {
+        return 0.5f + Mathf.Lerp(1, maxSize / restingSize, (_baseGunSpread / 180));
     }
 
     bool isMoving
@@ -104,6 +136,17 @@ public class DynamicCrosshair : MonoBehaviour
         get
         {
             if (Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0)
+                return true;
+            else
+                return false;
+        }
+    }
+
+    bool isJumping
+    {
+        get
+        {
+            if (Input.GetAxis("Jump") != 0)
                 return true;
             else
                 return false;

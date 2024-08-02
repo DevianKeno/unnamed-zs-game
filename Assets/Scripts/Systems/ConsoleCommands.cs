@@ -30,7 +30,7 @@ namespace UZSG.Systems
         void CCraft(object sender, string[] args)
         {
             var newItem = new Item(Game.Items.GetItemData("m4ar"));
-            _player.CraftingAgent.CraftItem(newItem);
+            _player.CraftingAgent.CraftItem(newItem, 0);
         }
 
         void CDamage(object sender, string[] args)

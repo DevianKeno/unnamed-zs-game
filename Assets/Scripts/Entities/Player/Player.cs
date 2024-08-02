@@ -38,7 +38,7 @@ namespace UZSG.Entities
         public AttributeCollection<GenericAttribute> Generic => generic;
         [SerializeField] InventoryHandler inventory;
         public InventoryHandler Inventory => inventory;
-        [SerializeField] Crafter craftingAgent;
+        [SerializeField] InventoryCrafting craftingAgent;
         public Crafter CraftingAgent => craftingAgent;
         StatusEffectCollection statusEffects;
         public StatusEffectCollection StatusEffects => statusEffects;
@@ -50,7 +50,6 @@ namespace UZSG.Entities
         public PlayerInventoryWindow InventoryGUI => invUI;
         PlayerHUD _HUD;
         public PlayerHUD HUD => _HUD;
-        
 
         #region Events
 

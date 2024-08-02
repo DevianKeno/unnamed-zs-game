@@ -7,48 +7,58 @@ using UZSG.Systems;
 
 namespace UZSG.Crafting
 {
-    public class Crafter : MonoBehaviour
+    public abstract class Crafter : MonoBehaviour
     {
-        // public Item Output;
-        public int Amount;
-        public Player player;
+        public List<Container> containers;
 
-        public void ViewRecipe(Item item)
-        {
-            RecipeData recipes = Game.Recipes.GetRecipeData(item.Id);
+        // public void ViewRecipe(Item item)
+        // {
+        //     RecipeData recipes = Game.Recipes.GetRecipeData(item.Id);
 
-            foreach (Item material in recipes.Materials)
-            {
-                print(material.Name);
+        //     foreach (Item material in recipes.Materials)
+        //     {
+        //         print(material.Name);
+        //     }
+        // }
+
+        /// <summary>
+        /// Consumes items in the container and returns an item whenever the required resource is available. 
+        /// Returns a dictionary of slots pertaining to the recipe. 
+        /// </summary>
+        protected bool CheckMaterialAvailability(Item item, int recipeIndex, out Dictionary<Item, List<ItemSlot>> dictSlots){
+            dictSlots = null;
+            
+            if (recipeIndex > item.Data.Recipes.Count){
+                print("Recipe index out of bound");
+                return false;
             }
-        }
 
-        public void testCommand(string testText)
-        {
-            print(testText);
-        }
-
-        public void CraftItem(Item item)
-        {
-            RecipeData recipes = Game.Recipes.GetRecipeData(item.Id);
-            var dictSlots = new Dictionary<Item, List<ItemSlot>>();
-
-            /// Check if sufficient materials is available inside the player inventory
-            foreach (Item material in recipes.Materials)
+            foreach (Item material in item.Data.Recipes[recipeIndex].Materials)
             {
-                var materialSlots = new List<ItemSlot>();
 
-                if (player.Inventory.Bag.ContainsCount(item: material, material.Count, out materialSlots))
+                foreach (Container container in containers)
                 {
-                    dictSlots.Add(material, materialSlots);
-                } else {
-                    print("Materials Required does not match players current Inventory");
-                    return;
+                    var materialSlots = new List<ItemSlot>();
+
+                    if (container.ContainsCount(item: material, material.Count, out materialSlots))
+                    {
+                        dictSlots.Add(material, materialSlots);
+                    } else {
+                        print("Materials Required does not match players current Inventory");
+                        return false;
+                    }
                 }
             }
-            /// Takes item in the inventory
-            /// NOTE: ENSURE THAT THE AVAILABILITY OF MATERIALS ARE FULLY CHECKED
-            foreach (Item material in recipes.Materials)
+
+            return true;
+        }
+
+        /// <summary>
+        /// Consumes items from the container
+        /// </summary>
+        protected virtual void TakeItems(Item item, int recipeIndex, Dictionary<Item, List<ItemSlot>> dictSlots){
+
+            foreach (Item material in item.Data.Recipes[recipeIndex].Materials)
             {
                 int remainingCount = material.Count;
 
@@ -77,10 +87,24 @@ namespace UZSG.Crafting
                     }
                 }
             }
+        }
 
-            Item _newItem = new Item(recipes.Output);
+        /// <summary>
+        /// Consumes items in the container and returns an item whenever the required resource is available
+        /// </summary>
+        public virtual void CraftItem(Item item, int recipeIndex)
+        {
+            var dictSlots = new Dictionary<Item, List<ItemSlot>>();
+            if ( !CheckMaterialAvailability(item, recipeIndex, out dictSlots)) {
+                return;
+            }
 
-            player.Inventory.Bag.TryPutNearest(_newItem);
+            TakeItems(item, recipeIndex, dictSlots);
+
+            foreach (Container container in containers){
+                if (container.TryPutNearest(new Item(item))) break;
+            }
+            
         }
     }
 }

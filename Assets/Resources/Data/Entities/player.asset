@@ -35,22 +35,22 @@ MonoBehaviour:
       _changeMultiplier: 1
       DelayChange: 0
       DelayedChangeSeconds: 0
-      delayTimer: 2382.9314
+      delayTimer: 2576.119
     - data: {fileID: 11400000, guid: 03beca28745658c48a7358ce536b9573, type: 2}
-      Value: 100
+      Value: 53.75
       BaseMaximum: 100
       Bonus: 0
       _multiplier: 1
       LimitOverflow: 1
       LimitUnderflow: 1
-      AllowChange: 1
+      AllowChange: 0
       Change: 1
       Cycle: 1
       BaseChange: 0.25
       _changeMultiplier: 1
       DelayChange: 1
       DelayedChangeSeconds: 1.5
-      delayTimer: 3.34375
+      delayTimer: 0.953125
     - data: {fileID: 11400000, guid: a256a1de972d93b4b88e0ee04c8d2aa5, type: 2}
       Value: 0
       BaseMaximum: 100
@@ -65,7 +65,7 @@ MonoBehaviour:
       _changeMultiplier: 1
       DelayChange: 0
       DelayedChangeSeconds: 0
-      delayTimer: 1841.0801
+      delayTimer: 2034.2676
     - data: {fileID: 11400000, guid: 1163b94315ee82b43880f69e4567d600, type: 2}
       Value: 0
       BaseMaximum: 100
@@ -80,7 +80,7 @@ MonoBehaviour:
       _changeMultiplier: 1
       DelayChange: 0
       DelayedChangeSeconds: 0
-      delayTimer: 1841.0801
+      delayTimer: 2034.2676
   Generic:
     Attributes:
     - data: {fileID: 11400000, guid: fe9f66b79d95e7948a4dfcb4512568c7, type: 2}
@@ -132,3 +132,7 @@ MonoBehaviour:
       _multiplier: 1
       LimitOverflow: 1
       LimitUnderflow: 0
+  KnownRecipes:
+  - {fileID: 11400000, guid: d483b2fe74215824dbda5f2c35f2445a, type: 2}
+  - {fileID: 11400000, guid: 2e41551279bc6c844802b36a217ef687, type: 2}
+  - {fileID: 11400000, guid: b5ca12c8083c14f47bbdf161ccdcdc18, type: 2}

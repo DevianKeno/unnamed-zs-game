@@ -1,15 +1,44 @@
 using System.Collections.Generic;
 using UnityEngine;
+
+using UZSG.Systems;
 using UZSG.Entities;
 using UZSG.Inventory;
 using UZSG.Items;
-using UZSG.Systems;
+using UZSG.UI;
 
 namespace UZSG.Crafting
 {
     public abstract class Crafter : MonoBehaviour
     {
         public List<Container> containers;
+
+        [SerializeField] CraftingGUI _GUI;
+
+        // public void ViewRecipe(Item item)
+        // {
+        //     RecipeData recipes = Game.Recipes.GetRecipeData(item.Id);
+
+        //     foreach (Item material in recipes.Materials)
+        //     {
+        //         print(material.Name);
+        //     }
+        // }
+
+        public void ReadRecipes(List<RecipeData> recipes)
+        {
+            _GUI.InitializeCraftableRecipes(recipes);
+        }
+        
+        public void BindUI(CraftingGUI gui)
+        {
+            _GUI = gui;
+        }
+
+        public void AddContainer(Container container)
+        {
+            containers.Add(container);
+        }
 
         /// <summary>
         /// Consumes items in the container and returns an item whenever the required resource is available. 

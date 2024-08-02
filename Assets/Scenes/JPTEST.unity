@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.18435085, g: 0.27414638, b: 0.327649, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -431,6 +431,10 @@ PrefabInstance:
     - target: {fileID: 1146450433425097833, guid: 033481a19307263458a06de1464ac025, type: 3}
       propertyPath: m_Name
       value: skinwalker (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1146450433425097833, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7937397935011984496, guid: 033481a19307263458a06de1464ac025, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1505,6 +1509,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: skinwalker (11)
       objectReference: {fileID: 0}
+    - target: {fileID: 1146450433425097833, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7937397935011984496, guid: 033481a19307263458a06de1464ac025, type: 3}
       propertyPath: m_LocalPosition.x
       value: -12.07
@@ -1739,6 +1747,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: skinwalker (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 1146450433425097833, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7937397935011984496, guid: 033481a19307263458a06de1464ac025, type: 3}
       propertyPath: m_LocalPosition.x
       value: -14.97
@@ -1801,6 +1813,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: skinwalker (8)
       objectReference: {fileID: 0}
+    - target: {fileID: 1146450433425097833, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7937397935011984496, guid: 033481a19307263458a06de1464ac025, type: 3}
       propertyPath: m_LocalPosition.x
       value: -15.330002
@@ -1862,6 +1878,10 @@ PrefabInstance:
     - target: {fileID: 1146450433425097833, guid: 033481a19307263458a06de1464ac025, type: 3}
       propertyPath: m_Name
       value: skinwalker (13)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1146450433425097833, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7937397935011984496, guid: 033481a19307263458a06de1464ac025, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2197,6 +2217,10 @@ PrefabInstance:
     - target: {fileID: 1146450433425097833, guid: 033481a19307263458a06de1464ac025, type: 3}
       propertyPath: m_Name
       value: skinwalker (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1146450433425097833, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7937397935011984496, guid: 033481a19307263458a06de1464ac025, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2871,6 +2895,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: skinwalker (10)
       objectReference: {fileID: 0}
+    - target: {fileID: 1146450433425097833, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7937397935011984496, guid: 033481a19307263458a06de1464ac025, type: 3}
       propertyPath: m_LocalPosition.x
       value: -14.93
@@ -3420,6 +3448,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: skinwalker (12)
       objectReference: {fileID: 0}
+    - target: {fileID: 1146450433425097833, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7937397935011984496, guid: 033481a19307263458a06de1464ac025, type: 3}
       propertyPath: m_LocalPosition.x
       value: -12.470001
@@ -3614,6 +3646,10 @@ PrefabInstance:
     - target: {fileID: 1146450433425097833, guid: 033481a19307263458a06de1464ac025, type: 3}
       propertyPath: m_Name
       value: skinwalker (9)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1146450433425097833, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7937397935011984496, guid: 033481a19307263458a06de1464ac025, type: 3}
       propertyPath: m_LocalPosition.x
@@ -5163,6 +5199,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: skinwalker (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 1146450433425097833, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7937397935011984496, guid: 033481a19307263458a06de1464ac025, type: 3}
       propertyPath: m_LocalPosition.x
       value: -17.54
@@ -5303,6 +5343,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: skinwalker (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 1146450433425097833, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7937397935011984496, guid: 033481a19307263458a06de1464ac025, type: 3}
       propertyPath: m_LocalPosition.x
       value: -14
@@ -5410,6 +5454,10 @@ PrefabInstance:
     - target: {fileID: 1146450433425097833, guid: 033481a19307263458a06de1464ac025, type: 3}
       propertyPath: m_Name
       value: skinwalker (7)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1146450433425097833, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7937397935011984496, guid: 033481a19307263458a06de1464ac025, type: 3}
       propertyPath: m_LocalPosition.x
@@ -6051,6 +6099,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: skinwalker (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 1146450433425097833, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7937397935011984496, guid: 033481a19307263458a06de1464ac025, type: 3}
       propertyPath: m_LocalPosition.x
       value: -17.14
@@ -6407,6 +6459,10 @@ PrefabInstance:
     - target: {fileID: 1146450433425097833, guid: 033481a19307263458a06de1464ac025, type: 3}
       propertyPath: m_Name
       value: skinwalker
+      objectReference: {fileID: 0}
+    - target: {fileID: 1146450433425097833, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4710550939094238023, guid: 033481a19307263458a06de1464ac025, type: 3}
       propertyPath: m_Size.x

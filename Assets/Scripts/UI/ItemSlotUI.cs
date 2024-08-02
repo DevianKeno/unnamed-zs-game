@@ -19,6 +19,7 @@ namespace UZSG.UI
         public static Color Normal { get => new(0f, 0f, 0f, 0.5f); }
         public static Color Hovered { get => new(0.2f, 0.2f, 0.2f, 0.5f); }
         
+        public Item Item;
         public int Index;
 
         public event EventHandler<PointerEventData> OnMouseDown;
@@ -26,11 +27,7 @@ namespace UZSG.UI
         public event EventHandler<PointerEventData> OnStartHover;
         public event EventHandler<PointerEventData> OnEndHover;
 
-        UIState state;
-
-        public Item Item;
-
-        [Space(10)]
+        [Space]
         [SerializeField] Image image;
         [SerializeField] TextMeshProUGUI indexTMP;
         [SerializeField] ItemDisplayUI itemDisplayUI;

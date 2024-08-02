@@ -40,7 +40,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 79.2076}
+  m_SizeDelta: {x: 500, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5971273863352026603
 CanvasRenderer:
@@ -119,7 +119,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
@@ -162,6 +162,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59163c36e057b3e4786a648c3f8f86b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rect: {fileID: 0}
+  AnimationFactor: 0.3
+  RecipeData: {fileID: 0}
+  button: {fileID: 5202387477307214840}
+  background: {fileID: 8132384543493191437}
   image: {fileID: 6480497869230475038}
   text: {fileID: 8626080680116665166}
 --- !u!1 &3789252495201252102
@@ -199,7 +204,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 206.69, y: -39.6038}
+  m_AnchoredPosition: {x: 206.69, y: -40}
   m_SizeDelta: {x: 233.38, y: 26.82}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1075777665571802134

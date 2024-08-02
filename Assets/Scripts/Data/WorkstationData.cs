@@ -7,7 +7,7 @@ namespace UZSG.Objects
 {
     [Serializable]
     [CreateAssetMenu(fileName = "New Station Data", menuName = "UZSG/Station Data")]
-    public class StationData : ObjectData
+    public class WorkstationData : ObjectData
     {
         public AssetReference GUI;
     }

@@ -432,6 +432,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: skinwalker (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 1146450433425097833, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5636306330842002441, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 2133685754}
     - target: {fileID: 7937397935011984496, guid: 033481a19307263458a06de1464ac025, type: 3}
       propertyPath: m_LocalPosition.x
       value: -14.57
@@ -472,10 +480,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 5212347924052863708, guid: 033481a19307263458a06de1464ac025, type: 3}
-    - {fileID: 1760536420915349204, guid: 033481a19307263458a06de1464ac025, type: 3}
-    - {fileID: 5570571676706201943, guid: 033481a19307263458a06de1464ac025, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -1508,6 +1513,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: skinwalker (11)
       objectReference: {fileID: 0}
+    - target: {fileID: 1146450433425097833, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5636306330842002441, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 2133685754}
     - target: {fileID: 7937397935011984496, guid: 033481a19307263458a06de1464ac025, type: 3}
       propertyPath: m_LocalPosition.x
       value: -12.07
@@ -1548,10 +1561,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 5212347924052863708, guid: 033481a19307263458a06de1464ac025, type: 3}
-    - {fileID: 1760536420915349204, guid: 033481a19307263458a06de1464ac025, type: 3}
-    - {fileID: 5570571676706201943, guid: 033481a19307263458a06de1464ac025, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -1776,6 +1786,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: skinwalker (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 1146450433425097833, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5636306330842002441, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 2133685754}
     - target: {fileID: 7937397935011984496, guid: 033481a19307263458a06de1464ac025, type: 3}
       propertyPath: m_LocalPosition.x
       value: -14.97
@@ -1816,10 +1834,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 5212347924052863708, guid: 033481a19307263458a06de1464ac025, type: 3}
-    - {fileID: 1760536420915349204, guid: 033481a19307263458a06de1464ac025, type: 3}
-    - {fileID: 5570571676706201943, guid: 033481a19307263458a06de1464ac025, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -1841,6 +1856,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: skinwalker (8)
       objectReference: {fileID: 0}
+    - target: {fileID: 1146450433425097833, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5636306330842002441, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 2133685754}
     - target: {fileID: 7937397935011984496, guid: 033481a19307263458a06de1464ac025, type: 3}
       propertyPath: m_LocalPosition.x
       value: -15.330002
@@ -1881,10 +1904,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 5212347924052863708, guid: 033481a19307263458a06de1464ac025, type: 3}
-    - {fileID: 1760536420915349204, guid: 033481a19307263458a06de1464ac025, type: 3}
-    - {fileID: 5570571676706201943, guid: 033481a19307263458a06de1464ac025, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -1906,6 +1926,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: skinwalker (13)
       objectReference: {fileID: 0}
+    - target: {fileID: 1146450433425097833, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5636306330842002441, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 2133685754}
     - target: {fileID: 7937397935011984496, guid: 033481a19307263458a06de1464ac025, type: 3}
       propertyPath: m_LocalPosition.x
       value: -11.709999
@@ -1946,10 +1974,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 5212347924052863708, guid: 033481a19307263458a06de1464ac025, type: 3}
-    - {fileID: 1760536420915349204, guid: 033481a19307263458a06de1464ac025, type: 3}
-    - {fileID: 5570571676706201943, guid: 033481a19307263458a06de1464ac025, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -2244,6 +2269,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: skinwalker (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 1146450433425097833, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5636306330842002441, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 2133685754}
     - target: {fileID: 7937397935011984496, guid: 033481a19307263458a06de1464ac025, type: 3}
       propertyPath: m_LocalPosition.x
       value: -4.08
@@ -2284,10 +2317,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 5212347924052863708, guid: 033481a19307263458a06de1464ac025, type: 3}
-    - {fileID: 1760536420915349204, guid: 033481a19307263458a06de1464ac025, type: 3}
-    - {fileID: 5570571676706201943, guid: 033481a19307263458a06de1464ac025, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -2425,6 +2455,7 @@ GameObject:
   m_Component:
   - component: {fileID: 709304560}
   - component: {fileID: 709304561}
+  - component: {fileID: 709304562}
   m_Layer: 0
   m_Name: Workbench
   m_TagString: Interactable
@@ -2462,7 +2493,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectData: {fileID: 11400000, guid: 05f76cb0af4286140b3e6d534bd8b034, type: 2}
+  crafter: {fileID: 709304562}
   canvas: {fileID: 1259995336}
+--- !u!114 &709304562
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 709304559}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbc2003adad9eff4fbd2a2a36394a9fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  containers: []
+  _GUI: {fileID: 0}
 --- !u!1 &779275859
 GameObject:
   m_ObjectHideFlags: 0
@@ -2968,6 +3014,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: skinwalker (10)
       objectReference: {fileID: 0}
+    - target: {fileID: 1146450433425097833, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5636306330842002441, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 2133685754}
     - target: {fileID: 7937397935011984496, guid: 033481a19307263458a06de1464ac025, type: 3}
       propertyPath: m_LocalPosition.x
       value: -14.93
@@ -3008,10 +3062,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 5212347924052863708, guid: 033481a19307263458a06de1464ac025, type: 3}
-    - {fileID: 1760536420915349204, guid: 033481a19307263458a06de1464ac025, type: 3}
-    - {fileID: 5570571676706201943, guid: 033481a19307263458a06de1464ac025, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -3592,6 +3643,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: skinwalker (12)
       objectReference: {fileID: 0}
+    - target: {fileID: 1146450433425097833, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5636306330842002441, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 2133685754}
     - target: {fileID: 7937397935011984496, guid: 033481a19307263458a06de1464ac025, type: 3}
       propertyPath: m_LocalPosition.x
       value: -12.470001
@@ -3632,10 +3691,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 5212347924052863708, guid: 033481a19307263458a06de1464ac025, type: 3}
-    - {fileID: 1760536420915349204, guid: 033481a19307263458a06de1464ac025, type: 3}
-    - {fileID: 5570571676706201943, guid: 033481a19307263458a06de1464ac025, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -3790,6 +3846,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: skinwalker (9)
       objectReference: {fileID: 0}
+    - target: {fileID: 1146450433425097833, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5636306330842002441, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 2133685754}
     - target: {fileID: 7937397935011984496, guid: 033481a19307263458a06de1464ac025, type: 3}
       propertyPath: m_LocalPosition.x
       value: -15.330002
@@ -3830,10 +3894,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 5212347924052863708, guid: 033481a19307263458a06de1464ac025, type: 3}
-    - {fileID: 1760536420915349204, guid: 033481a19307263458a06de1464ac025, type: 3}
-    - {fileID: 5570571676706201943, guid: 033481a19307263458a06de1464ac025, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -5442,6 +5503,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: skinwalker (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 1146450433425097833, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5636306330842002441, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 2133685754}
     - target: {fileID: 7937397935011984496, guid: 033481a19307263458a06de1464ac025, type: 3}
       propertyPath: m_LocalPosition.x
       value: -17.54
@@ -5482,10 +5551,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 5212347924052863708, guid: 033481a19307263458a06de1464ac025, type: 3}
-    - {fileID: 1760536420915349204, guid: 033481a19307263458a06de1464ac025, type: 3}
-    - {fileID: 5570571676706201943, guid: 033481a19307263458a06de1464ac025, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -5585,6 +5651,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: skinwalker (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 1146450433425097833, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5636306330842002441, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 2133685754}
     - target: {fileID: 7937397935011984496, guid: 033481a19307263458a06de1464ac025, type: 3}
       propertyPath: m_LocalPosition.x
       value: -14
@@ -5625,10 +5699,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 5212347924052863708, guid: 033481a19307263458a06de1464ac025, type: 3}
-    - {fileID: 1760536420915349204, guid: 033481a19307263458a06de1464ac025, type: 3}
-    - {fileID: 5570571676706201943, guid: 033481a19307263458a06de1464ac025, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -5696,6 +5767,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: skinwalker (7)
       objectReference: {fileID: 0}
+    - target: {fileID: 1146450433425097833, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5636306330842002441, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 2133685754}
     - target: {fileID: 7937397935011984496, guid: 033481a19307263458a06de1464ac025, type: 3}
       propertyPath: m_LocalPosition.x
       value: -14.93
@@ -5736,10 +5815,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 5212347924052863708, guid: 033481a19307263458a06de1464ac025, type: 3}
-    - {fileID: 1760536420915349204, guid: 033481a19307263458a06de1464ac025, type: 3}
-    - {fileID: 5570571676706201943, guid: 033481a19307263458a06de1464ac025, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -5875,7 +5951,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TargetFramerate: -1
   FreeLookCamera: {fileID: 892676884}
-  timeController: {fileID: 1948226128}
+  timeController: {fileID: 0}
   weatherController: {fileID: 0}
 --- !u!4 &1819902023
 Transform:
@@ -6340,6 +6416,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: skinwalker (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 1146450433425097833, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5636306330842002441, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 2133685754}
     - target: {fileID: 7937397935011984496, guid: 033481a19307263458a06de1464ac025, type: 3}
       propertyPath: m_LocalPosition.x
       value: -17.14
@@ -6380,10 +6464,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 5212347924052863708, guid: 033481a19307263458a06de1464ac025, type: 3}
-    - {fileID: 1760536420915349204, guid: 033481a19307263458a06de1464ac025, type: 3}
-    - {fileID: 5570571676706201943, guid: 033481a19307263458a06de1464ac025, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -6700,14 +6781,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: skinwalker
       objectReference: {fileID: 0}
-    - target: {fileID: 4710550939094238023, guid: 033481a19307263458a06de1464ac025, type: 3}
-      propertyPath: m_Size.x
-      value: 0.5
+    - target: {fileID: 1146450433425097833, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4710550939094238023, guid: 033481a19307263458a06de1464ac025, type: 3}
-      propertyPath: m_Size.z
-      value: 0.5
-      objectReference: {fileID: 0}
+    - target: {fileID: 5636306330842002441, guid: 033481a19307263458a06de1464ac025, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 2133685754}
     - target: {fileID: 7937397935011984496, guid: 033481a19307263458a06de1464ac025, type: 3}
       propertyPath: m_LocalPosition.x
       value: -2.56
@@ -6748,10 +6829,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 5212347924052863708, guid: 033481a19307263458a06de1464ac025, type: 3}
-    - {fileID: 1760536420915349204, guid: 033481a19307263458a06de1464ac025, type: 3}
-    - {fileID: 5570571676706201943, guid: 033481a19307263458a06de1464ac025, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

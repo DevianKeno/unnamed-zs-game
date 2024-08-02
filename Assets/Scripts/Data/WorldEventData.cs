@@ -3,25 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UZSG.Entities;
 
 
 namespace UZSG.World
 {
-    [Serializable]
-    public class WorldEvent
-    {
-        public void StartEvent()
-        {
-            OnEventStart?.Invoke(this, EventType);
-        }
-        public string EventType;
-        public bool EventOngoing;
-        public float ChanceToOccur;
-        public bool Active;
-        public int OccurEverySecond;
-        public event EventHandler<string> OnEventStart;
-        public List<EventPrefab> EventPrefab;
-    }
     [Serializable]
     public struct EventPrefab
     {
@@ -29,10 +15,22 @@ namespace UZSG.World
         public GameObject Prefab;
         public float ChanceToOccur;
     }
-    [CreateAssetMenu(fileName = "New World Event Data", menuName = "UZSG/World Event Data")]
+
+    public enum EventType { Weather, World, Attack }
+
     [Serializable]
-    public class WorldEventData : ScriptableObject
+    [CreateAssetMenu(fileName = "New World Event Data", menuName = "UZSG/World Event Data")]
+    public class WorldEventData : BaseData
     {
-        public WorldEvent worldEvents;
+        public string Name;
+        public EventType EventType;
+        public float ChanceToOccur;
+        public int OccurEverySecond;
+        public List<EventPrefab> EventPrefab;
+    }
+
+    public class RaidPartyEventData : WorldEventData
+    {
+        public List<EntityData> EntitiesToSpawn;
     }
 }

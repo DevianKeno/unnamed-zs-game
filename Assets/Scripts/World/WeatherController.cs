@@ -91,6 +91,11 @@ namespace UZSG.World.Weather
         {
             
         }
+
+        internal void OnEventEnd(object sender, string e)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
 

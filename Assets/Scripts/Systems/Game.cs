@@ -101,7 +101,7 @@ namespace UZSG.Systems
             Application.targetFrameRate = TargetFramerate;
         }
 
-        public WorldEventController worldEventController;
+        public WorldEventsController worldEventController;
 
         void InitializeManagers()
         {

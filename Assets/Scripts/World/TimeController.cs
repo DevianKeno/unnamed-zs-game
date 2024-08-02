@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UZSG.Systems;
+using UZSG.World;
 using UZSG.World.Weather;
 
 namespace UZSG.WorldBuilder
@@ -163,6 +164,17 @@ namespace UZSG.WorldBuilder
         public void ShowTime()
         {
             Debug.Log("Current Time: " + TwentyFourHourTime);
+        }
+
+        internal void OnEventEnd(object sender, string e)
+        {
+            var worldEvent = sender as WorldEvent;
+            // worldEvent.StartEvent();
+        }
+
+        internal void OnEventStart(object sender, string e)
+        {
+            var worldEvent = sender as WorldEvent;
         }
     }
 }

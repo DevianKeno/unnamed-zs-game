@@ -31,6 +31,5 @@ namespace UZSG.World.Weather
         public WeatherAttributes weatherAttributes;
         public WeatherProperties weatherProperties;
     }
-
 }
 

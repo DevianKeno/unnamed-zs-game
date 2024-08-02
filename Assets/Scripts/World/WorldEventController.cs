@@ -8,19 +8,21 @@ using UZSG.Timebase;
 using UZSG.World.Weather;
 using UZSG.WorldBuilder;
 
-
 namespace UZSG.World
 {
-    public class WorldEventController : MonoBehaviour
+    public class WorldEventsController : MonoBehaviour
     {
-        TimeController _timeController;
-        WeatherController _weatherController;
-        float _currentTime = 0;
         public int InternalCountdown = 0;
+        public List<WorldEvent> WorldEvents;
+        public List<WorldEventData> worldEventsData;
+
         [SerializeField] int _countdown = 0;
+        float _currentTime = 0;
         int _maxCountdown = 0;
         int tempCount = 0;
-        public List<WorldEventData> WorldEvents;
+
+        TimeController _timeController;
+        WeatherController _weatherController;
 
         public void Initialize()
         {
@@ -32,8 +34,21 @@ namespace UZSG.World
 
             Game.Tick.OnTick += OnTick;
             
-            foreach (WorldEvent worldEvent in WorldEvents.Select(worldEventData => worldEventData.worldEvents))
-                if (worldEvent.OccurEverySecond > _maxCountdown) _maxCountdown = worldEvent.OccurEverySecond;
+            // foreach (var worldEvent in WorldEvents)
+            // {
+            //     if (worldEvent.Data.OccurEverySecond > _maxCountdown) 
+            //     {
+            //         _maxCountdown = worldEvent.Data.OccurEverySecond;
+            //     }
+            // }
+            
+            foreach (var worldEventData in worldEventsData)
+            {
+                if (worldEventData.OccurEverySecond > _maxCountdown) 
+                {
+                    _maxCountdown = worldEventData.OccurEverySecond;
+                }
+            }
         }
 
         void OnTick(TickInfo info)
@@ -60,23 +75,59 @@ namespace UZSG.World
 
         void HandleEvents()
         {
-            foreach (WorldEvent worldEvent in WorldEvents.Select(worldEventData => worldEventData.worldEvents)) 
-                if (worldEvent.Active) SpawnEvent(worldEvent);
+            StartEvent();
+        }
+
+        void StartEvent()
+        {
+            foreach (WorldEvent worldEvent in WorldEvents)
+            {
+                if (worldEvent.IsActive)
+                {
+                    SpawnEvent(worldEvent);
+                }
+            }   
+        }
+
+        void InitializeEvent(WorldEvent worldEvent)
+        {
+            // worldEvent.OnEventStart += _weatherController.OnEventStart;
+
+            worldEvent.OnEventStart += OnEventStart;
+            worldEvent.OnEventStart += _timeController.OnEventStart;
+            worldEvent.OnEventStart += _weatherController.OnEventStart;
+            
+            worldEvent.OnEventEnd += OnEventEnd;
+            worldEvent.OnEventEnd += _timeController.OnEventEnd;
+            worldEvent.OnEventEnd += _weatherController.OnEventEnd;
+            
+            worldEvent.StartEvent();
+
+        }
+
+        void OnEventStart(object sender, string e)
+        {
+            ///
+        }
+
+        void OnEventEnd(object sender, string e)
+        {
+            /// 
         }
 
         void SpawnEvent(WorldEvent worldEvent)
         {
-            if (worldEvent.EventOngoing) return;
+            if (worldEvent.IsActive) return;
 
-            if (_countdown == worldEvent.OccurEverySecond)
+            if (_countdown == worldEvent.Data.OccurEverySecond)
             {
-                worldEvent.OnEventStart += _weatherController.OnEventStart;
+                InitializeEvent(worldEvent);
    
                 List<EventPrefab> eventPrefabs = new();
                 EventPrefab selectedEvent;
                 int chance = UnityEngine.Random.Range(1, 100);
 
-                foreach (EventPrefab eventPrefab in worldEvent.EventPrefab)
+                foreach (EventPrefab eventPrefab in worldEvent.Data.EventPrefab)
                 {
                     if (eventPrefab.ChanceToOccur >= chance) eventPrefabs.Add(eventPrefab);
                 }
@@ -86,7 +137,7 @@ namespace UZSG.World
                 else
                     selectedEvent = eventPrefabs[0];
 
-                worldEvent.EventOngoing = true;
+                // worldEvent.EndEvent();
             }
         }
     }

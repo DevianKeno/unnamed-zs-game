@@ -1068,9 +1068,7 @@ MonoBehaviour:
   generic:
     Attributes: []
   inventory: {fileID: 6573940630714393000}
-  invUI: {fileID: 0}
-  HUD: {fileID: 0}
-  CraftingAgent: {fileID: 3776927174533104677}
+  craftingAgent: {fileID: 3776927174533104677}
 --- !u!114 &7617903866874250683
 MonoBehaviour:
   m_ObjectHideFlags: 0

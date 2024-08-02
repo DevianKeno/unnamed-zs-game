@@ -73,7 +73,7 @@ public class DynamicCrosshair : MonoBehaviour
 
         // Set effectiveMaxSize depending if the player is moving, standing still, crouched, and firing
         float _effectiveMaxSize = moveSize * _crouchMultiplier * _recoilMultiplier;
-        Debug.Log($"moveSize: {moveSize}, crouchMult: {_crouchMultiplier}, recMult: {_recoilMultiplier}, effective: {_effectiveMaxSize}");
+        // Debug.Log($"moveSize: {moveSize}, crouchMult: {_crouchMultiplier}, recMult: {_recoilMultiplier}, effective: {_effectiveMaxSize}");
 
         if (_effectiveMaxSize > restingSize)
         {

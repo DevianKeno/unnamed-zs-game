@@ -25,9 +25,8 @@ namespace UZSG.Crafting
         /// Consumes items in the container and returns an item whenever the required resource is available. 
         /// Returns a dictionary of slots pertaining to the recipe. 
         /// </summary>
-        protected bool CheckMaterialAvailability(Item item, int recipeIndex, out Dictionary<Item, List<ItemSlot>> dictSlots){
-            dictSlots = null;
-            
+        protected bool CheckMaterialAvailability(Item item, int recipeIndex, Dictionary<Item, List<ItemSlot>> dictSlots){
+
             if (recipeIndex > item.Data.Recipes.Count){
                 print("Recipe index out of bound");
                 return false;
@@ -95,7 +94,7 @@ namespace UZSG.Crafting
         public virtual void CraftItem(Item item, int recipeIndex)
         {
             var dictSlots = new Dictionary<Item, List<ItemSlot>>();
-            if ( !CheckMaterialAvailability(item, recipeIndex, out dictSlots)) {
+            if ( !CheckMaterialAvailability(item, recipeIndex, dictSlots)) {
                 return;
             }
 

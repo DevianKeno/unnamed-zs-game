@@ -1,7 +1,9 @@
 using System;
-using System.Threading.Tasks;
+
 using UnityEngine;
+
 using UZSG.Systems;
+using UZSG.Data;
 
 namespace UZSG.Attributes
 {

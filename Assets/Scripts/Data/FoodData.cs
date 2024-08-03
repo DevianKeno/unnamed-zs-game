@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UZSG.Attributes;
 
-namespace UZSG.Items.Foods
+namespace UZSG.Data
 {
     [Serializable]
     public struct RecoveryData 

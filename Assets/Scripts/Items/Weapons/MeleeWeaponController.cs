@@ -1,15 +1,18 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.InputSystem;
+
+using UZSG.Systems;
+using UZSG.Data;
 using UZSG.Entities;
 using UZSG.Players;
-using UZSG.Systems;
 
 namespace UZSG.Items.Weapons
 {
-    public class MeleeWeaponController : WeaponController, ICollision
+    public class MeleeWeaponController : HeldWeaponController, ICollision
     {
         Player Player => owner as Player;
         public WeaponData WeaponData => ItemData as WeaponData;

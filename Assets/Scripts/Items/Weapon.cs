@@ -2,6 +2,8 @@ using System;
 
 using UnityEngine;
 
+using UZSG.Data;
+
 namespace UZSG.Items.Weapons
 {
     public class Tool

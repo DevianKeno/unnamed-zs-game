@@ -1,5 +1,4 @@
 using System;
-using UnityEngine.Rendering;
 
 namespace UZSG.Items.Weapons
 {

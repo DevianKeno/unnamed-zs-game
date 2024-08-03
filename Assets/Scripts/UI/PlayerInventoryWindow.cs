@@ -7,6 +7,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 using UZSG.Systems;
+using UZSG.Data;
 using UZSG.Inventory;
 using UZSG.Items;
 using UZSG.Entities;

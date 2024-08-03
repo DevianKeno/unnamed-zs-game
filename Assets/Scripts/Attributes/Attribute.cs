@@ -1,9 +1,16 @@
 using System;
+
 using UnityEngine;
+
 using UZSG.Systems;
+using UZSG.Data;
 
 namespace UZSG.Attributes
 {
+    public enum Type { Generic, Vital }
+    public enum Change { Static, Regen, Degen }
+    public enum Cycle { PerSecond, PerTick }
+    
     /// <summary>
     /// Base class for Attributes.
     /// </summary>

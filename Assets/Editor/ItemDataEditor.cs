@@ -1,6 +1,6 @@
-using UnityEngine;
 using UnityEditor;
-using UZSG.Items;
+
+using UZSG.Data;
 
 namespace UZSG.UnityEditor
 {

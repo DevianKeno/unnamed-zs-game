@@ -1,15 +1,18 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
-using UZSG.Systems;
-using UZSG.Players;
-using UZSG.Entities;
 using UnityEngine.InputSystem;
+
+using UZSG.Systems;
+using UZSG.Data;
+using UZSG.Entities;
+using UZSG.Players;
 
 namespace UZSG.Items.Weapons
 {
-    public class GunWeaponController : WeaponController, IReloadable
+    public class GunWeaponController : HeldWeaponController, IReloadable
     {
         public Player Player => owner as Player;
         public WeaponData WeaponData => ItemData as WeaponData;

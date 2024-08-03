@@ -6,11 +6,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using UZSG.Systems;
+using UZSG.Data;
 using UZSG.Entities;
 using UZSG.Players;
 using UZSG.Inventory;
-using UZSG.Items.Weapons;
 using UZSG.Items;
+using UZSG.Items.Weapons;
 
 namespace UZSG.FPP
 {
@@ -44,6 +45,8 @@ namespace UZSG.FPP
         public FPPCameraInput CameraController => cameraController;
         [SerializeField] FPPArmsController armsController;
         [SerializeField] FPPViewmodelController viewmodelController;
+        // [SerializeField] FPPAimDownSights adsController;
+
         Animator viewmodelAnimator;
         Animator cameraAnimator;
         [SerializeField] FPPCameraAnimationTarget cameraAnimationTarget;
@@ -348,6 +351,18 @@ namespace UZSG.FPP
             }
 
             /// This should not be here
+            /// fuck man this gonna be hard
+            // if (currentViewmodel.Model.TryGetComponent(out FPPAimDownSights ads))
+            // {
+            //     adsController = ads;
+            //     adsController.FPPCamera = cameraController.transform;
+            // }
+            // else
+            // {
+            //     adsController = null;
+            // }
+
+            /// This should not be here
             /// Attach Gun Muzzle Controller
             if (currentViewmodel.Model.TryGetComponent(out FPPGunModel gunModel))
             {
@@ -412,6 +427,11 @@ namespace UZSG.FPP
             if (heldItem == null) return;
             if (_isPerforming) return;
             if (_isPlayingAnimation) return;
+
+            if (e.To == ActionStates.Secondary)
+            {
+                // adsController?.AimDownSights();
+            }
 
             // if (heldItem != null)
             // {

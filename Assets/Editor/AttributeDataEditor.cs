@@ -1,25 +1,10 @@
-using System;
 using UnityEditor;
-using UnityEngine;
 
-namespace UZSG.Attributes
+using UZSG.Data;
+using UZSG.Attributes;
+
+namespace UZSG.UnityEditor
 {
-    public enum Type { Generic, Vital }
-    public enum Change { Static, Regen, Degen }
-    public enum Cycle { PerSecond, PerTick }
-
-    [Serializable]
-    [CreateAssetMenu(fileName = "Attribute", menuName = "UZSG/Attribute")]
-    public class AttributeData : ScriptableObject
-    {
-        public Type Type;
-        public string Id;
-        public string Name;
-        [TextArea] public string Description;
-        [HideInInspector] public Change Change;
-        [HideInInspector] public Cycle Cycle;
-    }
-
     [CustomEditor(typeof(AttributeData))]
     public class AttributeDataEditor : Editor
     {

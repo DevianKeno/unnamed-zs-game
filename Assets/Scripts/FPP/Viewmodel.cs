@@ -2,21 +2,10 @@ using System;
 
 using UnityEditor.Animations;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-using UZSG.Items;
-using UZSG.Items.Weapons;
+using UZSG.Data;
 
 namespace UZSG.FPP
 {
-    public interface IViewmodel
-    {
-        public AnimatorController ArmsAnimations { get; }
-        public AssetReference Viewmodel { get; }
-        public ViewmodelOffsets Offsets { get; }
-        public EquipmentAnimationData Animations { get; }
-        public bool HasViewmodel { get; }
-    }
-
     /// <summary>
     /// Represents objects that are visible in first-person perspective.
     /// </summary>

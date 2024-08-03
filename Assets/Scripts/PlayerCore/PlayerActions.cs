@@ -5,11 +5,12 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 using UZSG.Systems;
+using UZSG.Data;
 using UZSG.UI;
-using UZSG.Items;
 using UZSG.Interactions;
 using UZSG.Entities;
 using UZSG.Inventory;
+using UZSG.Items;
 
 namespace UZSG.Players
 {

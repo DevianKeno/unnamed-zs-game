@@ -5,8 +5,9 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
 using UZSG.Systems;
-using UZSG.Players;
+using UZSG.Data;
 using UZSG.Interactions;
+using UZSG.Players;
 using UZSG.Items;
 
 namespace UZSG.Entities

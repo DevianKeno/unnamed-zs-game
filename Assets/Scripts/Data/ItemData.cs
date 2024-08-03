@@ -8,13 +8,13 @@ using UnityEngine.AddressableAssets;
 using UZSG.Crafting;
 using UZSG.Data;
 
-namespace UZSG.Items
+namespace UZSG.Data
 {
     public enum ItemType { Item, Weapon, Tool, Equipment, Accessory }
     public enum ItemSubtype { None, Useable, Food, Consumable, Tool, Weapon, Equipable, Accessory }
 
     [Serializable]
-    [CreateAssetMenu(fileName = "New Item Data", menuName = "UZSG/Item Data")]
+    [CreateAssetMenu(fileName = "New Item Data", menuName = "UZSG/Items/Item Data")]
     public class ItemData : BaseData
     {
         [Header("Item Attributes")]

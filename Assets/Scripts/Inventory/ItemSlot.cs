@@ -1,5 +1,8 @@
 using System;
+
 using UnityEngine;
+
+using UZSG.Data;
 using UZSG.Items;
 
 namespace UZSG.Inventory

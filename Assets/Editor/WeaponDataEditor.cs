@@ -1,5 +1,6 @@
 using UnityEditor;
-using UZSG.Items.Weapons;
+
+using UZSG.Data;
 
 namespace UZSG.UnityEditor
 {

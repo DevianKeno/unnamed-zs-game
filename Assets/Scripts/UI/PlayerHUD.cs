@@ -48,7 +48,7 @@ namespace UZSG.UI
 
             InitializeHotbarSlots();
             InitializeEvents();
-            crosshair.player = Player;
+            crosshair.Player = Player;
             allCrosshair.player = Player;
         }
 

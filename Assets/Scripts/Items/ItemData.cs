@@ -25,7 +25,7 @@ namespace UZSG.Items
         public ItemType Type;
         public ItemSubtype Subtype;
         public float Weight;
-        public bool IsStackable;
+        public bool IsStackable => StackSize > 1;
         public int StackSize;
 
         /// Crafting

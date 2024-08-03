@@ -28,16 +28,16 @@ namespace UZSG.Entities
                 item = value;
             }
         }
-        public string Name => item.Name;
+        public string Name => item.Data.Name;
         public string ActionText
         {
             get
             {
-                if (item.Type == ItemType.Item ||
-                    item.Type == ItemType.Tool || 
-                    item.Type == ItemType.Equipment ||
-                    item.Type == ItemType.Accessory) return "Pick Up";
-                if (item.Type == ItemType.Weapon) return "Equip";
+                if (item.Data.Type == ItemType.Item ||
+                    item.Data.Type == ItemType.Tool || 
+                    item.Data.Type == ItemType.Equipment ||
+                    item.Data.Type == ItemType.Accessory) return "Pick Up";
+                if (item.Data.Type == ItemType.Weapon) return "Equip";
                 
                 return "Interact with";
             }
@@ -75,7 +75,7 @@ namespace UZSG.Entities
             }
             if (!item.Data.Model.IsSet())
             {
-                Game.Console.LogWarning($"The item {item.Id} has no model to load.");
+                Game.Console.LogWarning($"The item {item.Data.Id} has no model to load.");
                 return;
             }
 

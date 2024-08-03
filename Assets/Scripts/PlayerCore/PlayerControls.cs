@@ -343,7 +343,6 @@ namespace UZSG.Players
 
         void ToggleRun(bool run)
         {
-
             if (run)
             {
                 if (_isCrouching)

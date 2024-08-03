@@ -19,11 +19,6 @@ namespace UZSG.Items
         
         [SerializeField] protected ItemData _itemData;
         public ItemData Data => _itemData;
-        public string Id => _itemData.Id;
-        public string Name => _itemData.Name;
-        public int StackSize => _itemData.StackSize;
-        public ItemType Type => _itemData.Type;
-        public ItemSubtype Subtype => _itemData.Subtype;
         [SerializeField] int _count;
         public int Count => _count;
         public bool IsNone => _itemData == null;
@@ -46,7 +41,7 @@ namespace UZSG.Items
         public Item(ItemData data, int count = 1)
         {
             _itemData = data;
-            _count = Math.Clamp(count, 1, Data.StackSize);
+            _count = Math.Clamp(count, 0, Data.StackSize);
         }
         
         /// <summary>
@@ -55,7 +50,7 @@ namespace UZSG.Items
         public Item(string id, int count = 1)
         {
             _itemData = Game.Items.GetItemData(id);
-            _count = Math.Clamp(count, 1, Data.StackSize);
+            _count = Math.Clamp(count, 0, Data.StackSize);
         }
                 
         /// <summary>
@@ -64,7 +59,7 @@ namespace UZSG.Items
         public Item(Item other, int count = 1)
         {
             _itemData = other.Data;
-            _count = Math.Clamp(count, 1, Data.StackSize);
+            _count = Math.Clamp(count, 0, Data.StackSize);
         }
 
         #endregion
@@ -80,27 +75,38 @@ namespace UZSG.Items
         /// </summary>
         public Item Take(int amount)
         {
-            if (amount >= _count)
-            {
-                return this;
-            }
-
             _count -= amount;
             return new(_itemData, amount);
         }
+
+        public Item Combine(Item other)
+        {
+            if (!CanBeCombinedWith(other)) return None;
+
+            _count += other.Count;
+            return this;
+        }
         
-        public bool Combine(Item item, out Item excess)
+        public bool TryCombine(Item other, out Item excess)
         {
             excess = None;
-            if (item.IsNone) return false;
-            if (!item.Data.IsStackable) return false;
-            if (!CompareTo(item)) return false;
+            if (!CanBeCombinedWith(other)) return false;
 
-            _count += item.Count;
+            _count += other.Count;
             if (_count > Data.StackSize)
             {
                 excess = new(this, _count - Data.StackSize);
             }
+            return true;
+        }
+
+        public bool CanBeCombinedWith(Item other)
+        {
+            if (other == null || other.IsNone) return false; /// Invalid item
+            if (!CompareTo(other)) return false; /// Not the same
+            if (!_itemData.IsStackable) return false; /// Not stackable
+            if (_count + other.Count > Data.StackSize) return false; /// Exceeds stack size
+
             return true;
         }
 
@@ -109,7 +115,8 @@ namespace UZSG.Items
         /// </summary>
         public bool CompareTo(Item other)
         {
-            return _itemData == other.Data;
+            if (other != null) return _itemData == other.Data;
+            return false;
         }
     }
 }

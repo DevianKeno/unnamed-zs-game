@@ -32,7 +32,7 @@ namespace UZSG.Players
         bool _hadRightClicked;
         bool _isHoldingLeftClick;
         bool _isHoldingRightClick;
-        
+        bool _allowInteractions = true;
         /// <summary>
         /// The interactable object the Player is currently looking at.
         /// </summary>
@@ -113,15 +113,18 @@ namespace UZSG.Players
         public void Enable()
         {
             actionMap.Enable();
+            _allowInteractions = true;
         }
 
         public void Disable()
         {
             actionMap.Disable();
+            _allowInteractions = false;
         }
         
         void InteractionSphereCast()
         {
+            if (!_allowInteractions) return;
             var viewportRect = new Vector2(Screen.width / 2, Screen.height / 2);
             ray = Player.MainCamera.ScreenPointToRay(viewportRect);
 

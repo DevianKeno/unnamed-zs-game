@@ -12,14 +12,14 @@ namespace UZSG.UnityEditor
             nameProperty,
             description,
             sprite,
-            isStackable,
             stackSize,
             type,
             subType,
             isMaterial,
             isCraftable,
             recipes,
-            weight;
+            weight,
+            sourceDesc;
 
         protected override void OnEnable()
         {
@@ -30,13 +30,13 @@ namespace UZSG.UnityEditor
             description = serializedObject.FindProperty("Description");
             sprite = serializedObject.FindProperty("Sprite");
             stackSize = serializedObject.FindProperty("StackSize");
-            isStackable = serializedObject.FindProperty("IsStackable");
             type = serializedObject.FindProperty("Type");
             subType = serializedObject.FindProperty("Subtype");
             isMaterial = serializedObject.FindProperty("IsMaterial");
             isCraftable = serializedObject.FindProperty("IsCraftable");
             recipes = serializedObject.FindProperty("Recipes");
             weight = serializedObject.FindProperty("Weight");
+            sourceDesc = serializedObject.FindProperty("SourceDescription");
         }
 
         public override void OnInspectorGUI()
@@ -53,12 +53,8 @@ namespace UZSG.UnityEditor
             EditorGUILayout.PropertyField(type);
             EditorGUILayout.PropertyField(subType);
             EditorGUILayout.PropertyField(weight);
-            EditorGUILayout.PropertyField(isStackable);
-            if (isStackable.boolValue)
-            {
-                EditorGUILayout.PropertyField(stackSize);
-            }
-
+            EditorGUILayout.PropertyField(stackSize);
+            EditorGUILayout.PropertyField(sourceDesc);
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("Crafting", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(isMaterial);

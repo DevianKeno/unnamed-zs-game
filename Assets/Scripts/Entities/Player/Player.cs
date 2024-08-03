@@ -156,13 +156,14 @@ namespace UZSG.Entities
             invUI.Initialize();
             invUI.OnOpen += () =>
             {
-                ToggleControlsOnGUI(false);
+                Actions.ActionMap.Disable();
+                inputs["Look"].Disable();
             };
             invUI.OnClose += () =>
             {
-                ToggleControlsOnGUI(true);
+                Actions.ActionMap.Enable();
+                inputs["Look"].Enable();
             };
-            invUI.AlwaysSolo = true;
         }
 
         void InitializeHUD()
@@ -239,17 +240,6 @@ namespace UZSG.Entities
                     HUD.Show();
                 };
             }
-        }
-
-        public void ToggleControlsOnGUI(bool enable)
-        {
-            Controls.SetControl("Look", enable);
-            Controls.SetControl("Primary Action", enable);
-            Controls.SetControl("Secondary Action", enable);
-            Controls.SetControl("Reload", enable);
-            Controls.SetControl("Hotbar", enable);
-            Controls.SetControl("Interact", enable);
-            Controls.SetControl("Unholster", enable);
         }
     }
 }

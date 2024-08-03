@@ -237,9 +237,9 @@ namespace UZSG.FPP
 
             currentlyEquippedIndex = index;
             UnloadCurrentViewmodel();
-            if (_cachedViewmodelsById.ContainsKey(slot.Item.Id))
+            if (_cachedViewmodelsById.ContainsKey(slot.Item.Data.Id))
             {
-                EquipViewmodel(_cachedViewmodelsById[slot.Item.Id]);
+                EquipViewmodel(_cachedViewmodelsById[slot.Item.Data.Id]);
             }
             HoldItemByIndex(index);
         }

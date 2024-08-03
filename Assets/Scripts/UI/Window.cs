@@ -29,10 +29,8 @@ namespace UZSG.UI
             }
         }
         public float AnimationFactor = 0.3f;
-        /// <summary>
-        /// Removes all other windows when this is displayed.
-        /// </summary>
-        public bool AlwaysSolo { get; set; }
+        
+        public bool IsAnimated { get; set; }
 
         protected GameObject blocker;
 
@@ -57,16 +55,11 @@ namespace UZSG.UI
         /// Shows the window.
         /// </summary>
         /// <param name="solo">Removes all other windows if true.</param>
-        public void Show(bool solo = false)
+        public void Show()
         {
             gameObject.SetActive(true);
             LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
 
-            if (solo)
-            {
-                Game.UI.SetCurrentWindow(this);
-            }
-            
             if (!IsVisible)
             {
                 OnShow();
@@ -128,7 +121,7 @@ namespace UZSG.UI
         {
             if (visible)
             {
-                Show(AlwaysSolo);
+                Show();
             }
             else
             {

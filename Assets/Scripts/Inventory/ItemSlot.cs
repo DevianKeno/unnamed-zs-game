@@ -17,7 +17,7 @@ namespace UZSG.Inventory
         
         [SerializeField] int index;
         public int Index => index;
-        [SerializeField] Item item;
+        [SerializeField] Item item = Item.None;
         public Item Item => item;
         public ItemSlotType SlotType;
         [SerializeField] public bool IsEmpty
@@ -78,7 +78,7 @@ namespace UZSG.Inventory
 
         public bool IsFits(Item item)
         {
-            return (SlotType & MapItemTypeToSlotType(item.Type)) != 0;
+            return (SlotType & MapItemTypeToSlotType(item.Data.Type)) != 0;
         }
         
         public void Clear()
@@ -127,7 +127,7 @@ namespace UZSG.Inventory
         /// </summary>
         public bool TryCombine(Item toAdd, out Item excess)
         {
-            if (item.Combine(toAdd, out excess))
+            if (item.TryCombine(toAdd, out excess))
             {
                 ContentChanged();
                 return true;

@@ -29,6 +29,7 @@ MonoBehaviour:
   IsMaterial: 0
   IsCraftable: 0
   Recipes: []
+  SourceDescription: 
   HotbarIcon: {fileID: 0}
   Category: 1
   MeleeType: 0

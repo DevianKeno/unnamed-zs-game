@@ -4,8 +4,7 @@ namespace UZSG
     {
         public static bool IsValidIndex<T>(this System.Collections.Generic.List<T> list, int index)
         {
-            if (index < 0 && index > list.Count) return false;
-            return true;
+            return !(index < 0 || index >= list.Count);
         }
 
         public static bool IsSet(this UnityEngine.AddressableAssets.AssetReference assetReference)

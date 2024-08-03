@@ -251,12 +251,12 @@ namespace UZSG.UI
                 {
                     if (_selectedSlot.IsEmpty) return;
 
-                    Item tookItem = inventory.Bag.Take(_selectedSlot.Index);
-                    if (tookItem == _selectedSlot.Item)
+                    Item taken = inventory.Bag.Take(_selectedSlot.Index);
+                    if (taken == _selectedSlot.Item)
                     {
                         
                     }
-                    HoldItem(tookItem);
+                    HoldItem(taken);
                     _lastSelectedSlotIndex = _selectedSlot.Index;
                 }
             }
@@ -276,17 +276,20 @@ namespace UZSG.UI
                         return;
                     }
 
-                    if (_selectedSlot.Item.CompareTo(_heldItem))
+                    if (_selectedSlot.Item.CompareTo(_heldItem)) /// put 1
                     {
-                        if (_selectedSlot.TryCombine(_heldItem, out Item excess)) 
+                        _isPutting = true;
+                        Item toPut = _heldItem.Take(1);
+                        if (!_selectedSlot.TryCombine(toPut, out Item excess)) 
                         {
-                            HoldItem(excess);
+                            _heldItem.Combine(toPut); /// return item to hand
                         }
+                        HoldItem(_heldItem);
                     }
                     else /// swap items
                     {
-                        Item tookItem = inventory.Bag.Take(_selectedSlot.Index);
-                        var itemToPut = SwapItemWithHeldItem(tookItem);
+                        Item taken = inventory.Bag.Take(_selectedSlot.Index);
+                        var itemToPut = SwapItemWithHeldItem(taken);
                         inventory.Bag.TryPut(_selectedSlot.Index, itemToPut);
                     }
                     _isPutting = false;
@@ -316,10 +319,10 @@ namespace UZSG.UI
             }
             itemOptions = Game.UI.Create<ChoiceWindow>("Choice Window", show: false);
             itemOptions.Position = _selectedSlotUI.Rect.position;
-            itemOptions.Label = slot.Item.Name;
+            itemOptions.Label = slot.Item.Data.Name;
 
             var item = slot.Item;
-            if (item.Subtype == ItemSubtype.Weapon)
+            if (item.Data.Subtype == ItemSubtype.Weapon)
             {
                 itemOptions.AddChoice("Equip Mainhand")
                 .AddCallback(() =>
@@ -332,7 +335,7 @@ namespace UZSG.UI
                     
                 });
             }
-            if (item.Subtype == ItemSubtype.Useable)
+            if (item.Data.Subtype == ItemSubtype.Useable)
             {
                 itemOptions.AddChoice("Use")
                 .AddCallback(() =>
@@ -340,7 +343,7 @@ namespace UZSG.UI
                     
                 });
             }
-            if (item.Subtype == ItemSubtype.Food)
+            if (item.Data.Subtype == ItemSubtype.Food)
             {
                 itemOptions.AddChoice("Eat")
                 .AddCallback(() =>
@@ -348,7 +351,7 @@ namespace UZSG.UI
                     
                 });
             }
-            if (item.Subtype == ItemSubtype.Consumable)
+            if (item.Data.Subtype == ItemSubtype.Consumable)
             {
                 itemOptions.AddChoice("Consumable")
                 .AddCallback(() =>
@@ -356,6 +359,11 @@ namespace UZSG.UI
                     
                 });
             }
+            itemOptions.AddChoice("Grab")
+            .AddCallback(() =>
+            {
+                
+            });
             itemOptions.AddChoice("Drop")
             .AddCallback(() =>
             {
@@ -382,7 +390,7 @@ namespace UZSG.UI
 
         void HoldItem(Item item)
         {
-            if (item.IsNone)
+            if (item == null || item.IsNone || item.Count < 1)
             {
                 ReleaseHeldItem();
                 return;

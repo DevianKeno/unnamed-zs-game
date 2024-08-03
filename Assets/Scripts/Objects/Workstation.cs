@@ -55,7 +55,6 @@ namespace UZSG.Objects
                 _GUI = gui;
                 _GUI.Title = WorkstationData.WorkstationName;
                 _GUI.Hide();
-                _GUI.AlwaysSolo = true;
                 _hasGUILoaded = true;
     
                 backAction = Game.Main.GetInputAction("Back", "Global");

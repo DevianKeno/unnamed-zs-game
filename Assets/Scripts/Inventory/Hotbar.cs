@@ -17,26 +17,13 @@ namespace UZSG.Inventory
         public const int MainhandIndex = 1;
         public const int OffhandIndex = 2;
 
-        public override int SlotsCount { get; set; }
+        /// Special slots aside from the Hotbar slots
         ItemSlot _hands;
-        public ItemSlot Hands { get => _hands; }
+        public ItemSlot Hand => _hands;
         [SerializeField] ItemSlot _mainhand;
-        public ItemSlot Mainhand { get => _mainhand; }
+        public ItemSlot Mainhand => _mainhand;
         [SerializeField] ItemSlot _offhand;
-        public ItemSlot Offhand { get => _offhand; }
-        [SerializeField] List<ItemSlot> _slots = new();
-        public override List<ItemSlot> Slots => _slots;
-
-        public ItemSlot this[int i]
-        {
-            get
-            {
-                if (i < 0 || i > SlotsCount) return null;
-                if (i == MainhandIndex) return _mainhand;
-                if (i == OffhandIndex) return _offhand;
-                return _slots[i];
-            }
-        }
+        public ItemSlot Offhand => _offhand;
         
         internal void Initialize()
         {

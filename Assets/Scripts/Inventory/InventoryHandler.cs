@@ -39,7 +39,6 @@ namespace UZSG.Inventory
                 foreach (var slot in _bag.Slots)
                 {
                     if (slot.IsEmpty) return false;
-                    continue;
                 }
                 return true;
             }

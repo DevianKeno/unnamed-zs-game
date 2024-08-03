@@ -12,12 +12,33 @@ namespace UZSG
     /// </summary>
     public abstract class Container : MonoBehaviour
     {
-        public abstract int SlotsCount { get; set; }
-        public abstract List<ItemSlot> Slots { get; }
+        public int SlotsCount { get; set; }
+        [SerializeField] protected List<ItemSlot> _slots = new();
+        public List<ItemSlot> Slots => _slots;
+        public bool IsFull
+        {
+            get
+            {
+                foreach (var slot in Slots)
+                {
+                    if (slot.IsEmpty) return false;
+                }
+                return true;
+            }
+        }
         /// <summary>
         /// Called whenever the content of a Slot is changed.
         /// </summary>
         public event EventHandler<SlotContentChangedArgs> OnSlotContentChanged;
+
+        public ItemSlot this[int i]
+        {
+            get
+            {
+                if (!Slots.IsValidIndex(i)) return null;
+                return _slots[i];
+            }
+        }
 
         protected virtual void SlotContentChanged(object slot, ItemSlot.ContentChangedArgs e)
         {
@@ -57,7 +78,8 @@ namespace UZSG
         /// </summary>
         public virtual bool TryPutNearest(Item item)
         {
-            if (item == Item.None) return true;
+            if (item.IsNone) return true;
+            if (IsFull) return false;
 
             foreach (ItemSlot slot in Slots)
             {
@@ -101,10 +123,12 @@ namespace UZSG
         /// </summary>
         public virtual Item Take(int slotIndex)
         {
+            if (!Slots.IsValidIndex(slotIndex)) return Item.None;
+
             ItemSlot slot = Slots[slotIndex];
             if (slot.IsEmpty) return Item.None;
 
-            return slot.TakeItems(-1);
+            return slot.TakeAll();
         }
 
         /// <summary>
@@ -112,6 +136,8 @@ namespace UZSG
         /// </summary>
         public virtual Item TakeItems(int slotIndex, int amount)
         {           
+            if (!Slots.IsValidIndex(slotIndex)) return Item.None;
+
             ItemSlot slot = Slots[slotIndex];
             if (slot.IsEmpty) return Item.None;
 
@@ -123,7 +149,6 @@ namespace UZSG
         /// </summary>
         public bool Contains(Item item, out ItemSlot slot)
         {
-            slot = null;
             foreach (ItemSlot s in Slots)
             {
                 if (s.IsEmpty) continue;
@@ -134,6 +159,8 @@ namespace UZSG
                     return true;
                 }
             }
+            
+            slot = null;
             return false;
         }
 
@@ -201,37 +228,46 @@ namespace UZSG
             slots.AddRange(other.Slots);
             return slots;
         }
+        
+        /// <summary>
+        /// Removes item with count from the container.
+        /// </summary>
+        /// <param name="item"></param>
+        public virtual void Remove(Item item)
+        {
+        }
 
         /// <summary>
-        /// Prints the items inside the container
+        /// Removes ALL items from the container.
         /// </summary>
-        public virtual void PrintItems()
-        {
-            foreach(ItemSlot slot in Slots){
-
-                if(slot.Item.CompareTo(Item.None)){
-                    continue;
-                }
-                print($"Slot {slot.Index}: {slot.Item.Name} ({slot.Item.Count})");
-            }
-        }
-
-
-        public virtual void RemoveItems(List<Item> items)
+        public virtual void RemoveAll(Item item)
         {
         }
-
 
         public virtual void ClearItem(ItemSlot slot)
         {
             if (slot.IsEmpty) return;
+
             slot.Clear();
         }
 
         public virtual void ClearItem(int slotIndex)
         {
             if (!Slots.IsValidIndex(slotIndex)) return;
+
             ClearItem(Slots[slotIndex]);
+        }
+
+        /// <summary>
+        /// Prints the items inside the container.
+        /// </summary>
+        public virtual void PrintItems()
+        {
+            foreach (ItemSlot slot in Slots)
+            {
+                if (slot.IsEmpty) continue;
+                print($"Slot {slot.Index}: {slot.Item.Data.Name} ({slot.Item.Count})");
+            }
         }
     }
 }

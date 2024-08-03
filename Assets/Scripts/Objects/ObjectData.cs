@@ -8,6 +8,7 @@ namespace UZSG.Data
     [CreateAssetMenu(fileName = "New Object Data", menuName = "UZSG/Object Data")]
     public class ObjectData : BaseData
     {
+        [Header("Object")]
         public string Name;
         public AssetReference Model;
     }

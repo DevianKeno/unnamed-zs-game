@@ -30,7 +30,6 @@ namespace UZSG.UI
             public Sprite Sprite;
         }
 
-        bool _isInitialized;
         public bool EnableScreenAnimations = true;
         [SerializeField] Color interactionColor;
         public Color InteractionColor
@@ -44,7 +43,10 @@ namespace UZSG.UI
             }
         }
 
+        bool _isInitialized;
+        List<Window> _activeWindows = new();
         Window _currentWindow;
+
         [SerializeField] Canvas canvas;
         public Canvas Canvas => canvas;
 
@@ -111,6 +113,38 @@ namespace UZSG.UI
             _isCursorVisible = enabled;
             Cursor.visible = enabled;
             OnCursorToggled?.Invoke(enabled);
+        }
+
+        internal void AddToActiveWindows(Window window)
+        {
+            if (window != null)
+            {
+                _activeWindows.Add(window);
+            }
+        }
+
+        internal void RemoveFromActiveWindows(Window window)
+        {
+            if (window != null && _activeWindows.Contains(window))
+            {
+                _activeWindows.Remove(window);
+            }
+        }
+
+        internal void SetCurrentWindow(Window window)
+        {
+            if (window == null) return;
+            if (_currentWindow == window) return;
+
+            if (_currentWindow != null)
+            {
+                _currentWindow.Hide();
+            }
+            foreach (var w in _activeWindows)
+            {
+                w.Hide();
+            }
+            _currentWindow = window;
         }
 
         public GameObject Create(string prefabName, bool inSafeArea = true)
@@ -183,15 +217,6 @@ namespace UZSG.UI
             Game.Console.Log(msg);
             Debug.LogWarning(msg);
             return default;
-        }
-
-        public void DisplaySolo(Window window)
-        {
-            if (_currentWindow == window) return;
-
-            _currentWindow.Hide();
-            _currentWindow = window;
-            window.Show(); 
         }
 
         public GameObject CreateBlocker(IUIElement forElement = null, Action onClick = null)

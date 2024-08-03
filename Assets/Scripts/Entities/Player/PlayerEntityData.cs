@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UZSG.Attributes;
 using UZSG.Crafting;
+using UZSG.Data;
 
 namespace UZSG.Entities
 {

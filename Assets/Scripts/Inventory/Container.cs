@@ -167,9 +167,9 @@ namespace UZSG
         }
 
         /// <summary>
-        /// Returns the number of items inside the container and outputs the slots
+        /// Counts the number of items inside the container and outputs the slots
         /// </summary>
-        public int ItemCount(Item item, out List<ItemSlot> slots)
+        public int CountItem(Item item, out List<ItemSlot> slots)
         {
             slots = new();
             int remaining = item.Count;

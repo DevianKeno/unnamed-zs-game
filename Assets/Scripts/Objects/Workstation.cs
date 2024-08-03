@@ -10,6 +10,7 @@ using UZSG.Entities;
 using UZSG.Interactions;
 using UZSG.UI;
 using UZSG.Crafting;
+using UZSG.Data;
 
 namespace UZSG.Objects
 {
@@ -52,13 +53,15 @@ namespace UZSG.Objects
             LoadGUIAsset(WorkstationData.GUI, onLoadCompleted: (gui) =>
             {
                 _GUI = gui;
+                _GUI.Title = WorkstationData.WorkstationName;
                 _GUI.Hide();
+                _GUI.AlwaysSolo = true;
                 _hasGUILoaded = true;
     
                 backAction = Game.Main.GetInputAction("Back", "Global");
                 backAction.performed += (ctx) =>
                 {
-                    _GUI?.Hide();
+                    _GUI.Hide();
                 };
             });
         }
@@ -76,7 +79,7 @@ namespace UZSG.Objects
                 Game.UI.ToggleCursor(true);
 
                 _GUI.Show();
-                _GUI.OnClose += () =>
+                _GUI.OnClose += () => 
                 {
                     player.HUD.Show();
                     player.Actions.Enable();
@@ -98,7 +101,8 @@ namespace UZSG.Objects
             crafter.BindUI(_GUI as CraftingGUI);
             crafter.AddContainer(player.Inventory.Bag);
             // crafter.AddContainer(player.Inventory.Hotbar);
-            crafter.ReadRecipes(player.PlayerEntityData.KnownRecipes);
+            crafter.AddRecipes(WorkstationData.IncludedRecipes);
+            crafter.AddRecipes(player.PlayerEntityData.KnownRecipes);
             // InitializeCrafterGUI(player);
         }
 

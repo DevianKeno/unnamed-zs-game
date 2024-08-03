@@ -6,6 +6,7 @@ using UZSG.Entities;
 using UZSG.Inventory;
 using UZSG.Items;
 using UZSG.UI;
+using UZSG.Data;
 
 namespace UZSG.Crafting
 {
@@ -25,14 +26,15 @@ namespace UZSG.Crafting
         //     }
         // }
 
-        public void ReadRecipes(List<RecipeData> recipes)
+        public void AddRecipes(List<RecipeData> recipes)
         {
-            _GUI.InitializeCraftableRecipes(recipes);
+            _GUI.AddRecipes(recipes);
         }
         
         public void BindUI(CraftingGUI gui)
         {
             _GUI = gui;
+            _GUI.BindCrafter(this);
         }
 
         public void AddContainer(Container container)
@@ -44,9 +46,10 @@ namespace UZSG.Crafting
         /// Consumes items in the container and returns an item whenever the required resource is available. 
         /// Returns a dictionary of slots pertaining to the recipe. 
         /// </summary>
-        protected bool CheckMaterialAvailability(Item item, int recipeIndex, Dictionary<Item, List<ItemSlot>> dictSlots){
-
-            if (recipeIndex > item.Data.Recipes.Count){
+        protected bool CheckMaterialAvailability(Item item, int recipeIndex, Dictionary<Item, List<ItemSlot>> dictSlots)
+        {
+            if (recipeIndex > item.Data.Recipes.Count)
+            {
                 print("Recipe index out of bound");
                 return false;
             }
@@ -54,17 +57,16 @@ namespace UZSG.Crafting
             foreach (Item material in item.Data.Recipes[recipeIndex].Materials)
             {
                 var materialSlots = new List<ItemSlot>();
-                
-                int _totalItemCount = 0;
+                int totalItemCount = 0;
 
                 foreach (Container container in containers)
                 {
                     var tempSlots = new List<ItemSlot>();
-                    _totalItemCount += container.ItemCount(material, out tempSlots);
+                    totalItemCount += container.CountItem(material, out tempSlots);
                     materialSlots.AddRange(tempSlots);
                 }
 
-                if (_totalItemCount < material.Count){
+                if (totalItemCount < material.Count){
                     print("Materials required does not match the current container");
                     return false;
                 } 
@@ -78,8 +80,8 @@ namespace UZSG.Crafting
         /// <summary>
         /// Consumes items from the container
         /// </summary>
-        protected virtual void TakeItems(Item item, int recipeIndex, Dictionary<Item, List<ItemSlot>> dictSlots){
-
+        protected virtual void TakeItems(Item item, int recipeIndex, Dictionary<Item, List<ItemSlot>> dictSlots)
+        {
             foreach (Item material in item.Data.Recipes[recipeIndex].Materials)
             {
                 int remainingCount = material.Count;
@@ -107,7 +109,6 @@ namespace UZSG.Crafting
                         remainingCount -= slot.Item.Count;
                         slot.TakeAll();
                     }
-
                 }
             }
         }
@@ -118,16 +119,23 @@ namespace UZSG.Crafting
         public virtual void CraftItem(Item item, int recipeIndex)
         {
             var dictSlots = new Dictionary<Item, List<ItemSlot>>();
-            if ( !CheckMaterialAvailability(item, recipeIndex, dictSlots)) {
+
+            if (!CheckMaterialAvailability(item, recipeIndex, dictSlots))
+            {
                 return;
             }
 
             TakeItems(item, recipeIndex, dictSlots);
 
-            foreach (Container container in containers){
+            foreach (Container container in containers)
+            {
                 if (container.TryPutNearest(new Item(item))) break;
             }
-            
+        }
+
+        public bool TryCraftRecipe(RecipeData recipe)
+        {
+            return false;
         }
     }
 }

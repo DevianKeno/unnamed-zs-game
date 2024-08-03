@@ -162,6 +162,7 @@ namespace UZSG.Entities
             {
                 ToggleControlsOnGUI(true);
             };
+            invUI.AlwaysSolo = true;
         }
 
         void InitializeHUD()
@@ -187,8 +188,15 @@ namespace UZSG.Entities
             Camera.main.transform.localPosition = Vector3.zero;
         }
 
-        void Tick(TickInfo e)
+        void Tick(TickInfo t)
         {
+            /// Consume stamina while running
+            if (Controls.IsMoving && Controls.IsRunning)
+            {
+                /// Cache attributes for better performance
+                var runStaminaCost = Generic.GetAttribute("run_stamina_cost").Value;
+                Vitals.GetAttribute("stamina").Remove(runStaminaCost);
+            }
         }
 
         void OnIdleEnter(object sender, State<MoveStates>.ChangedContext e)
@@ -223,6 +231,14 @@ namespace UZSG.Entities
         public void ToggleInventory()
         {
             invUI.ToggleVisibility();
+            if (invUI.IsVisible)
+            {
+                HUD.Hide();
+                invUI.OnClose += () =>
+                {
+                    HUD.Show();
+                };
+            }
         }
 
         public void ToggleControlsOnGUI(bool enable)

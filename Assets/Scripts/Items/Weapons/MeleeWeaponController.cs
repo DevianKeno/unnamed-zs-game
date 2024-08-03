@@ -54,8 +54,8 @@ namespace UZSG.Items.Weapons
         void InitializeEventsFromOwnerInput()
         {
             if (owner is not Player player) return;
-            actionMap = player.Controls.ActionMap; /// DISBALE ALL ACTIONS ON DISABLE HELD ITEM
-            var inputs = player.Controls.Inputs;
+            actionMap = player.Actions.ActionMap; /// DISBALE ALL ACTIONS ON DISABLE HELD ITEM
+            var inputs = player.Actions.Inputs;
 
             inputs["Primary Action"].started += OnPlayerPrimary;
             inputs["Primary Action"].canceled += OnPlayerPrimary;

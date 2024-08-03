@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 
 using UZSG.Crafting;
+using UZSG.Data;
 
 namespace UZSG.Items
 {
@@ -16,7 +17,7 @@ namespace UZSG.Items
     [CreateAssetMenu(fileName = "New Item Data", menuName = "UZSG/Item Data")]
     public class ItemData : BaseData
     {
-        /// Item Attributes
+        [Header("Item Attributes")]
         public string Name;
         [TextArea] public string Description;
         public AssetReference Model;
@@ -31,5 +32,6 @@ namespace UZSG.Items
         public bool IsMaterial;
         public bool IsCraftable;
         public List<RecipeData> Recipes;
+        [TextArea] public string SourceDescription;
     }
 }

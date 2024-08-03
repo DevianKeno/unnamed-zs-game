@@ -16,6 +16,7 @@ namespace UZSG.Systems
     public sealed class TickSystem : MonoBehaviour
     {
         public const int MaxTPS = 10000;
+        public const int NormalTPS = 64;
 
         [SerializeField] int _ticksPerSecond;
         public int TPS

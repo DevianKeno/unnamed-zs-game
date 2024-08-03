@@ -85,7 +85,7 @@ namespace UZSG.Items.Weapons
         void InitializeEventsFromOwnerInput()
         {
             if (owner is not Player player) return;
-            var inputs = player.Controls.Inputs;
+            var inputs = player.Actions.Inputs;
 
             inputs["Primary Action"].started += OnPlayerPrimary;
             inputs["Primary Action"].canceled += OnPlayerPrimary;

@@ -129,12 +129,12 @@ namespace UZSG.Attributes
 
             if (Change == Change.Regen)
             {
-                Value += BaseChange;
+                _value += BaseChange;
                 CheckOverflow();
                 
             } else if (Change == Change.Degen)
             {
-                Value -= BaseChange;
+                _value -= BaseChange;
                 CheckUnderflow();
                 
             }

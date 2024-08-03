@@ -1,14 +1,17 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UZSG.Items;
 
-namespace UZSG.Crafting
+namespace UZSG.Data
 {
+    [Serializable]
     [CreateAssetMenu(fileName = "New Recipe Data", menuName = "UZSG/Recipe Data")]
-    public class RecipeData : ScriptableObject
+    public class RecipeData : BaseData
     {
-        public string Id;
         public string Name;
         public Item Output;
         public Item[] Materials;
+        public float DurationSeconds;
     }
 }

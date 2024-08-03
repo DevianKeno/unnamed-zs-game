@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 
 using UZSG.Systems;
 using UZSG.Entities;
+using UZSG.Attributes;
 
 namespace UZSG.Players
 {
@@ -41,7 +42,12 @@ namespace UZSG.Players
 
         #endregion
 
-        bool _isEnabled;
+        bool _isMovePressed;
+        bool _isMovingBackwards;
+        bool _isTransitioningCrouch;
+        bool _isRunning;
+        [SerializeField] float _targetSpeed;
+        float _crouchPosition;
         /// <summary>
         /// The input values performed in the current frame.
         /// </summary>
@@ -51,27 +57,15 @@ namespace UZSG.Players
         /// </summary>
         Vector3 _frameVelocity;
 
-        StrafeDirection strafeDirection;
-        public StrafeDirection StrafeDirection => strafeDirection;
-        [SerializeField] float _targetSpeed;
-        bool _isMovePressed;
-        bool _isMovingBackwards;
-        float _crouchPosition;
-        bool _isTransitioningCrouch;
-        bool _isRunning;
         /// <summary>
-        /// Check if holding [Run] key and speed is greater than run threshold
+        /// If holding [Run] key and speed is greater than run threshold.
         /// </summary>
-        public bool IsRunning { get => _isRunning; }
+        public bool IsRunning => _isRunning;
         bool _isCrouching;
-        public bool IsCrouching { get => _isCrouching; }
+        public bool IsCrouching => _isCrouching;
         public bool IsMoving
         {
-            get
-            {
-                if (Magnitude > 0) return true;
-                return false;
-            }
+            get => Magnitude > 0f;
         }
         public bool IsGrounded => groundChecker.IsGrounded;
         public bool IsFalling
@@ -82,6 +76,10 @@ namespace UZSG.Players
         {
             get => rb.velocity;
         }
+        public float Magnitude
+        {
+            get => rb.velocity.magnitude;   
+        }
         /// <summary>
         /// Represents how fast the player is moving in any direction.
         /// </summary>
@@ -91,21 +89,16 @@ namespace UZSG.Players
         }
         public float HorizontalSpeed
         {
-            get
-            {
-                var horizontalVelocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
-                return horizontalVelocity.magnitude;
-            }
+            get => new Vector3(rb.velocity.x, 0f, rb.velocity.z).magnitude;
         }
         public float VerticalSpeed
         {
-            get => rb.velocity.y;
+            get => new Vector3(0f, rb.velocity.y, 0f).magnitude;
         }
-        public float Magnitude
+        public bool CanBob
         {
-            get => new Vector3(rb.velocity.x, 0, rb.velocity.z).magnitude;   
+            get => IsGrounded;
         }
-
 
         #region Events
 
@@ -142,7 +135,7 @@ namespace UZSG.Players
 
         void InitializeInputs()
         {
-            actionMap = Game.Main.GetActionMap("Player");
+            actionMap = Game.Main.GetActionMap("Player Move");
             inputs = Game.Main.GetActionsFromMap(actionMap);
 
             foreach (var input in inputs)
@@ -184,14 +177,8 @@ namespace UZSG.Players
             UpdateStates();
         }
 
-        void Tick(TickInfo e)
+        void Tick(TickInfo t)
         {
-            if (IsMoving && IsRunning)
-            {
-                /// Cache attributes for better performance
-                var runStaminaCost = Player.Generic.GetAttribute("run_stamina_cost").Value;
-                Player.Vitals.GetAttribute("stamina").Remove(runStaminaCost);
-            }
         }
 
         void HandleMovement()
@@ -204,9 +191,14 @@ namespace UZSG.Players
         void RetrieveAttributes()
         {
             /// These can be cached and track changes using events
+            /// Vitals
+            stamina = Player.Vitals.GetAttribute("stamina");
+            
+            /// Generic
             MoveSpeed = Player.Generic.GetAttribute("move_speed").Value;
             RunSpeed = Player.Generic.GetAttribute("run_speed").Value;
             CrouchSpeed = Player.Generic.GetAttribute("crouch_speed").Value;
+            jumpStaminaCost = Player.Generic.GetAttribute("jump_stamina_cost").Value;
             
             _targetSpeed = MoveSpeed;
         }
@@ -231,44 +223,43 @@ namespace UZSG.Players
         }
 
 
+        #region Cached attributes
+
+        VitalAttribute stamina;
+        float jumpStaminaCost;
+
+        #endregion
+
+
         #region Player input callbacks
 
         void OnMoveInput(InputAction.CallbackContext context)
         {
-            if (!_isEnabled) return;
             if (!EnableMovementControls) return;
 
             _frameInput.Move = context.ReadValue<Vector2>();
             _isMovePressed = _frameInput.Move.x != 0 || _frameInput.Move.y != 0;
             _isMovingBackwards = _frameInput.Move.y < 0;
 
-            if (_frameInput.Move.x < 0)
+            CancelRunIfRunningBackwards();
+        }
+
+        void CancelRunIfRunningBackwards()
+        {
+            if (_isMovingBackwards && _isRunning)
             {
-                strafeDirection = StrafeDirection.Left;
-            }
-            else if (_frameInput.Move.x > 0)
-            {
-                strafeDirection = StrafeDirection.Right;
-            }
-            else
-            {
-                strafeDirection = StrafeDirection.None;
+                ToggleRun(false);
             }
         }
 
         void OnRunInput(InputAction.CallbackContext context)
         {
-            if (!_isEnabled) return;
             if (!EnableMovementControls) return;
             if (!IsGrounded) return;
 
             if (context.started)
             {
-                if (_isMovingBackwards)
-                {
-                    ToggleRun(false);
-                    return;
-                }
+                CancelRunBecauseOfOtherThings();
                 if (Player.FPP.IsPerforming) return;
 
                 ToggleRun(true);
@@ -279,35 +270,45 @@ namespace UZSG.Players
             }
         }
 
+        void CancelRunBecauseOfOtherThings()
+        {
+            if (_isMovingBackwards)
+            {
+                ToggleRun(false);
+            }
+        }
+
+
         void OnJumpInput(InputAction.CallbackContext context)
         {
-            if (!_isEnabled) return;
             if (!EnableMovementControls) return;
 
             if (context.started)
             {
+                if (!CanJump) return;
+            
                 if (_isRunning)
                 {
                     ToggleRun(false);
                 }
+                if (_isCrouching)
+                {
+                    ToggleCrouch(false);
+                }
+                
                 HandleJump();
             }
         }
 
-        public bool CanBob
+        public bool CanJump
         {
-            get
-            {
-                if (IsGrounded) return true;
-                return false;
-            }
+            get => stamina.Value >= jumpStaminaCost && IsGrounded;
         }
 
         [SerializeField] bool _crouchControlIsToggle = true;
 
         void OnCrouchInput(InputAction.CallbackContext context)
         {
-            if (!_isEnabled) return;
             if (!EnableMovementControls) return;
 
             if (_crouchControlIsToggle)
@@ -342,13 +343,14 @@ namespace UZSG.Players
 
         void ToggleRun(bool run)
         {
-            if (_isCrouching)
-            {
-                ToggleCrouch(false);
-            }
 
             if (run)
             {
+                if (_isCrouching)
+                {
+                    ToggleCrouch(false);
+                }
+
                 _targetSpeed = RunSpeed;
                 Player.MoveStateMachine.ToState(MoveStates.Run);
             }
@@ -385,7 +387,10 @@ namespace UZSG.Players
         {
             var targetVelocity = _frameVelocity * (_targetSpeed * Time.fixedDeltaTime);
             targetVelocity.y = rb.velocity.y;
-            rb.velocity = targetVelocity * TimeScale;
+            /// No acceleration
+            // rb.velocity = targetVelocity * TimeScale;
+            /// With acceleration
+            rb.velocity = Vector3.Lerp(rb.velocity, targetVelocity, Acceleration * Time.fixedDeltaTime) * TimeScale;
         }
 
         void ToggleCrouch(bool crouch)
@@ -425,12 +430,12 @@ namespace UZSG.Players
 
         public void Enable()
         {
-            _isEnabled = true;
+            actionMap.Enable();
         }
 
         public void Disable()
         {
-            _isEnabled = false;
+            actionMap.Disable();
         }
 
         void SetControlsEnabled(bool value)

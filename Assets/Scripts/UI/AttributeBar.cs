@@ -40,6 +40,11 @@ namespace UZSG.UI
             }
         }
 
+        public void Flash()
+        {
+            /// flash bar indicating something?
+        }
+
         public override void Refresh()
         {
             base.Refresh();

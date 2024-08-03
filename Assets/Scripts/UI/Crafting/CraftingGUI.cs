@@ -10,37 +10,82 @@ using UZSG.Crafting;
 using UZSG.Items;
 using UZSG.Systems;
 using UnityEngine.UI;
+using UZSG.Data;
 
 namespace UZSG.UI
 {
     public class CraftingGUI : WorkstationGUI
     {
+        RecipeData _selectedRecipe;
         List<CraftableItemUI> craftablesUI = new();
         List<ItemSlotUI> materialSlots = new();
 
-        [SerializeField] Crafter Crafter;
+        [SerializeField] Crafter crafter;
 
-        [SerializeField] TextMeshProUGUI titleText;
+
+        [SerializeField] CraftedItemDisplayUI craftedItemDisplay;
         [SerializeField] RectTransform craftablesHolder;
         [SerializeField] RectTransform materialsHolder;
+        [SerializeField] Button craftButton;
+        [SerializeField] Button closeButton;
+
+        internal void BindCrafter(Crafter crafter)
+        {
+            this.crafter = crafter;
+        }
 
         void OnClickCraftable(CraftableItemUI craftable)
         {
+            craftedItemDisplay.SetDisplayedItem(craftable.RecipeData.Output);
             DisplayMaterials(craftable.RecipeData);
             LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
+        }
+
+        public void ResetDisplayed()
+        {
+            craftedItemDisplay.ResetDisplayed();
+            ClearCraftables();
+            ClearMaterials();
+        }
+
+        public override void OnShow()
+        {
+            ResetDisplayed();
+
+            craftButton.onClick.AddListener(() =>
+            {
+                CraftItem();
+            });
+            closeButton.onClick.AddListener(() =>
+            {
+                Hide();
+            });
+        }
+
+        void CraftItem()
+        {
+            if (crafter.TryCraftRecipe(_selectedRecipe))
+            {
+                
+            }
         }
 
 
         #region Craftables list
 
-        public void InitializeCraftableRecipes(List<RecipeData> recipes)
+        public void AddRecipes(List<RecipeData> recipes)
         {
-            ClearCraftables();
             foreach (var recipe in recipes)
             {
                 AddCraftableItem(recipe);
             }
             LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
+        }
+
+        public void ReplaceRecipes(List<RecipeData> recipes)
+        {
+            ClearCraftables();
+            AddRecipes(recipes);
         }
 
         public void AddCraftableItem(RecipeData data)
@@ -89,6 +134,7 @@ namespace UZSG.UI
             }
             materialSlots.Clear();
         }
+
         #endregion
     }
 }

@@ -27,5 +27,6 @@ MonoBehaviour:
   IsStackable: 1
   StackSize: 999
   IsMaterial: 0
-  IsCraftable: 0
-  Recipes: []
+  IsCraftable: 1
+  Recipes:
+  - {fileID: 11400000, guid: d483b2fe74215824dbda5f2c35f2445a, type: 2}

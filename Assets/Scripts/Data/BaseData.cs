@@ -7,7 +7,6 @@ namespace UZSG.Data
     [CreateAssetMenu(fileName = "New Food Data", menuName = "UZSG/Food Data")]
     public class BaseData : ScriptableObject
     {
-        [Header("Data Attributes")]
         public string Id;
     }
 }

@@ -33,10 +33,14 @@ namespace UZSG.Attributes
         public static Attribute None => null;
         [SerializeField] protected AttributeData data;
         public AttributeData Data => data;
+        [SerializeField] protected float _value;
         /// <summary>
         /// Represents the current value.
         /// </summary>
-        public float Value;
+        public float Value => _value;
+        /// <summary>
+        /// Returns a value between 0 and 1, representing the value to max ratio.
+        /// </summary>
         public float ValueMaxRatio
         {
             get { return Value / Maximum; }
@@ -73,7 +77,7 @@ namespace UZSG.Attributes
                 if (value > 0)
                 {
                     _multiplier = value;
-                } else
+                }else
                 {
                     Game.Console?.Log($"Cannot set Multiplier for Attribute {Data.Name}. A negative multiplier is invalid.");
                 }
@@ -118,21 +122,21 @@ namespace UZSG.Attributes
         public static void ToMax(Attribute attr)
         {
             attr._previousValue = attr.Value;
-            attr.Value = attr.Maximum;            
+            attr._value = attr.Maximum;            
             attr.ValueChanged();
         }
         
         public static void ToMin(Attribute attr)
         {
             attr._previousValue = attr.Value;
-            attr.Value = attr.Minimum;
+            attr._value = attr.Minimum;
             attr.ValueChanged();
         }
         
         public static void ToZero(Attribute attr)
         {
             attr._previousValue = attr.Value;
-            attr.Value = 0f;
+            attr._value = 0f;
             attr.ValueChanged();
         }
 
@@ -142,7 +146,7 @@ namespace UZSG.Attributes
         public virtual void Add(float value)
         {
             _previousValue = Value;
-            Value += value;
+            _value += value;
             if (_previousValue == Value) return;
             CheckOverflow();
             ValueChanged();
@@ -154,7 +158,7 @@ namespace UZSG.Attributes
         public virtual void Remove(float value, bool buffer = false)
         {
             _previousValue = Value;
-            Value -= value;
+            _value -= value;
             if (_previousValue == Value) return;
             CheckUnderflow();
             ValueChanged(buffer);
@@ -169,7 +173,7 @@ namespace UZSG.Attributes
             if (value < Value)
             {
                 _previousValue = Value;
-                Value -= value;
+                _value -= value;
                 CheckUnderflow();
                 ValueChanged();
                 return true;
@@ -214,7 +218,7 @@ namespace UZSG.Attributes
             if (Value > Maximum)
             {
                 overflow = Value - Maximum;
-                Value -= overflow;
+                _value -= overflow;
             }
 
             return overflow;
@@ -229,7 +233,7 @@ namespace UZSG.Attributes
             if (Value < Minimum)
             {
                 underflow = Value;
-                Value += Mathf.Abs(underflow);
+                _value += Mathf.Abs(underflow);
             }
 
             return underflow;

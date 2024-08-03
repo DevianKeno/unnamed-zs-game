@@ -19,8 +19,10 @@ MonoBehaviour:
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
+  WorkstationName: Crafting
   GUI:
     m_AssetGUID: f06fbbe13f8dc704189c7a399c48e56c
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
+  IncludedRecipes: []

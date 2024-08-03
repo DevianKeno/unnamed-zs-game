@@ -5,13 +5,11 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 using UZSG.Systems;
+using UZSG.UI;
 using UZSG.Items;
-using UZSG.Items.Weapons;
 using UZSG.Interactions;
 using UZSG.Entities;
 using UZSG.Inventory;
-using UZSG.UI;
-using System.Collections;
 
 namespace UZSG.Players
 {
@@ -29,7 +27,6 @@ namespace UZSG.Players
         public float MaxInteractDistance;
         public float HoldThresholdMilliseconds = 200f;
         
-        bool _isEnabled;
         float _holdTimer;
         bool _hadLeftClicked;
         bool _hadRightClicked;
@@ -47,7 +44,9 @@ namespace UZSG.Players
         public event Action<Item> OnPickupItem;
         
         InputActionMap actionMap;
+        public InputActionMap ActionMap => actionMap;
         Dictionary<string, InputAction> inputs = new();
+        public Dictionary<string, InputAction> Inputs => inputs;
         
         void Awake()
         {
@@ -64,7 +63,7 @@ namespace UZSG.Players
 
         void InitializeInputs()
         {
-            actionMap = Game.Main.GetActionMap("Player");
+            actionMap = Game.Main.GetActionMap("Player Actions");
             inputs = Game.Main.GetActionsFromMap(actionMap);
         
             inputs["Primary Action"].started += OnStartPrimaryAction;           // LMB (default)
@@ -113,18 +112,16 @@ namespace UZSG.Players
 
         public void Enable()
         {
-            _isEnabled = true;
+            actionMap.Enable();
         }
 
         public void Disable()
         {
-            _isEnabled = false;
+            actionMap.Disable();
         }
         
         void InteractionSphereCast()
         {
-            if (!_isEnabled) return;
-
             var viewportRect = new Vector2(Screen.width / 2, Screen.height / 2);
             ray = Player.MainCamera.ScreenPointToRay(viewportRect);
 
@@ -154,7 +151,6 @@ namespace UZSG.Players
 
         void OnHotbarSelect(InputAction.CallbackContext context)
         {
-            if (!_isEnabled) return;
             if (!int.TryParse(context.control.displayName, out int index)) return;
 
             var hotbarIndex = (HotbarIndex) index;
@@ -165,20 +161,17 @@ namespace UZSG.Players
 
         void OnUnholster(InputAction.CallbackContext context)
         {
-            if (!_isEnabled) return;
             // Player.Inventory.SelectHotbarSlot(0);
             Player.FPP.Unholster();
         }
 
         void OnPerformReload(InputAction.CallbackContext context)
         {
-            if (!_isEnabled) return;
             Player.FPP.PerformReload();
         }
         
         void OnPerformInteract(InputAction.CallbackContext context)
         {
-            if (!_isEnabled) return;
             if (lookingAt == null) return;
 
             interactionIndicator.Hide();
@@ -187,14 +180,12 @@ namespace UZSG.Players
 
         void OnStartPrimaryAction(InputAction.CallbackContext c)
         {
-            if (!_isEnabled) return;
             _holdTimer = 0f;
             _hadLeftClicked = true;
         }
 
         void OnCancelPrimaryAction(InputAction.CallbackContext c)
         {
-            if (!_isEnabled) return;
             _hadLeftClicked = false;
             if (_isHoldingLeftClick)
             {
@@ -209,14 +200,12 @@ namespace UZSG.Players
 
         void OnStartSecondaryAction(InputAction.CallbackContext c)
         {
-            if (!_isEnabled) return;
             _holdTimer = 0f;
             _hadRightClicked = true;
         }
 
         void OnCancelSecondaryAction(InputAction.CallbackContext c)
         {
-            if (!_isEnabled) return;
             _hadRightClicked = false;
             if (_isHoldingRightClick)
             {

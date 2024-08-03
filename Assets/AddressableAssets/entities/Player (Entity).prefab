@@ -47,6 +47,7 @@ MonoBehaviour:
   containers:
   - {fileID: 2347074114045292195}
   - {fileID: 7107611863965880641}
+  _GUI: {fileID: 0}
   PlayerEntity: {fileID: 8107631895800867322}
 --- !u!1 &1560824521149795163
 GameObject:
@@ -473,13 +474,13 @@ MonoBehaviour:
   WalkBob:
     Amplitude: 1.05
     Frequency: 0.9
-    Recovery: 16
+    Recovery: 6
     MaintainForwardLook: 1
     LookDistance: 10
   RunBob:
     Amplitude: 1
-    Frequency: 0.9
-    Recovery: 4
+    Frequency: 1.1
+    Recovery: 8
     MaintainForwardLook: 1
     LookDistance: 10
 --- !u!114 &1760353934298345573
@@ -708,6 +709,7 @@ GameObject:
   - component: {fileID: 7608053696514126183}
   - component: {fileID: 2191657888378489256}
   - component: {fileID: 108881224563293428}
+  - component: {fileID: 8792051230440698930}
   m_Layer: 8
   m_Name: Character (Model)
   m_TagString: Untagged
@@ -802,6 +804,29 @@ CapsuleCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!136 &8792051230440698930
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6110845800208884272}
+  m_Material: {fileID: 13400000, guid: 40961d3c0edd95b42b1b67d83d198540, type: 2}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.6
+  m_Height: 1.9
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &6511268728921316728
@@ -1087,7 +1112,7 @@ MonoBehaviour:
   MoveSpeed: 225
   RunSpeed: 350
   CrouchSpeed: 2
-  JumpSpeed: 10
+  JumpSpeed: 4
   TimeScale: 1
   _targetSpeed: 0
   model: {fileID: 94713427562349016}

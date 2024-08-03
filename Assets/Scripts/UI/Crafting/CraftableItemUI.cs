@@ -1,12 +1,10 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using TMPro;
 
-using UZSG.Crafting;
-using UZSG.Items;
-using UZSG.Systems;
-using UnityEngine.EventSystems;
-using System;
+using UZSG.Data;
 
 namespace UZSG.UI
 {

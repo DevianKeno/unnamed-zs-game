@@ -16,8 +16,7 @@ namespace UZSG.Systems
         /// <summary>
         /// Contains the list of all attributes in the game.
         /// </summary>
-        Dictionary<string, AttributeData> _attributesDict = new();
-        [SerializeField] AssetLabelReference assetLabelReference;
+        Dictionary<string, AttributeData> _attrDict = new();
 
         internal void Initialize()
         {
@@ -31,20 +30,31 @@ namespace UZSG.Systems
         void LoadResources()
         {
             Game.Console.Log("Reading data: Attributes...");
-            var attrs = Resources.LoadAll<AttributeData>("Data/attributes");
+            var attrs = Resources.LoadAll<AttributeData>("Data/Attributes");
             foreach (var attr in attrs)
             {
-                _attributesDict[attr.Id] = attr;
+                _attrDict[attr.Id] = attr;
             }
         }
 
         public Attribute Create(string id)
         {
-            if (_attributesDict.ContainsKey(id))
+            if (_attrDict.ContainsKey(id))
             {
-                return new Attribute(_attributesDict[id]);
+                return new Attribute(_attrDict[id]);
             }
             return Attribute.None;
+        }
+
+        public AttributeData GetData(string id)
+        {
+            if (_attrDict.ContainsKey(id))
+            {
+                return _attrDict[id];
+            }
+
+            Game.Console.Log($"Invalid Attribute Id '{id}'");
+            return null;
         }
     }
 }

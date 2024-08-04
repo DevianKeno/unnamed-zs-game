@@ -49,7 +49,6 @@ namespace UZSG.Items.Weapons
         [SerializeField] GunWeaponStateMachine stateMachine;
         public GunWeaponStateMachine StateMachine => stateMachine;
         public GunMuzzleController MuzzleController;
-        [SerializeField] AudioSourceController audioSourceController;
 
         public void Initialize(GunItemEntityInfo info)
         {

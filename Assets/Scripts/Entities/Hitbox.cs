@@ -1,5 +1,8 @@
 using System;
+
 using UnityEngine;
+
+using UZSG.Interactions;
 
 namespace UZSG.Entities
 {

@@ -78,7 +78,7 @@ namespace UZSG.Attributes
             Game.Tick.OnTick -= Tick;
         }
 
-        internal override void Init()
+        internal override void Initialize()
         {
             if (Cycle == Cycle.PerSecond)
             {

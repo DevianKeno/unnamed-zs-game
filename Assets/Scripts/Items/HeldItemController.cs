@@ -20,6 +20,8 @@ namespace UZSG.Items
             get { return owner; }
             set { owner = value; }
         }
+        [SerializeField] protected AudioSourceController audioSourceController;
+        public AudioSourceController AudioSource => audioSourceController;
         protected InputActionMap actionMap;
 
         public abstract void Initialize();

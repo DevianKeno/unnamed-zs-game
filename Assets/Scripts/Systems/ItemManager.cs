@@ -92,7 +92,7 @@ namespace UZSG.Systems
             return Item.None;
         }
 
-        public ItemData GetItemData(string id)
+        public ItemData GetData(string id)
         {
             if (_itemsDict.ContainsKey(id))
             {

@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 using UZSG.Systems;
+using UZSG.Interactions;
 using UZSG.Data;
 using UZSG.Entities;
 using UZSG.Players;
@@ -32,7 +33,6 @@ namespace UZSG.Items.Weapons
 
         MeleeWeaponStateMachine stateMachine;
         public MeleeWeaponStateMachine StateMachine => stateMachine;
-        [SerializeField] AudioSourceController audioSourceController;
 
         void Awake()
         {
@@ -69,14 +69,14 @@ namespace UZSG.Items.Weapons
 
         void RetrievePlayerAttributes()
         {
-            if (Player.Vitals.TryGetAttribute("stamina", out var attr))
+            if (Player.Vitals.TryGet("stamina", out var attr))
             {
                 playerStamina = attr;
                 _canAttack = true;
             }
             else
             {
-                Game.Console.LogWarning($"Player {Player.name} does not have a 'stamina' attribute. Will not be able to attack.");
+                Game.Console.LogWarning($"Player {Player.name} does not have a 'stamina' attribute. They will not be able to use '{ItemData.Id}'.");
                 _canAttack = false;
             }
         }
@@ -151,9 +151,9 @@ namespace UZSG.Items.Weapons
             _inhibitActions = true;
             _isAttacking = true;
 
-            StartCoroutine(CreateAttackHitbox());
-            PlaySound();
             ConsumeStamina();
+            PlaySound();
+            StartCoroutine(CreateAttackRays());
             stateMachine.ToState(MeleeWeaponStates.Attack);
             yield return new WaitForSeconds(0.5f); /// SOMETHING ATKSPD THOUGH NOT SO STRAIGHFROWARDS LOTS OF CALCS (short for calculations)
             
@@ -171,12 +171,7 @@ namespace UZSG.Items.Weapons
             audioSourceController.PlaySound("swing1");
         }
 
-        public override void SetStateFromAction(ActionStates state)
-        {
-            
-        }
-
-        IEnumerator CreateAttackHitbox()
+        IEnumerator CreateAttackRays()
         {
             float halfAngle = attackAngle / 2;
             float angleStep = attackAngle / (numberOfRays - 1);
@@ -230,5 +225,9 @@ namespace UZSG.Items.Weapons
             }
         }
 
+        public override void SetStateFromAction(ActionStates state)
+        {
+            
+        }
     }
 }

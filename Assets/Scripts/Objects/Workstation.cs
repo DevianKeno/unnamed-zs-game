@@ -26,7 +26,7 @@ namespace UZSG.Objects
 
     public class Workstation : BaseObject, IInteractable, IPlaceable, ICrafter
     {
-        WorkstationData WorkstationData => objectData as WorkstationData;
+        public WorkstationData WorkstationData => objectData as WorkstationData;
         public string ActionText => "Use";
         public string Name => objectData.Name;
         [SerializeField] Crafter crafter;

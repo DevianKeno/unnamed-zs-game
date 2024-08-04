@@ -18,6 +18,9 @@ namespace UZSG.Entities
     public class ItemEntity : Entity, IInteractable
     {
         [SerializeField] Item item;
+        /// <summary>
+        /// Get the actual 'Item' from the Item Entity.
+        /// </summary>
         public Item Item
         {
             get

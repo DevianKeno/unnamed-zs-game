@@ -9,7 +9,10 @@ namespace UZSG.Attributes
     {
         public GenericAttribute(AttributeData data) : base(data)
         {
-            this.data = data;
+        }
+        
+        public GenericAttribute(string id) : base(id)
+        {
         }
     }
 }

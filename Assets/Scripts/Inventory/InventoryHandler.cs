@@ -8,7 +8,11 @@ using UZSG.Systems;
 namespace UZSG.Inventory
 {
     public enum HotbarIndex {
-        Hands, Mainhand, Offhand, Three, Four, Five, Six, Seven, Eight, Nine, //Ten,
+        Three, Four, Five, Six, Seven, Eight, Nine, //Ten,
+    }
+
+    public enum EquipmentIndex {
+        Hands, Mainhand, Offhand
     }
 
     public struct SlotContentChangedArgs
@@ -26,12 +30,13 @@ namespace UZSG.Inventory
 
         public float ThrowForce;
 
-        Hotbar _hotbar;
-        public Hotbar Hotbar => _hotbar;
-        public ItemSlot Mainhand => Hotbar.Mainhand;
-        public ItemSlot Offhand => Hotbar.Offhand;
         Bag _bag;
         public Bag Bag => _bag;
+        Hotbar _hotbar;
+        public Hotbar Hotbar => _hotbar;
+        Equipment _equipment;
+        public Equipment Equipment => _equipment;
+
         public bool IsFull
         {
             get
@@ -47,59 +52,23 @@ namespace UZSG.Inventory
         {
             get
             {
-                if (Mainhand.IsEmpty || Offhand.IsEmpty) return true;
+                if (_equipment.Mainhand.IsEmpty || _equipment.Offhand.IsEmpty) return true;
                 return false;
             }
         }
-
-        [SerializeField] HotbarUIHandler hotbarUI;
 
         void Awake()
         {
             _bag = GetComponent<Bag>();
             _hotbar = GetComponent<Hotbar>();
-        }
-
-        public static int SlotToIndex(HotbarIndex value)
-        {
-            return value switch
-            {
-                HotbarIndex.Mainhand => 1,
-                HotbarIndex.Offhand => 2,
-                HotbarIndex.Three => 3,
-                HotbarIndex.Four => 4,
-                HotbarIndex.Five => 5,
-                HotbarIndex.Six => 6,
-                HotbarIndex.Seven => 7,
-                HotbarIndex.Eight => 8,
-                HotbarIndex.Nine => 9,
-                // HotbarIndex.Ten => 0,
-                _ => -1,
-            };
-        }
-
-        public static HotbarIndex IndexToSlot(int value)
-        {
-            return value switch
-            {
-                1 => HotbarIndex.Mainhand,
-                2 => HotbarIndex.Offhand,
-                3 => HotbarIndex.Three,
-                4 => HotbarIndex.Four,
-                5 => HotbarIndex.Five,
-                6 => HotbarIndex.Six,
-                7 => HotbarIndex.Seven,
-                8 => HotbarIndex.Eight,
-                9 => HotbarIndex.Nine,
-                0 => HotbarIndex.Hands,
-                _ => throw new ArgumentException("Invalid value"),
-            };
+            _equipment = GetComponent<Equipment>();
         }
         
         public void Initialize()
         {
             _bag.Initialize();
             _hotbar.Initialize();
+            _equipment.Initialize();
         }
 
         public void LoadData(InventoryData data)
@@ -113,20 +82,11 @@ namespace UZSG.Inventory
             /// update ui if any 
         }
 
-        /// <summary>
-        /// Tries to put a Weapon item in either the Mainhand or Offhand.
-        /// </summary>
-        public bool TryEquipWeapon(Item item, out HotbarIndex putOnIndex)
+        public bool TryPutHotbar(Item item, out HotbarIndex putOnIndex)
         {
-            if (Mainhand.TryPut(item))
+            if (Hotbar.TryPutNearest(item, out var slot))
             {
-                putOnIndex = HotbarIndex.Mainhand;
-                return true;
-            }
-
-            if (Offhand.TryPut(item))
-            {
-                putOnIndex = HotbarIndex.Offhand;
+                putOnIndex = (HotbarIndex) slot.Index;
                 return true;
             }
 
@@ -149,6 +109,20 @@ namespace UZSG.Inventory
                     info.Entity.Rigidbody.AddForce(throwForce, ForceMode.Impulse);
                 });
             }
+        }
+
+        public ItemSlot GetEquipmentOrHotbarSlot(int index)
+        {
+            if (index >= 0 && index < 3)
+            {
+                return Equipment[index];
+            }
+            if (index >= 3)
+            {
+                return Hotbar[index - 3];
+            }
+            
+            return null;
         }
     }
 }

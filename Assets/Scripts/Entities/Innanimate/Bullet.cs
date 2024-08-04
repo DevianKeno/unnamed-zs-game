@@ -1,7 +1,10 @@
 using System;
+
 using UnityEngine;
-using UZSG.Items.Weapons;
+
 using UZSG.Systems;
+using UZSG.Interactions;
+using UZSG.Items.Weapons;
 
 namespace UZSG.Entities
 {
@@ -15,11 +18,6 @@ namespace UZSG.Entities
         public float Damage { get; set; }
         public Vector3 Velocity { get; set; }
         public float Speed { get; set; }
-    }
-
-    public interface ICollision
-    {
-        public string CollisionTag { get; }
     }
     
     /// <summary>

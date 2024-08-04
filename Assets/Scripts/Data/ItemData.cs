@@ -17,7 +17,7 @@ namespace UZSG.Data
     [CreateAssetMenu(fileName = "New Item Data", menuName = "UZSG/Items/Item Data")]
     public class ItemData : BaseData
     {
-        [Header("Item Attributes")]
+        [Header("Item Data")]
         public string Name;
         [TextArea] public string Description;
         public AssetReference Model;
@@ -26,7 +26,7 @@ namespace UZSG.Data
         public ItemSubtype Subtype;
         public float Weight;
         public bool IsStackable => StackSize > 1;
-        public int StackSize;
+        public int StackSize = 1;
 
         /// Crafting
         public bool IsMaterial;

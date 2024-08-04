@@ -221,7 +221,7 @@ GameObject:
   - component: {fileID: 2913275584996610114}
   - component: {fileID: 1107370032779974630}
   m_Layer: 5
-  m_Name: Weapons
+  m_Name: Equipment
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1067,16 +1067,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rect: {fileID: 4842610381706415447}
   AnimationFactor: 0.3
+  Player: {fileID: 0}
   inventory: {fileID: 0}
+  equipment: {fileID: 2216749953957324396}
+  hotbar: {fileID: 1279766023132119920}
   HealthBar: {fileID: 2290362011424768747}
   StaminaBar: {fileID: 6441483392727630303}
   HungerBar: {fileID: 15068807644706991}
   HydrationBar: {fileID: 2537953012572525295}
   XPBar: {fileID: 0}
   AmmoCounter: {fileID: 677489774150407483}
-  weapons: {fileID: 2216749953957324396}
   equippedWeaponTMP: {fileID: 9103161442452396899}
-  hotbar: {fileID: 1279766023132119920}
   pickupsIndicatorContainer: {fileID: 8223546366100887486}
   crosshair: {fileID: 142077827921252402}
   allCrosshair: {fileID: 4073046482514566878}

@@ -77,7 +77,7 @@ namespace UZSG.Players
 
             inputs["Interact"].performed += OnPerformInteract;                  // F (default)
             inputs["Interact"].Enable();
-            inputs["Hotbar"].performed += OnHotbarSelect;               // Tab/E (default)
+            inputs["Hotbar"].performed += OnNumberSlotSelect;               // Tab/E (default)
 
             inputs["Unholster"].performed += OnUnholster;               // X (default)
         }
@@ -153,14 +153,13 @@ namespace UZSG.Players
 
         #region Input callbacks
 
-        void OnHotbarSelect(InputAction.CallbackContext context)
+        void OnNumberSlotSelect(InputAction.CallbackContext context)
         {
             if (!int.TryParse(context.control.displayName, out int index)) return;
 
-            var hotbarIndex = (HotbarIndex) index;
-
+            var slot = Player.Inventory.GetEquipmentOrHotbarSlot(index);
             // Player.Inventory.SelectHotbarSlot(index);
-            Player.FPP.EquipHotbarIndex(hotbarIndex);
+            Player.FPP.EquipHeldItem(slot.Item.Data.Id);
         }
 
         void OnUnholster(InputAction.CallbackContext context)
@@ -239,14 +238,22 @@ namespace UZSG.Players
 
             bool gotItem; /// whether if the player had successfully picked up the item
             Item item = itemEntity.Item;
-
+        
             if (item.Data.Type == ItemType.Weapon)
             {
-                if (Player.Inventory.TryEquipWeapon(item, out HotbarIndex index))
+                if (Player.Inventory.Equipment.TryEquipWeapon(item, out EquipmentIndex index))
                 {
-                    Player.FPP.HoldItem(item.Data, index);
-                    
-                    lookingAt = null;
+                    Player.FPP.HoldItem(item.Data);
+                    OnPickupItem?.Invoke(item);
+                    DestroyPickupedItem(itemEntity);
+                    return;
+                }
+            }
+            else if (item.Data.Type == ItemType.Tool)
+            {
+                if (Player.Inventory.Hotbar.TryPutNearest(item, out ItemSlot slot))
+                {
+                    Player.FPP.HoldItem(item.Data);
                     OnPickupItem?.Invoke(item);
                     DestroyPickupedItem(itemEntity);
                     return;
@@ -256,14 +263,13 @@ namespace UZSG.Players
             /// Store generic items or items can't hold
             if (Player.Inventory.IsFull)
             {
-                /// Prompt inventory full
+                /// Prompt inventory full SUBJECT TO CHAZNGE
                 var msg = $"Can't pick up item. Inventory full";
-                Game.Console.Log(msg);
-                Debug.Log(msg);
+                Game.Console.LogAndUnityLog(msg);
                 return;
             }
+
             gotItem = Player.Inventory.Bag.TryPutNearest(item);
-            
             if (gotItem)
             {
                 lookingAt = null;

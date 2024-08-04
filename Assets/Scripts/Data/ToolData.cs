@@ -11,13 +11,13 @@ using UZSG.Attributes;
 
 namespace UZSG.Data
 {
-    [Serializable]
-    public struct ToolAttributes
-    {
-        public List<AttributeData> Attributes;
+    public enum ToolType {
+        Axe, Pickaxe, Shovel,
     }
 
-    public enum ToolType { Axe, Pickaxe, Shovel }
+    public enum ToolSwingDirection {
+        Upward, Downward, Leftward, Rightward,
+    }
 
     /// <summary>
     /// Represents the various data a Tool has.
@@ -26,10 +26,13 @@ namespace UZSG.Data
     [CreateAssetMenu(fileName = "New Tool Data", menuName = "UZSG/Items/Tool Data")]
     public class ToolData : ItemData, IViewmodel
     {
-        public Sprite HotbarIcon;
+        [Header("Tool Data")]
+        // public Sprite HotbarIcon;
         public ToolType ToolType;
-        public ToolAttributes ToolAttributes;
+        public ToolSwingDirection SwingDirection;
+        public AttributeCollection<Attributes.Attribute> Attributes;
 
+        [Header("Viewmodel Data")]
         /// Viewmodel Settings
         [SerializeField] AnimatorController armsAnimations;
         public AnimatorController ArmsAnimations => armsAnimations;

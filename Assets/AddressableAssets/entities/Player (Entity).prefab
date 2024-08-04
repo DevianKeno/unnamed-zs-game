@@ -514,6 +514,7 @@ GameObject:
   - component: {fileID: 6573940630714393000}
   - component: {fileID: 2347074114045292195}
   - component: {fileID: 7107611863965880641}
+  - component: {fileID: 8156828128213000758}
   m_Layer: 0
   m_Name: Inventory Handler
   m_TagString: Untagged
@@ -549,8 +550,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Player: {fileID: 8107631895800867322}
-  ThrowForce: 0
-  hotbarUI: {fileID: 0}
+  ThrowForce: 2
 --- !u!114 &2347074114045292195
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -576,59 +576,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a83d8e581968504e90ab83a1250771b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mainhand:
-    index: 0
-    item:
-      _itemData: {fileID: 0}
-      _count: 0
-    SlotType: 0
-  _offhand:
-    index: 0
-    item:
-      _itemData: {fileID: 0}
-      _count: 0
-    SlotType: 0
-  _slots:
-  - index: 0
-    item:
-      _itemData: {fileID: 0}
-      _count: 0
-    SlotType: 0
-  - index: 0
-    item:
-      _itemData: {fileID: 0}
-      _count: 0
-    SlotType: 0
-  - index: 0
-    item:
-      _itemData: {fileID: 0}
-      _count: 0
-    SlotType: 0
-  - index: 0
-    item:
-      _itemData: {fileID: 0}
-      _count: 0
-    SlotType: 0
-  - index: 0
-    item:
-      _itemData: {fileID: 0}
-      _count: 0
-    SlotType: 0
-  - index: 0
-    item:
-      _itemData: {fileID: 0}
-      _count: 0
-    SlotType: 0
-  - index: 0
-    item:
-      _itemData: {fileID: 0}
-      _count: 0
-    SlotType: 0
-  - index: 0
-    item:
-      _itemData: {fileID: 0}
-      _count: 0
-    SlotType: 0
+  _slots: []
+--- !u!114 &8156828128213000758
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5771848841049438004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00559ccf5960d994da93fd4e09e3748d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _slots: []
 --- !u!1 &5950259277001712762
 GameObject:
   m_ObjectHideFlags: 0
@@ -1089,9 +1050,9 @@ MonoBehaviour:
   playerData: {}
   playerEntityData: {fileID: 11400000, guid: c598e087ae8797c429748a8238d6885e, type: 2}
   vitals:
-    Attributes: []
+    attributes: []
   generic:
-    Attributes: []
+    attributes: []
   inventory: {fileID: 6573940630714393000}
   craftingAgent: {fileID: 3776927174533104677}
 --- !u!114 &7617903866874250683
@@ -1153,15 +1114,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Player: {fileID: 8107631895800867322}
   heldItem: {fileID: 0}
-  heldItemsContainer: {fileID: 8334059616362085046}
   AppendAnimationPrefixes: 1
   cameraController: {fileID: 4657274095525333481}
   armsController: {fileID: 5105896103929999244}
   viewmodelController: {fileID: 2004487973244473114}
   cameraAnimationTarget: {fileID: 9155779205102779035}
   gunMuzzleController: {fileID: 0}
+  heldItemsContainer: {fileID: 8334059616362085046}
   meleeWeaponControllerPrefab: {fileID: 1441765491178271053, guid: e83ed1a86c94c5e43b675ea1a3e947c1, type: 3}
   gunWeaponControllerPrefab: {fileID: 1441765491178271053, guid: 7bf816374faf0a44f8a0520f423fd2a8, type: 3}
+  heldToolControllerPrefab: {fileID: 1441765491178271053, guid: 005fc0d9b4b9634419ccb66eba885c80, type: 3}
 --- !u!114 &510820268512717889
 MonoBehaviour:
   m_ObjectHideFlags: 0

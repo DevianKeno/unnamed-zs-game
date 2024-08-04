@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+
+using UnityEngine;
+
 using UZSG.Systems;
 using UZSG.Data;
-using UnityEngine;
 
 namespace UZSG.Attributes
 {
@@ -14,39 +16,20 @@ namespace UZSG.Attributes
     [Serializable]
     public class AttributeCollection<T> where T : Attribute
     {
-        public List<T> Attributes = new();
-        Dictionary<string, T> _attributesDict = new();
+        [SerializeField] List<T> attributes = new();
+        Dictionary<string, T> _attrsDict = new();
         
         public T this[string id]
         {
-            get => GetAttribute(id);
+            get => Get(id);
         }
 
-        /// <summary>
-        /// Just a way to combine grouped attributes.
-        /// </summary>
-        public AttributeCollection(AttributeCollection<T> collection)
+        public void Initialize()
         {
-            Attributes = collection.Attributes;
-        }
-
-        /// <summary>
-        /// Just a way to combine grouped attributes.
-        /// </summary>
-        public AttributeCollection(AttributeCollection<T>[] attrCollections)
-        {
-            foreach (var collection in attrCollections)
-            {
-                Attributes.AddRange(collection.Attributes);
-            }
-        }
-
-        public void Init()
-        {
-            foreach (T attr in Attributes)
+            foreach (T attr in attributes)
             {                
-                AddAttribute(attr);
-                attr.Init();
+                Add(attr);
+                attr.Initialize();
             }
         }
 
@@ -60,82 +43,67 @@ namespace UZSG.Attributes
             // 
         }
 
-        public void AddAttribute(T attribute)
+        public void Add(T attribute)
         {
             if (!attribute.IsValid) return;
 
-            if (!_attributesDict.ContainsKey(attribute.Data.Id))
+            if (!_attrsDict.ContainsKey(attribute.Data.Id))
             {
-                _attributesDict[attribute.Data.Id] = attribute;
+                _attrsDict[attribute.Data.Id] = attribute;
             }
             else
             {
-                Game.Console.Log($"Attribute [{attribute.Data.Id}] already exists within the collection.");
+                Game.Console.LogAndUnityLog($"Attribute [{attribute.Data.Id}] already exists within the collection.");
             }
         }
 
-        public void RemoveAttribute(string id)
+        public void Remove(string id)
         {
-            if (_attributesDict.ContainsKey(id))
+            if (_attrsDict.ContainsKey(id))
             {
-                _attributesDict.Remove(id);
+                _attrsDict.Remove(id);
             }
             else
             {
-                Game.Console.Log($"Unable to remove Attribute [{id}] as it does not exist within the collection.");
+                Game.Console.LogAndUnityLog($"Unable to remove Attribute [{id}] as it does not exist within the collection.");
             }
         }
 
-        public bool RemoveAttribute(string id, out T attribute)
+        public bool Remove(string id, out T attribute)
         {
-            if (_attributesDict.ContainsKey(id))
+            if (_attrsDict.ContainsKey(id))
             {
-                _attributesDict.Remove(id, out attribute);
+                _attrsDict.Remove(id, out attribute);
                 return true;
             }
-            else
-            {
-                attribute = null;
-                Game.Console.Log($"Unable to remove Attribute [{id}] as it does not exist within the collection.");
-                return false;
-            }
+
+            attribute = null;
+            Game.Console.LogAndUnityLog($"Unable to remove Attribute '{id}' as it does not exist within the collection.");
+            return false;
         }
 
-        public T GetAttribute(string id)
+        public T Get(string id)
         {
-            if (_attributesDict.ContainsKey(id))
+            if (_attrsDict.ContainsKey(id))
             {
-                return _attributesDict[id];
+                return _attrsDict[id];
             }
-            else
-            {
-                string msg = $"Unable to retrieve Attribute [{id}] as it's not in the collection.";
-                Game.Console.Log(msg);
-                Debug.LogWarning(msg);
-                return null;
-            }
+
+            Game.Console.LogAndUnityLog($"Unable to retrieve Attribute '{id}' as it's not in the collection.");
+            return null;
         }
 
-        public bool TryGetAttribute(string id, out Attribute attribute)
+        public bool TryGet(string id, out Attribute attribute)
         {
-            if (_attributesDict.ContainsKey(id))
+            if (_attrsDict.ContainsKey(id))
             {
-                attribute = _attributesDict[id];
+                attribute = _attrsDict[id];
                 return true;
             } 
-            else
-            {
-                attribute = Attribute.None;
-                string msg = $"Unable to retrieve Attribute [{id}] as it's not in the collection.";
-                Game.Console.Log(msg);
-                Debug.LogWarning(msg);
-                return false;
-            }
-        }
-
-        public void Combine(AttributeCollection<T> other)
-        {
-            Attributes.AddRange(other.Attributes);
+            
+            attribute = Attribute.None;
+            Game.Console.LogAndUnityLog($"Unable to retrieve Attribute '{id}' as it's not in the collection.");
+            return false;
         }
     }
 }

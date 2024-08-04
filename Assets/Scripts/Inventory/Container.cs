@@ -21,15 +21,23 @@ namespace UZSG
             {
                 foreach (var slot in Slots)
                 {
+                    if (slot == null) continue;
                     if (slot.IsEmpty) return false;
                 }
                 return true;
             }
         }
+
+
+        #region Events
+
         /// <summary>
         /// Called whenever the content of a Slot is changed.
         /// </summary>
         public event EventHandler<SlotContentChangedArgs> OnSlotContentChanged;
+
+        #endregion
+        
 
         public ItemSlot this[int i]
         {
@@ -51,13 +59,16 @@ namespace UZSG
         [Obsolete("You are advised to use TryGetSlot() instead.")]
         public ItemSlot GetSlot(int index)
         {
-            if (index < 0 || index > Slots.Count) return null;
+            if (!Slots.IsValidIndex(index))
+            {
+                return null;
+            }
             return Slots[index];
         }
         
         public bool TryGetSlot(int index, out ItemSlot slot)
         {
-            if (index < 0 || index > Slots.Count)
+            if (!Slots.IsValidIndex(index))
             {
                 slot = null;
                 return false;
@@ -68,7 +79,7 @@ namespace UZSG
 
         public virtual Item ViewItem(int slotIndex)
         {
-            if (slotIndex < 0 || slotIndex > Slots.Count) return Item.None;
+            if (!Slots.IsValidIndex(slotIndex)) return Item.None;
             return Slots[slotIndex].Item;
         }
 
@@ -81,16 +92,47 @@ namespace UZSG
             if (item.IsNone) return true;
             if (IsFull) return false;
 
-            foreach (ItemSlot slot in Slots)
+            foreach (ItemSlot s in Slots)
             {
-                if (slot.IsEmpty) /// just put
+                if (s == null) continue;
+                if (s.IsEmpty) /// just put
                 {
-                    slot.Put(item);
+                    s.Put(item);
                     return true;
                 }
                 
-                if (slot.TryCombine(item, out Item excess))
+                if (s.TryCombine(item, out Item excess))
                 {
+                    if (TryPutNearest(excess)) return true;
+                    continue;
+                }
+            }
+            return false;
+        }
+        
+        /// <summary>
+        /// Tries to put the item to the nearest empty slot.
+        /// Returns true if put succesfully, otherwise false.
+        /// </summary>
+        public virtual bool TryPutNearest(Item item, out ItemSlot slot)
+        {
+            slot = null;
+            if (item.IsNone) return true;
+            if (IsFull) return false;
+
+            foreach (ItemSlot s in Slots)
+            {
+                if (s == null) continue;
+                if (s.IsEmpty) /// just put
+                {
+                    slot = s;
+                    s.Put(item);
+                    return true;
+                }
+                
+                if (s.TryCombine(item, out Item excess))
+                {
+                    slot = s; /// IDK ABOUT THIS
                     if (TryPutNearest(excess)) return true;
                     continue;
                 }
@@ -107,7 +149,8 @@ namespace UZSG
             if (item.IsNone) return false;
 
             ItemSlot slot = Slots[slotIndex];
-
+            if (slot == null) return false;
+            
             if (slot.IsEmpty)
             {
                 return slot.TryPut(item);

@@ -37,7 +37,7 @@ namespace UZSG.Attributes
             public ValueChangeType ValueChangeType { get; set; }
         }
 
-        public static Attribute None => null;
+        public static Attribute None => new(data: null);
         [SerializeField] protected AttributeData data;
         public AttributeData Data => data;
         [SerializeField] protected float _value;
@@ -96,19 +96,14 @@ namespace UZSG.Attributes
         public bool LimitOverflow = true;
         public bool LimitUnderflow = true;
         protected float _previousValue;
-        public bool IsValid
-        {
-            get
-            {
-                return data != null;
-            }
-        }
+        public bool IsValid => data != null;
 
 
         #region Events        
 
         /// <summary>
-        /// Fired everytime ONLY IF the value of this attribute is changed.
+        /// Fired everytime ONLY IF the value of this attribute is CHANGED.
+        /// Meaning that if the value is modified, but is still the same, it is not called.
         /// </summary>
         public event EventHandler<ValueChangedInfo> OnValueChanged;
         /// <summary>
@@ -119,12 +114,22 @@ namespace UZSG.Attributes
         #endregion
 
 
+        #region Constructors
+
         public Attribute(AttributeData data)
         {
             this.data = data;
         }
+        
+        public Attribute(string id)
+        {
+            this.data = Game.Attributes.GetData(id);
+        }
 
-        internal virtual void Init() {}
+        #endregion
+
+
+        internal virtual void Initialize() { }
 
         public static void ToMax(Attribute attr)
         {

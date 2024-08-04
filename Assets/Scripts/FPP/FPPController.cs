@@ -12,13 +12,14 @@ using UZSG.Players;
 using UZSG.Inventory;
 using UZSG.Items;
 using UZSG.Items.Weapons;
+using UZSG.Items.Tools;
 
 namespace UZSG.FPP
 {
     /// <summary>
     /// Handles the functionalities of the Player's first-person perspective.
     /// </summary>
-    public class FPPController : MonoBehaviour
+    public partial class FPPController : MonoBehaviour
     {
         public Player Player;
         [Space]
@@ -26,13 +27,18 @@ namespace UZSG.FPP
         bool _isEnabled;
         [SerializeField] HeldItemController heldItem;
         public HeldItemController HeldItem => heldItem;
-        [SerializeField] GameObject heldItemsContainer;
-        Dictionary<HotbarIndex, HeldItemController> _cachedHeldItems = new();
-        Dictionary<string, Viewmodel> _cachedViewmodelsById = new();
+        /// <summary>
+        /// Key is the ItemData Id.
+        /// </summary>
+        Dictionary<string, HeldItemController> _cachedHeldItems = new();
+        /// <summary>
+        /// Key is the ItemData Id.
+        /// </summary>
+        Dictionary<string, Viewmodel> _cachedViewmodels = new();
 
-        HotbarIndex currentlyEquippedIndex;
-        public HotbarIndex CurrentlyEquippedIndex => currentlyEquippedIndex;
-        HotbarIndex lastEquippedIndex;
+        string currentlyEquippedId;
+        public string CurrentlyEquippedIndex => currentlyEquippedId;
+        string lastEquippedId;
         bool _isPlayingAnimation;
         Viewmodel currentViewmodel;
         public Viewmodel CurrentViewmodel => currentViewmodel;
@@ -51,10 +57,12 @@ namespace UZSG.FPP
         Animator cameraAnimator;
         [SerializeField] FPPCameraAnimationTarget cameraAnimationTarget;
         [SerializeField] GunMuzzleController gunMuzzleController;
+        [SerializeField] GameObject heldItemsContainer;
         
         [Header("Held Item Controller Prefabs")]
         [SerializeField] GameObject meleeWeaponControllerPrefab;
         [SerializeField] GameObject gunWeaponControllerPrefab;
+        [SerializeField] GameObject heldToolControllerPrefab;
 
         bool _hasHeldItem;
         bool _isPerforming;
@@ -95,8 +103,8 @@ namespace UZSG.FPP
 
         void LoadAndEquipHands()
         {
-            var armsData = Game.Items.GetItemData("arms");
-            HoldItem(armsData, HotbarIndex.Hands);
+            var armsData = Game.Items.GetData("arms");
+            HoldItem(armsData);
         }
 
 
@@ -110,13 +118,13 @@ namespace UZSG.FPP
         /// <summary>
         /// Hold an item in FPP perspective. Does nothing if the item is not holdable.
         /// </summary>
-        public void HoldItem(ItemData data, HotbarIndex index)
+        public void HoldItem(ItemData data)
         {
             StartCoroutine(StartPerform(1f));
             LoadViewmodelAsset(data, equip: true);
-            LoadHeldItem(data, index, () =>
+            LoadHeldItem(data, () =>
             {
-                Player.FPP.EquipHotbarIndex(index);
+                EquipHeldItem(data.Id);
             });
         }
 
@@ -126,9 +134,9 @@ namespace UZSG.FPP
         /// <summary>
         /// Load view model from addressables.
         /// </summary>
-        async void LoadViewmodelAsset(ItemData item, bool equip = true)
+        async void LoadViewmodelAsset(ItemData data, bool equip = true)
         {
-            if (item is not IViewmodel viewmodel) return;
+            if (data is not IViewmodel viewmodel) return;
             
             await LoadViewmodelAssetAsync(viewmodel, equip);
         }
@@ -140,12 +148,15 @@ namespace UZSG.FPP
 
             if (viewmodel != null) /// Cache loaded viewmodel
             {
-                if (!_cachedViewmodelsById.ContainsKey(itemData.Id))
+                if (!_cachedViewmodels.ContainsKey(itemData.Id))
                 {
-                    _cachedViewmodelsById[itemData.Id] = viewmodel;
+                    _cachedViewmodels[itemData.Id] = viewmodel;
                 }
                 if (equip)
                 {
+                    /// Check if for some reason had switched
+                    if (heldItem.ItemData.Id != itemData.Id) return viewmodel;
+
                     /// Equip viewmodel on finish load :)
                     EquipViewmodel(viewmodel);
                 }
@@ -153,15 +164,17 @@ namespace UZSG.FPP
             return viewmodel;
         }
 
-        void LoadHeldItem(ItemData data, HotbarIndex index, Action onDoneInitialize = null)
+        void LoadHeldItem(ItemData data, Action onDoneInitialize = null)
         {
+            if (data is not IViewmodel viewmodel) return;
+
             if (data is WeaponData weaponData)
             {
                 if (weaponData.Category == WeaponCategory.Melee)
                 {
                     LoadHeldItemControllerAsync<MeleeWeaponController>(meleeWeaponControllerPrefab, (meleeWeapon) =>
                     {
-                        InitializeHeldItemController(data, meleeWeapon, index);
+                        InitializeHeldItemController(data, meleeWeapon);
                         onDoneInitialize?.Invoke();
                     });
                 }
@@ -169,10 +182,19 @@ namespace UZSG.FPP
                 {
                     LoadHeldItemControllerAsync<GunWeaponController>(gunWeaponControllerPrefab, (gunWeapon) =>
                     {
-                        InitializeHeldItemController(data, gunWeapon, index);
+                        InitializeHeldItemController(data, gunWeapon);
                         onDoneInitialize?.Invoke();
                     });
                 }
+                return;
+            }
+            else if (data is ToolData toolData)
+            {
+                LoadHeldItemControllerAsync<HeldToolController>(heldToolControllerPrefab, (tool) =>
+                {
+                    InitializeHeldItemController(data, tool);
+                    onDoneInitialize?.Invoke();
+                });
                 return;
             }
 
@@ -182,29 +204,29 @@ namespace UZSG.FPP
             }
         }
 
-        void InitializeHeldItemController(ItemData data ,HeldItemController controller, HotbarIndex index)
+        void InitializeHeldItemController(ItemData data ,HeldItemController controller)
         {
             controller.transform.parent = heldItemsContainer.transform;
             controller.ItemData = data;
             controller.Owner = Player;
             controller.Initialize();
-            _cachedHeldItems[index] = controller;
+            _cachedHeldItems[data.Id] = controller;
             controller.name = $"{data.Name} (Held Item)";
 
-            HoldItemByIndex(index);
+            HoldItemById(data.Id);
             InitializeHeldItem();
         }
 
-        void HoldItemByIndex(HotbarIndex index)
+        void HoldItemById(string id)
         {
             if (heldItem != null)
             {
                 heldItem.gameObject.SetActive(false);
             }
 
-            if (_cachedHeldItems.ContainsKey(index))
+            if (_cachedHeldItems.ContainsKey(id))
             {
-                heldItem = _cachedHeldItems[index];
+                heldItem = _cachedHeldItems[id];
                 heldItem.gameObject.SetActive(true);
             }
             else
@@ -231,20 +253,21 @@ namespace UZSG.FPP
             Debug.LogWarning(msg);
         }
                 
-        public void EquipHotbarIndex(HotbarIndex index)
+        public void EquipHeldItem(string id)
         {
             if (_isPlayingAnimation) return;
-            if (currentlyEquippedIndex == index) return;
-            if (!Player.Inventory.Hotbar.TryGetSlot((int) index, out var slot)) return;
-            if (slot.IsEmpty) return;
+            if (currentlyEquippedId == id) return;
 
-            currentlyEquippedIndex = index;
-            UnloadCurrentViewmodel();
-            if (_cachedViewmodelsById.ContainsKey(slot.Item.Data.Id))
+            if (_cachedHeldItems.ContainsKey(id))
             {
-                EquipViewmodel(_cachedViewmodelsById[slot.Item.Data.Id]);
+                currentlyEquippedId = id;
+                UnloadCurrentViewmodel();
+                if (_cachedViewmodels.ContainsKey(id))
+                {
+                    EquipViewmodel(_cachedViewmodels[id]);
+                }
+                HoldItemById(id);
             }
-            HoldItemByIndex(index);
         }
 
         public void Unholster()
@@ -252,14 +275,14 @@ namespace UZSG.FPP
             if (_isPlayingAnimation) return;
 
             /// Swaps
-            if (currentlyEquippedIndex == HotbarIndex.Hands)
+            if (currentlyEquippedId == "arms")
             {
-                EquipHotbarIndex(lastEquippedIndex);
+                EquipHeldItem(lastEquippedId);
             }
             else
             {
-                lastEquippedIndex = currentlyEquippedIndex;
-                EquipHotbarIndex(HotbarIndex.Hands);
+                lastEquippedId = currentlyEquippedId;
+                EquipHeldItem("arms");
             }
         }
 
@@ -281,14 +304,14 @@ namespace UZSG.FPP
         void LoadViewmodel(Viewmodel viewmodel)
         {
             /// Load cached viewmodel
-            if (!_cachedViewmodelsById.ContainsKey(viewmodel.ItemData.Id))
+            if (!_cachedViewmodels.ContainsKey(viewmodel.ItemData.Id))
             {
                 var msg = $"Tried to load held item '{viewmodel.ItemData.Id}' but it's not loaded nor equipped?";
                 Game.Console.LogAndUnityLog(msg);
                 return;
             }
 
-            currentViewmodel = _cachedViewmodelsById[viewmodel.ItemData.Id];
+            currentViewmodel = _cachedViewmodels[viewmodel.ItemData.Id];
             
             /// Load arms animations
             armsController.SetAnimatorController(currentViewmodel.ArmsAnimations);
@@ -402,6 +425,12 @@ namespace UZSG.FPP
                 rangedWeapon.StateMachine.OnStateChanged += OnRangedWeaponStateChanged;
                 rangedWeapon.OnFire += OnWeaponFired;
             }
+            else if (heldItem is HeldToolController tool)
+            {
+                tool.StateMachine.OnStateChanged -= OnToolWeaponStateChanged;
+                
+                tool.StateMachine.OnStateChanged += OnToolWeaponStateChanged;
+            }
         }
 
         public void PerformReload()
@@ -459,6 +488,14 @@ namespace UZSG.FPP
         {
             if (heldItem == null) return;
             
+            var animId = GetAnimIdFromState(e.To);
+            PlayAnimations(animId);
+        }
+
+        void OnToolWeaponStateChanged(object sender, StateMachine<ToolItemStates>.StateChangedContext e)
+        {
+            if (heldItem == null) return;
+
             var animId = GetAnimIdFromState(e.To);
             PlayAnimations(animId);
         }

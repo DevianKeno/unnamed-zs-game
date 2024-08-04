@@ -44,7 +44,7 @@ namespace UZSG.Items
         public Item(ItemData data, int count = 1)
         {
             _itemData = data;
-            _count = Math.Clamp(count, 0, Data.StackSize);
+            _count = Math.Clamp(count, 0, EnsureStackSizeNotZero());
         }
         
         /// <summary>
@@ -52,8 +52,8 @@ namespace UZSG.Items
         /// </summary>
         public Item(string id, int count = 1)
         {
-            _itemData = Game.Items.GetItemData(id);
-            _count = Math.Clamp(count, 0, Data.StackSize);
+            _itemData = Game.Items.GetData(id);
+            _count = Math.Clamp(count, 0, EnsureStackSizeNotZero());
         }
                 
         /// <summary>
@@ -62,11 +62,15 @@ namespace UZSG.Items
         public Item(Item other, int count = 1)
         {
             _itemData = other.Data;
-            _count = Math.Clamp(count, 0, Data.StackSize);
+            _count = Math.Clamp(count, 0, EnsureStackSizeNotZero());
         }
 
         #endregion
         
+        int EnsureStackSizeNotZero()
+        {
+            return Data.StackSize == 0 ? 1 : Data.StackSize;
+        }
         
         public void SetCount(int value)
         {

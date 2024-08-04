@@ -16,23 +16,24 @@ namespace UZSG.UI
 {
     public class PlayerHUD : Window
     {
-        public Player Player { get; private set; }
-        Dictionary<int, ItemSlotUI> _hotbarSlotUIs = new();
+        public Player Player;
+        [Space]
+
         [SerializeField] InventoryHandler inventory;
+        Dictionary<int, ItemSlotUI> _equipmentSlotUIs = new();
+        Dictionary<int, ItemSlotUI> _hotbarSlotUIs = new();
         
         [Header("Elements")]
+        public GameObject equipment;
+        public GameObject hotbar;
         public AttributeBar HealthBar;
         public AttributeBar StaminaBar;
         public AttributeBar HungerBar;
         public AttributeBar HydrationBar;
         public AttributeBar XPBar;
         public AmmoCounterHUD AmmoCounter;
-
-        public GameObject weapons;
         public TextMeshProUGUI equippedWeaponTMP;
-        public GameObject hotbar;
         public GameObject pickupsIndicatorContainer;
-
         public DynamicCrosshair crosshair;
         public SwitchCrosshair allCrosshair;
 
@@ -46,35 +47,22 @@ namespace UZSG.UI
                 return;
             }
 
-            InitializeHotbarSlots();
+            InitializeItemSlots();
             InitializeEvents();
             crosshair.Player = Player;
             allCrosshair.player = Player;
         }
 
+        void InitializeItemSlots()
+        {
+            InitializeHotbarSlots();
+            InitializeEquipmentSlots();
+        }
+
         void InitializeHotbarSlots()
         {
-            InitializeWeaponSlots();
-            InitializeToolSlots();
-        }
-
-        void InitializeWeaponSlots()
-        {
-            int i = 1;
-            foreach (Transform child in weapons.transform)
-            {
-                if (child.TryGetComponent<ItemSlotUI>(out var slotUI))
-                {
-                    _hotbarSlotUIs.Add(i, slotUI);
-                    i++;
-                }
-            }
-        }
-
-        void InitializeToolSlots()
-        {
-            int maxSlots = inventory.Hotbar.SlotsCount;
-            for (int i = 0; i < maxSlots; i++)
+            /// Hotbar slots are created in runtime
+            for (int i = 0; i < inventory.Hotbar.SlotsCount; i++)
             {
                 int index = 3 + i; /// 3 is hotbar starting index
                 var slotUI = Game.UI.Create<ItemSlotUI>("Item Slot");
@@ -85,13 +73,28 @@ namespace UZSG.UI
                 slotUI.OnMouseDown += OnClickHotbarSlot;
                 slotUI.OnStartHover += OnStartHoverSlot;
                 slotUI.OnEndHover += OnEndHoverSlot;
-                _hotbarSlotUIs.Add(index, slotUI);
+                _hotbarSlotUIs[index] = slotUI;
+            }
+        }
+
+        void InitializeEquipmentSlots()
+        {
+            /// Equipment slots are already set
+            int index = 1; /// Only 1 (mainhand) and 2 (offhand), as 0 (arms) is not displayed :)
+            foreach (Transform child in equipment.transform)
+            {
+                if (child.TryGetComponent<ItemSlotUI>(out var slotUI)) /// there might be other GameObjects
+                {
+                    _equipmentSlotUIs[index] = slotUI;
+                    index++;
+                }
             }
         }
 
         void InitializeEvents()
         {
             Player.Inventory.Hotbar.OnSlotContentChanged += OnHotbarSlotChanged;
+            Player.Inventory.Equipment.OnSlotContentChanged += OnEquipmentSlotChanged;
             Player.FPP.OnChangeHeldItem += OnChangeHeldItem;
 
             Player.Actions.OnPickupItem += (item) =>
@@ -113,18 +116,25 @@ namespace UZSG.UI
 
         void BindPlayerAttributes()
         {
-            HealthBar.BindAttribute(Player.Vitals.GetAttribute("health"));
-            StaminaBar.BindAttribute(Player.Vitals.GetAttribute("stamina"));
-            HungerBar.BindAttribute(Player.Vitals.GetAttribute("hunger"));
-            HydrationBar.BindAttribute(Player.Vitals.GetAttribute("hydration"));
+            HealthBar.BindAttribute(Player.Vitals.Get("health"));
+            StaminaBar.BindAttribute(Player.Vitals.Get("stamina"));
+            HungerBar.BindAttribute(Player.Vitals.Get("hunger"));
+            HydrationBar.BindAttribute(Player.Vitals.Get("hydration"));
         }
 
         #region Callbacks
 
         void OnHotbarSlotChanged(object sender, SlotContentChangedArgs e)
         {
-            _hotbarSlotUIs[e.Slot.Index].SetDisplayedItem(e.Slot.Item);
+            var hotbarOffset = e.Slot.Index + 3;
+            _hotbarSlotUIs[hotbarOffset].SetDisplayedItem(e.Slot.Item);
         }
+
+        void OnEquipmentSlotChanged(object sender, SlotContentChangedArgs e)
+        {
+            _equipmentSlotUIs[e.Slot.Index].SetDisplayedItem(e.Slot.Item);
+        }
+
 
         void OnChangeHeldItem(HeldItemController heldItem)
         {

@@ -126,17 +126,15 @@ namespace UZSG.Entities
         void InitializeAttributes()
         {
             /// Get blueprint base
-            vitals = new(playerEntityData.Vitals);
+            vitals = playerEntityData.Vitals;
+            vitals.Initialize();
 
             /// Overwrite base with data from file
             // Vitals.LoadData(Data.Vitals);
 
-            /// Initialize
-            vitals.Init();
-
-            generic = new(playerEntityData.Generic);
+            generic = playerEntityData.Generic;
+            generic.Initialize();
             // Generic.LoadData(Data.Generic);
-            generic.Init();
 
 #region Temporary
             /// These should be read from file
@@ -147,8 +145,8 @@ namespace UZSG.Entities
         void InitializeInventory()
         {
             // Inventory.LoadData(Data.Inventory);
-            inventory.Bag.SlotsCount = (int) Generic.GetAttribute("bag_slots_count").Value;
-            inventory.Hotbar.SlotsCount = (int) Generic.GetAttribute("hotbar_size").Value;
+            inventory.Bag.SlotsCount = (int) Generic.Get("bag_slots_count").Value;
+            inventory.Hotbar.SlotsCount = (int) Generic.Get("hotbar_size").Value;
             inventory.Initialize();
 
             invUI = Game.UI.Create<PlayerInventoryWindow>("Player Inventory", show: false);
@@ -195,8 +193,8 @@ namespace UZSG.Entities
             if (Controls.IsMoving && Controls.IsRunning)
             {
                 /// Cache attributes for better performance
-                var runStaminaCost = Generic.GetAttribute("run_stamina_cost").Value;
-                Vitals.GetAttribute("stamina").Remove(runStaminaCost);
+                var runStaminaCost = Generic.Get("run_stamina_cost").Value;
+                Vitals.Get("stamina").Remove(runStaminaCost);
             }
         }
 
@@ -214,9 +212,9 @@ namespace UZSG.Entities
 
         void OnJumpEnter(object sender, State<MoveStates>.ChangedContext e)
         {
-            if (Vitals.TryGetAttribute("stamina", out Attributes.Attribute attr))
+            if (Vitals.TryGet("stamina", out Attributes.Attribute attr))
             {
-                float jumpStaminaCost = Generic.GetAttribute("jump_stamina_cost").Value;
+                float jumpStaminaCost = Generic.Get("jump_stamina_cost").Value;
                 attr.Remove(jumpStaminaCost, buffer: true);
             }
         }

@@ -22,6 +22,7 @@ namespace UZSG.Data
     [CreateAssetMenu(fileName = "New Weapon Data", menuName = "UZSG/Items/Weapon Data")]
     public class WeaponData : ItemData, IViewmodel
     {
+        [Header("Weapon Data")]
         public Sprite HotbarIcon;
         public WeaponCategory Category;
         public WeaponMeleeType MeleeType;

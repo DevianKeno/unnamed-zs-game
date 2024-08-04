@@ -29,7 +29,7 @@ namespace UZSG.Systems
         /// </summary>
         void CCraft(object sender, string[] args)
         {
-            var newItem = new Item(Game.Items.GetItemData("m4ar"));
+            var newItem = new Item(Game.Items.GetData("m4ar"));
             _player.CraftingAgent.CraftItem(newItem, 0);
         }
 

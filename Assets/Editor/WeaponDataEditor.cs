@@ -101,7 +101,7 @@ namespace UZSG.UnityEditor
             }
 
             EditorGUILayout.Space();
-            EditorGUILayout.LabelField("Viewmodel Attributes", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("Viewmodel Data", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(armsAnimations);
             EditorGUILayout.PropertyField(viewmodel);
             EditorGUILayout.PropertyField(viewmodelOffsets);

@@ -157,5 +157,15 @@ namespace UZSG.Inventory
                 _ => ItemSlotType.All
             };
         }
+
+        /// <summary>
+        /// Swap contents :)
+        /// </summary>
+        public static void SwapContents(ItemSlot a, ItemSlot b)
+        {
+            var temp = a.TakeItems();
+            a.Put(b.TakeItems());
+            b.Put(temp);
+        }
     }
 }

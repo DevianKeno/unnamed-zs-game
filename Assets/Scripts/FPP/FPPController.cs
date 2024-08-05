@@ -43,7 +43,14 @@ namespace UZSG.FPP
         Viewmodel currentViewmodel;
         public Viewmodel CurrentViewmodel => currentViewmodel;
 
+
+        #region Events
+
         public event Action<HeldItemController> OnChangeHeldItem;
+        public event Action OnPerformFinish;
+
+        #endregion
+
 
         [Header("Controllers")]
         public bool AppendAnimationPrefixes = true;
@@ -144,14 +151,13 @@ namespace UZSG.FPP
         async Task<Viewmodel> LoadViewmodelAssetAsync(IViewmodel item, bool equip)
         {
             var itemData = item as ItemData;
+            if (_cachedViewmodels.ContainsKey(itemData.Id)) return null;
+            
             var viewmodel = await viewmodelController.LoadViewmodelAssetAsync(item);
-
             if (viewmodel != null) /// Cache loaded viewmodel
             {
-                if (!_cachedViewmodels.ContainsKey(itemData.Id))
-                {
-                    _cachedViewmodels[itemData.Id] = viewmodel;
-                }
+                _cachedViewmodels[itemData.Id] = viewmodel;
+                
                 if (equip)
                 {
                     /// Check if for some reason had switched
@@ -261,8 +267,8 @@ namespace UZSG.FPP
 
             if (_cachedHeldItems.ContainsKey(id))
             {
-                currentlyEquippedId = id;
                 UnloadCurrentViewmodel();
+                currentlyEquippedId = id;
                 if (_cachedViewmodels.ContainsKey(id))
                 {
                     EquipViewmodel(_cachedViewmodels[id]);
@@ -562,6 +568,7 @@ namespace UZSG.FPP
             _isPlayingAnimation = false;
             _isPerforming = false;
             cameraAnimationTarget.Disable();
+            OnPerformFinish?.Invoke();
             yield return null;
         }
 

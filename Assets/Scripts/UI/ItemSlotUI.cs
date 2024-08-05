@@ -24,8 +24,8 @@ namespace UZSG.UI
 
         public event EventHandler<PointerEventData> OnMouseDown;
         public event EventHandler<PointerEventData> OnMouseUp;
-        public event EventHandler<PointerEventData> OnStartHover;
-        public event EventHandler<PointerEventData> OnEndHover;
+        public event EventHandler<PointerEventData> OnHoverStart;
+        public event EventHandler<PointerEventData> OnHoverEnd;
 
         [Space]
         [SerializeField] Image image;
@@ -44,16 +44,9 @@ namespace UZSG.UI
             SetDisplayedItem(Item);
         }
 
-        void SetState(UIState state)
+        void OnDisable()
         {
-            if (state == UIState.Normal)
-            {                
-                image.color = Normal;
-            }
-            else if (state == UIState.Hovered)
-            {
-                image.color = Hovered;
-            }
+            Reset();
         }
 
 
@@ -80,13 +73,13 @@ namespace UZSG.UI
         public void OnPointerEnter(PointerEventData e)
         {
             image.color = Hovered;
-            OnStartHover?.Invoke(this, e);
+            OnHoverStart?.Invoke(this, e);
         }
 
         public void OnPointerExit(PointerEventData e)
         {
             Reset();
-            OnEndHover?.Invoke(this, e);
+            OnHoverEnd?.Invoke(this, e);
         }
 
         public void OnPointerDown(PointerEventData e)

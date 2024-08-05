@@ -87,9 +87,18 @@ namespace UZSG.UI
             return this;
         }
 
-        public Choice SetEnabled(bool value)
+        public Choice SetEnabled(bool enabled)
         {
-            button.interactable = value;
+            button.interactable = enabled;
+
+            if (enabled)
+            {
+                labelText.CrossFadeAlpha(1f, 0f, false);
+            }
+            else
+            {
+                labelText.CrossFadeAlpha(0.33f, 0f, false);
+            }
             return this;
         }
 

@@ -72,8 +72,8 @@ namespace UZSG.UI
                 slotUI.Index = index;
                 
                 slotUI.OnMouseDown += OnClickHotbarSlot;
-                slotUI.OnStartHover += OnStartHoverSlot;
-                slotUI.OnEndHover += OnEndHoverSlot;
+                slotUI.OnHoverStart += OnStartHoverSlot;
+                slotUI.OnHoverEnd += OnEndHoverSlot;
                 _hotbarSlotUIs[index] = slotUI;
             }
         }

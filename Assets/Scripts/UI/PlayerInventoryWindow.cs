@@ -70,7 +70,7 @@ namespace UZSG.UI
             _isInitialized = true;
 
             InitializeEvents();
-            InitializeBag();
+            InitializeBagSlotUIs();
             selector = Instantiate(selectorPrefab, transform).GetComponent<Selector>();
             frameController.SwitchToFrame("bag", force: true);
             InitializeInputs();
@@ -95,18 +95,7 @@ namespace UZSG.UI
         }
 
 
-        #region Callbacks
-
-        void OnSwitchFrame(string frame)
-        {
-            PutBackHeldItem();
-            DestroyItemOptions();
-        }
-
-        #endregion
-
-
-        void InitializeBag()
+        void InitializeBagSlotUIs()
         {
             int maxSlots = inventory.Bag.SlotsCount;
             for (int i = 0; i < maxSlots; i++)
@@ -115,14 +104,14 @@ namespace UZSG.UI
                 slot.name = $"Slot ({i})";
                 slot.transform.SetParent(bag.transform);
                 slot.Index = i;
-                slot.OnMouseUp += OnClickBagSlot;
-                slot.OnStartHover += OnStartHoverSlot;
-                slot.OnEndHover += OnEndHoverSlot;
+                slot.OnHoverStart += OnBagSlotHoverStart;
+                slot.OnHoverEnd += OnBagSlotHoverEnd;
+                slot.OnMouseDown += OnBagSlotClick;
                 _bagSlotUIs.Add(i, slot);
                 slot.Show();
             }
             
-            inventory.Bag.OnSlotContentChanged += BagSlotChangedCallback;
+            inventory.Bag.OnSlotContentChanged += OnBagSlotContentChanged;
         }
 
         void InitializeInputs()
@@ -151,16 +140,6 @@ namespace UZSG.UI
         {
             Player = player;
             inventory ??= player.Inventory;
-        }
-
-        public void SetSlotDisplay(int slotIndex, Item item)
-        {
-            if (slotIndex > 18 )
-            {
-                Game.Console.LogDebug("Slot index out of bounds.");
-                return;
-            }
-            _bagSlotUIs[slotIndex].SetDisplayedItem(item);
         }
 
         public override void OnShow()
@@ -201,33 +180,51 @@ namespace UZSG.UI
             actionMap.Disable();
             PutBackHeldItem();
             DestroyItemOptions();
-            if (_selectedSlotUI != null) _selectedSlotUI.Refresh();
             _selectedSlotUI = null;
             selector.Hide();
             gameObject.SetActive(false);
             Game.UI.ToggleCursor(false);
         }
 
-        void OnStartHoverSlot(object sender, PointerEventData e)
+
+        #region Event callbacks
+
+        void OnSwitchFrame(FrameController.SwitchFrameContext context)
         {
-            var slot = sender as ItemSlotUI;
-            selector.Select(slot.transform as RectTransform);
-            _selectedSlotUI = slot;
-            /// other animation stuff
+            /// Idk about this, selector might be visible on other frames
+            /// subject to change
+            if (context.Time == FrameController.SwitchFrameTime.Started)
+            {
+                selector.Hide();
+            }
+            else if (context.Time == FrameController.SwitchFrameTime.Finished)
+            {
+                if (context.Next == "bag")
+                {
+                    selector.Show();
+                }
+            }
+            
+            PutBackHeldItem();
+            DestroyItemOptions();
         }
 
-        void OnEndHoverSlot(object sender, PointerEventData e)
-        {
-            _selectedSlotUI = null;
-            _selectedSlot = null;
-        }
-
-        void BagSlotChangedCallback(object sender, SlotContentChangedArgs e)
+        void OnBagSlotContentChanged(object sender, SlotContentChangedArgs e)
         {
             _bagSlotUIs[e.Slot.Index].SetDisplayedItem(e.Slot.Item);
         }
 
-        void OnClickBagSlot(object sender, PointerEventData e)
+        void OnBagSlotHoverStart(object sender, PointerEventData e)
+        {
+            var slot = sender as ItemSlotUI;
+            selector.Select(slot.transform as RectTransform);
+        }
+
+        void OnBagSlotHoverEnd(object sender, PointerEventData e)
+        {
+        }
+
+        void OnBagSlotClick(object sender, PointerEventData e)
         {
             _selectedSlotUI = (ItemSlotUI) sender;
             _selectedSlot = inventory.Bag[_selectedSlotUI.Index];
@@ -303,7 +300,7 @@ namespace UZSG.UI
                         return;
                     }
 
-                    CreateItemOptions(_selectedSlot);
+                    CreateItemOptions();
                     
                     // _isGetting = true;
                     // HoldItem(inventory.Bag.TakeItems(_selectedSlot.Index, 1));
@@ -312,7 +309,10 @@ namespace UZSG.UI
             }
         }
 
-        void CreateItemOptions(ItemSlot slot)
+        #endregion
+
+
+        void CreateItemOptions()
         {
             if (itemOptions)
             {
@@ -320,21 +320,12 @@ namespace UZSG.UI
             }
             itemOptions = Game.UI.Create<ChoiceWindow>("Choice Window", show: false);
             itemOptions.Position = _selectedSlotUI.Rect.position;
-            itemOptions.Label = slot.Item.Data.Name;
+            itemOptions.Label = _selectedSlot.Item.Data.Name;
 
-            var item = slot.Item;
+            var item = _selectedSlot.Item;
             if (item.Data.Subtype == ItemSubtype.Weapon)
             {
-                itemOptions.AddChoice("Equip Mainhand")
-                .AddCallback(() =>
-                {
-                    
-                });
-                itemOptions.AddChoice("Equip Offhand")
-                .AddCallback(() =>
-                {
-                    
-                });
+                AddWeaponChoices();
             }
             if (item.Data.Subtype == ItemSubtype.Useable)
             {
@@ -368,10 +359,50 @@ namespace UZSG.UI
             itemOptions.AddChoice("Drop")
             .AddCallback(() =>
             {
-                Player.Inventory.DropItem(slot.Index);
+                Player.Inventory.DropItem(_selectedSlot.Index);
             });
 
             itemOptions.Show();
+        }
+
+        void AddWeaponChoices()
+        {
+            var item = _selectedSlot.Item;
+
+            var equipMainhand = itemOptions.AddChoice("Equip Mainhand")
+            .AddCallback(() =>
+            {
+                ItemSlot.SwapContents(Inventory.Equipment.Mainhand, _selectedSlot);
+                Player.FPP.HoldItem(item.Data);
+            });
+            
+            var equipOffhand = itemOptions.AddChoice("Equip Offhand")
+            .AddCallback(() =>
+            {
+                ItemSlot.SwapContents(Inventory.Equipment.Offhand, _selectedSlot);
+                Player.FPP.HoldItem(item.Data);
+            });
+
+            /// Disables Choices when performing FPP actions
+            /// and re-enables it on finish
+            if (Player.FPP.IsPerforming)
+            {
+                equipMainhand.SetEnabled(false);
+                equipOffhand.SetEnabled(false);
+
+                itemOptions.OnClose += () => /// be sure to unsubscribe on UI close
+                {
+                    Player.FPP.OnPerformFinish -= ReenableChoices;
+                };
+                Player.FPP.OnPerformFinish += ReenableChoices;
+
+                void ReenableChoices()
+                {
+                    Player.FPP.OnPerformFinish -= ReenableChoices;
+                    equipMainhand.SetEnabled(true);
+                    equipOffhand.SetEnabled(true);
+                }
+            }
         }
 
         void DestroyItemOptions()

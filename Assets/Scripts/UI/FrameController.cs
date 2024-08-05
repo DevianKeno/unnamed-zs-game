@@ -10,6 +10,17 @@ namespace UZSG.UI
 {
     public class FrameController : MonoBehaviour
     {
+        public enum SwitchFrameTime {
+            Started, Finished
+        }
+
+        public struct SwitchFrameContext
+        {
+            public SwitchFrameTime Time { get; set; }
+            public string Previous { get; set; }
+            public string Next { get; set; }
+        }
+
         [SerializeField] bool _isTransitioning;
         public bool IsTransitioning => _isTransitioning;
         [SerializeField] Frame currentFrame;
@@ -18,7 +29,7 @@ namespace UZSG.UI
         public LeanTweenType TweenType = LeanTweenType.easeOutExpo;
         public List<Frame> Frames = new();
 
-        public event Action<string> OnSwitchFrame;
+        public event Action<SwitchFrameContext> OnSwitchFrame;
 
 #region Editor
         [SerializeField] string switchTo;
@@ -44,6 +55,14 @@ namespace UZSG.UI
 
             if (_isTransitioning) return;
             _isTransitioning = true;
+
+            var context = new SwitchFrameContext()
+            {
+                Time = SwitchFrameTime.Started,
+                Previous = currentFrame.Name,
+                Next = name,
+            };
+            OnSwitchFrame?.Invoke(context);
 
             if (Game.UI.EnableScreenAnimations)
             {
@@ -71,6 +90,9 @@ namespace UZSG.UI
                     currentFrame = frame;
                     currentFrame.transform.SetAsLastSibling();
                     _isTransitioning = false;
+
+                    context.Time = SwitchFrameTime.Finished;
+                    OnSwitchFrame?.Invoke(context);
                 });
                 LayoutRebuilder.ForceRebuildLayoutImmediate(frame.transform as RectTransform);
             }
@@ -81,9 +103,10 @@ namespace UZSG.UI
                 currentFrame = frame;
                 currentFrame.transform.SetAsLastSibling();
                 LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
+
+                context.Time = SwitchFrameTime.Finished;
+                OnSwitchFrame?.Invoke(context);
             }
-            
-            OnSwitchFrame?.Invoke(currentFrame.Name);
         }
 
         public Frame GetFrame(string name)

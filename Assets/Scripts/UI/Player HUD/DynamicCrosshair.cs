@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEditorInternal;
 using UnityEngine;
+using UnityEngine.Android;
 using UZSG.Entities;
 using UZSG.FPP;
 using UZSG.Items.Weapons;
@@ -16,7 +17,7 @@ public class DynamicCrosshair : MonoBehaviour
     public float restingSize;
     public float maxSize;
     public float speed;
-    [Range(0.00f, 0.10f)]
+    [Range(0.00f, 1.0f)]
     public float addedFiringFactor;
 
     private RectTransform _crosshair;
@@ -37,17 +38,17 @@ public class DynamicCrosshair : MonoBehaviour
 
     private void OnChangeHeldItem(HeldItemController controller)
     {
-        // Set recoilMultiplier based on a fixed arbitrary number; experimental, scuffed, and subject to change
+        print("CHANGED!");
+        // TODO: fix recoilMult not activating on first change of held weapon item
+        // Set recoilMultiplier based on weapon spread data; experimental, scuffed, and subject to change
         if (player.FPP.HeldItem is GunWeaponController gunWeapon)
         {
             _baseRecoilValue = CalculateBaseRecoilMultiplier(gunWeapon.WeaponData.RangedAttributes.Spread);
 
             gunWeapon.StateMachine.OnStateChanged += OnGunWeaponStateChanged;
-            //print($"FF: {addedFiringFactor}, addedTFF: {_addedTotalFiringFactor}, baseRecoil: {_baseRecoilValue}, recMult: {_recoilMultiplier}");
         }
         else
         {
-            print("called");
             _recoilMultiplier = 1.0f;
         }
 
@@ -106,8 +107,6 @@ public class DynamicCrosshair : MonoBehaviour
 
             // Reset the addedFiringFactor and recoilMultiplier to reset crosshair after firing
             _recoilMultiplier = 1.0f;
-            // _baseRecoilValue = 1.0f;
-            _addedTotalFiringFactor = 0; // test/tracker
         }
         else
         {
@@ -119,16 +118,14 @@ public class DynamicCrosshair : MonoBehaviour
     {
         if (e.To == GunWeaponStates.Fire)
         {
-            print($"FF: {addedFiringFactor}, addedTFF: {_addedTotalFiringFactor}, baseRecoil: {_baseRecoilValue}, recMult: {_recoilMultiplier}");
             _recoilMultiplier = _baseRecoilValue + addedFiringFactor;
-            print($"AFTER FF: {addedFiringFactor}, addedTFF: {_addedTotalFiringFactor}, baseRecoil: {_baseRecoilValue}, recMult: {_recoilMultiplier}");
         }
 
     }
 
     float CalculateBaseRecoilMultiplier(float _baseGunSpread)
     {
-        return 0.5f + Mathf.Lerp(1, maxSize / restingSize, (_baseGunSpread / 180));
+        return 0.5f + Mathf.Lerp(1, maxSize / restingSize, (_baseGunSpread / 15));
     }
 
     bool isMoving

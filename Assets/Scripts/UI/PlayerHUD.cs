@@ -19,7 +19,6 @@ namespace UZSG.UI
         public Player Player;
         [Space]
 
-        [SerializeField] InventoryHandler inventory;
         Dictionary<int, ItemSlotUI> _equipmentSlotUIs = new();
         Dictionary<int, ItemSlotUI> _hotbarSlotUIs = new();
         
@@ -62,7 +61,7 @@ namespace UZSG.UI
         void InitializeHotbarSlots()
         {
             /// Hotbar slots are created in runtime
-            for (int i = 0; i < inventory.Hotbar.SlotsCount; i++)
+            for (int i = 0; i < Player.Inventory.Hotbar.SlotsCount; i++)
             {
                 int index = 3 + i; /// 3 is hotbar starting index
                 var slotUI = Game.UI.Create<ItemSlotUI>("Item Slot");
@@ -109,9 +108,7 @@ namespace UZSG.UI
         public void BindPlayer(Player player)
         {
             Player = player;
-            inventory = player.Inventory;
             BindPlayerAttributes();
-            // StaminaBar.SetAttribute(Player.Vitals.GetAttributeFromId("stamina"));
         }
 
         void BindPlayerAttributes()
@@ -120,7 +117,10 @@ namespace UZSG.UI
             StaminaBar.BindAttribute(Player.Vitals.Get("stamina"));
             HungerBar.BindAttribute(Player.Vitals.Get("hunger"));
             HydrationBar.BindAttribute(Player.Vitals.Get("hydration"));
+
+            XPBar.BindAttribute(Player.Generic.Get("experience"));
         }
+
 
         #region Callbacks
 

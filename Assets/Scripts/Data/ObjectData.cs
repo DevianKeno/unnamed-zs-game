@@ -1,5 +1,5 @@
 using System;
-
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -14,6 +14,6 @@ namespace UZSG.Data
         [Header("Object")]
         public string Name;
         public AssetReference Model;
-        public AttributeCollection<Attributes.Attribute> Attributes;
+        public List<AttributeData> Attributes;
     }
 }

@@ -11,6 +11,6 @@ namespace UZSG.Data
         [Header("Attribute Data")]
         public string Name;
         [TextArea] public string Description;
-        public Attributes.Type Type;
+        public Attributes.AttributeType Type;
     }
 }

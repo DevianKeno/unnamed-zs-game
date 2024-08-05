@@ -33,7 +33,7 @@ namespace UZSG.Items.Tools
         ToolItemStateMachine stateMachine;
         public ToolItemStateMachine StateMachine => stateMachine;
 
-        [SerializeField] AttributeCollection<Attribute> runtimeAttributes;
+        [SerializeField] AttributeCollection<GenericAttribute> runtimeAttributes;
 
         void Awake()
         {
@@ -150,7 +150,7 @@ namespace UZSG.Items.Tools
 
         void ConsumeStamina()
         {
-            playerStamina.Remove(attackStaminaCost, buffer: true);
+            playerStamina.Remove(attackStaminaCost);
         }
 
         void PlaySound()

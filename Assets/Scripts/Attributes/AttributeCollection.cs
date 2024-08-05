@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -16,32 +17,43 @@ namespace UZSG.Attributes
     [Serializable]
     public class AttributeCollection<T> where T : Attribute
     {
+        /// Just so can view in Inspector
         [SerializeField] List<T> attributes = new();
         Dictionary<string, T> _attrsDict = new();
-        
+        public List<T> Attributes
+        {
+            get => _attrsDict.Values.ToList();
+        }
+
         public T this[string id]
         {
             get => Get(id);
         }
 
-        public void Initialize()
+        public void ReadAttributesData(List<AttributeData> data)
         {
-            foreach (T attr in attributes)
-            {                
-                Add(attr);
-                attr.Initialize();
+            foreach (var attr in data)
+            {
+                Attribute newAttr = attr.Type switch /// wdym it's a fucking enum
+                {
+                    AttributeType.Generic => new GenericAttribute(attr.Id),
+                    AttributeType.Vital => new VitalAttribute(attr.Id),
+                };
+
+                Add((T) newAttr);
+                attributes.Add((T) newAttr);
             }
         }
-
-        public void LoadData(AttributeCollectionData<T> data)
-        {
-            //
-        }
+    
+        // public void LoadData(AttributeCollectionData data)
+        // {
+        //     //
+        // }
         
-        public void SaveData(AttributeCollectionData<T> data)
-        {
-            // 
-        }
+        // public void SaveData(AttributeCollectionData data)
+        // {
+        //     // 
+        // }
 
         public void Add(T attribute)
         {
@@ -93,7 +105,7 @@ namespace UZSG.Attributes
             return null;
         }
 
-        public bool TryGet(string id, out Attribute attribute)
+        public bool TryGet(string id, out T attribute)
         {
             if (_attrsDict.ContainsKey(id))
             {
@@ -101,7 +113,7 @@ namespace UZSG.Attributes
                 return true;
             } 
             
-            attribute = Attribute.None;
+            attribute = (T) Attribute.None;
             Game.Console.LogAndUnityLog($"Unable to retrieve Attribute '{id}' as it's not in the collection.");
             return false;
         }

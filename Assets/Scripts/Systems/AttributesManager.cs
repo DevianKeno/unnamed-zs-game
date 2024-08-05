@@ -36,16 +36,7 @@ namespace UZSG.Systems
                 _attrDict[attr.Id] = attr;
             }
         }
-
-        public Attribute Create(string id)
-        {
-            if (_attrDict.ContainsKey(id))
-            {
-                return new Attribute(_attrDict[id]);
-            }
-            return Attribute.None;
-        }
-
+        
         public AttributeData GetData(string id)
         {
             if (_attrDict.ContainsKey(id))

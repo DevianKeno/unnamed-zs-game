@@ -30,7 +30,7 @@ namespace UZSG.Data
         // public Sprite HotbarIcon;
         public ToolType ToolType;
         public ToolSwingDirection SwingDirection;
-        public AttributeCollection<Attributes.Attribute> Attributes;
+        public List<Attributes.Attribute> Attributes;
 
         [Header("Viewmodel Data")]
         /// Viewmodel Settings

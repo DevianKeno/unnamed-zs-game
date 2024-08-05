@@ -16,7 +16,8 @@ MonoBehaviour:
   Name: Fiber Cord
   Output:
     _itemData: {fileID: 11400000, guid: 1a052c19c2caff046a456a3918e4c3eb, type: 2}
-    _count: 1
+    _count: 2
   Materials:
   - _itemData: {fileID: 11400000, guid: 35a7f50afca84d847b7a649f7d65b88b, type: 2}
-    _count: 2
+    _count: 4
+  DurationSeconds: 0

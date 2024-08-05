@@ -36,11 +36,11 @@ namespace UZSG.UnityEditor
             EditorGUILayout.PropertyField(nameProperty);
             EditorGUILayout.PropertyField(description);
             EditorGUILayout.PropertyField(type);
-            if (attributeData.Type == Type.Generic)
+            if (attributeData.Type == AttributeType.Generic)
             {
 
             }
-            else if (attributeData.Type == Type.Vital)
+            else if (attributeData.Type == AttributeType.Vital)
             {
                 // EditorGUILayout.PropertyField(change);
                 // EditorGUILayout.PropertyField(cycle);

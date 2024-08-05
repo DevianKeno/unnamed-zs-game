@@ -13,7 +13,7 @@ namespace UZSG.Data
     {
         public string Name;
         public AssetReference Model;
-        public AttributeCollection<Attributes.Attribute> Attributes;
+        public List<AttributeData> Attributes;
     }
 
     [Serializable]

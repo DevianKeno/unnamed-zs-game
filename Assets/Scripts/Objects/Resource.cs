@@ -1,5 +1,5 @@
 using System;
-
+using System.ComponentModel;
 using UZSG.Data;
 using UZSG.Interactions;
 using UZSG.Items.Tools;
@@ -9,6 +9,7 @@ namespace UZSG.Objects
     public class Resource : BaseObject
     {
         public ResourceData ResourceData => objectData as ResourceData;
+        public AttributeCollection runtimeAttributes;
 
         public float Health = 100;
         
@@ -16,14 +17,14 @@ namespace UZSG.Objects
 
         void Start()
         {
-
+            
         }
 
         public void HitBy(CollisionHitInfo other)
         {
             if (other.By is HeldToolController tool)
             {
-                Health -= tool.ToolData.Attributes["efficiency"].Value;
+                // Health -= tool.ToolData.Attributes["efficiency"].Value;
             }
         }
     }

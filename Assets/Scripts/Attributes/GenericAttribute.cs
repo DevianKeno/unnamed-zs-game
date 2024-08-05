@@ -14,5 +14,26 @@ namespace UZSG.Attributes
         public GenericAttribute(string id) : base(id)
         {
         }
+        
+        internal override void Initialize()
+        {
+            base.Initialize();
+        }
+        
+        public virtual void ReadSaveData(GenericAttributeSaveData data, bool initialize = true)
+        {
+            value = data.Value;
+            minimum = data.Minimum;
+            baseMaximum = data.BaseMaximum;
+            multiplier = data.Multiplier;
+            flatBonus = data.FlatBonus;
+            LimitOverflow = data.LimitOverflow;
+            LimitUnderflow = data.LimitUnderflow;
+
+            if (initialize)
+            {
+                Initialize();
+            }
+        }
     }
 }

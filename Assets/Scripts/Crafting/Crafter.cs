@@ -7,6 +7,8 @@ using UZSG.Inventory;
 using UZSG.Items;
 using UZSG.UI;
 using UZSG.Data;
+using System.Collections;
+using System;
 
 namespace UZSG.Crafting
 {

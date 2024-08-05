@@ -68,6 +68,14 @@ namespace UZSG.Entities
         public ActionStateMachine ActionStateMachine { get; private set; }
         public FPPController FPP { get; private set; }
 
+        public bool CanJump
+        {
+            get
+            {
+                return Vitals.Get("stamina").Value >= Generic.Get("jump_stamina_cost").Value && Controls.IsGrounded;
+            }
+        }
+
         public override void OnSpawn()
         {
             Initialize();
@@ -126,27 +134,98 @@ namespace UZSG.Entities
         void InitializeAttributes()
         {
             /// Get blueprint base
-            vitals = playerEntityData.Vitals;
-            vitals.Initialize();
-
+            vitals.ReadAttributesData(playerEntityData.Vitals);
+            
             /// Overwrite base with data from file
             // Vitals.LoadData(Data.Vitals);
 
-            generic = playerEntityData.Generic;
-            generic.Initialize();
+            generic.ReadAttributesData(playerEntityData.Generic);
             // Generic.LoadData(Data.Generic);
 
-#region Temporary
-            /// These should be read from file
-            /// e.g. Attributes.LoadData();
+            SetDefaultAttributes();
+        }
+
+        void SetDefaultAttributes()
+        {
+#region Temporary /// These should be read from save data
+
+            vitals["health"].ReadSaveData(new()
+            {
+                Value = 100f,
+                BaseMaximum = 100f,
+                ChangeType = VitalAttributeChangeType.Regen,
+                TimeCycle = VitalAttributeTimeCycle.Tick,
+                BaseChange = 0.1f / TickSystem.NormalTPS,
+            });
+            vitals["stamina"].ReadSaveData(new()
+            {
+                Value = 100f,
+                BaseMaximum = 100f,
+                ChangeType = VitalAttributeChangeType.Regen,
+                TimeCycle = VitalAttributeTimeCycle.Tick,
+                BaseChange = 5f / TickSystem.NormalTPS,
+                EnableDelayedChange = true,
+                DelayedChangeDuration = 2f,
+            });
+            vitals["hunger"].ReadSaveData(new()
+            {
+                Value = 100f,
+                BaseMaximum = 100f,
+                ChangeType = VitalAttributeChangeType.Degen,
+                TimeCycle = VitalAttributeTimeCycle.Tick,
+                BaseChange = 0.1f / TickSystem.NormalTPS,
+            });
+            vitals["hydration"].ReadSaveData(new()
+            {
+                Value = 100f,
+                BaseMaximum = 100f,
+                ChangeType = VitalAttributeChangeType.Degen,
+                TimeCycle = VitalAttributeTimeCycle.Tick,
+                BaseChange = 0.1f / TickSystem.NormalTPS,
+            });
+
+            /// Should save and read all though
+            generic["move_speed"].ReadSaveData(new()
+            {
+                Value = 300f,
+            });
+            generic["run_speed"].ReadSaveData(new()
+            {
+                Value = 400f,
+            });
+            generic["crouch_speed"].ReadSaveData(new()
+            {
+                Value = 200f,
+            });
+            generic["jump_stamina_cost"].ReadSaveData(new()
+            {
+                Value = 20f,
+            });
+            generic["jump_hunger_cost"].ReadSaveData(new()
+            {
+                Value = 0.33f,
+            });
+            generic["jump_hydration_cost"].ReadSaveData(new()
+            {
+                Value = 0.33f,
+            });
+            generic["bag_slots_count"].ReadSaveData(new()
+            {
+                Value = 16,
+            });
+            generic["hotbar_slots_count"].ReadSaveData(new()
+            {
+                Value = 2,
+            });
+
 #endregion
         }
 
         void InitializeInventory()
         {
             // Inventory.LoadData(Data.Inventory);
-            inventory.Bag.SlotsCount = (int) Generic.Get("bag_slots_count").Value;
-            inventory.Hotbar.SlotsCount = (int) Generic.Get("hotbar_size").Value;
+            inventory.Bag.SlotsCount = Mathf.FloorToInt(Generic.Get("bag_slots_count").Value);
+            inventory.Hotbar.SlotsCount = Mathf.FloorToInt(Generic.Get("hotbar_slots_count").Value);
             inventory.Initialize();
 
             invUI = Game.UI.Create<PlayerInventoryWindow>("Player Inventory", show: false);
@@ -190,7 +269,7 @@ namespace UZSG.Entities
         void Tick(TickInfo t)
         {
             /// Consume stamina while running
-            if (Controls.IsMoving && Controls.IsRunning)
+            if (Controls.IsRunning && Controls.IsMoving)
             {
                 /// Cache attributes for better performance
                 var runStaminaCost = Generic.Get("run_stamina_cost").Value;
@@ -212,10 +291,23 @@ namespace UZSG.Entities
 
         void OnJumpEnter(object sender, State<MoveStates>.ChangedContext e)
         {
-            if (Vitals.TryGet("stamina", out Attributes.Attribute attr))
+            /// Consume Stamina on jump
+            if (Vitals.TryGet("stamina", out var stamina))
             {
                 float jumpStaminaCost = Generic.Get("jump_stamina_cost").Value;
-                attr.Remove(jumpStaminaCost, buffer: true);
+                stamina.Remove(jumpStaminaCost);
+            }
+            /// Consume Hunger on jump
+            if (Vitals.TryGet("hunger", out var hunger))
+            {
+                float jumpHungerCost = Generic.Get("jump_hunger_cost").Value;
+                hunger.Remove(jumpHungerCost);
+            }
+            /// Consume Hydration on jump
+            if (Vitals.TryGet("hydration", out var hydration))
+            {
+                float jumpHydrationCost = Generic.Get("jump_hydration_cost").Value;
+                hydration.Remove(jumpHydrationCost);
             }
         }
         

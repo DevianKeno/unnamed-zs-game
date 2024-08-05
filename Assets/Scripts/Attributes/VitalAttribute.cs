@@ -10,34 +10,139 @@ namespace UZSG.Attributes
     [Serializable]
     public class VitalAttribute : Attribute
     {
-        public bool AllowChange = true;
-        public Change Change;
-        public Cycle Cycle;
-        /// <summary>
-        /// Base change in value per cycle.
-        /// </summary>
-        public float BaseChange;    
-        /// <summary>
-        /// Change value multiplier. Default is 1.
-        /// (CurrentChange = BaseChangeValue * ChangeValueMultiplier)
-        /// </summary>
-        [SerializeField] float _changeMultiplier = 1;
-        public float ChangeMultiplier
+        [SerializeField] protected bool allowChange = true;
+        public bool AllowChange
         {
-            get => _changeMultiplier;
+            get
+            {
+                return allowChange;
+            }
             set
             {
-                if (value > 0)
-                {
-                    _changeMultiplier = value;
-                } else
-                {
-                    Game.Console?.Log($"Failed to set ChangeValueMultiplier for Attribute {Data.Id}. A negative multiplier is invalid.");
-                }
+                allowChange = value;
             }
         }
-        public bool DelayChange;
-        public float DelayedChangeSeconds;
+
+        [SerializeField, Tooltip("Whether the change in value is regeneration, degeneration, or static (no change).")]
+        protected VitalAttributeChangeType changeType = VitalAttributeChangeType.Static;
+        /// <summary>
+        /// Whether the change in value is regeneration, degeneration, or static (no change).
+        /// </summary>
+        public VitalAttributeChangeType ChangeType
+        {
+            get
+            {
+                return changeType;
+            }
+            set
+            {
+                changeType = value;
+            }
+        }
+
+        [SerializeField, Tooltip("Whether the change in value happens per second, or per tick.")]
+        protected VitalAttributeTimeCycle timeCycle = VitalAttributeTimeCycle.Second;
+        /// <summary>
+        /// Whether the change in value happens per second, or per tick.
+        /// </summary>
+        public VitalAttributeTimeCycle TimeCycle
+        {
+            get
+            {
+                return timeCycle;
+            }
+            set
+            {
+                timeCycle = value;
+            }
+        }
+
+        [SerializeField, Tooltip("The base change in value per cycle.")]
+        protected float baseChange = 0f;
+        /// <summary>
+        /// The base change in value per cycle.
+        /// </summary>
+        public float BaseChange
+        {
+            get
+            {
+                return baseChange;
+            }
+            set
+            {
+                baseChange = value;
+            }
+        }
+
+        [SerializeField, Tooltip("Multiplier for the change value. Default is 1. CurrentChange = (BaseChange * ChangeMultiplier)")]
+        protected float changeMultiplier = 1f;
+        /// <summary>
+        /// Multiplier for the change value. Default is 1.
+        /// CurrentChange = (BaseChange * ChangeMultiplier)
+        /// </summary>
+        public float ChangeMultiplier
+        {
+            get
+            {
+                return changeMultiplier;
+            }
+            set
+            {
+                changeMultiplier = Mathf.Clamp(value, 0, float.MaxValue);
+            }
+        }
+
+        [SerializeField, Tooltip("Flat value added to the Base Change value, after multipliers. Can be negative.")]
+        protected float changeFlatBonus = 0f;
+        /// <summary>
+        /// Flat value added to the Base Change value, after multipliers. Can be negative.
+        /// </summary>
+        public float ChangeFlatBonus
+        {
+            get
+            {
+                return changeFlatBonus;
+            }
+            set
+            {
+                changeFlatBonus = value;
+            }
+        }
+
+        [SerializeField, Tooltip("Whether to delay the value's change when the value is modified.")]
+        protected bool enableDelayedChange = false;
+        /// <summary>
+        /// Whether to delay the value's change when the value is modified.
+        /// </summary>
+        public bool EnableDelayedChange
+        {
+            get
+            {
+                return enableDelayedChange;
+            }
+            set
+            {
+                enableDelayedChange = value;
+            }
+        }
+
+        [SerializeField, Tooltip("The delay time in seconds.")]
+        protected float delayedChangeDuration = 0f;
+        /// <summary>
+        /// The delay time in seconds.
+        /// </summary>
+        public float DelayedChangeDuration
+        {
+            get
+            {
+                return delayedChangeDuration;
+            }
+            set
+            {
+                delayedChangeDuration = Mathf.Clamp(value, 0, float.MaxValue);
+            }
+        }
+
         /// <summary>
         /// Amount changed from the current Value per cycle, after multipliers.
         /// (BaseChange * _changeMultiplier) 
@@ -46,144 +151,145 @@ namespace UZSG.Attributes
         {
             get
             {
-                return BaseChange * _changeMultiplier;
+                return baseChange * changeMultiplier;
             }
         }
-
-        [SerializeField] float delayTimer;           
+     
+        float _lockUntil;
 
         #region Events
+
         /// <summary>
         /// Called when the value reaches its current maximum value.
         /// </summary>
-        public event EventHandler<ValueChangedInfo> OnReachMaximum;
+        public event EventHandler<AttributeValueChangedContext> OnReachMaximum;
         /// <summary>
         /// Called when the value reaches its minimum value.
         /// </summary>
-        public event EventHandler<ValueChangedInfo> OnReachMinimum;
-        /// <summary>
-        /// Called when the value reaches zero.
-        /// </summary>
+        public event EventHandler<AttributeValueChangedContext> OnReachMinimum;
+
         #endregion
         
+
         public VitalAttribute(AttributeData data) : base(data)
         {
             this.data = data;
         }
-
-        ~VitalAttribute()
+        
+        public VitalAttribute(string id) : base(id)
         {
-            Game.Tick.OnSecond -= CycleSecond;
-            Game.Tick.OnTick -= CycleTick;
-            Game.Tick.OnTick -= Tick;
+            this.data = Game.Attributes.GetData(id);
         }
 
         internal override void Initialize()
         {
-            if (Cycle == Cycle.PerSecond)
+            base.Initialize();
+
+            if (allowChange)
             {
-                Game.Tick.OnSecond += CycleSecond;
-            } else
-            {                
-                Game.Tick.OnTick += CycleTick;
+                if (timeCycle == VitalAttributeTimeCycle.Tick)
+                {
+                    Game.Tick.OnTick += CycleTick;
+                }
+                else if (timeCycle == VitalAttributeTimeCycle.Second)
+                {
+                    Game.Tick.OnSecond += CycleSecond;
+                }
             }
-            
-            Game.Tick.OnTick += Tick;
         }
         
-        void Tick(TickInfo e)
-        {
-            delayTimer += Game.Tick.SecondsPerTick;
-            
-            if (delayTimer > DelayedChangeSeconds)
-            {
-                AllowChange = true;
-            }
-        }
-
-        void CycleTick(TickInfo e)
+        void CycleTick(TickInfo t)
         {
             PerformCycle();
         }
 
-        void CycleSecond(SecondInfo e)
+        void CycleSecond(SecondInfo s)
         {
             PerformCycle();
-        }
-
-        public override void Remove(float value, bool buffer = false)
-        {
-            base.Remove(value, buffer);
-
-            if (DelayChange)
-            {
-                AllowChange = false;
-                delayTimer = 0f;
-            }
         }
 
         /// <summary>
-        /// Change current value by the Change type.
+        /// Change current value by the ChangeType.
         /// </summary>
-        public void PerformCycle()
+        void PerformCycle()
         {
-            if (!AllowChange) return;
+            if (!allowChange) return;
 
-            if (Change == Change.Regen)
+            if (changeType == VitalAttributeChangeType.Regen)
             {
-                _value += BaseChange;
+                value += CurrentChange;
                 CheckOverflow();
                 
-            } else if (Change == Change.Degen)
+            }
+            else if (changeType == VitalAttributeChangeType.Degen)
             {
-                _value -= BaseChange;
+                value -= CurrentChange;
                 CheckUnderflow();
                 
             }
-
             ValueChanged();
         }
-
-        public void StartCycle()
+        
+        public override void Remove(float value)
         {
-            if (Cycle == Cycle.PerSecond)
+            base.Remove(value);
+
+            if (enableDelayedChange)
             {
-                Game.Tick.OnTick += Tick;
-            } else if (Cycle == Cycle.PerTick)
-            {
-                Game.Tick.OnSecond += CycleSecond;
+                allowChange = false;
+                _lockUntil = Time.time + delayedChangeDuration;
+                Game.Tick.OnTick += CheckForChange;
             }
         }
 
-        protected override void ValueChanged(bool buffer = false)
+        void CheckForChange(TickInfo t)
         {
-            base.ValueChanged(buffer);
-                       
-            float value = Mathf.Abs(Value - _previousValue);
-            if (Value <= _minimum)
+            if (Time.time >= _lockUntil)
             {
-                OnReachMinimum?.Invoke(this, new()
-                {
-                    Previous = _previousValue,
-                    Change = value,
-                    New = Value,
-                    ValueChangeType = Value > _previousValue ? ValueChangeType.Increased : ValueChangeType.Decreased,
-                    IsBuffered = buffer,
-                });
-                return;
+                allowChange = true;
+                _lockUntil = -1f;
+                Game.Tick.OnTick -= CheckForChange;
             }
+        }
 
-            if (Value >= Maximum)
+        protected override void ValueChanged()
+        {
+            base.ValueChanged();
+                       
+            float valueChange = Mathf.Abs(value - previousValue);
+            AttributeValueChangedContext context = new()
             {
-                OnReachMaximum?.Invoke(this, new()
-                {
-                    Previous = _previousValue,
-                    Change = value,
-                    New = Value,
-                    ValueChangeType = Value > _previousValue ? ValueChangeType.Increased : ValueChangeType.Decreased,
-                    IsBuffered = buffer,
-                });
-                return;
+                Previous = previousValue,
+                Change = valueChange,
+                New = value
+            };
+
+            if (Value <= minimum)
+            {
+                OnReachMinimum?.Invoke(this, context);
+            }
+            else if (Value >= CurrentMaximum)
+            {
+                OnReachMaximum?.Invoke(this, context);
+            }
+        }
+                
+        public virtual void ReadSaveData(VitalAttributeSaveData data, bool initialize = true)
+        {
+            base.ReadSaveData(data, initialize: false);
+
+            allowChange = data.AllowChange;
+            changeType = data.ChangeType;
+            timeCycle = data.TimeCycle;
+            baseChange = data.BaseChange;
+            changeMultiplier = data.ChangeMultiplier;
+            changeFlatBonus = data.ChangeFlatBonus;
+            enableDelayedChange = data.EnableDelayedChange;
+            delayedChangeDuration = data.DelayedChangeDuration;
+
+            if (initialize)
+            {
+                Initialize();
             }
         }
     }

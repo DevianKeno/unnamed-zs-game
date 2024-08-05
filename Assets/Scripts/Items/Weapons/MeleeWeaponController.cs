@@ -10,6 +10,7 @@ using UZSG.Interactions;
 using UZSG.Data;
 using UZSG.Entities;
 using UZSG.Players;
+using UZSG.Attributes;
 
 namespace UZSG.Items.Weapons
 {
@@ -33,6 +34,7 @@ namespace UZSG.Items.Weapons
 
         MeleeWeaponStateMachine stateMachine;
         public MeleeWeaponStateMachine StateMachine => stateMachine;
+        [SerializeField] AttributeCollection<GenericAttribute> runtimeAttributes;
 
         void Awake()
         {
@@ -163,7 +165,7 @@ namespace UZSG.Items.Weapons
 
         void ConsumeStamina()
         {
-            playerStamina.Remove(attackStaminaCost, buffer: true);
+            playerStamina.Remove(attackStaminaCost);
         }
 
         void PlaySound()

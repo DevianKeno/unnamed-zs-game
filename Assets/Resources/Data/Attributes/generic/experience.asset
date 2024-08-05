@@ -12,9 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e18afb883e1451a4c82eb24298dc52e1, type: 3}
   m_Name: experience
   m_EditorClassIdentifier: 
-  Type: 0
-  Id: crouch_speed
-  Name: Crouch Speed
+  Id: experience
+  Name: Experience
   Description: 
-  Change: 0
-  Cycle: 0
+  Type: 0

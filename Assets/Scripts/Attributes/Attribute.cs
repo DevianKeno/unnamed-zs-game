@@ -7,9 +7,17 @@ using UZSG.Data;
 
 namespace UZSG.Attributes
 {
-    public enum Type { Generic, Vital }
-    public enum Change { Static, Regen, Degen }
-    public enum Cycle { PerSecond, PerTick }
+    public enum AttributeType {
+        Generic, Vital
+    }
+    
+    public enum VitalAttributeChangeType {
+        Static, Regen, Degen
+    }
+
+    public enum VitalAttributeTimeCycle {
+        Second, Tick
+    }
     
     /// <summary>
     /// Base class for Attributes.
@@ -17,85 +25,123 @@ namespace UZSG.Attributes
     [Serializable]
     public class Attribute
     {
-        public enum ValueChangeType { Increased, Decreased }
-
-        public struct ValueChangedInfo
-        {
-            /// <summary>
-            /// The value before the change.
-            /// </summary>
-            public float Previous { get; set; }
-            /// <summary>
-            /// The value after the change.
-            /// </summary>
-            public float New { get; set; }
-            /// <summary>
-            /// The amount of value changed.
-            /// </summary>
-            public float Change { get; set; }
-            public bool IsBuffered { get; set; }
-            public ValueChangeType ValueChangeType { get; set; }
+        public enum ValueChangedType {
+            Increased, Decreased
         }
 
         public static Attribute None => new(data: null);
+        
         [SerializeField] protected AttributeData data;
         public AttributeData Data => data;
-        [SerializeField] protected float _value;
+
+        [SerializeField, Tooltip("The current value.")]
+        protected float value = 0f;
         /// <summary>
-        /// Represents the current value.
+        /// The current value.
+        /// Setting this value directly will clamp it to Minimum and CurrentMaximum.
+        /// If you want overflow, set it to false and use Add().
         /// </summary>
-        public float Value => _value;
-        /// <summary>
-        /// Returns a value between 0 and 1, representing the value to max ratio.
-        /// </summary>
-        public float ValueMaxRatio
+        public float Value
         {
-            get { return Value / Maximum; }
+            get
+            {
+                return value;
+            }
+            set
+            {
+                this.value = Mathf.Clamp(value, minimum, CurrentMaximum);
+            }
         }
+        
+        protected float minimum = 0f;
         /// <summary>
-        /// Represents the base maximum value, without any multipliers.
+        /// The base minimum value. You probably don't need to change this :)
         /// </summary>
-        public float BaseMaximum;
+        public float Minimum
+        {
+            get
+            {
+                return minimum;
+            }
+            set
+            {
+                minimum = value;
+            }
+        }
+
+        [SerializeField, Tooltip("Represents the base maximum value, without any multipliers.")]
+        protected float baseMaximum = 100f;
         /// <summary>
-        /// Flat value added to the base maximum value, before multipliers.
+        /// Represents the base maximum value, without any multipliers. Defaults to 100, change if needed.
         /// </summary>
-        public float Bonus;
+        public float BaseMaximum
+        {
+            get
+            {
+                return baseMaximum;
+            }
+        }
+
+        [SerializeField, Tooltip("Multiplier for the Base Maximum value. Default is 1. CurrentMaximum = (BaseMaximum * Multiplier)")]
+        protected float multiplier = 1f;
+        /// <summary>
+        /// Multiplier for the Base Maximum value. Default is 1.
+        /// CurrentMaximum = (BaseMaximum * Multiplier)
+        /// </summary>
+        public float Multiplier
+        {
+            get
+            {
+                return multiplier;
+            }
+            set
+            {
+                multiplier = Mathf.Clamp(value, 0, float.MaxValue);
+            }
+        }
+
+        [SerializeField, Tooltip("Flat value added to the Base Maximum value, before multipliers. Can be negative.")]
+        protected float flatBonus = 0f;
+        /// <summary>
+        /// Flat value added to the Base Maximum value, after multipliers. Can be negative.
+        /// </summary>
+        public float FlatBonus
+        {
+            get
+            {
+                return flatBonus;
+            }
+            set
+            {
+                flatBonus = value;
+            }
+        }
+
         /// <summary>
         /// Represents the current maximum value, after multipliers have been applied.
         /// Maximum = BaseMax * Multiplier
         /// </summary>
-        public float Maximum
+        public float CurrentMaximum
         {
             get
             {
-                return (BaseMaximum + Bonus) * _multiplier;
+                return (baseMaximum * multiplier) + flatBonus;
             }
         }
         /// <summary>
-        /// Multiplier for the BaseMax. Default is 1.
-        /// Maximum = (BaseMax * Multiplier)
+        /// Returns a value between 0 and 1, representing the value to current max ratio.
         /// </summary>
-        [SerializeField] float _multiplier = 1;
-        public float Multiplier
+        public float ValueMaxRatio
         {
-            get => _multiplier;
-            set
+            get
             {
-                if (value > 0)
-                {
-                    _multiplier = value;
-                }else
-                {
-                    Game.Console?.Log($"Cannot set Multiplier for Attribute {Data.Name}. A negative multiplier is invalid.");
-                }
+                return Value / CurrentMaximum;
             }
         }
-        
-        protected float _minimum = 0f;
-        public float Minimum => _minimum;
+
         public bool LimitOverflow = true;
         public bool LimitUnderflow = true;
-        protected float _previousValue;
+        protected float previousValue;
         public bool IsValid => data != null;
 
 
@@ -105,16 +151,14 @@ namespace UZSG.Attributes
         /// Fired everytime ONLY IF the value of this attribute is CHANGED.
         /// Meaning that if the value is modified, but is still the same, it is not called.
         /// </summary>
-        public event EventHandler<ValueChangedInfo> OnValueChanged;
+        public event EventHandler<AttributeValueChangedContext> OnValueChanged;
         /// <summary>
         /// Called when the value reaches zero.
         /// </summary>
-        public event EventHandler<ValueChangedInfo> OnReachZero;
+        public event EventHandler<AttributeValueChangedContext> OnReachZero;
 
         #endregion
 
-
-        #region Constructors
 
         public Attribute(AttributeData data)
         {
@@ -126,40 +170,16 @@ namespace UZSG.Attributes
             this.data = Game.Attributes.GetData(id);
         }
 
-        #endregion
-
-
         internal virtual void Initialize() { }
-
-        public static void ToMax(Attribute attr)
-        {
-            attr._previousValue = attr.Value;
-            attr._value = attr.Maximum;            
-            attr.ValueChanged();
-        }
-        
-        public static void ToMin(Attribute attr)
-        {
-            attr._previousValue = attr.Value;
-            attr._value = attr.Minimum;
-            attr.ValueChanged();
-        }
-        
-        public static void ToZero(Attribute attr)
-        {
-            attr._previousValue = attr.Value;
-            attr._value = 0f;
-            attr.ValueChanged();
-        }
 
         /// <summary>
         /// Add amount to the attribute's value.
         /// </summary>
         public virtual void Add(float value)
         {
-            _previousValue = Value;
-            _value += value;
-            if (_previousValue == Value) return;
+            previousValue = Value;
+            this.value += value;
+            if (previousValue == Value) return;
             CheckOverflow();
             ValueChanged();
         }
@@ -167,57 +187,46 @@ namespace UZSG.Attributes
         /// <summary>
         /// Remove amount from the attribute's value.
         /// </summary>
-        public virtual void Remove(float value, bool buffer = false)
+        public virtual void Remove(float value)
         {
-            _previousValue = Value;
-            _value -= value;
-            if (_previousValue == Value) return;
+            previousValue = Value;
+            this.value -= value;
+            if (previousValue == Value) return;
             CheckUnderflow();
-            ValueChanged(buffer);
+            ValueChanged();
         }
         
         /// <summary>
-        /// Tries to remove the amount from the attribute's current value.
-        /// Returns true if the value is less than the current value, false otherwise.
+        /// Tries to remove an amount from the Attribute's current Value.
+        /// Returns true if the amount can be removed, false otherwise.
         /// </summary>
-        public bool TryRemove(float value)
+        public virtual bool TryRemove(float amount)
         {
-            if (value < Value)
+            if (amount <= Value)
             {
-                _previousValue = Value;
-                _value -= value;
-                CheckUnderflow();
-                ValueChanged();
+                Remove(amount);
                 return true;
             }
+            
             return false;
         }
         
-        protected virtual void ValueChanged(bool buffer = false)
+        protected virtual void ValueChanged()
         {
-            if (Value == _previousValue) return;
+            if (value == previousValue) return;
             
-            float value = Mathf.Abs(Value - _previousValue);
-            OnValueChanged?.Invoke(this, new()
+            float valueChange = Mathf.Abs(value - previousValue);
+            AttributeValueChangedContext context = new()
             {
-                Previous = _previousValue,
-                Change = value,
-                New = Value,
-                ValueChangeType = Value > _previousValue ? ValueChangeType.Increased : ValueChangeType.Decreased,
-                IsBuffered = buffer,
-            });
+                Previous = previousValue,
+                Change = valueChange,
+                New = value
+            };
 
+            OnValueChanged?.Invoke(this, context);
             if (Value <= 0)
             {
-                OnReachZero?.Invoke(this, new()
-                {
-                    Previous = _previousValue,
-                    Change = value,
-                    New = Value,
-                    ValueChangeType = Value > _previousValue ? ValueChangeType.Increased : ValueChangeType.Decreased,
-                    IsBuffered = buffer,
-                });
-                return;
+                OnReachZero?.Invoke(this, context);
             }
         }
 
@@ -226,11 +235,10 @@ namespace UZSG.Attributes
             if (!LimitOverflow) return 0f;
 
             float overflow = 0f;
-
-            if (Value > Maximum)
+            if (value > CurrentMaximum)
             {
-                overflow = Value - Maximum;
-                _value -= overflow;
+                overflow = value - CurrentMaximum;
+                value -= overflow;
             }
 
             return overflow;
@@ -241,14 +249,55 @@ namespace UZSG.Attributes
             if (!LimitUnderflow) return 0f;
 
             float underflow = 0f;
-
-            if (Value < Minimum)
+            if (value < minimum)
             {
-                underflow = Value;
-                _value += Mathf.Abs(underflow);
+                underflow = value;
+                value += Mathf.Abs(underflow); /// negative
             }
 
             return underflow;
         }
+        
+        public virtual void ReadSaveData(AttributeSaveData data, bool initialize = true)
+        {
+            value = data.Value;
+            minimum = data.Minimum;
+            baseMaximum = data.BaseMaximum;
+            multiplier = data.Multiplier;
+            flatBonus = data.FlatBonus;
+            LimitOverflow = data.LimitOverflow;
+            LimitUnderflow = data.LimitUnderflow;
+
+            if (initialize)
+            {
+                Initialize();
+            }
+        }
+        
+
+        #region Static
+
+        public static void ToMax(Attribute attr)
+        {
+            attr.previousValue = attr.Value;
+            attr.value = attr.CurrentMaximum;
+            attr.ValueChanged();
+        }
+        
+        public static void ToMin(Attribute attr)
+        {
+            attr.previousValue = attr.Value;
+            attr.value = attr.Minimum;
+            attr.ValueChanged();
+        }
+        
+        public static void ToZero(Attribute attr)
+        {
+            attr.previousValue = attr.Value;
+            attr.value = 0f;
+            attr.ValueChanged();
+        }
+
+        #endregion
     }
 }

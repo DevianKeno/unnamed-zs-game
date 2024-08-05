@@ -34,6 +34,7 @@ namespace UZSG.Data
         public List<RecipeData> Recipes;
         [TextArea] public string SourceDescription;
 
+#if UNITY_EDITOR
         public void GetRecipes()
         {
             Recipes.Clear();
@@ -44,5 +45,6 @@ namespace UZSG.Data
                 Recipes.Add(recipeData);
             }
         }
+#endif
     }
 }

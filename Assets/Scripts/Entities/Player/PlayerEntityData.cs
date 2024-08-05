@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+
 using UnityEngine;
+
 using UZSG.Attributes;
 using UZSG.Crafting;
 using UZSG.Data;
@@ -15,8 +17,8 @@ namespace UZSG.Entities
     public class PlayerEntityData : EntityData
     {        
         [Header("Attributes")]
-        public AttributeCollection<VitalAttribute> Vitals;
-        public AttributeCollection<GenericAttribute> Generic;
+        public List<AttributeData> Vitals;
+        public List<AttributeData> Generic;
         public List<RecipeData> KnownRecipes;
     }
 }

@@ -16,16 +16,18 @@ MonoBehaviour:
   Name: First Aid Kit
   Description: Healing item.
   Model:
-    m_AssetGUID: 
+    m_AssetGUID: 2c64cb256d6caf6478c497288aada1bf
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  Sprite: {fileID: 0}
+  Sprite: {fileID: 21300000, guid: 92c14a7bf54dd634fae4eb0b24e3be6d, type: 3}
   Type: 0
   Subtype: 3
   Weight: 2
   StackSize: 1
   IsMaterial: 1
   IsCraftable: 1
-  Recipes: []
+  Recipes:
+  - {fileID: 11400000, guid: 314eca0960e514f46b436d87ec9f13fc, type: 2}
+  - {fileID: 11400000, guid: 70c3322715fb47a42bae1c4ac67841e7, type: 2}
   SourceDescription: 'Crafter using '

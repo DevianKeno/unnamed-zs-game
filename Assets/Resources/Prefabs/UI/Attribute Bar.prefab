@@ -34,8 +34,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -140.99997, y: 0}
-  m_SizeDelta: {x: -281.99994, y: 0}
+  m_AnchoredPosition: {x: -250, y: 0}
+  m_SizeDelta: {x: -500, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6343592085002602742
 CanvasRenderer:
@@ -109,8 +109,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -140.99997, y: 0}
-  m_SizeDelta: {x: -281.99994, y: 0}
+  m_AnchoredPosition: {x: -250, y: 0}
+  m_SizeDelta: {x: -500, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4845669279810501809
 CanvasRenderer:
@@ -254,17 +254,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 817ff1558a8f94f46bed7a8aa689ff3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _value: 71.8
+  _value: 50
   barRect: {fileID: 8963817805981456813}
   fillRect: {fileID: 1468061552080109571}
   attribute:
     data: {fileID: 0}
-    Value: 0
-    BaseMaximum: 0
-    Bonus: 0
-    _multiplier: 0
+    value: 0
+    baseMaximum: 0
+    flatBonus: 0
+    multiplier: 0
     LimitOverflow: 0
     LimitUnderflow: 0
+  BufferOnDecreaseValue: 0
   BufferDuration: 0.2
   TweenType: 1
   bufferRect: {fileID: 4464040806379643172}

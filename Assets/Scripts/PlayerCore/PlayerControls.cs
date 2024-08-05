@@ -225,7 +225,7 @@ namespace UZSG.Players
 
         #region Cached attributes
 
-        VitalAttribute stamina;
+        Attributes.Attribute stamina;
         float jumpStaminaCost;
 
         #endregion
@@ -278,14 +278,13 @@ namespace UZSG.Players
             }
         }
 
-
         void OnJumpInput(InputAction.CallbackContext context)
         {
             if (!EnableMovementControls) return;
 
             if (context.started)
             {
-                if (!CanJump) return;
+                if (!Player.CanJump) return;
             
                 if (_isRunning)
                 {
@@ -298,11 +297,6 @@ namespace UZSG.Players
                 
                 HandleJump();
             }
-        }
-
-        public bool CanJump
-        {
-            get => stamina.Value >= jumpStaminaCost && IsGrounded;
         }
 
         [SerializeField] bool _crouchControlIsToggle = true;

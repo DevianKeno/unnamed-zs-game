@@ -8,126 +8,146 @@ namespace UZSG.Entities
 {
     public abstract class Enemy : Entity
     {
-        private float distanceFromPlayer; // the actual distance in game distance from the player
-        public float siteRange;  // range from which it follow players
-        public Transform player; // used for player position
-        [SerializeField] private NavMeshAgent enemyEntity; // the entity's agent movement
-        public float roamRadius; // Radius of which the agent can travel
-        public float roamInterval; // Interval before the model moves again
-        public float roamTime; // Time it takes for the agent to travel a point
-        private Vector3 randomDestination; // Destination of agent
-        public EnemyData EnemyData => entityData as EnemyData;
-        [SerializeField] protected EnemyActionStatesMachine enemyStateMachine;
-
+        public float SiteRange;  // range from which it follow Players
+        public Transform Player; // used for Player position
+        public float RoamRadius; // Radius of which the agent can travel
+        public float RoamInterval; // Interval before the model moves again
+        public float RoamTime; // Time it takes for the agent to travel a point
         public EnemyActionStatesMachine EnemyStateMachine => enemyStateMachine;
+        public EnemyData EnemyData => entityData as EnemyData;
+        Vector3 _randomDestination; // Destination of agent
+        float distanceFromPlayer; // the actual distance in game distance from the Player
+        [SerializeField] protected EnemyActionStatesMachine enemyStateMachine;
+        [SerializeField] private NavMeshAgent _enemyEntity; // the entity's agent movement
 
         void Start()
         {
-            enemyEntity = GetComponent<NavMeshAgent>();
+            _enemyEntity = GetComponent<NavMeshAgent>();
         }
 
-        // SENSOR METHODS
-        public EnemyActionStates _isInSiteRange()  // determines if enemy can chase player or roam map
+        #region Agent sensors
+        public EnemyActionStates IsInSiteRange  // determines if enemy can Chase Player or Roam map
         {
-            distanceFromPlayer = Vector3.Distance(player.position, transform.position);
-            if (distanceFromPlayer > siteRange)
+            get
             {
-                return EnemyActionStates.Roam;
-            }
-            return EnemyActionStates.Chase;
-        }
-
-        public bool _isInAttackrange() // determines if enemy can attack player
-        {
-            return false;
-        }
-        public bool _isNoHealth() // determines if the enemy is dead
-        {
-            return false;
-        }
-        public bool _isSpecialAttackTriggered() // determines if an event happened that triggered special attack 1
-        {
-            return false;
-        }
-        public bool _isSpecialAttackTriggered2() // determines if an event happened that triggered special attack 2
-        {
-            return false;
-        }
-
-        public EnemyActionStates handleTransition() // "sense" what's the state of the enemy 
-        {
-            // if enemy has no health, state is dead
-            if (_isNoHealth() == true)
-            {
-                return EnemyActionStates.Die;
-            }
-            // if player not in chase range
-            if (_isInSiteRange() == EnemyActionStates.Roam)
-            {
-                return EnemyActionStates.Roam;
-            }
-            else
-            {
-                if (_isInAttackrange() == false) // chase
+                if (distanceFromPlayer > SiteRange)
                 {
-                    return EnemyActionStates.Chase;
+                    return EnemyActionStates.Roam;
                 }
-                else // attack player
+                return EnemyActionStates.Chase;
+            }
+        }
+
+        public bool IsInAttackrange // determines if enemy can Attack Player
+        {
+            get
+            {
+                return false;
+            }
+        }
+        public bool IsNoHealth // determines if the enemy is dead
+        {
+            get
+            {
+                return false;
+            }
+        }
+        public bool IsSpecialAttackTriggered // determines if an event happened that triggered special Attack 1
+        {
+            get
+            {
+                return false;
+            }
+        }
+        public bool IsSpecialAttackTriggered2 // determines if an event happened that triggered special Attack 2
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        public EnemyActionStates HandleTransition // "sense" what's the state of the enemy 
+        {
+            get
+            {
+                // if enemy has no health, state is dead
+                if (IsNoHealth == true)
                 {
-                    return EnemyActionStates.Attack;
+                    return EnemyActionStates.Die;
+                }
+                // if Player not in Chase range
+                if (IsInSiteRange == EnemyActionStates.Roam)
+                {
+                    return EnemyActionStates.Roam;
+                }
+                else
+                {
+                    if (IsInAttackrange == false) // Chase
+                    {
+                        return EnemyActionStates.Chase;
+                    }
+                    else // Attack Player
+                    {
+                        return EnemyActionStates.Attack;
+                    }
                 }
             }
         }
 
-        // ACTION METHODS
-        public void chase()
+        #endregion
+
+
+        #region Agent actuator
+
+        public void Chase()
         {
             enemyStateMachine.ToState(EnemyActionStates.Chase);
-            enemyEntity.SetDestination(player.position);
-            Debug.Log("distance from player: " + distanceFromPlayer + "with a trigger needed of: " + siteRange);
+            _enemyEntity.SetDestination(Player.position);
+            Debug.Log("distance from Player: " + distanceFromPlayer + "with a trigger needed of: " + SiteRange);
         }
-        public void roam()
+        public void Roam()
         {
             enemyStateMachine.ToState(EnemyActionStates.Roam);
-            roamTime -= Time.deltaTime;
-            if (roamTime <= 0)
+            RoamTime -= Time.deltaTime;
+            if (RoamTime <= 0)
             {
                 // Get a random position
-                randomDestination = UnityEngine.Random.insideUnitSphere * roamRadius;
-                randomDestination += transform.position;
+                _randomDestination = UnityEngine.Random.insideUnitSphere * RoamRadius;
+                _randomDestination += transform.position;
 
-                NavMesh.SamplePosition(randomDestination, out NavMeshHit navHit, roamRadius, NavMesh.AllAreas);
+                NavMesh.SamplePosition(_randomDestination, out NavMeshHit navHit, RoamRadius, NavMesh.AllAreas);
 
                 // Set the agent's destination to the random point
-                enemyEntity.SetDestination(navHit.position);
-                Debug.Log("distance from player: " + navHit.position);
-                roamTime = UnityEngine.Random.Range(1.0f, roamInterval);
+                _enemyEntity.SetDestination(navHit.position);
+                Debug.Log("distance from Player: " + navHit.position);
+                RoamTime = UnityEngine.Random.Range(1.0f, RoamInterval);
             }
         }
-        public void attack2() 
+        public void Attack2() 
         {
             enemyStateMachine.ToState(EnemyActionStates.Attack2);
-            Debug.Log("attack2"); 
+            Debug.Log("Attack2"); 
         }
-        public void attack()
+        public void Attack()
         {
             enemyStateMachine.ToState(EnemyActionStates.Attack);
-            Debug.Log("attack"); 
+            Debug.Log("Attack"); 
         }
-        public void die()
+        public void Die()
         {
             enemyStateMachine.ToState(EnemyActionStates.Die);
-            Debug.Log("die"); 
+            Debug.Log("Die"); 
         }
-        public void specialAttack()
+        public void SpecialAttack()
         {
             enemyStateMachine.ToState(EnemyActionStates.SpecialAttack);
-            Debug.Log("specialAttack"); 
+            Debug.Log("SpecialAttack"); 
         }
-        public void specialAttack2()
+        public void SpecialAttack2()
         {
             enemyStateMachine.ToState(EnemyActionStates.SpecialAttack2);
-            Debug.Log("specialAttack2"); 
+            Debug.Log("SpecialAttack2"); 
         }
 
         public void executeAction(EnemyActionStates action) // execute an action depending on what state the entity is on
@@ -135,27 +155,31 @@ namespace UZSG.Entities
             switch (action)
             {
                 case EnemyActionStates.Chase:
-                    chase();
+                    Chase();
                     break;
                 case EnemyActionStates.Roam:
-                    roam();
+                    Roam();
                     break;
                 case EnemyActionStates.Attack2:
-                    attack2();
+                    Attack2();
                     break;
                 case EnemyActionStates.Attack:
-                    attack();
+                    Attack();
                     break;
                 case EnemyActionStates.Die:
-                    die();
+                    Die();
                     break;
                 case EnemyActionStates.SpecialAttack:
-                    specialAttack();
+                    SpecialAttack();
                     break;
                 case EnemyActionStates.SpecialAttack2:
-                    specialAttack2();
+                    SpecialAttack2();
                     break;
             }
         }
+        
+        #endregion
+
+
     }
 }

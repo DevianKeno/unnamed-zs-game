@@ -11,54 +11,54 @@ namespace UZSG.Entities
     {
         //public Entity entity;
         public Transform player; // used for player position
-        private NavMeshAgent enemyEntity; // the entity's agent movement
+        private NavMeshAgent _enemyEntity; // the entity's agent movement
         public float triggerDistance; // minimum distance from player before entity follows it
         private float distanceFromPlayer; // the actual distance in game distance from the player
-        public float roamRadius; // Radius of which the agent can travel
-        public float roamInterval; // Interval before the model moves again
-        public float roamTime; // Time it takes for the agent to travel a point
-        private Vector3 randomDestination; // Destination of agent
+        public float RoamRadius; // Radius of which the agent can travel
+        public float RoamInterval; // Interval before the model moves again
+        public float RoamTime; // Time it takes for the agent to travel a point
+        private Vector3 _randomDestination; // Destination of agent
 
         // Start is called before the first frame update
         void Start()
         {
             // Set the movement and world finding of the agent
-            enemyEntity = GetComponent<NavMeshAgent>();
+            _enemyEntity = GetComponent<NavMeshAgent>();
         }
 
         // Update is called once per frame
         void LateUpdate()
         {
             distanceFromPlayer = Vector3.Distance(player.position, transform.position);
-            // chase player if in range
+            // Chase player if in range
             if (distanceFromPlayer < triggerDistance)
             {
-                enemyEntity.SetDestination(player.position);
+                _enemyEntity.SetDestination(player.position);
                 Debug.Log("distance from player: " + distanceFromPlayer + "with a trigger needed of: " + triggerDistance);    
             }
-            // roam if not
+            // Roam if not
             else
             {
-                roamTime -= Time.deltaTime;
-                if (roamTime <= 0)
+                RoamTime -= Time.deltaTime;
+                if (RoamTime <= 0)
                 {
-                    roam();
-                    roamTime = UnityEngine.Random.Range(1.0f, roamInterval);
+                    Roam();
+                    RoamTime = UnityEngine.Random.Range(1.0f, RoamInterval);
                 }
             }
         }
 
-        void roam()
+        void Roam()
         {
             // Get a random position
-            randomDestination = UnityEngine.Random.insideUnitSphere * roamRadius;
-            randomDestination += transform.position;
+            _randomDestination = UnityEngine.Random.insideUnitSphere * RoamRadius;
+            _randomDestination += transform.position;
 
             NavMeshHit navHit;
-            NavMesh.SamplePosition(randomDestination, out navHit, roamRadius, NavMesh.AllAreas);
+            NavMesh.SamplePosition(_randomDestination, out navHit, RoamRadius, NavMesh.AllAreas);
 
             // Set the agent's destination to the random point
-            enemyEntity.SetDestination(navHit.position);
+            _enemyEntity.SetDestination(navHit.position);
             Debug.Log("distance from player: " + navHit.position);
         }
     }

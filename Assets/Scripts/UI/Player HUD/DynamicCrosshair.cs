@@ -1,7 +1,7 @@
 using System;
 
 using UnityEngine;
-
+using UnityEngine.Android;
 using UZSG.Entities;
 using UZSG.FPP;
 using UZSG.Items;
@@ -10,7 +10,25 @@ using UZSG.Systems;
 
 namespace UZSG.UI
 {
-    public class DynamicCrosshair : MonoBehaviour
+    [Header("Crosshair")]
+    public Player player;
+    public float restingSize;
+    public float maxSize;
+    public float speed;
+    [Range(0.00f, 1.0f)]
+    public float addedFiringFactor;
+
+    private RectTransform _crosshair;
+    private float _currentSize;
+    private float _moveSize = 0.0f;
+    private float _jumpMultiplier = 1.0f;
+    private float _crouchMultiplier = 1.0f;
+    private float _recoilMultiplier = 1.0f;
+    private float _baseRecoilValue = 1.0f;
+    private float _addedTotalFiringFactor = 0.0f;
+
+    // Start is called before the first frame update
+    void Start()
     {
         [Header("Crosshair")]
         public Player Player;
@@ -20,19 +38,20 @@ namespace UZSG.UI
         [Range(0.00f, 0.10f)]
         public float AddedFiringFactor;
 
-        float _currentSize;
-        float _moveSize = 0.0f;
-        float _jumpMultiplier = 1.0f;
-        float _crouchMultiplier = 1.0f;
-        float _recoilMultiplier = 1.0f;
-        float _baseRecoilValue = 1.0f;
-        float _addedTotalFiringFactor = 0.0f;
-        
-        [SerializeField] RectTransform crosshair;
-
-        void Start()
+    private void OnChangeHeldItem(HeldItemController controller)
+    {
+        print("CHANGED!");
+        // TODO: fix recoilMult not activating on first change of held weapon item
+        // Set recoilMultiplier based on weapon spread data; experimental, scuffed, and subject to change
+        if (player.FPP.HeldItem is GunWeaponController gunWeapon)
         {
-            Player.FPP.OnChangeHeldItem += OnChangeHeldItem;
+            _baseRecoilValue = CalculateBaseRecoilMultiplier(gunWeapon.WeaponData.RangedAttributes.Spread);
+
+            gunWeapon.StateMachine.OnStateChanged += OnGunWeaponStateChanged;
+        }
+        else
+        {
+            _recoilMultiplier = 1.0f;
         }
 
         // Update is called once per frame
@@ -97,21 +116,8 @@ namespace UZSG.UI
             // Set effectiveMaxSize depending if the player is moving, standing still, jumping, crouched, and firing
             float _effectiveMaxSize = _moveSize * _jumpMultiplier * _crouchMultiplier * _recoilMultiplier;
 
-            //print($"moveSize: {_moveSize}, jumpMult: {_jumpMultiplier}, crouchMult: {_crouchMultiplier}, recMult: {_recoilMultiplier}, effective: {_effectiveMaxSize}");
-
-            if (_effectiveMaxSize > RestingSize)
-            {
-                _currentSize = Mathf.Lerp(_currentSize, _effectiveMaxSize, Time.deltaTime * Speed);
-
-                // Reset the addedFiringFactor and recoilMultiplier to reset crosshair after firing
-                _recoilMultiplier = 1.0f;
-                // _baseRecoilValue = 1.0f;
-                _addedTotalFiringFactor = 0; // test/tracker
-            }
-            else
-            {
-                _currentSize = Mathf.Lerp(_currentSize, RestingSize, Time.deltaTime * Speed);
-            }
+            // Reset the addedFiringFactor and recoilMultiplier to reset crosshair after firing
+            _recoilMultiplier = 1.0f;
         }
 
         void OnGunWeaponStateChanged(object sender, StateMachine<GunWeaponStates>.StateChangedContext e)
@@ -127,10 +133,19 @@ namespace UZSG.UI
 
         float CalculateBaseRecoilMultiplier(float _baseGunSpread)
         {
-            return 0.5f + Mathf.Lerp(1, MaxSize / RestingSize, (_baseGunSpread / 180));
+            _recoilMultiplier = _baseRecoilValue + addedFiringFactor;
         }
 
-        bool IsMoving
+    }
+
+    float CalculateBaseRecoilMultiplier(float _baseGunSpread)
+    {
+        return 0.5f + Mathf.Lerp(1, maxSize / restingSize, (_baseGunSpread / 15));
+    }
+
+    bool isMoving
+    {
+        get
         {
             get
             {

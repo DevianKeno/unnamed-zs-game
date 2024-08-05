@@ -22,11 +22,13 @@ namespace UZSG.Entities
         void Start()
         {
             InitializeHitboxEvents();
+            actionState = HandleTransition;
+            executeAction(actionState);
         }
 
         void LateUpdate()
         {
-            actionState = handleTransition();
+            actionState = HandleTransition;
             executeAction(actionState);
         }
 

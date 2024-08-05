@@ -201,13 +201,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   entityData: {fileID: 11400000, guid: 3bbb12e3042059d4abbf8d40af48316c, type: 2}
-  siteRange: 12
-  player: {fileID: 0}
-  enemyEntity: {fileID: 2040430638346997429}
-  roamRadius: 4
-  roamInterval: 1
-  roamTime: 10
+  SiteRange: 0
+  Player: {fileID: 0}
+  RoamRadius: 0
+  RoamInterval: 0
+  RoamTime: 0
   enemyStateMachine: {fileID: 5533417015105148321}
+  _enemyEntity: {fileID: 2040430638346997429}
 --- !u!114 &6820198976887448944
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -305,7 +305,7 @@ NavMeshAgent:
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
-  m_StoppingDistance: 0
+  m_StoppingDistance: 1
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1

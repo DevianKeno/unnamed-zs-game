@@ -28,7 +28,10 @@ namespace UZSG.Systems
         bool _isInitialized;
         public bool IsInitialized => _isInitialized;
         public bool EnableDebugMode = true;
-        Dictionary<string, Command> commandsDict = new();
+        /// <summary>
+        /// Key is command name.
+        /// </summary>
+        Dictionary<string, Command> _commandsDict = new();
         public List<string> Messages;
 
         ConsoleWindow UI;
@@ -64,63 +67,20 @@ namespace UZSG.Systems
                 if (info.Entity is Player player)
                 {
                     _player = player;
+                    UI.OnOpen += () =>
+                    {
+                        _player.Controls.Disable();
+                        _player.Actions.Disable();
+                        _player.FPP.ToggleControls(false);
+                    };
+                    UI.OnClose += () =>
+                    {
+                        _player.Controls.Enable();
+                        _player.Actions.Enable();
+                        _player.FPP.ToggleControls(true);
+                    };
                 }
             };
-        }
-
-        void InitializeCommands()
-        {
-            Log("Initializing command registry...");
-            /// Arguments enclosed in <> are required, [] are optional
-            
-            CreateCommand("clear",
-                          "Clears the console messages.")
-                          .OnInvoke += CClear;
-
-            CreateCommand("freecam",
-                          "Toggle Free Look Camera.")
-                          .OnInvoke += CFreecam;
-
-            CreateCommand("craft <item_id>",
-                          "Crafts item given the item_id")
-                          .OnInvoke += CCraft;
-            
-            CreateCommand("help",
-                          "Prints help message.")
-                          .OnInvoke += CHelp;
-            
-            CreateCommand("item <item_id> [amount]",
-                          "Gives the player the item.")
-                          .OnInvoke += CItem;
-
-            CreateCommand("say <message>",
-                          "Send a message.")
-                          .OnInvoke += CSay;
-            
-            CreateCommand("spawn <entity_id> [x] [y] [z]",
-                          "Spawns an entity.")
-                          .OnInvoke += CSpawn;
-
-            CreateCommand("teleport <x> <y> <z>",
-                          "Teleport to coordinates.")
-                          .OnInvoke += CTeleport;
-
-            CreateCommand("tick <set|freeze> [value]",
-                          "Manipulate in-game tick system.")
-                          .OnInvoke += CTick;
-                          
-            CreateCommand("time <set> <value>",
-                          "")
-                          .OnInvoke += CTime;
-
-            CreateCommand("world <create|load> <world_name>",
-                          "")
-                          .OnInvoke += CWorld;
-
-            // /spawn item "bandage" 1
-
-            // CreateCommand("tick <freeze|set> <value>",
-            //               "Control the game's tick rate.").AddCallback(Command_Tick);
         }
 
         void InitializeInputs()
@@ -174,7 +134,7 @@ namespace UZSG.Systems
                 }
             }
 
-            commandsDict[args[0]] = newCommand; 
+            _commandsDict[args[0]] = newCommand; 
             return newCommand;           
         }
 
@@ -183,18 +143,24 @@ namespace UZSG.Systems
             if (input.StartsWith("/")) input = input[1..]; /// Remove '/' if present
             string[] split = input.Split(' ');
 
-            RunCommand(split[0], split[1..]);
+            ExecuteCommand(split[0], split[1..]);
         }
 
-        void RunCommand(string command, string[] args)
+        void ExecuteCommand(string command, string[] args)
         {
-            if (commandsDict.ContainsKey(command))
+            if (command[0] == '/')
             {
-                /// Invalid command arguments are currently unhandled
-                commandsDict[command].Invoke(args);
-            } else
+                command = command.Replace("/", "");
+            }
+
+            try
             {
-                PromptInvalid();
+                _commandsDict[command].Invoke(args);
+            }
+            catch
+            {
+                PromptInvalid(command);
+                return;
             }
         }
 
@@ -208,10 +174,11 @@ namespace UZSG.Systems
 
         void PromptInvalid(string command)
         {
-            if (commandsDict.ContainsKey(command))
+            if (_commandsDict.ContainsKey(command))
             {
                 Log($"Invalid command usage. Try '/help {command}'");
-            } else
+            }
+            else
             {
                 PromptInvalid();
             }

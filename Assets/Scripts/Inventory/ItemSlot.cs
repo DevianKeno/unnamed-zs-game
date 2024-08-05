@@ -30,6 +30,13 @@ namespace UZSG.Inventory
                 return item == null || item.IsNone;
             }
         }
+        [SerializeField] public bool HasItem
+        {
+            get
+            {
+                return item != null && !item.IsNone;
+            }
+        }
 
         /// <summary>
         /// Called whenever the content of this Slot is changed.

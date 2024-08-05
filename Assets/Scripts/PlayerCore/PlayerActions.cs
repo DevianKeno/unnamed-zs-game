@@ -158,8 +158,11 @@ namespace UZSG.Players
             if (!int.TryParse(context.control.displayName, out int index)) return;
 
             var slot = Player.Inventory.GetEquipmentOrHotbarSlot(index);
-            // Player.Inventory.SelectHotbarSlot(index);
-            Player.FPP.EquipHeldItem(slot.Item.Data.Id);
+            if (slot != null && slot.HasItem)
+            {
+                Player.FPP.EquipHeldItem(slot.Item.Data.Id);
+                // Player.Inventory.SelectHotbarSlot(index);
+            }
         }
 
         void OnUnholster(InputAction.CallbackContext context)

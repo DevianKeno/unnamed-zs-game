@@ -4,6 +4,7 @@ using TMPro;
 using UZSG.Systems;
 using System.Collections.Generic;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 
 namespace UZSG.UI
 {
@@ -27,7 +28,7 @@ namespace UZSG.UI
             inputs["Navigate Entry Up"].performed += NavigatePreviousEntry;
             inputs["Navigate Entry Down"].performed += NavigateNextEntry;
 
-            inputField.onEndEdit.AddListener(InputSubmit);
+            inputField.onSubmit.AddListener(InputSubmit);
             
             Game.Console.OnLogMessage += UpdateMessages;
             messages.text = string.Join(' ', Game.Console.Messages);

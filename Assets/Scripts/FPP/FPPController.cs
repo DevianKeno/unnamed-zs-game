@@ -255,6 +255,7 @@ namespace UZSG.FPP
                 
         public void EquipHeldItem(string id)
         {
+            if (string.IsNullOrEmpty(id)) return;
             if (_isPlayingAnimation) return;
             if (currentlyEquippedId == id) return;
 

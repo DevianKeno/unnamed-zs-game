@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UZSG.Entities;
 using UZSG.Items;
@@ -9,20 +10,75 @@ namespace UZSG.Systems
     /// </summary>
     public sealed partial class Console : MonoBehaviour, IInitializeable
     {
+        void InitializeCommands()
+        {
+            Log("Initializing command registry...");
+            /// Arguments enclosed in <> are required, [] are optional
+            
+            CreateCommand("clear",
+                          "Clears the console messages.")
+                          .OnInvoke += CClear;
+
+            CreateCommand("freecam",
+                          "Toggle Free Look Camera.")
+                          .OnInvoke += CFreecam;
+
+            CreateCommand("craft <item_id>",
+                          "Crafts item given the item_id")
+                          .OnInvoke += CCraft;
+            
+            CreateCommand("give <player|me> <item_id> [amount]",
+                          "Gives the player the item.")
+                          .OnInvoke += CGive;
+            
+            CreateCommand("help",
+                          "Prints help message.")
+                          .OnInvoke += CHelp;
+
+            CreateCommand("say <message>",
+                          "Send a message.")
+                          .OnInvoke += CSay;
+            
+            CreateCommand("spawn <entity_id> [x] [y] [z]",
+                          "Spawns an entity.")
+                          .OnInvoke += CSpawn;
+
+            CreateCommand("teleport <x> <y> <z>",
+                          "Teleport to coordinates.")
+                          .OnInvoke += CTeleport;
+
+            CreateCommand("tick <set|freeze> [value]",
+                          "Manipulate in-game tick system.")
+                          .OnInvoke += CTick;
+                          
+            CreateCommand("time <set> <value>",
+                          "")
+                          .OnInvoke += CTime;
+
+            CreateCommand("world <create|load> <world_name>",
+                          "")
+                          .OnInvoke += CWorld;
+
+            // /spawn item "bandage" 1
+
+            // CreateCommand("tick <freeze|set> <value>",
+            //               "Control the game's tick rate.").AddCallback(Command_Tick);
+        }
+
+
+        #region Command implementations
+
         /// The args parameters represent the arguments WITHOUT the actual command.
         /// ex. "/spawn item bandage"
         /// The args would consist of [item, bandage]
-        
-        #region Command implementations
+
         /// <summary>
         /// Clears the console messages.
         /// </summary>
         void CClear(object sender, string[] args)
         {
             Messages.Clear();
-        }
-
-        
+        }        
         
         /// <summary>
         /// Spawns an entity.
@@ -45,6 +101,34 @@ namespace UZSG.Systems
         {
             
         }
+        
+        /// <summary>
+        /// Gives the player the item.
+        /// </summary>
+        void CGive(object sender, string[] args)
+        {
+            if (args.Length > 1)
+            {
+                var target = args[0];
+                var id = args[1];
+                int count = 1;
+                if (args.Length > 2)
+                {
+                    count = string.IsNullOrEmpty(args[2]) ? 1 : int.Parse(args[2]);
+                }
+                var newItem = new Item(Game.Items.GetData(id), count);
+
+                if (target == "me") /// target self
+                {
+                    _player.Inventory.Bag.TryPutNearest(newItem);
+                    Game.Console.Log($"Given {_player.name} {count} of '{id}'");
+                }
+                else /// target player Id
+                {
+                    throw new NotImplementedException();
+                }
+            }
+        }
 
         /// <summary>
         /// Prints the help message to the console.
@@ -55,7 +139,7 @@ namespace UZSG.Systems
             {
                 Game.Console.WriteLine("List of available commands: ");
                 string message = "";
-                foreach (var c in commandsDict)
+                foreach (var c in _commandsDict)
                 {
                     message += $"{c.Value.Name}, "; /// This will have an extra comma, pls fix
                 }
@@ -69,19 +153,10 @@ namespace UZSG.Systems
                 }
                 else
                 {
-                    Log($"Usage: " + commandsDict[args[1]].Syntax);
-                    Log(commandsDict[args[1]].Description);
+                    Log($"Usage: " + _commandsDict[args[1]].Syntax);
+                    Log(_commandsDict[args[1]].Description);
                 }
             }
-        }
-        
-        /// <summary>
-        /// Gives the player the item.
-        /// </summary>
-        void CItem(object sender, string[] args)
-        {
-            // Item item = new(
-            // player.Inventory.TryPutNearest(item);
         }
         
         /// <summary>

@@ -101,7 +101,7 @@ namespace UZSG.Inventory
         {
             if (Bag.TryGetSlot(slotIndex, out var slot))
             {
-                var position = Player.Position + Vector3.forward;
+                var position = Player.EyeLevel + Player.Forward;
                 Game.Entity.Spawn<ItemEntity>("item", position, callback: (info) =>
                 {
                     info.Entity.Item = slot.TakeAll();

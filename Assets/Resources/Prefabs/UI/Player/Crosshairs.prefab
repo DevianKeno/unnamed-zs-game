@@ -188,12 +188,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eff17b7d69b34994b8356ab7231bb7c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Player: {fileID: 0}
-  RestingSize: 80
-  MaxSize: 130
-  Speed: 10
-  AddedFiringFactor: 0.01
-  crosshair: {fileID: 705301196296037395}
+  player: {fileID: 0}
+  restingSize: 80
+  maxSize: 130
+  speed: 10
+  addedFiringFactor: 0.01
+  _crosshair: {fileID: 705301196296037395}
 --- !u!1 &2592336669567913889
 GameObject:
   m_ObjectHideFlags: 0

@@ -354,7 +354,7 @@ namespace UZSG.UI
             }
             if (item.Data.Subtype == ItemSubtype.Consumable)
             {
-                itemOptions.AddChoice("Consumable")
+                itemOptions.AddChoice("Use")
                 .AddCallback(() =>
                 {
                     

@@ -47,7 +47,6 @@ MonoBehaviour:
   containers:
   - {fileID: 2347074114045292195}
   - {fileID: 7107611863965880641}
-  _GUI: {fileID: 0}
   PlayerEntity: {fileID: 8107631895800867322}
 --- !u!1 &1560824521149795163
 GameObject:
@@ -550,7 +549,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Player: {fileID: 8107631895800867322}
-  ThrowForce: 2
+  ThrowForce: 5
 --- !u!114 &2347074114045292195
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1098,7 +1097,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Player: {fileID: 8107631895800867322}
   Radius: 0.2
-  MaxInteractDistance: 2.5
+  MaxInteractDistance: 3
   HoldThresholdMilliseconds: 200
 --- !u!114 &8623776553954527420
 MonoBehaviour:

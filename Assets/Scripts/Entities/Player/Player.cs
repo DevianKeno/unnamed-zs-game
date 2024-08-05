@@ -197,6 +197,10 @@ namespace UZSG.Entities
             {
                 Value = 200f,
             });
+            generic["run_stamina_cost"].ReadSaveData(new()
+            {
+                Value = 5 / TickSystem.NormalTPS,
+            });
             generic["jump_stamina_cost"].ReadSaveData(new()
             {
                 Value = 20f,

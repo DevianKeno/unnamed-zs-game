@@ -97,12 +97,12 @@ namespace UZSG.Objects
 
         protected virtual void InitializeCrafter(Player player)
         {
-            crafter.BindUI(_GUI as CraftingGUI);
-            crafter.AddContainer(player.Inventory.Bag);
-            // crafter.AddContainer(player.Inventory.Hotbar);
-            crafter.AddRecipes(WorkstationData.IncludedRecipes);
-            crafter.AddRecipes(player.PlayerEntityData.KnownRecipes);
-            // InitializeCrafterGUI(player);
+            // crafter.BindUI(_GUI as CraftingGUI);
+            // crafter.AddContainer(player.Inventory.Bag);
+            // // crafter.AddContainer(player.Inventory.Hotbar);
+            // crafter.AddRecipes(WorkstationData.IncludedRecipes);
+            // crafter.AddRecipes(player.PlayerEntityData.KnownRecipes);
+            // // InitializeCrafterGUI(player);
         }
 
         protected virtual void LoadGUIAsset(AssetReference asset, Action<WorkstationGUI> onLoadCompleted = null)

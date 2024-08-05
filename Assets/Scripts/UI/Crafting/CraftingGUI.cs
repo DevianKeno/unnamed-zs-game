@@ -64,10 +64,7 @@ namespace UZSG.UI
 
         void CraftItem()
         {
-            if (crafter.TryCraftRecipe(_selectedRecipe))
-            {
-                
-            }
+            crafter.CraftItem(_selectedRecipe);
         }
 
 

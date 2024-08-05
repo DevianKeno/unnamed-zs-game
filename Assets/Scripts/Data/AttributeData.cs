@@ -8,6 +8,7 @@ namespace UZSG.Data
     [CreateAssetMenu(fileName = "Attribute", menuName = "UZSG/Attributes/Attribute Data")]
     public class AttributeData : BaseData
     {
+        [Header("Attribute Data")]
         public string Name;
         [TextArea] public string Description;
         public Attributes.Type Type;

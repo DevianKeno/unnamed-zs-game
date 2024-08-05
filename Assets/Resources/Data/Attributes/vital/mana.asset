@@ -12,9 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e18afb883e1451a4c82eb24298dc52e1, type: 3}
   m_Name: mana
   m_EditorClassIdentifier: 
-  Type: 1
-  Change: 1
-  Cycle: 0
   Id: mana
   Name: Mana
   Description: 
+  Type: 1

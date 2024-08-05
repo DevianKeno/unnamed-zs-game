@@ -1,5 +1,5 @@
 using UnityEditor;
-
+using UnityEngine;
 using UZSG.Data;
 
 namespace UZSG.UnityEditor
@@ -18,6 +18,7 @@ namespace UZSG.UnityEditor
             isMaterial,
             isCraftable,
             recipes,
+            recipess,
             weight,
             sourceDesc;
 
@@ -43,9 +44,9 @@ namespace UZSG.UnityEditor
         {
             serializedObject.Update();
             base.OnInspectorGUI();
+            ItemData itemData = (ItemData) target;
             
             EditorGUILayout.Space();
-            EditorGUILayout.LabelField("Item Attributes", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(nameProperty);
             EditorGUILayout.PropertyField(description);
             EditorGUILayout.PropertyField(assetReference);
@@ -60,10 +61,12 @@ namespace UZSG.UnityEditor
             EditorGUILayout.PropertyField(isMaterial);
             EditorGUILayout.PropertyField(isCraftable);
 
-            if (isCraftable.boolValue)
+            if (GUILayout.Button("Get Recipes"))
             {
-                EditorGUILayout.PropertyField(recipes);
+                itemData.GetRecipes();  
+                serializedObject.Update(); 
             }
+            EditorGUILayout.PropertyField(recipes);
 
             // ItemType itemType = (ItemType) type.enumValueIndex;
             // if (itemType == ItemType.Weapon || itemType == ItemType.Tool)

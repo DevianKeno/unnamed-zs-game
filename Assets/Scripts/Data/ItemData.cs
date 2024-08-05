@@ -33,5 +33,16 @@ namespace UZSG.Data
         public bool IsCraftable;
         public List<RecipeData> Recipes;
         [TextArea] public string SourceDescription;
+
+        public void GetRecipes()
+        {
+            Recipes.Clear();
+            foreach (var recipeData in Resources.LoadAll<RecipeData>("Data/Recipes"))
+            {
+                var str = recipeData.name.Split('-');
+                if (str[0] != Id) continue;
+                Recipes.Add(recipeData);
+            }
+        }
     }
 }

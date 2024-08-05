@@ -12,9 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e18afb883e1451a4c82eb24298dc52e1, type: 3}
   m_Name: bag_slots_count
   m_EditorClassIdentifier: 
-  Type: 0
   Id: bag_slots_count
   Name: bag_slots_count
   Description: How many items you can carry.
-  Change: 0
-  Cycle: 0
+  Type: 0

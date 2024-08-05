@@ -24,9 +24,11 @@ MonoBehaviour:
   Type: 0
   Subtype: 1
   Weight: 0
-  IsStackable: 1
   StackSize: 999
   IsMaterial: 0
   IsCraftable: 1
   Recipes:
   - {fileID: 11400000, guid: d483b2fe74215824dbda5f2c35f2445a, type: 2}
+  - {fileID: 11400000, guid: cb32aeaee9a8ee84cbd5456637994761, type: 2}
+  - {fileID: 11400000, guid: f000b8f0a93320d41b27404c408c6c63, type: 2}
+  SourceDescription: 

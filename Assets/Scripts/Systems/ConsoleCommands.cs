@@ -86,7 +86,7 @@ namespace UZSG.Systems
         void CCraft(object sender, string[] args)
         {
             var newItem = new Item(Game.Items.GetData("m4ar"));
-            _player.CraftingAgent.CraftItem(newItem, 0);
+            _player.CraftingAgent.CraftItem(newItem.Data.Recipes[0]);
         }
 
         void CDamage(object sender, string[] args)

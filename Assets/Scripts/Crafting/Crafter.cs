@@ -62,7 +62,7 @@ namespace UZSG.Crafting
                 int _totalItemCount = 0;
 
                 var tempSlots = new List<ItemSlot>();
-                _totalItemCount += containers[containerIndex].ItemCount(material, out tempSlots);
+                _totalItemCount += containers[containerIndex].CountItem(material, out tempSlots);
                 materialSlots.AddRange(tempSlots);
 
                 if (_totalItemCount < material.Count){

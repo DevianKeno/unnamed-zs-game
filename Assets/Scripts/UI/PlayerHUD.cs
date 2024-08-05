@@ -35,6 +35,7 @@ namespace UZSG.UI
         public GameObject pickupsIndicatorContainer;
         public DynamicCrosshair crosshair;
         public SwitchCrosshair allCrosshair;
+        public Compass compass;
 
         internal void Initialize()
         {
@@ -50,6 +51,7 @@ namespace UZSG.UI
             InitializeEvents();
             crosshair.Player = Player;
             allCrosshair.player = Player;
+            compass.Player = Player;
         }
 
         void InitializeItemSlots()

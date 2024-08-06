@@ -9,8 +9,9 @@ using UZSG.Entities;
 using UZSG.Inventory;
 using UZSG.Items;
 
-namespace UZSG.Crafting 
+namespace UZSG.Crafting
 {
+    //test
     public struct CraftFinishedInfo 
     {
             public DateTime StartTime;

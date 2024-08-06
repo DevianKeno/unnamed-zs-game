@@ -153,15 +153,15 @@ namespace UZSG.Systems
                 command = command.Replace("/", "");
             }
 
-            try
-            {
+            // try
+            // {
                 _commandsDict[command].Invoke(args);
-            }
-            catch
-            {
-                PromptInvalid(command);
-                return;
-            }
+            // }
+            // catch 
+            // {
+            //     PromptInvalid(command);
+            //     return;
+            // }
         }
 
         /// <summary>

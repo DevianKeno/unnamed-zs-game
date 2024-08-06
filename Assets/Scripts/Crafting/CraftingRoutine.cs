@@ -12,6 +12,8 @@ namespace UZSG.Crafting
         public event EventHandler<int> OnCraftSecond;
         public event EventHandler<CraftFinishedInfo> OnCraftFinish;
         public RecipeData RecipeData;
+
+        int secondsElapsed = 0;
         
 
         public CraftingRoutine(RecipeData recipeData)
@@ -20,18 +22,22 @@ namespace UZSG.Crafting
         }
 
 
+        public int GetTimeRemaining(){
+            return (int)RecipeData.DurationSeconds - secondsElapsed;
+        }
+
+
         public IEnumerator CraftCoroutine()
         {
             CraftFinishedInfo TimeInfo;
 
             TimeInfo.StartTime = DateTime.Now;
-            int secondsElapsed = 0;
             while (secondsElapsed < RecipeData.DurationSeconds)
             {
                 
                 yield return new WaitForSeconds(1);
                 secondsElapsed++;
-                OnCraftSecond?.Invoke(this, secondsElapsed);
+                OnCraftSecond?.Invoke(this, GetTimeRemaining());
             }                
             TimeInfo.EndTime = DateTime.Now;
             OnCraftFinish?.Invoke(this, TimeInfo);

@@ -19,6 +19,7 @@ MonoBehaviour:
     _count: 1
   Materials:
   - _itemData: {fileID: 11400000, guid: 9632887a2e9858a4394041398036f076, type: 2}
+    _count: 4
+  - _itemData: {fileID: 11400000, guid: 74e8913029c3a3b4583fb180fdd991bc, type: 2}
     _count: 2
-  - _itemData: {fileID: 11400000, guid: 4db832ac8aad01d4185db5362c1488da, type: 2}
-    _count: 1
+  DurationSeconds: 40

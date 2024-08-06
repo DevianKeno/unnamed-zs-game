@@ -134,7 +134,7 @@ namespace UZSG.Entities
         void InitializeAttributes()
         {
             /// Get blueprint base
-            vitals.ReadAttributesData(playerEntityData.Vitals);
+            vitals.ReadSaveData(playerData.Vitals);
             
             /// Overwrite base with data from file
             // Vitals.LoadData(Data.Vitals);
@@ -142,12 +142,14 @@ namespace UZSG.Entities
             generic.ReadAttributesData(playerEntityData.Generic);
             // Generic.LoadData(Data.Generic);
 
-            SetDefaultAttributes();
+            // SetDefaultAttributes();
         }
 
         void SetDefaultAttributes()
         {
 #region Temporary /// These should be read from save data
+
+            vitals.ReadSaveData(playerData.Vitals);
 
             vitals["health"].ReadSaveData(new()
             {

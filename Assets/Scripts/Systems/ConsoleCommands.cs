@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UZSG.Crafting;
 using UZSG.Entities;
 using UZSG.Items;
 
@@ -85,8 +86,9 @@ namespace UZSG.Systems
         /// </summary>
         void CCraft(object sender, string[] args)
         {
-            var newItem = new Item(Game.Items.GetData("m4ar"));
-            _player.CraftingAgent.CraftItem(newItem.Data.Recipes[0]);
+            var newItem = new Item(Game.Items.GetData(args[0]));
+            var playerInventoryCrafter = (InventoryCrafting)_player.CraftingAgent;
+            playerInventoryCrafter.CraftQueue(newItem.Data.Recipes[0]);
         }
 
         void CDamage(object sender, string[] args)

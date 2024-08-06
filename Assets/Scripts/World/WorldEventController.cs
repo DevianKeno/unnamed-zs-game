@@ -32,8 +32,9 @@ namespace UZSG.World
 
             Game.Tick.OnTick += OnTick;
             
-            foreach (WorldEvent worldEvent in WorldEvents.Select(worldEventData => worldEventData.worldEvents))
-                if (worldEvent.OccurEverySecond > _maxCountdown) _maxCountdown = worldEvent.OccurEverySecond;
+            foreach (WorldEventProperties properties in WorldEvents.Select(worldEventData => worldEventData.worldEvents))
+                if (properties.OccurEverySecond > _maxCountdown)
+                    _maxCountdown = properties.OccurEverySecond;
         }
 
         void OnTick(TickInfo info)
@@ -49,8 +50,8 @@ namespace UZSG.World
             {
                 tempCount = Mathf.FloorToInt(_currentTime);
                 InternalCountdown++;
-                if (_countdown > _maxCountdown) 
-                    _countdown = 0;
+                if (_countdown >= _maxCountdown) 
+                    _countdown = 1;
                 else 
                     _countdown++;
                 
@@ -60,34 +61,67 @@ namespace UZSG.World
 
         void HandleEvents()
         {
-            foreach (WorldEvent worldEvent in WorldEvents.Select(worldEventData => worldEventData.worldEvents)) 
-                if (worldEvent.Active) SpawnEvent(worldEvent);
+            foreach (WorldEventProperties properties in WorldEvents.Select(worldEventData => worldEventData.worldEvents)) 
+                if (properties.Active) SpawnEvent(properties);
         }
 
-        void SpawnEvent(WorldEvent worldEvent)
+        EventPrefab? SelectEvent(WorldEventProperties properties)
         {
-            if (worldEvent.EventOngoing) return;
+            EventPrefab selectedEvent;
 
-            if (_countdown == worldEvent.OccurEverySecond)
+            if (_countdown == properties.OccurEverySecond)
             {
-                worldEvent.OnEventStart += _weatherController.OnEventStart;
-   
-                List<EventPrefab> eventPrefabs = new();
-                EventPrefab selectedEvent;
-                int chance = UnityEngine.Random.Range(1, 100);
 
-                foreach (EventPrefab eventPrefab in worldEvent.EventPrefab)
+                if(properties.ChanceToOccur < UnityEngine.Random.Range(1, 100))
+                {
+                    Debug.Log("Event did not occur.");
+                    return null;
+                }
+
+                print("Event of type " + properties.Type + " occurred.");
+
+                int chance = UnityEngine.Random.Range(1, 100);
+                List<EventPrefab> eventPrefabs = new();
+
+                foreach (EventPrefab eventPrefab in properties.EventPrefab)
                 {
                     if (eventPrefab.ChanceToOccur >= chance) eventPrefabs.Add(eventPrefab);
                 }
 
                 if (eventPrefabs.Count > 1)
                     selectedEvent = eventPrefabs[UnityEngine.Random.Range(0, eventPrefabs.Count)];
-                else
+                else if (eventPrefabs.Count == 1)
                     selectedEvent = eventPrefabs[0];
-
-                worldEvent.EventOngoing = true;
+                else
+                {
+                    print("No event prefab selected.");
+                    return null;
+                }
+                print("Event occurred: " + selectedEvent.Name);
+                return selectedEvent;
             }
+            return null;
+        }
+
+        void InitializeControllers(WorldEventProperties properties, WorldEvent eventHandler)
+        {
+            if (properties.Type == WorldEventType.Weather)
+                eventHandler.OnSpawnEvent += _weatherController.OnEventStart;
+        }
+
+        void SpawnEvent(WorldEventProperties properties)
+        {
+            EventPrefab? selectedEvent = SelectEvent(properties);
+            if (selectedEvent == null) return;
+
+            WorldEvent worldEvent = new()
+            {
+                EventInfo = properties,
+                EventPrefab = selectedEvent.Value
+            };
+
+            InitializeControllers(properties, worldEvent);
+            worldEvent.Initialize();
         }
     }
 }

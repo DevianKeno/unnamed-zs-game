@@ -56,7 +56,6 @@ namespace UZSG.UI.HUD
         void Update()
         {
             CrosshairChange();
-
             _crosshair.sizeDelta = new Vector2(_currentSize, _currentSize);
         }
 
@@ -85,7 +84,7 @@ namespace UZSG.UI.HUD
             // Set crouchMultiplier to a fixed value if the player is crouching
             if (player.Controls.IsCrouching)
             {
-                _crouchMultiplier = 0.7f;
+                _crouchMultiplier = 0.85f;
             }
             else
             {
@@ -96,19 +95,12 @@ namespace UZSG.UI.HUD
             // Set effectiveMaxSize depending if the player is moving, standing still, jumping, crouched, and firing
             float _effectiveMaxSize = _moveSize * _jumpMultiplier * _crouchMultiplier * _recoilMultiplier;
 
-            //print($"moveSize: {_moveSize}, jumpMult: {_jumpMultiplier}, crouchMult: {_crouchMultiplier}, recMult: {_recoilMultiplier}, effective: {_effectiveMaxSize}");
+            // print($"moveSize: {_moveSize}, jumpMult: {_jumpMultiplier}, crouchMult: {_crouchMultiplier}, recMult: {_recoilMultiplier}, effective: {_effectiveMaxSize}");
 
-            if (_effectiveMaxSize > restingSize)
-            {
-                _currentSize = Mathf.Lerp(_currentSize, _effectiveMaxSize, Time.deltaTime * speed);
+            _currentSize = Mathf.Lerp(_currentSize, _effectiveMaxSize, Time.deltaTime * speed);
 
-                // Reset the addedFiringFactor and recoilMultiplier to reset crosshair after firing
-                _recoilMultiplier = 1.0f;
-            }
-            else
-            {
-                _currentSize = Mathf.Lerp(_currentSize, restingSize, Time.deltaTime * speed);
-            }
+            // Reset the addedFiringFactor and recoilMultiplier to reset crosshair after firing
+            _recoilMultiplier = 1.0f;
         }
 
         void OnGunWeaponStateChanged(object sender, StateMachine<GunWeaponStates>.StateChangedContext e)

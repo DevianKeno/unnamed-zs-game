@@ -45,20 +45,14 @@ namespace UZSG.Attributes
             }
         }
     
-        public void ReadSaveData(List<VitalAttributeSaveData> data)
+        public void ReadSaveData<U>(List<U> saveData) where U : AttributeSaveData
         {
-            foreach (var attr in data)
+            foreach (var attr in saveData)
             {
-                var attrData = Game.Attributes.GetData(attr.Id);
-                Attribute newAttr = attr.Type switch
-                {
-                    0 => new GenericAttribute(attrData),
-                    1 => new VitalAttribute(attrData),
-                    _ => throw new ArgumentOutOfRangeException(),
-                };
-
-                newAttr.ReadSaveData(attr);
-                Add((T) newAttr);
+                // var attrData = Game.Attributes.GetData(attr.Id);
+                // // T newAttr = new(attrData);
+                // newAttr.ReadSaveData(attr);
+                // Add(newAttr as T);
             }
         }
         

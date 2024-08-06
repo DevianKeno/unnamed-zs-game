@@ -9,7 +9,7 @@ namespace UZSG.Data
     public class PlayerData
     {
         public InventoryData Inventory;
-        public List<VitalAttributeSaveData> Vitals;
-        public List<GenericAttributeSaveData> Generic;
+        public List<AttributeSaveData> Vitals;
+        public List<AttributeSaveData> Generic;
     }
 }

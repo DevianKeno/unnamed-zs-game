@@ -33,6 +33,8 @@ namespace UZSG.Players
 
         public void SavePlayerJson()
         {
+            //ParseData();
+            
             // store player data
             _playerDataToJson.Inventory = Player.PlayerData.Inventory;
             _playerDataToJson.Vitals = Player.PlayerData.Vitals;
@@ -44,7 +46,10 @@ namespace UZSG.Players
             // Write into the filepath the player data
             File.WriteAllText(Application.dataPath + _jsonPlayerFile, _jsonData);
         }
+
+        public void ParseData()
+        {
+
+        }
     }
-
-
 }

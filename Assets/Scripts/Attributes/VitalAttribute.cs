@@ -279,8 +279,8 @@ namespace UZSG.Attributes
             base.ReadSaveData(data, initialize: false);
 
             allowChange = data.AllowChange;
-            changeType = data.ChangeType;
-            timeCycle = data.TimeCycle;
+            changeType = (VitalAttributeChangeType) data.ChangeType;
+            timeCycle = (VitalAttributeTimeCycle) data.TimeCycle;
             baseChange = data.BaseChange;
             changeMultiplier = data.ChangeMultiplier;
             changeFlatBonus = data.ChangeFlatBonus;

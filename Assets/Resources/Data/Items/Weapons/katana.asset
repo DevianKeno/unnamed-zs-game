@@ -24,11 +24,12 @@ MonoBehaviour:
   Type: 1
   Subtype: 5
   Weight: 1.6
-  IsStackable: 0
   StackSize: 1
   IsMaterial: 0
   IsCraftable: 0
-  Recipes: []
+  Recipes:
+  - {fileID: 11400000, guid: d483b2fe74215824dbda5f2c35f2445a, type: 2}
+  SourceDescription: 
   HotbarIcon: {fileID: 0}
   Category: 0
   MeleeType: 2

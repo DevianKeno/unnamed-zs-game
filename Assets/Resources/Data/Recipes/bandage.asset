@@ -22,5 +22,4 @@ MonoBehaviour:
     _count: 3
   - _itemData: {fileID: 11400000, guid: 9632887a2e9858a4394041398036f076, type: 2}
     _count: 1
-  IsTimed: 0
-  DurationSeconds: 0
+  DurationSeconds: 20

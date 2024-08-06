@@ -19,8 +19,7 @@ namespace UZSG.Crafting
     public class InventoryCrafting : Crafter
     {
         public Player PlayerEntity;
-
-        public List<CraftingRoutine> craftingRoutineList;
+        public List<CraftingRoutine> craftingRoutineList = new();
 
         public void CraftQueue(RecipeData recipe)
         {
@@ -38,19 +37,22 @@ namespace UZSG.Crafting
             craftInstance.OnCraftFinish += OnCraftFinish;
             craftInstance.OnCraftSecond += OnCraftSeconds;
 
+            craftingRoutineList.Add(craftInstance);
+
             StartCoroutine(craftInstance.CraftCoroutine());
         }
 
         private void OnCraftSeconds(object sender, int secondsElapsed)
         {
-            var x = (CraftingRoutine) sender;
-            print($"Crafting: {x.RecipeData.Id} - {x.RecipeData.DurationSeconds - secondsElapsed} seconds Remaining");
+            var _craftingInstanceSender = (CraftingRoutine) sender;
+            print($"Crafting: {_craftingInstanceSender.RecipeData.Id} - {_craftingInstanceSender.GetTimeRemaining()} seconds Remaining");
         }
 
         private void OnCraftFinish(object sender, CraftFinishedInfo unixTime)
         {
-            var x = (CraftingRoutine) sender;
-            containers[0].TryPutNearest(new Item(x.RecipeData.Output));
+            var _craftingInstanceSender = (CraftingRoutine) sender;
+            containers[0].TryPutNearest(new Item(_craftingInstanceSender.RecipeData.Output));
+            craftingRoutineList.Remove(_craftingInstanceSender);
         }
 
     }

@@ -77,8 +77,6 @@ namespace UZSG.Crafting
             return true;
         }
 
-
-
         /// <summary>
         /// Consumes items from the container
         /// </summary>

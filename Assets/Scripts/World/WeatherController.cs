@@ -1,13 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Rendering;
 using UnityEngine;
 using UZSG.Systems;
 using UZSG.WorldBuilder;
 
 namespace UZSG.World.Weather
 {
-    public class WeatherController : MonoBehaviour
+    public class WeatherController : EventBehaviour
     {
 
         public bool InstantiateWeatherInEditor;
@@ -55,6 +56,7 @@ namespace UZSG.World.Weather
             {
                 if (_currentWeather != _defaultWeather)
                 {
+                    EventOngoing = false;
                     SetWeather(_defaultWeather);
                 }
             }
@@ -87,10 +89,19 @@ namespace UZSG.World.Weather
 
         }
 
-        public void OnEventStart(object worldEvent, string eventName)
+        public void OnEventStart(object sender, WorldEventProperties properties)
         {
-            
-        }
+            var @event = sender as WorldEvent;
+            if (@event == null || EventOngoing)
+            {
+                print("Event is null or ongoing.");
+                return;
+            }
+
+            EventPrefab selectedEvent = @event.EventPrefab;
+            EventOngoing = true;
+            SetWeather(selectedEvent.Prefab.GetComponent<RainDataHolder>().WeatherData);
+        }        
     }
 }
 

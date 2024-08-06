@@ -8,20 +8,15 @@ using UnityEngine;
 namespace UZSG.World
 {
     [Serializable]
-    public class WorldEvent
+    public class WorldEventProperties
     {
-        public void StartEvent()
-        {
-            OnEventStart?.Invoke(this, EventType);
-        }
-        public string EventType;
-        public bool EventOngoing;
-        public float ChanceToOccur;
+        public WorldEventType Type;
         public bool Active;
+        public float ChanceToOccur;
         public int OccurEverySecond;
-        public event EventHandler<string> OnEventStart;
         public List<EventPrefab> EventPrefab;
     }
+    
     [Serializable]
     public struct EventPrefab
     {
@@ -29,10 +24,11 @@ namespace UZSG.World
         public GameObject Prefab;
         public float ChanceToOccur;
     }
+
     [CreateAssetMenu(fileName = "New World Event Data", menuName = "UZSG/World Event Data")]
     [Serializable]
     public class WorldEventData : ScriptableObject
     {
-        public WorldEvent worldEvents;
+        public WorldEventProperties worldEvents;
     }
 }

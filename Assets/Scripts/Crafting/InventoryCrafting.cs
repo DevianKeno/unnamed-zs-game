@@ -19,7 +19,6 @@ namespace UZSG.Crafting
     }
     public class InventoryCrafting : Crafter
     {
-        public Player PlayerEntity;
         public List<CraftingRoutine> craftingRoutineList = new();
 
         public void CraftQueue(RecipeData recipe)

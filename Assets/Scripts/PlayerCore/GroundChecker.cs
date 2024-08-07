@@ -41,39 +41,6 @@ namespace UZSG.Players
             _isGrounded = false;
         }
 
-        // not in currently in use, but might be helpful in future
-        public void GroundMaterialDetection()
-        {
-            if (Physics.Raycast(rayStart.position, rayStart.transform.up * -1 , out hit, rayCastRange, mask))
-            {
-                MeshCollider collider = hit.collider as MeshCollider;
-                // Remember to handle case where collider is null because you hit a non-mesh primitive...
-
-                if(collider == null)
-                {
-                    material = null;
-                }
-                else
-                {
-                    Mesh mesh = collider.sharedMesh;
-
-                    // There are 3 indices stored per triangle
-                    _limit = hit.triangleIndex * 3;
-                    
-                    for (_submesh = 0; _submesh < mesh.subMeshCount; _submesh++)
-                    {
-                        _numIndices = mesh.GetTriangles(_submesh).Length;
-                        if (_numIndices > _limit)
-                            break;
-
-                        _limit -= _numIndices;
-                    }
-
-                    material = collider.GetComponent<MeshRenderer>().sharedMaterials[_submesh];
-                }
-            }
-        }
-
         public void GroundTextureDetection()
         {
             
@@ -116,7 +83,6 @@ namespace UZSG.Players
                     }
                 }
 
-                print($"texture: {terrain.terrainData.terrainLayers[_primaryIndex].diffuseTexture.name}");
                 _texture = terrain.terrainData.terrainLayers[_primaryIndex].diffuseTexture.name;
             }
 
@@ -126,7 +92,39 @@ namespace UZSG.Players
         private void GetRenderMaterial(Renderer renderer) 
         {
             _texture = renderer.material.GetTexture("_MainTex").name;
-            print($"renderer: {_texture}");
+        }
+
+        // not in currently in use, but might be helpful in future
+        public void GroundMaterialDetection()
+        {
+            if (Physics.Raycast(rayStart.position, rayStart.transform.up * -1, out hit, rayCastRange, mask))
+            {
+                MeshCollider collider = hit.collider as MeshCollider;
+                // Remember to handle case where collider is null because you hit a non-mesh primitive...
+
+                if (collider == null)
+                {
+                    material = null;
+                }
+                else
+                {
+                    Mesh mesh = collider.sharedMesh;
+
+                    // There are 3 indices stored per triangle
+                    _limit = hit.triangleIndex * 3;
+
+                    for (_submesh = 0; _submesh < mesh.subMeshCount; _submesh++)
+                    {
+                        _numIndices = mesh.GetTriangles(_submesh).Length;
+                        if (_numIndices > _limit)
+                            break;
+
+                        _limit -= _numIndices;
+                    }
+
+                    material = collider.GetComponent<MeshRenderer>().sharedMaterials[_submesh];
+                }
+            }
         }
     }
 }

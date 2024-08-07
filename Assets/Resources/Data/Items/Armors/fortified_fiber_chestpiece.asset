@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dc8fecea64fdc8e4aa38d82f83efa010, type: 3}
-  m_Name: test_armor
+  m_Name: fortified_fiber_chestpiece
   m_EditorClassIdentifier: 
-  Id: 
+  Id: fortified_fiber_headgear
   Name: 
   Description: 
   Model:
@@ -25,10 +25,13 @@ MonoBehaviour:
   Subtype: 0
   Weight: 0
   StackSize: 1
+  IsFuel: 0
+  FuelDuration: 0
   IsMaterial: 0
   IsCraftable: 0
   Recipes: []
   SourceDescription: 
+  AudioAssetsData: {fileID: 0}
   Piece: 0
   Category: 0
   Attributes:

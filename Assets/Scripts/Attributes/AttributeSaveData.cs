@@ -5,6 +5,8 @@ namespace UZSG.Attributes
     [Serializable]
     public class AttributeSaveData
     {
+        public string Id;
+        public int Type = 0;
         public float Value = 0f;
         public float Minimum = 0f;
         public float BaseMaximum = 0f;

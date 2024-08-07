@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -68,6 +69,19 @@ namespace UZSG.Entities
         public ActionStateMachine ActionStateMachine { get; private set; }
         public FPPController FPP { get; private set; }
 
+        /// <summary>
+        /// All Player Data
+        /// </summary>
+        string _jsonPlayerDefaultFile = "Assets/Scripts/Data/DefaultPlayerData.json";
+        string _jsonDefaultData;
+        public DefaultPlayerJsonStruct _playerDefaultData;
+        public struct DefaultPlayerJsonStruct 
+        {
+            public List<object> jsonInventory;
+            public List<VitalAttributeSaveData> VitalAttributes;
+            public List<GenericAttributeSaveData> GenericAttributes;
+        } 
+
         public bool CanJump
         {
             get
@@ -117,7 +131,7 @@ namespace UZSG.Entities
         }
 
         InputActionMap actionMap;
-        Dictionary<string, InputAction> inputs = new();
+        readonly Dictionary<string, InputAction> inputs = new();
 
         void InitializeInputs()
         {
@@ -131,96 +145,22 @@ namespace UZSG.Entities
             inputs["Inventory"].performed += OnPerformInventory;        // Tab/E (default)
         }
 
+
+        #region Default Player Attributes (vital/generic)
+
         void InitializeAttributes()
         {
-            /// Get blueprint base
-            vitals.ReadAttributesData(playerEntityData.Vitals);
-            
-            /// Overwrite base with data from file
-            // Vitals.LoadData(Data.Vitals);
+            // Read the JSON file
+            _jsonDefaultData = File.ReadAllText(Application.dataPath + _jsonPlayerDefaultFile);
 
-            generic.ReadAttributesData(playerEntityData.Generic);
-            // Generic.LoadData(Data.Generic);
+            // Convert into PlayerData
+            _playerDefaultData = JsonUtility.FromJson<DefaultPlayerJsonStruct>(_jsonDefaultData);
 
-            SetDefaultAttributes();
-        }
-
-        void SetDefaultAttributes()
-        {
-#region Temporary /// These should be read from save data
-
-            vitals["health"].ReadSaveData(new()
-            {
-                Value = 100f,
-                BaseMaximum = 100f,
-                ChangeType = VitalAttributeChangeType.Regen,
-                TimeCycle = VitalAttributeTimeCycle.Tick,
-                BaseChange = 0.1f / TickSystem.NormalTPS,
-            });
-            vitals["stamina"].ReadSaveData(new()
-            {
-                Value = 100f,
-                BaseMaximum = 100f,
-                ChangeType = VitalAttributeChangeType.Regen,
-                TimeCycle = VitalAttributeTimeCycle.Tick,
-                BaseChange = 5f / TickSystem.NormalTPS,
-                EnableDelayedChange = true,
-                DelayedChangeDuration = 2f,
-            });
-            vitals["hunger"].ReadSaveData(new()
-            {
-                Value = 100f,
-                BaseMaximum = 100f,
-                ChangeType = VitalAttributeChangeType.Degen,
-                TimeCycle = VitalAttributeTimeCycle.Tick,
-                BaseChange = 0.1f / TickSystem.NormalTPS,
-            });
-            vitals["hydration"].ReadSaveData(new()
-            {
-                Value = 100f,
-                BaseMaximum = 100f,
-                ChangeType = VitalAttributeChangeType.Degen,
-                TimeCycle = VitalAttributeTimeCycle.Tick,
-                BaseChange = 0.1f / TickSystem.NormalTPS,
-            });
-
+            // Get the attributes
+            vitals.ReadSaveData(_playerDefaultData.VitalAttributes);
+          
             /// Should save and read all though
-            generic["move_speed"].ReadSaveData(new()
-            {
-                Value = 300f,
-            });
-            generic["run_speed"].ReadSaveData(new()
-            {
-                Value = 400f,
-            });
-            generic["crouch_speed"].ReadSaveData(new()
-            {
-                Value = 200f,
-            });
-            generic["run_stamina_cost"].ReadSaveData(new()
-            {
-                Value = 5 / TickSystem.NormalTPS,
-            });
-            generic["jump_stamina_cost"].ReadSaveData(new()
-            {
-                Value = 20f,
-            });
-            generic["jump_hunger_cost"].ReadSaveData(new()
-            {
-                Value = 0.33f,
-            });
-            generic["jump_hydration_cost"].ReadSaveData(new()
-            {
-                Value = 0.33f,
-            });
-            generic["bag_slots_count"].ReadSaveData(new()
-            {
-                Value = 16,
-            });
-            generic["hotbar_slots_count"].ReadSaveData(new()
-            {
-                Value = 2,
-            });
+            generic.ReadSaveData(_playerDefaultData.GenericAttributes);
 
 #endregion
         }

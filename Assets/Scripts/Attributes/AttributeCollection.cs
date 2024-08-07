@@ -45,15 +45,21 @@ namespace UZSG.Attributes
             }
         }
     
-        // public void LoadData(AttributeCollectionData data)
-        // {
-        //     //
-        // }
+        public void ReadSaveData<U>(List<U> saveData) where U : AttributeSaveData
+        {
+            foreach (var attr in saveData)
+            {
+                // var attrData = Game.Attributes.GetData(attr.Id);
+                // // T newAttr = new(attrData);
+                // newAttr.ReadSaveData(attr);
+                // Add(newAttr as T);
+            }
+        }
         
-        // public void SaveData(AttributeCollectionData data)
-        // {
-        //     // 
-        // }
+        public void SaveToJSON(List<T> data)
+        {
+            // 
+        }
 
         public void Add(T attribute)
         {

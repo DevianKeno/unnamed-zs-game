@@ -4,6 +4,7 @@ using UnityEngine;
 
 using UZSG.Systems;
 using UZSG.Data;
+using System.Collections.Generic;
 
 namespace UZSG.Attributes
 {

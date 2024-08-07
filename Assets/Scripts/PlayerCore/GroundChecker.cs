@@ -10,6 +10,7 @@ namespace UZSG.Players
     {
         [SerializeField] bool _isGrounded;
         [SerializeField] bool _blendTerrainSounds;
+        public bool drawRayCast;
         public LayerMask mask;
         public Transform rayStart;
         public float rayCastRange;
@@ -46,7 +47,11 @@ namespace UZSG.Players
             
             if (Physics.Raycast(rayStart.position, -rayStart.up, out hit, rayCastRange, mask))
             {
-                Debug.DrawLine(rayStart.position, hit.point, Color.red);
+                if (drawRayCast)
+                {
+                    Debug.DrawLine(rayStart.position, hit.point, Color.red);
+                }
+                
                 if (hit.collider.TryGetComponent<Terrain>(out Terrain _terrain))
                 {
                     GetTexture(_terrain, hit.point);
@@ -58,7 +63,10 @@ namespace UZSG.Players
             }
             else
             {
-                Debug.DrawLine(rayStart.position, hit.point, Color.blue);
+                if (drawRayCast)
+                {
+                    Debug.DrawLine(rayStart.position, hit.point, Color.blue);
+                }
             }
         }
 
@@ -85,8 +93,6 @@ namespace UZSG.Players
 
                 _texture = terrain.terrainData.terrainLayers[_primaryIndex].diffuseTexture.name;
             }
-
-            // return _texture;
         }
 
         private void GetRenderMaterial(Renderer renderer) 

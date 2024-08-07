@@ -12,14 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6379a2b7d91791945abf1dc8c29cd406, type: 3}
   m_Name: skinwalker
   m_EditorClassIdentifier: 
+  Id: skinwalker
   AssetReference:
     m_AssetGUID: 033481a19307263458a06de1464ac025
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  Id: skinwalker
   Name: Skinwalker
+  AudioAssetsData: {fileID: 0}
   Generic:
   - {fileID: 11400000, guid: e1db9201565269c4caebcb12298f0665, type: 2}
-  - {fileID: 11400000, guid: 5e71af7286d194c4c9bf489e08b9c33f, type: 2}
+  - {fileID: 11400000, guid: 1ca754ca1365db04c87c8de19db59ede, type: 2}
   - {fileID: 11400000, guid: fe9f66b79d95e7948a4dfcb4512568c7, type: 2}
+  - {fileID: 11400000, guid: 33f825a04b3af2244b7c69ea9930a3ef, type: 2}
+  - {fileID: 11400000, guid: 5e71af7286d194c4c9bf489e08b9c33f, type: 2}

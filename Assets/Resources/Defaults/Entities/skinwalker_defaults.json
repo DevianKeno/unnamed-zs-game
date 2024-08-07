@@ -1,0 +1,29 @@
+{
+    "GenericAttributes": [
+        {
+            "Id": "health",
+            "Type": 0,
+            "Value": 50.0
+        },
+        {
+            "Id": "run_speed",
+            "Type": 0,
+            "Value": 10.0
+        },
+        {
+            "Id": "move_speed",
+            "Type": 0,
+            "Value": 8.0
+        },
+        {
+            "Id": "armor",
+            "Type": 0,
+            "Value": 1.0
+        },
+        {
+            "Id": "attack_damage",
+            "Type": 0,
+            "Value": 20.0
+        }
+    ]
+}

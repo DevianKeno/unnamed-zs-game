@@ -13,7 +13,7 @@ namespace UZSG.Entities
         public Transform player; // used for player position
         private NavMeshAgent _enemyEntity; // the entity's agent movement
         public float triggerDistance; // minimum distance from player before entity follows it
-        private float distanceFromPlayer; // the actual distance in game distance from the player
+        private float _distanceFromPlayer; // the actual distance in game distance from the player
         public float RoamRadius; // Radius of which the agent can travel
         public float RoamInterval; // Interval before the model moves again
         public float RoamTime; // Time it takes for the agent to travel a point
@@ -29,12 +29,12 @@ namespace UZSG.Entities
         // Update is called once per frame
         void LateUpdate()
         {
-            distanceFromPlayer = Vector3.Distance(player.position, transform.position);
+            _distanceFromPlayer = Vector3.Distance(player.position, transform.position);
             // Chase player if in range
-            if (distanceFromPlayer < triggerDistance)
+            if (_distanceFromPlayer < triggerDistance)
             {
                 _enemyEntity.SetDestination(player.position);
-                Debug.Log("distance from player: " + distanceFromPlayer + "with a trigger needed of: " + triggerDistance);    
+                Debug.Log("distance from player: " + _distanceFromPlayer + "with a trigger needed of: " + triggerDistance);    
             }
             // Roam if not
             else

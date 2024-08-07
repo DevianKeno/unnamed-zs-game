@@ -1,5 +1,8 @@
 {
     "Inventory": [],
+    "KnownRecipes":[
+
+    ],
     "VitalAttributes": [
         {
             "Id": "health",

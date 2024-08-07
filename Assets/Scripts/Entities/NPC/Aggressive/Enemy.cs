@@ -1,6 +1,8 @@
 using System;
+using System.IO;
 using UnityEngine;
 using UnityEngine.AI;
+using UZSG.Attributes;
 using UZSG.Data;
 using UZSG.Systems;
 
@@ -8,21 +10,73 @@ namespace UZSG.Entities
 {
     public abstract class Enemy : Entity
     {
-        public float SiteRange;  // range from which it follow Players
-        public Transform Player; // used for Player position
+        #region Agent movement related
+
+        public float SiteRange, AttackRange;  // range from which it follow, attacks Players
         public float RoamRadius; // Radius of which the agent can travel
         public float RoamInterval; // Interval before the model moves again
         public float RoamTime; // Time it takes for the agent to travel a point
+        Player _target; // Current target of the enemy
         public EnemyActionStatesMachine EnemyStateMachine => enemyStateMachine;
-        public EnemyData EnemyData => entityData as EnemyData;
+        float _distanceFromPlayer; // the actual distance in game distance from the Player
+        float _shortestDistance = Mathf.Infinity;
+        bool _inSite, _inAttack; // checks if the player is in site, attack range
+        Collider[] _hitColliders; // array of object that is within enemy range
+        Collider _closestCollider;
         Vector3 _randomDestination; // Destination of agent
-        float distanceFromPlayer; // the actual distance in game distance from the Player
         [SerializeField] protected EnemyActionStatesMachine enemyStateMachine;
-        [SerializeField] private NavMeshAgent _enemyEntity; // the entity's agent movement
+        [SerializeField] NavMeshAgent _enemyEntity; // the entity's agent movement
+        [SerializeField] LayerMask PlayerLayer; // Layers that the enemy chases
+
+
+        #endregion
+
+
+        #region Agent data
+
+        public EnemyData EnemyData => entityData as EnemyData;
+        public string defaultPath; // Default file path of the specific enemy
+        public EnemySaveData defaultData;
+        [SerializeField] AttributeCollection<GenericAttribute> generic;
+
+
+        #endregion
 
         void Start()
         {
             _enemyEntity = GetComponent<NavMeshAgent>();
+        }
+
+        protected virtual void LateUpdate()
+        {
+            
+        }
+
+        public override void OnSpawn()
+        {
+            defaultPath = entityDefaultsPath + $"{entityData.Id}_defaults.json";
+            Game.Console.Log("Enemy can chase player!\n");
+            Initialize();
+        }
+
+        void Initialize() 
+        {
+            LoadDefaults(); // read from JSON file the default enemy attributes
+            InitializeAttributes(); // set the default attributes of the enemy
+            Game.Console.Log("Enemy fully initialized!");
+        }
+
+        void LoadDefaults()
+        {
+            var defaultsJson = File.ReadAllText(Application.dataPath + defaultPath);
+            defaultData = JsonUtility.FromJson<EnemySaveData>(defaultsJson);
+            Game.Console.Log("Enemy data: \n" + defaultData);
+        }
+
+        void InitializeAttributes()
+        {
+            generic = new();
+            generic.ReadSaveJSON(defaultData.GenericAttributes);
         }
 
         #region Agent sensors
@@ -30,19 +84,58 @@ namespace UZSG.Entities
         {
             get
             {
-                if (distanceFromPlayer > SiteRange)
+                _target = ClosestPlayer();
+                if (_target != null)
                 {
-                    return EnemyActionStates.Roam;
+                    return EnemyActionStates.Chase;
                 }
-                return EnemyActionStates.Chase;
+                return EnemyActionStates.Roam;
             }
         }
 
-        public bool IsInAttackrange // determines if enemy can Attack Player
+        void OnDrawGizmos()
+        {
+            Gizmos.DrawSphere(transform.position, SiteRange);
+        }
+
+        public Player ClosestPlayer()
+        {
+            // Find objects within the range
+            _hitColliders = Physics.OverlapSphere(transform.position, SiteRange, LayerMask.GetMask("Player"));
+
+
+            // Iterate over each collider in the range
+            foreach (Collider collider in _hitColliders)
+            {
+                // Calculate the distance between the enemy and the player (collider)
+                float _distanceToCollider = Vector3.Distance(transform.position, collider.transform.position);
+
+                // Update throguh each iteration the closest player
+                if (_distanceToCollider < _shortestDistance)
+                {
+                    _shortestDistance = _distanceToCollider;
+                    _closestCollider = collider;
+                }
+            }
+            Debug.Log("target is: " + _target + "\n" +
+            "site range is: " + SiteRange   + "\n" +
+            "site range is: " + PlayerLayer  + "\n" +
+            "Players in collider: \n" + _hitColliders);
+
+            // if player not null return the player, else null
+            return _closestCollider != null ? _closestCollider.GetComponent<Player>() : null;
+        }
+
+        public EnemyActionStates IsInAttackrange // determines if enemy can Attack Player
         {
             get
-            {
-                return false;
+            {   
+                _inAttack = Physics.CheckSphere(transform.position, AttackRange, PlayerLayer);
+                if (_inSite)
+                {
+                    return EnemyActionStates.Attack;
+                }
+                return EnemyActionStates.Chase;
             }
         }
         public bool IsNoHealth // determines if the enemy is dead
@@ -83,7 +176,7 @@ namespace UZSG.Entities
                 }
                 else
                 {
-                    if (IsInAttackrange == false) // Chase
+                    if (IsInAttackrange == EnemyActionStates.Chase) // Chase
                     {
                         return EnemyActionStates.Chase;
                     }
@@ -103,8 +196,7 @@ namespace UZSG.Entities
         public void Chase()
         {
             enemyStateMachine.ToState(EnemyActionStates.Chase);
-            _enemyEntity.SetDestination(Player.position);
-            Debug.Log("distance from Player: " + distanceFromPlayer + "with a trigger needed of: " + SiteRange);
+            _enemyEntity.SetDestination(_target.transform.position);
         }
         public void Roam()
         {
@@ -120,7 +212,6 @@ namespace UZSG.Entities
 
                 // Set the agent's destination to the random point
                 _enemyEntity.SetDestination(navHit.position);
-                Debug.Log("distance from Player: " + navHit.position);
                 RoamTime = UnityEngine.Random.Range(1.0f, RoamInterval);
             }
         }

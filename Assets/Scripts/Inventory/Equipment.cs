@@ -13,6 +13,11 @@ namespace UZSG.Inventory
             public int Index { get; set; }
             public ItemSlot ItemSlot { get; set; }
         }
+
+        public Equipment() : base(0)
+        {
+            Initialize();
+        }
         
         public const int HandsIndex = 0;
         public const int MainhandIndex = 1;
@@ -25,7 +30,7 @@ namespace UZSG.Inventory
         ItemSlot _offhand;
         public ItemSlot Offhand => _offhand;
 
-        internal void Initialize()
+        public void Initialize()
         {
             _hands = new(HandsIndex, ItemSlotType.Weapon);
             _hands.OnContentChanged += SlotContentChanged;

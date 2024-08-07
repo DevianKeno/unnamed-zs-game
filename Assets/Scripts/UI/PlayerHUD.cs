@@ -63,7 +63,7 @@ namespace UZSG.UI
         void InitializeHotbarSlots()
         {
             /// Hotbar slots are created in runtime
-            for (int i = 0; i < Player.Inventory.Hotbar.SlotsCount; i++)
+            for (int i = 0; i < Player.Inventory.Hotbar.SlotCount; i++)
             {
                 int index = 3 + i; /// 3 is hotbar starting index
                 var slotUI = Game.UI.Create<ItemSlotUI>("Item Slot");

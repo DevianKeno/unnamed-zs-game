@@ -44,8 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fddc5f8f127c5a84ea5730a18ec74560, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  containers: []
-  PlayerEntity: {fileID: 0}
   _playerEntity: {fileID: 0}
 --- !u!1 &1560824521149795163
 GameObject:
@@ -541,9 +539,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7011254150909436731}
   - component: {fileID: 6573940630714393000}
-  - component: {fileID: 2347074114045292195}
-  - component: {fileID: 7107611863965880641}
-  - component: {fileID: 8156828128213000758}
   m_Layer: 0
   m_Name: Inventory Handler
   m_TagString: Untagged
@@ -580,45 +575,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Player: {fileID: 8107631895800867322}
   ThrowForce: 5
---- !u!114 &2347074114045292195
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5771848841049438004}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2532ef3f0ae602d45a0ecf4de32fb1f4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _slots: []
---- !u!114 &7107611863965880641
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5771848841049438004}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a83d8e581968504e90ab83a1250771b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _slots: []
---- !u!114 &8156828128213000758
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5771848841049438004}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 00559ccf5960d994da93fd4e09e3748d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _slots: []
 --- !u!1 &5950259277001712762
 GameObject:
   m_ObjectHideFlags: 0
@@ -1005,6 +961,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91fd57dad2e3b8844889a99ae9e028d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  AudioAssetsData: {fileID: 0}
 --- !u!1 &7057467972537837280
 GameObject:
   m_ObjectHideFlags: 0
@@ -1127,7 +1084,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entityData: {fileID: 11400000, guid: c598e087ae8797c429748a8238d6885e, type: 2}
   CanPickUpItems: 1
-  playerData: {}
+  playerData:
+    VitalAttributes: []
+    GenericAttributes: []
   playerEntityData: {fileID: 11400000, guid: c598e087ae8797c429748a8238d6885e, type: 2}
   vitals:
     attributes: []
@@ -1135,6 +1094,10 @@ MonoBehaviour:
     attributes: []
   inventory: {fileID: 6573940630714393000}
   craftingAgent: {fileID: 6457100291753886462}
+  audioController: {fileID: 0}
+  saveData:
+    VitalAttributes: []
+    GenericAttributes: []
 --- !u!114 &7617903866874250683
 MonoBehaviour:
   m_ObjectHideFlags: 0

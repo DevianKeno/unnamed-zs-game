@@ -94,10 +94,9 @@ namespace UZSG.UI
             frameController.OnSwitchFrame += OnSwitchFrame;
         }
 
-
         void InitializeBagSlotUIs()
         {
-            int maxSlots = inventory.Bag.SlotsCount;
+            int maxSlots = inventory.Bag.SlotCount;
             for (int i = 0; i < maxSlots; i++)
             {
                 var slot = Game.UI.Create<ItemSlotUI>("Item Slot");

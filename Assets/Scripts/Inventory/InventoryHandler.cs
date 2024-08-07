@@ -30,10 +30,10 @@ namespace UZSG.Inventory
 
         public float ThrowForce;
 
-        Bag _bag;
-        public Bag Bag => _bag;
-        Hotbar _hotbar;
-        public Hotbar Hotbar => _hotbar;
+        Container _bag;
+        public Container Bag => _bag;
+        Container _hotbar;
+        public Container Hotbar => _hotbar;
         Equipment _equipment;
         public Equipment Equipment => _equipment;
 
@@ -57,18 +57,16 @@ namespace UZSG.Inventory
             }
         }
 
-        void Awake()
-        {
-            _bag = GetComponent<Bag>();
-            _hotbar = GetComponent<Hotbar>();
-            _equipment = GetComponent<Equipment>();
-        }
-        
         public void Initialize()
         {
-            _bag.Initialize();
-            _hotbar.Initialize();
-            _equipment.Initialize();
+            var bagSlotCount = Mathf.FloorToInt(Player.Generic.Get("bag_slots_count").Value);
+            _bag = new(bagSlotCount);
+
+            var hotbarSlotCount = Mathf.FloorToInt(Player.Generic.Get("hotbar_slots_count").Value);
+            _hotbar = new(hotbarSlotCount);
+            
+            /// special treatment
+            _equipment = new();
         }
 
         public void LoadData(InventorySaveData data)
@@ -77,7 +75,7 @@ namespace UZSG.Inventory
 
         public void SelectHotbarSlot(int index)
         {            
-            if (index < 0 || index > Hotbar.SlotsCount) return;
+            if (index < 0 || index > Hotbar.SlotCount) return;
             
             /// update ui if any 
         }

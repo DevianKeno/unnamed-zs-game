@@ -2526,7 +2526,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbc2003adad9eff4fbd2a2a36394a9fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  containers: []
 --- !u!1001 &719451075
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4395,11 +4394,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 8211317842885609042, guid: bc0b442a5a7b2d241a9d4b637a4f8278, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.25
+      value: -0.56
       objectReference: {fileID: 0}
     - target: {fileID: 8211317842885609042, guid: bc0b442a5a7b2d241a9d4b637a4f8278, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.27
+      value: -0.06
       objectReference: {fileID: 0}
     - target: {fileID: 8347050042701758296, guid: bc0b442a5a7b2d241a9d4b637a4f8278, type: 3}
       propertyPath: m_LocalPosition.x
@@ -6836,8 +6835,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TargetFramerate: -1
   FreeLookCamera: {fileID: 892676884}
-  timeController: {fileID: 0}
-  weatherController: {fileID: 0}
+  worldEventController: {fileID: 0}
 --- !u!4 &1819902023
 Transform:
   m_ObjectHideFlags: 0

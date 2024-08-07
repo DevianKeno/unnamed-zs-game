@@ -150,8 +150,6 @@ namespace UZSG.Entities
         void InitializeInventory()
         {
             // Inventory.LoadData(Data.Inventory);
-            inventory.Bag.SlotsCount = Mathf.FloorToInt(Generic.Get("bag_slots_count").Value);
-            inventory.Hotbar.SlotsCount = Mathf.FloorToInt(Generic.Get("hotbar_slots_count").Value);
             inventory.Initialize();
 
             invUI = Game.UI.Create<PlayerInventoryWindow>("Player Inventory", show: false);

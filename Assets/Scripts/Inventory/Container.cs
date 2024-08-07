@@ -1,31 +1,44 @@
 using System;
 using System.Collections.Generic;
+
 using UnityEngine;
+
+using UZSG.Systems;
 using UZSG.Inventory;
 using UZSG.Items;
-using UZSG.Systems;
 
 namespace UZSG
 {
     /// <summary>
     /// Base class for all Containers that have ItemSlots.
     /// </summary>
-    public abstract class Container : MonoBehaviour
+    [Serializable]
+    public class Container
     {
-        public int SlotsCount { get; set; }
+        protected int _slotCount;
+        public int SlotCount
+        {
+            get => _slotCount;
+        }
         [SerializeField] protected List<ItemSlot> _slots = new();
         public List<ItemSlot> Slots => _slots;
         public bool IsFull
         {
             get
             {
-                foreach (var slot in Slots)
+                foreach (var slot in _slots)
                 {
                     if (slot == null) continue;
                     if (slot.IsEmpty) return false;
                 }
                 return true;
             }
+        }
+
+        public Container(int slotsCount)
+        {
+            _slotCount = Math.Clamp(slotsCount, 0, 999);
+            CreateSlots();
         }
 
 
@@ -45,6 +58,16 @@ namespace UZSG
             {
                 if (!Slots.IsValidIndex(i)) return null;
                 return _slots[i];
+            }
+        }
+
+        void CreateSlots()
+        {
+            for (int i = 0; i < SlotCount; i++)
+            {
+                ItemSlot newSlot = new(i, ItemSlotType.All);
+                newSlot.OnContentChanged += SlotContentChanged;
+                _slots.Add(newSlot);
             }
         }
 
@@ -299,18 +322,6 @@ namespace UZSG
             if (!Slots.IsValidIndex(slotIndex)) return;
 
             ClearItem(Slots[slotIndex]);
-        }
-
-        /// <summary>
-        /// Prints the items inside the container.
-        /// </summary>
-        public virtual void PrintItems()
-        {
-            foreach (ItemSlot slot in Slots)
-            {
-                if (slot.IsEmpty) continue;
-                print($"Slot {slot.Index}: {slot.Item.Data.Name} ({slot.Item.Count})");
-            }
         }
     }
 }

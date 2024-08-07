@@ -10,7 +10,7 @@ using UZSG.Data;
 
 namespace UZSG.Data
 {
-    public enum ItemType { Item, Weapon, Tool, Equipment, Accessory }
+    public enum ItemType { Item, Weapon, Tool, Equipment, Armor, Accessory }
     public enum ItemSubtype { None, Useable, Food, Consumable, Tool, Weapon, Equipable, Accessory }
 
     [Serializable]

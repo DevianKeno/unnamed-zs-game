@@ -16,11 +16,11 @@ namespace UZSG.World
             set => _eventInfo = value;
         }
 
-        EventPrefab _eventPrefab;
-        public EventPrefab EventPrefab
+        EventPrefab _selectedEvent;
+        public EventPrefab SelectedEvent
         {
-            get => _eventPrefab;
-            set => _eventPrefab = value;
+            get => _selectedEvent;
+            set => _selectedEvent = value;
         }
 
         public event EventHandler<WorldEventProperties> OnSpawnEvent;

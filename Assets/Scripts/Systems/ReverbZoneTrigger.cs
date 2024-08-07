@@ -15,13 +15,11 @@ public class ReverbZoneTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        print("ENTERED!");
         _reverbZone.enabled = !_reverbZone.enabled;
     }
 
     private void OnTriggerExit(Collider other)
     {
-        print("EXITED!");
         _reverbZone.enabled = !_reverbZone.enabled;
     }
 }

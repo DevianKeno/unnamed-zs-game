@@ -26,14 +26,21 @@ namespace UZSG.Entities
             executeAction(actionState);
         }
 
-        void LateUpdate()
+        protected override void LateUpdate()
         {
+            base.LateUpdate();
             actionState = HandleTransition;
             executeAction(actionState);
         }
 
+        void FixedUpdate()
+        {
+            /// search here
+        }
+
         public override void OnSpawn()
         {
+            base.OnSpawn();
             InitializeHitboxEvents();
         }
 

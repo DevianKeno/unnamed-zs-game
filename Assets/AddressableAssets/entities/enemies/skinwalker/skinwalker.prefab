@@ -201,13 +201,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   entityData: {fileID: 11400000, guid: 3bbb12e3042059d4abbf8d40af48316c, type: 2}
-  SiteRange: 0
-  Player: {fileID: 0}
-  RoamRadius: 0
-  RoamInterval: 0
-  RoamTime: 0
+  SiteRange: 12
+  AttackRange: 0.5
+  RoamRadius: 4
+  RoamInterval: 2
+  RoamTime: 3
   enemyStateMachine: {fileID: 5533417015105148321}
   _enemyEntity: {fileID: 2040430638346997429}
+  PlayerLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  defaultPath: 
+  defaultData:
+    GenericAttributes: []
+  generic:
+    attributes: []
 --- !u!114 &6820198976887448944
 MonoBehaviour:
   m_ObjectHideFlags: 0

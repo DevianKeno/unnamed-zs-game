@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.15546194, g: 0.17761302, b: 0.19037068, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -956,18 +956,6 @@ MonoBehaviour:
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 9031321928697203625, guid: c8a8e49113fae5b40b045ce0f2eeb0c3, type: 3}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: 
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -5252,8 +5240,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TargetFramerate: -1
   FreeLookCamera: {fileID: 892676884}
-  timeController: {fileID: 1948226128}
-  weatherController: {fileID: 1948226129}
+  worldEventController: {fileID: 0}
 --- !u!4 &1819902023
 Transform:
   m_ObjectHideFlags: 0
@@ -5651,6 +5638,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80761320998b60946a0940a2f9e29c26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  EventOngoing: 0
   InstantiateWeatherInEditor: 0
   CurrentWeather: {fileID: 11400000, guid: 51da26a6cfe31fd4ebd9a1ff6725bc7a, type: 2}
   DefaultWeather: {fileID: 11400000, guid: 51da26a6cfe31fd4ebd9a1ff6725bc7a, type: 2}

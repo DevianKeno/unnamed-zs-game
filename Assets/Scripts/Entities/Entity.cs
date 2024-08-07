@@ -12,6 +12,8 @@ namespace UZSG.Entities
     /// </summary>
     public abstract class Entity : MonoBehaviour
     {
+        protected const string entityDefaultsPath = "/Resources/Defaults/Entities/";
+
         [SerializeField] protected EntityData entityData;
         public EntityData EntityData => entityData;
         public Vector3 Position

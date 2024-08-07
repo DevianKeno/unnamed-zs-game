@@ -8,7 +8,6 @@ namespace UZSG.Crafting
 {
     public class CraftingRoutine
     {
-
         public event EventHandler<int> OnCraftSecond;
         public event EventHandler<CraftFinishedInfo> OnCraftFinish;
         public RecipeData RecipeData;
@@ -34,7 +33,6 @@ namespace UZSG.Crafting
             TimeInfo.StartTime = DateTime.Now;
             while (secondsElapsed < RecipeData.DurationSeconds)
             {
-                
                 yield return new WaitForSeconds(1);
                 secondsElapsed++;
                 OnCraftSecond?.Invoke(this, GetTimeRemaining());

@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7266182500231018910}
   - component: {fileID: 6457100291753886462}
+  - component: {fileID: 1060515019585979714}
   m_Layer: 8
   m_Name: Crafting Controller
   m_TagString: Untagged
@@ -44,7 +45,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fddc5f8f127c5a84ea5730a18ec74560, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  containers: []
   _playerEntity: {fileID: 0}
+--- !u!114 &1060515019585979714
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 875597890616857745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4dbc5a32840240d46a92c188ced713ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  button:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  Test: {fileID: 0}
 --- !u!1 &1560824521149795163
 GameObject:
   m_ObjectHideFlags: 0

@@ -76,7 +76,7 @@ namespace UZSG.Players
         public void GroundTextureDetection()
         {
             
-            if (Physics.Raycast(rayStart.position, rayStart.transform.up * -1, out hit, rayCastRange, mask))
+            if (Physics.Raycast(rayStart.position, -rayStart.up, out hit, rayCastRange, mask))
             {
                 Debug.DrawLine(rayStart.position, hit.point, Color.red);
                 if (hit.collider.TryGetComponent<Terrain>(out Terrain _terrain))

@@ -32,9 +32,9 @@ namespace UZSG.World
 
             Game.Tick.OnTick += OnTick;
             
-            foreach (WorldEventProperties properties in WorldEvents.Select(worldEventData => worldEventData.worldEvents))
-                if (properties.OccurEverySecond > _maxCountdown)
-                    _maxCountdown = properties.OccurEverySecond;
+            foreach (WorldEventData data in WorldEvents)
+                if (data.worldEvents.OccurEverySecond > _maxCountdown)
+                    _maxCountdown = data.worldEvents.OccurEverySecond;
         }
 
         void OnTick(TickInfo info)
@@ -61,8 +61,9 @@ namespace UZSG.World
 
         void HandleEvents()
         {
-            foreach (WorldEventProperties properties in WorldEvents.Select(worldEventData => worldEventData.worldEvents)) 
-                if (properties.Active) SpawnEvent(properties);
+            foreach (WorldEventData data in WorldEvents)
+                if (data.worldEvents.Active)
+                    SpawnEvent(data.worldEvents);
         }
 
         EventPrefab? SelectEvent(WorldEventProperties properties)

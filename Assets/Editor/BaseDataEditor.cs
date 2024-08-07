@@ -9,7 +9,7 @@ namespace UZSG.UnityEditor
     public class BaseDataEditor : Editor
     {
         SerializedProperty id;
-
+        
         protected virtual void OnEnable()
         {
             id = serializedObject.FindProperty("Id");

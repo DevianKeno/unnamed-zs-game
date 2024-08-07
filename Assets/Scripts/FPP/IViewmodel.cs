@@ -5,6 +5,9 @@ using UZSG.Data;
 
 namespace UZSG.FPP
 {
+    /// <summary>
+    /// For objects that is visible on FPP.
+    /// </summary>
     public interface IViewmodel
     {
         public AnimatorController ArmsAnimations { get; }

@@ -1,44 +1,19 @@
 using System;
-using UnityEditor;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using UZSG.Attributes;
 
-namespace UZSG.Entities
+namespace UZSG.Data
 {
     [Serializable]
     [CreateAssetMenu(fileName = "New Entity Data", menuName = "UZSG/Entity/Entity Data")]
-    public class EntityData : ScriptableObject
+    public class EntityData : BaseData
     {
+        [Header("Entity Data")]
         public AssetReference AssetReference;
-        public string Id;
         public string Name;
+        
+        [Header("Audio Data")]
+        public AudioAssetsData AudioAssetsData;
     }
-    
-    // [CustomEditor(typeof(EntityData))]
-    // public class EntityDataEditor : Editor
-    // {
-    //     SerializedProperty attributable;
-    //     SerializedProperty attributes;
-
-    //     void OnEnable()
-    //     {
-    //         attributable = serializedObject.FindProperty("Attributable");
-    //         attributes = serializedObject.FindProperty("Attributes");
-    //     }
-
-    //     public override void OnInspectorGUI()
-    //     {
-    //         base.OnInspectorGUI();
-    //         EntityData entityData = (EntityData)target;
-            
-    //         if (entityData.Attributable)
-    //         {
-    //             EditorGUILayout.PropertyField(attributes);
-    //         }
-            
-    //         serializedObject.Update();
-    //         serializedObject.ApplyModifiedProperties();
-    //     }
-    // }
 }

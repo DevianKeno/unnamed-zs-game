@@ -80,6 +80,11 @@ namespace UZSG.FPP
         bool _hasArmsAnimations;
         bool _hasViewmodelAnimations;
         bool _hasCameraAnimations;
+
+        public bool CanSwapEquipped
+        {
+            get => !_isPlayingAnimation && !_isPerforming;
+        }
         
         void Awake()
         {
@@ -127,25 +132,39 @@ namespace UZSG.FPP
         /// </summary>
         public void HoldItem(ItemData data)
         {
+            if (data is not IViewmodel viewmodel) return;
+
             StartCoroutine(StartPerform(1f));
             LoadViewmodelAsset(data, equip: true);
-            LoadHeldItem(data, () =>
+            LoadHeldItem(data, (heldItem) =>
             {
+                SetupHeldItemController(heldItem);
                 EquipHeldItem(data.Id);
             });
+        }
+
+        public void ReleaseItem(ItemData data)
+        {
+            if (!_cachedViewmodels.ContainsKey(data.Id)) return;
+            
+            // var viewmodel = _cachedViewmodels[data.Id];
+            UnloadViewmodelAsset(data);
         }
 
         #endregion
 
         
         /// <summary>
-        /// Load view model from addressables.
+        /// Load viewmodel from addressables.
         /// </summary>
         async void LoadViewmodelAsset(ItemData data, bool equip = true)
+        {            
+            await LoadViewmodelAssetAsync(data as IViewmodel, equip);
+        }
+
+        async void UnloadViewmodelAsset(ItemData data)
         {
-            if (data is not IViewmodel viewmodel) return;
-            
-            await LoadViewmodelAssetAsync(viewmodel, equip);
+            // await null;
         }
 
         async Task<Viewmodel> LoadViewmodelAssetAsync(IViewmodel item, bool equip)
@@ -154,42 +173,37 @@ namespace UZSG.FPP
             if (_cachedViewmodels.ContainsKey(itemData.Id)) return null;
             
             var viewmodel = await viewmodelController.LoadViewmodelAssetAsync(item);
-            if (viewmodel != null) /// Cache loaded viewmodel
+            if (viewmodel == null) return null;
+            
+            /// Cache loaded viewmodel
+            _cachedViewmodels[itemData.Id] = viewmodel;
+            if (equip)
             {
-                _cachedViewmodels[itemData.Id] = viewmodel;
-                
-                if (equip)
-                {
-                    /// Check if for some reason had switched
-                    if (heldItem.ItemData.Id != itemData.Id) return viewmodel;
-
-                    /// Equip viewmodel on finish load :)
-                    EquipViewmodel(viewmodel);
-                }
+                if (heldItem.ItemData.Id != itemData.Id) return viewmodel; /// Check if for some reason had switched
+                EquipViewmodel(viewmodel); /// Equip on finish load :)
             }
+            
             return viewmodel;
         }
 
-        void LoadHeldItem(ItemData data, Action onDoneInitialize = null)
+        void LoadHeldItem(ItemData data, Action<HeldItemController> onDoneInitialize = null)
         {
-            if (data is not IViewmodel viewmodel) return;
-
             if (data is WeaponData weaponData)
             {
                 if (weaponData.Category == WeaponCategory.Melee)
                 {
                     LoadHeldItemControllerAsync<MeleeWeaponController>(meleeWeaponControllerPrefab, (meleeWeapon) =>
                     {
-                        InitializeHeldItemController(data, meleeWeapon);
-                        onDoneInitialize?.Invoke();
+                        meleeWeapon.ItemData = data;
+                        onDoneInitialize?.Invoke(meleeWeapon);
                     });
                 }
                 else if (weaponData.Category == WeaponCategory.Ranged)
                 {
                     LoadHeldItemControllerAsync<GunWeaponController>(gunWeaponControllerPrefab, (gunWeapon) =>
                     {
-                        InitializeHeldItemController(data, gunWeapon);
-                        onDoneInitialize?.Invoke();
+                        gunWeapon.ItemData = data;
+                        onDoneInitialize?.Invoke(gunWeapon);
                     });
                 }
                 return;
@@ -198,8 +212,8 @@ namespace UZSG.FPP
             {
                 LoadHeldItemControllerAsync<HeldToolController>(heldToolControllerPrefab, (tool) =>
                 {
-                    InitializeHeldItemController(data, tool);
-                    onDoneInitialize?.Invoke();
+                    tool.ItemData = data;
+                    onDoneInitialize?.Invoke(tool);
                 });
                 return;
             }
@@ -210,20 +224,24 @@ namespace UZSG.FPP
             }
         }
 
-        void InitializeHeldItemController(ItemData data ,HeldItemController controller)
+        void SetupHeldItemController(HeldItemController controller)
         {
+            var itemData = controller.ItemData;
             controller.transform.parent = heldItemsContainer.transform;
-            controller.ItemData = data;
             controller.Owner = Player;
+            controller.name = $"{itemData.Name} (Held Item)";
             controller.Initialize();
-            _cachedHeldItems[data.Id] = controller;
-            controller.name = $"{data.Name} (Held Item)";
 
-            HoldItemById(data.Id);
+            _cachedHeldItems[itemData.Id] = controller;
+
+            ReplaceActiveHeldItemGameObject(itemData.Id);
             InitializeHeldItem();
         }
 
-        void HoldItemById(string id)
+        /// <summary>
+        /// Setup Held Item for the different FPP controller components.
+        /// </summary>
+        void ReplaceActiveHeldItemGameObject(string id)
         {
             if (heldItem != null)
             {
@@ -239,24 +257,6 @@ namespace UZSG.FPP
             {
                 heldItem = null;
             }
-            
-            InitializeHeldItem();
-            OnChangeHeldItem?.Invoke(heldItem);
-        }
-        
-        void LoadHeldItemControllerAsync<T>(GameObject prefab, Action<T> onLoadCompleted = null) where T : Component
-        {
-            var go = Instantiate(prefab);
-            if (go.TryGetComponent(out T controller))
-            {
-                onLoadCompleted?.Invoke(controller);
-                return;
-            }
-
-            Destroy(go);
-            var msg = $"Loaded prefab does not contain a component of type {typeof(T)}.";
-            Game.Console.LogWarning(msg);
-            Debug.LogWarning(msg);
         }
                 
         public void EquipHeldItem(string id)
@@ -273,7 +273,8 @@ namespace UZSG.FPP
                 {
                     EquipViewmodel(_cachedViewmodels[id]);
                 }
-                HoldItemById(id);
+                ReplaceActiveHeldItemGameObject(id);
+                OnChangeHeldItem?.Invoke(heldItem);
             }
         }
 
@@ -295,8 +296,7 @@ namespace UZSG.FPP
 
         void EquipViewmodel(Viewmodel viewmodel)
         {
-            LoadViewmodel(viewmodel);
-
+            SetupViewmodel(viewmodel);
             PlayAnimations("equip");
         }
 
@@ -308,19 +308,22 @@ namespace UZSG.FPP
             }
         }
 
-        void LoadViewmodel(Viewmodel viewmodel)
+        /// <summary>
+        /// Setup viewmodel for the different FPP controller components.
+        /// </summary>
+        void SetupViewmodel(Viewmodel viewmodel)
         {
-            /// Load cached viewmodel
+            /// Validate cached viewmodel
             if (!_cachedViewmodels.ContainsKey(viewmodel.ItemData.Id))
             {
-                var msg = $"Tried to load held item '{viewmodel.ItemData.Id}' but it's not loaded nor equipped?";
+                var msg = $"Tried to setup Held Item '{viewmodel.ItemData.Id}' but it's not loaded nor equipped?";
                 Game.Console.LogAndUnityLog(msg);
                 return;
             }
 
             currentViewmodel = _cachedViewmodels[viewmodel.ItemData.Id];
             
-            /// Load arms animations
+            /// Setup arms animations
             armsController.SetAnimatorController(currentViewmodel.ArmsAnimations);
             if (viewmodel.ArmsAnimations != null)
             {
@@ -343,7 +346,7 @@ namespace UZSG.FPP
                 Game.Console.LogAndUnityLog(msg);
             }
 
-            /// Load model animations
+            /// Setup model animations
             if (currentViewmodel.ModelAnimator != null)
             {
                 _hasViewmodelAnimations = true;
@@ -357,7 +360,7 @@ namespace UZSG.FPP
                 Game.Console.LogAndUnityLog(msg);
             }
 
-            /// Load camera animations
+            /// Setup camera animations
             if (currentViewmodel.CameraAnimator != null)
             {
                 _hasCameraAnimations = true;
@@ -556,6 +559,21 @@ namespace UZSG.FPP
             {
                 int ammoCount = weapon.CurrentRounds;
             }
+        }
+        
+        void LoadHeldItemControllerAsync<T>(GameObject prefab, Action<T> onLoadCompleted = null) where T : Component
+        {
+            var go = Instantiate(prefab);
+            if (go.TryGetComponent(out T controller))
+            {
+                onLoadCompleted?.Invoke(controller);
+                return;
+            }
+
+            Destroy(go);
+            var msg = $"Loaded prefab does not contain a component of type {typeof(T)}.";
+            Game.Console.LogWarning(msg);
+            Debug.LogWarning(msg);
         }
 
         IEnumerator FinishAnimation(float durationSeconds)

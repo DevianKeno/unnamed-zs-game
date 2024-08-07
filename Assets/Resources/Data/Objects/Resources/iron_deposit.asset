@@ -15,12 +15,15 @@ MonoBehaviour:
   Id: iron_deposit
   Name: Iron Deposit
   Model:
-    m_AssetGUID: 
+    m_AssetGUID: bc0b442a5a7b2d241a9d4b637a4f8278
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  Attributes:
-    attributes: []
+  Attributes: []
+  ToolType: 1
+  Yield:
+    _itemData: {fileID: 11400000, guid: d91e12a0a4b6668499c647324acdd545, type: 2}
+    _count: 1
   Instances:
   - Name: Small Iron Deposit
     Model:
@@ -29,14 +32,7 @@ MonoBehaviour:
       m_SubObjectType: 
       m_EditorAssetChanged: 0
     Attributes:
-      attributes:
-      - data: {fileID: 11400000, guid: e1db9201565269c4caebcb12298f0665, type: 2}
-        _value: 250
-        BaseMaximum: 0
-        Bonus: 0
-        _multiplier: 0
-        LimitOverflow: 0
-        LimitUnderflow: 0
+    - {fileID: 11400000, guid: e1db9201565269c4caebcb12298f0665, type: 2}
   - Name: Iron Deposit
     Model:
       m_AssetGUID: 
@@ -44,14 +40,7 @@ MonoBehaviour:
       m_SubObjectType: 
       m_EditorAssetChanged: 0
     Attributes:
-      attributes:
-      - data: {fileID: 11400000, guid: e1db9201565269c4caebcb12298f0665, type: 2}
-        _value: 1000
-        BaseMaximum: 0
-        Bonus: 0
-        _multiplier: 0
-        LimitOverflow: 0
-        LimitUnderflow: 0
+    - {fileID: 11400000, guid: e1db9201565269c4caebcb12298f0665, type: 2}
   - Name: Large Iron Deposit
     Model:
       m_AssetGUID: 
@@ -59,11 +48,4 @@ MonoBehaviour:
       m_SubObjectType: 
       m_EditorAssetChanged: 0
     Attributes:
-      attributes:
-      - data: {fileID: 11400000, guid: e1db9201565269c4caebcb12298f0665, type: 2}
-        _value: 5000
-        BaseMaximum: 0
-        Bonus: 0
-        _multiplier: 0
-        LimitOverflow: 0
-        LimitUnderflow: 0
+    - {fileID: 11400000, guid: e1db9201565269c4caebcb12298f0665, type: 2}

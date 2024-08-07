@@ -6,10 +6,10 @@ using UZSG.Crafting;
 namespace UZSG.Data
 {
     [Serializable]
-    public class PlayerData
+    public struct PlayerSaveData
     {
-        public InventoryData Inventory;
-        public List<AttributeSaveData> Vitals;
-        public List<AttributeSaveData> Generic;
+        public InventorySaveData Inventory;
+        public List<VitalAttributeSaveData> VitalAttributes;
+        public List<GenericAttributeSaveData> GenericAttributes;
     }
 }

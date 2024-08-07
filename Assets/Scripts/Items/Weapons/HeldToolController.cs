@@ -216,14 +216,18 @@ namespace UZSG.Items.Tools
                     By = this,
                     ContactPoint = point,
                 });
+                return;
             }
-            else if (hitObject.TryGetComponent<Resource>(out var resource))
+
+            var hit = hitObject.GetComponentInParent<BaseObject>();
+            if (hit is Resource resource)
             {
                 resource.HitBy(new()
                 {
                     By = this,
                     ContactPoint = point,
                 });
+                return;
             }
         }
 

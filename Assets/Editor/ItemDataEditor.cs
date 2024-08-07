@@ -18,7 +18,7 @@ namespace UZSG.UnityEditor
             isMaterial,
             isCraftable,
             recipes,
-            recipess,
+            audioAssetsData,
             weight,
             sourceDesc;
 
@@ -38,6 +38,7 @@ namespace UZSG.UnityEditor
             recipes = serializedObject.FindProperty("Recipes");
             weight = serializedObject.FindProperty("Weight");
             sourceDesc = serializedObject.FindProperty("SourceDescription");
+            audioAssetsData = serializedObject.FindProperty("AudioAssetsData");
         }
 
         public override void OnInspectorGUI()
@@ -56,17 +57,20 @@ namespace UZSG.UnityEditor
             EditorGUILayout.PropertyField(weight);
             EditorGUILayout.PropertyField(stackSize);
             EditorGUILayout.PropertyField(sourceDesc);
+
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("Crafting", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(isMaterial);
             EditorGUILayout.PropertyField(isCraftable);
-
             if (GUILayout.Button("Get Recipes"))
             {
-                itemData.GetRecipes();  
-                serializedObject.Update(); 
+                GetRecipes(itemData);
             }
             EditorGUILayout.PropertyField(recipes);
+
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("Audio Data", EditorStyles.boldLabel);
+            EditorGUILayout.PropertyField(audioAssetsData);
 
             // ItemType itemType = (ItemType) type.enumValueIndex;
             // if (itemType == ItemType.Weapon || itemType == ItemType.Tool)
@@ -81,5 +85,20 @@ namespace UZSG.UnityEditor
 
             serializedObject.ApplyModifiedProperties();
         }
+
+#if UNITY_EDITOR
+        void GetRecipes(ItemData itemData)
+        {
+            itemData.Recipes.Clear();
+            foreach (var recipeData in Resources.LoadAll<RecipeData>("Data/Recipes"))
+            {
+                var str = recipeData.name.Split('-');
+                if (str[0] != itemData.Id) continue;
+                itemData.Recipes.Add(recipeData);
+            }
+
+            EditorUtility.SetDirty(itemData);
+        }
+#endif
     }
 }

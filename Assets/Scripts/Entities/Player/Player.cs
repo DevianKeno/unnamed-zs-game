@@ -29,8 +29,8 @@ namespace UZSG.Entities
     {
         public bool CanPickUpItems = true;
 
-        [SerializeField] PlayerData playerData;
-        public PlayerData PlayerData => playerData;
+        [SerializeField] PlayerSaveData playerData;
+        public PlayerSaveData PlayerData => playerData;
         [SerializeField] PlayerEntityData playerEntityData;
         public PlayerEntityData PlayerEntityData => playerEntityData;
         [SerializeField] AttributeCollection<VitalAttribute> vitals;
@@ -43,6 +43,7 @@ namespace UZSG.Entities
         public Crafter CraftingAgent => craftingAgent;
         StatusEffectCollection statusEffects;
         public StatusEffectCollection StatusEffects => statusEffects;
+        [SerializeField] AudioSourceController audioController;
         
         public Vector3 Forward => MainCamera.transform.forward;
         public Vector3 EyeLevel => MainCamera.transform.position;
@@ -72,15 +73,8 @@ namespace UZSG.Entities
         /// <summary>
         /// All Player Data
         /// </summary>
-        string _jsonPlayerDefaultFile = "Assets/Scripts/Data/DefaultPlayerData.json";
-        string _jsonDefaultData;
-        public DefaultPlayerJsonStruct _playerDefaultData;
-        public struct DefaultPlayerJsonStruct 
-        {
-            public List<object> jsonInventory;
-            public List<VitalAttributeSaveData> VitalAttributes;
-            public List<GenericAttributeSaveData> GenericAttributes;
-        } 
+        const string playerDefaultsPath = "/Resources/Defaults/Entities/player_defaults.json";
+        public PlayerSaveData saveData;
 
         public bool CanJump
         {
@@ -109,17 +103,11 @@ namespace UZSG.Entities
         {
             Game.Console.Log("I, player, has been spawned!");
 
-            // Load PlayerData from file
-            // Data.LoadFromFile("/path");
-
-            //loads the user-crafting agent
-            craftingAgent.InitializePlayer(this);
-            craftingAgent.containers.Add(inventory.Bag);
-            craftingAgent.containers.Add(inventory.Hotbar);
-
+            LoadDefaults();
             InitializeAttributes();
             InitializeStateMachines();
             InitializeInventory();
+            InitializeCrafter();
             InitializeHUD();
             InitializeInputs();
             
@@ -127,7 +115,6 @@ namespace UZSG.Entities
             Controls.Enable();
             Actions.Initialize();
             Actions.Enable();
-            
             FPP.Initialize();
             ParentMainCameraToFPPController();
 
@@ -135,39 +122,29 @@ namespace UZSG.Entities
             OnDoneInit?.Invoke(this, new());
         }
 
-        InputActionMap actionMap;
-        readonly Dictionary<string, InputAction> inputs = new();
-
-        void InitializeInputs()
+        void LoadDefaults()
         {
-            actionMap = Game.Main.GetActionMap("Player");
-            foreach (var action in actionMap.actions)
-            {
-                inputs[action.name] = action;
-                action.Enable();
-            }
-            
-            inputs["Inventory"].performed += OnPerformInventory;        // Tab/E (default)
+            var defaultsJson = File.ReadAllText(Application.dataPath + playerDefaultsPath);
+            saveData = JsonUtility.FromJson<PlayerSaveData>(defaultsJson);
         }
-
-
-        #region Default Player Attributes (vital/generic)
 
         void InitializeAttributes()
         {
-            // Read the JSON file
-            _jsonDefaultData = File.ReadAllText(Application.dataPath + _jsonPlayerDefaultFile);
+            vitals = new();
+            vitals.ReadSaveJSON(saveData.VitalAttributes);
 
-            // Convert into PlayerData
-            _playerDefaultData = JsonUtility.FromJson<DefaultPlayerJsonStruct>(_jsonDefaultData);
+            generic = new();
+            generic.ReadSaveJSON(saveData.GenericAttributes);
+        }
+        
+        void InitializeStateMachines()
+        {
+            MoveStateMachine.InitialState = MoveStateMachine.States[MoveStates.Idle];
 
-            // Get the attributes
-            vitals.ReadSaveData(_playerDefaultData.VitalAttributes);
-          
-            /// Should save and read all though
-            generic.ReadSaveData(_playerDefaultData.GenericAttributes);
-
-#endregion
+            MoveStateMachine.States[MoveStates.Idle].OnEnter += OnIdleEnter;
+            MoveStateMachine.States[MoveStates.Run].OnEnter += OnRunEnter;
+            MoveStateMachine.States[MoveStates.Jump].OnEnter += OnJumpEnter;
+            MoveStateMachine.States[MoveStates.Crouch].OnEnter += OnCrouchEnter;      
         }
 
         void InitializeInventory()
@@ -192,21 +169,33 @@ namespace UZSG.Entities
             };
         }
 
+        void InitializeCrafter()
+        {
+            craftingAgent.InitializePlayer(this);
+            craftingAgent.AddContainer(inventory.Bag);
+            craftingAgent.AddContainer(inventory.Hotbar);
+        }
+
         void InitializeHUD()
         {
             _HUD = Game.UI.Create<PlayerHUD>("Player HUD");
             _HUD.BindPlayer(this);
             _HUD.Initialize();
         }
-        
-        void InitializeStateMachines()
-        {
-            MoveStateMachine.InitialState = MoveStateMachine.States[MoveStates.Idle];
 
-            MoveStateMachine.States[MoveStates.Idle].OnEnter += OnIdleEnter;
-            MoveStateMachine.States[MoveStates.Run].OnEnter += OnRunEnter;
-            MoveStateMachine.States[MoveStates.Jump].OnEnter += OnJumpEnter;
-            MoveStateMachine.States[MoveStates.Crouch].OnEnter += OnCrouchEnter;      
+        InputActionMap actionMap;
+        readonly Dictionary<string, InputAction> inputs = new();
+
+        void InitializeInputs()
+        {
+            actionMap = Game.Main.GetActionMap("Player");
+            foreach (var action in actionMap.actions)
+            {
+                inputs[action.name] = action;
+                action.Enable();
+            }
+            
+            inputs["Inventory"].performed += OnPerformInventory;        // Tab/E (default)
         }
 
         void ParentMainCameraToFPPController()

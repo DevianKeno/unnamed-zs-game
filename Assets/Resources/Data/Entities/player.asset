@@ -12,13 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b7e2e119c8ab584aa3e9d5a795a27fa, type: 3}
   m_Name: player
   m_EditorClassIdentifier: 
+  Id: player
   AssetReference:
     m_AssetGUID: c8a8e49113fae5b40b045ce0f2eeb0c3
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  Id: player
   Name: Player
+  AudioAssetsData: {fileID: 11400000, guid: 1909aa057d6bbca4cbcdffb7dfcbe936, type: 2}
   Vitals:
   - {fileID: 11400000, guid: e1db9201565269c4caebcb12298f0665, type: 2}
   - {fileID: 11400000, guid: 03beca28745658c48a7358ce536b9573, type: 2}

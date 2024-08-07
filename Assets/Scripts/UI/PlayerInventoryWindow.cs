@@ -372,15 +372,19 @@ namespace UZSG.UI
             var equipMainhand = itemOptions.AddChoice("Equip Mainhand")
             .AddCallback(() =>
             {
+                var equipped = Inventory.Equipment.Mainhand.Item;
                 ItemSlot.SwapContents(Inventory.Equipment.Mainhand, _selectedSlot);
                 Player.FPP.HoldItem(item.Data);
+                Player.FPP.ReleaseItem(equipped.Data);
             });
             
             var equipOffhand = itemOptions.AddChoice("Equip Offhand")
             .AddCallback(() =>
             {
+                var equipped = Inventory.Equipment.Mainhand.Item;
                 ItemSlot.SwapContents(Inventory.Equipment.Offhand, _selectedSlot);
                 Player.FPP.HoldItem(item.Data);
+                Player.FPP.ReleaseItem(equipped.Data);
             });
 
             /// Disables Choices when performing FPP actions

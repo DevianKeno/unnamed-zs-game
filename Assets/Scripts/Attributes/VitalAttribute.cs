@@ -273,19 +273,20 @@ namespace UZSG.Attributes
                 OnReachMaximum?.Invoke(this, context);
             }
         }
-                
-        public virtual void ReadSaveData(VitalAttributeSaveData data, bool initialize = true)
+
+        public override void ReadSaveData(AttributeSaveData data, bool initialize = true)
         {
             base.ReadSaveData(data, initialize: false);
 
-            allowChange = data.AllowChange;
-            changeType = (VitalAttributeChangeType) data.ChangeType;
-            timeCycle = (VitalAttributeTimeCycle) data.TimeCycle;
-            baseChange = data.BaseChange;
-            changeMultiplier = data.ChangeMultiplier;
-            changeFlatBonus = data.ChangeFlatBonus;
-            enableDelayedChange = data.EnableDelayedChange;
-            delayedChangeDuration = data.DelayedChangeDuration;
+            var vitalData = data as VitalAttributeSaveData;
+            allowChange = vitalData.AllowChange;
+            changeType = (VitalAttributeChangeType) vitalData.ChangeType;
+            timeCycle = (VitalAttributeTimeCycle) vitalData.TimeCycle;
+            baseChange = vitalData.BaseChange;
+            changeMultiplier = vitalData.ChangeMultiplier;
+            changeFlatBonus = vitalData.ChangeFlatBonus;
+            enableDelayedChange = vitalData.EnableDelayedChange;
+            delayedChangeDuration = vitalData.DelayedChangeDuration;
 
             if (initialize)
             {

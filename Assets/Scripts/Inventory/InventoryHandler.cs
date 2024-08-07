@@ -71,7 +71,7 @@ namespace UZSG.Inventory
             _equipment.Initialize();
         }
 
-        public void LoadData(InventoryData data)
+        public void LoadData(InventorySaveData data)
         {
         }
 

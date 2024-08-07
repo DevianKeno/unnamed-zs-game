@@ -34,7 +34,17 @@ namespace UZSG.Attributes
         
         [SerializeField] protected AttributeData data;
         public AttributeData Data => data;
-
+        
+        public Attribute(AttributeData data)
+        {
+            this.data = data;
+        }
+        
+        public Attribute(string id)
+        {
+            this.data = Game.Attributes.GetData(id);
+        }
+        
         [SerializeField, Tooltip("The current value.")]
         protected float value = 0f;
         /// <summary>
@@ -159,17 +169,6 @@ namespace UZSG.Attributes
         public event EventHandler<AttributeValueChangedContext> OnReachZero;
 
         #endregion
-
-
-        public Attribute(AttributeData data)
-        {
-            this.data = data;
-        }
-        
-        public Attribute(string id)
-        {
-            this.data = Game.Attributes.GetData(id);
-        }
 
         internal virtual void Initialize() { }
 

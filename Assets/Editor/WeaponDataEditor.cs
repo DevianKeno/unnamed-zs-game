@@ -18,8 +18,7 @@ namespace UZSG.UnityEditor
             armsAnimations,
             viewmodel,
             viewmodelOffsets,
-            anims,
-            audioData;
+            anims;
         
         protected override void OnEnable()
         {
@@ -38,7 +37,6 @@ namespace UZSG.UnityEditor
             viewmodel = serializedObject.FindProperty("viewmodel");
             viewmodelOffsets = serializedObject.FindProperty("viewmodelOffsets");
             anims = serializedObject.FindProperty("anims");
-            audioData = serializedObject.FindProperty("audioData");
         }
 
         public override void OnInspectorGUI()
@@ -106,7 +104,6 @@ namespace UZSG.UnityEditor
             EditorGUILayout.PropertyField(viewmodel);
             EditorGUILayout.PropertyField(viewmodelOffsets);
             EditorGUILayout.PropertyField(anims);
-            EditorGUILayout.PropertyField(audioData);
 
             serializedObject.ApplyModifiedProperties();
         }

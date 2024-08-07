@@ -15,7 +15,7 @@ namespace UZSG.UI
 
         public void BindAttribute(Attribute attr)
         {
-            if (!attr.IsValid) return;
+            if (attr == null || !attr.IsValid) return;
 
             attribute = attr;
             attribute.OnValueChanged += OnValueChanged;

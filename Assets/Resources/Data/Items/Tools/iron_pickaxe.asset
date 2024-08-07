@@ -32,21 +32,13 @@ MonoBehaviour:
   ToolType: 1
   SwingDirection: 1
   Attributes:
-    attributes:
-    - data: {fileID: 11400000, guid: dfa56112f40946a428ee64518c941476, type: 2}
-      _value: 10
-      BaseMaximum: 0
-      Bonus: 0
-      _multiplier: 0
-      LimitOverflow: 0
-      LimitUnderflow: 0
-    - data: {fileID: 11400000, guid: 8065c7b302bdaf142aedd6761e5bbb15, type: 2}
-      _value: 100
-      BaseMaximum: 0
-      Bonus: 0
-      _multiplier: 0
-      LimitOverflow: 0
-      LimitUnderflow: 0
+  - data: {fileID: 0}
+    value: 0
+    baseMaximum: 0
+    multiplier: 0
+    flatBonus: 0
+    LimitOverflow: 0
+    LimitUnderflow: 0
   armsAnimations: {fileID: 0}
   viewmodel:
     m_AssetGUID: 

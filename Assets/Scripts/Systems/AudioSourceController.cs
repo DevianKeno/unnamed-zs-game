@@ -14,8 +14,9 @@ namespace UZSG.Systems
     /// </summary>
     public class AudioSourceController : MonoBehaviour
     {
-        bool _hasAudioPool;
+        public AudioAssetsData AudioAssetsData;
 
+        bool _hasAudioPool;
         Dictionary<string, AudioClip> audioClips = new();
         public List<AudioClip> AudioClips => audioClips.Values.ToList();
         Queue<AudioSource> availableSources = new();
@@ -26,7 +27,7 @@ namespace UZSG.Systems
             _hasAudioPool = true;
             
             var parent = new GameObject("Audio Source Pool");
-            parent.transform.parent = transform;
+            parent.transform.SetParent(transform);
             for (int i = 0; i < size; i++)
             {
                 var go = new GameObject($"Audio Source ({i})");
@@ -49,25 +50,23 @@ namespace UZSG.Systems
             );
         }
 
-        int CalculateOptimalAudioPoolSize(int clipSize, float roundsPerMinute, float maxAudioDurationSeconds)
+        public async void LoadAudioAssetsData(AudioAssetsData data, Action onCompleted = null)
         {
-            float roundsPerSecond = roundsPerMinute / 60f;
-            float maxShotsWithinAudioClipDuration = roundsPerSecond * maxAudioDurationSeconds;
-            int optimalPoolSize = Mathf.CeilToInt(maxShotsWithinAudioClipDuration);
-            optimalPoolSize = Mathf.Min(optimalPoolSize, 30);
+            if (data == null)
+            {
+                Game.Console.LogAndUnityLog($"AudioAssetId reference not set. No audio will play.");
+                return;
+            }
 
-            return optimalPoolSize;
-        }
-
-        public async void LoadAudioAssetIds(EquipmentAudioData data, Action onCompleted = null)
-        {
-            var loadAudioTask = Game.Audio.LoadAudioAssets(data.AudioAssetIds, (result) =>
+            AudioAssetsData = data;
+            var loadAudioTask = Game.Audio.LoadAudioAssets(data.AudioClips, (result) =>
             {
                 foreach (var audio in result)
                 {
                     audioClips[audio.name] = audio;
                 }
             });
+
             await loadAudioTask;
             onCompleted?.Invoke();
         }
@@ -93,6 +92,16 @@ namespace UZSG.Systems
         {
             yield return new WaitWhile(() => source.isPlaying);
             availableSources.Enqueue(source);
+        }
+
+        int CalculateOptimalAudioPoolSize(int clipSize, float roundsPerMinute, float maxAudioDurationSeconds)
+        {
+            float roundsPerSecond = roundsPerMinute / 60f;
+            float maxShotsWithinAudioClipDuration = roundsPerSecond * maxAudioDurationSeconds;
+            int optimalPoolSize = Mathf.CeilToInt(maxShotsWithinAudioClipDuration);
+            optimalPoolSize = Mathf.Min(optimalPoolSize, 30);
+
+            return optimalPoolSize;
         }
     }
 }

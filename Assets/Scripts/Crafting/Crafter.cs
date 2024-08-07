@@ -14,7 +14,7 @@ namespace UZSG.Crafting
 {
     public abstract class Crafter : MonoBehaviour
     {
-        public List<Container> containers;
+        protected List<Container> containers = new();
         /// <summary>
         /// Consumes items in the container and returns an item whenever the required resource is available. 
         /// Returns a dictionary of slots pertaining to the recipe. 
@@ -148,5 +148,11 @@ namespace UZSG.Crafting
             }
         }
 
+        public void AddContainer(Container container)
+        {
+            if (container == null) return;
+
+            containers.Add(container);
+        }
     }
 }

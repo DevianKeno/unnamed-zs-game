@@ -22,10 +22,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 2c64cb256d6caf6478c497288aada1bf
-    m_Address: Assets/Models/Items/first_aid_kit/first_aid_kit_model.prefab
+  - m_GUID: 4febe2ca4a4827147a5a0e3d173ce0b4
+    m_Address: Assets/AddressableAssets/Entities/player/audio
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - player_audio
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: d6b1e406a4a37f140ab8a82b4ab55278, type: 2}

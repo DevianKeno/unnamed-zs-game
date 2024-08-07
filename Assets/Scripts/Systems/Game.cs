@@ -120,7 +120,8 @@ namespace UZSG.Systems
             entityManager.Initialize();
             recipeManager.Initialize();
 
-            worldEventController.Initialize();
+            /// This should be inside World
+            // worldEventController.Initialize();
 
             #endregion            
 

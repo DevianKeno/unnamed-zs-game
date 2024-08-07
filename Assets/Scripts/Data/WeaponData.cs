@@ -32,7 +32,7 @@ namespace UZSG.Data
         public WeaponMeleeAttributes MeleeAttributes;
         public WeaponRangedAttributes RangedAttributes;
 
-        /// Viewmodel Settings
+        [Header("Viewmodel Data")]
         [SerializeField] AnimatorController armsAnimations;
         public AnimatorController ArmsAnimations => armsAnimations;
         [SerializeField] AssetReference viewmodel;
@@ -41,8 +41,6 @@ namespace UZSG.Data
         public ViewmodelOffsets Offsets => viewmodelOffsets;
         [SerializeField] EquipmentAnimationData anims;
         public EquipmentAnimationData Animations => anims;
-        [SerializeField] EquipmentAudioData audioData;
-        public EquipmentAudioData AudioData => audioData;
         public bool HasViewmodel => viewmodel.IsSet();
     }
 }

@@ -24,11 +24,14 @@ MonoBehaviour:
   Type: 1
   Subtype: 5
   Weight: 1.2
-  IsStackable: 0
   StackSize: 1
+  IsFuel: 0
+  FuelDuration: 0
   IsMaterial: 0
   IsCraftable: 0
   Recipes: []
+  SourceDescription: 
+  AudioAssetsData: {fileID: 11400000, guid: d7c0b0b1fd7e3c846b0b779bd497678d, type: 2}
   HotbarIcon: {fileID: 0}
   Category: 1
   MeleeType: 1
@@ -96,29 +99,3 @@ MonoBehaviour:
     SecondaryRelease: 
     Equip: 
     Dequip: 
-  audioData:
-    AudioAssetIds:
-    - Id: fire0
-      AudioAsset:
-        m_AssetGUID: 9c05719cc12949a4f8234760643bd983
-        m_SubObjectName: 
-        m_SubObjectType: 
-        m_EditorAssetChanged: 0
-    - Id: fire1
-      AudioAsset:
-        m_AssetGUID: 40908e54f86684143a1537c35fff3848
-        m_SubObjectName: 
-        m_SubObjectType: 
-        m_EditorAssetChanged: 0
-    - Id: fire2
-      AudioAsset:
-        m_AssetGUID: 42e2450453447e841b64f162c1db13ca
-        m_SubObjectName: 
-        m_SubObjectType: 
-        m_EditorAssetChanged: 0
-    - Id: fire3
-      AudioAsset:
-        m_AssetGUID: ae4e98a26a5dd5b499c4a039c93cac26
-        m_SubObjectName: 
-        m_SubObjectType: 
-        m_EditorAssetChanged: 0

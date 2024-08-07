@@ -27,6 +27,8 @@ namespace UZSG.Data
         public float Weight;
         public bool IsStackable => StackSize > 1;
         public int StackSize = 1;
+        public bool IsFuel;
+        public float FuelDuration;
 
         /// Crafting
         public bool IsMaterial;
@@ -34,17 +36,7 @@ namespace UZSG.Data
         public List<RecipeData> Recipes;
         [TextArea] public string SourceDescription;
 
-#if UNITY_EDITOR
-        public void GetRecipes()
-        {
-            Recipes.Clear();
-            foreach (var recipeData in Resources.LoadAll<RecipeData>("Data/Recipes"))
-            {
-                var str = recipeData.name.Split('-');
-                if (str[0] != Id) continue;
-                Recipes.Add(recipeData);
-            }
-        }
-#endif
+        [Header("Audio Data")]
+        public AudioAssetsData AudioAssetsData;
     }
 }

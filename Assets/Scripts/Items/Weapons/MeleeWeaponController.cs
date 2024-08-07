@@ -50,7 +50,7 @@ namespace UZSG.Items.Weapons
 
         void InitializeAudioController()
         {
-            audioSourceController.LoadAudioAssetIds(WeaponData.AudioData);
+            audioSourceController.LoadAudioAssetsData(WeaponData.AudioAssetsData);
             audioSourceController.CreateAudioPool(size: 8); 
         }
 

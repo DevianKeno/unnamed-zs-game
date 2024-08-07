@@ -1,7 +1,9 @@
 using UnityEngine;
 using UnityEditor;
 
-namespace UZSG.UI
+using UZSG.UI;
+
+namespace UZSG.UnityEditor
 {
     [CustomEditor(typeof(FrameController))]
     public class FrameControllerEditor : Editor

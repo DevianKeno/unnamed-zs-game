@@ -50,7 +50,7 @@ namespace UZSG.Systems
             };
         }
         
-        public async Task LoadAudioAssets(List<AudioAssetId> assetReference, Action<List<AudioClip>> onComplete = null)
+        public async Task LoadAudioAssets(List<AssetReference> assetReference, Action<List<AudioClip>> onComplete = null)
         {
             var audioClips = new List<AudioClip>();
             var loadTasks = new List<Task>();
@@ -60,7 +60,7 @@ namespace UZSG.Systems
                 var tcs = new TaskCompletionSource<AudioClip>();
                 loadTasks.Add(tcs.Task);
 
-                Addressables.LoadAssetAsync<AudioClip>(audioAssetId.AudioAsset).Completed += (a) =>
+                Addressables.LoadAssetAsync<AudioClip>(audioAssetId).Completed += (a) =>
                 {
                     if (a.Status == AsyncOperationStatus.Succeeded)
                     {

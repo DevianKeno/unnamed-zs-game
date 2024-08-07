@@ -25,11 +25,13 @@ MonoBehaviour:
   Subtype: 5
   Weight: 1.6
   StackSize: 1
+  IsFuel: 0
+  FuelDuration: 0
   IsMaterial: 0
   IsCraftable: 0
-  Recipes:
-  - {fileID: 11400000, guid: d483b2fe74215824dbda5f2c35f2445a, type: 2}
+  Recipes: []
   SourceDescription: 
+  AudioAssetsData: {fileID: 11400000, guid: b148036c70abbf04ea8e6a34d2c1f0fd, type: 2}
   HotbarIcon: {fileID: 0}
   Category: 0
   MeleeType: 2
@@ -97,11 +99,3 @@ MonoBehaviour:
     SecondaryRelease: 
     Equip: 
     Dequip: 
-  audioData:
-    AudioAssetIds:
-    - Id: swing
-      AudioAsset:
-        m_AssetGUID: 8ee277fc727072f4fb3fa7b60a714fce
-        m_SubObjectName: 
-        m_SubObjectType: 
-        m_EditorAssetChanged: 1

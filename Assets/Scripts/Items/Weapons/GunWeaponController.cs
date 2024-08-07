@@ -66,7 +66,7 @@ namespace UZSG.Items.Weapons
 
         void InitializeAudioController()
         {
-            audioSourceController.LoadAudioAssetIds(WeaponData.AudioData, () =>
+            audioSourceController.LoadAudioAssetsData(WeaponData.AudioAssetsData, () =>
             {
                 InitializeGunSounds();
             });
@@ -245,6 +245,9 @@ namespace UZSG.Items.Weapons
             Player.HUD.AmmoCounter.SetClip(_currentRounds);
         }
 
+        /// <summary>
+        /// Just initializes the gun's different fire sounds.
+        /// </summary>
         void InitializeGunSounds()
         {
             foreach (AudioClip clip in audioSourceController.AudioClips)
@@ -260,7 +263,7 @@ namespace UZSG.Items.Weapons
         void PlayRandomFireSound()
         {
             int randIndex = UnityEngine.Random.Range(0, fireSoundIds.Count);
-            audioSourceController.PlaySound(fireSoundIds[randIndex]);
+            audioSourceController.PlaySound($"fire_{randIndex}");
         }
 
         void SpawnBulletEntity()

@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -30,35 +31,32 @@ namespace UZSG.Attributes
             get => Get(id);
         }
 
-        public void ReadAttributesData(List<AttributeData> data)
+        public void ReadSaveJSON<U>(List<U> saveData) where U : AttributeSaveData
         {
-            foreach (var attr in data)
+            foreach (U attr in saveData)
             {
-                Attribute newAttr = attr.Type switch /// wdym it's a fucking enum
+                if (Game.Attributes.TryGetData(attr.Id, out var attrData))
                 {
-                    AttributeType.Generic => new GenericAttribute(attr.Id),
-                    AttributeType.Vital => new VitalAttribute(attr.Id),
-                };
-
-                Add((T) newAttr);
-                attributes.Add((T) newAttr);
-            }
-        }
-    
-        public void ReadSaveData<U>(List<U> saveData) where U : AttributeSaveData
-        {
-            foreach (var attr in saveData)
-            {
-                // var attrData = Game.Attributes.GetData(attr.Id);
-                // // T newAttr = new(attrData);
-                // newAttr.ReadSaveData(attr);
-                // Add(newAttr as T);
+                    Type t = typeof(T);
+                    var constructor = t.GetConstructor(new Type[] { typeof(AttributeData) });
+                    if (constructor == null)
+                    {
+                        Debug.LogError($"No constructor found for type {t.Name} with a single parameter of type AttributeData");
+                        continue;
+                    }
+                    T newAttr = (T) constructor.Invoke(new object[] { attrData });
+                    newAttr.ReadSaveData(attr);
+                    Add(newAttr);
+                }
             }
         }
         
-        public void SaveToJSON(List<T> data)
+        public void WriteSaveJSON(List<T> data)
         {
-            // 
+            foreach (T attr in attributes)
+            {
+                //
+            }
         }
 
         public void Add(T attribute)
@@ -68,6 +66,7 @@ namespace UZSG.Attributes
             if (!_attrsDict.ContainsKey(attribute.Data.Id))
             {
                 _attrsDict[attribute.Data.Id] = attribute;
+                attributes.Add(attribute);
             }
             else
             {
@@ -79,6 +78,7 @@ namespace UZSG.Attributes
         {
             if (_attrsDict.ContainsKey(id))
             {
+                attributes.Remove(_attrsDict[id]);
                 _attrsDict.Remove(id);
             }
             else
@@ -91,6 +91,7 @@ namespace UZSG.Attributes
         {
             if (_attrsDict.ContainsKey(id))
             {
+                attributes.Remove(_attrsDict[id]);
                 _attrsDict.Remove(id, out attribute);
                 return true;
             }
@@ -119,8 +120,8 @@ namespace UZSG.Attributes
                 return true;
             } 
             
-            attribute = (T) Attribute.None;
             Game.Console.LogAndUnityLog($"Unable to retrieve Attribute '{id}' as it's not in the collection.");
+            attribute = (T) Attribute.None;
             return false;
         }
     }

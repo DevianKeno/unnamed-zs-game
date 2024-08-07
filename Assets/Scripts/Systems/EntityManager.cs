@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
+
+using UZSG.Data;
 using UZSG.Entities;
 using UZSG.Items;
 

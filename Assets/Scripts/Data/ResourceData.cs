@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 
 using UZSG.Attributes;
+using UZSG.Items;
 
 namespace UZSG.Data
 {
@@ -21,6 +22,8 @@ namespace UZSG.Data
     public class ResourceData : ObjectData
     {
         [Header("Resource")]
+        public ToolType ToolType;
+        public Item Yield;
         public List<ResourceInstances> Instances;
     }
 }

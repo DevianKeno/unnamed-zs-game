@@ -47,5 +47,19 @@ namespace UZSG.Systems
             Game.Console.Log($"Invalid Attribute Id '{id}'");
             return null;
         }
+        
+        
+        public bool TryGetData(string id, out AttributeData data)
+        {
+            if (_attrDict.ContainsKey(id))
+            {
+                data = _attrDict[id];
+                return true;
+            }
+
+            Game.Console.LogWarning($"Invalid Attribute Id '{id}'");
+            data = null;
+            return false;
+        }
     }
 }

@@ -37,8 +37,6 @@ namespace UZSG.WorldBuilder
 
         public void Initialize()
         {
-            Game.Tick.OnTick += OnTick;
-            _currentTime = 800;
             CurrentDay = 0;
         }
 
@@ -55,11 +53,9 @@ namespace UZSG.WorldBuilder
             SetTime(TwentyFourHourTime);
         }
 
-        void OnTick(TickInfo info)
+        public void OnTick(float deltaTime)
         {
-            float tickThreshold = Game.Tick.TPS / 64f;
-
-            _currentTime += ((Game.Tick.SecondsPerTick * (Game.Tick.CurrentTick / 32f)) * tickThreshold);
+            _currentTime += deltaTime;
             TwentyFourHourTime = Mathf.FloorToInt(_currentTime / _dayLength * 2400f);
             IncrementDay();
             UpdateCelestialBodies();

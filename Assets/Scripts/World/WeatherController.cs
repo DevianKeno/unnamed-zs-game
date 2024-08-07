@@ -1,13 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Rendering;
 using UnityEngine;
 using UZSG.Systems;
 using UZSG.WorldBuilder;
 
 namespace UZSG.World.Weather
 {
-    public class WeatherController : MonoBehaviour
+    public class WeatherController : EventBehaviour
     {
 
         public bool InstantiateWeatherInEditor;
@@ -29,7 +30,6 @@ namespace UZSG.World.Weather
             CurrentWeather = CurrentWeather == null ? DefaultWeather : CurrentWeather;
             _currentParticleSystem = CurrentWeather.particleSystem;
             SetWeather(CurrentWeather);
-            Game.Tick.OnTick += OnTick;
             
         }
         void OnValidate()
@@ -40,12 +40,11 @@ namespace UZSG.World.Weather
             if (InstantiateWeatherInEditor) SetWeather(CurrentWeather);
         }
 
-        void OnTick(TickInfo info)
+        public void OnTick(float deltaTime)
         {
-            float tickThreshold = Game.Tick.TPS / 64f;
             if (_weatherCountdown > 0 || _weatherCountdown != -1)
             {
-                _weatherCountdown -= ((Game.Tick.SecondsPerTick * (Game.Tick.CurrentTick / 32f)) * tickThreshold);
+                _weatherCountdown -= deltaTime;
             }
 
             HandleChange();
@@ -57,6 +56,7 @@ namespace UZSG.World.Weather
             {
                 if (_currentWeather != _defaultWeather)
                 {
+                    EventOngoing = false;
                     SetWeather(_defaultWeather);
                 }
             }
@@ -88,6 +88,20 @@ namespace UZSG.World.Weather
             HandleChange();
 
         }
+
+        public void OnEventStart(object sender, WorldEventProperties properties)
+        {
+            var @event = sender as WorldEvent;
+            if (@event == null || EventOngoing)
+            {
+                print("Event is null or ongoing.");
+                return;
+            }
+
+            EventPrefab selectedEvent = @event.EventPrefab;
+            EventOngoing = true;
+            SetWeather(selectedEvent.Prefab.GetComponent<RainDataHolder>().WeatherData);
+        }        
     }
 }
 

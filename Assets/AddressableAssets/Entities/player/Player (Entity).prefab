@@ -670,7 +670,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 512
   rayStart: {fileID: 3582013876043017136}
-  rayCastRange: 0.2
+  rayCastRange: 1
   boxCollider: {fileID: 1504893056223954484}
 --- !u!1 &6110845800208884272
 GameObject:

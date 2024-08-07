@@ -113,7 +113,20 @@ namespace UZSG.Crafting
                 }
             }
         }
-
+        
+        /// <summary>
+        /// Consumes items in the container and returns an item whenever the required resource is available
+        /// </summary>
+        
+        /// <summary>
+        /// Gives player the materials based on the RecipeData. It does not check if the player already takes the item so use checking logic to avoid situations such as item cloning
+        /// </summary>
+        protected virtual void ReturnItems(RecipeData recipe){
+            foreach (Container container in containers){
+                foreach (Item item in recipe.Materials)
+                    if (container.TryPutNearest(new Item(item))) break;
+            }
+        }
         /// <summary>
         /// Consumes items in the container and returns an item whenever the required resource is available
         /// </summary>

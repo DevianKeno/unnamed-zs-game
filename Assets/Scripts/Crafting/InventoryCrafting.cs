@@ -4,6 +4,7 @@ using System.Runtime.Serialization.Formatters;
 using UnityEditorInternal.Profiling.Memory.Experimental;
 using UnityEngine;
 using UnityEngine.ResourceManagement.Util;
+using UnityEngine.UI;
 using UZSG.Data;
 using UZSG.Entities;
 using UZSG.Inventory;
@@ -17,10 +18,13 @@ namespace UZSG.Crafting
             public DateTime StartTime;
             public DateTime EndTime;
     }
+ 
     public class InventoryCrafting : Crafter
     {
         public List<CraftingRoutine> craftingRoutineList = new();
+        public event Action<CraftingRoutine> OnStartCraft;
 
+        
         public void CraftQueue(RecipeData recipe)
         {
             var dictSlots = new Dictionary<Item, List<ItemSlot>>();
@@ -32,7 +36,7 @@ namespace UZSG.Crafting
 
             TakeItems(recipe, dictSlots);
 
-            CraftingRoutine craftInstance = new CraftingRoutine(recipe);
+            CraftingRoutine craftInstance = new(recipe);
 
             craftInstance.OnCraftFinish += OnCraftFinish;
             craftInstance.OnCraftSecond += OnCraftSeconds;
@@ -40,6 +44,13 @@ namespace UZSG.Crafting
             craftingRoutineList.Add(craftInstance);
 
             StartCoroutine(craftInstance.CraftCoroutine());
+
+
+        }
+
+        public void StopCraftQueue(CraftingRoutine craftingRoutine)
+        {
+            
         }
 
         private void OnCraftSeconds(object sender, int secondsElapsed)

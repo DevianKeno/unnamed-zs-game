@@ -2465,7 +2465,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   containers: []
-  _GUI: {fileID: 0}
 --- !u!1001 &719451075
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3578,7 +3577,7 @@ Transform:
   m_GameObject: {fileID: 968207203}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.36893576, z: -0, w: 0.9294549}
-  m_LocalPosition: {x: -5.5230002, y: 1.211, z: -1.665}
+  m_LocalPosition: {x: -4.51, y: 1.211, z: -0.62}
   m_LocalScale: {x: 2.65, y: 2.4441748, z: 1.2864078}
   m_ConstrainProportionsScale: 1
   m_Children: []

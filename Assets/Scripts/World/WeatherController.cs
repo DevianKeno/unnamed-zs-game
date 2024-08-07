@@ -93,11 +93,13 @@ namespace UZSG.World.Weather
             var @event = sender as WorldEvent;
             if (@event == null || EventOngoing)
             {
-                print("Event is null or ongoing.");
+                Game.Console.Log($"<color=#ad0909>Event is null or ongoing.</color>");
+                // print("Event is null or ongoing.");
                 return;
             }
-
-            EventPrefab selectedEvent = @event.EventPrefab;
+            
+            Game.Console.Log($"<color=#ad0909>Weather event started.</color>");
+            EventPrefab selectedEvent = @event.SelectedEvent;
             EventOngoing = true;
             SetWeather(selectedEvent.Prefab.GetComponent<RainDataHolder>().WeatherData);
         }        

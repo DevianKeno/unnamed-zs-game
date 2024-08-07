@@ -66,50 +66,6 @@ namespace UZSG.World
                     SpawnEvent(data.worldEvents);
         }
 
-        EventPrefab? SelectEvent(WorldEventProperties properties)
-        {
-            EventPrefab selectedEvent;
-
-            if (_countdown == properties.OccurEverySecond)
-            {
-
-                if(properties.ChanceToOccur < UnityEngine.Random.Range(1, 100))
-                {
-                    Debug.Log("Event did not occur.");
-                    return null;
-                }
-
-                print("Event of type " + properties.Type + " occurred.");
-
-                int chance = UnityEngine.Random.Range(1, 100);
-                List<EventPrefab> eventPrefabs = new();
-
-                foreach (EventPrefab eventPrefab in properties.EventPrefab)
-                {
-                    if (eventPrefab.ChanceToOccur >= chance) eventPrefabs.Add(eventPrefab);
-                }
-
-                if (eventPrefabs.Count > 1)
-                    selectedEvent = eventPrefabs[UnityEngine.Random.Range(0, eventPrefabs.Count)];
-                else if (eventPrefabs.Count == 1)
-                    selectedEvent = eventPrefabs[0];
-                else
-                {
-                    print("No event prefab selected.");
-                    return null;
-                }
-                print("Event occurred: " + selectedEvent.Name);
-                return selectedEvent;
-            }
-            return null;
-        }
-
-        void InitializeControllers(WorldEventProperties properties, WorldEvent eventHandler)
-        {
-            if (properties.Type == WorldEventType.Weather && !_weatherController.EventOngoing)
-                eventHandler.OnSpawnEvent += _weatherController.OnEventStart;
-        }
-
         void SpawnEvent(WorldEventProperties properties)
         {
             EventPrefab? selectedEvent = SelectEvent(properties);
@@ -118,11 +74,57 @@ namespace UZSG.World
             WorldEvent worldEvent = new()
             {
                 EventInfo = properties,
-                EventPrefab = selectedEvent.Value
+                SelectedEvent = selectedEvent.Value
             };
 
             InitializeControllers(properties, worldEvent);
             worldEvent.Initialize();
+        }
+
+        EventPrefab? SelectEvent(WorldEventProperties properties)
+        {
+            if (_countdown != properties.OccurEverySecond) return null;
+            
+            EventPrefab selectedEvent;
+
+            if(properties.ChanceToOccur < UnityEngine.Random.Range(1, 100))
+            {
+                Game.Console.Log($"<color=#34d5eb>Event did not occur.</color>");
+                // Debug.Log("Event did not occur.");
+                return null;
+            }
+
+            // print("Event of type " + properties.Type + " occurred.");
+            Game.Console.Log($"<color=#34d5eb>Event of type {properties.Type} occured.</color>");
+
+
+            int chance = UnityEngine.Random.Range(1, 100);
+            List<EventPrefab> eventPrefabs = new();
+
+            foreach (EventPrefab eventPrefab in properties.EventPrefab)
+            {
+                if (eventPrefab.ChanceToOccur >= chance) eventPrefabs.Add(eventPrefab);
+            }
+
+            if (eventPrefabs.Count > 1)
+                selectedEvent = eventPrefabs[UnityEngine.Random.Range(0, eventPrefabs.Count)];
+            else if (eventPrefabs.Count == 1)
+                selectedEvent = eventPrefabs[0];
+            else
+            {
+                // print("No event prefab selected.");
+                Game.Console.Log($"<color=#e8eb34>No event prefab selected.</color>");
+                return null;
+            }
+            Game.Console.Log($"<color=#e8eb34>Event occured: {selectedEvent.Name}</color>");
+            // print("Event occurred: " + selectedEvent.Name);
+            return selectedEvent;
+        }
+
+        void InitializeControllers(WorldEventProperties properties, WorldEvent eventHandler)
+        {
+            if (properties.Type == WorldEventType.Weather)
+                eventHandler.OnSpawnEvent += _weatherController.OnEventStart;
         }
     }
 }

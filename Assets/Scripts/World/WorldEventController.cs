@@ -106,7 +106,7 @@ namespace UZSG.World
 
         void InitializeControllers(WorldEventProperties properties, WorldEvent eventHandler)
         {
-            if (properties.Type == WorldEventType.Weather)
+            if (properties.Type == WorldEventType.Weather && !_weatherController.EventOngoing)
                 eventHandler.OnSpawnEvent += _weatherController.OnEventStart;
         }
 

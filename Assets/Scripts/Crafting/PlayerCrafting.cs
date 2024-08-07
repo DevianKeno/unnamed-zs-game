@@ -1,0 +1,13 @@
+using System;
+using UZSG.Entities;
+
+namespace UZSG.Crafting 
+{
+    public class PlayerCrafting : InventoryCrafting
+    {
+        public Player _playerEntity;
+        public void InitializePlayer(Player _player){
+            _playerEntity = _player;
+        }
+    }
+}

@@ -39,7 +39,7 @@ namespace UZSG.Entities
         public AttributeCollection<GenericAttribute> Generic => generic;
         [SerializeField] InventoryHandler inventory;
         public InventoryHandler Inventory => inventory;
-        [SerializeField] InventoryCrafting craftingAgent;
+        [SerializeField] PlayerCrafting craftingAgent;
         public Crafter CraftingAgent => craftingAgent;
         StatusEffectCollection statusEffects;
         public StatusEffectCollection StatusEffects => statusEffects;
@@ -111,6 +111,11 @@ namespace UZSG.Entities
 
             // Load PlayerData from file
             // Data.LoadFromFile("/path");
+
+            //loads the user-crafting agent
+            craftingAgent.InitializePlayer(this);
+            craftingAgent.containers.Add(inventory.Bag);
+            craftingAgent.containers.Add(inventory.Hotbar);
 
             InitializeAttributes();
             InitializeStateMachines();

@@ -86,7 +86,6 @@ namespace UZSG.World.Weather
             Instantiate(particle, ParticleParent.transform);
             
             HandleChange();
-
         }
 
         public void OnEventStart(object sender, WorldEventProperties properties)

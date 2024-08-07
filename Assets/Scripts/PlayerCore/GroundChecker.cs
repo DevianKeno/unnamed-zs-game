@@ -16,6 +16,7 @@ namespace UZSG.Players
 
         RaycastHit hit;
         Material material;
+        string _texture;
         int _limit;
         int _submesh;
         int _numIndices;
@@ -81,12 +82,11 @@ namespace UZSG.Players
                 Debug.DrawLine(rayStart.position, hit.point, Color.red);
                 if (hit.collider.TryGetComponent<Terrain>(out Terrain _terrain))
                 {
-                    print("CALLED!");
                     GetTexture(_terrain, hit.point);
                 }
-                else
+                else if (hit.collider.TryGetComponent<Renderer>(out Renderer _renderer))
                 {
-                    print("NOT CALLED :(");
+                    GetRenderMaterial(_renderer);
                 }
             }
             else
@@ -97,8 +97,6 @@ namespace UZSG.Players
 
         private void GetTexture(Terrain terrain, Vector3 hitPoint)
         {
-            string _texture = " ";
-
             Vector3 _terrainPosition = hitPoint - terrain.transform.position;
             Vector3 _splatMapPosition = new Vector3(_terrainPosition.x / terrain.terrainData.size.x, 0, _terrainPosition.z / terrain.terrainData.size.z);
 
@@ -123,6 +121,12 @@ namespace UZSG.Players
             }
 
             // return _texture;
+        }
+
+        private void GetRenderMaterial(Renderer renderer) 
+        {
+            _texture = renderer.material.GetTexture("_MainTex").name;
+            print($"renderer: {_texture}");
         }
     }
 }

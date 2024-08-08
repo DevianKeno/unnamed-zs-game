@@ -64,6 +64,7 @@ namespace UZSG.World.Weather
         void FollowPlayer()
         {
             if (Camera.main.transform == null) return;
+            
             Vector3 offset = new Vector3(0, 16, 0);
             ParticleParent.transform.position = Camera.main.transform.position + offset;
         }
@@ -71,7 +72,7 @@ namespace UZSG.World.Weather
         void DeleteChildren(Transform parent, bool immediate = false)
         {
             if (ParticleParent.transform.childCount <= 0) return;
-            
+
             for (int i = 0; i < parent.childCount; i++) Destroy(parent.GetChild(i).gameObject);
         }
 

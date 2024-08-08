@@ -20,15 +20,7 @@ namespace UZSG.Crafting
     public abstract class Crafter : MonoBehaviour
     {
         public List<CraftingRoutine> craftingRoutineList = new();
-        // public Container InputContainer = new();
-        // public Container OutputContainer;
-
-        /// <summary>
-        /// Consumes items in the container and returns an item whenever the required resource is available. 
-        /// Returns a dictionary of slots pertaining to the recipe. 
-        /// </summary>
-        ///
-        //Function for checking the availability of materials using RecipeData
+        
         protected bool CheckMaterialAvailability(RecipeData recipe, Container input){
 
             foreach (Item material in recipe.Materials)
@@ -139,12 +131,5 @@ namespace UZSG.Crafting
             _craftingInstanceSender.output.TryPutNearest(new Item(_craftingInstanceSender.recipeData.Output));
             craftingRoutineList.Remove(_craftingInstanceSender);
         }
-
-        // public void AddContainer(Container container, Container input)
-        // {
-        //     if (container == null) return;
-
-        //     InputContainers.Add(container);
-        // }
     }
 }

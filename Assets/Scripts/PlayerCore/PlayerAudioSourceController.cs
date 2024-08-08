@@ -31,6 +31,7 @@ namespace UZSG.Players
                 if (IsMoving && Player.Controls.IsGrounded && Player.Controls.Magnitude != 0f)
                 {
 
+                    // 2f is arbitrary, a number kinda feels right based on player magnitude
                     _cooldown = 2f / Player.Controls.Magnitude;
 
                     // half working solution to Ground getting dereferenced half of the time

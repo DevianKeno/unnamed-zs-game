@@ -8,6 +8,7 @@ using TMPro;
 
 using UZSG.Systems;
 using UZSG.Inventory;
+using UZSG.Interactions;
 using UZSG.Attributes;
 using UZSG.Players;
 using UZSG.Data;
@@ -18,14 +19,10 @@ using UZSG.Crafting;
 
 namespace UZSG.Entities
 {
-    public interface IInteractActor
-    {
-    }
-
     /// <summary>
     /// Player entity.
     /// </summary>
-    public class Player : Entity, IInteractActor
+    public class Player : Entity, IAttributable, IInteractActor
     {
         public bool CanPickUpItems = true;
 
@@ -37,6 +34,8 @@ namespace UZSG.Entities
         public AttributeCollection<VitalAttribute> Vitals => vitals;
         [SerializeField] AttributeCollection<GenericAttribute> generic;
         public AttributeCollection<GenericAttribute> Generic => generic;
+        [SerializeField] AttributeCollection<Attributes.Attribute> attributes;
+        public AttributeCollection<Attributes.Attribute> Attributes => attributes;
         [SerializeField] InventoryHandler inventory;
         public InventoryHandler Inventory => inventory;
         [SerializeField] PlayerCrafting craftingAgent;

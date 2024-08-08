@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3225a92847421ec41a13a5cd94ac5446, type: 3}
   m_Name: player_audio
   m_EditorClassIdentifier: 
-  Path: Assets/AddressableAssets/Entities/player/audio
+  Path: Assets/AddressableAssets/Entities/player/Audio
   AudioClips:
   - m_AssetGUID: 5d75826af5277964daf041363ff46d81
     m_SubObjectName: 

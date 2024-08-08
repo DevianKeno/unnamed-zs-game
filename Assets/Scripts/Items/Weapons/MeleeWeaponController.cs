@@ -14,7 +14,7 @@ using UZSG.Attributes;
 
 namespace UZSG.Items.Weapons
 {
-    public class MeleeWeaponController : HeldWeaponController, ICollision
+    public class MeleeWeaponController : HeldWeaponController, ICollisionSource
     {
         Player Player => owner as Player;
         public WeaponData WeaponData => ItemData as WeaponData;
@@ -31,6 +31,14 @@ namespace UZSG.Items.Weapons
         public bool VisualizeAttack;
 
         public string CollisionTag => "Melee";
+
+        
+        #region Melee weapon events
+
+        public event Action<CollisionHitInfo> OnMeleeHit;
+
+        #endregion
+
 
         MeleeWeaponStateMachine stateMachine;
         public MeleeWeaponStateMachine StateMachine => stateMachine;
@@ -216,15 +224,19 @@ namespace UZSG.Items.Weapons
         
         void OnHit(Vector3 point, Collider hitObject)
         {
+            var info = new CollisionHitInfo()
+            {
+                Source = this,
+                ContactPoint = point,
+            };
+
             if (hitObject.TryGetComponent<Hitbox>(out var hitbox))
             {
                 // CalculatedDamage = CalculateDamage(hitbox.Part);
-                hitbox.HitBy(new()
-                {
-                    By = this,
-                    ContactPoint = point,
-                });
+                hitbox.HitBy(info);
             }
+
+            OnMeleeHit?.Invoke(info);
         }
 
         public override void SetStateFromAction(ActionStates state)

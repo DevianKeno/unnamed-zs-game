@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 using TMPro;
 
 using UZSG.Entities;
@@ -36,6 +37,7 @@ namespace UZSG.UI
         public DynamicCrosshair crosshair;
         public SwitchCrosshair allCrosshair;
         public HUD.Compass compass;
+        public Image vignette;
 
         internal void Initialize()
         {

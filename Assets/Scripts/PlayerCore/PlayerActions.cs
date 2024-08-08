@@ -126,9 +126,10 @@ namespace UZSG.Players
         void InteractionSphereCast()
         {
             if (!_allowInteractions) return;
-            var viewportRect = new Vector2(Screen.width / 2, Screen.height / 2);
-            ray = Player.MainCamera.ScreenPointToRay(viewportRect);
 
+            var viewportCenter = new Vector2(Screen.width / 2, Screen.height / 2);
+            ray = Player.MainCamera.ScreenPointToRay(viewportCenter);
+            
             foreach (var hit in Physics.SphereCastAll(ray, Radius, MaxInteractDistance))
             {
                 if (hit.collider != null && hit.collider.CompareTag("Interactable"))

@@ -1,11 +1,13 @@
 namespace UZSG.Crafting
 {
-    public class OutputContainer : Container 
-    {
-        OutputContainer (int numberOfSlots)
-        {
+    /// Create an instance of a container using
+    /// var container = new Container(slotCount);
+    // public class OutputContainer : Container 
+    // {
+    //     public
+    //     // OutputContainer (int numberOfSlots)
+    //     // {
             
-        }
-
-    }
+    //     // }
+    // }
 }

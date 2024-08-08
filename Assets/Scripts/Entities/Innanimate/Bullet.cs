@@ -26,7 +26,7 @@ namespace UZSG.Entities
     /// </summary>
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(BoxCollider))]
-    public class Bullet : Entity, IProjectile, ICollision
+    public class Bullet : Entity, IProjectile, ICollisionSource
     {
         public const float DefaultBulletScale = 0.05f;
         
@@ -127,7 +127,7 @@ namespace UZSG.Entities
                 CalculatedDamage = CalculateDamage(hitbox.Part);
                 hitbox.HitBy(new()
                 {
-                    By = this,
+                    Source = this,
                     ContactPoint = point,
                 });
                 Destroy(gameObject);

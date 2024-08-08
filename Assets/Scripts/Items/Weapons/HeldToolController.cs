@@ -14,7 +14,7 @@ using UZSG.Objects;
 
 namespace UZSG.Items.Tools
 {
-    public class HeldToolController : HeldItemController, ICollision
+    public class HeldToolController : HeldItemController, ICollisionSource
     {
         public Player Player => owner as Player;
         public ToolData ToolData => ItemData as ToolData;
@@ -32,8 +32,6 @@ namespace UZSG.Items.Tools
         public string CollisionTag => "Tool";
         ToolItemStateMachine stateMachine;
         public ToolItemStateMachine StateMachine => stateMachine;
-
-        [SerializeField] AttributeCollection<GenericAttribute> runtimeAttributes;
 
         void Awake()
         {
@@ -84,7 +82,7 @@ namespace UZSG.Items.Tools
             /// TEST ONLY
             var durabilityAttr = new GenericAttribute("durability");
             durabilityAttr.Add(100); 
-            runtimeAttributes.Add(durabilityAttr);
+            Attributes.Add(durabilityAttr);
         }
 
 
@@ -213,7 +211,7 @@ namespace UZSG.Items.Tools
                 // CalculatedDamage = CalculateDamage(hitbox.Part);
                 hitbox.HitBy(new()
                 {
-                    By = this,
+                    Source = this,
                     ContactPoint = point,
                 });
                 return;
@@ -224,7 +222,7 @@ namespace UZSG.Items.Tools
             {
                 resource.HitBy(new()
                 {
-                    By = this,
+                    Source = this,
                     ContactPoint = point,
                 });
                 return;

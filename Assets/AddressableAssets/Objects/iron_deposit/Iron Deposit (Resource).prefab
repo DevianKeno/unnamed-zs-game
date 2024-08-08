@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8347050042701758296}
-  - component: {fileID: 8574257095109980923}
+  - component: {fileID: 6965361753636834885}
   m_Layer: 0
   m_Name: Iron Deposit (Resource)
   m_TagString: Untagged
@@ -33,7 +33,7 @@ Transform:
   - {fileID: 8211317842885609042}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8574257095109980923
+--- !u!114 &6965361753636834885
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -42,12 +42,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 8773096145428350765}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 290501c0479786146bd998ff857b3464, type: 3}
+  m_Script: {fileID: 11500000, guid: e3fbb78907d364e42bfb3cf67112e5a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   objectData: {fileID: 11400000, guid: 9905aa6b0a0ea864b87f41927fd7add9, type: 2}
   attributes:
     attributes: []
+  audioController: {fileID: 0}
 --- !u!1001 &8538490023043621305
 PrefabInstance:
   m_ObjectHideFlags: 0

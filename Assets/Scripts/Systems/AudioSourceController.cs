@@ -54,7 +54,7 @@ namespace UZSG.Systems
         {
             if (data == null)
             {
-                Game.Console.LogAndUnityLog($"AudioAssetId reference not set. No audio will play.");
+                Game.Console.LogAndUnityLog($"AudioAssetsData reference not set. No audio will play.");
                 return;
             }
 
@@ -71,14 +71,24 @@ namespace UZSG.Systems
             onCompleted?.Invoke();
         }
 
+        public AudioClip GetClip(string name)
+        {
+            if (audioClips.TryGetValue(name, out var clip))
+            {
+                return clip;
+            }
+
+            return null;
+        }
+
         public void PlaySound(string name)
         {
             if (availableSources.Count > 0)
             {
-                if (audioClips.ContainsKey(name))
+                if (audioClips.TryGetValue(name, out var clip))
                 {
                     var source = availableSources.Dequeue();
-                    source.clip = audioClips[name];
+                    source.clip = clip;
                     source.Play();
                     StartCoroutine(ReturnToPoolWhenFinished(source));
                 };

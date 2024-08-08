@@ -9,58 +9,22 @@ using UZSG.Systems;
 
 namespace UZSG.Objects
 {
-    public class Resource : BaseObject
+    public class Resource : BaseObject, ICollisionTarget
     {
         public ResourceData ResourceData => objectData as ResourceData;
-        public AttributeCollection<GenericAttribute> attrCollection = new();
-        
         public event EventHandler<CollisionHitInfo> OnHit;
-
-        GenericAttribute healthAttr;
-
-        void Start()
+        
+        /// On load on world
+        protected override void Start()
         {
-            attrCollection.Add(new GenericAttribute("health"));
-            healthAttr = attrCollection["health"];
-            healthAttr.Value = 10f;
+            base.Start();
+            
+            Attributes.Add(new GenericAttribute("health"));
+            Attributes["health"].Value = 10f;
         }
-
-        public void HitBy(CollisionHitInfo other)
+        
+        public virtual void HitBy(CollisionHitInfo other)
         {
-            float damage = 0;
-
-            if (other.By is HeldToolController tool)
-            {
-                if (tool.ToolData.ToolType == ResourceData.ToolType)
-                {
-                    damage *= 1;
-                    if (tool.Owner is Player player)
-                    {
-                        var yield = new Item(ResourceData.Yield);
-                        if (player.Inventory.Bag.TryPutNearest(yield))
-                        {
-                            
-                        }
-                        else
-                        {
-                            Game.Entity.Spawn<ItemEntity>("item_entity", player.Position, callback: (info) =>
-                            {
-                                info.Entity.Item = yield;
-                            });
-                        }
-                    }
-                }
-                else
-                {
-                    damage *= 0.5f;
-                }
-            }
-            else
-            {
-                damage *= 0.33f;
-            }
-
-            healthAttr.Remove(damage);
         }
     }
 }

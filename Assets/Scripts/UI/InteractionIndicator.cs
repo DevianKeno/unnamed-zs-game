@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+
 using UZSG.Interactions;
 using UZSG.Entities;
 
@@ -30,6 +31,14 @@ namespace UZSG.UI
             objectText.text = obj.Name;
             Show();
             LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
+        }
+
+        public void SetKey(bool enabled)
+        {
+            if (enabled)
+            {
+
+            }
         }
 
         public void Indicate(Options options)

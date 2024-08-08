@@ -20,6 +20,7 @@ MonoBehaviour:
     m_SubObjectType: 
     m_EditorAssetChanged: 0
   Attributes: []
+  AudioAssetsData: {fileID: 11400000, guid: 11bc0fff6a43ee148b15187e4870dcfb, type: 2}
   ToolType: 1
   Yield:
     _itemData: {fileID: 11400000, guid: d91e12a0a4b6668499c647324acdd545, type: 2}

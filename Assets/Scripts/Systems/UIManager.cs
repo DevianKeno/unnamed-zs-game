@@ -46,6 +46,7 @@ namespace UZSG.UI
         bool _isInitialized;
         List<Window> _activeWindows = new();
         Window _currentWindow;
+        Dictionary<string, Sprite> _icons = new();
 
         [SerializeField] Canvas canvas;
         public Canvas Canvas => canvas;
@@ -76,6 +77,7 @@ namespace UZSG.UI
             
             Game.Console.Log("Initializing UI...");
             InitializeUIPrefabs();
+            InitializeIcons();
 
             input = Game.Main.MainInput;
             toggleCursorInput = input.actions.FindAction("Toggle Cursor");
@@ -87,9 +89,19 @@ namespace UZSG.UI
 
         void InitializeUIPrefabs()
         {
+            Game.Console.Log("Initializing UI Prefabs...");
             foreach (GameObject element in Resources.LoadAll<GameObject>("Prefabs/UI"))
             {
                 prefabsDict[element.name] = element;
+            }
+        }
+
+        void InitializeIcons()
+        {
+            Game.Console.Log("Initializing Icons...");
+            foreach (var sprite in Resources.LoadAll<Sprite>("Prefabs/Resources/Textures/Icons"))
+            {
+                _icons[sprite.name] = sprite;
             }
         }
 
@@ -113,6 +125,16 @@ namespace UZSG.UI
             _isCursorVisible = enabled;
             Cursor.visible = enabled;
             OnCursorToggled?.Invoke(enabled);
+        }
+
+        public Sprite GetIcon(string id)
+        {
+            if (_icons.TryGetValue(id, out var sprite))
+            {
+                return sprite;
+            }
+            Game.Console.LogWarning($"There's no icon '{id}'");
+            return null;
         }
 
         internal void AddToActiveWindows(Window window)

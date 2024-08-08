@@ -57,7 +57,7 @@
         {
             "Id": "crouch_speed",
             "Type": 0,
-            "Value": 200.0
+            "Value": 150.0
         },
         {
             "Id": "run_stamina_cost",

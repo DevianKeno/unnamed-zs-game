@@ -54,17 +54,17 @@ namespace UZSG.Entities
 
         void OnCollision(object sender, CollisionHitInfo info)
         {
-            if (info.By.CollisionTag == "Projectile")
+            if (info.Source.CollisionTag == "Projectile")
             {
                 var hitbox = sender as Hitbox;
-                var bullet = info.By as Bullet;
+                var bullet = info.Source as Bullet;
 
                 Debug.Log($"Shot part {hitbox.Part}");
                 SpawnBlood(info.ContactPoint);
                 // SpawnDamageText(info.ContactPoint);
                 Destroy(bullet.gameObject);
             }
-            else if (info.By.CollisionTag == "Melee")
+            else if (info.Source.CollisionTag == "Melee")
             {
                 SpawnBlood(info.ContactPoint);
                 // SpawnDamageText(info.ContactPoint);

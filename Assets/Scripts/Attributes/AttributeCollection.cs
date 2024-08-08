@@ -124,5 +124,9 @@ namespace UZSG.Attributes
             attribute = (T) Attribute.None;
             return false;
         }
+
+        public void InitializeFromData(List<GenericAttributeSaveData> data)
+        {
+        }
     }
 }

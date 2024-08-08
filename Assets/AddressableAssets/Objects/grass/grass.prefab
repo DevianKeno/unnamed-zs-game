@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1291858004029073003}
   - component: {fileID: 9050129584946652560}
+  - component: {fileID: 4815622487065304501}
   m_Layer: 0
   m_Name: grass
   m_TagString: Untagged
@@ -46,9 +47,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectData: {fileID: 11400000, guid: 9bce1b7dbf5051541b7c91bae5967ef6, type: 2}
+  audioController: {fileID: 4815622487065304501}
+  attributes:
+    attributes: []
   Item:
     _itemData: {fileID: 11400000, guid: fe31e13f437bd6d429adfd67ab6ba40b, type: 2}
     _count: 1
+--- !u!114 &4815622487065304501
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7919779558643627726}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91fd57dad2e3b8844889a99ae9e028d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AudioAssetsData: {fileID: 11400000, guid: 6cf4ae24c234f1f44a0eec1ea6f4b459, type: 2}
 --- !u!1001 &8363785689195212395
 PrefabInstance:
   m_ObjectHideFlags: 0

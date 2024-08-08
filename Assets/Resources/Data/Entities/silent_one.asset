@@ -9,13 +9,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4cea627f23728654ba7f2d8e85166973, type: 3}
+  m_Script: {fileID: 11500000, guid: 6379a2b7d91791945abf1dc8c29cd406, type: 3}
   m_Name: silent_one
   m_EditorClassIdentifier: 
+  Id: 
   AssetReference:
-    m_AssetGUID: c8a8e49113fae5b40b045ce0f2eeb0c3
+    m_AssetGUID: 
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  Id: silent_one
-  Name: Silent One
+  Name: 
+  AudioAssetsData: {fileID: 0}
+  Generic:
+  - {fileID: 11400000, guid: e1db9201565269c4caebcb12298f0665, type: 2}
+  - {fileID: 11400000, guid: fe9f66b79d95e7948a4dfcb4512568c7, type: 2}

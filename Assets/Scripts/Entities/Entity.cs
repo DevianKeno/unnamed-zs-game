@@ -21,6 +21,8 @@ namespace UZSG.Entities
             get { return transform.position; }
             set { transform.position = value; }
         }
+        [SerializeField] protected AudioSourceController audioSourceController;
+        public AudioSourceController AudioSourceController => audioSourceController;
 
         internal void OnSpawnInternal()
         {

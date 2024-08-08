@@ -395,12 +395,14 @@ namespace UZSG.Players
             Player.MoveStateMachine.ToState(MoveStates.Crouch);
             
             if (crouch)
-            {            
+            {
+                Player.HUD.vignette.CrossFadeAlpha(1f, 0.5f, false);
                 _targetSpeed = CrouchSpeed;
                 _crouchPosition = Player.FPP.CameraController.transform.position.y - 1f;
             }
             else
             {
+                Player.HUD.vignette.CrossFadeAlpha(0f, 0.5f, false);
                 _targetSpeed = MoveSpeed;
                 _crouchPosition = Player.FPP.CameraController.transform.position.y + 1f;
             }

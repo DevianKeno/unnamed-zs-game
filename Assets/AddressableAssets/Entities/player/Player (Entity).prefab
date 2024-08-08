@@ -45,8 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fddc5f8f127c5a84ea5730a18ec74560, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  containers: []
-  _playerEntity: {fileID: 0}
+  _playerEntity: {fileID: 8107631895800867322}
 --- !u!114 &1060515019585979714
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -686,6 +685,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _isGrounded: 0
   _blendTerrainSounds: 0
+  drawRayCast: 0
   mask:
     serializedVersion: 2
     m_Bits: 512
@@ -1080,6 +1080,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   entityData: {fileID: 11400000, guid: c598e087ae8797c429748a8238d6885e, type: 2}
+  audioSourceController: {fileID: 0}
   CanPickUpItems: 1
   playerData:
     VitalAttributes: []
@@ -1088,6 +1089,8 @@ MonoBehaviour:
   vitals:
     attributes: []
   generic:
+    attributes: []
+  attributes:
     attributes: []
   inventory: {fileID: 6573940630714393000}
   craftingAgent: {fileID: 6457100291753886462}

@@ -10,11 +10,13 @@ namespace UZSG.UnityEditor
     public class AudioAssetsDataEditor : Editor
     {
         SerializedProperty path,
+            poolSize,
             audioClips;
         
         protected virtual void OnEnable()
         {
             path = serializedObject.FindProperty("Path");
+            poolSize = serializedObject.FindProperty("PoolSize");
             audioClips = serializedObject.FindProperty("AudioClips");
         }
         
@@ -25,6 +27,7 @@ namespace UZSG.UnityEditor
 
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("Audio Data", EditorStyles.boldLabel);
+            EditorGUILayout.PropertyField(poolSize);
             EditorGUILayout.PropertyField(path);
             if (GUILayout.Button("Load Audio Assets"))
             {

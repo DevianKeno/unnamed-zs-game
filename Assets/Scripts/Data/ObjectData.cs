@@ -15,5 +15,8 @@ namespace UZSG.Data
         public string Name;
         public AssetReference Model;
         public List<AttributeData> Attributes;
+
+        [Header("Audio Data")]
+        public AudioAssetsData AudioAssetsData;
     }
 }

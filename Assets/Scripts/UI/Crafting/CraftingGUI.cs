@@ -11,6 +11,7 @@ using UZSG.Items;
 using UZSG.Systems;
 using UnityEngine.UI;
 using UZSG.Data;
+using UZSG.Inventory;
 
 namespace UZSG.UI
 {
@@ -22,12 +23,23 @@ namespace UZSG.UI
 
         [SerializeField] Crafter crafter;
 
-
         [SerializeField] CraftedItemDisplayUI craftedItemDisplay;
         [SerializeField] RectTransform craftablesHolder;
         [SerializeField] RectTransform materialsHolder;
+        [SerializeField] GameObject outputSlots;
         [SerializeField] Button craftButton;
         [SerializeField] Button closeButton;
+
+        void Start()
+        {
+            foreach (Transform ca in outputSlots.transform)
+            {
+                if (ca.TryGetComponent<ItemSlot>(out var itemSlot))
+                {
+                    
+                }
+            }
+        }
 
         internal void BindCrafter(Crafter crafter)
         {

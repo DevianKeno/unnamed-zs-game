@@ -297,7 +297,7 @@ MonoBehaviour:
   Sensitivity: 0.1
   EnableControls: 1
   FPPCamera: {fileID: 8061303154701812193}
-  animator: {fileID: 0}
+  animator: {fileID: 1923179626101220164}
 --- !u!114 &5105896103929999244
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -691,6 +691,7 @@ MonoBehaviour:
   _isGrounded: 0
   _blendTerrainSounds: 0
   drawRayCast: 0
+  texture: 
   mask:
     serializedVersion: 2
     m_Bits: 512
@@ -949,7 +950,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 7699380848211720457}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4969537266866188656
+--- !u!114 &5583044567273583744
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -958,10 +959,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 7039790214531450963}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91fd57dad2e3b8844889a99ae9e028d8, type: 3}
+  m_Script: {fileID: 11500000, guid: 506e744f4f9c07d4db200eee5f5a0c4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AudioAssetsData: {fileID: 0}
+  AudioAssetsData: {fileID: 11400000, guid: 1909aa057d6bbca4cbcdffb7dfcbe936, type: 2}
+  Player: {fileID: 8107631895800867322}
+  Ground: {fileID: 0}
+  Controls: {fileID: 0}
 --- !u!1 &7057467972537837280
 GameObject:
   m_ObjectHideFlags: 0
@@ -1036,6 +1040,7 @@ GameObject:
   - component: {fileID: 7699380848211720457}
   - component: {fileID: 8107631895800867322}
   - component: {fileID: 7617903866874250683}
+  - component: {fileID: 7471560326920745413}
   - component: {fileID: 5659626291116057010}
   - component: {fileID: 8623776553954527420}
   - component: {fileID: 510820268512717889}
@@ -1100,7 +1105,7 @@ MonoBehaviour:
     attributes: []
   inventory: {fileID: 6573940630714393000}
   craftingAgent: {fileID: 6457100291753886462}
-  audioController: {fileID: 0}
+  audioController: {fileID: 5583044567273583744}
   saveData:
     VitalAttributes: []
     GenericAttributes: []
@@ -1133,6 +1138,22 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 512
   _crouchControlIsToggle: 1
+--- !u!114 &7471560326920745413
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9031321928697203625}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 506e744f4f9c07d4db200eee5f5a0c4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AudioAssetsData: {fileID: 11400000, guid: 1909aa057d6bbca4cbcdffb7dfcbe936, type: 2}
+  Player: {fileID: 8107631895800867322}
+  Ground: {fileID: 6313547803532779528}
+  Controls: {fileID: 7617903866874250683}
 --- !u!114 &5659626291116057010
 MonoBehaviour:
   m_ObjectHideFlags: 0

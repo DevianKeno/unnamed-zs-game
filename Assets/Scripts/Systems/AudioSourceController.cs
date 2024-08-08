@@ -90,7 +90,7 @@ namespace UZSG.Systems
                     var source = availableSources.Dequeue();
                     source.clip = clip;
                     source.Play();
-                    StartCoroutine(ReturnToPoolWhenFinished(source));
+                    StartCoroutine(ReturnToFootstepPoolWhenFinished(source));
                 };
             }
             /// else maybe still try to play sound, exceeding the pool size
@@ -101,6 +101,12 @@ namespace UZSG.Systems
         IEnumerator ReturnToPoolWhenFinished(AudioSource source)
         {
             yield return new WaitWhile(() => source.isPlaying);
+            availableSources.Enqueue(source);
+        }
+
+        IEnumerator ReturnToFootstepPoolWhenFinished(AudioSource source)
+        {
+            yield return new WaitForSeconds(source.clip.length);
             availableSources.Enqueue(source);
         }
 

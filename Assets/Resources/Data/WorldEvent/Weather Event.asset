@@ -16,7 +16,7 @@ MonoBehaviour:
     Type: 0
     Active: 1
     ChanceToOccur: 60
-    OccurEverySecond: 300
+    OccurEverySecond: 2
     EventPrefab:
     - Name: Rainy
       Prefab: {fileID: 5703222695182286115, guid: 9c7e79d7f34f2824d87326082b750faf, type: 3}

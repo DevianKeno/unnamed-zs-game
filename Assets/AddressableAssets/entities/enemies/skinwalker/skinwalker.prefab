@@ -143,7 +143,7 @@ GameObject:
   - component: {fileID: 4710550939094238023}
   - component: {fileID: 5533417015105148321}
   - component: {fileID: 2040430638346997429}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: skinwalker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -201,7 +201,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   entityData: {fileID: 11400000, guid: 3bbb12e3042059d4abbf8d40af48316c, type: 2}
-  SiteRange: 12
+  audioSourceController: {fileID: 0}
   AttackRange: 0.5
   RoamRadius: 4
   RoamInterval: 2

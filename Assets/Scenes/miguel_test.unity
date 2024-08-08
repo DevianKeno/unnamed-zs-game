@@ -2048,9 +2048,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08501839b4b61c146b3cc3003ef8d147, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  assetLabelReference:
-    m_LabelString: 
   Global: {fileID: 1618359539}
+  audioSourcePrefab: {fileID: 0}
 --- !u!1001 &681352280
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5883,10 +5882,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: skinwalker
       objectReference: {fileID: 0}
-    - target: {fileID: 5636306330842002441, guid: 033481a19307263458a06de1464ac025, type: 3}
-      propertyPath: Player
-      value: 
-      objectReference: {fileID: 9093193935490710898}
     - target: {fileID: 7937397935011984496, guid: 033481a19307263458a06de1464ac025, type: 3}
       propertyPath: m_LocalPosition.x
       value: -2.56

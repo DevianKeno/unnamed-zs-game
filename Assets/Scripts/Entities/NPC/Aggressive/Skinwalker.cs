@@ -12,30 +12,21 @@ namespace UZSG.Entities
     public class Skinwalker : Enemy
     {
         EntityHitboxController hitboxes;
-        EnemyActionStates actionState;
 
         void Awake()
         {
             hitboxes = GetComponent<EntityHitboxController>();
         }
 
-        void Start()
+        protected override void Start()
         {
+            base.Start(); // Determine the default state of the skinwalker
             InitializeHitboxEvents();
-            actionState = HandleTransition;
-            executeAction(actionState);
         }
 
         protected override void LateUpdate()
         {
             base.LateUpdate();
-            actionState = HandleTransition;
-            executeAction(actionState);
-        }
-
-        void FixedUpdate()
-        {
-            /// search here
         }
 
         public override void OnSpawn()

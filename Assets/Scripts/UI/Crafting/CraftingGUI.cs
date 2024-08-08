@@ -76,7 +76,7 @@ namespace UZSG.UI
 
         void CraftItem()
         {
-            crafter.CraftItem(_selectedRecipe);
+            // crafter.CraftItem(_selectedRecipe);
         }
 
 

@@ -106,7 +106,7 @@ namespace UZSG.Entities
             InitializeAttributes();
             InitializeStateMachines();
             InitializeInventory();
-            InitializeCrafter();
+            // InitializeCrafter();
             InitializeHUD();
             InitializeInputs();
             
@@ -169,8 +169,8 @@ namespace UZSG.Entities
         void InitializeCrafter()
         {
             craftingAgent.InitializePlayer(this);
-            craftingAgent.AddContainer(inventory.Bag);
-            craftingAgent.AddContainer(inventory.Hotbar);
+            // craftingAgent.AddContainer(inventory.Bag);
+            // craftingAgent.AddContainer(inventory.Hotbar);
         }
 
         void InitializeHUD()

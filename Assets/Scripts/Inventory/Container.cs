@@ -284,6 +284,27 @@ namespace UZSG
         }
 
         /// <summary>
+        /// Counts the number of items inside the container
+        /// </summary>
+        public int CountItem(Item item)
+        {
+            int remaining = item.Count;
+            int count = 0;
+
+            foreach (ItemSlot slot in Slots)
+            {
+                if (slot.IsEmpty) continue;
+
+                if (slot.Item.CompareTo(item))
+                {
+                    count += slot.Item.Count;
+                    remaining -= slot.Item.Count;
+                }
+            }
+            return count;
+        }
+
+        /// <summary>
         /// Combines this container to another container. <Read Only>
         /// Returns a combined COPY of the slots of both containers.
         /// </summary>

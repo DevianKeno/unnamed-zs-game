@@ -87,8 +87,8 @@ namespace UZSG.Systems
         void CCraft(object sender, string[] args)
         {
             var newItem = new Item(Game.Items.GetData(args[0]));
-            var playerInventoryCrafter = (InventoryCrafting)_player.CraftingAgent;
-            playerInventoryCrafter.CraftQueue(newItem.Data.Recipes[0]);
+            var playerInventoryCrafter = (PlayerCrafting)_player.CraftingAgent;
+            playerInventoryCrafter.CraftQueue(_player.Inventory.Bag, _player.Inventory.Bag, newItem.Data.Recipes[0]);
         }
 
         void CDamage(object sender, string[] args)

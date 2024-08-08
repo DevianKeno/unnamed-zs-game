@@ -42,12 +42,11 @@ namespace UZSG.World.Weather
 
         public void OnTick(float deltaTime)
         {
-            if (_weatherCountdown > 0 || _weatherCountdown != -1)
+            if (_weatherCountdown >= 0 || _weatherCountdown != -1)
             {
                 _weatherCountdown -= deltaTime;
+                HandleChange();
             }
-
-            HandleChange();
         }
 
         void HandleChange()
@@ -60,9 +59,13 @@ namespace UZSG.World.Weather
                     SetWeather(_defaultWeather);
                 }
             }
+        }
 
-            Time.DayFogColor = Color.Lerp(Time.DayFogColor, _currentWeather.weatherProperties.DayFogColor, 1f);
-            Time.NightFogColor = Color.Lerp(Time.NightFogColor, _currentWeather.weatherProperties.NightFogColor, 1f);
+        void FollowPlayer()
+        {
+            if (Camera.main.transform == null) return;
+            Vector3 offset = new Vector3(0, 16, 0);
+            ParticleParent.transform.position = Camera.main.transform.position + offset;
         }
 
         void DeleteChildren(Transform parent, bool immediate = false)
@@ -84,6 +87,9 @@ namespace UZSG.World.Weather
 
             ParticleSystem particle = _currentParticleSystem;
             Instantiate(particle, ParticleParent.transform);
+
+            Time.DayFogColor = Color.Lerp(Time.DayFogColor, _currentWeather.weatherProperties.DayFogColor, 1f);
+            Time.NightFogColor = Color.Lerp(Time.NightFogColor, _currentWeather.weatherProperties.NightFogColor, 1f);
             
             HandleChange();
         }

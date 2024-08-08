@@ -116,7 +116,7 @@ namespace UZSG.Players
         [SerializeField] Transform model;
         [SerializeField] Rigidbody rb;
         public Rigidbody Rigidbody => rb;
-        [SerializeField] GroundChecker groundChecker;
+        public GroundChecker groundChecker;
         [SerializeField] Transform groundCheckerObject;
         [SerializeField] LayerMask groundMask;
         

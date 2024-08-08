@@ -4,25 +4,26 @@ using UnityEngine;
 using UnityEngine.AI;
 using UZSG.Attributes;
 using UZSG.Data;
+using UZSG.Players;
 using UZSG.Systems;
+using UZSG.Interactions;
 
 namespace UZSG.Entities
 {
-    public abstract class Enemy : Entity
+    public abstract class Enemy : Entity, IDetectable
     {
         #region Agent movement related
 
-        public float SiteRange, AttackRange;  // range from which it follow, attacks Players
+        public float AttackRange;  // range from which it follow, attacks Players (to remove)
         public float RoamRadius; // Radius of which the agent can travel
         public float RoamInterval; // Interval before the model moves again
         public float RoamTime; // Time it takes for the agent to travel a point
         Player _target; // Current target of the enemy
         public EnemyActionStatesMachine EnemyStateMachine => enemyStateMachine;
         float _distanceFromPlayer; // the actual distance in game distance from the Player
-        float _shortestDistance = Mathf.Infinity;
         bool _inSite, _inAttack; // checks if the player is in site, attack range
-        Collider[] _hitColliders; // array of object that is within enemy range
-        Collider _closestCollider;
+        EnemyActionStates actionState;
+        PlayerDetection _playerDetected;
         Vector3 _randomDestination; // Destination of agent
         [SerializeField] protected EnemyActionStatesMachine enemyStateMachine;
         [SerializeField] NavMeshAgent _enemyEntity; // the entity's agent movement
@@ -42,14 +43,31 @@ namespace UZSG.Entities
 
         #endregion
 
-        void Start()
+        protected virtual void Start()
         {
-            _enemyEntity = GetComponent<NavMeshAgent>();
+            actionState = HandleTransition;
+            executeAction(actionState);
+        }
+
+        private void PlayerInRange(Player player)
+        {
+            _target = player;
+        }
+
+        public void PlayerDetect(Player player)
+        {
+            PlayerInRange(player);
         }
 
         protected virtual void LateUpdate()
         {
             
+        }
+
+        void FixedUpdate()
+        {
+            actionState = HandleTransition;
+            executeAction(actionState);
         }
 
         public override void OnSpawn()
@@ -84,46 +102,12 @@ namespace UZSG.Entities
         {
             get
             {
-                _target = ClosestPlayer();
                 if (_target != null)
                 {
                     return EnemyActionStates.Chase;
                 }
                 return EnemyActionStates.Roam;
             }
-        }
-
-        void OnDrawGizmos()
-        {
-            Gizmos.DrawSphere(transform.position, SiteRange);
-        }
-
-        public Player ClosestPlayer()
-        {
-            // Find objects within the range
-            _hitColliders = Physics.OverlapSphere(transform.position, SiteRange, LayerMask.GetMask("Player"));
-
-
-            // Iterate over each collider in the range
-            foreach (Collider collider in _hitColliders)
-            {
-                // Calculate the distance between the enemy and the player (collider)
-                float _distanceToCollider = Vector3.Distance(transform.position, collider.transform.position);
-
-                // Update throguh each iteration the closest player
-                if (_distanceToCollider < _shortestDistance)
-                {
-                    _shortestDistance = _distanceToCollider;
-                    _closestCollider = collider;
-                }
-            }
-            Debug.Log("target is: " + _target + "\n" +
-            "site range is: " + SiteRange   + "\n" +
-            "site range is: " + PlayerLayer  + "\n" +
-            "Players in collider: \n" + _hitColliders);
-
-            // if player not null return the player, else null
-            return _closestCollider != null ? _closestCollider.GetComponent<Player>() : null;
         }
 
         public EnemyActionStates IsInAttackrange // determines if enemy can Attack Player
@@ -268,7 +252,7 @@ namespace UZSG.Entities
                     break;
             }
         }
-        
+
         #endregion
 
 

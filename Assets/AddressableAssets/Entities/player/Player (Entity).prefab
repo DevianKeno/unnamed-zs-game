@@ -1036,6 +1036,7 @@ GameObject:
   - component: {fileID: 510820268512717889}
   - component: {fileID: 2848331815560721266}
   - component: {fileID: 6219494926804465756}
+  - component: {fileID: -3256070732724861321}
   - component: {fileID: 8394152581638175708}
   - component: {fileID: 7388258057917320939}
   - component: {fileID: 1668294420427726490}
@@ -1214,6 +1215,24 @@ MonoBehaviour:
   Player: {fileID: 0}
   UI: {fileID: 0}
   UIPrefab: {fileID: 4017954678295749456, guid: da617d130e4da8c489760923ab877732, type: 3}
+--- !u!114 &-3256070732724861321
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9031321928697203625}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b363c6981a7273b429d2011edad97652, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SiteRange: 12
+  AttackRange: 1
+  _shortestDistance: Infinity
+  EnemyLayer:
+    serializedVersion: 2
+    m_Bits: 16384
 --- !u!54 &8394152581638175708
 Rigidbody:
   m_ObjectHideFlags: 0

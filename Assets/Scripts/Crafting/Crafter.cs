@@ -14,14 +14,9 @@ namespace UZSG.Crafting
 {
     public abstract class Crafter : MonoBehaviour
     {
-        protected List<Container> containers = new();
-        /// <summary>
-        /// Consumes items in the container and returns an item whenever the required resource is available. 
-        /// Returns a dictionary of slots pertaining to the recipe. 
-        /// </summary>
-        /// 
-
-
+        public List<CraftingRoutine> craftingRoutineList = new();
+        protected List<Container> InputContainers = new();
+        public Container OutputContainer;
 
         /// <summary>
         /// Consumes items in the container and returns an item whenever the required resource is available. 
@@ -36,7 +31,7 @@ namespace UZSG.Crafting
                 var materialSlots = new List<ItemSlot>();
                 int totalItemCount = 0;
 
-                foreach (Container container in containers)
+                foreach (Container container in InputContainers)
                 {
                     var tempSlots = new List<ItemSlot>();
                     totalItemCount += container.CountItem(material, out tempSlots);
@@ -56,7 +51,7 @@ namespace UZSG.Crafting
 
 
         //Function for checking the availability of materials within a specific Container using RecipeData
-        protected bool CheckMaterialAvailabilityWithinContainer(RecipeData recipe, int containerIndex, Dictionary<Item, List<ItemSlot>> dictSlots){
+        protected bool CheckMaterialAvailabilityWithinContainer(RecipeData recipe, Container container, Dictionary<Item, List<ItemSlot>> dictSlots){
             foreach (Item material in recipe.Materials)
             {
                 var materialSlots = new List<ItemSlot>();
@@ -64,7 +59,7 @@ namespace UZSG.Crafting
                 int _totalItemCount = 0;
 
                 var tempSlots = new List<ItemSlot>();
-                _totalItemCount += containers[containerIndex].CountItem(material, out tempSlots);
+                _totalItemCount += container.CountItem(material, out tempSlots);
                 materialSlots.AddRange(tempSlots);
 
                 if (_totalItemCount < material.Count){
@@ -121,51 +116,67 @@ namespace UZSG.Crafting
         /// <summary>
         /// Gives player the materials based on the RecipeData. It does not check if the player already takes the item so use checking logic to avoid situations such as item cloning
         /// </summary>
-        protected virtual void ReturnItems(RecipeData recipe){
-            foreach (Container container in containers){
+        protected virtual void ReturnItems(RecipeData recipe)
+        {
+            foreach (Container container in InputContainers)
+            {
                 foreach (Item item in recipe.Materials)
+                {
                     if (container.TryPutNearest(new Item(item))) break;
+                }
             }
         }
+
         /// <summary>
         /// Consumes items in the container and returns an item whenever the required resource is available
         /// </summary>
-        public virtual void CraftItem(RecipeData recipe)
+        public void CraftQueue(RecipeData recipe)
         {
             var dictSlots = new Dictionary<Item, List<ItemSlot>>();
-            if ( !CheckMaterialAvailability(recipe, dictSlots)) {
+
+            if ( !CheckMaterialAvailability(recipe, dictSlots))
+            {
                 return;
             }
 
             TakeItems(recipe, dictSlots);
 
-            foreach (Container container in containers){
-                if (container.TryPutNearest(new Item(recipe.Output))) break;
-            }
+            CraftingRoutine craftInstance = new CraftingRoutine(recipe);
+
+            craftInstance.OnCraftFinish += OnCraftFinish;
+            craftInstance.OnCraftSecond += OnCraftSeconds;
+
+            craftingRoutineList.Add(craftInstance);
+
+            StartCoroutine(craftInstance.CraftCoroutine());
         }
 
-        /// <summary>
-        /// Consumes items in a specific container and returns an item whenever the required resource is available within that container
-        /// </summary>
-        public virtual void ContainerCraftItem(RecipeData recipe, int containerIndex)
+        protected void MigrateOutputToInput(Container input, Container output) //use only for debugging purposes
         {
-            var dictSlots = new Dictionary<Item, List<ItemSlot>>();
-            if ( !CheckMaterialAvailabilityWithinContainer(recipe, containerIndex, dictSlots)) {
-                return;
+            foreach (ItemSlot slot in output.Slots)
+            {
+                input.TryPutNearest(slot.TakeAll());
             }
+        }
+        private void OnCraftSeconds(object sender, int secondsElapsed)
+        {
+            var _craftingInstanceSender = (CraftingRoutine) sender;
+            print($"Crafting: {_craftingInstanceSender.RecipeData.Id} - {_craftingInstanceSender.GetTimeRemaining()} seconds Remaining");
+        }
 
-            TakeItems(recipe, dictSlots);
-
-            foreach (Container container in containers){
-                if (container.TryPutNearest(new Item(recipe.Output))) break;
-            }
+        private void OnCraftFinish(object sender, CraftFinishedInfo unixTime)
+        {
+            var _craftingInstanceSender = (CraftingRoutine) sender;
+            OutputContainer.TryPutNearest(new Item(_craftingInstanceSender.RecipeData.Output));
+            MigrateOutputToInput(InputContainers[0], OutputContainer);
+            craftingRoutineList.Remove(_craftingInstanceSender);
         }
 
         public void AddContainer(Container container)
         {
             if (container == null) return;
 
-            containers.Add(container);
+            InputContainers.Add(container);
         }
     }
 }

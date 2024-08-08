@@ -85,15 +85,10 @@ namespace UZSG.Items
             _count -= amount;
             return new(_itemData, amount);
         }
-
-        public Item Combine(Item other)
-        {
-            if (!CanBeCombinedWith(other)) return None;
-
-            _count += other.Count;
-            return this;
-        }
         
+        /// <summary>
+        /// Try to combine this Item with the other item.
+        /// </summary>
         public bool TryCombine(Item other, out Item excess)
         {
             excess = None;
@@ -106,15 +101,38 @@ namespace UZSG.Items
             }
             return true;
         }
+        
+        /// <summary>
+        /// Try to stack this Item with the other item.
+        /// </summary>
+        public bool TryCombineStack(Item other)
+        {
+            if (!CanBeStackedWith(other)) return false;
 
+            _count += other.Count;
+            return true;
+        }
+
+        /// <summary>
+        /// Checks if this Item can be combined with the other Item.
+        /// </summary>
         public bool CanBeCombinedWith(Item other)
         {
-            if (other == null || other.IsNone) return false; /// Invalid item
-            if (!CompareTo(other)) return false; /// Not the same
-            if (!_itemData.IsStackable) return false; /// Not stackable
-            if (_count + other.Count > Data.StackSize) return false; /// Exceeds stack size
+            if (!_itemData.IsStackable) return false;   /// Not stackable
+            if (!CompareTo(other)) return false;        /// Not the same
 
             return true;
+        }
+
+        /// <summary>
+        /// Checks if this Item can be stacked with the other Item.
+        /// Returns false if the total of the combined Items exceeds the Item's stack size.
+        /// </summary>
+        public bool CanBeStackedWith(Item other)
+        {
+            if (!CanBeCombinedWith(other)) return false;
+            
+            return _count + other.Count <= Data.StackSize; /// Exceeds stack size
         }
 
         /// <summary>
@@ -122,8 +140,7 @@ namespace UZSG.Items
         /// </summary>
         public bool CompareTo(Item other)
         {
-            if (other != null) return _itemData == other.Data;
-            return false;
+            return other != null && _itemData == other.Data;
         }
     }
 }

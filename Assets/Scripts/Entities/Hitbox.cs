@@ -7,11 +7,11 @@ using UZSG.Interactions;
 namespace UZSG.Entities
 {
     [Serializable]
-    public class Hitbox : MonoBehaviour
+    public class Hitbox : MonoBehaviour, ICollisionTarget
     {
         public HitboxPart Part;
-        public event EventHandler<CollisionHitInfo> OnCollision;
-        
+        public event EventHandler<CollisionHitInfo> OnHit;
+
         BoxCollider boxCollider;
 
         void Awake()
@@ -21,7 +21,7 @@ namespace UZSG.Entities
 
         public void HitBy(CollisionHitInfo other)
         {
-            OnCollision?.Invoke(this, other);
+            OnHit?.Invoke(this, other);
         }
     }
 }

@@ -37,7 +37,7 @@ namespace UZSG.Crafting
                 int totalItemCount = 0;
 
                 var tempSlots = new List<ItemSlot>();
-                totalItemCount += input.CountItem(material);
+                totalItemCount += input.CountItem(material, out var slots);
                 materialSlots.AddRange(tempSlots);
 
 

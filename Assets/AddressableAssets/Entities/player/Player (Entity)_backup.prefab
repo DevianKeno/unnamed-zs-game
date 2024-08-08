@@ -45,6 +45,35 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerEntity: {fileID: 8107631895800867322}
+  PlayerInventory:
+    _slots: []
+  OutputContainer:
+    _slots:
+    - index: 0
+      item:
+        _itemData: {fileID: 0}
+        _count: 0
+      SlotType: 1
+    - index: 1
+      item:
+        _itemData: {fileID: 0}
+        _count: 0
+      SlotType: 1
+    - index: 2
+      item:
+        _itemData: {fileID: 0}
+        _count: 0
+      SlotType: 1
+    - index: 3
+      item:
+        _itemData: {fileID: 0}
+        _count: 0
+      SlotType: 1
+    - index: 4
+      item:
+        _itemData: {fileID: 0}
+        _count: 0
+      SlotType: 1
 --- !u!1 &1560824521149795163
 GameObject:
   m_ObjectHideFlags: 0
@@ -575,6 +604,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Player: {fileID: 8107631895800867322}
   ThrowForce: 5
+  FindItemId: 
 --- !u!1 &5950259277001712762
 GameObject:
   m_ObjectHideFlags: 0
@@ -1389,10 +1419,6 @@ PrefabInstance:
     - target: {fileID: 7184585947677067896, guid: 4494d796b17db674e826142a9b6262fa, type: 3}
       propertyPath: m_Name
       value: arms
-      objectReference: {fileID: 0}
-    - target: {fileID: 7184585947677067896, guid: 4494d796b17db674e826142a9b6262fa, type: 3}
-      propertyPath: m_Layer
-      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 7295481714053074932, guid: 4494d796b17db674e826142a9b6262fa, type: 3}
       propertyPath: m_Layer

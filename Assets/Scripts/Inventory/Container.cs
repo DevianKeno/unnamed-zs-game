@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using UnityEngine;
 
-using UZSG.Systems;
 using UZSG.Inventory;
 using UZSG.Items;
 
@@ -13,7 +13,7 @@ namespace UZSG
     /// Base class for all Containers that have ItemSlots.
     /// </summary>
     [Serializable]
-    public class Container
+    public partial class Container
     {
         protected int _slotCount;
         public int SlotCount
@@ -22,6 +22,12 @@ namespace UZSG
         }
         [SerializeField] protected List<ItemSlot> _slots = new();
         public List<ItemSlot> Slots => _slots;
+        Dictionary<string, HashSet<ItemSlot>> _cachedIdSlots = new();
+        /// <summary>
+        /// Stores the list of ItemSlots of a particular Item present in this Container.
+        /// Key is Item Id; Value is all ItemSlots that contains the Item with the same Id.
+        /// </summary>
+        public Dictionary<string, HashSet<ItemSlot>> IdSlots => _cachedIdSlots;
         public bool IsFull
         {
             get
@@ -34,14 +40,15 @@ namespace UZSG
                 return true;
             }
         }
-
-        public Container(int slotsCount)
+    
+        public int FreeSlotsCount
         {
-            _slotCount = Math.Clamp(slotsCount, 0, 999);
-            CreateSlots();
+            get
+            {
+                return _slots.Count(slot => slot.IsEmpty);
+            }
         }
-
-
+    
         #region Events
 
         /// <summary>
@@ -50,7 +57,7 @@ namespace UZSG
         public event EventHandler<SlotContentChangedArgs> OnSlotContentChanged;
 
         #endregion
-        
+
 
         public ItemSlot this[int i]
         {
@@ -59,6 +66,16 @@ namespace UZSG
                 if (!Slots.IsValidIndex(i)) return null;
                 return _slots[i];
             }
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="slotsCount"></param>
+        public Container(int slotsCount)
+        {
+            _slotCount = Math.Clamp(slotsCount, 0, 999); /// Max container size
+            CreateSlots();
         }
 
         void CreateSlots()
@@ -77,6 +94,50 @@ namespace UZSG
             {
                 Slot = (ItemSlot) slot
             });
+        }
+
+        void CacheItem(Item item, ItemSlot slot)
+        {
+            if (!_cachedIdSlots.TryGetValue(item.Data.Id, out var hashset))
+            {
+                hashset = new();
+                _cachedIdSlots[item.Data.Id] = hashset;
+            }
+            hashset.Add(slot);
+        }
+
+        void UncacheItem(Item item, ItemSlot slot)
+        {
+            if (_cachedIdSlots.ContainsKey(item.Data.Id))
+            {
+                _cachedIdSlots[item.Data.Id].Remove(slot);
+            }
+        }
+        
+        public virtual Item ViewItem(int slotIndex)
+        {
+            if (!Slots.IsValidIndex(slotIndex)) return Item.None;
+            return new(Slots[slotIndex].Item);
+        }
+
+        public virtual List<ItemSlot> FindItem(string id)
+        {
+            if (_cachedIdSlots.TryGetValue(id, out var slots))
+            {
+                return slots.ToList(); 
+            }
+
+            return new();
+        }
+
+        public virtual List<ItemSlot> FindItem(Item item)
+        {
+            if (_cachedIdSlots.TryGetValue(item.Data.Id, out var slots))
+            {
+                return slots.ToList(); 
+            }
+
+            return new();
         }
 
         [Obsolete("You are advised to use TryGetSlot() instead.")]
@@ -98,251 +159,6 @@ namespace UZSG
             }
             slot = Slots[index];
             return true;
-        }
-
-        public virtual Item ViewItem(int slotIndex)
-        {
-            if (!Slots.IsValidIndex(slotIndex)) return Item.None;
-            return Slots[slotIndex].Item;
-        }
-
-        /// <summary>
-        /// Tries to put the item to the nearest empty slot.
-        /// Returns true if put succesfully, otherwise false.
-        /// </summary>
-        public virtual bool TryPutNearest(Item item)
-        {
-            if (item.IsNone) return true;
-            if (IsFull) return false;
-
-            foreach (ItemSlot s in Slots)
-            {
-                if (s == null) continue;
-                if (s.IsEmpty) /// just put
-                {
-                    s.Put(item);
-                    return true;
-                }
-                
-                if (s.TryCombine(item, out Item excess))
-                {
-                    if (TryPutNearest(excess)) return true;
-                    continue;
-                }
-            }
-            return false;
-        }
-        
-        /// <summary>
-        /// Tries to put the item to the nearest empty slot.
-        /// Returns true if put succesfully, otherwise false.
-        /// </summary>
-        public virtual bool TryPutNearest(Item item, out ItemSlot slot)
-        {
-            slot = null;
-            if (item.IsNone) return true;
-            if (IsFull) return false;
-
-            foreach (ItemSlot s in Slots)
-            {
-                if (s == null) continue;
-                if (s.IsEmpty) /// just put
-                {
-                    slot = s;
-                    s.Put(item);
-                    return true;
-                }
-                
-                if (s.TryCombine(item, out Item excess))
-                {
-                    slot = s; /// IDK ABOUT THIS
-                    if (TryPutNearest(excess)) return true;
-                    continue;
-                }
-            }
-            return false;
-        }
-    
-        /// <summary>
-        /// Tries to put the Item in the specified slot index.
-        /// </summary>
-        public virtual bool TryPut(int slotIndex, Item item)
-        {
-            if (!Slots.IsValidIndex(slotIndex)) return false;
-            if (item.IsNone) return false;
-
-            ItemSlot slot = Slots[slotIndex];
-            if (slot == null) return false;
-            
-            if (slot.IsEmpty)
-            {
-                return slot.TryPut(item);
-            }
-            else
-            {
-                return slot.TryCombine(item, out Item excess);
-            }
-        }       
-
-        /// <summary>
-        /// Take entire stack.
-        /// </summary>
-        public virtual Item Take(int slotIndex)
-        {
-            if (!Slots.IsValidIndex(slotIndex)) return Item.None;
-
-            ItemSlot slot = Slots[slotIndex];
-            if (slot.IsEmpty) return Item.None;
-
-            return slot.TakeAll();
-        }
-
-        /// <summary>
-        /// Take some amount of Item from Slot.
-        /// </summary>
-        public virtual Item TakeItems(int slotIndex, int amount)
-        {           
-            if (!Slots.IsValidIndex(slotIndex)) return Item.None;
-
-            ItemSlot slot = Slots[slotIndex];
-            if (slot.IsEmpty) return Item.None;
-
-            return slot.TakeItems(amount);
-        }
-        
-        /// <summary>
-        /// Check if the item exists within the container, regardless of amount.
-        /// </summary>
-        public bool Contains(Item item, out ItemSlot slot)
-        {
-            foreach (ItemSlot s in Slots)
-            {
-                if (s.IsEmpty) continue;
-
-                if (s.Item.CompareTo(item))
-                {
-                    slot = s;
-                    return true;
-                }
-            }
-            
-            slot = null;
-            return false;
-        }
-
-        /// <summary>
-        /// Check if a specified amount of item exists within the container.
-        /// </summary>
-        public bool ContainsCount(Item item, int amount, out List<ItemSlot> slots)
-        {
-            slots = new();
-            int remaining = item.Count;
-            int count = 0;
-
-            foreach (ItemSlot slot in Slots)
-            {
-                if (slot.IsEmpty) continue;
-
-                if (slot.Item.CompareTo(item))
-                {
-                    count += slot.Item.Count;
-                    remaining -= slot.Item.Count;
-                    slots.Add(slot);
-
-                    if (count >= amount)
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return count >= item.Count;
-        }
-
-        /// <summary>
-        /// Counts the number of items inside the container and outputs the slots
-        /// </summary>
-        public int CountItem(Item item, out List<ItemSlot> slots)
-        {
-            slots = new();
-            int remaining = item.Count;
-            int count = 0;
-
-            foreach (ItemSlot slot in Slots)
-            {
-                if (slot.IsEmpty) continue;
-
-                if (slot.Item.CompareTo(item))
-                {
-                    count += slot.Item.Count;
-                    remaining -= slot.Item.Count;
-                    slots.Add(slot);
-                }
-            }
-
-            return count;
-        }
-
-        /// <summary>
-        /// Counts the number of items inside the container
-        /// </summary>
-        public int CountItem(Item item)
-        {
-            int remaining = item.Count;
-            int count = 0;
-
-            foreach (ItemSlot slot in Slots)
-            {
-                if (slot.IsEmpty) continue;
-
-                if (slot.Item.CompareTo(item))
-                {
-                    count += slot.Item.Count;
-                    remaining -= slot.Item.Count;
-                }
-            }
-            return count;
-        }
-
-        /// <summary>
-        /// Combines this container to another container. <Read Only>
-        /// Returns a combined COPY of the slots of both containers.
-        /// </summary>
-        public List<ItemSlot> Combine(Container other)
-        {
-            List<ItemSlot> slots = new();
-            slots.AddRange(Slots);
-            slots.AddRange(other.Slots);
-            return slots;
-        }
-        
-        /// <summary>
-        /// Removes item with count from the container.
-        /// </summary>
-        /// <param name="item"></param>
-        public virtual void Remove(Item item)
-        {
-        }
-
-        /// <summary>
-        /// Removes ALL items from the container.
-        /// </summary>
-        public virtual void RemoveAll(Item item)
-        {
-        }
-
-        public virtual void ClearItem(ItemSlot slot)
-        {
-            if (slot.IsEmpty) return;
-
-            slot.Clear();
-        }
-
-        public virtual void ClearItem(int slotIndex)
-        {
-            if (!Slots.IsValidIndex(slotIndex)) return;
-
-            ClearItem(Slots[slotIndex]);
         }
     }
 }

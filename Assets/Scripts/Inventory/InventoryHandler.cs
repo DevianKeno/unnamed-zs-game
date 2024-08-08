@@ -122,5 +122,21 @@ namespace UZSG.Inventory
             
             return null;
         }
+
+
+        #region Debugging
+
+        public string FindItemId; /// debugging
+        
+        [ContextMenu("Find Item Slots")]
+        void FindThis()
+        {
+            foreach (var slot in Bag.FindItem(FindItemId))
+            {
+                print(slot.Index);
+            }
+        }
+
+        #endregion
     }
 }

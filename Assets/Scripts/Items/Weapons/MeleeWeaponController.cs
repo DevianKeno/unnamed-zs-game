@@ -188,7 +188,7 @@ namespace UZSG.Items.Weapons
             float stepTime = attackDuration / numberOfRays;
             Color rayColor;
             
-            HashSet<int> hitEnemies = new();
+            HashSet<int> targets = new();
 
             for (int i = 0; i < numberOfRays; i++)
             {
@@ -200,11 +200,10 @@ namespace UZSG.Items.Weapons
                 {
                     int hitObjectId = hit.collider.GetInstanceID();
 
-                    if (!hitEnemies.Contains(hitObjectId))
+                    if (!targets.Contains(hitObjectId))
                     {
-                        hitEnemies.Add(hitObjectId);
+                        targets.Add(hitObjectId);
                         OnHit(hit.point, hit.collider);
-                        Debug.Log("Hit: " + hit.collider.name);
                     }
                     rayColor = Color.red;
                 }
@@ -226,17 +225,18 @@ namespace UZSG.Items.Weapons
         {
             var info = new CollisionHitInfo()
             {
+                Type = CollisionType.Melee,
                 Source = this,
                 ContactPoint = point,
             };
 
-            if (hitObject.TryGetComponent<Hitbox>(out var hitbox))
+            var target = hitObject.GetComponentInParent<ICollisionTarget>();
+            if (target != null)
             {
-                // CalculatedDamage = CalculateDamage(hitbox.Part);
-                hitbox.HitBy(info);
+                info.Target = target;
+                target.HitBy(info);
+                OnMeleeHit?.Invoke(info);
             }
-
-            OnMeleeHit?.Invoke(info);
         }
 
         public override void SetStateFromAction(ActionStates state)

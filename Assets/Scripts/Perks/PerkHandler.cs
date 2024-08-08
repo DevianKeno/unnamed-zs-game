@@ -11,5 +11,8 @@ namespace UZSG.Perks
         public PerkData PerkData => perkData;
         [SerializeField] protected Entity entity;
         public Entity Entity => entity;
+
+        bool _isActive;
+        public bool IsActive => _isActive;
     }
 }

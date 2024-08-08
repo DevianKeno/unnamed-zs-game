@@ -40,6 +40,8 @@ namespace UZSG.Systems
         public static AttributesManager Attributes { get => attrManager; }
         static ItemManager itemManager;
         public static ItemManager Items { get => itemManager; }
+        static ParticleManager particleManager;
+        public static ParticleManager Particles { get => particleManager; }
         static RecipeManager recipeManager;
         public static RecipeManager Recipes { get => recipeManager; }
         static EntityManager entityManager;
@@ -81,6 +83,7 @@ namespace UZSG.Systems
                 
                 tickSystem = GetComponentInChildren<TickSystem>();
                 attrManager = GetComponentInChildren<AttributesManager>();
+                particleManager = GetComponentInChildren<ParticleManager>();
                 itemManager = GetComponentInChildren<ItemManager>();
                 recipeManager = GetComponentInChildren<RecipeManager>();
                 entityManager = GetComponentInChildren<EntityManager>();

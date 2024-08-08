@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5586792705028836797}
   - component: {fileID: 5275204011979382437}
-  - component: {fileID: 867534607560851256}
   m_Layer: 10
   m_Name: Damage Text
   m_TagString: Untagged
@@ -61,23 +60,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &867534607560851256
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4665211119221876103}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c8fb2a656f4ca8d41ba52faa8f7b0a4c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  entityData: {fileID: 11400000, guid: b5c484a073ac2d446b41c8b436044cc5, type: 2}
-  damage: 0
-  Force: 5
-  text: {fileID: 6984878254017395619}
-  rb: {fileID: 5275204011979382437}
 --- !u!1 &8179481281565964352
 GameObject:
   m_ObjectHideFlags: 0

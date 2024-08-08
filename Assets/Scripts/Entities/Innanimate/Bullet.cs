@@ -127,6 +127,7 @@ namespace UZSG.Entities
                 CalculatedDamage = CalculateDamage(hitbox.Part);
                 hitbox.HitBy(new()
                 {
+                    Type = CollisionType.Projectile,
                     Source = this,
                     ContactPoint = point,
                 });

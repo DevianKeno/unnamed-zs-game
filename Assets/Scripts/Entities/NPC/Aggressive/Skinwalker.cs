@@ -48,7 +48,7 @@ namespace UZSG.Entities
         {
             foreach (var hitbox in hitboxes.Hitboxes)
             {
-                hitbox.OnCollision += OnCollision;
+                hitbox.OnHit += OnCollision;
             }
         }
 
@@ -78,7 +78,7 @@ namespace UZSG.Entities
 
         void SpawnBlood(Vector3 position)
         {
-            Game.Entity.Spawn<BloodSplat>("blood_splat", position);
+            Game.Particles.Create("blood_splat", position);
         }
     }
 }

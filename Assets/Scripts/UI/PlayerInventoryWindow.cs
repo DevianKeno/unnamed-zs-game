@@ -279,7 +279,7 @@ namespace UZSG.UI
                         Item toPut = _heldItem.Take(1);
                         if (!_selectedSlot.TryCombine(toPut, out Item excess)) 
                         {
-                            _heldItem.Combine(toPut); /// return item to hand
+                            _heldItem.TryCombine(toPut, out excess); /// return item to hand
                         }
                         HoldItem(_heldItem);
                     }

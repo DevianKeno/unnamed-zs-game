@@ -11,13 +11,14 @@ namespace UZSG.Players
         [SerializeField] bool _isGrounded;
         [SerializeField] bool _blendTerrainSounds;
         public bool drawRayCast;
+        public string texture;
+
         public LayerMask mask;
         public Transform rayStart;
         public float rayCastRange;
 
         RaycastHit hit;
         Material material;
-        string _texture;
         int _limit;
         int _submesh;
         int _numIndices;
@@ -29,6 +30,7 @@ namespace UZSG.Players
         public void OnTriggerEnter(Collider other)
         {
             _isGrounded = true;
+            GroundTextureDetection();
         }
 
         public void OnTriggerStay(Collider other)
@@ -40,6 +42,12 @@ namespace UZSG.Players
         public void OnTriggerExit(Collider other)
         {
             _isGrounded = false;
+        }
+
+        // idk if permanent solution, dont fix if it ain't broken i guess
+        public string RetrieveTexture()
+        {
+            return texture;
         }
 
         public void GroundTextureDetection()
@@ -67,6 +75,8 @@ namespace UZSG.Players
                 {
                     Debug.DrawLine(rayStart.position, hit.point, Color.blue);
                 }
+
+                texture = "none";
             }
         }
 
@@ -91,13 +101,13 @@ namespace UZSG.Players
                     }
                 }
 
-                _texture = terrain.terrainData.terrainLayers[_primaryIndex].diffuseTexture.name;
+                texture = terrain.terrainData.terrainLayers[_primaryIndex].diffuseTexture.name;
             }
         }
 
         private void GetRenderMaterial(Renderer renderer) 
         {
-            _texture = renderer.material.GetTexture("_MainTex").name;
+            texture = renderer.material.GetTexture("_MainTex").name;
         }
 
         // not in currently in use, but might be helpful in future

@@ -14,19 +14,67 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Path: Assets/AddressableAssets/Entities/player/audio
   AudioClips:
-  - m_AssetGUID: 5d75826af5277964daf041363ff46d81
+  - m_AssetGUID: 4b09b120ce33ef1489757888406fb619
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  - m_AssetGUID: 432e58d302d78294f849cb3e45605041
+  - m_AssetGUID: 70c875b4612ed2647baddfc8c6cb0650
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  - m_AssetGUID: d51e3839ce5f80e498b5564693e0824e
+  - m_AssetGUID: 6f683834d27495a4fa7824fbbcec9713
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  - m_AssetGUID: c1f49ab4d3cc63e4883a0d19080f07a6
+  - m_AssetGUID: 00c01f54c4a5f814c8294a83d6315c02
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  - m_AssetGUID: c846909af399e234884bc4de4da16dee
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  - m_AssetGUID: f17411c0c4d220849a863e2580508866
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  - m_AssetGUID: 6d940db0263e1ae4da15be08fabbce79
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  - m_AssetGUID: 53e02d44d8f317c4c941e3d2a3865397
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  - m_AssetGUID: 0f3a5489d66c8e540acd4be405795a3e
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  - m_AssetGUID: f6d2f491921df3a43b15020aba1458f6
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  - m_AssetGUID: df45047a2c5ac2b4fb3600f48ab2d96b
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  - m_AssetGUID: 0d6a1b8fdebd91343a9d5a6063b3cd34
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  - m_AssetGUID: ddbe5c3763305ac40a1c8c6dfbc94106
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  - m_AssetGUID: ceb6352cb4fe1634f946cc2044867027
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  - m_AssetGUID: 989dbdecea4920448ac579574cff6007
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  - m_AssetGUID: 52bc23f06cbfc774c98f010faac88ba5
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0

@@ -25,7 +25,10 @@ MonoBehaviour:
   Subtype: 0
   Weight: 0
   StackSize: 999
+  IsFuel: 0
+  FuelDuration: 0
   IsMaterial: 1
   IsCraftable: 0
   Recipes: []
   SourceDescription: Obtained from mining.
+  AudioAssetsData: {fileID: 11400000, guid: 1909aa057d6bbca4cbcdffb7dfcbe936, type: 2}

@@ -43,8 +43,9 @@ namespace UZSG.Entities
         public Crafter CraftingAgent => craftingAgent;
         StatusEffectCollection statusEffects;
         public StatusEffectCollection StatusEffects => statusEffects;
-        [SerializeField] AudioSourceController audioController;
-        
+        [SerializeField] PlayerAudioSourceController audioController;
+        public PlayerAudioSourceController Audio => audioController;
+
         public Vector3 Forward => MainCamera.transform.forward;
         public Vector3 EyeLevel => MainCamera.transform.position;
 
@@ -104,6 +105,10 @@ namespace UZSG.Entities
             Game.Console.Log("I, player, has been spawned!");
 
             LoadDefaults();
+
+            audioController.CreateAudioPool(8);
+            audioController.LoadAudioAssetsData(playerEntityData.AudioAssetsData);
+
             InitializeAttributes();
             InitializeStateMachines();
             InitializeInventory();

@@ -61,12 +61,20 @@ namespace UZSG.World.Weather
             }
         }
 
-        void FollowPlayer()
+        void FollowPlayer(ParticleSystem particle)
         {
+            print("Following player");
             if (Camera.main.transform == null) return;
+
+            if (ParticleParent.transform.parent != Camera.main.transform)
+            {
+                ParticleParent.transform.SetParent(Camera.main.transform);
+            }
+            
+            ParticleSystem particleInstance = Instantiate(particle, ParticleParent.transform);
             
             Vector3 offset = new Vector3(0, 16, 0);
-            ParticleParent.transform.position = Camera.main.transform.position + offset;
+            particleInstance.transform.position = Camera.main.transform.position + offset;
         }
 
         void DeleteChildren(Transform parent, bool immediate = false)
@@ -87,7 +95,7 @@ namespace UZSG.World.Weather
             DeleteChildren(ParticleParent.transform);
 
             ParticleSystem particle = _currentParticleSystem;
-            Instantiate(particle, ParticleParent.transform);
+            FollowPlayer(particle);
 
             Time.DayFogColor = Color.Lerp(Time.DayFogColor, _currentWeather.weatherProperties.DayFogColor, 1f);
             Time.NightFogColor = Color.Lerp(Time.NightFogColor, _currentWeather.weatherProperties.NightFogColor, 1f);

@@ -16,14 +16,19 @@ namespace UZSG
         /// </summary>
         public virtual bool CanPutItem(Item item)
         {
-            /// Check first the ItemSlots containing the same Item
+            /// Check first the cached ItemSlots containing the same Item
             if (_cachedIdSlots.TryGetValue(item.Data.Id, out var slots))
             {
+                int nextCount = item.Count;
                 foreach (ItemSlot slot in slots)
                 {
+                    var tempItem = new Item(item, nextCount);
                     if (slot == null) continue;
                     if (slot.IsEmpty) return true;
-                    if (slot.Item.CanBeStackedWith(item)) return true;
+                    if (slot.Item.CanBeStackedWith(tempItem)) return true;
+                    
+                    nextCount -= slot.Item.Data.StackSize - slot.Item.Count;
+                    if (nextCount <= 0) break;
                 }
             }
             return CanPutNearest(item);
@@ -47,7 +52,7 @@ namespace UZSG
                 }
             }
 
-            return false;
+            return true;
         }
 
         public virtual bool CanPutNearest(Item item)

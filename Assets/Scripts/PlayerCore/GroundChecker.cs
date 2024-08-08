@@ -44,12 +44,6 @@ namespace UZSG.Players
             _isGrounded = false;
         }
 
-        // idk if permanent solution, dont fix if it ain't broken i guess
-        public string RetrieveTexture()
-        {
-            return texture;
-        }
-
         public void GroundTextureDetection()
         {
             

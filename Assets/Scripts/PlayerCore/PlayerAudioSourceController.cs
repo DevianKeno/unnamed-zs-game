@@ -11,7 +11,6 @@ namespace UZSG.Players
     public class PlayerAudioSourceController : AudioSourceController
     {
         public Player Player;
-        public GroundChecker Ground;
 
         string _texture = "none";
         float _cooldown = 0f;
@@ -27,15 +26,14 @@ namespace UZSG.Players
         {
             while (true)
             {
-                print($"magn: {Player.Controls.Magnitude}");
                 if (IsMoving && Player.Controls.IsGrounded && Player.Controls.Magnitude != 0f)
                 {
 
                     // 2f is arbitrary, a number kinda feels right based on player magnitude
                     _cooldown = 2f / Player.Controls.Magnitude;
 
-                    // half working solution to Ground getting dereferenced half of the time
-                    _texture = Ground?.RetrieveTexture();
+                    // LMFAO IT'S FIXED NOW, INSANE
+                    _texture = Player.Controls.groundChecker.texture;
 
                     _timer += Time.deltaTime;
                     if (_timer >= _cooldown)

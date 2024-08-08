@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UZSG.Entities;
 using UZSG.Systems;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 namespace UZSG.Players
 {
@@ -26,21 +27,11 @@ namespace UZSG.Players
         {
             while (true)
             {
-                if (IsMoving && Player.Controls.IsGrounded)
-                {    
+                print($"magn: {Player.Controls.Magnitude}");
+                if (IsMoving && Player.Controls.IsGrounded && Player.Controls.Magnitude != 0f)
+                {
 
-                    if (Player.Controls.IsRunning)
-                    {
-                        _cooldown = 0.250f;
-                    }
-                    else if (Player.Controls.IsCrouching)
-                    {
-                        _cooldown = 0.750f;
-                    }
-                    else
-                    {
-                        _cooldown = 0.5f;
-                    }
+                    _cooldown = 2f / Player.Controls.Magnitude;
 
                     // half working solution to Ground getting dereferenced half of the time
                     _texture = Ground?.RetrieveTexture();

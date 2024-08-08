@@ -989,6 +989,7 @@ MonoBehaviour:
   AudioAssetsData: {fileID: 11400000, guid: 1909aa057d6bbca4cbcdffb7dfcbe936, type: 2}
   Player: {fileID: 8107631895800867322}
   Ground: {fileID: 0}
+  Controls: {fileID: 0}
 --- !u!1 &7057467972537837280
 GameObject:
   m_ObjectHideFlags: 0
@@ -1170,6 +1171,7 @@ MonoBehaviour:
   AudioAssetsData: {fileID: 11400000, guid: 1909aa057d6bbca4cbcdffb7dfcbe936, type: 2}
   Player: {fileID: 8107631895800867322}
   Ground: {fileID: 6313547803532779528}
+  Controls: {fileID: 7617903866874250683}
 --- !u!114 &5659626291116057010
 MonoBehaviour:
   m_ObjectHideFlags: 0

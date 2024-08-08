@@ -12,7 +12,7 @@ namespace UZSG.Crafting
         public int FurnaceCapacity = 3;
 
         public void Init(){
-            InputContainers.Add(new Container(5));
+            // InputContainers.Add(new Container(5));
         }
 
         protected bool isFurnaceFull(){

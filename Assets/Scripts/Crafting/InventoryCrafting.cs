@@ -12,13 +12,7 @@ using UZSG.Items;
 
 namespace UZSG.Crafting
 {
-    //test
-    public struct CraftFinishedInfo 
-    {
-            public DateTime StartTime;
-            public DateTime EndTime;
-    }
- 
+    
     public class InventoryCrafting : Crafter
     {
         

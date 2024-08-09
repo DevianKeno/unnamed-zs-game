@@ -11,17 +11,18 @@ namespace UZSG.Crafting
     public class Furnace : FuelBasedCrafting
     {
         public Container Dishes = new(5);
-        public Container InputContainer;
         public int FurnaceCapacity = 3;
 
-        protected bool isFurnaceFull(){
-            if(craftingRoutineList.Count >= FurnaceCapacity){
+        List<CraftingRoutine> furnaceRoutineList = new();
+        protected bool isFurnaceFull()
+        {
+            if(furnaceRoutineList.Count >= FurnaceCapacity){
                 return true;
             }
             return false;
         }
 
-        public void StartCooking(RecipeData recipe){
+        public void PrepareCooking(RecipeData recipe){
             if (!isFurnaceFull()){
                 print("Furnace is still busy");
                 return;
@@ -32,8 +33,27 @@ namespace UZSG.Crafting
                 return;
             };
             var _ingredients = TakeItems(recipe, InputContainer);
-            var _beingCooked = new CraftingRoutine(recipe, _ingredients, Dishes);
+
+            var _fuelRoutineConf = new CraftingRoutineOptions() {
+                recipe = recipe,
+                materialSets = _ingredients,
+                output = Dishes,
+                routineList = furnaceRoutineList,
+            };
+            
+            var _cookInstance = new CraftingRoutine(_fuelRoutineConf, true);
+            furnaceRoutineList.Add(_cookInstance);
         }
+
+        public void StartCooking(){
+            ConsumeFuel();
+            if (isFuelRemainingAvailable()){
+                foreach (var routine in furnaceRoutineList) {
+                    StartCoroutine(routine.CraftCoroutine());
+                }
+            }
+        }
+
     }
 }
 

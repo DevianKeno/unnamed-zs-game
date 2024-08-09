@@ -9,18 +9,34 @@ using UZSG.UI;
 using UZSG.Data;
 using System.Collections;
 using System;
+using UnityEditor.ShaderGraph.Internal;
 
 namespace UZSG.Crafting
 {
     public struct CraftFinishedInfo 
     {
-            public DateTime StartTime;
-            public DateTime EndTime;
+        public DateTime StartTime;
+        public DateTime EndTime;
     }
+
+    public struct CraftingRoutineOptions
+    {
+        public CraftingRoutineOptions(RecipeData recipe, List<Item> materialSets, Container output, List<CraftingRoutine> routineList)
+        {
+            this.recipe = recipe;
+            this.materialSets = materialSets;
+            this.output = output;
+            this.routineList = routineList;
+        }
+        public RecipeData recipe;
+        public List<Item> materialSets;
+        public Container output;
+        public List<CraftingRoutine> routineList;
+    }
+
     public abstract class Crafter : MonoBehaviour
     {
-        public List<CraftingRoutine> craftingRoutineList = new();
-        
+
         protected bool CheckMaterialAvailability(RecipeData recipe, Container input){
 
             foreach (Item material in recipe.Materials)
@@ -84,33 +100,11 @@ namespace UZSG.Crafting
         {
             foreach (Item item in materialSet)
             {
-                input.TryPutNearest(item);
+                input.TryPutNearest(new Item(item));
             }
         }
 
-        /// <summary>
-        /// Consumes items in the container and returns an item whenever the required resource is available
-        /// </summary>
-        public void CraftQueue(Container input, Container output, RecipeData recipe)
-        {
-            var dictSlots = new Dictionary<Item, List<ItemSlot>>();
 
-            if ( !CheckMaterialAvailability(recipe, input))
-            {
-                return;
-            }
-
-            List<Item> _materialSets = TakeItems(recipe, input);
-
-            CraftingRoutine craftInstance = new CraftingRoutine(recipe, _materialSets, output);
-
-            craftInstance.OnCraftFinish += OnCraftFinish;
-            craftInstance.OnCraftSecond += OnCraftSeconds;
-
-            craftingRoutineList.Add(craftInstance);
-
-            StartCoroutine(craftInstance.CraftCoroutine());
-        }
 
         protected void MigrateOutputToInput(Container input, Container output) //use only for debugging purposes
         {
@@ -119,17 +113,20 @@ namespace UZSG.Crafting
                 input.TryPutNearest(slot.TakeAll());
             }
         }
-        private void OnCraftSeconds(object sender, int secondsElapsed)
+
+
+        //EVENTS SECTION
+        protected void OnCraftSeconds(object sender, int secondsElapsed)
         {
             var _craftingInstanceSender = (CraftingRoutine) sender;
             print($"Crafting: {_craftingInstanceSender.recipeData.Id} - {_craftingInstanceSender.GetTimeRemaining()} seconds Remaining");
         }
 
-        private void OnCraftFinish(object sender, CraftFinishedInfo unixTime)
+        protected void OnCraftFinish(object sender, CraftFinishedInfo unixTime)
         {
             var _craftingInstanceSender = (CraftingRoutine) sender;
             _craftingInstanceSender.output.TryPutNearest(new Item(_craftingInstanceSender.recipeData.Output));
-            craftingRoutineList.Remove(_craftingInstanceSender);
+            _craftingInstanceSender.routineList.Remove(_craftingInstanceSender);
         }
     }
 }

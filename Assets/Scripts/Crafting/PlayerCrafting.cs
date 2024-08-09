@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UZSG.Entities;
 using UZSG.Inventory;
 
@@ -7,12 +8,12 @@ namespace UZSG.Crafting
     public class PlayerCrafting : InventoryCrafting
     {
         public Player _playerEntity;
-        public Container PlayerInventory;
         public Container OutputContainer = new(5);
+        public List<CraftingRoutine> PlayerCraftingList = new();
 
         void Start(){
-            _playerEntity = this.transform.parent.gameObject.GetComponent<Player>();
-            PlayerInventory = _playerEntity.Inventory.Bag;
+            _playerEntity = transform.parent.gameObject.GetComponent<Player>();
+            InputContainer = _playerEntity.Inventory.Bag;
         }
         public void InitializePlayer(Player _player)
         {

@@ -2061,6 +2061,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Navigate Slots",
+                    "type": "Value",
+                    "id": "28148ee0-1f7a-4ed1-b3d5-4270f6dd7d52",
+                    "expectedControlType": "Dpad",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
                     "name": "Shift Click",
                     "type": "Button",
                     "id": "0e696c50-45b5-41c8-a586-c390bbf00269",
@@ -2070,20 +2079,29 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Navigate Slots",
-                    "type": "Value",
-                    "id": "28148ee0-1f7a-4ed1-b3d5-4270f6dd7d52",
-                    "expectedControlType": "Dpad",
+                    "name": "Ctrl",
+                    "type": "Button",
+                    "id": "adf9277c-9fb8-4038-a568-256fa90e878a",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": true
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Alt",
+                    "type": "Button",
+                    "id": "e00ef7c3-1450-43b3-9187-aac4c9f0fa1f",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
                 {
                     "name": "",
-                    "id": "514410d3-5c8a-4252-a8fe-135f7a4c2fd1",
-                    "path": "<Keyboard>/leftShift",
+                    "id": "fed551d3-cd46-4c7b-ac7f-f343ce8fbcd0",
+                    "path": "<Keyboard>/shift",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -2110,6 +2128,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Hide",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b7e5185c-78c4-423f-8f81-697c76a4f685",
+                    "path": "<Keyboard>/ctrl",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Ctrl",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f152cddc-6ba2-4e48-8e8e-f8fddcbd4a84",
+                    "path": "<Keyboard>/alt",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Alt",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

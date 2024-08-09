@@ -195,6 +195,7 @@ namespace UZSG.Items.Weapons
                 float currentAngle = halfAngle - (angleStep * i);
                 Vector3 direction = Quaternion.Euler(0, currentAngle, 0) * Player.Forward;
                 Vector3 rayOrigin = Player.EyeLevel;
+                Vector3 forceDirection = Vector3.zero;
 
                 if (Physics.Raycast(rayOrigin, direction, out RaycastHit hit, attackRange, attackLayer))
                 {
@@ -203,7 +204,9 @@ namespace UZSG.Items.Weapons
                     if (!targets.Contains(hitObjectId))
                     {
                         targets.Add(hitObjectId);
+                        forceDirection = CalculateForceDirection(hit.point, hit.normal, direction);
                         OnHit(hit.point, hit.collider);
+
                     }
                     rayColor = Color.red;
                 }
@@ -214,11 +217,18 @@ namespace UZSG.Items.Weapons
                 
                 if (VisualizeAttack)
                 {
+                    Debug.DrawRay(hit.point, forceDirection * 2, Color.green, 1.0f);
                     Debug.DrawRay(rayOrigin, direction * attackRange, rayColor, 1.0f);
                 }
 
                 yield return new WaitForSeconds(stepTime);
             }
+        }
+
+        Vector3 CalculateForceDirection(Vector3 contactPoint, Vector3 contactNormal, Vector3 swingDirection)
+        {
+            Vector3 reflectDirection = Vector3.Reflect(swingDirection, contactNormal);
+            return reflectDirection;
         }
         
         void OnHit(Vector3 point, Collider hitObject)
@@ -238,7 +248,7 @@ namespace UZSG.Items.Weapons
                 OnMeleeHit?.Invoke(info);
             }
         }
-
+        
         public override void SetStateFromAction(ActionStates state)
         {
             

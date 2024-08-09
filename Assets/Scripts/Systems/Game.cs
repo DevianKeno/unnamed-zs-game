@@ -121,6 +121,7 @@ namespace UZSG.Systems
             attrManager.Initialize();
             itemManager.Initialize();
             entityManager.Initialize();
+            particleManager.Initialize();
             recipeManager.Initialize();
 
             /// This should be inside World

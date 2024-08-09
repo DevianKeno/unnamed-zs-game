@@ -1,26 +1,26 @@
-using UnityEditor.ShaderGraph;
 using UnityEngine;
 using UnityEngine.UI;
+
 using UZSG.Entities;
 
 namespace UZSG.UI.HUD
 {
+    public enum CompassAnimationType {
+        NoShake,
+        NormalShake,
+        DampenedShake,
+        SpringBasedShake
+    }
+
     public class Compass : MonoBehaviour
     {
         public Player Player;
-        public RawImage compassImage;
+        [Space]
 
-        public enum compassAnimation{
-            NoShake,
-            NormalShake,
-            DampenedShake,
-            SpringBasedShake
-        };
+        public bool Enabled;
 
         [Header("Animated Compass")]
-        public compassAnimation _shakeType = new compassAnimation();
-
-        Transform _posPlayer;
+        public CompassAnimationType ShakeType = new();
 
         [Header("Normal Shake variables")]
         public float shakeDuration = 0.5f; // Duration of the shake
@@ -44,27 +44,32 @@ namespace UZSG.UI.HUD
         float _targetAngle2;
         float _velocity2;
         float _currentAngle;
+        Transform FPPCamera;
 
-        // Start is called before the first frame update
-        void Start()
+        [SerializeField] RawImage compassImage;
+
+        internal void Initialize(Player player)
         {
-            _posPlayer = Player.FPP.CameraController.transform;
-
-            _currentAngle = compassImage.uvRect.x;   // used for Spring Based Shake
+            Player = player;
+            FPPCamera = player.FPP.Camera.transform;
+            Enabled = true;
         }
 
-        // Update is called once per frame
         void Update()
         {
-            if (_shakeType == compassAnimation.NormalShake)
+            if (!Enabled) return;
+            
+            compassImage.uvRect = new Rect(FPPCamera.transform.localEulerAngles.y / 360f, 0, 1f, 1f);
+            
+            if (ShakeType == CompassAnimationType.NormalShake)
             {
                 Shake1();
             }
-            else if (_shakeType == compassAnimation.DampenedShake)
+            else if (ShakeType == CompassAnimationType.DampenedShake)
             {
                 Shake2();
             }
-            else if (_shakeType == compassAnimation.SpringBasedShake)
+            else if (ShakeType == CompassAnimationType.SpringBasedShake)
             {
                 Shake3();
             }
@@ -76,7 +81,7 @@ namespace UZSG.UI.HUD
 
         void Shake1()
         {
-            float _compassTravel = _posPlayer.localEulerAngles.y / 360f;
+            float _compassTravel = FPPCamera.localEulerAngles.y / 360f;
             Vector2 _newUVRect = new Rect(_compassTravel, 0, 1f, 1f).min;
 
             if (_newUVRect != _previousUVRect && Vector2.Distance(_newUVRect, _previousUVRect) > 0.05)
@@ -112,7 +117,7 @@ namespace UZSG.UI.HUD
         
         void Shake2()
         {
-            _targetAngle = _posPlayer.localEulerAngles.y / 360f;
+            _targetAngle = FPPCamera.localEulerAngles.y / 360f;
             float currentAngle = compassImage.uvRect.x;
             float deltaAngle = _targetAngle - currentAngle;
             _velocity = Mathf.Lerp(_velocity, deltaAngle * _rotationSpeed, Time.deltaTime);
@@ -123,7 +128,7 @@ namespace UZSG.UI.HUD
 
         void Shake3()
         {
-            _targetAngle2 = _posPlayer.localEulerAngles.y / 360f;
+            _targetAngle2 = FPPCamera.localEulerAngles.y / 360f;
             float displacement = _targetAngle2 - _currentAngle;
             float acceleration = _springConstant * displacement - _damping * _velocity2;
             _velocity2 += acceleration * Time.deltaTime;
@@ -133,7 +138,7 @@ namespace UZSG.UI.HUD
 
         void NoShake()
         {
-            compassImage.uvRect = new Rect(_posPlayer.localEulerAngles.y / 360f, 0, 1f, 1f);
+            compassImage.uvRect = new Rect(FPPCamera.localEulerAngles.y / 360f, 0, 1f, 1f);
         }
     }
 }

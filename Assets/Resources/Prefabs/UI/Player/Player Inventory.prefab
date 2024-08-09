@@ -2498,7 +2498,6 @@ MonoBehaviour:
   rect: {fileID: 226868355165448386}
   AnimationFactor: 0.3
   Player: {fileID: 0}
-  inventory: {fileID: 0}
   frameController: {fileID: 6864834813706343539}
   bag: {fileID: 9108677017342296465}
   selectorPrefab: {fileID: 4703142867302330524, guid: de582ed54f6da9e40b695f3411e80524, type: 3}
@@ -2596,12 +2595,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rect: {fileID: 5293828896158943791}
   AnimationFactor: 0.3
+  Crafter: {fileID: 0}
   titleText: {fileID: 5008727454904757325}
   crafter: {fileID: 0}
   craftedItemDisplay: {fileID: 1262393651460353646}
   craftablesHolder: {fileID: 8474461248963068522}
   materialsHolder: {fileID: 4648145006940362137}
-  outputSlots: {fileID: 0}
+  outputSlots: {fileID: 4337315793158089789}
   craftButton: {fileID: 4715713749235191066}
   closeButton: {fileID: 7240020653883601109}
 --- !u!1 &7920684511685865911

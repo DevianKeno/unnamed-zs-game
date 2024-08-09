@@ -112,7 +112,7 @@ GameObject:
   - component: {fileID: 5926042534786560088}
   - component: {fileID: 973915384513159457}
   - component: {fileID: 7597647673977087240}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Workbench (Object)
   m_TagString: Interactable
   m_Icon: {fileID: 0}
@@ -149,9 +149,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectData: {fileID: 11400000, guid: 05f76cb0af4286140b3e6d534bd8b034, type: 2}
-  audioController: {fileID: 0}
   attributes:
     attributes: []
+  audioController: {fileID: 0}
   crafter: {fileID: 7597647673977087240}
   canvas: {fileID: 444594727191127144}
 --- !u!114 &7597647673977087240
@@ -221,6 +221,10 @@ PrefabInstance:
     - target: {fileID: 4036843865114568506, guid: 4524b8fc3768a4745b020f354ebf72ac, type: 3}
       propertyPath: m_Name
       value: workbench_model
+      objectReference: {fileID: 0}
+    - target: {fileID: 4036843865114568506, guid: 4524b8fc3768a4745b020f354ebf72ac, type: 3}
+      propertyPath: m_Layer
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 4036843865114568506, guid: 4524b8fc3768a4745b020f354ebf72ac, type: 3}
       propertyPath: m_TagString

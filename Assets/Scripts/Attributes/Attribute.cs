@@ -163,6 +163,12 @@ namespace UZSG.Attributes
         /// Meaning that if the value is modified, but is still the same, it is not called.
         /// </summary>
         public event EventHandler<AttributeValueChangedContext> OnValueChanged;
+        
+        /// <summary>
+        /// Fired everytime the Add() or Remove() methods are called.
+        /// </summary>
+        public event EventHandler<AttributeValueChangedContext> OnValueModify;
+
         /// <summary>
         /// Called when the value reaches zero.
         /// </summary>
@@ -172,28 +178,44 @@ namespace UZSG.Attributes
 
         internal virtual void Initialize() { }
 
+        protected void AddInternal(float value)
+        {
+            if (value == 0) return;
+
+            previousValue = Value;
+            this.value += value;
+            CheckOverflow();
+
+            ValueChanged();
+        }
+
+        protected void RemoveInternal(float value)
+        {
+            if (value == 0) return;
+
+            previousValue = Value;
+            this.value -= value;
+            CheckUnderflow();
+
+            ValueChanged();
+        }
+
         /// <summary>
         /// Add amount to the attribute's value.
         /// </summary>
         public virtual void Add(float value)
         {
-            previousValue = Value;
-            this.value += value;
-            if (previousValue == Value) return;
-            CheckOverflow();
-            ValueChanged();
+            AddInternal(value);
+            ValueModified();
         }
-        
+
         /// <summary>
         /// Remove amount from the attribute's value.
         /// </summary>
         public virtual void Remove(float value)
         {
-            previousValue = Value;
-            this.value -= value;
-            if (previousValue == Value) return;
-            CheckUnderflow();
-            ValueChanged();
+            RemoveInternal(value);
+            ValueModified();
         }
         
         /// <summary>
@@ -211,15 +233,14 @@ namespace UZSG.Attributes
             return false;
         }
         
-        protected virtual void ValueChanged()
-        {
-            if (value == previousValue) return;
-            
+        protected virtual bool ValueChanged()
+        {            
             float valueChange = Mathf.Abs(value - previousValue);
+            if (valueChange <= 0) return false;
+
             AttributeValueChangedContext context = new()
             {
                 Previous = previousValue,
-                Change = valueChange,
                 New = value
             };
 
@@ -228,6 +249,18 @@ namespace UZSG.Attributes
             {
                 OnReachZero?.Invoke(this, context);
             }
+
+            return true;
+        }
+
+        protected virtual void ValueModified()
+        {
+            var info = new AttributeValueChangedContext()
+            {
+                Previous = previousValue,
+                New = value,
+            };
+            OnValueModify?.Invoke(this, info);
         }
 
         protected float CheckOverflow()

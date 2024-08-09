@@ -1,4 +1,7 @@
 using System;
+
+using UnityEngine;
+
 using UZSG.Attributes;
 using UZSG.Data;
 using UZSG.Entities;
@@ -11,6 +14,9 @@ namespace UZSG.Objects
 {
     public class Tree : Resource
     {
+        public float ChopAngle = 8f; /// based on tree's size, hardness, mass?
+        [SerializeField] Transform treeModel;
+
         /// On load on world
         protected override void Start()
         {
@@ -48,6 +54,7 @@ namespace UZSG.Objects
                     }
                     
                     Game.Audio.Play("chop", transform.position);
+                    AnimateChop(-(tool.Owner as Player).Right);
                 }
                 else /// other tools deals half damage
                 {
@@ -60,6 +67,26 @@ namespace UZSG.Objects
             }
 
             Attributes["health"].Remove(damage);
+        }
+
+        void AnimateChop(Vector3 swingDirection)
+        {
+            LeanTween.cancel(treeModel.gameObject);
+
+            var targetRotation = Vector3.zero;
+            targetRotation += swingDirection * ChopAngle;
+
+            LeanTween.rotate(treeModel.gameObject, targetRotation, 0f)
+            .setOnComplete(() =>
+            {
+                ResetTransforms();
+            });
+        }
+
+        void ResetTransforms()
+        {
+            LeanTween.rotate(treeModel.gameObject, Vector3.zero, 0.33f)
+            .setEaseOutExpo();
         }
     }
 }

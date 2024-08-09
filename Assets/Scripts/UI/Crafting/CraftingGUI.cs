@@ -34,7 +34,7 @@ namespace UZSG.UI
         {
             foreach (Transform ca in outputSlots.transform)
             {
-                if (ca.TryGetComponent<ItemSlot>(out var itemSlot))
+                if (ca.TryGetComponent<ItemSlotUI>(out var itemSlot))
                 {
                     
                 }

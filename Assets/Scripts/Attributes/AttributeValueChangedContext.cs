@@ -16,7 +16,13 @@ namespace UZSG.Attributes
         /// <summary>
         /// The change in value.
         /// </summary>
-        public float Change { get; set; }
+        public readonly float Change
+        {
+            get
+            {
+                return UnityEngine.Mathf.Abs(New - Previous);
+            }
+        }
         /// <summary>
         /// Whether if the value had increased or decreased.
         /// </summary>
@@ -26,13 +32,6 @@ namespace UZSG.Attributes
             {
                 return New > Previous ? Attribute.ValueChangedType.Increased : Attribute.ValueChangedType.Decreased;
             }
-        }
-
-        public AttributeValueChangedContext(float previous, float @new, float change)
-        {
-            Previous = previous;
-            New = @new;
-            Change = change;
         }
     }
 }

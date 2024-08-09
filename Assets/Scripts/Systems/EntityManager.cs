@@ -33,8 +33,7 @@ namespace UZSG.Systems
 
             var startTime = Time.time;
             Game.Console.Log("Reading data: Entities...");
-            var ettys = Resources.LoadAll<EntityData>("Data/entities");
-            foreach (var etty in ettys)
+            foreach (var etty in Resources.LoadAll<EntityData>("Data/Entities"))
             {
                 _entitiesDict[etty.Id] = etty;
             }

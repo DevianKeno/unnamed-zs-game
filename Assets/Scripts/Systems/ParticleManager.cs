@@ -22,6 +22,10 @@ namespace UZSG.Systems
             
             var startTime = Time.time;
             Game.Console.Log("Reading data: Particles...");
+            foreach (var particle in Resources.LoadAll<ParticleData>("Data/Particles"))
+            {
+                _particlesDict[particle.Id] = particle;
+            }
         }
 
         /// <summary>

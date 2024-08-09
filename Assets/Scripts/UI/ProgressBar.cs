@@ -8,7 +8,10 @@ namespace UZSG.UI
         protected float _value;
         public float Value
         {
-            get { return _value; }
+            get
+            {
+                return _value;
+            }
             set
             {
                 if (_value != value)

@@ -14,8 +14,9 @@ using UZSG.Players;
 using UZSG.Data;
 using UZSG.FPP;
 using UZSG.UI;
-using UZSG.StatusEffects;
+using UZSG.UI.HUD;
 using UZSG.Crafting;
+using UZSG.StatusEffects;
 
 namespace UZSG.Entities
 {
@@ -46,18 +47,25 @@ namespace UZSG.Entities
         public PlayerAudioSourceController Audio => audioController;
 
         public Vector3 Forward => MainCamera.transform.forward;
+        public Vector3 Right => MainCamera.transform.right;
+        public Vector3 Up => MainCamera.transform.up;
         public Vector3 EyeLevel => MainCamera.transform.position;
 
         PlayerInventoryWindow invUI;
         public PlayerInventoryWindow InventoryGUI => invUI;
         PlayerHUD _HUD;
         public PlayerHUD HUD => _HUD;
+        
+        InputActionMap actionMap;
+        readonly Dictionary<string, InputAction> inputs = new();
+
 
         #region Events
 
         public event EventHandler<EventArgs> OnDoneInit;
 
         #endregion
+
 
         [field: Header("Components")]
         /// <summary>
@@ -108,8 +116,8 @@ namespace UZSG.Entities
             audioController.CreateAudioPool(8);
             audioController.LoadAudioAssetsData(playerEntityData.AudioAssetsData);
 
-            InitializeAttributes();
             InitializeStateMachines();
+            InitializeAttributes();
             InitializeInventory();
             // InitializeCrafter();
             InitializeHUD();
@@ -151,22 +159,28 @@ namespace UZSG.Entities
             MoveStateMachine.States[MoveStates.Crouch].OnEnter += OnCrouchEnter;      
         }
 
+        void InitializeHUD()
+        {
+            _HUD = Game.UI.Create<PlayerHUD>("Player HUD");
+            _HUD.Initialize(this);
+        }
+
         void InitializeInventory()
         {
-            // Inventory.LoadData(Data.Inventory);
             inventory.Initialize();
+            inventory.ReadSaveJSON(new());
 
-            invUI = Game.UI.Create<PlayerInventoryWindow>("Player Inventory", show: false);
-            invUI.BindPlayer(this);
-            invUI.Initialize();
+            invUI = Game.UI.Create<PlayerInventoryWindow>("Player Inventory", false);
+            invUI.Initialize(this);
+
             invUI.OnOpen += () =>
             {
-                Actions.ActionMap.Disable();
+                Actions.Disable();
                 inputs["Look"].Disable();
             };
             invUI.OnClose += () =>
             {
-                Actions.ActionMap.Enable();
+                Actions.Enable();
                 inputs["Look"].Enable();
             };
         }
@@ -177,16 +191,6 @@ namespace UZSG.Entities
             // craftingAgent.AddContainer(inventory.Bag);
             // craftingAgent.AddContainer(inventory.Hotbar);
         }
-
-        void InitializeHUD()
-        {
-            _HUD = Game.UI.Create<PlayerHUD>("Player HUD");
-            _HUD.BindPlayer(this);
-            _HUD.Initialize();
-        }
-
-        InputActionMap actionMap;
-        readonly Dictionary<string, InputAction> inputs = new();
 
         void InitializeInputs()
         {
@@ -202,7 +206,7 @@ namespace UZSG.Entities
 
         void ParentMainCameraToFPPController()
         {
-            Camera.main.transform.SetParent(FPP.CameraController.Camera.transform, false);
+            Camera.main.transform.SetParent(FPP.Camera.Camera.transform, false);
             Camera.main.transform.localPosition = Vector3.zero;
         }
 
@@ -251,25 +255,9 @@ namespace UZSG.Entities
             }
         }
         
-        /// <summary>
-        /// I want the cam to lock and cursor to appear only when the key is released :P
-        /// </summary>    
         void OnPerformInventory(InputAction.CallbackContext context)
         {
-            ToggleInventory();
-        }
-
-        public void ToggleInventory()
-        {
             invUI.ToggleVisibility();
-            if (invUI.IsVisible)
-            {
-                HUD.Hide();
-                invUI.OnClose += () =>
-                {
-                    HUD.Show();
-                };
-            }
         }
     }
 }

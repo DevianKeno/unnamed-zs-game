@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: bag_slots_count
   m_EditorClassIdentifier: 
   Id: bag_slots_count
-  Name: bag_slots_count
+  Name: Bag Slots Count
   Description: How many items you can carry.
   Type: 0

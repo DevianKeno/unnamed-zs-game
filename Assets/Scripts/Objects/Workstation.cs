@@ -40,7 +40,7 @@ namespace UZSG.Objects
 
         InputAction backAction;
         
-        void Start()
+        protected override void Start()
         {
             /// TESTING ONLY
             /// Place() should execute when the object is placed on the world :)
@@ -48,61 +48,62 @@ namespace UZSG.Objects
             ///
         }
 
+        void InitializeCrafter(Player player)
+        {
+            // crafter.BindUI(_GUI as CraftingGUI);
+            // crafter.AddRecipes(WorkstationData.IncludedRecipes);
+        }
+
+        void RequestCrafterInformation(Player player)
+        {
+            // crafter.AddContainer(player.Inventory.Bag);
+            // crafter.AddContainer(player.Inventory.Hotbar);
+            // crafter.AddRecipes(player.PlayerEntityData.KnownRecipes);
+        }
+
         public virtual void Place()
         {
             LoadGUIAsset(WorkstationData.GUI, onLoadCompleted: (gui) =>
             {
-                _GUI = gui;
-                _GUI.Title = WorkstationData.WorkstationName;
-                _GUI.Hide();
-                _hasGUILoaded = true;
-    
-                backAction = Game.Main.GetInputAction("Back", "Global");
-                backAction.performed += (ctx) =>
-                {
-                    _GUI.Hide();
-                };
+                InitializeGUI(gui);
             });
         }
 
         public virtual void Interact(IInteractActor actor, InteractArgs args)
         {
             if (actor is not Player player) return;
-
-            if (_hasGUILoaded)
-            {
-                player.HUD.Hide();
-                player.Actions.Disable();
-                player.Controls.Disable();
-                player.FPP.ToggleControls(false);
-                Game.UI.ToggleCursor(true);
-
-                _GUI.Show();
-                _GUI.OnClose += () => 
-                {
-                    player.HUD.Show();
-                    player.Actions.Enable();
-                    player.Controls.Enable();
-                    player.FPP.ToggleControls(true);
-                    Game.UI.ToggleCursor(false);
-                };
-
-                InitializeCrafter(player);
-            }
-            else
+            if (!_hasGUILoaded)
             {
                 Game.Console.LogAndUnityLog($"Workstation '{WorkstationData.Id}' has no GUI loaded.");
+                return;
             }
+
+            player.HUD.Hide();
+            player.Actions.Disable();
+            player.Controls.Disable();
+            player.FPP.ToggleControls(false);
+            Game.UI.ToggleCursor(true);
+
+            _GUI.OnClose += () => 
+            {
+                player.HUD.Show();
+                player.Actions.Enable();
+                player.Controls.Enable();
+                player.FPP.ToggleControls(true);
+                Game.UI.ToggleCursor(false);
+            };
+
+            RequestCrafterInformation(player);
         }
 
-        protected virtual void InitializeCrafter(Player player)
+        public void OpenGUI()
         {
-            // crafter.BindUI(_GUI as CraftingGUI);
-            // crafter.AddContainer(player.Inventory.Bag);
-            // // crafter.AddContainer(player.Inventory.Hotbar);
-            // crafter.AddRecipes(WorkstationData.IncludedRecipes);
-            // crafter.AddRecipes(player.PlayerEntityData.KnownRecipes);
-            // // InitializeCrafterGUI(player);
+            _GUI.SetActive(true);
+        }
+
+        public void CloseGUI()
+        {
+            _GUI.SetActive(false);
         }
 
         protected virtual void LoadGUIAsset(AssetReference asset, Action<WorkstationGUI> onLoadCompleted = null)
@@ -118,12 +119,27 @@ namespace UZSG.Objects
                 if (a.Status == AsyncOperationStatus.Succeeded)
                 {
                     var go = Instantiate(a.Result, canvas.transform);
+                    
                     if (go.TryGetComponent<WorkstationGUI>(out var gui))
                     {
+                        gui.SetActive(false);
                         onLoadCompleted?.Invoke(gui);
                         return;
                     }
                 }
+            };
+        }
+
+        void InitializeGUI(WorkstationGUI gui)
+        {
+            _GUI = gui;
+            _GUI.Title = WorkstationData.WorkstationName;
+            _hasGUILoaded = true;
+
+            backAction = Game.Main.GetInputAction("Back", "Global");
+            backAction.performed += (ctx) =>
+            {
+                CloseGUI();
             };
         }
     }

@@ -1837,11 +1837,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rect: {fileID: 5690071034703501165}
   AnimationFactor: 0.3
+  Crafter: {fileID: 0}
   titleText: {fileID: 4756600779310461199}
   crafter: {fileID: 0}
   craftedItemDisplay: {fileID: 1586578194868073260}
   craftablesHolder: {fileID: 8222185039756828456}
   materialsHolder: {fileID: 5116585477215013083}
+  outputSlots: {fileID: 4301352829544329599}
   craftButton: {fileID: 5112096350664364120}
   closeButton: {fileID: 7204066485831232919}
 --- !u!1 &8008453317070298908

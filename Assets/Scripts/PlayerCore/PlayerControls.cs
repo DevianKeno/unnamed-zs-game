@@ -398,23 +398,23 @@ namespace UZSG.Players
             {
                 Player.HUD.vignette.CrossFadeAlpha(1f, 0.5f, false);
                 _targetSpeed = CrouchSpeed;
-                _crouchPosition = Player.FPP.CameraController.transform.position.y - 1f;
+                _crouchPosition = Player.FPP.Camera.transform.position.y - 1f;
             }
             else
             {
                 Player.HUD.vignette.CrossFadeAlpha(0f, 0.5f, false);
                 _targetSpeed = MoveSpeed;
-                _crouchPosition = Player.FPP.CameraController.transform.position.y + 1f;
+                _crouchPosition = Player.FPP.Camera.transform.position.y + 1f;
             }
             _isCrouching = crouch;
 
-            LeanTween.value(gameObject, Player.FPP.CameraController.transform.position.y, _crouchPosition, transitionSpeed)
+            LeanTween.value(gameObject, Player.FPP.Camera.transform.position.y, _crouchPosition, transitionSpeed)
             .setOnUpdate((float i) =>
             {   
-                Player.FPP.CameraController.transform.position = new Vector3(
-                    Player.FPP.CameraController.transform.position.x,
+                Player.FPP.Camera.transform.position = new Vector3(
+                    Player.FPP.Camera.transform.position.x,
                     i,
-                    Player.FPP.CameraController.transform.position.z
+                    Player.FPP.Camera.transform.position.z
                 );
             })
             .setOnComplete(() =>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
@@ -56,12 +57,14 @@ namespace UZSG.UI
 
 
         #region UI Events
+        
         public event Action<bool> OnCursorToggled;
         
         #endregion
 
         
         #region Inputs
+
         PlayerInput input;
         InputAction toggleCursorInput;
         InputAction closeCurrentWindowInput;

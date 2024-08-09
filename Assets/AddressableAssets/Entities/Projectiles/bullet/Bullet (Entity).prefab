@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 1267184495338280296}
   - component: {fileID: 141987813804094459}
   - component: {fileID: 3034706727560040334}
-  - component: {fileID: 8036403274945354195}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -84,27 +83,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &8036403274945354195
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 276391463480745451}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &999913822789937765
 GameObject:
   m_ObjectHideFlags: 0
@@ -189,7 +167,7 @@ TrailRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.097229004
+        value: 0.044937134
         inSlope: -0.61142087
         outSlope: -0.61142087
         tangentMode: 0
@@ -326,7 +304,7 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 2039
+    m_Bits: 0
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
@@ -347,6 +325,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   entityData: {fileID: 11400000, guid: 405cf52e16b571e489e63a0bc1f4aff7, type: 2}
+  audioSourceController: {fileID: 0}
   DamageAttributes:
     BaseDamage: 0
     IsPartDamage: 0
@@ -364,5 +343,6 @@ MonoBehaviour:
     Speed: 0
     GravityScale: 0
     MinRenderDistance: 0
-  CalculatedDamage: 0
-  Point: {x: 0, y: 0, z: 0}
+  LayerMask:
+    serializedVersion: 2
+    m_Bits: 10240

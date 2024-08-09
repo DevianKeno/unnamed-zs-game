@@ -12,6 +12,8 @@ namespace UZSG.UI
     /// </summary>
     public class Window : MonoBehaviour, IUIElement
     {
+        static Vector2 _hiddenWindowsPosition = new(5000, 5000);
+        
         [SerializeField] protected RectTransform rect;
         public RectTransform Rect => rect;
         [field: Space]
@@ -19,27 +21,33 @@ namespace UZSG.UI
         public bool IsVisible { get; set; }
         public Vector3 Position
         {
-            get
-            {
-                return rect.transform.position;
-            }
-            set
-            {
-                rect.transform.position = value;
-            }
+            get { return rect.transform.position; }
+            set { rect.transform.position = value; }
         }
-        public float AnimationFactor = 0.3f;
+        public float FadeDuration = 0.3f;
         
-        public bool IsAnimated { get; set; }
-
         protected GameObject blocker;
+        protected Vector2 showedPosition;
 
+
+        #region Events
+
+        /// <summary>
+        /// Called whenever this Window is shown/opened.
+        /// </summary>
         public event Action OnOpen;
+        /// <summary>
+        /// Called whenever this Window is hidden/closed.
+        /// </summary>
         public event Action OnClose;
 
-        void Start()
+        #endregion
+        
+
+        void Awake()
         {
             rect = GetComponent<RectTransform>();
+            showedPosition = rect.localPosition;
         }
 
         /// <summary>
@@ -54,34 +62,22 @@ namespace UZSG.UI
         /// <summary>
         /// Shows the window.
         /// </summary>
-        /// <param name="solo">Removes all other windows if true.</param>
         public void Show()
         {
-            gameObject.SetActive(true);
-            LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
-
             if (!IsVisible)
             {
                 OnShow();
                 OnOpen?.Invoke();
             }
+
+            rect.anchoredPosition = showedPosition; /// hehe^2
             IsVisible = true;
-            Game.UI.AddToActiveWindows(this);
-        }
-
-        bool _destroyOnBlockerClick;
-
-        public void CreateBlocker(bool destroyOnClick = true)
-        {
-            _destroyOnBlockerClick = destroyOnClick;
-            blocker = Game.UI.CreateBlocker(forElement: this, onClick: () =>
-            {
-                if (_destroyOnBlockerClick) Destroy();
-            });
         }
 
         /// <summary>
-        /// Hides the window. Does not destroy. Use Destroy() if you need to,
+        /// Hides the window.
+        /// Does not destroy nor disables the object.
+        /// Use Destroy() if you need to delete, and SetActive() to disable.
         /// </summary>
         public void Hide()
         {
@@ -89,11 +85,26 @@ namespace UZSG.UI
             {
                 OnHide();
                 OnClose?.Invoke();
-            };
+            }
+
+            rect.anchoredPosition = _hiddenWindowsPosition; /// hehe^2
             IsVisible = false;
-            
-            Game.UI.RemoveFromActiveWindows(this);
-            gameObject.SetActive(false);
+        }
+
+        public void SetActive(bool enabled)
+        {
+            if (enabled)
+            {
+                gameObject.SetActive(true);
+                Show();
+                LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
+            }
+            else
+            {
+                Hide();
+                // Game.UI.RemoveFromActiveWindows(this);
+                gameObject.SetActive(false);
+            }
         }
 
         // public void FadeIn()

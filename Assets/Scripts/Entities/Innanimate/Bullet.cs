@@ -10,12 +10,21 @@ namespace UZSG.Entities
 {
     public struct BulletEntityOptions
     {
+        /// <summary>
+        /// Position where the bullet originated.
+        /// </summary>
         public Vector3 Origin { get; set; }
         /// <summary>
         /// Distance where the bullet starts to be visible.
         /// </summary>
         public float RenderAt { get; set; }
+        /// <summary>
+        /// Bullet's internal damage.
+        /// </summary>
         public float Damage { get; set; }
+        /// <summary>
+        /// Bullet trajectory.
+        /// </summary>
         public Vector3 Velocity { get; set; }
         public float Speed { get; set; }
     }
@@ -33,9 +42,8 @@ namespace UZSG.Entities
         public string CollisionTag => "Projectile";
         public BulletDamageAttributes DamageAttributes;
         public BulletAttributes Attributes;
-        public float CalculatedDamage;
+        public LayerMask LayerMask;
         
-        public Vector3 Point;
         Vector3 _velocity;
         Vector3 _origin;
         Vector3 _previousPosition;
@@ -64,15 +72,15 @@ namespace UZSG.Entities
         
         void Update()
         {
-            ApplyMovement();
-            ApplyGravity();
-            RaycastForCollisions();
-            _previousPosition = transform.position;
         }
 
         void FixedUpdate()
         {
+            ApplyMovement();
+            ApplyGravity();
+            RaycastForCollisions();
             CheckDistanceFromOrigin();
+            _previousPosition = transform.position;
         }
 
         void RaycastForCollisions()
@@ -81,7 +89,7 @@ namespace UZSG.Entities
             float distance = (transform.position - _previousPosition).magnitude;
             Ray ray = new(_previousPosition, direction);
             
-            if (Physics.Raycast(ray, out var hit, distance, LayerMask.GetMask("Hitbox")))
+            if (Physics.Raycast(ray, out var hit, distance, LayerMask))
             {
                 OnHit(hit.point, hit.collider);
             }
@@ -120,17 +128,21 @@ namespace UZSG.Entities
             }
         }
 
-        void OnHit(Vector3 point, Collider other)
+        void OnHit(Vector3 point, Collider hitObject)
         {
-            if (other.TryGetComponent<Hitbox>(out var hitbox))
+            var info = new CollisionHitInfo()
             {
-                CalculatedDamage = CalculateDamage(hitbox.Part);
-                hitbox.HitBy(new()
-                {
-                    Type = CollisionType.Projectile,
-                    Source = this,
-                    ContactPoint = point,
-                });
+                Type = CollisionType.Melee,
+                Source = this,
+                ContactPoint = point,
+            };
+
+            var target = hitObject.GetComponentInParent<ICollisionTarget>();
+            if (target != null)
+            {
+                // CalculatedDamage = CalculateDamage(hitbox.Part);
+                info.Target = target;
+                target.HitBy(info);
                 Destroy(gameObject);
             }
         }

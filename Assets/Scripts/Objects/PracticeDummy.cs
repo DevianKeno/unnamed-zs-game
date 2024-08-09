@@ -1,8 +1,11 @@
 using System;
 
 using UnityEngine;
+
 using UZSG.Attributes;
+using UZSG.Entities;
 using UZSG.Interactions;
+using UZSG.Systems;
 
 namespace UZSG.Objects
 {
@@ -18,15 +21,15 @@ namespace UZSG.Objects
             base.Start();
         }
         
-        public void HitBy(CollisionHitInfo other)
+        public void HitBy(CollisionHitInfo info)
         {
-            if (other.Type == CollisionType.Melee)
+            if (info.Type == CollisionType.Melee)
             {
-                OnHitMelee(other);
+                OnHitMelee(info);
             }
-            else if (other.Type == CollisionType.Projectile)
+            else if (info.Type == CollisionType.Projectile)
             {
-                OnHitProjectile(other);
+                OnHitProjectile(info);
             }
         }
 
@@ -37,14 +40,23 @@ namespace UZSG.Objects
             .setEaseOutElastic();
         }
 
+        void SpawnDamageText(Vector3 position)
+        {
+            Game.Entity.Spawn<DamageText>("damage_text", position, (info) =>
+            {
+                info.Entity.Text = "15";
+            });
+        }
+
         void OnHitMelee(CollisionHitInfo other)
         {
             AnimateHit();
+            SpawnDamageText(other.ContactPoint);
         }
 
         void OnHitProjectile(CollisionHitInfo other)
         {
-            
+            SpawnDamageText(other.ContactPoint);
         }
     }
 }

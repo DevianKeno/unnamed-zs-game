@@ -25,10 +25,13 @@ MonoBehaviour:
   Subtype: 0
   Weight: 0
   StackSize: 1
+  IsFuel: 0
+  FuelDuration: 0
   IsMaterial: 0
   IsCraftable: 0
   Recipes: []
   SourceDescription: 
+  AudioAssetsData: {fileID: 0}
   Piece: 0
   Category: 0
   Attributes:

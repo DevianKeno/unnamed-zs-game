@@ -13,7 +13,7 @@ namespace UZSG.UI
 
         [SerializeField] protected RectTransform bufferRect;
 
-        public void BindAttribute(Attribute attr)
+        public virtual void BindAttribute(Attribute attr)
         {
             if (attr == null || !attr.IsValid) return;
 
@@ -22,7 +22,7 @@ namespace UZSG.UI
             Refresh();
         }
 
-        void OnValueChanged(object sender, AttributeValueChangedContext info)
+        protected virtual void OnValueChanged(object sender, AttributeValueChangedContext info)
         {
             Value = attribute.ValueMaxRatio * 100f;
 

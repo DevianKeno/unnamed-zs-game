@@ -55,7 +55,7 @@ namespace UZSG.FPP
         [Header("Controllers")]
         public bool AppendAnimationPrefixes = true;
         [SerializeField] FPPCameraInput cameraController;
-        public FPPCameraInput CameraController => cameraController;
+        public FPPCameraInput Camera => cameraController;
         [SerializeField] FPPArmsController armsController;
         [SerializeField] FPPViewmodelController viewmodelController;
         // [SerializeField] FPPAimDownSights adsController;

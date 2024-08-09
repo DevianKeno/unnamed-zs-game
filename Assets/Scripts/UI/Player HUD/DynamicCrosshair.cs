@@ -11,14 +11,17 @@ namespace UZSG.UI.HUD
 {
     public class DynamicCrosshair : MonoBehaviour
     {
+        public Player Player;
+        [Space]
+        
         [Header("Crosshair")]
-        public Player player;
         public float restingSize;
         public float maxSize;
         public float speed;
         [Range(0.00f, 1.0f)]
         public float addedFiringFactor;
 
+        bool _enabled;
         float _currentSize;
         float _moveSize = 0.0f;
         float _jumpMultiplier = 1.0f;
@@ -27,12 +30,18 @@ namespace UZSG.UI.HUD
         float _baseRecoilValue = 1.0f;
         float _addedTotalFiringFactor = 0.0f;
 
-        [SerializeField] RectTransform _crosshair;
+        [SerializeField] RectTransform crosshair;
 
-        void Start()
+        void Awake()
         {
-            player.FPP.OnChangeHeldItem += OnChangeHeldItem;
-            _crosshair = GetComponent<RectTransform>();
+            crosshair = GetComponent<RectTransform>();
+        }
+
+        internal void Initialize(Player player)
+        {
+            Player = player;
+            Player.FPP.OnChangeHeldItem += OnChangeHeldItem;
+            _enabled = true;
         }
 
         void OnChangeHeldItem(HeldItemController controller)
@@ -40,7 +49,7 @@ namespace UZSG.UI.HUD
             print("CHANGED!");
             // TODO: fix recoilMult not activating on first change of held weapon item
             // Set recoilMultiplier based on weapon spread data; experimental, scuffed, and subject to change
-            if (player.FPP.HeldItem is GunWeaponController gunWeapon)
+            if (Player.FPP.HeldItem is GunWeaponController gunWeapon)
             {
                 _baseRecoilValue = CalculateBaseRecoilMultiplier(gunWeapon.WeaponData.RangedAttributes.Spread);
 
@@ -55,8 +64,10 @@ namespace UZSG.UI.HUD
 
         void Update()
         {
+            if (!_enabled) return;
+            
             CrosshairChange();
-            _crosshair.sizeDelta = new Vector2(_currentSize, _currentSize);
+            crosshair.sizeDelta = new Vector2(_currentSize, _currentSize);
         }
 
         void CrosshairChange()
@@ -72,7 +83,7 @@ namespace UZSG.UI.HUD
             }
 
             // Set jumpMultiplier to a fixed value if the player is jumping or in the air
-            if (!player.Controls.IsGrounded || IsJumping)
+            if (!Player.Controls.IsGrounded || IsJumping)
             {
                 _jumpMultiplier = 1.3f;
             }
@@ -82,7 +93,7 @@ namespace UZSG.UI.HUD
             }
 
             // Set crouchMultiplier to a fixed value if the player is crouching
-            if (player.Controls.IsCrouching)
+            if (Player.Controls.IsCrouching)
             {
                 _crouchMultiplier = 0.85f;
             }

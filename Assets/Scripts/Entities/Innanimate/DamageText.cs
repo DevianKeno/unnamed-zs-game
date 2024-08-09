@@ -8,46 +8,38 @@ namespace UZSG.Entities
     /// </summary>
     public class DamageText : Entity
     {
-        [SerializeField] string damage;
-        public string Damage
+        public string Text
         {
             get
             {
-                return text.text;
+                return textTMP.text;
             }
             set
             {
-                text.text = value;
+                textTMP.text = value;
             }
         }
         public Color Color
         {
             get
             {
-                return text.color;
+                return textTMP.color;
             }
             set
             {
-                text.color = value;
+                textTMP.color = value;
             }
         }
         public float Force;
 
         [Space]
-        [SerializeField] TextMeshPro text;
+        [SerializeField] TextMeshPro textTMP;
         [SerializeField] Rigidbody rb;
-
-        void OnValidate()
-        {
-            if (Application.isPlaying) return;
-
-            Damage = damage;
-        }
 
         public override void OnSpawn()
         {
             ShootUp(Vector3.up, Force);
-            Destroy(gameObject, 3f);
+            Destroy(gameObject, 2f);
         }
         
         public void ShootUp(Vector3 impactDirection, float force = 5)

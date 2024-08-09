@@ -1,5 +1,3 @@
-using System.Collections;
-
 using UnityEngine;
 using UnityEngine.UI;
 using UZSG.Systems;
@@ -9,19 +7,17 @@ namespace UZSG.UI
     [RequireComponent(typeof(Graphic))]
     public class FadeableElement : MonoBehaviour
     {
+        float _originalAlpha;
         Graphic graphic;
-        float originalAlpha;
 
         void Awake()
         {
             graphic = GetComponent<Graphic>();
         }
 
-        internal void Initialize()
+        void Start()
         {
-            graphic = GetComponent<Graphic>();
-            originalAlpha = graphic.color.a;
-            SetAlpha(0f);
+            _originalAlpha = graphic.color.a;
         }
 
         public void SetAlpha(float alpha)
@@ -33,31 +29,27 @@ namespace UZSG.UI
 
         public void FadeIn(float duration)
         {
-            StopAllCoroutines();
-
             if (Game.UI.EnableScreenAnimations)
             {
-                StartCoroutine(FadeInCoroutine(duration));
+                SetAlpha(0f);
+                graphic.CrossFadeAlpha(_originalAlpha, duration, false);
             }
             else
             {
-                SetAlpha(originalAlpha);
+                SetAlpha(_originalAlpha);
             }
         }
 
-        IEnumerator FadeInCoroutine(float duration)
+        public void FadeOut(float duration)
         {
-            float elapsedTime = 0f;
-            SetAlpha(0f);
-
-            while (elapsedTime < duration)
+            if (Game.UI.EnableScreenAnimations)
             {
-                elapsedTime += Time.deltaTime;
-                float alpha = Mathf.Clamp01(elapsedTime / duration) * originalAlpha;
-                SetAlpha(alpha);
-                yield return null;
+                graphic.CrossFadeAlpha(0f, duration, false);
             }
-            SetAlpha(originalAlpha);
+            else
+            {
+                SetAlpha(0f);
+            }
         }
     }
 }

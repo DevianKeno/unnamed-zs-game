@@ -47,7 +47,7 @@ MonoBehaviour:
     RoundsPerMinute: 300
     ClipSize: 7
     ReloadSpeed: 1
-    Spread: 7
+    Spread: 0
     BurstFireCount: 0
     BurstFireInterval: 0
     BulletDamage:

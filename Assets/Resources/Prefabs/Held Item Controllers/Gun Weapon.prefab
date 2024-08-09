@@ -138,7 +138,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4873502809465433407}
   - component: {fileID: 9221673136634983152}
-  - component: {fileID: 6967395181125910395}
+  - component: {fileID: 7056730655661889698}
   - component: {fileID: 2726077485849005911}
   m_Layer: 0
   m_Name: Gun Weapon
@@ -176,10 +176,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ItemData: {fileID: 0}
-  stateMachine: {fileID: 6967395181125910395}
-  MuzzleController: {fileID: 0}
   audioSourceController: {fileID: 2726077485849005911}
---- !u!114 &6967395181125910395
+  attributes:
+    attributes: []
+  stateMachine: {fileID: 7056730655661889698}
+  MuzzleController: {fileID: 0}
+--- !u!114 &7056730655661889698
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -188,7 +190,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1441765491178271053}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b2bdec81e1eeeb845b96edba3629cea2, type: 3}
+  m_Script: {fileID: 11500000, guid: fc346ad3691b8974b84d805e33b47039, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _lockedUntil: 0
@@ -207,6 +209,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91fd57dad2e3b8844889a99ae9e028d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  AudioAssetsData: {fileID: 0}
 --- !u!1 &1804872665885607403
 GameObject:
   m_ObjectHideFlags: 0

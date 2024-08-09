@@ -154,6 +154,13 @@ namespace UZSG.Attributes
                 return baseChange * changeMultiplier;
             }
         }
+        public bool IsFull
+        {
+            get
+            {
+                return Value >= CurrentMaximum;
+            }
+        }
      
         float _lockUntil;
 
@@ -200,34 +207,31 @@ namespace UZSG.Attributes
         
         void CycleTick(TickInfo t)
         {
-            PerformCycle();
+            PerformInternalCycle();
         }
 
         void CycleSecond(SecondInfo s)
         {
-            PerformCycle();
+            PerformInternalCycle();
         }
 
         /// <summary>
         /// Change current value by the ChangeType.
         /// </summary>
-        void PerformCycle()
+        void PerformInternalCycle()
         {
             if (!allowChange) return;
 
             if (changeType == VitalAttributeChangeType.Regen)
             {
-                value += CurrentChange;
+                AddInternal(CurrentChange);
                 CheckOverflow();
-                
             }
             else if (changeType == VitalAttributeChangeType.Degen)
             {
-                value -= CurrentChange;
+                RemoveInternal(CurrentChange);
                 CheckUnderflow();
-                
             }
-            ValueChanged();
         }
         
         public override void Remove(float value)
@@ -252,26 +256,35 @@ namespace UZSG.Attributes
             }
         }
 
-        protected override void ValueChanged()
+        protected override bool ValueChanged()
         {
-            base.ValueChanged();
-                       
+            if (!base.ValueChanged())
+            {
+                return false;
+            }
+
             float valueChange = Mathf.Abs(value - previousValue);
             AttributeValueChangedContext context = new()
             {
                 Previous = previousValue,
-                Change = valueChange,
                 New = value
             };
 
             if (Value <= minimum)
             {
-                OnReachMinimum?.Invoke(this, context);
+                if (previousValue > Minimum)
+                {
+                    OnReachMinimum?.Invoke(this, context);
+                }
             }
             else if (Value >= CurrentMaximum)
             {
-                OnReachMaximum?.Invoke(this, context);
+                if (previousValue < CurrentMaximum)
+                {
+                    OnReachMaximum?.Invoke(this, context);
+                }
             }
+            return true;
         }
 
         public override void ReadSaveData(AttributeSaveData data, bool initialize = true)

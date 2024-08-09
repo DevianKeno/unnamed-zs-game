@@ -69,7 +69,7 @@ namespace UZSG.Inventory
             _equipment = new();
         }
 
-        public void LoadData(InventorySaveData data)
+        public void ReadSaveJSON(InventorySaveData data)
         {
         }
 

@@ -1,18 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
-public class AttackData : MonoBehaviour
+namespace UZSG.Combat
 {
-    // Start is called before the first frame update
-    void Start()
+    [Serializable]
+    public struct AttackInfo
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        public float Damage;
     }
 }

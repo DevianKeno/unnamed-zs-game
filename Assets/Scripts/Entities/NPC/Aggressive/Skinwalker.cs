@@ -52,13 +52,13 @@ namespace UZSG.Entities
 
                 Debug.Log($"Shot part {hitbox.Part}");
                 SpawnBlood(info.ContactPoint);
-                // SpawnDamageText(info.ContactPoint);
+                SpawnDamageText(info.ContactPoint);
                 Destroy(bullet.gameObject);
             }
             else if (info.Source.CollisionTag == "Melee")
             {
                 SpawnBlood(info.ContactPoint);
-                // SpawnDamageText(info.ContactPoint);
+                SpawnDamageText(info.ContactPoint);
             }
         }
 

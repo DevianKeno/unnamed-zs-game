@@ -1,39 +1,40 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+
+using UZSG.Systems;
 using UZSG.Entities;
 using UZSG.FPP;
+using UZSG.Items;
 using UZSG.Items.Weapons;
-using UZSG.Systems;
 
-public class SwitchCrosshair : MonoBehaviour
+namespace UZSG.UI.HUD
 {
-    public Player player;
-    // Start is called before the first frame update
-    void Start()
+    public class SwitchCrosshair : MonoBehaviour
     {
-        if (player.FPP.HeldItem is GunWeaponController gunWeapon)
-        {
-            gameObject.transform.Find("Non-Weapon Crosshair").gameObject.SetActive(false);
-        }
-        else
-        {
-            gameObject.transform.Find("Weapon Crosshair").gameObject.SetActive(false);
-        }
-    }
+        public Player Player;
+        [Space]
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (player.FPP.HeldItem is GunWeaponController gunWeapon)
+        [SerializeField] GameObject defaultCrosshair;
+        [SerializeField] GameObject gunCrosshair;
+        
+        internal void Initialize(Player player)
         {
-            gameObject.transform.Find("Non-Weapon Crosshair").gameObject.SetActive(false);
-            gameObject.transform.Find("Weapon Crosshair").gameObject.SetActive(true);
+            Player = player;
+            player.FPP.OnChangeHeldItem += OnChangeHeldItem;
         }
-        else
+
+        void OnChangeHeldItem(HeldItemController controller)
         {
-            gameObject.transform.Find("Non-Weapon Crosshair").gameObject.SetActive(true);
-            gameObject.transform.Find("Weapon Crosshair").gameObject.SetActive(false);
+            /// Switch crosshairs
+            if (Player.FPP.HeldItem is GunWeaponController gunWeapon)
+            {
+                defaultCrosshair.SetActive(false);
+                gunCrosshair.SetActive(true);
+            }
+            else
+            {
+                defaultCrosshair.SetActive(true);
+                gunCrosshair.SetActive(false);
+            }
         }
     }
 }

@@ -13,7 +13,7 @@ using UZSG.Items;
 using UZSG.UI.HUD;
 using UZSG.Items.Weapons;
 
-namespace UZSG.UI
+namespace UZSG.UI.HUD
 {
     public class PlayerHUD : Window
     {
@@ -22,6 +22,8 @@ namespace UZSG.UI
 
         Dictionary<int, ItemSlotUI> _equipmentSlotUIs = new();
         Dictionary<int, ItemSlotUI> _hotbarSlotUIs = new();
+
+        public event Action<Player> OnInitializePlayer;
         
         [Header("Elements")]
         public GameObject equipment;
@@ -36,24 +38,24 @@ namespace UZSG.UI
         public GameObject pickupsIndicatorContainer;
         public DynamicCrosshair crosshair;
         public SwitchCrosshair allCrosshair;
-        public HUD.Compass compass;
+        public Compass compass;
         public Image vignette;
 
-        internal void Initialize()
+        internal void Initialize(Player player)
         {
-            if (Player == null)
+            if (player == null)
             {
-                var msg = $"Failed to initialize Player HUD. Bind a Player first!";
-                Game.Console.Log(msg);
-                Debug.LogWarning(msg);
+                Game.Console.LogAndUnityLog($"Invalid player.");
                 return;
             }
 
+            Player = player;
+            BindPlayerAttributes();
             InitializeItemSlots();
             InitializeEvents();
-            crosshair.player = Player;
-            allCrosshair.player = Player;
-            compass.Player = Player;
+            crosshair.Initialize(player);
+            allCrosshair.Initialize(player);
+            compass.Initialize(player);
         }
 
         void InitializeItemSlots()
@@ -111,8 +113,6 @@ namespace UZSG.UI
 
         public void BindPlayer(Player player)
         {
-            Player = player;
-            BindPlayerAttributes();
         }
 
         void BindPlayerAttributes()
@@ -138,7 +138,6 @@ namespace UZSG.UI
         {
             _equipmentSlotUIs[e.Slot.Index].SetDisplayedItem(e.Slot.Item);
         }
-
 
         void OnChangeHeldItem(HeldItemController heldItem)
         {

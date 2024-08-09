@@ -8,12 +8,11 @@ namespace UZSG.Players
     public class PlayerDetection: MonoBehaviour 
     {
         public event EventHandler<EnemyCollidedEventArgs> OnEnemyInRange;
-        public float SiteRange, AttackRange; // range from which Players is in site, attack range of entity
-        public float _shortestDistance = Mathf.Infinity;
+        public float SiteRange, AttackRange; // range from which Players is in site
         bool _inChase;
+        Enemy _enemyFound; // the enemy found in a specific collider
         Player _player;
-        Collider[] _hitColliders; // array of object that is within enemy range
-        Collider _closestCollider;
+        Collider[] _hitSiteColliders; // array of object that is within enemy range
         [SerializeField] LayerMask EnemyLayer; // Layers that the enemy chases
 
         void FixedUpdate()
@@ -28,21 +27,31 @@ namespace UZSG.Players
             public Collider[] Enemies;
         }
 
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.red; // Set the color of the gizmo
+            Gizmos.DrawWireSphere(transform.position, SiteRange); // Draw the wireframe sphere
+        }
+
         public void FindEnemyInRange()
         {
-            // Reset the shortest distance and closest collider
-            _shortestDistance = float.MaxValue;
-            _closestCollider = null;
-            
             // Find objects within the range
-            _hitColliders = Physics.OverlapSphere(transform.position, SiteRange, EnemyLayer);
+            _hitSiteColliders = Physics.OverlapSphere(transform.position, SiteRange, EnemyLayer);
             _player = GetComponent<Player>();
 
-            foreach (var collider in _hitColliders)
+            // Iterate over each collided object determining whether its a player or not
+            foreach (var collider in _hitSiteColliders)
             {
-                if (collider.TryGetComponent<IDetectable>(out var detectable))
+                _enemyFound = collider.GetComponent<Enemy>();
+                // If detected enemy chase player
+                if (_enemyFound != null)
                 {
-                    detectable.PlayerDetect(_player);
+                    if (collider.TryGetComponent<IDetectable>(out var detectable))
+                    {
+                        // Player is within enemy site range
+                        detectable.PlayerDetect(_player);
+                        Debug.Log("Enemy detected");
+                    }
                 }
             }
         }

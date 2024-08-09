@@ -24,6 +24,11 @@
             "Id": "attack_damage",
             "Type": 0,
             "Value": 20.0
+        },
+        {
+            "Id": "site_radius",
+            "Type": 0,
+            "Value": 12.0
         }
     ]
 }

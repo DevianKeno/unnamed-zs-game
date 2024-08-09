@@ -21,16 +21,25 @@ namespace UZSG.Entities
         Player _target; // Current target of the enemy
         public EnemyActionStatesMachine EnemyStateMachine => enemyStateMachine;
         bool _inSite, _inAttack; // checks if the player is in site, attack range
-        EnemyActionStates actionState;
+        EnemyActionStates _actionState;
         Vector3 _randomDestination; // Destination of agent
         [SerializeField] float _distanceFromPlayer;
-        [SerializeField] float radius; // Radius of which the enemy detects the player
+        [SerializeField] float _speed;
+        [SerializeField] float _radius; // Radius of which the enemy detects the player
         [SerializeField] protected EnemyActionStatesMachine enemyStateMachine;
         [SerializeField] NavMeshAgent _enemyEntity; // the entity's agent movement
         [SerializeField] LayerMask PlayerLayer; // Layers that the enemy chases
 
         
         #endregion
+
+
+        #region Horde Setting
+        
+        public Transform Hordetransform;
+
+        #endregion
+
 
         #region Agent data
 
@@ -46,8 +55,8 @@ namespace UZSG.Entities
         #region Enemy Start/Update
         protected virtual void Start()
         {
-            actionState = HandleTransition;
-            executeAction(actionState);
+            _actionState = HandleTransition;
+            ExecuteAction(_actionState);
             Game.Tick.OnSecond += Game_Tick_OnSecond();
         }
 
@@ -64,8 +73,8 @@ namespace UZSG.Entities
 
         void FixedUpdate()
         {
-            actionState = HandleTransition;
-            executeAction(actionState);
+            _actionState = HandleTransition;
+            ExecuteAction(_actionState);
         }
 
         public override void OnSpawn()
@@ -84,7 +93,7 @@ namespace UZSG.Entities
         public void ResetPlayerIfNotInRange()
         {
             _distanceFromPlayer = Vector3.Distance(_target.Position, transform.position); 
-            if (radius <= _distanceFromPlayer)
+            if (_radius <= _distanceFromPlayer)
             {
                 _target = null;
             }
@@ -112,7 +121,7 @@ namespace UZSG.Entities
         {
             generic = new();
             generic.ReadSaveJSON(defaultData.GenericAttributes);
-            radius = generic.Get("site_radius").Value;
+            _radius = generic.Get("site_radius").Value;
         }
 
         #endregion
@@ -164,6 +173,32 @@ namespace UZSG.Entities
             }
         }
 
+        public bool IsHordeMode
+        {
+            get
+            {   // TODO: palitan mo yung "jericho_method" sa method na nagrereturn ng bool; true if in hordemode (lalakad straight line), false if hindi horde mode zombie
+                if (jericho_method)
+                {
+                    if (IsInSiteRange == EnemyActionStates.Roam)
+                    {
+                        Hordetransform.position = new Vector3(1, 2, 1);             // change mo value sa need mo
+                        Hordetransform.rotation = Quaternion.Euler(0, 30, 0);       // change mo value sa need mo
+                        return true;
+                    }
+                    return false;
+                }
+                return false;
+            }
+        }
+
+        public bool jericho_method // TODO: pwede mo remove ito or palitan ng method mo, pansamantala ko lang yan 
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         public EnemyActionStates HandleTransition // "sense" what's the state of the enemy 
         {
             get
@@ -172,6 +207,11 @@ namespace UZSG.Entities
                 if (IsNoHealth == true)
                 {
                     return EnemyActionStates.Die;
+                }
+                // if enemy is in horde mode
+                if (IsHordeMode)
+                {
+                    return EnemyActionStates.Horde;
                 }
                 // if Player not in Chase range
                 if (IsInSiteRange == EnemyActionStates.Roam)
@@ -248,10 +288,16 @@ namespace UZSG.Entities
         public void Horde()
         {
             enemyStateMachine.ToState(EnemyActionStates.Horde);
-            Debug.Log("SpecialAttack2");
+
+            // Set the starting position and rotation of the zombie
+            transform.position = Hordetransform.position;
+            transform.rotation = Hordetransform.rotation;
+
+            // Move forward according to speed
+            transform.Translate(Vector3.forward * _speed * Time.deltaTime);
         }
 
-        public void executeAction(EnemyActionStates action) // execute an action depending on what state the entity is on
+        public void ExecuteAction(EnemyActionStates action) // execute an action depending on what state the entity is on
         {
             switch (action)
             {
@@ -275,6 +321,9 @@ namespace UZSG.Entities
                     break;
                 case EnemyActionStates.SpecialAttack2:
                     SpecialAttack2();
+                    break;
+                case EnemyActionStates.Horde:
+                    Horde();
                     break;
             }
         }

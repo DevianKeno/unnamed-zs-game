@@ -12,7 +12,7 @@ namespace UZSG.Players
         bool _inChase;
         Enemy _enemyFound; // the enemy found in a specific collider
         Player _player;
-        Collider[] _hitColliders; // array of object that is within enemy range
+        Collider[] _hitSiteColliders; // array of object that is within enemy range
         [SerializeField] LayerMask EnemyLayer; // Layers that the enemy chases
 
         void FixedUpdate()
@@ -36,11 +36,11 @@ namespace UZSG.Players
         public void FindEnemyInRange()
         {
             // Find objects within the range
-            _hitColliders = Physics.OverlapSphere(transform.position, SiteRange, EnemyLayer);
+            _hitSiteColliders = Physics.OverlapSphere(transform.position, SiteRange, EnemyLayer);
             _player = GetComponent<Player>();
 
             // Iterate over each collided object determining whether its a player or not
-            foreach (var collider in _hitColliders)
+            foreach (var collider in _hitSiteColliders)
             {
                 _enemyFound = collider.GetComponent<Enemy>();
                 // If detected enemy chase player

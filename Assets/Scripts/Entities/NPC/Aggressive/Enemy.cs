@@ -20,18 +20,17 @@ namespace UZSG.Entities
         public float RoamTime; // Time it takes for the agent to travel a point
         Player _target; // Current target of the enemy
         public EnemyActionStatesMachine EnemyStateMachine => enemyStateMachine;
-        float _distanceFromPlayer; // the actual distance in game distance from the Player
         bool _inSite, _inAttack; // checks if the player is in site, attack range
         EnemyActionStates actionState;
-        PlayerDetection _playerDetected;
         Vector3 _randomDestination; // Destination of agent
+        [SerializeField] float _distanceFromPlayer;
+        [SerializeField] float radius; // Radius of which the enemy detects the player
         [SerializeField] protected EnemyActionStatesMachine enemyStateMachine;
         [SerializeField] NavMeshAgent _enemyEntity; // the entity's agent movement
         [SerializeField] LayerMask PlayerLayer; // Layers that the enemy chases
 
-
+        
         #endregion
-
 
         #region Agent data
 
@@ -43,20 +42,19 @@ namespace UZSG.Entities
 
         #endregion
 
+
+        #region Enemy Start/Update
         protected virtual void Start()
         {
             actionState = HandleTransition;
             executeAction(actionState);
+            Game.Tick.OnSecond += Game_Tick_OnSecond();
         }
 
-        private void PlayerInRange(Player player)
+        private Action<SecondInfo> Game_Tick_OnSecond()
         {
-            _target = player;
-        }
-
-        public void PlayerDetect(Player player)
-        {
-            PlayerInRange(player);
+            ResetPlayerIfNotInRange();
+            return null;
         }
 
         protected virtual void LateUpdate()
@@ -73,15 +71,34 @@ namespace UZSG.Entities
         public override void OnSpawn()
         {
             defaultPath = entityDefaultsPath + $"{entityData.Id}_defaults.json";
-            Game.Console.Log("Enemy can chase player!\n");
             Initialize();
         }
 
+        #endregion
+
+        public void PlayerDetect(Player player)
+        {
+            _target = player; // set the current target of the enemy to they player found
+        }
+
+        public void ResetPlayerIfNotInRange()
+        {
+            _distanceFromPlayer = Vector3.Distance(_target.Position, transform.position); 
+            if (radius <= _distanceFromPlayer)
+            {
+                _target = null;
+            }
+        }
+
+
+        #region Agent Loading Default Data
+
         void Initialize() 
         {
+            _target = null; // set player to none
             LoadDefaults(); // read from JSON file the default enemy attributes
             InitializeAttributes(); // set the default attributes of the enemy
-            Game.Console.Log("Enemy fully initialized!");
+            Debug.Log("Enemy fully initialized!");
         }
 
         void LoadDefaults()
@@ -95,7 +112,10 @@ namespace UZSG.Entities
         {
             generic = new();
             generic.ReadSaveJSON(defaultData.GenericAttributes);
+            radius = generic.Get("site_radius").Value;
         }
+
+        #endregion
 
         #region Agent sensors
         public EnemyActionStates IsInSiteRange  // determines if enemy can Chase Player or Roam map
@@ -223,6 +243,12 @@ namespace UZSG.Entities
         {
             enemyStateMachine.ToState(EnemyActionStates.SpecialAttack2);
             Debug.Log("SpecialAttack2"); 
+        }
+
+        public void Horde()
+        {
+            enemyStateMachine.ToState(EnemyActionStates.Horde);
+            Debug.Log("SpecialAttack2");
         }
 
         public void executeAction(EnemyActionStates action) // execute an action depending on what state the entity is on

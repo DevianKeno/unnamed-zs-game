@@ -12,6 +12,7 @@ namespace UZSG.Attributes
         public float BaseMaximum = 0f;
         public float Multiplier = 1f;
         public float FlatBonus = 0f;
+        public float SiteRadius = 0f;
         public bool LimitOverflow = true;
         public bool LimitUnderflow = true;
     }

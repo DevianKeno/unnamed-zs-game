@@ -13,9 +13,10 @@ namespace UZSG.FPP
         public float MinSpeed = 0.3f;
         public BobSettings WalkBob = new();
         public BobSettings RunBob = new();
-        
+        public BobSettings CrouchBob = new();
+        [SerializeField] BobSettings _bobToUse;
+
         Vector3 _originalPosition;
-        BobSettings _bobToUse;
         
         void Start()
         {
@@ -34,11 +35,28 @@ namespace UZSG.FPP
             if (!Player.Controls.IsGrounded) return;
             if (Player.Controls.HorizontalSpeed < MinSpeed) return;
 
-            _bobToUse = Player.Controls.IsRunning ? RunBob : WalkBob;
+            _bobToUse = setBob();
+
             AddPosition(FootStepMotion());
             if (_bobToUse.MaintainForwardLook)
             {
                 transform.LookAt(FocusTarget());
+            }
+        }
+
+        BobSettings setBob()
+        {
+            if (Player.Controls.IsRunning)
+            {
+                return RunBob;
+            }
+            else if (Player.Controls.IsCrouching)
+            {
+                return CrouchBob;
+            }
+            else
+            {
+                return WalkBob;
             }
         }
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,14 +9,12 @@ namespace UZSG.Crafting
 {
     public class FuelBasedCrafting : Crafter
     {
+        public Container InputContainer;
         public float FuelRemaining = 0;
         Container FuelContainer;
 
         protected bool isFuelRemainingAvailable() {
-            if (FuelRemaining > 0) {
-                return true;
-            }
-            return false;
+            return FuelRemaining > 0;
         }
 
         protected bool isFuelAvailable() {
@@ -27,9 +26,20 @@ namespace UZSG.Crafting
 
         public void ConsumeFuel()
         {
-            if (isFuelAvailable() || isFuelRemainingAvailable()) return;
+            if (isFuelRemainingAvailable()) return;
+            if (!isFuelAvailable()) return;
             FuelContainer.TakeItems(0, 1);
             StartCoroutine(BurnFuel());
+        }
+
+        public void OnFuelCheck(object sender, EventArgs e){
+            var _craftingRoutineInstance = (CraftingRoutine)sender;
+            if (!isFuelRemainingAvailable()){
+                foreach(CraftingRoutine routine in _craftingRoutineInstance.routineList){
+                    StopCoroutine(routine.CraftCoroutine());
+                    routine.secondsElapsed = 0;
+                }
+            }
         }
 
         IEnumerator BurnFuel(){

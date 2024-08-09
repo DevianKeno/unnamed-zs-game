@@ -66,7 +66,6 @@ namespace UZSG.Systems
             //               "Control the game's tick rate.").AddCallback(Command_Tick);
         }
 
-
         #region Command implementations
 
         /// The args parameters represent the arguments WITHOUT the actual command.
@@ -88,7 +87,7 @@ namespace UZSG.Systems
         {
             var newItem = new Item(Game.Items.GetData(args[0]));
             var playerInventoryCrafter = (PlayerCrafting)_player.CraftingAgent;
-            playerInventoryCrafter.CraftQueue(_player.Inventory.Bag, _player.Inventory.Bag, newItem.Data.Recipes[0]);
+            playerInventoryCrafter.CraftItem(newItem.Data.Recipes[0], playerInventoryCrafter.InputContainer, playerInventoryCrafter.PlayerCraftingList);
         }
 
         void CDamage(object sender, string[] args)

@@ -464,9 +464,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Player: {fileID: 0}
   compassImage: {fileID: 1547546752102342463}
-  enableShake: 0
+  _shakeType: 2
   shakeDuration: 0.5
   shakeMagnitude: 0.01
+  _rotationSpeed: 10
+  _dampening: 0.9
+  _springConstant: 5
+  _damping: 5
 --- !u!1 &4918768679915663315
 GameObject:
   m_ObjectHideFlags: 0

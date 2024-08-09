@@ -528,11 +528,23 @@ MonoBehaviour:
     MaintainForwardLook: 1
     LookDistance: 10
   RunBob:
-    Amplitude: 1
+    Amplitude: 3
     Frequency: 1.1
     Recovery: 8
     MaintainForwardLook: 1
     LookDistance: 10
+  CrouchBob:
+    Amplitude: 2
+    Frequency: 0.5
+    Recovery: 6
+    MaintainForwardLook: 1
+    LookDistance: 10
+  _bobToUse:
+    Amplitude: 0
+    Frequency: 0
+    Recovery: 0
+    MaintainForwardLook: 0
+    LookDistance: 0
 --- !u!114 &1760353934298345573
 MonoBehaviour:
   m_ObjectHideFlags: 0

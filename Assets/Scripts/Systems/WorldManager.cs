@@ -1,10 +1,8 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UZSG.World.Weather;
-using UZSG.WorldBuilder;
+
+using UZSG.Worlds;
 
 namespace UZSG.Systems
 {
@@ -14,9 +12,9 @@ namespace UZSG.Systems
         public bool IsInitialized => _isInitialized;
 
         /// <summary>
-        /// The current loaded world.
+        /// The currently loaded world.
         /// </summary>
-        public World World { get; }
+        public World CurrentWorld { get; set; }
 
         /// <summary>
         /// Called after the World has been successfully initialized.
@@ -25,7 +23,7 @@ namespace UZSG.Systems
 
         internal void Initialize()
         {
-            Game.Console?.Log("Initializing world...");
+            Game.Console.Log("Initializing World...");
 
             OnDoneInit?.Invoke();
         }
@@ -39,9 +37,5 @@ namespace UZSG.Systems
         {
             // Game.Entity.Spawn("player", new (0f, 1f, 0f));
         }
-
-        public TimeController Time;
-        public WeatherController Weather;
-        
     }
 }

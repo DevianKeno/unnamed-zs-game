@@ -24,6 +24,8 @@ namespace UZSG.Entities
         [SerializeField] protected AudioSourceController audioSourceController;
         public AudioSourceController AudioSourceController => audioSourceController;
 
+        public string Id => entityData.Id;
+
         internal void OnSpawnInternal()
         {
             OnSpawn();
@@ -34,5 +36,10 @@ namespace UZSG.Entities
         /// You can modify the entity's attributes before this calls.
         /// </summary>
         public virtual void OnSpawn() { }
+
+        public virtual void Kill()
+        {
+            Game.Entity.Kill(this);
+        }
     }
 }

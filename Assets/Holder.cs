@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UZSG.Data;
 
-namespace UZSG.World.Weather
+namespace UZSG.WorldEvents.Weather
 {
     public class RainDataHolder : MonoBehaviour
     {

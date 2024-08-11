@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.InputSystem;
+using PlayEveryWare.EpicOnlineServices;
 
 using UZSG.UI;
-using UZSG.World;
-using UZSG.World.Weather;
-using UZSG.WorldBuilder;
+using UZSG.EOS;
+using UZSG.WorldEvents;
 
 namespace UZSG.Systems
 {
@@ -20,37 +21,44 @@ namespace UZSG.Systems
         #region Core
 
         static Console console;
-        public static Console Console { get => console; }
+        public static Console Console => console;
         static UIManager UIManager;
-        public static UIManager UI { get => UIManager; }
+        public static UIManager UI => UIManager;
         static AudioManager audioManager;
-        public static AudioManager Audio { get => audioManager; }
+        public static AudioManager Audio => audioManager;
+        /// <summary>
+        /// EOS Interface singleton.
+        /// Just a shortcut to 'EOSManager.Instance'
+        /// </summary>
+        public static EOSManager.EOSSingleton EOS => EOSManager.Instance;
+        public static EOSSubManagers EOSManagers { get; private set; }
         static WorldManager worldManager;
-        public static WorldManager World { get => worldManager; }
+        public static WorldManager World => worldManager;
 
         #endregion
 
 
         #region World-entry
         static TickSystem tickSystem;
-        public static TickSystem Tick { get => tickSystem; }
+        public static TickSystem Tick => tickSystem;
         static TimeManager timeManager;
-        public static TimeManager Time { get => timeManager; }
+        public static TimeManager Time => timeManager;
         static AttributesManager attrManager;
-        public static AttributesManager Attributes { get => attrManager; }
+        public static AttributesManager Attributes => attrManager;
         static ItemManager itemManager;
-        public static ItemManager Items { get => itemManager; }
+        public static ItemManager Items => itemManager;
         static ParticleManager particleManager;
-        public static ParticleManager Particles { get => particleManager; }
+        public static ParticleManager Particles => particleManager;
         static RecipeManager recipeManager;
-        public static RecipeManager Recipes { get => recipeManager; }
+        public static RecipeManager Recipes => recipeManager;
         static EntityManager entityManager;
-        public static EntityManager Entity { get => entityManager; }
+        public static EntityManager Entity => entityManager;
 
         #endregion
 
         
         #region Debug
+
         public FreeLookCamera FreeLookCamera;
 
         #endregion
@@ -62,7 +70,7 @@ namespace UZSG.Systems
         internal event Action OnLateInit;
 
         PlayerInput mainInput;
-        public PlayerInput MainInput { get => mainInput; }        
+        public PlayerInput MainInput => mainInput;        
 
         void Awake()
         {
@@ -71,7 +79,8 @@ namespace UZSG.Systems
             if (Main != null && Main != this)
             {
                 Destroy(this);
-            } else
+            }
+            else
             {
                 Main = this;
 
@@ -104,6 +113,7 @@ namespace UZSG.Systems
             Application.targetFrameRate = TargetFramerate;
         }
 
+        /// This should be inside World
         public WorldEventController worldEventController;
 
         void InitializeManagers()
@@ -111,7 +121,7 @@ namespace UZSG.Systems
             /// The console is initialized first thing
             console.Initialize();
 
-            UI.Initialize();
+            UIManager.Initialize();
             audioManager.Initialize();
             worldManager.Initialize();
 

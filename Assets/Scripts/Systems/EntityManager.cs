@@ -24,7 +24,11 @@ namespace UZSG.Systems
         /// </summary>
         Dictionary<string, EntityData> _entitiesDict = new();
         
-        public event EventHandler<EntitySpawnedInfo> OnEntitySpawn;
+        public event Action<EntitySpawnedInfo> OnEntitySpawned;
+        /// <summary>
+        /// Subscribe to this event if you need to make last changes before the entity is removed from the universe.
+        /// </summary>
+        public event Action<EntityKilledInfo> OnEntityKilled;
                 
         internal void Initialize()
         {
@@ -72,7 +76,7 @@ namespace UZSG.Systems
                         {
                             Entity = entity
                         };
-                        OnEntitySpawn?.Invoke(this, info);
+                        OnEntitySpawned?.Invoke(info);
                         callback?.Invoke(info);
                         entity.OnSpawnInternal();
 
@@ -116,7 +120,7 @@ namespace UZSG.Systems
                         {
                             Entity = entity as T
                         };
-                        OnEntitySpawn?.Invoke(this, new()
+                        OnEntitySpawned?.Invoke(new()
                         {
                             Entity = entity
                         });
@@ -167,10 +171,25 @@ namespace UZSG.Systems
             };
         }
 
+        public struct EntityKilledInfo
+        {
+            public Entity Entity { get; set; }
+        }
+
+
         public void Kill(Entity entity)
         {
             if (entity == null) return;
+            OnEntityKilled?.Invoke(new()
+            {
+                Entity = entity
+            });
             Destroy(entity.gameObject);
+        }
+
+        public bool IsValidId(string id)
+        {
+            return _entitiesDict.ContainsKey(id);
         }
 
         #endregion

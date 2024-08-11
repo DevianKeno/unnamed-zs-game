@@ -62,7 +62,7 @@ namespace UZSG.Systems
         {
             UI = Game.UI.Create<ConsoleWindow>("Console Window");
 
-            Game.Entity.OnEntitySpawn += (sender, info) =>
+            Game.Entity.OnEntitySpawned += (info) =>
             {
                 if (info.Entity is Player player)
                 {

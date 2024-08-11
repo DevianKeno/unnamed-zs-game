@@ -5,7 +5,13 @@ namespace UZSG.Systems
 {
     public struct TickInfo
     {
+        /// <summary>
+        /// The tick's 'index', if you need it. Number between 0 and TPS.
+        /// </summary>
         public int Tick { get; set; }
+        /// <summary>
+        /// The interval in seconds from the last tick to the current tick :)
+        /// </summary>
         public float DeltaTime { get; set; }
     }
 

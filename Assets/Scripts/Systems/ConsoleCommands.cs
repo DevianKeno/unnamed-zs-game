@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UZSG.Crafting;
 using UZSG.Entities;
@@ -27,6 +28,10 @@ namespace UZSG.Systems
             CreateCommand("craft <item_id>",
                           "Crafts item given the item_id")
                           .OnInvoke += CCraft;
+
+            CreateCommand("entity <query> <id>",
+                          "Queries the Entities of Id present in the current world.")
+                          .OnInvoke += CEntity;
             
             CreateCommand("give <player|me> <item_id> [amount]",
                           "Gives the player the item.")
@@ -66,11 +71,12 @@ namespace UZSG.Systems
             //               "Control the game's tick rate.").AddCallback(Command_Tick);
         }
 
+
         #region Command implementations
 
         /// The args parameters represent the arguments WITHOUT the actual command.
         /// ex. "/spawn item bandage"
-        /// The args would consist of [item, bandage]
+        /// The args would consist of ["item", "bandage"]
 
         /// <summary>
         /// Clears the console messages.
@@ -93,6 +99,27 @@ namespace UZSG.Systems
         void CDamage(object sender, string[] args)
         {
             
+        }
+
+        void CEntity(object sender, string[] args)
+        {
+            if (args[0] == "query")
+            {
+                var id = args[1];
+                if (Game.Entity.IsValidId(id))
+                {
+                    var ettyList = Game.World.CurrentWorld.GetEntitiesById(id);
+                    var msg = $"Entity Id: '{id}' | Count: {ettyList.Count}\n";
+                    foreach (var etty in ettyList)
+                    {
+                        msg += $"{etty.Id}, ";
+                    }
+                }
+
+                return;
+            }
+            
+            throw new KeyNotFoundException();
         }
 
         /// <summary>
@@ -232,7 +259,7 @@ namespace UZSG.Systems
             {
                 if (int.TryParse(args[1], out int value))
                 {
-                    Game.World.Time.SetTime(value);
+                    Game.World.CurrentWorld.Time.SetTime(value);
                 }
                 else
                 {

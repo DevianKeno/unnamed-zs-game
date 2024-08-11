@@ -3,8 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-namespace UZSG.World.Weather
+namespace UZSG.Data
 {
     [Serializable]
     public struct WeatherAttributes

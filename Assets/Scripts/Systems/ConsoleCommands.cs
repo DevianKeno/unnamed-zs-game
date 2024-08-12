@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UZSG.Crafting;
+using UZSG.Data;
 using UZSG.Entities;
 using UZSG.Items;
 
@@ -60,6 +61,10 @@ namespace UZSG.Systems
             CreateCommand("time <set> <value>",
                           "")
                           .OnInvoke += CTime;
+            
+            CreateCommand("wbcraft <item_id>",
+                        "Crafts item if player is interacting with workbench")
+                        .OnInvoke += CWbcraft;
 
             CreateCommand("world <create|load> <world_name>",
                           "")
@@ -93,7 +98,7 @@ namespace UZSG.Systems
         {
             var newItem = new Item(Game.Items.GetData(args[0]));
             var playerInventoryCrafter = (PlayerCrafting)_player.CraftingAgent;
-            playerInventoryCrafter.CraftItem(newItem.Data.Recipes[0], playerInventoryCrafter.InputContainer, playerInventoryCrafter.PlayerCraftingList);
+            playerInventoryCrafter.PlayerCraftItem(newItem.Data.Recipes[0]);
         }
 
         void CDamage(object sender, string[] args)
@@ -266,6 +271,19 @@ namespace UZSG.Systems
                     Game.Console.Log("Time must be a positive integer value.");
                 }
             }
+        }
+
+        /// <summary>
+        /// Creates access to external workbench
+        /// </summary>
+        void CWbcraft(object sender, string[] args){
+            var wbcraft = (WorkbenchCrafter)_player.ExternalCrafter;
+            var newItem = new Item(Game.Items.GetData(args[0]));
+            if (wbcraft == null){
+                print("Player is not interacting with workbench");
+                return;
+            }
+            wbcraft.WorkbenchCraftItem(_player, newItem.Data.Recipes[0]);
         }
 
         /// <summary>

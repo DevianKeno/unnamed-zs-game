@@ -102,12 +102,11 @@ namespace UZSG.Entities
             if (_target != null)
             {
                 _distanceFromPlayer = Vector3.Distance(_target.Position, transform.position); 
-            }
-
-            // Check if player is no longer in range then no more target to chase
-            if (_radius <= _distanceFromPlayer)
-            {
-                _target = null;
+        
+                if (_radius <= _distanceFromPlayer)
+                {
+                    _target = null;
+                }
             }
         }
 
@@ -197,9 +196,9 @@ namespace UZSG.Entities
                 {
                     if (IsInSiteRange == EnemyActionStates.Roam)
                     {
-                        //Hordetransform.position = new Vector3(1, 2, 1);             // change mo value sa need mo
-                        //Hordetransform.rotation = Quaternion.Euler(0, 30, 0);       // change mo value sa need mo
-                        return false; // palitan mo to ng true jericho once na done ka na
+                        Hordetransform.position = new Vector3(1, 2, 1);             // change mo value sa need mo
+                        Hordetransform.rotation = Quaternion.Euler(0, 30, 0);       // change mo value sa need mo
+                        return true;
                     }
                     return false;
                 }
@@ -225,10 +224,10 @@ namespace UZSG.Entities
                     return EnemyActionStates.Die;
                 }
                 // if enemy is in horde mode
-                if (IsHordeMode)
-                {
-                    return EnemyActionStates.Horde;
-                }
+                // if (IsHordeMode)
+                // {
+                //     return EnemyActionStates.Horde;
+                // }
                 // if Player not in Chase range
                 if (IsInSiteRange == EnemyActionStates.Roam)
                 {

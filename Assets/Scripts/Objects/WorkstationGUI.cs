@@ -1,19 +1,16 @@
+using System;
+using System.Collections.Generic;
+
 using UnityEngine;
 using TMPro;
-using System.Collections.Generic;
+
+using UZSG.Objects;
 using UZSG.Crafting;
-using System;
 
 namespace UZSG.UI
 {
     public class WorkstationGUI : Window
     {
-        public string Title
-        {
-            get { return titleText.text; }
-            set { titleText.text = value; }
-        }
-
         public InventoryCrafting Crafter;
 
         void Awake()
@@ -30,7 +27,5 @@ namespace UZSG.UI
         {
             // instantiate
         }
-
-        [SerializeField] protected TextMeshProUGUI titleText;
     }
 }

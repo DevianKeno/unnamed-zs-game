@@ -45,10 +45,15 @@ namespace UZSG.UI
 
         public void SwitchToFrame(string name)
         {
-            SwitchToFrame(name, force: false);
+            SwitchToFrame(name, instant: false, force: false);
         }
 
-        public void SwitchToFrame(string name, bool force = false)
+        public void SwitchToFrame(string name, bool instant = false)
+        {
+            SwitchToFrame(name, instant, force: false);
+        }
+
+        public void SwitchToFrame(string name, bool instant = false, bool force = false)
         {
             Frame frame = GetFrame(name);
             if (frame == null) return;
@@ -64,16 +69,16 @@ namespace UZSG.UI
             };
             OnSwitchFrame?.Invoke(context);
 
-            if (Game.UI.EnableScreenAnimations)
+            if (Game.UI.EnableScreenAnimations && !instant)
             {
                 if (currentFrame != null && currentFrame.Name != frame.Name)
                 {
                     /// Move current frame out of the way
-                    LeanTween.move(currentFrame.Rect, new Vector2(-currentFrame.Rect.rect.width, 0f), AnimationFactor)
+                    LeanTween.move(currentFrame.Rect, new Vector2(-1920, 0f), AnimationFactor)
                     .setEase(TweenType)
                     .setOnComplete(() =>
                     {
-                        currentFrame.Rect.anchoredPosition = new Vector2(currentFrame.Rect.rect.width, 0f);
+                        currentFrame.Rect.anchoredPosition = new Vector2(1920, 0f);
                     });
                 }
                 else if (!force)
@@ -98,12 +103,13 @@ namespace UZSG.UI
             }
             else
             {
-                currentFrame.Rect.anchoredPosition = new Vector2(currentFrame.Rect.rect.width, 0f); /// Hide current frame
+                _isTransitioning = true;
+                currentFrame.Rect.anchoredPosition = new Vector2(-1920, 0f); /// Hide current frame
                 frame.Rect.anchoredPosition = Vector2.zero; /// Show new frame
                 currentFrame = frame;
                 currentFrame.transform.SetAsLastSibling();
                 LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
-
+                _isTransitioning = false;
                 context.Time = SwitchFrameTime.Finished;
                 OnSwitchFrame?.Invoke(context);
             }

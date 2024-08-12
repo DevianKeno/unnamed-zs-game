@@ -29,12 +29,13 @@ namespace UZSG.Objects
         public WorkstationData WorkstationData => objectData as WorkstationData;
         public string ActionText => "Use";
         public string Name => objectData.Name;
-        [SerializeField] Crafter crafter;
-        public Crafter Crafter => crafter;
 
+        Player player;
         bool _hasGUILoaded;
         WorkstationGUI _GUI;
-        [SerializeField] Canvas canvas;
+        public WorkstationGUI GUI => _GUI;
+        [SerializeField] Crafter crafter;
+        public Crafter Crafter => crafter;
 
         public event EventHandler<InteractArgs> OnInteract;
 
@@ -48,11 +49,10 @@ namespace UZSG.Objects
             ///
         }
 
-        void InitializeCrafter(Player player)
+        void InitializeCrafter()
         {
             // crafter.BindUI(_GUI as CraftingGUI);
-            // crafter.AddRecipes(WorkstationData.IncludedRecipes);s
-            player.ExternalCrafter = crafter;
+            // crafter.AddRecipes(WorkstationData.IncludedRecipes);
         }
 
         void RequestCrafterInformation(Player player)
@@ -60,55 +60,54 @@ namespace UZSG.Objects
             // crafter.AddContainer(player.Inventory.Bag);
             // crafter.AddContainer(player.Inventory.Hotbar);
             // crafter.AddRecipes(player.PlayerEntityData.KnownRecipes);
+            player.ExternalCrafter = crafter;
         }
 
         public virtual void Place()
         {
-            LoadGUIAsset(WorkstationData.GUI, onLoadCompleted: (gui) =>
-            {
-                InitializeGUI(gui);
-            });
         }
 
         public virtual void Interact(IInteractActor actor, InteractArgs args)
         {
             if (actor is not Player player) return;
-            if (!_hasGUILoaded)
+
+            this.player = player;
+            LoadGUIAsset(WorkstationData.GUI, onLoadCompleted: (gui) =>
             {
-                Game.Console.LogAndUnityLog($"Workstation '{WorkstationData.Id}' has no GUI loaded.");
-                return;
-            }
+                InitializeGUI(gui);
+                InitializeCrafter();
+                RequestCrafterInformation(player);
+            
+                /// encapsulate
+                player.InfoHUD.Hide();
+                player.Actions.Disable();
+                player.Controls.Disable();
+                player.FPP.ToggleControls(false);
 
-            player.InfoHUD.Hide();
-            player.Actions.Disable();
-            player.Controls.Disable();
-            player.FPP.ToggleControls(false);
-            Game.UI.ToggleCursor(true);
+                player.UseWorkstation(this);
+                Game.UI.ToggleCursor(true);
 
-            _GUI.OnClose += () => 
-            {
-                player.InfoHUD.Show();
-                player.Actions.Enable();
-                player.Controls.Enable();
-                player.FPP.ToggleControls(true);
-                Game.UI.ToggleCursor(false);
-
-                player.ExternalCrafter = null;
-            };
-
-            RequestCrafterInformation(player);
-            InitializeCrafter(player);
+                player.InventoryGUI.OnClose += OnCloseInventory;
+            });
         }
 
-        public void OpenGUI()
+        void OnCloseInventory()
         {
-            _GUI.SetActive(true);
+            player.InventoryGUI.OnClose -= OnCloseInventory;
+
+            player.ResetToPlayerCraftingGUI();
+            player.ExternalCrafter = null;
+            Game.UI.ToggleCursor(false);
+            _GUI.Destroy();
+            
+            /// encapsulate
+            player.InfoHUD.Show();
+            player.Actions.Enable();
+            player.Controls.Enable();
+            player.FPP.ToggleControls(true);
+            player = null;
         }
 
-        public void CloseGUI()
-        {
-            _GUI.SetActive(false);
-        }
 
         protected virtual void LoadGUIAsset(AssetReference asset, Action<WorkstationGUI> onLoadCompleted = null)
         {
@@ -122,11 +121,10 @@ namespace UZSG.Objects
             {
                 if (a.Status == AsyncOperationStatus.Succeeded)
                 {
-                    var go = Instantiate(a.Result, canvas.transform);
+                    var go = Instantiate(a.Result);
                     
                     if (go.TryGetComponent<WorkstationGUI>(out var gui))
                     {
-                        gui.SetActive(false);
                         onLoadCompleted?.Invoke(gui);
                         return;
                     }
@@ -137,14 +135,17 @@ namespace UZSG.Objects
         void InitializeGUI(WorkstationGUI gui)
         {
             _GUI = gui;
-            _GUI.Title = WorkstationData.WorkstationName;
+            // _GUI.Title = WorkstationData.WorkstationName;
             _hasGUILoaded = true;
 
             backAction = Game.Main.GetInputAction("Back", "Global");
-            backAction.performed += (ctx) =>
-            {
-                CloseGUI();
-            };
+            backAction.performed += OnCloseInventoryGlobalBack;
+        }
+
+        void OnCloseInventoryGlobalBack(InputAction.CallbackContext context)
+        {
+            backAction.performed -= OnCloseInventoryGlobalBack;
+            OnCloseInventory();
         }
     }
 }

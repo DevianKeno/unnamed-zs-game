@@ -11,5 +11,6 @@ namespace UZSG.Data
         public InventorySaveData Inventory;
         public List<VitalAttributeSaveData> VitalAttributes;
         public List<GenericAttributeSaveData> GenericAttributes;
+        public List<string> KnownRecipes;
     }
 }

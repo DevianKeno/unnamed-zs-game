@@ -20,8 +20,7 @@ namespace UZSG.Entities
 
         protected override void Start()
         {
-            base.Start(); // Determine the default state of the skinwalker
-            InitializeHitboxEvents();
+            OnSpawn();
         }
 
         protected override void LateUpdate()
@@ -32,6 +31,7 @@ namespace UZSG.Entities
         public override void OnSpawn()
         {
             base.OnSpawn();
+            
             InitializeHitboxEvents();
         }
 
@@ -55,7 +55,7 @@ namespace UZSG.Entities
                 Debug.Log($"Shot part {hitbox.Part}");
                 SpawnBlood(info.ContactPoint);
                 SpawnDamageText(info.ContactPoint);
-                Destroy(bullet.gameObject);
+                Destroy(bullet.gameObject); /// Change on penetration
             }
             else if (info.Source.CollisionTag == "Melee")
             {

@@ -4,9 +4,7 @@ namespace UZSG.Crafting
 {
     public class WorkbenchCrafter : InventoryCrafting
     {
+        public Container OutputContainer = new(5);
         
-        void Initialize(){
-
-        }
     }
 }

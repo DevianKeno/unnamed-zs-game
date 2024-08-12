@@ -9,6 +9,7 @@ using UZSG.Systems;
 using UZSG.Data;
 using UZSG.Worlds;
 using UZSG.WorldEvents.Weather;
+using UZSG.WorldEvents.Raid;
 
 namespace UZSG.WorldEvents
 {
@@ -16,6 +17,7 @@ namespace UZSG.WorldEvents
     {
         WorldTimeController _timeController;
         WeatherController _weatherController;
+        RaidController _raidController;
         float _currentTime = 0;
         public int InternalCountdown = 0;
         [SerializeField] int _countdown = 0;
@@ -25,17 +27,23 @@ namespace UZSG.WorldEvents
 
         public void Initialize()
         {
-            _timeController = this.GetComponent<WorldTimeController>();
-            _weatherController = this.GetComponent<WeatherController>();
-
-            _timeController.Initialize();
-            _weatherController.Initialize();
-
+            InitializeControllers();
             Game.Tick.OnTick += OnTick;
             
             foreach (WorldEventData data in WorldEvents)
                 if (data.worldEvents.OccurEverySecond > _maxCountdown)
                     _maxCountdown = data.worldEvents.OccurEverySecond;
+        }
+
+        void InitializeControllers()
+        {
+            _timeController = this.GetComponent<WorldTimeController>();
+            _weatherController = this.GetComponent<WeatherController>();
+            _raidController = this.GetComponent<RaidController>();
+
+            _timeController.Initialize();
+            _weatherController.Initialize();
+            _raidController.Initialize();
         }
 
         void OnTick(TickInfo info)
@@ -46,6 +54,7 @@ namespace UZSG.WorldEvents
 
             _timeController.OnTick(secondsCalculation);
             _weatherController.OnTick(secondsCalculation);
+            _raidController.OnTick(secondsCalculation);
             
             if (Mathf.FloorToInt(_currentTime) > tempCount)
             {
@@ -78,7 +87,7 @@ namespace UZSG.WorldEvents
                 SelectedEvent = selectedEvent.Value
             };
 
-            InitializeControllers(properties, worldEvent);
+            SubscribeControllers(properties, worldEvent);
             worldEvent.Initialize();
         }
 
@@ -122,9 +131,12 @@ namespace UZSG.WorldEvents
             return selectedEvent;
         }
 
-        void InitializeControllers(WorldEventProperties properties, WorldEvent eventHandler)
+        void SubscribeControllers(WorldEventProperties properties, WorldEvent eventHandler)
         {
             if (properties.Type == WorldEventType.Weather)
+                eventHandler.OnSpawnEvent += _weatherController.OnEventStart;
+            
+            if (properties.Type == WorldEventType.Raid)
                 eventHandler.OnSpawnEvent += _weatherController.OnEventStart;
         }
     }

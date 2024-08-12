@@ -50,6 +50,8 @@ namespace UZSG.Entities
                 var hitbox = sender as Hitbox;
                 var bullet = info.Source as Bullet;
 
+                TakeDamage(10f);
+
                 Debug.Log($"Shot part {hitbox.Part}");
                 SpawnBlood(info.ContactPoint);
                 SpawnDamageText(info.ContactPoint);
@@ -60,6 +62,14 @@ namespace UZSG.Entities
                 SpawnBlood(info.ContactPoint);
                 SpawnDamageText(info.ContactPoint);
             }
+        }
+
+        void TakeDamage(float damage)
+        {
+            var health = generic.Get("health");
+            print(health.Value);
+            health.Remove(damage);
+            print(health.Value);
         }
 
         void SpawnDamageText(Vector3 position)

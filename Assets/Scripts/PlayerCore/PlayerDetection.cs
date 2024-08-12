@@ -50,7 +50,6 @@ namespace UZSG.Players
                     {
                         // Player is within enemy site range
                         detectable.PlayerDetect(_player);
-                        //Debug.Log("Enemy detected");
                     }
                 }
             }

@@ -90,9 +90,9 @@ namespace UZSG.Entities
 
         public void PlayerDetect(Player player)
         {
-            if (!player)
+            if (player != null)
             {
-                _target = player; // set the current target of the enemy to they player foundss
+                _target = player; // set the current target of the enemy to they player found
             }
         }
 
@@ -150,6 +150,7 @@ namespace UZSG.Entities
             {
                 if (_target != null)
                 {
+                    Debug.Log("In chase state dapat.");
                     return EnemyActionStates.Chase;
                 }
                 return EnemyActionStates.Roam;
@@ -265,13 +266,13 @@ namespace UZSG.Entities
             // Check if the enemy has reached its destination and is actively moving
             if (_enemyEntity.remainingDistance >= 0.002f && _enemyEntity.remainingDistance <= _enemyEntity.stoppingDistance)
             {
-                Debug.Log("In waiting state");
+                //Debug.Log("In waiting state");
                 _enemyEntity.isStopped = true;
                 _enemyEntity.updateRotation = false;
             }
             else
             {
-                Debug.Log("In roam state and distance is: " + _enemyEntity.remainingDistance + "\nstopping distance is: " + _enemyEntity.stoppingDistance);
+                //Debug.Log("In roam state and distance is: " + _enemyEntity.remainingDistance + "\nstopping distance is: " + _enemyEntity.stoppingDistance);
                 // Continue moving toward the destination
                 RoamTime -= Time.deltaTime;
                 if (RoamTime <= 0)

@@ -51,7 +51,8 @@ namespace UZSG.Objects
         void InitializeCrafter(Player player)
         {
             // crafter.BindUI(_GUI as CraftingGUI);
-            // crafter.AddRecipes(WorkstationData.IncludedRecipes);
+            // crafter.AddRecipes(WorkstationData.IncludedRecipes);s
+            player.ExternalCrafter = crafter;
         }
 
         void RequestCrafterInformation(Player player)
@@ -91,9 +92,12 @@ namespace UZSG.Objects
                 player.Controls.Enable();
                 player.FPP.ToggleControls(true);
                 Game.UI.ToggleCursor(false);
+
+                player.ExternalCrafter = null;
             };
 
             RequestCrafterInformation(player);
+            InitializeCrafter(player);
         }
 
         public void OpenGUI()

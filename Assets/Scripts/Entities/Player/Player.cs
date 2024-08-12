@@ -41,6 +41,8 @@ namespace UZSG.Entities
         public InventoryHandler Inventory => inventory;
         [SerializeField] PlayerCrafting craftingAgent;
         public Crafter CraftingAgent => craftingAgent;
+
+        public Crafter ExternalCrafter;
         StatusEffectCollection statusEffects;
         public StatusEffectCollection StatusEffects => statusEffects;
         [SerializeField] PlayerAudioSourceController audioController;

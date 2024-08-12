@@ -36,7 +36,6 @@ namespace UZSG.Crafting
 
     public abstract class Crafter : MonoBehaviour
     {
-
         protected bool CheckMaterialAvailability(RecipeData recipe, Container input){
 
             foreach (Item material in recipe.Materials)

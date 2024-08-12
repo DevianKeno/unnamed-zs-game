@@ -14,7 +14,6 @@ namespace UZSG.Crafting
 {
     public class InventoryCrafting : Crafter
     {
-        public Container InputContainer;
 
         public void CraftQueue(Container input, Container output, RecipeData recipe, CraftingRoutine craftingRoutine)
         {
@@ -24,9 +23,9 @@ namespace UZSG.Crafting
             StartCoroutine(craftingRoutine.CraftCoroutine());
         }
 
-        public void CraftItem(RecipeData recipe, Container output, List<CraftingRoutine> routineList) {
-            if(!CheckMaterialAvailability(recipe, InputContainer)) return;
-            var _materials = TakeItems(recipe, InputContainer);
+        public void CraftItem(RecipeData recipe, Container input, Container output, List<CraftingRoutine> routineList) {
+            if(!CheckMaterialAvailability(recipe, input)) return;
+            var _materials = TakeItems(recipe, input);
             var _craftRoutineConf = new CraftingRoutineOptions() {
                 recipe = recipe,
                 output = output,
@@ -34,12 +33,12 @@ namespace UZSG.Crafting
                 materialSets = _materials
             };
             var _newCraftingInstance = new CraftingRoutine(_craftRoutineConf);
-            CraftQueue(InputContainer, output, recipe, _newCraftingInstance);
+            CraftQueue(input, output, recipe, _newCraftingInstance);
         }
 
-        public void CancelCraftItem(List<CraftingRoutine> routineList, CraftingRoutine routine){
+        public void CancelCraftItem(List<CraftingRoutine> routineList, Container input, CraftingRoutine routine){
             //check first if inventory is able to return the items before cancelling container
-            ReturnItems(InputContainer, routine.materialSets);
+            ReturnItems(input, routine.materialSets);
             StopCoroutine(routine.CraftCoroutine());
             routineList.Remove(routine);
         }

@@ -7,6 +7,7 @@ using UZSG.Data;
 using UZSG.Players;
 using UZSG.Systems;
 using UZSG.Interactions;
+using System.Collections;
 
 namespace UZSG.Entities
 {
@@ -15,14 +16,17 @@ namespace UZSG.Entities
         #region Agent movement related
 
         public float AttackRange;  // range from which it follow, attacks Players (to remove)
-        public float RoamRadius; // Radius of which the agent can travel
-        public float RoamInterval; // Interval before the model moves again
-        public float RoamTime; // Time it takes for the agent to travel a point
-        Player _target; // Current target of the enemy
         public EnemyActionStatesMachine EnemyStateMachine => enemyStateMachine;
+        Player _target; // Current target of the enemy
         bool _inSite, _inAttack; // checks if the player is in site, attack range
         EnemyActionStates _actionState;
         Vector3 _randomDestination; // Destination of agent
+        [SerializeField] float RoamTime; // Time it takes for the agent to travel a point
+        [SerializeField] float RoamRadius; // Radius of which the agent can travel
+        [SerializeField] float RoamInterval; // Interval before the model moves again
+        //[SerializeField] float _minWait, _maxWait; // waiting time before roaming again
+        //[SerializeField] float _waitTime; // actual waiting time of enemy in second
+        //[SerializeField] bool _isWaiting = false; // Track if the AI is currently waiting
         [SerializeField] float _distanceFromPlayer;
         [SerializeField] float _speed;
         [SerializeField] float _radius; // Radius of which the enemy detects the player
@@ -57,13 +61,12 @@ namespace UZSG.Entities
         {
             _actionState = HandleTransition;
             ExecuteAction(_actionState);
-            Game.Tick.OnSecond += Game_Tick_OnSecond();
+            Game.Tick.OnSecond += Game_Tick_OnSecond;
         }
 
-        private Action<SecondInfo> Game_Tick_OnSecond()
+        private void Game_Tick_OnSecond(SecondInfo info)
         {
             ResetPlayerIfNotInRange();
-            return null;
         }
 
         protected virtual void LateUpdate()
@@ -87,12 +90,21 @@ namespace UZSG.Entities
 
         public void PlayerDetect(Player player)
         {
-            _target = player; // set the current target of the enemy to they player found
+            if (!player)
+            {
+                _target = player; // set the current target of the enemy to they player foundss
+            }
         }
 
         public void ResetPlayerIfNotInRange()
         {
-            _distanceFromPlayer = Vector3.Distance(_target.Position, transform.position); 
+            // Check if there is a target, then calculate the distance
+            if (_target != null)
+            {
+                _distanceFromPlayer = Vector3.Distance(_target.Position, transform.position); 
+            }
+
+            // Check if player is no longer in range then no more target to chase
             if (_radius <= _distanceFromPlayer)
             {
                 _target = null;
@@ -122,6 +134,11 @@ namespace UZSG.Entities
             generic = new();
             generic.ReadSaveJSON(defaultData.GenericAttributes);
             _radius = generic.Get("site_radius").Value;
+            //_minWait = generic.Get("wait_min_time_roam_zombie").Value;
+            //_maxWait = generic.Get("wait_max_time_roam_zombie").Value;
+            _speed = generic.Get("move_speed").Value;
+            RoamRadius = generic.Get("zombie_roam_radius").Value;
+            RoamInterval = generic.Get("zombie_roam_interval").Value;
         }
 
         #endregion
@@ -181,9 +198,9 @@ namespace UZSG.Entities
                 {
                     if (IsInSiteRange == EnemyActionStates.Roam)
                     {
-                        Hordetransform.position = new Vector3(1, 2, 1);             // change mo value sa need mo
-                        Hordetransform.rotation = Quaternion.Euler(0, 30, 0);       // change mo value sa need mo
-                        return true;
+                        //Hordetransform.position = new Vector3(1, 2, 1);             // change mo value sa need mo
+                        //Hordetransform.rotation = Quaternion.Euler(0, 30, 0);       // change mo value sa need mo
+                        return false; // palitan mo to ng true jericho once na done ka na
                     }
                     return false;
                 }
@@ -242,23 +259,37 @@ namespace UZSG.Entities
             enemyStateMachine.ToState(EnemyActionStates.Chase);
             _enemyEntity.SetDestination(_target.transform.position);
         }
+
         public void Roam()
         {
-            enemyStateMachine.ToState(EnemyActionStates.Roam);
-            RoamTime -= Time.deltaTime;
-            if (RoamTime <= 0)
+            // Check if the enemy has reached its destination and is actively moving
+            if (_enemyEntity.remainingDistance >= 0.002f && _enemyEntity.remainingDistance <= _enemyEntity.stoppingDistance)
             {
-                // Get a random position
-                _randomDestination = UnityEngine.Random.insideUnitSphere * RoamRadius;
-                _randomDestination += transform.position;
+                Debug.Log("In waiting state");
+                _enemyEntity.isStopped = true;
+                _enemyEntity.updateRotation = false;
+            }
+            else
+            {
+                Debug.Log("In roam state and distance is: " + _enemyEntity.remainingDistance + "\nstopping distance is: " + _enemyEntity.stoppingDistance);
+                // Continue moving toward the destination
+                RoamTime -= Time.deltaTime;
+                if (RoamTime <= 0)
+                {
+                    // Get a random position
+                    _randomDestination = UnityEngine.Random.insideUnitSphere * RoamRadius;
+                    _randomDestination += transform.position;
 
-                NavMesh.SamplePosition(_randomDestination, out NavMeshHit navHit, RoamRadius, NavMesh.AllAreas);
+                    NavMesh.SamplePosition(_randomDestination, out NavMeshHit navHit, RoamRadius, NavMesh.AllAreas);
 
-                // Set the agent's destination to the random point
-                _enemyEntity.SetDestination(navHit.position);
-                RoamTime = UnityEngine.Random.Range(1.0f, RoamInterval);
+                    // Set the agent's destination to the random point
+                    _enemyEntity.SetDestination(navHit.position);
+                    enemyStateMachine.ToState(EnemyActionStates.Roam);
+                    RoamTime = UnityEngine.Random.Range(1.0f, RoamInterval); // Reset RoamTime for the next movement
+                }
             }
         }
+
         public void Attack2() 
         {
             enemyStateMachine.ToState(EnemyActionStates.Attack2);
@@ -294,7 +325,7 @@ namespace UZSG.Entities
             transform.rotation = Hordetransform.rotation;
 
             // Move forward according to speed
-            transform.Translate(Vector3.forward * _speed * Time.deltaTime);
+            transform.Translate(Vector3.forward * (_speed * Time.deltaTime));
         }
 
         public void ExecuteAction(EnemyActionStates action) // execute an action depending on what state the entity is on

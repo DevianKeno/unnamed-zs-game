@@ -17,55 +17,49 @@ namespace UZSG.Players
         float _timer = 0f;
         int _clipIndex;
 
-        private void Start()
+        private void Update()
         {
-            StartCoroutine(PlayFootstepSound());
+            PlayFootsteps();
         }
 
-        private IEnumerator PlayFootstepSound()
+        void PlayFootsteps()
         {
-            while (true)
+            if (IsMoving && Player.Controls.IsGrounded && Player.Controls.Magnitude != 0f)
             {
-                if (IsMoving && Player.Controls.IsGrounded && Player.Controls.Magnitude != 0f)
+
+                // 2f is arbitrary, a number kinda feels right based on player magnitude
+                _cooldown = 2f / Player.Controls.Magnitude;
+
+                // LMFAO IT'S FIXED NOW, INSANE
+                _texture = Player.Controls.groundChecker.texture;
+
+                _timer += Time.deltaTime;
+                if (_timer >= _cooldown)
                 {
+                    _clipIndex = UnityEngine.Random.Range(0, 7);
 
-                    // 2f is arbitrary, a number kinda feels right based on player magnitude
-                    _cooldown = 2f / Player.Controls.Magnitude;
-
-                    // LMFAO IT'S FIXED NOW, INSANE
-                    _texture = Player.Controls.groundChecker.texture;
-
-                    _timer += Time.deltaTime;
-                    if (_timer >= _cooldown)
+                    // add more if for more textures, idk what are the better implementation
+                    if (_texture == "grass")
                     {
-                        _clipIndex = UnityEngine.Random.Range(0, 7);
-
-                        // add more if for more textures, idk what are the better implementation
-                        if (_texture == "grass")
-                        {
-                            PlaySound($"grass_walk_{_clipIndex}");
-                        }
-                        else if(_texture == "dirt")
-                        {
-                            PlaySound($"dirt_walk_{_clipIndex}");
-                        }
-                        else
-                        {
-                            
-                            PlaySound($"grass_walk_{_clipIndex}");
-                        }
-                        
-                        _timer = 0f;
+                        PlaySound($"grass_walk_{_clipIndex}");
                     }
-                }
-                else
-                {
+                    else if (_texture == "dirt")
+                    {
+                        PlaySound($"dirt_walk_{_clipIndex}");
+                    }
+                    else
+                    {
+
+                        PlaySound($"grass_walk_{_clipIndex}");
+                    }
+
                     _timer = 0f;
                 }
-
-                yield return null;
             }
-            
+            else
+            {
+                _timer = 0f;
+            }
         }
 
         bool IsMoving

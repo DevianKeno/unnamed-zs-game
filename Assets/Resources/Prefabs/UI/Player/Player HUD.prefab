@@ -464,7 +464,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Player: {fileID: 0}
   compassImage: {fileID: 1547546752102342463}
-  _shakeType: 2
+  _shakeType: 3
   shakeDuration: 0.5
   shakeMagnitude: 0.01
   _rotationSpeed: 10

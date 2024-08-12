@@ -50,7 +50,7 @@ namespace UZSG.Entities
         public EnemyData EnemyData => entityData as EnemyData;
         public string defaultPath; // Default file path of the specific enemy
         public EnemySaveData defaultData;
-        [SerializeField] AttributeCollection<GenericAttribute> generic;
+        [SerializeField] protected AttributeCollection<GenericAttribute> generic;
 
 
         #endregion
@@ -134,8 +134,6 @@ namespace UZSG.Entities
             generic = new();
             generic.ReadSaveJSON(defaultData.GenericAttributes);
             _radius = generic.Get("site_radius").Value;
-            //_minWait = generic.Get("wait_min_time_roam_zombie").Value;
-            //_maxWait = generic.Get("wait_max_time_roam_zombie").Value;
             _speed = generic.Get("move_speed").Value;
             RoamRadius = generic.Get("zombie_roam_radius").Value;
             RoamInterval = generic.Get("zombie_roam_interval").Value;
@@ -266,13 +264,11 @@ namespace UZSG.Entities
             // Check if the enemy has reached its destination and is actively moving
             if (_enemyEntity.remainingDistance >= 0.002f && _enemyEntity.remainingDistance <= _enemyEntity.stoppingDistance)
             {
-                //Debug.Log("In waiting state");
                 _enemyEntity.isStopped = true;
                 _enemyEntity.updateRotation = false;
             }
             else
             {
-                //Debug.Log("In roam state and distance is: " + _enemyEntity.remainingDistance + "\nstopping distance is: " + _enemyEntity.stoppingDistance);
                 // Continue moving toward the destination
                 RoamTime -= Time.deltaTime;
                 if (RoamTime <= 0)

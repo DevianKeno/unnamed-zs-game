@@ -32,8 +32,18 @@ namespace UZSG.Systems
         /// </summary>
         public static EOSManager.EOSSingleton EOS => EOSManager.Instance;
         public static EOSSubManagers EOSManagers { get; private set; }
+        static AttributesManager attrManager;
+        public static AttributesManager Attributes => attrManager;
+        static EntityManager entityManager;
+        public static EntityManager Entity => entityManager;
+        static ItemManager itemManager;
+        public static ItemManager Items => itemManager;
+        static RecipeManager recipeManager;
+        public static RecipeManager Recipes => recipeManager;
         static WorldManager worldManager;
         public static WorldManager World => worldManager;
+        static TimeManager timeManager;
+        public static TimeManager Time => timeManager;
 
         #endregion
 
@@ -41,18 +51,8 @@ namespace UZSG.Systems
         #region World-entry
         static TickSystem tickSystem;
         public static TickSystem Tick => tickSystem;
-        static TimeManager timeManager;
-        public static TimeManager Time => timeManager;
-        static AttributesManager attrManager;
-        public static AttributesManager Attributes => attrManager;
-        static ItemManager itemManager;
-        public static ItemManager Items => itemManager;
         static ParticleManager particleManager;
         public static ParticleManager Particles => particleManager;
-        static RecipeManager recipeManager;
-        public static RecipeManager Recipes => recipeManager;
-        static EntityManager entityManager;
-        public static EntityManager Entity => entityManager;
 
         #endregion
 

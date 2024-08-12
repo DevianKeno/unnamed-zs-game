@@ -275,7 +275,7 @@ namespace UZSG.Systems
         {
             if (args[0] == "create")
             {
-                Game.World.CreateWorld(args[1]);
+                // Game.World.CreateWorld(args[1]);
 
             } else if (args[0] == "load")
             {

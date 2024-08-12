@@ -53,8 +53,10 @@ namespace UZSG.Entities
 
         PlayerInventoryWindow invUI;
         public PlayerInventoryWindow InventoryGUI => invUI;
-        PlayerHUD _HUD;
-        public PlayerHUD HUD => _HUD;
+        PlayerEquipmentHUD _equipmentHUD;
+        public PlayerEquipmentHUD EquipHUD => _equipmentHUD;
+        PlayerInfoHUD _infoHUD;
+        public PlayerInfoHUD InfoHUD => _infoHUD;
         
         InputActionMap actionMap;
         readonly Dictionary<string, InputAction> inputs = new();
@@ -161,8 +163,11 @@ namespace UZSG.Entities
 
         void InitializeHUD()
         {
-            _HUD = Game.UI.Create<PlayerHUD>("Player HUD");
-            _HUD.Initialize(this);
+            _infoHUD = Game.UI.Create<PlayerInfoHUD>("Player Info HUD");
+            _infoHUD.Initialize(this);
+
+            _equipmentHUD = Game.UI.Create<PlayerEquipmentHUD>("Player Equipment HUD");
+            _equipmentHUD.Initialize(this);
         }
 
         void InitializeInventory()
@@ -170,18 +175,20 @@ namespace UZSG.Entities
             inventory.Initialize();
             inventory.ReadSaveJSON(new());
 
-            invUI = Game.UI.Create<PlayerInventoryWindow>("Player Inventory", false);
+            invUI = Game.UI.Create<PlayerInventoryWindow>("Player Inventory", show: false);
             invUI.Initialize(this);
 
             invUI.OnOpen += () =>
             {
                 Actions.Disable();
                 inputs["Look"].Disable();
+                _infoHUD.Hide();
             };
             invUI.OnClose += () =>
             {
                 Actions.Enable();
                 inputs["Look"].Enable();
+                _infoHUD.Show();
             };
         }
 

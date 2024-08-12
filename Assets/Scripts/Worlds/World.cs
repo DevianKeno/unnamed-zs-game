@@ -30,11 +30,15 @@ namespace UZSG.Worlds
         {
             if (_isInitialized) return;
             _isInitialized = true;
+
+            timeController.Initialize();
+            eventsController.Initialize();
             
             Game.Entity.OnEntitySpawned += OnEntitySpawned;
             Game.Entity.OnEntityKilled += OnEntityKilled;
             Game.Tick.OnTick += Tick;
         }
+        
 
         #region Event callbacks
 
@@ -86,6 +90,11 @@ namespace UZSG.Worlds
                 return list;
             }
             return new();
+        }
+
+        public void LoadLevelAsync()
+        {
+            
         }
     }
 }

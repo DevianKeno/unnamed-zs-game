@@ -202,6 +202,10 @@ namespace UZSG.UI
             return null;
         }
 
+        /// <summary>
+        /// Create an instance of a UI prefab.
+        /// </summary>
+        /// <typeparam name="T">Window script attach to the root.</typeparam>
         public T Create<T>(string prefabName, bool show = true) where T : Window
         {            
             if (prefabsDict.ContainsKey(prefabName))

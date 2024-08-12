@@ -12,8 +12,6 @@ namespace UZSG.UI
     /// </summary>
     public class Window : MonoBehaviour, IUIElement
     {
-        static Vector2 _hiddenWindowsPosition = new(5000, 5000);
-        
         [SerializeField] protected RectTransform rect;
         public RectTransform Rect => rect;
         [field: Space]
@@ -27,7 +25,6 @@ namespace UZSG.UI
         public float FadeDuration = 0.3f;
         
         protected GameObject blocker;
-        protected Vector2 showedPosition;
 
 
         #region Events
@@ -47,7 +44,6 @@ namespace UZSG.UI
         void Awake()
         {
             rect = GetComponent<RectTransform>();
-            showedPosition = rect.localPosition;
         }
 
         /// <summary>
@@ -64,13 +60,14 @@ namespace UZSG.UI
         /// </summary>
         public void Show()
         {
+            gameObject.SetActive(true);
+
             if (!IsVisible)
             {
                 OnShow();
                 OnOpen?.Invoke();
             }
-
-            rect.anchoredPosition = showedPosition; /// hehe^2
+            
             IsVisible = true;
         }
 
@@ -87,7 +84,7 @@ namespace UZSG.UI
                 OnClose?.Invoke();
             }
 
-            rect.anchoredPosition = _hiddenWindowsPosition; /// hehe^2
+            gameObject.SetActive(false);
             IsVisible = false;
         }
 

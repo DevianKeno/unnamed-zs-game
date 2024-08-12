@@ -89,7 +89,7 @@ GameObject:
   - component: {fileID: 6248146509334210996}
   - component: {fileID: 200817258700876314}
   - component: {fileID: 6984878254017395619}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -177,7 +177,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 0
+  m_text: 12
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5daeb78d9e0af8945b958a3990542fbd, type: 2}
   m_sharedMaterial: {fileID: -3542337355913425260, guid: 5daeb78d9e0af8945b958a3990542fbd, type: 2}

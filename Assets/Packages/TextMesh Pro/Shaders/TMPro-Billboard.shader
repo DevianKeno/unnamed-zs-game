@@ -131,7 +131,7 @@ SubShader {
 		#pragma multi_compile __ UNITY_UI_CLIP_RECT
 		#pragma multi_compile __ UNITY_UI_ALPHACLIP
 
-		int _KeepConstantScaling = 1;
+		int _KeepConstantScaling = 0;
 		float _Scaling = 10.0;
 
 

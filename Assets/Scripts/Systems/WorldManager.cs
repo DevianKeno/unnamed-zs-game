@@ -30,10 +30,10 @@ namespace UZSG.Systems
 
         public void CreateWorld(string name)
         {
-
+            
         }
 
-        public void LoadWorld(string name)
+        public void LoadLevel(string name)
         {
             // Game.Entity.Spawn("player", new (0f, 1f, 0f));
         }

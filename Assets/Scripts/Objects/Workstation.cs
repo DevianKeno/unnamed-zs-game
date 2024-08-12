@@ -78,7 +78,7 @@ namespace UZSG.Objects
                 return;
             }
 
-            player.HUD.Hide();
+            player.InfoHUD.Hide();
             player.Actions.Disable();
             player.Controls.Disable();
             player.FPP.ToggleControls(false);
@@ -86,7 +86,7 @@ namespace UZSG.Objects
 
             _GUI.OnClose += () => 
             {
-                player.HUD.Show();
+                player.InfoHUD.Show();
                 player.Actions.Enable();
                 player.Controls.Enable();
                 player.FPP.ToggleControls(true);

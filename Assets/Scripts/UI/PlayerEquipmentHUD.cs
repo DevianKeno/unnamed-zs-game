@@ -15,15 +15,13 @@ using UZSG.Items.Weapons;
 
 namespace UZSG.UI.HUD
 {
-    public class PlayerHUD : Window
+    public class PlayerEquipmentHUD : Window
     {
         public Player Player;
         [Space]
 
         Dictionary<int, ItemSlotUI> _equipmentSlotUIs = new();
         Dictionary<int, ItemSlotUI> _hotbarSlotUIs = new();
-
-        public event Action<Player> OnInitializePlayer;
         
         [Header("Elements")]
         public GameObject equipment;
@@ -35,11 +33,6 @@ namespace UZSG.UI.HUD
         public AttributeBar XPBar;
         public AmmoCounterHUD AmmoCounter;
         public TextMeshProUGUI equippedWeaponTMP;
-        public GameObject pickupsIndicatorContainer;
-        public DynamicCrosshair crosshair;
-        public SwitchCrosshair allCrosshair;
-        public Compass compass;
-        public Image vignette;
 
         internal void Initialize(Player player)
         {
@@ -53,9 +46,6 @@ namespace UZSG.UI.HUD
             BindPlayerAttributes();
             InitializeItemSlots();
             InitializeEvents();
-            crosshair.Initialize(player);
-            allCrosshair.Initialize(player);
-            compass.Initialize(player);
         }
 
         void InitializeItemSlots()
@@ -101,14 +91,6 @@ namespace UZSG.UI.HUD
             Player.Inventory.Hotbar.OnSlotContentChanged += OnHotbarSlotChanged;
             Player.Inventory.Equipment.OnSlotContentChanged += OnEquipmentSlotChanged;
             Player.FPP.OnChangeHeldItem += OnChangeHeldItem;
-
-            Player.Actions.OnPickupItem += (item) =>
-            {
-                var indicator = Game.UI.Create<PickupsIndicator>("Pickups Indicator", show: false);
-                indicator.transform.SetParent(pickupsIndicatorContainer.transform); 
-                indicator.SetDisplayedItem(item);
-                indicator.PlayAnimation();
-            };
         }
 
         public void BindPlayer(Player player)

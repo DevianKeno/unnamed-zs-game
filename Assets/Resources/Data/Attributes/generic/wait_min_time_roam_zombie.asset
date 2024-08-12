@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e18afb883e1451a4c82eb24298dc52e1, type: 3}
-  m_Name: site_radius
+  m_Name: wait_min_time_roam_zombie
   m_EditorClassIdentifier: 
-  Id: site_radius
-  Name: Site Radius
-  Description: Zombie site Radius
+  Id: wait_min_time_roam_zombie
+  Name: Wait Min Time Roam Zombie
+  Description: Zombie walking interval before roaming again (Minimum)
   Type: 0

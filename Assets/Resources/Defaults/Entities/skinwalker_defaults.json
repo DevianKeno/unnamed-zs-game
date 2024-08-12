@@ -29,6 +29,16 @@
             "Id": "site_radius",
             "Type": 0,
             "Value": 12.0
+        },
+        {
+            "Id": "zombie_roam_radius",
+            "Type": 0,
+            "Value": 25.0
+        },
+        {
+            "Id": "zombie_roam_interval",
+            "Type": 0,
+            "Value": 20.0
         }
     ]
 }

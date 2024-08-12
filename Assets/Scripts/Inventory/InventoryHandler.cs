@@ -4,6 +4,7 @@ using UZSG.Data;
 using UZSG.Entities;
 using UZSG.Items;
 using UZSG.Systems;
+using UZSG.UI;
 
 namespace UZSG.Inventory
 {
@@ -67,6 +68,11 @@ namespace UZSG.Inventory
             
             /// special treatment
             _equipment = new();
+        }
+
+        void InitializeGUI()
+        {
+
         }
 
         public void ReadSaveJSON(InventorySaveData data)

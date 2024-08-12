@@ -524,8 +524,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   EventOngoing: 0
   InstantiateWeatherInEditor: 0
-  CurrentWeather: {fileID: 0}
-  DefaultWeather: {fileID: 0}
+  CurrentWeather: {fileID: 11400000, guid: 51da26a6cfe31fd4ebd9a1ff6725bc7a, type: 2}
+  DefaultWeather: {fileID: 11400000, guid: 51da26a6cfe31fd4ebd9a1ff6725bc7a, type: 2}
   Time: {fileID: 4064020474479255504}
   _weatherCountdown: 0
   ParticleParent: {fileID: 0}

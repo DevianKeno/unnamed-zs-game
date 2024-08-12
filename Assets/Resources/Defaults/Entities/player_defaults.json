@@ -82,7 +82,7 @@
         {
             "Id": "bag_slots_count",
             "Type": 0,
-            "Value": 16
+            "Value": 18
         },
         {
             "Id": "hotbar_slots_count",

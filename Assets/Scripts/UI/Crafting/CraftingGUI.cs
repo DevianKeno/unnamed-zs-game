@@ -28,7 +28,6 @@ namespace UZSG.UI
         [SerializeField] RectTransform materialsHolder;
         [SerializeField] GameObject outputSlots;
         [SerializeField] Button craftButton;
-        [SerializeField] Button closeButton;
 
         void Start()
         {
@@ -67,10 +66,6 @@ namespace UZSG.UI
             craftButton.onClick.AddListener(() =>
             {
                 CraftItem();
-            });
-            closeButton.onClick.AddListener(() =>
-            {
-                Hide();
             });
         }
 

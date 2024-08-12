@@ -37,7 +37,7 @@ namespace UZSG.Entities
     [RequireComponent(typeof(BoxCollider))]
     public class Bullet : Entity, IProjectile, ICollisionSource
     {
-        public const float DefaultBulletScale = 0.05f;
+        public const float DefaultBulletScale = 0.08f;
         
         public string CollisionTag => "Projectile";
         public BulletDamageAttributes DamageAttributes;
@@ -52,33 +52,23 @@ namespace UZSG.Entities
         bool _isMoving;
         bool _hasGravity;
 
-        Rigidbody rb;
-        BoxCollider coll;
-        MeshRenderer meshRenderer;
-        TrailRenderer trailRenderer;
+        [SerializeField] Rigidbody rb;
+        [SerializeField] BoxCollider coll;
+        [SerializeField] MeshRenderer meshRenderer;
+        [SerializeField] TrailRenderer trailRenderer;
         
-        void Awake()
+        public override void OnSpawn()
         {
-            rb = GetComponent<Rigidbody>();
-            coll = GetComponent<BoxCollider>();
-            meshRenderer = GetComponentInChildren<MeshRenderer>();
-            trailRenderer = GetComponentInChildren<TrailRenderer>();
-        }
+            base.OnSpawn();
 
-        void Start()
-        {
             Destroy(gameObject, 5f); /// Despawn after 5 seconds
-        }
-        
-        void Update()
-        {
         }
 
         void FixedUpdate()
         {
+            RaycastForCollisions();
             ApplyMovement();
             ApplyGravity();
-            RaycastForCollisions();
             CheckDistanceFromOrigin();
             _previousPosition = transform.position;
         }
@@ -132,7 +122,7 @@ namespace UZSG.Entities
         {
             var info = new CollisionHitInfo()
             {
-                Type = CollisionType.Melee,
+                Type = CollisionType.Projectile,
                 Source = this,
                 ContactPoint = point,
             };

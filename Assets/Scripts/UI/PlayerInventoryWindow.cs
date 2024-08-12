@@ -11,6 +11,8 @@ using UZSG.Data;
 using UZSG.Inventory;
 using UZSG.Items;
 using UZSG.Entities;
+using TMPro;
+using UZSG.Objects;
 
 namespace UZSG.UI
 {
@@ -47,6 +49,9 @@ namespace UZSG.UI
         [Header("Inventory Components")]
         [SerializeField] FrameController frameController;
         [SerializeField] GameObject bag;
+        [SerializeField] Transform craftingFrame;
+        [SerializeField] CraftingGUI playerCraftingGUI;
+        [SerializeField] TextMeshProUGUI titleText;
         
         [Header("Prefabs")]
         [SerializeField] GameObject selectorPrefab;
@@ -190,6 +195,27 @@ namespace UZSG.UI
             Game.UI.ToggleCursor(false);
         }
 
+        /// <summary>
+        /// Replace the Player Crafting GUI with the Workstation GUI.
+        /// </summary>
+        public void SetWorkstation(Workstation workstation)
+        {
+            if (workstation == null) return; /// why would be null tho
+
+            playerCraftingGUI.Hide();
+            workstation.GUI.transform.SetParent(craftingFrame, false);
+            frameController.SwitchToFrame("crafting", instant: true);
+            /// Set the title text to the workstation's name
+            titleText.text = workstation.WorkstationData.WorkstationName;
+            Show();
+        }
+
+        public void ResetToPlayerCraftingGUI()
+        {
+            titleText.text = "Cwafting";
+            playerCraftingGUI.Show();
+        }
+
 
         #region Event callbacks
 
@@ -209,6 +235,7 @@ namespace UZSG.UI
                 }
             }
             
+            titleText.text = context.Next;
             PutBackHeldItem();
             DestroyItemOptions();
         }

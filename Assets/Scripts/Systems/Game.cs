@@ -57,13 +57,6 @@ namespace UZSG.Systems
         #endregion
 
         
-        #region Debug
-
-        public FreeLookCamera FreeLookCamera;
-
-        #endregion
-
-
         /// <summary>
         /// Called after all Managers have been initialized.
         /// </summary>
@@ -104,8 +97,6 @@ namespace UZSG.Systems
         void Start()
         {
             InitializeManagers();
-            
-            FreeLookCamera.InitializeInputs(); /// DEBUGGING ONLY
         }
 
         void OnValidate()

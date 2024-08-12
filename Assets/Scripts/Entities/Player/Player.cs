@@ -17,6 +17,7 @@ using UZSG.UI;
 using UZSG.UI.HUD;
 using UZSG.Crafting;
 using UZSG.StatusEffects;
+using UZSG.Objects;
 
 namespace UZSG.Entities
 {
@@ -144,6 +145,11 @@ namespace UZSG.Entities
             saveData = JsonUtility.FromJson<PlayerSaveData>(defaultsJson);
         }
 
+        void SaveDataToJSON()
+        {
+            
+        }
+
         void InitializeAttributes()
         {
             vitals = new();
@@ -267,6 +273,16 @@ namespace UZSG.Entities
         void OnPerformInventory(InputAction.CallbackContext context)
         {
             invUI.ToggleVisibility();
+        }
+
+        public void UseWorkstation(Workstation workstation)
+        {
+            invUI.SetWorkstation(workstation);
+        }
+
+        public void ResetToPlayerCraftingGUI()
+        {
+            invUI.ResetToPlayerCraftingGUI();
         }
     }
 }

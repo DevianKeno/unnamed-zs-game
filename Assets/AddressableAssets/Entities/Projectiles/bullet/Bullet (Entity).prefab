@@ -280,7 +280,7 @@ Rigidbody:
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 10240
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -301,7 +301,7 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 10240
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -346,3 +346,7 @@ MonoBehaviour:
   LayerMask:
     serializedVersion: 2
     m_Bits: 10240
+  rb: {fileID: 5723560054871247184}
+  coll: {fileID: 2886082513997833480}
+  meshRenderer: {fileID: 3034706727560040334}
+  trailRenderer: {fileID: 113949430939021490}

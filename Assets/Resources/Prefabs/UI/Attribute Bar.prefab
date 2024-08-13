@@ -261,8 +261,8 @@ MonoBehaviour:
     data: {fileID: 0}
     value: 0
     baseMaximum: 0
-    flatBonus: 0
     multiplier: 0
+    flatBonus: 0
     LimitOverflow: 0
     LimitUnderflow: 0
   BufferOnDecreaseValue: 0

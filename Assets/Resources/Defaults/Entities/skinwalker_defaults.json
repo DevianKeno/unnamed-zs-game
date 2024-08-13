@@ -1,54 +1,24 @@
 {
-    "GenericAttributes": [
-        {
-            "Id": "health",
-            "Type": 0,
-            "Value": 50.0
-        },
-        {
-            "Id": "run_speed",
-            "Type": 0,
-            "Value": 10.0
-        },
-        {
-            "Id": "move_speed",
-            "Type": 0,
-            "Value": 8.0
-        },
-        {
-            "Id": "armor",
-            "Type": 0,
-            "Value": 1.0
-        },
-        {
-            "Id": "attack_damage",
-            "Type": 0,
-            "Value": 20.0
-        },
-        {
-            "Id": "attack_cooldown",
-            "Type": 0,
-            "Value": 2.0
-        },
-        {
-            "Id": "zombie_site_radius",
-            "Type": 0,
-            "Value": 12.0
-        },
-        {
-            "Id": "zombie_attack_radius",
-            "Type": 0,
-            "Value": 1.0
-        },
-        {
-            "Id": "zombie_roam_radius",
-            "Type": 0,
-            "Value": 25.0
-        },
-        {
-            "Id": "zombie_roam_interval",
-            "Type": 0,
-            "Value": 20.0
-        }
-    ]
+  "Attributes": [
+    {
+      "Id": "health",
+      "Value": 100.0,
+      "Minimum": 0.0,
+      "BaseMaximum": 100.0,
+      "Multiplier": 1.0,
+      "FlatBonus": 0.0,
+      "LimitOverflow": true,
+      "LimitUnderflow": true
+    },
+    {
+        "Id": "move_speed",
+        "Value": 300.0,
+        "Minimum": 0.0,
+        "BaseMaximum": 1000.0,
+        "Multiplier": 1.0,
+        "FlatBonus": 0.0,
+        "LimitOverflow": true,
+        "LimitUnderflow": true
+    }
+  ]
 }

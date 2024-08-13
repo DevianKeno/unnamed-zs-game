@@ -11,7 +11,7 @@ using System.Collections;
 
 namespace UZSG.Entities
 {
-    public abstract class Enemy : Entity, IAttributable, IDetectable
+    public abstract class Enemy : Entity, IDetectable
     {
         #region Agent movement related
 
@@ -22,8 +22,8 @@ namespace UZSG.Entities
         Vector3 _randomDestination; // Destination of agent
         [SerializeField] bool _hasTargetInSite, _hasTargetInAttack; // checks if the player is in site, attack range or is a target
         [SerializeField] float RoamTime; // Time it takes for the agent to travel a point
-        [SerializeField] float RoamRadius; // Radius of which the agent can travel
-        [SerializeField] float RoamInterval; // Interval before the model moves again
+        [SerializeField] float _roamRadius; // Radius of which the agent can travel
+        [SerializeField] float _roamInterval; // Interval before the model moves again
         //[SerializeField] float _minWait, _maxWait; // waiting time before roaming again
         //[SerializeField] float _waitTime; // actual waiting time of enemy in second
         //[SerializeField] bool _isWaiting = false; // Track if the AI is currently waiting
@@ -158,13 +158,14 @@ namespace UZSG.Entities
 
         void InitializeAttributes()
         {
-            generic = new();
-            generic.ReadSaveJSON(defaultData.GenericAttributes);
-            _siteRadius = generic.Get("zombie_site_radius").Value;
-            _attackRadius = generic.Get("zombie_attack_radius").Value;
-            _speed = generic.Get("move_speed").Value;
-            RoamRadius = generic.Get("zombie_roam_radius").Value;
-            RoamInterval = generic.Get("zombie_roam_interval").Value;
+            attributes = new();
+            attributes.ReadSaveJson(defaultData.Attributes);
+            
+            _siteRadius = Attributes.Get("zombie_site_radius").Value;
+            _attackRadius = Attributes.Get("zombie_attack_radius").Value;
+            _speed = Attributes.Get("move_speed").Value;
+            _roamRadius = Attributes.Get("zombie_roam_radius").Value;
+            _roamInterval = Attributes.Get("zombie_roam_interval").Value;
         }
 
         #endregion
@@ -203,7 +204,7 @@ namespace UZSG.Entities
 
         public void TakeDamage(float damage)
         {
-            var health = generic.Get("health");
+            var health = attributes.Get("health");
             health.Remove(damage);
         }
 
@@ -308,15 +309,15 @@ namespace UZSG.Entities
                 if (RoamTime <= 0)
                 {
                     // Get a random position
-                    _randomDestination = UnityEngine.Random.insideUnitSphere * RoamRadius;
+                    _randomDestination = UnityEngine.Random.insideUnitSphere * _roamRadius;
                     _randomDestination += transform.position;
 
-                    NavMesh.SamplePosition(_randomDestination, out NavMeshHit navHit, RoamRadius, NavMesh.AllAreas);
+                    NavMesh.SamplePosition(_randomDestination, out NavMeshHit navHit, _roamRadius, NavMesh.AllAreas);
 
                     // Set the agent's destination to the random point
                     _enemyEntity.SetDestination(navHit.position);
                     enemyStateMachine.ToState(EnemyActionStates.Roam);
-                    RoamTime = UnityEngine.Random.Range(1.0f, RoamInterval); // Reset RoamTime for the next movement
+                    RoamTime = UnityEngine.Random.Range(1.0f, _roamInterval); // Reset RoamTime for the next movement
                 }
             }
         }

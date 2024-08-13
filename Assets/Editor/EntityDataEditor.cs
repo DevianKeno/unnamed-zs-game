@@ -1,11 +1,7 @@
-using System;
-
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 
 using UZSG.Data;
-using UZSG.Entities;
 
 namespace UZSG.UnityEditor
 {
@@ -14,6 +10,7 @@ namespace UZSG.UnityEditor
     {
         SerializedProperty assetReference,
             nameProperty,
+            attributes,
             audioAssetsData;
 
         protected override void OnEnable()
@@ -22,6 +19,7 @@ namespace UZSG.UnityEditor
             
             assetReference = serializedObject.FindProperty("AssetReference");
             nameProperty = serializedObject.FindProperty("Name");
+            attributes = serializedObject.FindProperty("Attributes");
             audioAssetsData = serializedObject.FindProperty("AudioAssetsData");
         }
 
@@ -29,10 +27,23 @@ namespace UZSG.UnityEditor
         {
             serializedObject.Update();
             base.OnInspectorGUI();
-            EntityData entityData = (EntityData) target;
+            EntityData data = (EntityData) target;
             
             EditorGUILayout.PropertyField(assetReference);
             EditorGUILayout.PropertyField(nameProperty);
+            EditorGUILayout.PropertyField(attributes);
+            
+            if (GUILayout.Button("Save to Defaults Json"))
+            {
+                data.WriteDefaultsJson();
+                EditorUtility.SetDirty(data);
+            }
+            if (GUILayout.Button("Read to Defaults Json"))
+            {
+                data.ReadDefaultsJson();
+                EditorUtility.SetDirty(data);
+            }
+
             EditorGUILayout.PropertyField(audioAssetsData);
             
             serializedObject.ApplyModifiedProperties();

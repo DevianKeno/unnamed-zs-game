@@ -4,10 +4,8 @@ using System.Collections.Generic;
 namespace UZSG.Saves
 {
     [Serializable]
-    public class PlayerSaveData : SaveData
+    public class PlayerSaveData : EntitySaveData
     {
-        /// Attributes first
-        public List<AttributeSaveData> Attributes = new();
         public InventorySaveData Inventory = new();
         public List<string> KnownRecipes = new();
     }

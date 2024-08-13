@@ -68,8 +68,6 @@ namespace UZSG.Entities
         PlayerInfoHUD _infoHUD;
         public PlayerInfoHUD InfoHUD => _infoHUD;
 
-        #endregion
-
         
         InputActionMap actionMap;
         readonly Dictionary<string, InputAction> inputs = new();
@@ -135,7 +133,6 @@ namespace UZSG.Entities
             InitializeAttributes();
             InitializeStateMachines();
             InitializeInventory();
-            InitializeKnownRecipes();
             // InitializeCrafter();
             InitializeHUD();
             InitializeInputs();
@@ -153,7 +150,7 @@ namespace UZSG.Entities
 
         void LoadDefaultsJson()
         {
-            saveData = playerEntityData.GetDefaultsJson();
+            saveData = playerEntityData.GetDefaultsJson<PlayerSaveData>();
         }
 
         public void ReadSaveJson(PlayerSaveData saveData)

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UZSG.Saves;
 
 namespace UZSG.Data
@@ -6,6 +7,6 @@ namespace UZSG.Data
     [Serializable]
     public class EnemySaveData : SaveData
     {
-        public AttributeCollectionSaveData GenericAttributes;
+        public List<AttributeSaveData> Attributes;
     }
 }

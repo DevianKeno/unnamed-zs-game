@@ -12,14 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6379a2b7d91791945abf1dc8c29cd406, type: 3}
   m_Name: silent_one
   m_EditorClassIdentifier: 
-  Id: 
+  Id: silent_one
   AssetReference:
     m_AssetGUID: 
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  Name: 
+  Name: Silent One
+  Attributes: []
   AudioAssetsData: {fileID: 0}
-  Generic:
-  - {fileID: 11400000, guid: e1db9201565269c4caebcb12298f0665, type: 2}
-  - {fileID: 11400000, guid: fe9f66b79d95e7948a4dfcb4512568c7, type: 2}

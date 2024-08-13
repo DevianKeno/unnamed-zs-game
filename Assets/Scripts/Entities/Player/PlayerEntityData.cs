@@ -20,19 +20,15 @@ namespace UZSG.Entities
     [CreateAssetMenu(fileName = "New Player Entity Data", menuName = "UZSG/Entity/Player Entity Data")]
     public class PlayerEntityData : EntityData
     {
-        string defaultsPath = Application.dataPath + "/Resources/Defaults/Entities/";
-
-        [Header("Attributes")]
-        public List<Attributes.Attribute> Attributes;
         public List<RecipeData> KnownRecipes;
 
-        public PlayerSaveData GetDefaultsJson()
+        public override PlayerSaveData GetDefaultsJson<PlayerSaveData>()
         {
             var filepath = defaultsPath + $"{Id}_defaults.json";
 
             if (!File.Exists(filepath))
             {
-                Game.Console.LogWarning($"'player_defaults' not found, creating new one...");
+                Game.Console.LogWarning($"'{Id}_defaults' not found, creating new one...");
                 WriteDefaultsJson();
             }
             
@@ -41,30 +37,16 @@ namespace UZSG.Entities
         }
 
 #if UNITY_EDITOR
-        public void ReadDefaultsJson()
+        public override void ReadDefaultsJson()
         {
+            base.ReadDefaultsJson();
+            
             var filepath = defaultsPath + $"{Id}_defaults.json";
             var defaultsJson = File.ReadAllText(filepath);
             var defaults = JsonConvert.DeserializeObject<PlayerSaveData>(defaultsJson);
 
             /// Inventory
-            
-            /// Attributes
-            Attributes.Clear();
-            foreach (var attrSave in defaults.Attributes)
-            {
-                var attrData = Resources.Load<AttributeData>($"Data/Attributes/{attrSave.Id}");
-                if (attrData != null)
-                {
-                    var newAttr = new Attributes.Attribute(attrData);
-                    newAttr.ReadSaveJson(attrSave);
-                    Attributes.Add(newAttr);
-                }
-                else
-                {
-                    Debug.LogWarning($"Invalid Attribute Id '{attrSave.Id}'. It does not exist.");
-                }
-            }
+            /// 
 
             /// Recipes
             KnownRecipes.Clear();
@@ -81,25 +63,24 @@ namespace UZSG.Entities
                 }
             }
         }
-#endif
-
-        public void WriteDefaultsJson()
+        
+        public override void WriteDefaultsJson()
         {
             var saveData = new PlayerSaveData();
-            /// Inventory
             
             /// Attributes
             var ac = new AttributeCollection();
             ac.AddList(Attributes);
             saveData.Attributes = ac.WriteSaveJson();
 
+            /// Inventory
+            /// 
+            
             /// Recipes
             saveData.KnownRecipes.AddRange(KnownRecipes.Select(recipe => recipe.Id));
 
-            var filepath = defaultsPath + $"{Id}_defaults.json";
-            if (!Directory.Exists(defaultsPath)) Directory.CreateDirectory(defaultsPath);///
-            var defaultsJson = JsonConvert.SerializeObject(saveData, Formatting.Indented);
-            File.WriteAllText(filepath, defaultsJson);
+            WriteToFile(saveData);
         }
-    } 
+#endif
+    }
 }

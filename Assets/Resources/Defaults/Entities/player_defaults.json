@@ -1,4 +1,15 @@
 {
+  "Inventory": {
+    "Bag": null,
+    "Hotbar": null,
+    "Equipment": null
+  },
+  "KnownRecipes": [
+    "fiber_cord",
+    "fiber_cord_1",
+    "bandage",
+    "first_aid_kit"
+  ],
   "Attributes": [
     {
       "Id": "health",
@@ -139,15 +150,16 @@
       "FlatBonus": 0.0,
       "LimitOverflow": true,
       "LimitUnderflow": true
+    },
+    {
+      "Id": "innate_thirst",
+      "Value": 0.01,
+      "Minimum": 0.0,
+      "BaseMaximum": 0.0,
+      "Multiplier": 100.0,
+      "FlatBonus": 0.0,
+      "LimitOverflow": true,
+      "LimitUnderflow": true
     }
-  ],
-  "Inventory": {
-    "Bag": null,
-    "Hotbar": null,
-    "Equipment": null
-  },
-  "KnownRecipes": [
-    "bandage",
-    "first_aid_kit"
   ]
 }

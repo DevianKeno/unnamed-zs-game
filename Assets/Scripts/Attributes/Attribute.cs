@@ -4,6 +4,7 @@ using UnityEngine;
 
 using UZSG.Systems;
 using UZSG.Data;
+using UZSG.Saves;
 using System.Collections.Generic;
 
 namespace UZSG.Attributes
@@ -24,7 +25,7 @@ namespace UZSG.Attributes
     /// Base class for Attributes.
     /// </summary>
     [Serializable]
-    public class Attribute
+    public class Attribute : ISaveDataReadWrite<AttributeSaveData>
     {
         public enum ValueChangedType {
             Increased, Decreased
@@ -290,8 +291,13 @@ namespace UZSG.Attributes
 
             return underflow;
         }
+
+        public void ReadSaveJson(AttributeSaveData saveData)
+        {
+            ReadSaveJson(saveData);
+        }
         
-        public virtual void ReadSaveData(AttributeSaveData data, bool initialize = true)
+        public virtual void ReadSaveJSON(AttributeSaveData data, bool initialize = true)
         {
             value = data.Value;
             minimum = data.Minimum;
@@ -306,8 +312,12 @@ namespace UZSG.Attributes
                 Initialize();
             }
         }
-        
 
+        public AttributeSaveData WriteSaveJson()
+        {
+            throw new NotImplementedException();
+        }
+        
         #region Static
 
         public static void ToMax(Attribute attr)

@@ -1,6 +1,6 @@
 using System;
 
-namespace UZSG.Attributes
+namespace UZSG.Saves
 {
     [Serializable]
     public class GenericAttributeSaveData : AttributeSaveData

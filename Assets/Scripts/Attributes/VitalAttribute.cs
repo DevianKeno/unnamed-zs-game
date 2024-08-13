@@ -4,6 +4,7 @@ using UnityEngine;
 
 using UZSG.Systems;
 using UZSG.Data;
+using UZSG.Saves;
 
 namespace UZSG.Attributes
 {
@@ -287,9 +288,9 @@ namespace UZSG.Attributes
             return true;
         }
 
-        public override void ReadSaveData(AttributeSaveData data, bool initialize = true)
+        public override void ReadSaveJSON(AttributeSaveData data, bool initialize = true)
         {
-            base.ReadSaveData(data, initialize: false);
+            base.ReadSaveJSON(data, initialize: false);
 
             var vitalData = data as VitalAttributeSaveData;
             allowChange = vitalData.AllowChange;

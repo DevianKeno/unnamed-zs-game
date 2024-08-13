@@ -1,13 +1,11 @@
 using System;
-using System.Collections.Generic;
-using UZSG.Attributes;
-using UZSG.Crafting;
+using UZSG.Saves;
 
 namespace UZSG.Data
 {
     [Serializable]
-    public struct EnemySaveData
+    public class EnemySaveData : SaveData
     {
-        public List<GenericAttributeSaveData> GenericAttributes;
+        public AttributeCollectionSaveData GenericAttributes;
     }
 }

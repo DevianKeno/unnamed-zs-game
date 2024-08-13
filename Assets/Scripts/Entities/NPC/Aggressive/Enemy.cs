@@ -131,7 +131,7 @@ namespace UZSG.Entities
         void InitializeAttributes()
         {
             generic = new();
-            generic.ReadSaveJSON(defaultData.GenericAttributes);
+            generic.ReadSaveJson(defaultData.GenericAttributes);
             _radius = generic.Get("site_radius").Value;
             _speed = generic.Get("move_speed").Value;
             RoamRadius = generic.Get("zombie_roam_radius").Value;

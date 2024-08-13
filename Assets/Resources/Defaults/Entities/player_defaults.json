@@ -6,7 +6,7 @@
     "VitalAttributes": [
         {
             "Id": "health",
-            "Type": 1,
+            "Type": "vital",
             "Value": 100.0,
             "BaseMaximum": 100.0,
             "ChangeType": 1,
@@ -15,7 +15,7 @@
         },
         {
             "Id": "stamina",
-            "Type": 1,
+            "Type": "vital",
             "Value": 100.0,
             "BaseMaximum": 100.0,
             "ChangeType": 1,
@@ -26,7 +26,7 @@
         },
         {
             "Id": "hunger",
-            "Type": 1,
+            "Type": "vital",
             "Value": 100.0,
             "BaseMaximum": 100.0,
             "ChangeType": 2,
@@ -35,7 +35,7 @@
         },
         {
             "Id": "hydration",
-            "Type": 1,
+            "Type": "vital",
             "Value": 100.0,
             "BaseMaximum": 100.0,
             "ChangeType": 2,
@@ -46,47 +46,47 @@
     "GenericAttributes": [
         {
             "Id": "move_speed",
-            "Type": 0,
+            "Type": "generic",
             "Value": 300.0
         },
         {
             "Id": "run_speed",
-            "Type": 0,
+            "Type": "generic",
             "Value": 400.0
         },
         {
             "Id": "crouch_speed",
-            "Type": 0,
+            "Type": "generic",
             "Value": 150.0
         },
         {
             "Id": "run_stamina_cost",
-            "Type": 0,
+            "Type": "generic",
             "Value": 0.078125
         },
         {
             "Id": "jump_stamina_cost",
-            "Type": 0,
+            "Type": "generic",
             "Value": 20.0
         },
         {
             "Id": "jump_hunger_cost",
-            "Type": 0,
+            "Type": "generic",
             "Value": 0.33
         },
         {
             "Id": "jump_hydration_cost",
-            "Type": 0,
+            "Type": "generic",
             "Value": 0.33
         },
         {
             "Id": "bag_slots_count",
-            "Type": 0,
+            "Type": "generic",
             "Value": 18
         },
         {
             "Id": "hotbar_slots_count",
-            "Type": 0,
+            "Type": "generic",
             "Value": 2
         }
     ]

@@ -1,10 +1,11 @@
 using System;
+using System.Collections.Generic;
 
-namespace UZSG.Data
+namespace UZSG.Saves
 {
     [Serializable]
-    public struct InventorySaveData
+    public class ContainerSaveData : SaveData
     {
-        
+        public List<ItemSlotSaveData> ItemSlots;
     }
 }

@@ -3,6 +3,7 @@ using UnityEngine;
 using UZSG.Data;
 using UZSG.Entities;
 using UZSG.Items;
+using UZSG.Saves;
 using UZSG.Systems;
 using UZSG.UI;
 
@@ -16,7 +17,7 @@ namespace UZSG.Inventory
         Hands, Mainhand, Offhand
     }
 
-    public class InventoryHandler : MonoBehaviour
+    public class InventoryHandler : MonoBehaviour, ISaveDataReadWrite<InventorySaveData>
     {
         public Player Player;
         [Space]
@@ -73,10 +74,6 @@ namespace UZSG.Inventory
         void InitializeGUI()
         {
 
-        }
-
-        public void ReadSaveJSON(InventorySaveData data)
-        {
         }
 
         public void SelectHotbarSlot(int index)
@@ -143,6 +140,16 @@ namespace UZSG.Inventory
             return null;
         }
 
+        public void ReadSaveJson(InventorySaveData data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public InventorySaveData WriteSaveJson()
+        {
+            throw new NotImplementedException();
+        }
+
 
         #region Debugging
 
@@ -156,7 +163,6 @@ namespace UZSG.Inventory
                 print(slot.Index);
             }
         }
-
         #endregion
     }
 }

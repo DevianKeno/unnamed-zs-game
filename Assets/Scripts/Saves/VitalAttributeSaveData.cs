@@ -1,6 +1,7 @@
 using System;
+using UZSG.Attributes;
 
-namespace UZSG.Attributes
+namespace UZSG.Saves
 {
     [Serializable]
     public class VitalAttributeSaveData : AttributeSaveData

@@ -2,6 +2,7 @@ using System;
 
 using UnityEngine;
 using UZSG.Data;
+using UZSG.Saves;
 
 namespace UZSG.Attributes
 {
@@ -21,7 +22,7 @@ namespace UZSG.Attributes
             base.Initialize();
         }
         
-        public virtual void ReadSaveData(GenericAttributeSaveData data, bool initialize = true)
+        public virtual void ReadSaveJSON(GenericAttributeSaveData data, bool initialize = true)
         {
             value = data.Value;
             minimum = data.Minimum;

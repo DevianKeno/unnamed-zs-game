@@ -5,6 +5,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
+using Newtonsoft.Json;
 
 using UZSG.Systems;
 using UZSG.Inventory;
@@ -18,13 +19,18 @@ using UZSG.UI.HUD;
 using UZSG.Crafting;
 using UZSG.StatusEffects;
 using UZSG.Objects;
+using UZSG.Saves;
 
 namespace UZSG.Entities
 {
+    public interface IPlayer : IAttributable, IInteractActor, ISaveDataReadWrite<PlayerSaveData>
+    {
+    }
+    
     /// <summary>
     /// Player entity.
     /// </summary>
-    public class Player : Entity, IAttributable, IInteractActor
+    public class Player : Entity, IPlayer
     {
         public bool CanPickUpItems = true;
 
@@ -117,6 +123,7 @@ namespace UZSG.Entities
             Game.Console.Log("I, player, has been spawned!");
 
             LoadDefaults();
+            // ReadSaveJson(); /// should be called not here
 
             audioController.CreateAudioPool(8);
             audioController.LoadAudioAssetsData(playerEntityData.AudioAssetsData);
@@ -145,18 +152,39 @@ namespace UZSG.Entities
             saveData = JsonUtility.FromJson<PlayerSaveData>(defaultsJson);
         }
 
-        void SaveDataToJSON()
+        public void ReadSaveJson(PlayerSaveData saveData)
         {
-            
+            if (saveData == null)
+            {
+                Game.Console.LogError($"Invalid PlayerSaveData loaded for Player");
+                return;
+            }
+
+            /// Load attributes first
+            Vitals.ReadSaveJson(saveData.VitalAttributes);
+            Generic.ReadSaveJson(saveData.GenericAttributes);
+            inventory.ReadSaveJson(saveData.Inventory);
+        }
+
+        public PlayerSaveData WriteSaveJson()
+        {
+            var saveData = new PlayerSaveData()
+            {
+                VitalAttributes = Vitals.WriteSaveJson(),
+                GenericAttributes = Generic.WriteSaveJson(),
+                Inventory = inventory.WriteSaveJson(),
+            };
+
+            return saveData;
         }
 
         void InitializeAttributes()
         {
             vitals = new();
-            vitals.ReadSaveJSON(saveData.VitalAttributes);
+            vitals.ReadSaveJson(saveData.VitalAttributes);
 
             generic = new();
-            generic.ReadSaveJSON(saveData.GenericAttributes);
+            generic.ReadSaveJson(saveData.GenericAttributes);
         }
         
         void InitializeStateMachines()
@@ -181,7 +209,7 @@ namespace UZSG.Entities
         void InitializeInventory()
         {
             inventory.Initialize();
-            inventory.ReadSaveJSON(new());
+            inventory.ReadSaveJson(new());
 
             invUI = Game.UI.Create<PlayerInventoryWindow>("Player Inventory", show: false);
             invUI.Initialize(this);
@@ -199,6 +227,8 @@ namespace UZSG.Entities
                 _infoHUD.Show();
             };
         }
+
+
 
         void InitializeCrafter()
         {
@@ -227,7 +257,11 @@ namespace UZSG.Entities
 
         void Tick(TickInfo t)
         {
-            /// Consume stamina while running
+            ConsumeStaminaWhileRunning();
+        }
+
+        void ConsumeStaminaWhileRunning()
+        {
             if (Controls.IsRunning && Controls.IsMoving)
             {
                 /// Cache attributes for better performance

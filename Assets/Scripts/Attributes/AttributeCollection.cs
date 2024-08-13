@@ -7,6 +7,7 @@ using UnityEngine;
 
 using UZSG.Systems;
 using UZSG.Data;
+using UZSG.Saves;
 
 namespace UZSG.Attributes
 {
@@ -16,7 +17,7 @@ namespace UZSG.Attributes
     /// Individual attributes can also be indexed.
     /// </summary>
     [Serializable]
-    public class AttributeCollection<T> where T : Attribute
+    public class AttributeCollection<T> : ISaveDataReadWrite<AttributeCollectionSaveData> where T : Attribute
     {
         /// Just so can view in Inspector
         [SerializeField] List<T> attributes = new();
@@ -31,9 +32,9 @@ namespace UZSG.Attributes
             get => Get(id);
         }
 
-        public void ReadSaveJSON<U>(List<U> saveData) where U : AttributeSaveData
+        public void ReadSaveJson(AttributeCollectionSaveData saveData)
         {
-            foreach (U attr in saveData)
+            foreach (var attr in saveData.Attributes)
             {
                 if (Game.Attributes.TryGetData(attr.Id, out var attrData))
                 {
@@ -45,18 +46,15 @@ namespace UZSG.Attributes
                         continue;
                     }
                     T newAttr = (T) constructor.Invoke(new object[] { attrData });
-                    newAttr.ReadSaveData(attr);
+                    newAttr.ReadSaveJson(attr);
                     Add(newAttr);
                 }
             }
         }
         
-        public void WriteSaveJSON(List<T> data)
+        public AttributeCollectionSaveData WriteSaveJson()
         {
-            foreach (T attr in attributes)
-            {
-                //
-            }
+            throw new NotImplementedException();
         }
 
         public void Add(T attribute)
@@ -123,10 +121,6 @@ namespace UZSG.Attributes
             Game.Console.LogAndUnityLog($"Unable to retrieve Attribute '{id}' as it's not in the collection.");
             attribute = (T) Attribute.None;
             return false;
-        }
-
-        public void InitializeFromData(List<GenericAttributeSaveData> data)
-        {
         }
     }
 }

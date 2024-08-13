@@ -4,6 +4,7 @@ using System.Linq;
 
 using UnityEngine;
 
+using UZSG.Saves;
 using UZSG.Inventory;
 using UZSG.Items;
 
@@ -13,7 +14,7 @@ namespace UZSG
     /// Base class for all Containers that have ItemSlots.
     /// </summary>
     [Serializable]
-    public partial class Container
+    public partial class Container : ISaveDataReadWrite<ContainerSaveData>
     {
         protected int _slotCount;
         public int SlotCount
@@ -212,6 +213,16 @@ namespace UZSG
             }
             slot = Slots[index];
             return true;
+        }
+
+        public void ReadSaveJson(ContainerSaveData saveData)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ContainerSaveData WriteSaveJson()
+        {
+            throw new NotImplementedException();
         }
     }
 }

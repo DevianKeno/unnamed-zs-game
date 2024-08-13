@@ -2,10 +2,18 @@ using System;
 
 using UnityEngine;
 
+using UZSG.Saves;
 using UZSG.Worlds;
 
 namespace UZSG.Systems
 {
+    public struct CreateWorldOptions
+    {
+        public string Name;
+        public DateTime CreatedDate;
+        public DateTime LastModifiedDate;
+    }
+
     public class WorldManager : MonoBehaviour, IInitializeable
     {
         bool _isInitialized;
@@ -25,12 +33,19 @@ namespace UZSG.Systems
         {
             Game.Console.Log("Initializing World...");
 
+            RetrieveSavedWorlds();
+
             OnDoneInit?.Invoke();
         }
 
-        public void CreateWorld(string name)
+        void RetrieveSavedWorlds()
         {
             
+        }
+
+        public void CreateWorld(CreateWorldOptions options)
+        {
+            options.CreatedDate = DateTime.Now;
         }
 
         public void LoadLevel(string name)

@@ -1,12 +1,12 @@
 using System;
 
-namespace UZSG.Attributes
+namespace UZSG.Saves
 {
     [Serializable]
-    public class AttributeSaveData
+    public class AttributeSaveData : SaveData
     {
         public string Id;
-        public int Type = 0;
+        public string Type = "generic";
         public float Value = 0f;
         public float Minimum = 0f;
         public float BaseMaximum = 0f;

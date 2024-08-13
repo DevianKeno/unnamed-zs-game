@@ -20,15 +20,15 @@ namespace UZSG.UI.HUD
             SetFiringMode(gun.CurrentFiringMode);
         }
 
-        public void SetClip(int count)
+        public void SetClip(int value)
         {
-            clipAmmoText.text = $"{count}";
-            clipAmmoText.color = ClipTextColor.Evaluate(1 - (count / (ClipSize <= 0 ? 999f : ClipSize)));
+            clipAmmoText.text = $"{value}";
+            clipAmmoText.color = ClipTextColor.Evaluate(1 - (value / (ClipSize <= 0 ? 999f : ClipSize)));
         }
         
-        public void SetReserve(int count)
+        public void SetReserve(int value)
         {
-            reserveAmmoText.text = $"{count}";
+            reserveAmmoText.text = $"{value}";
         }
 
         public void SetFiringMode(FiringMode mode)

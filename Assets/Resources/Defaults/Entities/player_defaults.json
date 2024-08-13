@@ -152,11 +152,21 @@
       "LimitUnderflow": true
     },
     {
-      "Id": "innate_thirst",
-      "Value": 0.01,
+      "Id": "stamina_regen_per_tick",
+      "Value": 0.078125,
       "Minimum": 0.0,
-      "BaseMaximum": 0.0,
-      "Multiplier": 100.0,
+      "BaseMaximum": 100.0,
+      "Multiplier": 1.0,
+      "FlatBonus": 0.0,
+      "LimitOverflow": true,
+      "LimitUnderflow": true
+    },
+    {
+      "Id": "stamina_regen_delay",
+      "Value": 2.0,
+      "Minimum": 0.0,
+      "BaseMaximum": 2.0,
+      "Multiplier": 1.0,
       "FlatBonus": 0.0,
       "LimitOverflow": true,
       "LimitUnderflow": true

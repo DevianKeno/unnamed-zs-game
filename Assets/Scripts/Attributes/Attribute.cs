@@ -14,7 +14,7 @@ namespace UZSG.Attributes
     [Serializable]
     public class Attribute : ISaveDataReadWrite<AttributeSaveData>
     {
-        public enum ValueChangedType {
+        public enum ValueChangeType {
             Increased, Decreased
         }
 
@@ -163,7 +163,7 @@ namespace UZSG.Attributes
         /// <summary>
         /// Fired everytime the Add() or Remove() methods are called.
         /// </summary>
-        public event EventHandler<AttributeValueChangedContext> OnValueModify;
+        public event EventHandler<AttributeValueChangedContext> OnValueModified;
         /// <summary>
         /// Called when the value reaches its current maximum value.
         /// </summary>
@@ -283,7 +283,7 @@ namespace UZSG.Attributes
                 Previous = previousValue,
                 New = value,
             };
-            OnValueModify?.Invoke(this, info);
+            OnValueModified?.Invoke(this, info);
         }
 
         protected float CheckOverflow()

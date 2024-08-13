@@ -282,7 +282,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rect: {fileID: 0}
-  AnimationFactor: 0.3
+  FadeDuration: 0.3
   indicator: {fileID: 8250109019733149546}
   actionText: {fileID: 0}
   objectText: {fileID: 8250109019658285424}

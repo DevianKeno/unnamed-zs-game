@@ -22,7 +22,7 @@ namespace UZSG.UI
 
         RecipeData _selectedRecipe;
         Dictionary<string, CraftableItemUI> craftableItemUIs = new();
-        List<MaterialSlotUI> materialSlotUIs = new();
+        List<MaterialCountUI> materialSlotUIs = new();
 
         [SerializeField] CraftedItemDisplayUI craftedItemDisplay;
         [SerializeField] RectTransform craftablesHolder;
@@ -209,7 +209,7 @@ namespace UZSG.UI
 
         void CreateMaterialSlot(Item material)
         {
-            var matSlot = Game.UI.Create<MaterialSlotUI>("Material Slot", materialSlotsHolder);
+            var matSlot = Game.UI.Create<MaterialCountUI>("Material Count", materialSlotsHolder);
             matSlot.SetDisplayedItem(material);
             matSlot.Needed = material.Count;
 

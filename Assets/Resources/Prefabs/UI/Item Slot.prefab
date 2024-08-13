@@ -179,11 +179,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 179d4a2b432e9e046b993c41d6444e34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rect: {fileID: 0}
+  rect: {fileID: 7226684566756821325}
   FadeDuration: 0.3
-  Item:
+  item:
     _itemData: {fileID: 0}
-    _count: 1
+    _count: 0
   Index: 0
   image: {fileID: 7226684566756821324}
   indexTMP: {fileID: 0}
@@ -298,7 +298,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4574587701464950729, guid: 69f9d656166c5f343947161e86d926db, type: 3}
       propertyPath: item._count
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5387474831028067485, guid: 69f9d656166c5f343947161e86d926db, type: 3}
       propertyPath: m_AnchorMax.x

@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 
 using UnityEngine;
 using UnityEngine.InputSystem;
-using TMPro;
-using Newtonsoft.Json;
+using MEC;
 
 using UZSG.Systems;
 using UZSG.Inventory;
@@ -20,7 +18,6 @@ using UZSG.Crafting;
 using UZSG.StatusEffects;
 using UZSG.Objects;
 using UZSG.Saves;
-using System.Linq;
 
 namespace UZSG.Entities
 {
@@ -63,10 +60,10 @@ namespace UZSG.Entities
 
         PlayerInventoryWindow invUI;
         public PlayerInventoryWindow InventoryGUI => invUI;
-        PlayerEquipmentHUD _equipmentHUD;
-        public PlayerEquipmentHUD EquipHUD => _equipmentHUD;
-        PlayerInfoHUD _infoHUD;
-        public PlayerInfoHUD InfoHUD => _infoHUD;
+        PlayerHUDVitals _vitalsHUD;
+        public PlayerHUDVitals VitalsHUD => _vitalsHUD;
+        PlayerHUDInfo _infoHUD;
+        public PlayerHUDInfo InfoHUD => _infoHUD;
 
         
         InputActionMap actionMap;
@@ -177,8 +174,28 @@ namespace UZSG.Entities
         void InitializeAttributes()
         {
             attributes.ReadSaveJson(saveData.Attributes);
+
+            attributes["stamina"].OnValueModified += OnAttrStaminaModified;
         }
-        
+
+
+        #region Attribute event callbacks
+
+        bool _allowStaminaRegen;
+        CoroutineHandle _delayedStaminaCoroutine;
+        void OnAttrStaminaModified(object sender, AttributeValueChangedContext e)
+        {
+            if (e.ValueChangedType == UZSG.Attributes.Attribute.ValueChangeType.Decreased)
+            {
+                _allowStaminaRegen = false;
+                Timing.KillCoroutines(_delayedStaminaCoroutine);
+                _delayedStaminaCoroutine = Timing.RunCoroutine(_DelayStaminaRegen());
+            }
+        }
+
+        #endregion
+
+
         void InitializeStateMachines()
         {
             MoveStateMachine.InitialState = MoveStateMachine.States[MoveStates.Idle];
@@ -191,11 +208,11 @@ namespace UZSG.Entities
 
         void InitializeHUD()
         {
-            _infoHUD = Game.UI.Create<PlayerInfoHUD>("Player Info HUD");
+            _infoHUD = Game.UI.Create<PlayerHUDInfo>("Player HUD Info");
             _infoHUD.Initialize(this);
 
-            _equipmentHUD = Game.UI.Create<PlayerEquipmentHUD>("Player Equipment HUD");
-            _equipmentHUD.Initialize(this);
+            _vitalsHUD = Game.UI.Create<PlayerHUDVitals>("Player HUD Vitals");
+            _vitalsHUD.Initialize(this);
         }
 
         void InitializeInventory()
@@ -251,6 +268,16 @@ namespace UZSG.Entities
         void Tick(TickInfo t)
         {
             ConsumeStaminaWhileRunning();
+            RegenerateStamina();
+        }
+
+
+        void RegenerateStamina()
+        {
+            if (_allowStaminaRegen)
+            {
+                Attributes.Get("stamina").Add(Attributes.Get("stamina_regen_per_tick").Value);
+            }
         }
 
         void ConsumeStaminaWhileRunning()
@@ -265,6 +292,12 @@ namespace UZSG.Entities
 
         void OnIdleEnter(object sender, State<MoveStates>.ChangedContext e)
         {
+        }
+
+        IEnumerator<float> _DelayStaminaRegen()
+        {
+            yield return Timing.WaitForSeconds(Attributes["stamina_regen_delay"].Value);
+            _allowStaminaRegen = true;
         }
 
         void OnRunEnter(object sender, State<MoveStates>.ChangedContext e)

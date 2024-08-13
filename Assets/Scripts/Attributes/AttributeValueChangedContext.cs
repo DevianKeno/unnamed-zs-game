@@ -26,11 +26,11 @@ namespace UZSG.Attributes
         /// <summary>
         /// Whether if the value had increased or decreased.
         /// </summary>
-        public readonly Attribute.ValueChangedType ValueChangedType
+        public readonly Attribute.ValueChangeType ValueChangedType
         {
             get
             {
-                return New > Previous ? Attribute.ValueChangedType.Increased : Attribute.ValueChangedType.Decreased;
+                return New > Previous ? Attribute.ValueChangeType.Increased : Attribute.ValueChangeType.Decreased;
             }
         }
     }

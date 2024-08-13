@@ -413,7 +413,7 @@ namespace UZSG.FPP
         {
             if (heldItem is GunWeaponController gunWeapon)
             {
-                Player.EquipHUD.AmmoCounter.Initialize(gunWeapon);
+                Player.InfoHUD.AmmoCounter.Initialize(gunWeapon);
             }
             
             InitializeHeldItemEvents();

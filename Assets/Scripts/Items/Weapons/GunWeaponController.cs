@@ -54,7 +54,7 @@ namespace UZSG.Items.Weapons
         {
             Initialize();
             _currentRounds = info.Rounds;
-            Player.EquipHUD.AmmoCounter.SetClip(_currentRounds);
+            Player.InfoHUD.AmmoCounter.SetClip(_currentRounds);
         }
 
         public override void Initialize()
@@ -160,7 +160,7 @@ namespace UZSG.Items.Weapons
                 _currentFiringMode = SwitchFiringMode(_currentFiringMode);
             } while ((GetFiringModeFlag(_currentFiringMode) & availableModes) == 0);
 
-            Player.EquipHUD.AmmoCounter.SetFiringMode(_currentFiringMode);
+            Player.InfoHUD.AmmoCounter.SetFiringMode(_currentFiringMode);
             yield return new WaitForSeconds(0.33f);
             _inhibitActions = false;
         }
@@ -242,7 +242,7 @@ namespace UZSG.Items.Weapons
             MuzzleController?.Fire();
             stateMachine.ToState(GunWeaponStates.Fire);
             OnFire?.Invoke();
-            Player.EquipHUD.AmmoCounter.SetClip(_currentRounds);
+            Player.InfoHUD.AmmoCounter.SetClip(_currentRounds);
         }
 
         /// <summary>
@@ -303,7 +303,7 @@ namespace UZSG.Items.Weapons
             _currentRounds = WeaponData.RangedAttributes.ClipSize;
             _isReloading = false;
             _inhibitActions = false;
-            Player.EquipHUD.AmmoCounter.SetClip(_currentRounds);
+            Player.InfoHUD.AmmoCounter.SetClip(_currentRounds);
             Debug.Log("Completed reload");
         }
 

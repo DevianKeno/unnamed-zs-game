@@ -118,10 +118,17 @@ MonoBehaviour:
     flatBonus: 0
     LimitOverflow: 1
     LimitUnderflow: 1
-  - data: {fileID: 11400000, guid: bb6ea8e20522a7246a8eca3395c5d118, type: 2}
-    value: 0.01
-    baseMaximum: 0
-    multiplier: 100
+  - data: {fileID: 11400000, guid: 297da97244e00d04d847300f0c687be4, type: 2}
+    value: 0.078125
+    baseMaximum: 100
+    multiplier: 1
+    flatBonus: 0
+    LimitOverflow: 1
+    LimitUnderflow: 1
+  - data: {fileID: 11400000, guid: b6b91ffe93b7ba749936e3f4fc186998, type: 2}
+    value: 2
+    baseMaximum: 2
+    multiplier: 1
     flatBonus: 0
     LimitOverflow: 1
     LimitUnderflow: 1

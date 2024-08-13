@@ -15,24 +15,20 @@ using UZSG.Items.Weapons;
 
 namespace UZSG.UI.HUD
 {
-    public class PlayerEquipmentHUD : Window
+    public class PlayerHUDVitals : Window
     {
         public Player Player;
         [Space]
 
-        Dictionary<int, ItemSlotUI> _equipmentSlotUIs = new();
         Dictionary<int, ItemSlotUI> _hotbarSlotUIs = new();
         
         [Header("Elements")]
-        public GameObject equipment;
         public GameObject hotbar;
         public AttributeBar HealthBar;
         public AttributeBar StaminaBar;
         public AttributeBar HungerBar;
         public AttributeBar HydrationBar;
         public AttributeBar XPBar;
-        public AmmoCounterHUD AmmoCounter;
-        public TextMeshProUGUI equippedWeaponTMP;
 
         internal void Initialize(Player player)
         {
@@ -44,14 +40,8 @@ namespace UZSG.UI.HUD
 
             Player = player;
             BindPlayerAttributes();
-            InitializeItemSlots();
-            InitializeEvents();
-        }
-
-        void InitializeItemSlots()
-        {
             InitializeHotbarSlots();
-            InitializeEquipmentSlots();
+            InitializeEvents();
         }
 
         void InitializeHotbarSlots()
@@ -72,29 +62,9 @@ namespace UZSG.UI.HUD
             }
         }
 
-        void InitializeEquipmentSlots()
-        {
-            /// Equipment slots are already set
-            int index = 1; /// Only 1 (mainhand) and 2 (offhand), as 0 (arms) is not displayed :)
-            foreach (Transform child in equipment.transform)
-            {
-                if (child.TryGetComponent<ItemSlotUI>(out var slotUI)) /// there might be other GameObjects
-                {
-                    _equipmentSlotUIs[index] = slotUI;
-                    index++;
-                }
-            }
-        }
-
         void InitializeEvents()
         {
             Player.Inventory.Hotbar.OnSlotItemChanged += OnHotbarSlotChanged;
-            Player.Inventory.Equipment.OnSlotItemChanged += OnEquipmentSlotChanged;
-            Player.FPP.OnChangeHeldItem += OnChangeHeldItem;
-        }
-
-        public void BindPlayer(Player player)
-        {
         }
 
         void BindPlayerAttributes()
@@ -115,17 +85,6 @@ namespace UZSG.UI.HUD
             _hotbarSlotUIs[hotbarOffset].SetDisplayedItem(e.Slot.Item);
         }
 
-        void OnEquipmentSlotChanged(object sender, SlotItemChangedContext e)
-        {
-            _equipmentSlotUIs[e.Slot.Index].SetDisplayedItem(e.Slot.Item);
-        }
-
-        void OnChangeHeldItem(HeldItemController heldItem)
-        {
-            if (heldItem == null) return;
-            equippedWeaponTMP.text = heldItem.ItemData.Name;
-        }
-        
         void OnStartHoverSlot(object sender, PointerEventData e)
         {
             

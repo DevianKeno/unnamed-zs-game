@@ -3,7 +3,7 @@ using TMPro;
 
 namespace UZSG.UI
 {
-    public class MaterialSlotUI : ItemSlotUI
+    public class MaterialCountUI : ItemSlotUI
     {
         [SerializeField] int present;
         /// <summary>

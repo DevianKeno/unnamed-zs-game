@@ -1,11 +1,15 @@
 using System;
 using System.Collections.Generic;
+
 using UZSG.Data;
 using UZSG.Entities;
 using UZSG.Inventory;
 
 namespace UZSG.Crafting 
 {
+    /// <summary>
+    /// Crafting logic for Player Inventory crafting.
+    /// </summary>
     public class PlayerCrafting : InventoryCrafting
     {
         public Player _playerEntity;

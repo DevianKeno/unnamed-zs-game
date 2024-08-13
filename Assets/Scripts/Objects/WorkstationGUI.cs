@@ -11,21 +11,7 @@ namespace UZSG.UI
 {
     public class WorkstationGUI : Window
     {
-        public InventoryCrafting Crafter;
-
-        void Awake()
-        {
-            // Crafter.OnStartCraft += OnStartCraft;
-        }
-
-        void OnStartCraft(CraftingRoutine routine)
-        {
-            CreateCraftingRoutineGUI(routine);
-        }
-
-        void CreateCraftingRoutineGUI(CraftingRoutine routine)
-        {
-            // instantiate
-        }
+        protected Crafter crafter;
+        public Crafter Crafter => crafter;
     }
 }

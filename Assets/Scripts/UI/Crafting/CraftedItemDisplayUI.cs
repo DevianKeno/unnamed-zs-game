@@ -1,30 +1,25 @@
-using System;
-using System.Collections.Generic;
-
-using UnityEditor.UI;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using TMPro;
 
-using UZSG.Crafting;
-using UZSG.Items;
-using UZSG.Systems;
-using UnityEngine.UI;
 using UZSG.Data;
+using UZSG.Items;
 
 namespace UZSG.UI
 {
     public class CraftedItemDisplayUI : MonoBehaviour
     {
+        [Header("UI Elements")]
         [SerializeField] ItemDisplayUI itemDisplay;
         [SerializeField] TextMeshProUGUI itemNameText;
         [SerializeField] TextMeshProUGUI descriptionText;
 
-        public void SetDisplayedItem(Item item)
+        public void SetDisplayedRecipe(RecipeData data)
         {
-            itemDisplay.SetDisplayedItem(item);
-            itemNameText.text = item.Data.Name;
-            descriptionText.text = item.Data.Description;
+            ResetDisplayed();
+
+            itemDisplay.SetDisplayedItem(data.Output);
+            itemNameText.text = data.Output.Data.Name;
+            descriptionText.text = data.Output.Data.Description;
         }
 
         public void ResetDisplayed()
@@ -32,7 +27,6 @@ namespace UZSG.UI
             itemDisplay.SetDisplayedItem(Item.None);
             itemNameText.text = "Select recipe";
             descriptionText.text = "";
-
         }
     }
 }

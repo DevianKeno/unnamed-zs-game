@@ -10,29 +10,44 @@ using UZSG.Inventory;
 
 namespace UZSG.UI
 {
-    public enum UIState { Normal, Hovered }
-
     public class ItemSlotUI : Window, ISelectable, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
     {
-        public static Color Opaque { get => new(1f, 1f, 1f, 1f); }
-        public static Color Transparent { get => new(1f, 1f, 1f, 0f); }
-        public static Color Normal { get => new(0f, 0f, 0f, 0.5f); }
-        public static Color Hovered { get => new(0.2f, 0.2f, 0.2f, 0.5f); }
+        public static Color Opaque => new(1f, 1f, 1f, 1f);
+        public static Color Transparent => new(1f, 1f, 1f, 0f);
+        public static Color Normal => new(0f, 0f, 0f, 0.5f);
+        public static Color Hovered => new(0.2f, 0.2f, 0.2f, 0.5f);
         
-        public Item Item;
+        [SerializeField] protected Item item = Item.None;
+        public Item Item
+        {
+            get
+            {
+                return item;
+            }
+            set
+            {
+                SetDisplayedItem(item);
+            }
+        }
         public int Index;
+
+
+        #region Events
 
         public event EventHandler<PointerEventData> OnMouseDown;
         public event EventHandler<PointerEventData> OnMouseUp;
         public event EventHandler<PointerEventData> OnHoverStart;
         public event EventHandler<PointerEventData> OnHoverEnd;
 
-        [Space]
-        [SerializeField] Image image;
-        [SerializeField] TextMeshProUGUI indexTMP;
-        [SerializeField] ItemDisplayUI itemDisplayUI;
+        #endregion
 
-        void OnValidate()
+
+        [Space]
+        [SerializeField] protected Image image;
+        [SerializeField] protected TextMeshProUGUI indexTMP;
+        [SerializeField] protected ItemDisplayUI itemDisplayUI;
+
+        protected virtual void OnValidate()
         {
             if (Application.isPlaying) return;
 
@@ -41,7 +56,7 @@ namespace UZSG.UI
                 indexTMP.text = $"{Index}"; 
             }
 
-            SetDisplayedItem(Item);
+            SetDisplayedItem(item);
         }
 
         void OnDisable()
@@ -54,7 +69,8 @@ namespace UZSG.UI
 
         public void SetDisplayedItem(Item item)
         {
-            itemDisplayUI?.SetDisplayedItem(item);
+            this.item = item;
+            itemDisplayUI.SetDisplayedItem(item);
         }
 
         public void Reset()
@@ -69,6 +85,7 @@ namespace UZSG.UI
         }
 
         #endregion
+
 
         public void OnPointerEnter(PointerEventData e)
         {

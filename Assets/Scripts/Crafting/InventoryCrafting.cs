@@ -1,10 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization.Formatters;
-using UnityEditorInternal.Profiling.Memory.Experimental;
-using UnityEngine;
-using UnityEngine.ResourceManagement.Util;
-using UnityEngine.UI;
+using System.Linq;
 using UZSG.Data;
 using UZSG.Entities;
 using UZSG.Inventory;
@@ -12,9 +8,11 @@ using UZSG.Items;
 
 namespace UZSG.Crafting
 {
+    /// <summary>
+    /// Crafting logic that is based on input containers.
+    /// </summary>
     public class InventoryCrafting : Crafter
     {
-
         public void CraftQueue(Container input, Container output, RecipeData recipe, CraftingRoutine craftingRoutine)
         {
             craftingRoutine.OnCraftFinish += OnCraftFinish;
@@ -23,24 +21,32 @@ namespace UZSG.Crafting
             StartCoroutine(craftingRoutine.CraftCoroutine());
         }
 
-        public void CraftItem(RecipeData recipe, Container input, Container output, List<CraftingRoutine> routineList) {
-            if(!CheckMaterialAvailability(recipe, input)) return;
-            var _materials = TakeItems(recipe, input);
-            var _craftRoutineConf = new CraftingRoutineOptions() {
-                recipe = recipe,
-                output = output,
-                routineList = routineList,
-                materialSets = _materials
+        public void CraftItem(RecipeData recipe, Container input, Container output, List<CraftingRoutine> routineList)
+        {
+            if (!CheckMaterialAvailability(recipe, input)) return;
+
+            var materials = TakeItems(recipe, input);
+            var craftRoutineConf = new CraftingRoutineOptions()
+            {
+                Recipe = recipe,
+                Output = output,
+                RoutineList = routineList,
+                MaterialSets = materials
             };
-            var _newCraftingInstance = new CraftingRoutine(_craftRoutineConf);
-            CraftQueue(input, output, recipe, _newCraftingInstance);
+
+            var newCraftingInstance = new CraftingRoutine(craftRoutineConf);
+            CraftQueue(input, output, recipe, newCraftingInstance);
         }
 
-        public void CancelCraftItem(List<CraftingRoutine> routineList, Container input, CraftingRoutine routine){
-            //check first if inventory is able to return the items before cancelling container
-            ReturnItems(input, routine.materialSets);
-            StopCoroutine(routine.CraftCoroutine());
-            routineList.Remove(routine);
+        public void CancelCraftItem(List<CraftingRoutine> routineList, Container input, CraftingRoutine routine)
+        {
+            /// Check first if inventory is able to return the items before cancelling container
+            if (CanReturnItems(input, routine.recipeData.Materials.ToList()))
+            {
+                StopCoroutine(routine.CraftCoroutine());
+                routineList.Remove(routine);
+            }
+            /// Return items here vv
         }
     }
 }

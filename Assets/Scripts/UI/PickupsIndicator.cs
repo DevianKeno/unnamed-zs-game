@@ -13,7 +13,7 @@ namespace UZSG.UI
 
         public void SetDisplayedItem(Item item)
         {
-            if (item == null || item.IsNone) return;
+            if (item.IsNone) return;
 
             itemImage.sprite = item.Data.Sprite;
             itemNameTMP.text = item.Data.Name;

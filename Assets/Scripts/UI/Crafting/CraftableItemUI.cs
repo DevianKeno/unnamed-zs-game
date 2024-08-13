@@ -10,7 +10,31 @@ namespace UZSG.UI
 {
     public class CraftableItemUI : Window, IPointerEnterHandler, IPointerExitHandler
     {
+        static Color CraftableTextColor = Color.white;
+        static Color UncraftableTextColor = Color.gray;
+
         public RecipeData RecipeData;
+        CraftableItemStatus status;
+        public CraftableItemStatus Status
+        {
+            get
+            {
+                return status;
+            }
+            set
+            {
+                status = value;
+                
+                if (status == CraftableItemStatus.Uncraftable)
+                {
+                    text.color = UncraftableTextColor;
+                }
+                else if (status == CraftableItemStatus.Craftable)
+                {
+                    text.color = CraftableTextColor;
+                }
+            }
+        }
 
         Color _originalBgColor;
 
@@ -46,6 +70,16 @@ namespace UZSG.UI
             RecipeData = recipeData;
             image.sprite = recipeData.Output.Data.Sprite;
             text.text = recipeData.Name;
+        }
+
+        public void Enable()
+        {
+            button.interactable = true;
+        }
+
+        public void Disable()
+        {
+            button.interactable = false;
         }
     }
 }

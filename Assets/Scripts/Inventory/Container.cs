@@ -59,9 +59,9 @@ namespace UZSG
         #region Events
 
         /// <summary>
-        /// Called whenever the content of a Slot is changed.
+        /// Called whenever the Item of a Slot is changed.
         /// </summary>
-        public event EventHandler<SlotItemChangedContext> OnSlotContentChanged;
+        public event EventHandler<SlotItemChangedContext> OnSlotItemChanged;
 
         #endregion
 
@@ -119,7 +119,7 @@ namespace UZSG
 
         protected virtual void SlotContentChanged(object sender, ItemSlot.ItemChangedContext context)
         {
-            OnSlotContentChanged?.Invoke(this, new()
+            OnSlotItemChanged?.Invoke(this, new()
             {
                 Slot = (ItemSlot) sender
             });

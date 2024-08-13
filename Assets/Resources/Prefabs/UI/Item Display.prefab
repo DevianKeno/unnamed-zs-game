@@ -382,9 +382,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93965bc73a081394ea73dea597fda09d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Item:
+  rect: {fileID: 2487710081773077363}
+  FadeDuration: 0.3
+  item:
     _itemData: {fileID: 0}
-    _count: 0
+    _count: 1
   image: {fileID: 4494180898781530103}
   countText: {fileID: 978103743619419775}
   altText: {fileID: 4397969410178795938}

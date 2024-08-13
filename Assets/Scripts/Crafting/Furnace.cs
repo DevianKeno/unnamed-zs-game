@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
-using UnityEditor.Build;
+
 using UnityEngine;
+
 using UZSG.Data;
 using UZSG.Inventory;
 using UZSG.Items;
@@ -14,46 +15,54 @@ namespace UZSG.Crafting
         public int FurnaceCapacity = 3;
 
         List<CraftingRoutine> furnaceRoutineList = new();
-        protected bool isFurnaceFull()
+
+        protected bool IsFurnaceFull()
         {
-            if(furnaceRoutineList.Count >= FurnaceCapacity){
+            if (furnaceRoutineList.Count >= FurnaceCapacity)
+            {
                 return true;
             }
             return false;
         }
 
-        public void PrepareCooking(RecipeData recipe){
-            if (!isFurnaceFull()){
+        public void PrepareCooking(RecipeData recipe)
+        {
+            if (!IsFurnaceFull())
+            {
                 print("Furnace is still busy");
                 return;
             }
 
-            if(!CheckMaterialAvailability(recipe, InputContainer)){
+            if(!CheckMaterialAvailability(recipe, InputContainer))
+            {
                 print("Not enough materials");
                 return;
             };
-            var _ingredients = TakeItems(recipe, InputContainer);
 
-            var _fuelRoutineConf = new CraftingRoutineOptions() {
-                recipe = recipe,
-                materialSets = _ingredients,
-                output = Dishes,
-                routineList = furnaceRoutineList,
+            var ingredients = TakeItems(recipe, InputContainer);
+            var fuelRoutineConf = new CraftingRoutineOptions()
+            {
+                Recipe = recipe,
+                MaterialSets = ingredients,
+                Output = Dishes,
+                RoutineList = furnaceRoutineList,
             };
             
-            var _cookInstance = new CraftingRoutine(_fuelRoutineConf, true);
-            furnaceRoutineList.Add(_cookInstance);
+            var cookInstance = new CraftingRoutine(fuelRoutineConf, true);
+            furnaceRoutineList.Add(cookInstance);
         }
 
-        public void StartCooking(){
+        public void StartCooking()
+        {
             ConsumeFuel();
-            if (isFuelRemainingAvailable()){
-                foreach (var routine in furnaceRoutineList) {
+            if (IsFuelRemainingAvailable())
+            {
+                foreach (var routine in furnaceRoutineList)
+                {
                     StartCoroutine(routine.CraftCoroutine());
                 }
             }
         }
-
     }
 }
 

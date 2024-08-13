@@ -28,4 +28,7 @@ MonoBehaviour:
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  IncludedRecipes: []
+  IncludedRecipes:
+  - {fileID: 11400000, guid: 2e41551279bc6c844802b36a217ef687, type: 2}
+  - {fileID: 11400000, guid: 314eca0960e514f46b436d87ec9f13fc, type: 2}
+  - {fileID: 11400000, guid: b5ca12c8083c14f47bbdf161ccdcdc18, type: 2}

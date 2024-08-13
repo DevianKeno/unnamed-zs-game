@@ -13,12 +13,15 @@ namespace UZSG.Crafting
         public float FuelRemaining = 0;
         Container FuelContainer;
 
-        protected bool isFuelRemainingAvailable() {
+        protected bool IsFuelRemainingAvailable()
+        {
             return FuelRemaining > 0;
         }
 
-        protected bool isFuelAvailable() {
-            if (FuelContainer.Slots[0].IsEmpty){
+        protected bool IsFuelAvailable()
+        {
+            if (FuelContainer.Slots[0].IsEmpty)
+            {
                 return false;
             }
             return true;
@@ -26,28 +29,34 @@ namespace UZSG.Crafting
 
         public void ConsumeFuel()
         {
-            if (isFuelRemainingAvailable()) return;
-            if (!isFuelAvailable()) return;
+            if (IsFuelRemainingAvailable()) return;
+            if (!IsFuelAvailable()) return;
+
             FuelContainer.TakeItems(0, 1);
             StartCoroutine(BurnFuel());
         }
 
-        public void OnFuelCheck(object sender, EventArgs e){
+        public void OnFuelCheck(object sender, EventArgs e)
+        {
             var _craftingRoutineInstance = (CraftingRoutine)sender;
-            if (!isFuelRemainingAvailable()){
-                foreach(CraftingRoutine routine in _craftingRoutineInstance.routineList){
+            
+            if (!IsFuelRemainingAvailable())
+            {
+                foreach(CraftingRoutine routine in _craftingRoutineInstance.routineList)
+                {
                     StopCoroutine(routine.CraftCoroutine());
                     routine.secondsElapsed = 0;
                 }
             }
         }
 
-        IEnumerator BurnFuel(){
-            while (isFuelRemainingAvailable())
+        IEnumerator BurnFuel()
+        {
+            while (IsFuelRemainingAvailable())
             {
                 yield return new WaitForSeconds(1);
                 FuelRemaining -= 1;
-                if(!isFuelRemainingAvailable())
+                if(!IsFuelRemainingAvailable())
                 {
                     ConsumeFuel();
                 }

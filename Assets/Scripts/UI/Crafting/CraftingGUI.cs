@@ -12,51 +12,51 @@ using UZSG.Systems;
 using UnityEngine.UI;
 using UZSG.Data;
 using UZSG.Inventory;
+using UZSG.Entities;
 
 namespace UZSG.UI
 {
     public class CraftingGUI : WorkstationGUI
     {
-        RecipeData _selectedRecipe;
-        List<CraftableItemUI> craftablesUI = new();
-        List<ItemSlotUI> materialSlots = new();
+        Player player;
 
-        [SerializeField] Crafter crafter;
+        RecipeData _selectedRecipe;
+        List<CraftableItemUI> craftableItemUIs = new();
+        List<MaterialSlotUI> materialSlotUIs = new();
 
         [SerializeField] CraftedItemDisplayUI craftedItemDisplay;
         [SerializeField] RectTransform craftablesHolder;
-        [SerializeField] RectTransform materialsHolder;
+        [SerializeField] RectTransform materialSlotsHolder;
         [SerializeField] GameObject outputSlots;
         [SerializeField] Button craftButton;
 
-        void Start()
-        {
-            foreach (Transform ca in outputSlots.transform)
-            {
-                if (ca.TryGetComponent<ItemSlotUI>(out var itemSlot))
-                {
-                    
-                }
-            }
-        }
-
-        internal void BindCrafter(Crafter crafter)
-        {
-            this.crafter = crafter;
-        }
-
+        /// <summary>
+        /// Called when user clicks on a recipe, also referred here as a "Craftable Item".
+        /// </summary>
         void OnClickCraftable(CraftableItemUI craftable)
         {
-            craftedItemDisplay.SetDisplayedItem(craftable.RecipeData.Output);
-            DisplayMaterials(craftable.RecipeData);
+            var selectedRecipe = craftable.RecipeData;
+            craftedItemDisplay.SetDisplayedRecipe(selectedRecipe);
+            DisplayMaterials(selectedRecipe);
+
+            if (PlayerHasMaterialsFor(selectedRecipe))
+            {
+                craftButton.interactable = true;
+            }
+            else
+            {
+                /// TODO, still interactable but prompt "Insufficient materials"
+                craftButton.interactable = false;
+            }
+
             LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
         }
 
         public void ResetDisplayed()
         {
             craftedItemDisplay.ResetDisplayed();
-            ClearCraftables();
-            ClearMaterials();
+            ClearCraftableItems();
+            ClearMaterialSlots();
         }
 
         public override void OnShow()
@@ -69,44 +69,114 @@ namespace UZSG.UI
             });
         }
 
+        public override void OnHide()
+        {
+            Unsubscribe();
+        }
+
         void CraftItem()
         {
             // crafter.CraftItem(_selectedRecipe);
         }
 
+        public void SetPlayer(Player player)
+        {
+            this.player = player;
+            // InitializePlayerEvents()
+            player.Inventory.Bag.OnSlotItemChanged += OnPlayerBagItemChanged;
+        }
 
-        #region Craftables list
+        void OnPlayerBagItemChanged(object sender, SlotItemChangedContext e)
+        {
+            //{
+                foreach (CraftableItemUI craftable in craftableItemUIs)
+                {
+                    UpdateCraftableStatusForPlayer(craftable);
+                }
+
+                foreach (var matSlot in materialSlotUIs)
+                {
+                    if (player.Inventory.Bag.IdItemCount.TryGetValue(matSlot.Item.Id, out int count))
+                    {
+                        matSlot.Present = count;
+                    }
+                    else
+                    {
+                        matSlot.Present = 0;
+                    }
+                }
+            //}
+        }
+
+
+        #region Craftables Item UIs
+
+        public void AddRecipesById(List<string> ids)
+        {
+            foreach (var id in ids)
+            {
+                if (Game.Recipes.TryGetRecipeData(id, out var data))
+                CreateCraftableItemUI(data);
+            }
+            LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
+        }
 
         public void AddRecipes(List<RecipeData> recipes)
         {
             foreach (var recipe in recipes)
             {
-                AddCraftableItem(recipe);
+                CreateCraftableItemUI(recipe);
             }
             LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
         }
-
+        
         public void ReplaceRecipes(List<RecipeData> recipes)
         {
-            ClearCraftables();
+            ClearCraftableItems();
             AddRecipes(recipes);
         }
 
-        public void AddCraftableItem(RecipeData data)
+        public void CreateCraftableItemUI(RecipeData recipeData)
         {
             var craftableUI = Game.UI.Create<CraftableItemUI>("Craftable Item", craftablesHolder);
-            craftableUI.SetRecipe(data);
+            craftableUI.SetRecipe(recipeData);
             craftableUI.OnClick += OnClickCraftable;
-            craftablesUI.Add(craftableUI);
+
+            UpdateCraftableStatusForPlayer(craftableUI);
+
+            craftableItemUIs.Add(craftableUI);
         }
 
-        void ClearCraftables()
+        void UpdateCraftableStatusForPlayer(CraftableItemUI craftable)
         {
-            foreach (var craftable in craftablesUI)
+            if (PlayerHasMaterialsFor(craftable.RecipeData))
+            {
+                craftable.Status = CraftableItemStatus.Craftable;
+            }
+            else
+            {
+                craftable.Status = CraftableItemStatus.Uncraftable;
+            }
+        }
+
+        bool PlayerHasMaterialsFor(RecipeData data)
+        {
+            foreach (var material in data.Materials)
+            {
+                if (!player.Inventory.Bag.IdItemCount.TryGetValue(material.Id, out int count)) return false;
+                if (count < material.Count) return false;
+            }
+
+            return true;
+        }
+
+        void ClearCraftableItems()
+        {
+            foreach (var craftable in craftableItemUIs)
             {
                 craftable.Destroy();
             }
-            craftablesUI.Clear();
+            craftableItemUIs.Clear();
         }
 
         #endregion
@@ -116,27 +186,63 @@ namespace UZSG.UI
 
         public void DisplayMaterials(RecipeData data)
         {
-            ClearMaterials();
-            foreach (var item in data.Materials)
+            ClearMaterialSlots();
+
+            foreach (var material in data.Materials)
             {
-                AddMaterial(item);
+                CreateMaterialSlot(material);
             }
         }
 
-        void AddMaterial(Item item)
+        void CreateMaterialSlot(Item material)
         {
-            var slot = Game.UI.Create<ItemSlotUI>("Item Slot", materialsHolder);
-            slot.SetDisplayedItem(item);
-            materialSlots.Add(slot);
+            var matSlot = Game.UI.Create<MaterialSlotUI>("Material Slot", materialSlotsHolder);
+            matSlot.SetDisplayedItem(material);
+            matSlot.Needed = material.Count;
+
+            /// Retrieve cached count for Item of Id
+            if (player.Inventory.Bag.IdItemCount.TryGetValue(material.Id, out var count))
+            {
+                /// Can also change colors here if you want
+                matSlot.Present = count;
+            }
+
+            materialSlotUIs.Add(matSlot);
+        }        
+
+        void ClearMaterialSlots()
+        {
+            foreach (var slot in materialSlotUIs)
+            {
+                Destroy(slot.gameObject);
+            }
+            materialSlotUIs.Clear();
         }
 
-        void ClearMaterials()
+        public void InitializeCrafter(Crafter crafter)
         {
-            foreach (var slotUI in materialSlots)
-            {
-                slotUI.Destroy();
-            }
-            materialSlots.Clear();
+            Unsubscribe();
+            
+            crafter.OnCraftStart += OnCraftStart;
+        }
+
+        
+        #region Crafter event callbacks
+
+        void OnCraftStart(object sender, CraftingRoutine routine)
+        {
+            
+        }
+
+        #endregion
+
+
+        void Unsubscribe()
+        {
+            if (crafter == null) return;
+
+
+
         }
 
         #endregion

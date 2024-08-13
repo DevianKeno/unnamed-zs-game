@@ -1,7 +1,22 @@
 {
-    "Inventory": [],
+    "Inventory": [
+        
+    ],
     "KnownRecipes":[
-
+        "wooden_stick",
+        "wooden_plank",
+        "wooden_chips",
+        "tree_bark",
+        "pebble",
+        "stone_shard",
+        "string",
+        "fabric",
+        "bandage",
+        "splint",
+        "cotton_balls",
+        "crafting_table",
+        "furnace",
+        "wooden_wall"
     ],
     "VitalAttributes": [
         {

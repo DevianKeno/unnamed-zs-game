@@ -9,6 +9,7 @@ namespace UZSG.Data
     public struct PlayerSaveData
     {
         public InventorySaveData Inventory;
+        public List<string> KnownRecipes;
         public List<VitalAttributeSaveData> VitalAttributes;
         public List<GenericAttributeSaveData> GenericAttributes;
     }

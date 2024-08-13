@@ -27,22 +27,51 @@ namespace UZSG.Entities
     {
         public bool CanPickUpItems = true;
 
+
+        #region Overall Player Data
+
+        public PlayerSaveData saveData;
         [SerializeField] PlayerSaveData playerData;
         public PlayerSaveData PlayerData => playerData;
         [SerializeField] PlayerEntityData playerEntityData;
         public PlayerEntityData PlayerEntityData => playerEntityData;
+
+        #endregion
+
+
+        #region Attribute Data
+
         [SerializeField] AttributeCollection<VitalAttribute> vitals;
         public AttributeCollection<VitalAttribute> Vitals => vitals;
         [SerializeField] AttributeCollection<GenericAttribute> generic;
         public AttributeCollection<GenericAttribute> Generic => generic;
         [SerializeField] AttributeCollection<Attributes.Attribute> attributes;
         public AttributeCollection<Attributes.Attribute> Attributes => attributes;
+
+        #endregion
+
+
+        #region Item Data
+
         [SerializeField] InventoryHandler inventory;
         public InventoryHandler Inventory => inventory;
         [SerializeField] PlayerCrafting craftingAgent;
         public Crafter CraftingAgent => craftingAgent;
+        [SerializeField] List<string> recipes;
+
+        #endregion
+
+
+        #region Player Status
+
         StatusEffectCollection statusEffects;
         public StatusEffectCollection StatusEffects => statusEffects;
+
+        #endregion
+
+
+        #region Player Control Related
+
         [SerializeField] PlayerAudioSourceController audioController;
         public PlayerAudioSourceController Audio => audioController;
 
@@ -57,6 +86,9 @@ namespace UZSG.Entities
         public PlayerEquipmentHUD EquipHUD => _equipmentHUD;
         PlayerInfoHUD _infoHUD;
         public PlayerInfoHUD InfoHUD => _infoHUD;
+
+        #endregion
+
         
         InputActionMap actionMap;
         readonly Dictionary<string, InputAction> inputs = new();
@@ -84,7 +116,6 @@ namespace UZSG.Entities
         /// All Player Data
         /// </summary>
         const string playerDefaultsPath = "/Resources/Defaults/Entities/player_defaults.json";
-        public PlayerSaveData saveData;
 
         public bool CanJump
         {
@@ -121,6 +152,7 @@ namespace UZSG.Entities
             InitializeStateMachines();
             InitializeAttributes();
             InitializeInventory();
+            InitializeKnownRecipes();
             // InitializeCrafter();
             InitializeHUD();
             InitializeInputs();
@@ -140,6 +172,7 @@ namespace UZSG.Entities
         {
             var defaultsJson = File.ReadAllText(Application.dataPath + playerDefaultsPath);
             saveData = JsonUtility.FromJson<PlayerSaveData>(defaultsJson);
+            
         }
 
         void InitializeAttributes()
@@ -149,6 +182,12 @@ namespace UZSG.Entities
 
             generic = new();
             generic.ReadSaveJSON(saveData.GenericAttributes);
+        }
+
+        void InitializeKnownRecipes()
+        {
+            recipes = new();
+            recipes = saveData.KnownRecipes;
         }
         
         void InitializeStateMachines()

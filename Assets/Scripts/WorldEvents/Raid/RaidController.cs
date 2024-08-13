@@ -15,7 +15,6 @@ namespace UZSG.WorldEvents.Raid
 
         public void Initialize()
         {
-                
         }
 
         public void OnTick(float deltaTime)

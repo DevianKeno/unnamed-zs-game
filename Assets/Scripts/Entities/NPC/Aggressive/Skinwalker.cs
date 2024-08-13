@@ -20,6 +20,7 @@ namespace UZSG.Entities
 
         protected override void Start()
         {
+            base.Start();
             OnSpawn();
         }
 

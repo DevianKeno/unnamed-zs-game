@@ -5,6 +5,7 @@ namespace UZSG.Interactions
 {
     public interface IDetectable
     {
-        public void PlayerDetect(Player player);
+        public void PlayerSiteDetect(Player player);
+        public void PlayerAttackDetect(Player player);
     }
 }

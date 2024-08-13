@@ -18,9 +18,9 @@ namespace UZSG.Entities
         public float AttackRange;  // range from which it follow, attacks Players (to remove)
         public EnemyActionStatesMachine EnemyStateMachine => enemyStateMachine;
         Player _target; // Current target of the enemy
-        bool _inSite, _inAttack; // checks if the player is in site, attack range
         EnemyActionStates _actionState;
         Vector3 _randomDestination; // Destination of agent
+        [SerializeField] bool _hasTargetInSite, _hasTargetInAttack; // checks if the player is in site, attack range or is a target
         [SerializeField] float RoamTime; // Time it takes for the agent to travel a point
         [SerializeField] float RoamRadius; // Radius of which the agent can travel
         [SerializeField] float RoamInterval; // Interval before the model moves again
@@ -29,7 +29,7 @@ namespace UZSG.Entities
         //[SerializeField] bool _isWaiting = false; // Track if the AI is currently waiting
         [SerializeField] float _distanceFromPlayer;
         [SerializeField] float _speed;
-        [SerializeField] float _radius; // Radius of which the enemy detects the player
+        [SerializeField] float _siteRadius, _attackRadius; // Radius of which the enemy detects the player
         [SerializeField] protected EnemyActionStatesMachine enemyStateMachine;
         [SerializeField] NavMeshAgent _enemyEntity; // the entity's agent movement
         [SerializeField] LayerMask PlayerLayer; // Layers that the enemy chases
@@ -89,27 +89,55 @@ namespace UZSG.Entities
 
         #endregion
 
-        public void PlayerDetect(Player player)
+
+        #region Agent Player Detection
+
+        public void PlayerSiteDetect(Player player)
         {
             if (player != null)
             {
                 _target = player; // set the current target of the enemy to they player found
+                _hasTargetInSite = true;
+            }
+        }
+
+        public void PlayerAttackDetect(Player player)
+        {
+            if (player != null)
+            {
+                _hasTargetInAttack = true;
             }
         }
 
         public void ResetPlayerIfNotInRange()
         {
             // Check if there is a target, then calculate the distance
-            if (_target != null)
+            if (_hasTargetInSite)
             {
                 _distanceFromPlayer = Vector3.Distance(_target.Position, transform.position); 
         
-                if (_radius <= _distanceFromPlayer)
+                if (_siteRadius <= _distanceFromPlayer) // if target no longer in site reset target
                 {
                     _target = null;
+                    _hasTargetInSite = false;
+                    enemyStateMachine.ToState(EnemyActionStates.Roam);
+                }
+                else
+                {
+                    // Check if no player in attack range, reset
+                    if (_hasTargetInAttack)
+                    {
+                        if (_attackRadius <= _distanceFromPlayer)
+                        {
+                            _hasTargetInAttack = false;
+                            enemyStateMachine.ToState(EnemyActionStates.Chase);
+                        }
+                    }
                 }
             }
         }
+
+        #endregion
 
 
         #region Agent Loading Default Data
@@ -119,7 +147,6 @@ namespace UZSG.Entities
             _target = null; // set player to none
             LoadDefaults(); // read from JSON file the default enemy attributes
             InitializeAttributes(); // set the default attributes of the enemy
-            Debug.Log("Enemy fully initialized!");
         }
 
         void LoadDefaults()
@@ -131,43 +158,39 @@ namespace UZSG.Entities
 
         void InitializeAttributes()
         {
-            /// Read save
-            attributes = new();
-            // attributes.ReadSaveJson(defaultData.A);
-
-            /// Access
-            _radius = Attributes.Get("site_radius").Value;
-            _speed = Attributes.Get("move_speed").Value;
-            RoamRadius = Attributes.Get("zombie_roam_radius").Value;
-            RoamInterval = Attributes.Get("zombie_roam_interval").Value;
+            generic = new();
+            generic.ReadSaveJSON(defaultData.GenericAttributes);
+            _siteRadius = generic.Get("zombie_site_radius").Value;
+            _attackRadius = generic.Get("zombie_attack_radius").Value;
+            _speed = generic.Get("move_speed").Value;
+            RoamRadius = generic.Get("zombie_roam_radius").Value;
+            RoamInterval = generic.Get("zombie_roam_interval").Value;
         }
 
         #endregion
 
         #region Agent sensors
-        public EnemyActionStates IsInSiteRange  // determines if enemy can Chase Player or Roam map
+        public bool IsInSiteRange  // determines if enemy can Chase Player or Roam map
         {
             get
             {
-                if (_target != null)
+                if (_hasTargetInSite)
                 {
-                    Debug.Log("In chase state dapat.");
-                    return EnemyActionStates.Chase;
+                    return true;
                 }
-                return EnemyActionStates.Roam;
+                return false;
             }
         }
 
-        public EnemyActionStates IsInAttackrange // determines if enemy can Attack Player
+        public bool IsInAttackrange // determines if enemy can Attack Player
         {
             get
             {   
-                _inAttack = Physics.CheckSphere(transform.position, AttackRange, PlayerLayer);
-                if (_inSite)
+                if (_hasTargetInAttack)
                 {
-                    return EnemyActionStates.Attack;
+                    return true;
                 }
-                return EnemyActionStates.Chase;
+                return false;
             }
         }
         public bool IsNoHealth // determines if the enemy is dead
@@ -177,6 +200,13 @@ namespace UZSG.Entities
                 return false;
             }
         }
+
+        public void TakeDamage(float damage)
+        {
+            var health = generic.Get("health");
+            health.Remove(damage);
+        }
+
         public bool IsSpecialAttackTriggered // determines if an event happened that triggered special Attack 1
         {
             get
@@ -196,12 +226,11 @@ namespace UZSG.Entities
         {
             get
             {   // TODO: palitan mo yung "jericho_method" sa method na nagrereturn ng bool; true if in hordemode (lalakad straight line), false if hindi horde mode zombie
-                if (jericho_method)
+                if (JerichoMethod)
                 {
-                    if (IsInSiteRange == EnemyActionStates.Roam)
+                    if (IsInSiteRange)
                     {
-                        Hordetransform.position = new Vector3(1, 2, 1);             // change mo value sa need mo
-                        Hordetransform.rotation = Quaternion.Euler(0, 30, 0);       // change mo value sa need mo
+                        Hordetransform.SetPositionAndRotation(new Vector3(1, 2, 1), Quaternion.Euler(0, 30, 0));
                         return true;
                     }
                     return false;
@@ -210,7 +239,7 @@ namespace UZSG.Entities
             }
         }
 
-        public bool jericho_method // TODO: pwede mo remove ito or palitan ng method mo, pansamantala ko lang yan 
+        public bool JerichoMethod // TODO: pwede mo remove ito or palitan ng method mo, pansamantala ko lang yan 
         {
             get
             {
@@ -223,7 +252,7 @@ namespace UZSG.Entities
             get
             {
                 // if enemy has no health, state is dead
-                if (IsNoHealth == true)
+                if (IsNoHealth)
                 {
                     return EnemyActionStates.Die;
                 }
@@ -233,17 +262,17 @@ namespace UZSG.Entities
                 //     return EnemyActionStates.Horde;
                 // }
                 // if Player not in Chase range
-                if (IsInSiteRange == EnemyActionStates.Roam)
+                if (!IsInSiteRange)
                 {
                     return EnemyActionStates.Roam;
                 }
                 else
                 {
-                    if (IsInAttackrange == EnemyActionStates.Chase) // Chase
+                    if (!IsInAttackrange) // If no player found in attack range keep chasing
                     {
                         return EnemyActionStates.Chase;
                     }
-                    else // Attack Player
+                    else
                     {
                         return EnemyActionStates.Attack;
                     }
@@ -258,12 +287,14 @@ namespace UZSG.Entities
 
         public void Chase()
         {
+            _enemyEntity.isStopped = false;
             enemyStateMachine.ToState(EnemyActionStates.Chase);
             _enemyEntity.SetDestination(_target.transform.position);
         }
 
         public void Roam()
         {
+            _enemyEntity.isStopped = false;
             // Check if the enemy has reached its destination and is actively moving
             if (_enemyEntity.remainingDistance >= 0.002f && _enemyEntity.remainingDistance <= _enemyEntity.stoppingDistance)
             {
@@ -298,6 +329,8 @@ namespace UZSG.Entities
         public void Attack()
         {
             enemyStateMachine.ToState(EnemyActionStates.Attack);
+            _enemyEntity.isStopped = true;
+            _enemyEntity.updateRotation = false;
             Debug.Log("Attack"); 
         }
         public void Die()
@@ -321,8 +354,7 @@ namespace UZSG.Entities
             enemyStateMachine.ToState(EnemyActionStates.Horde);
 
             // Set the starting position and rotation of the zombie
-            transform.position = Hordetransform.position;
-            transform.rotation = Hordetransform.rotation;
+            transform.SetPositionAndRotation(Hordetransform.position, Hordetransform.rotation);
 
             // Move forward according to speed
             transform.Translate(Vector3.forward * (_speed * Time.deltaTime));

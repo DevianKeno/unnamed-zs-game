@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e18afb883e1451a4c82eb24298dc52e1, type: 3}
-  m_Name: site_radius
+  m_Name: zombie_site_radius
   m_EditorClassIdentifier: 
-  Id: site_radius
-  Name: Site Radius
+  Id: zombie_site_radius
+  Name: Zombie Site Radius
   Description: Zombie site Radius
   Type: 0

@@ -26,9 +26,19 @@
             "Value": 20.0
         },
         {
-            "Id": "site_radius",
+            "Id": "attack_cooldown",
+            "Type": 0,
+            "Value": 2.0
+        },
+        {
+            "Id": "zombie_site_radius",
             "Type": 0,
             "Value": 12.0
+        },
+        {
+            "Id": "zombie_attack_radius",
+            "Type": 0,
+            "Value": 1.0
         },
         {
             "Id": "zombie_roam_radius",

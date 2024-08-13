@@ -164,7 +164,7 @@ GameObject:
   - component: {fileID: 6950953388547815406}
   - component: {fileID: 7449110528680967072}
   m_Layer: 5
-  m_Name: Attribute Bar
+  m_Name: Attribute Bar_old
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

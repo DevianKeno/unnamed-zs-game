@@ -1015,7 +1015,7 @@ GameObject:
   - component: {fileID: 6048758858910967692}
   - component: {fileID: 7888401561407538612}
   m_Layer: 5
-  m_Name: Player Equipment HUD
+  m_Name: Player Equipment HUD_old
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

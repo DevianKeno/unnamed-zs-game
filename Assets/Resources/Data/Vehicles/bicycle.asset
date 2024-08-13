@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4decc72d49b4d8d4aa72345b41c09303, type: 3}
+  m_Name: bicycle
+  m_EditorClassIdentifier: 
+  Id: bicycle
+  Name: Bicycle
+  Description: A fucking bicycle
+  Model:
+    m_AssetGUID: 45fbcb582516cc34e8ab1615ab38b43d
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 1
+  Type: 1
+  Generic:
+  - {fileID: 11400000, guid: e1db9201565269c4caebcb12298f0665, type: 2}

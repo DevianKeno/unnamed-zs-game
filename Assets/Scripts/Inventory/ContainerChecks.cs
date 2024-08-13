@@ -14,16 +14,15 @@ namespace UZSG
         /// <summary>
         /// Checks if the given item can be put in the Container.
         /// </summary>
-        public virtual bool CanPutItem(Item item)
+        public virtual bool CanPutItem(Item item, out HashSet<ItemSlot> slots)
         {
             /// Check first the cached ItemSlots containing the same Item
-            if (_cachedIdSlots.TryGetValue(item.Data.Id, out var slots))
+            if (_cachedIdSlots.TryGetValue(item.Data.Id, out slots))
             {
                 int nextCount = item.Count;
                 foreach (ItemSlot slot in slots)
                 {
                     var tempItem = new Item(item, nextCount);
-                    if (slot == null) continue;
                     if (slot.IsEmpty) return true;
                     if (slot.Item.CanBeStackedWith(tempItem)) return true;
                     
@@ -31,7 +30,7 @@ namespace UZSG
                     if (nextCount <= 0) break;
                 }
             }
-            return CanPutNearest(item);
+            return CanPutNearestEmpty(item);
         }
 
         /// <summary>
@@ -46,23 +45,19 @@ namespace UZSG
             foreach (var item in items)
             {
                 if (_freeSlotsCounter <= 0) return false;
-                if (!CanPutItem(item))
-                {
-                    return false;
-                }
+                if (!CanPutItem(item, out var slots)) return false;
             }
 
             return true;
         }
 
-        public virtual bool CanPutNearest(Item item)
+        public virtual bool CanPutNearestEmpty(Item item)
         {
             if (item.IsNone) return true;
             if (IsFull) return false;
 
             foreach (ItemSlot slot in Slots)
             {
-                if (slot == null) continue;
                 if (slot.IsEmpty)
                 {
                     _freeSlotsCounter--;
@@ -95,6 +90,7 @@ namespace UZSG
         /// <summary>
         /// Check if a specified amount of item exists within the container.
         /// </summary>
+        [Obsolete("Use the property 'IdItemCount' instead.")]
         public bool ContainsCount(Item item, int amount, out List<ItemSlot> slots)
         {
             slots = new();

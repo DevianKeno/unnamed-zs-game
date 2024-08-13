@@ -72,7 +72,7 @@ namespace UZSG.Entities
 
         void LoadModel()
         {
-            if (item == null || item.IsNone)
+            if (item.IsNone)
             {
                 Game.Console.LogWarning($"Item in {transform.position} is not set.");
                 return;
@@ -96,7 +96,7 @@ namespace UZSG.Entities
 
         public override void OnSpawn()
         {
-            if (item != null)
+            if (!item.IsNone)
             {
                 LoadModel();
             }
@@ -124,7 +124,7 @@ namespace UZSG.Entities
         /// </summary>
         public Item AsItem()
         {
-            if (item == null || item.IsNone)
+            if (item.IsNone)
             {
                 return Item.None;
             }

@@ -16,14 +16,6 @@ namespace UZSG.Inventory
         Hands, Mainhand, Offhand
     }
 
-    public struct SlotContentChangedArgs
-    {
-        /// <summary>
-        /// The Slot that has changed.
-        /// </summary>
-        public ItemSlot Slot { get; set; }
-    }
-
     public class InventoryHandler : MonoBehaviour
     {
         public Player Player;
@@ -62,12 +54,20 @@ namespace UZSG.Inventory
         {
             var bagSlotCount = Mathf.FloorToInt(Player.Generic.Get("bag_slots_count").Value);
             _bag = new(bagSlotCount);
+            _bag.OnExcessItem += OnBagExcessItem;
 
             var hotbarSlotCount = Mathf.FloorToInt(Player.Generic.Get("hotbar_slots_count").Value);
             _hotbar = new(hotbarSlotCount);
             
             /// special treatment
             _equipment = new();
+        }
+
+        void OnBagExcessItem(object sender, Item excess)
+        {
+            if (excess.IsNone) return;
+
+            DropItem(excess);
         }
 
         void InitializeGUI()
@@ -88,14 +88,28 @@ namespace UZSG.Inventory
 
         public bool TryPutHotbar(Item item, out HotbarIndex putOnIndex)
         {
-            if (Hotbar.TryPutNearest(item, out var slot))
-            {
-                putOnIndex = (HotbarIndex) slot.Index;
-                return true;
-            }
+            // if (Hotbar.TryPutNearest(item, out var slot))
+            // {
+            //     putOnIndex = (HotbarIndex) slot.Index;
+            //     return true;
+            // }
 
             putOnIndex = default;
             return false;
+        }
+
+        /// <summary>
+        /// Drops item on the ground.
+        /// </summary>
+        public void DropItem(Item item)
+        {
+            var position = Player.EyeLevel + Player.Forward;
+            Game.Entity.Spawn<ItemEntity>("item", position, callback: (info) =>
+            {
+                info.Entity.Item = item;
+                var throwForce = (Player.Forward + Vector3.up) * ThrowForce;
+                info.Entity.Rigidbody.AddForce(throwForce, ForceMode.Impulse);
+            });
         }
 
         /// <summary>

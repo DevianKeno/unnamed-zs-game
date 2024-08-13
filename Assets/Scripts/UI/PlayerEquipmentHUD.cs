@@ -88,8 +88,8 @@ namespace UZSG.UI.HUD
 
         void InitializeEvents()
         {
-            Player.Inventory.Hotbar.OnSlotContentChanged += OnHotbarSlotChanged;
-            Player.Inventory.Equipment.OnSlotContentChanged += OnEquipmentSlotChanged;
+            Player.Inventory.Hotbar.OnSlotItemChanged += OnHotbarSlotChanged;
+            Player.Inventory.Equipment.OnSlotItemChanged += OnEquipmentSlotChanged;
             Player.FPP.OnChangeHeldItem += OnChangeHeldItem;
         }
 
@@ -110,13 +110,13 @@ namespace UZSG.UI.HUD
 
         #region Callbacks
 
-        void OnHotbarSlotChanged(object sender, SlotContentChangedArgs e)
+        void OnHotbarSlotChanged(object sender, SlotItemChangedContext e)
         {
             var hotbarOffset = e.Slot.Index + 3;
             _hotbarSlotUIs[hotbarOffset].SetDisplayedItem(e.Slot.Item);
         }
 
-        void OnEquipmentSlotChanged(object sender, SlotContentChangedArgs e)
+        void OnEquipmentSlotChanged(object sender, SlotItemChangedContext e)
         {
             _equipmentSlotUIs[e.Slot.Index].SetDisplayedItem(e.Slot.Item);
         }

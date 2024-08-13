@@ -42,6 +42,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 7483f2347fa993845a34e0f8c8bbe2a5, type: 2}
   KnownRecipes:
   - {fileID: 11400000, guid: d483b2fe74215824dbda5f2c35f2445a, type: 2}
-  - {fileID: 11400000, guid: 2e41551279bc6c844802b36a217ef687, type: 2}
-  - {fileID: 11400000, guid: b5ca12c8083c14f47bbdf161ccdcdc18, type: 2}
-  - {fileID: 11400000, guid: 314eca0960e514f46b436d87ec9f13fc, type: 2}
+  - {fileID: 11400000, guid: cb32aeaee9a8ee84cbd5456637994761, type: 2}
+  - {fileID: 11400000, guid: f000b8f0a93320d41b27404c408c6c63, type: 2}

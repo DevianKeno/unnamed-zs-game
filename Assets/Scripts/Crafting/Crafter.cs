@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+
 using UnityEngine;
 
 using UZSG.Systems;
@@ -7,37 +9,34 @@ using UZSG.Inventory;
 using UZSG.Items;
 using UZSG.UI;
 using UZSG.Data;
-using System.Collections;
-using System;
-using UnityEditor.ShaderGraph.Internal;
 
 namespace UZSG.Crafting
 {
-    public struct CraftFinishedInfo 
-    {
-        public DateTime StartTime;
-        public DateTime EndTime;
-    }
-
-    public struct CraftingRoutineOptions
-    {
-        public CraftingRoutineOptions(RecipeData recipe, List<Item> materialSets, Container output, List<CraftingRoutine> routineList)
-        {
-            this.recipe = recipe;
-            this.materialSets = materialSets;
-            this.output = output;
-            this.routineList = routineList;
-        }
-        public RecipeData recipe;
-        public List<Item> materialSets;
-        public Container output;
-        public List<CraftingRoutine> routineList;
-    }
-
+    /// <summary>
+    /// Base abstract class for all crafting logic.
+    /// </summary>
     public abstract class Crafter : MonoBehaviour
     {
-        protected bool CheckMaterialAvailability(RecipeData recipe, Container input){
+        #region Events
 
+        /// <summary>
+        /// Called when the crafter start crafting an Item.
+        /// </summary>
+        public event EventHandler<CraftingRoutine> OnCraftStart;
+        /// <summary>
+        /// Called every second while the crafter crafts an Item.
+        /// </summary>
+        public event EventHandler<CraftingRoutine> OnCraftSecondsss;
+        /// <summary>
+        /// Called when the crafter finishes crafting an Item.
+        /// </summary>
+        public event EventHandler<CraftingRoutine> OnCraftFinished;
+
+        #endregion
+
+
+        protected bool CheckMaterialAvailability(RecipeData recipe, Container input)
+        {
             foreach (Item material in recipe.Materials)
             {
                 var materialSlots = new List<ItemSlot>();
@@ -47,21 +46,22 @@ namespace UZSG.Crafting
                 totalItemCount += input.CountItem(material, out var slots);
                 materialSlots.AddRange(tempSlots);
 
-
-                if (totalItemCount < material.Count){
+                if (totalItemCount < material.Count)
+                {
                     print("Materials required does not match the current container");
                     return false;
                 }
             }
+
             return true;
         }
 
         /// <summary>
         /// Consumes items from the container
         /// </summary>
-        protected virtual List<Item> TakeItems(RecipeData recipe, Container input){
-
-            List<Item> _materialSet = new();
+        protected virtual List<Item> TakeItems(RecipeData recipe, Container input)
+        {
+            var materialSet = new List<Item>();
 
             foreach (Item material in recipe.Materials)
             {
@@ -78,32 +78,27 @@ namespace UZSG.Crafting
                     {
                         remainingCount -= material.Count;
                         Item _takenItem = slot.TakeItems(material.Count);
-                        _materialSet.Add(_takenItem);
+                        materialSet.Add(_takenItem);
                     }
                     else
                     {
                         remainingCount -= slot.Item.Count;
                         Item _takenItem = slot.TakeAll();
-                        _materialSet.Add(_takenItem);
+                        materialSet.Add(_takenItem);
                     }
                 }
             }
 
-            return _materialSet;
+            return materialSet;
         }
         
         /// <summary>
         /// Gives player the materials based on the RecipeData. It does not check if the player already takes the item so use checking logic to avoid situations such as item cloning
         /// </summary>
-        protected virtual void ReturnItems(Container input, List<Item> materialSet)
+        protected virtual bool CanReturnItems(Container input, List<Item> materialSet)
         {
-            foreach (Item item in materialSet)
-            {
-                input.TryPutNearest(new Item(item));
-            }
+            return input.CanPutItems(materialSet);
         }
-
-
 
         protected void MigrateOutputToInput(Container input, Container output) //use only for debugging purposes
         {
@@ -118,7 +113,7 @@ namespace UZSG.Crafting
         protected void OnCraftSeconds(object sender, int secondsElapsed)
         {
             var _craftingInstanceSender = (CraftingRoutine) sender;
-            print($"Crafting: {_craftingInstanceSender.recipeData.Id} - {_craftingInstanceSender.GetTimeRemaining()} seconds Remaining");
+            print($"Crafting: {_craftingInstanceSender.recipeData.Id} - {_craftingInstanceSender.TimeRemaining} seconds Remaining");
         }
 
         protected void OnCraftFinish(object sender, CraftFinishedInfo unixTime)

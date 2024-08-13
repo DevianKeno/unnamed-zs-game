@@ -159,7 +159,7 @@ namespace UZSG.Players
             if (!int.TryParse(context.control.displayName, out int index)) return;
 
             var slot = Player.Inventory.GetEquipmentOrHotbarSlot(index);
-            if (slot != null && slot.HasItem)
+            if (slot.HasItem)
             {
                 Player.FPP.EquipHeldItem(slot.Item.Data.Id);
                 // Player.Inventory.SelectHotbarSlot(index);
@@ -255,7 +255,7 @@ namespace UZSG.Players
             }
             else if (item.Data.Type == ItemType.Tool)
             {
-                if (Player.Inventory.Hotbar.TryPutNearest(item, out ItemSlot slot))
+                if (Player.Inventory.Hotbar.TryPutNearest(item))
                 {
                     Player.FPP.HoldItem(item.Data);
                     OnPickupItem?.Invoke(item);

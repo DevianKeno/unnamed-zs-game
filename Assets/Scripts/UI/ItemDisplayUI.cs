@@ -5,15 +5,32 @@ using UZSG.Items;
 
 namespace UZSG.UI
 {
+    /// <summary>
+    /// UI element for displaying Items (with count).
+    /// </summary>
     public class ItemDisplayUI : Window, IUIElement
     {
-        [SerializeField] Item item;
+        [SerializeField] Item item = Item.None;
         public Item Item
         {
-            get => item;
+            get
+            {
+                return item;
+            }
             set
             {
-                SetDisplayedItem(value);
+                SetDisplayedItem(item);
+            }
+        }
+        public string Count
+        {
+            get
+            {
+                return item.Count.ToString();
+            }
+            set
+            {
+                countText.text = value;
             }
         }
 
@@ -21,7 +38,7 @@ namespace UZSG.UI
         [SerializeField] TextMeshProUGUI countText;
         [SerializeField] TextMeshProUGUI altText;
 
-        void Start()
+        void OnEnable()
         {
             image.preserveAspect = true;
         }
@@ -30,7 +47,7 @@ namespace UZSG.UI
         {            
             this.item = item;
             
-            if (item == null || item.IsNone)
+            if (item.IsNone)
             {
                 image.sprite = null;
                 image.color = ItemSlotUI.Transparent;
@@ -61,6 +78,18 @@ namespace UZSG.UI
                 {
                     countText.text = item.Count.ToString();
                 }
+            }
+        }
+
+        public void DisplayCount(bool display)
+        {
+            if (display)
+            {
+                countText.gameObject.SetActive(true);
+            }
+            else
+            {
+                countText.gameObject.SetActive(false);
             }
         }
     }

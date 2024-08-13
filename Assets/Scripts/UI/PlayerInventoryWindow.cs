@@ -18,6 +18,8 @@ namespace UZSG.UI
 {
     public class PlayerInventoryWindow : Window, IInitializeable
     {
+        const string CraftingTitle = "Crafting"; /// this should be read from a Lang file
+        
         public Player Player;
         public InventoryHandler Inventory => Player.Inventory;
         [Space]
@@ -120,7 +122,7 @@ namespace UZSG.UI
                 slot.Show();
             }
             
-            Inventory.Bag.OnSlotContentChanged += OnBagSlotContentChanged;
+            Inventory.Bag.OnSlotItemChanged += OnBagSlotContentChanged;
         }
 
         void InitializeInputs()
@@ -212,7 +214,7 @@ namespace UZSG.UI
 
         public void ResetToPlayerCraftingGUI()
         {
-            titleText.text = "Cwafting";
+            titleText.text = CraftingTitle;
             playerCraftingGUI.Show();
         }
 
@@ -235,12 +237,11 @@ namespace UZSG.UI
                 }
             }
             
-            titleText.text = context.Next;
             PutBackHeldItem();
             DestroyItemOptions();
         }
 
-        void OnBagSlotContentChanged(object sender, SlotContentChangedArgs e)
+        void OnBagSlotContentChanged(object sender, SlotItemChangedContext e)
         {
             _bagSlotUIs[e.Slot.Index].SetDisplayedItem(e.Slot.Item);
         }
@@ -266,26 +267,26 @@ namespace UZSG.UI
 
                 if (_isHoldingItem)
                 {
-                    if (Inventory.Bag.TryPut(_selectedSlot.Index, _heldItem))
+                    if (Inventory.Bag.TryPutIn(_selectedSlot.Index, _heldItem))
                     {
                         ReleaseHeldItem();
                     }
                     else /// swap items
                     {
                         Item tookItem = Inventory.Bag.Take(_selectedSlot.Index);
-                        Inventory.Bag.TryPut(_selectedSlot.Index, SwapItemWithHeldItem(tookItem));
+                        Inventory.Bag.TryPutIn(_selectedSlot.Index, SwapItemWithHeldItem(tookItem));
                     }
                 }
                 else
                 {
                     if (_selectedSlot.IsEmpty) return;
 
-                    Item taken = Inventory.Bag.Take(_selectedSlot.Index);
-                    if (taken == _selectedSlot.Item)
+                    var itemTaken = Inventory.Bag.Take(_selectedSlot.Index);
+                    if (itemTaken.CompareTo(_selectedSlot.Item))
                     {
                         
                     }
-                    HoldItem(taken);
+                    HoldItem(itemTaken);
                     _lastSelectedSlotIndex = _selectedSlot.Index;
                 }
             }
@@ -298,7 +299,7 @@ namespace UZSG.UI
                         _isPutting = true;
 
                         Item toPut = _heldItem.Take(1);
-                        if (Inventory.Bag.TryPut(_selectedSlot.Index, toPut))
+                        if (Inventory.Bag.TryPutIn(_selectedSlot.Index, toPut))
                         {
                             HoldItem(_heldItem);
                         }
@@ -319,7 +320,7 @@ namespace UZSG.UI
                     {
                         Item taken = Inventory.Bag.Take(_selectedSlot.Index);
                         var itemToPut = SwapItemWithHeldItem(taken);
-                        Inventory.Bag.TryPut(_selectedSlot.Index, itemToPut);
+                        Inventory.Bag.TryPutIn(_selectedSlot.Index, itemToPut);
                     }
                     _isPutting = false;
                 }
@@ -457,7 +458,7 @@ namespace UZSG.UI
 
         void HoldItem(Item item)
         {
-            if (item == null || item.IsNone || item.Count < 1)
+            if (item.IsNone || item.Count < 1)
             {
                 ReleaseHeldItem();
                 return;
@@ -471,15 +472,15 @@ namespace UZSG.UI
         void ReleaseHeldItem()
         {
             _isHoldingItem = false;
-            _heldItem = null;
+            _heldItem = Item.None;
             DestroyItemDisplay();
         }
 
         void PutBackHeldItem()
         {
-            if (_heldItem == null) return;
+            if (_heldItem.IsNone) return;
             
-            Inventory.Bag.TryPut(_lastSelectedSlotIndex, _heldItem);
+            Inventory.Bag.TryPutIn(_lastSelectedSlotIndex, _heldItem);
             ReleaseHeldItem();
             _lastSelectedSlotIndex = -1;
         }

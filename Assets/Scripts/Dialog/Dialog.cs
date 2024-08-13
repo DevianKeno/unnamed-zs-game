@@ -53,6 +53,35 @@ namespace UZSG.DialogSystem
             return story.currentText;
         }
 
+
+        public List<Choice> GetChoices(){
+            if(story.canContinue)
+            {
+                Debug.LogError("You can't retrieve choices while the story is in progress");
+            }
+
+            return story.currentChoices;
+        }
+
+        public void ResetStory()
+        {
+            if(!isLoaded())
+            {
+                Debug.LogError("You didn't even load the story in the first place");
+                return;
+            }
+            story.ResetState();
+        }
+
+        public void MakeChoice(int choiceIndex)
+        {
+            if(!story.canContinue)
+            {
+                Debug.LogError("You can't choose a choices while the story is in progress");
+            }
+            story.ChooseChoiceIndex(choiceIndex);
+        }
+
         public virtual void OnMakeChoices(Choice choice) {}
         public virtual void onDidContinue() {}
     }

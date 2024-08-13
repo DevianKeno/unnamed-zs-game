@@ -1,9 +1,13 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using UZSG.Systems;
-using UZSG.WorldEvents;
 
+using UnityEditor.Rendering;
+using UnityEngine;
+
+using UZSG.Systems;
+using UZSG.Data;
+using UZSG.Worlds;
 
 
 namespace UZSG.WorldEvents.Raid
@@ -15,7 +19,7 @@ namespace UZSG.WorldEvents.Raid
 
         public void Initialize()
         {
-            
+
         }
 
         public void OnTick(float deltaTime)
@@ -26,7 +30,7 @@ namespace UZSG.WorldEvents.Raid
             }
         }
 
-        void SpawnEnemey()
+        void SpawnEnemy()
         {
             throw new System.NotImplementedException();
         }

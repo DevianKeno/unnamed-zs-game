@@ -67,6 +67,9 @@ namespace UZSG.Entities
         public PlayerEquipmentHUD EquipHUD => _equipmentHUD;
         PlayerInfoHUD _infoHUD;
         public PlayerInfoHUD InfoHUD => _infoHUD;
+
+        #endregion
+
         
         InputActionMap actionMap;
         readonly Dictionary<string, InputAction> inputs = new();
@@ -132,6 +135,7 @@ namespace UZSG.Entities
             InitializeAttributes();
             InitializeStateMachines();
             InitializeInventory();
+            InitializeKnownRecipes();
             // InitializeCrafter();
             InitializeHUD();
             InitializeInputs();

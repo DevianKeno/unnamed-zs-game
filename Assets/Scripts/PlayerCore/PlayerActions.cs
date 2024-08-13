@@ -122,7 +122,22 @@ namespace UZSG.Players
             actionMap.Disable();
             _allowInteractions = false;
         }
-        
+
+        public void SetControl(string name, bool enabled)
+        {
+            if (inputs.ContainsKey(name))
+            {
+                if (enabled)
+                {
+                    inputs[name].Enable();
+                }
+                else
+                {
+                    inputs[name].Disable();
+                }
+            }
+        }
+
         void InteractionSphereCast()
         {
             if (!_allowInteractions) return;

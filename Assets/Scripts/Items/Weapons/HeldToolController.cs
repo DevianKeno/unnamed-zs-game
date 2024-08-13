@@ -63,7 +63,7 @@ namespace UZSG.Items.Tools
 
         void RetrievePlayerAttributes()
         {
-            if (Player.Vitals.TryGet("stamina", out var attr))
+            if (Player.Attributes.TryGet("stamina", out var attr))
             {
                 playerStamina = attr;
                 _canAttack = true;

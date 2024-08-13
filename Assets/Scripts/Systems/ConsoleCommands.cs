@@ -97,7 +97,7 @@ namespace UZSG.Systems
         void CCraft(object sender, string[] args)
         {
             var newItem = new Item(Game.Items.GetData(args[0]));
-            var playerInventoryCrafter = (PlayerCrafting)_player.CraftingAgent;
+            var playerInventoryCrafter = (PlayerCrafting)_player.Crafter;
             playerInventoryCrafter.PlayerCraftItem(newItem.Data.Recipes[0]);
         }
 
@@ -276,14 +276,15 @@ namespace UZSG.Systems
         /// <summary>
         /// Creates access to external workbench
         /// </summary>
-        void CWbcraft(object sender, string[] args){
-            var wbcraft = (WorkbenchCrafter)_player.ExternalCrafter;
-            var newItem = new Item(Game.Items.GetData(args[0]));
-            if (wbcraft == null){
-                print("Player is not interacting with workbench");
-                return;
-            }
-            wbcraft.WorkbenchCraftItem(_player, newItem.Data.Recipes[0]);
+        void CWbcraft(object sender, string[] args)
+        {
+            // var wbcraft = (WorkbenchCrafter)_player.ExternalCrafter;
+            // var newItem = new Item(Game.Items.GetData(args[0]));
+            // if (wbcraft == null){
+            //     print("Player is not interacting with workbench");
+            //     return;
+            // }
+            // wbcraft.WorkbenchCraftItem(_player, newItem.Data.Recipes[0]);
         }
 
         /// <summary>

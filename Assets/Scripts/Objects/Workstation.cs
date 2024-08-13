@@ -54,7 +54,13 @@ namespace UZSG.Objects
             _GUI.ResetDisplayed();
             _GUI.SetPlayer(player);
             _GUI.AddRecipes(WorkstationData.IncludedRecipes); /// by raw RecipeData
-            _GUI.AddRecipesById(player.PlayerData.KnownRecipes); /// by raw RecipeData
+            /// Situational by workstation
+            /// e.g., By Player recipes can also be crafted in Workbench (ofc if the Player knows it)
+            /// but not in smelting, etc. as said, situational
+            if (WorkstationData.IncludePlayerRecipes)
+            {
+                _GUI.AddRecipesById(player.SaveData.KnownRecipes); /// by raw RecipeData
+            }
             _GUI.InitializeCrafter(crafter); /// this should not be null tho
 
             backAction = Game.Main.GetInputAction("Back", "Global");
@@ -93,7 +99,6 @@ namespace UZSG.Objects
             backAction.performed -= OnInputGlobalBack;
 
             player.ResetToPlayerCraftingGUI();
-            player.ExternalCrafter = null;
             Game.UI.ToggleCursor(false);
             _GUI.Destroy();
             

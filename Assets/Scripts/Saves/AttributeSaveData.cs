@@ -6,13 +6,11 @@ namespace UZSG.Saves
     public class AttributeSaveData : SaveData
     {
         public string Id;
-        public string Type = "generic";
         public float Value = 0f;
         public float Minimum = 0f;
         public float BaseMaximum = 0f;
         public float Multiplier = 1f;
         public float FlatBonus = 0f;
-        public float SiteRadius = 0f;
         public bool LimitOverflow = true;
         public bool LimitUnderflow = true;
     }

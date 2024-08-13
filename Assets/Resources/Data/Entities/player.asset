@@ -20,27 +20,105 @@ MonoBehaviour:
     m_EditorAssetChanged: 0
   Name: Player
   AudioAssetsData: {fileID: 11400000, guid: eed9c45f6757aae48b1990646f079589, type: 2}
-  Vitals:
-  - {fileID: 11400000, guid: e1db9201565269c4caebcb12298f0665, type: 2}
-  - {fileID: 11400000, guid: 03beca28745658c48a7358ce536b9573, type: 2}
-  - {fileID: 11400000, guid: 1163b94315ee82b43880f69e4567d600, type: 2}
-  - {fileID: 11400000, guid: a256a1de972d93b4b88e0ee04c8d2aa5, type: 2}
-  - {fileID: 11400000, guid: 94b51b5be6f21db40a4c92ebcdade961, type: 2}
-  Generic:
-  - {fileID: 11400000, guid: 94b51b5be6f21db40a4c92ebcdade961, type: 2}
-  - {fileID: 11400000, guid: fe9f66b79d95e7948a4dfcb4512568c7, type: 2}
-  - {fileID: 11400000, guid: 1ca754ca1365db04c87c8de19db59ede, type: 2}
-  - {fileID: 11400000, guid: 2d61d3236698a6a4e81d503fae1c7421, type: 2}
-  - {fileID: 11400000, guid: a27faf74b47c0664091a44ac647f437d, type: 2}
-  - {fileID: 11400000, guid: fe7432cf6f0d40c4bb3556a4ad3b22ab, type: 2}
-  - {fileID: 11400000, guid: 7712a22b8a69c8f40a3a1891cfbca630, type: 2}
-  - {fileID: 11400000, guid: 3a7eb619286a16b488612bcdc2cee65c, type: 2}
-  - {fileID: 11400000, guid: 33f825a04b3af2244b7c69ea9930a3ef, type: 2}
-  - {fileID: 11400000, guid: 91ee287a94e4d854093201e92000c189, type: 2}
-  - {fileID: 11400000, guid: 5210e33413593884eaaf994b5d314d40, type: 2}
-  - {fileID: 11400000, guid: fe7432cf6f0d40c4bb3556a4ad3b22ab, type: 2}
-  - {fileID: 11400000, guid: 7483f2347fa993845a34e0f8c8bbe2a5, type: 2}
+  Attributes:
+  - data: {fileID: 11400000, guid: e1db9201565269c4caebcb12298f0665, type: 2}
+    value: 100
+    baseMaximum: 100
+    multiplier: 1
+    flatBonus: 0
+    LimitOverflow: 1
+    LimitUnderflow: 1
+  - data: {fileID: 11400000, guid: 03beca28745658c48a7358ce536b9573, type: 2}
+    value: 100
+    baseMaximum: 100
+    multiplier: 1
+    flatBonus: 0
+    LimitOverflow: 1
+    LimitUnderflow: 1
+  - data: {fileID: 11400000, guid: 1163b94315ee82b43880f69e4567d600, type: 2}
+    value: 100
+    baseMaximum: 100
+    multiplier: 1
+    flatBonus: 0
+    LimitOverflow: 1
+    LimitUnderflow: 1
+  - data: {fileID: 11400000, guid: a256a1de972d93b4b88e0ee04c8d2aa5, type: 2}
+    value: 100
+    baseMaximum: 100
+    multiplier: 1
+    flatBonus: 0
+    LimitOverflow: 1
+    LimitUnderflow: 1
+  - data: {fileID: 11400000, guid: 6b8653436d3cc3849869a2da6b4b9945, type: 2}
+    value: 0
+    baseMaximum: 100
+    multiplier: 1
+    flatBonus: 0
+    LimitOverflow: 1
+    LimitUnderflow: 1
+  - data: {fileID: 11400000, guid: fe9f66b79d95e7948a4dfcb4512568c7, type: 2}
+    value: 300
+    baseMaximum: 0
+    multiplier: 1
+    flatBonus: 0
+    LimitOverflow: 1
+    LimitUnderflow: 1
+  - data: {fileID: 11400000, guid: 1ca754ca1365db04c87c8de19db59ede, type: 2}
+    value: 400
+    baseMaximum: 0
+    multiplier: 1
+    flatBonus: 0
+    LimitOverflow: 1
+    LimitUnderflow: 1
+  - data: {fileID: 11400000, guid: 2d61d3236698a6a4e81d503fae1c7421, type: 2}
+    value: 150
+    baseMaximum: 0
+    multiplier: 1
+    flatBonus: 0
+    LimitOverflow: 1
+    LimitUnderflow: 1
+  - data: {fileID: 11400000, guid: a27faf74b47c0664091a44ac647f437d, type: 2}
+    value: 0.078125
+    baseMaximum: 0
+    multiplier: 1
+    flatBonus: 0
+    LimitOverflow: 1
+    LimitUnderflow: 1
+  - data: {fileID: 11400000, guid: fe7432cf6f0d40c4bb3556a4ad3b22ab, type: 2}
+    value: 20
+    baseMaximum: 0
+    multiplier: 1
+    flatBonus: 0
+    LimitOverflow: 1
+    LimitUnderflow: 1
+  - data: {fileID: 11400000, guid: 7712a22b8a69c8f40a3a1891cfbca630, type: 2}
+    value: 0.33
+    baseMaximum: 0
+    multiplier: 1
+    flatBonus: 0
+    LimitOverflow: 1
+    LimitUnderflow: 1
+  - data: {fileID: 11400000, guid: 3a7eb619286a16b488612bcdc2cee65c, type: 2}
+    value: 0.33
+    baseMaximum: 0
+    multiplier: 1
+    flatBonus: 0
+    LimitOverflow: 1
+    LimitUnderflow: 1
+  - data: {fileID: 11400000, guid: 91ee287a94e4d854093201e92000c189, type: 2}
+    value: 18
+    baseMaximum: 0
+    multiplier: 1
+    flatBonus: 0
+    LimitOverflow: 1
+    LimitUnderflow: 1
+  - data: {fileID: 11400000, guid: 5210e33413593884eaaf994b5d314d40, type: 2}
+    value: 2
+    baseMaximum: 0
+    multiplier: 1
+    flatBonus: 0
+    LimitOverflow: 1
+    LimitUnderflow: 1
   KnownRecipes:
   - {fileID: 11400000, guid: d483b2fe74215824dbda5f2c35f2445a, type: 2}
-  - {fileID: 11400000, guid: cb32aeaee9a8ee84cbd5456637994761, type: 2}
-  - {fileID: 11400000, guid: f000b8f0a93320d41b27404c408c6c63, type: 2}
+  - {fileID: 11400000, guid: 314eca0960e514f46b436d87ec9f13fc, type: 2}

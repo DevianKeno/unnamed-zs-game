@@ -192,13 +192,13 @@ namespace UZSG.Players
         {
             /// These can be cached and track changes using events
             /// Vitals
-            stamina = Player.Vitals.Get("stamina");
+            stamina = Player.Attributes.Get("stamina");
             
             /// Generic
-            MoveSpeed = Player.Generic.Get("move_speed").Value;
-            RunSpeed = Player.Generic.Get("run_speed").Value;
-            CrouchSpeed = Player.Generic.Get("crouch_speed").Value;
-            jumpStaminaCost = Player.Generic.Get("jump_stamina_cost").Value;
+            MoveSpeed = Player.Attributes.Get("move_speed").Value;
+            RunSpeed = Player.Attributes.Get("run_speed").Value;
+            CrouchSpeed = Player.Attributes.Get("crouch_speed").Value;
+            jumpStaminaCost = Player.Attributes.Get("jump_stamina_cost").Value;
             
             _targetSpeed = MoveSpeed;
         }

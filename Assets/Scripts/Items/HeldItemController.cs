@@ -23,8 +23,8 @@ namespace UZSG.Items
         }
         [SerializeField] protected AudioSourceController audioSourceController;
         public AudioSourceController AudioSource => audioSourceController;
-        [SerializeField] protected AttributeCollection<Attribute> attributes;
-        public AttributeCollection<Attribute> Attributes => attributes;
+        [SerializeField] protected AttributeCollection attributes;
+        public AttributeCollection Attributes => attributes;
 
         protected InputActionMap actionMap;
 

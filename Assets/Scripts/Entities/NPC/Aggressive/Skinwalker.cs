@@ -66,7 +66,7 @@ namespace UZSG.Entities
 
         void TakeDamage(float damage)
         {
-            var health = generic.Get("health");
+            var health = Attributes.Get("health");
             print(health.Value);
             health.Remove(damage);
             print(health.Value);

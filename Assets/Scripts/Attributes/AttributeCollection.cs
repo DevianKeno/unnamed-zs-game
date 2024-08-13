@@ -17,47 +17,51 @@ namespace UZSG.Attributes
     /// Individual attributes can also be indexed.
     /// </summary>
     [Serializable]
-    public class AttributeCollection<T> : ISaveDataReadWrite<AttributeCollectionSaveData> where T : Attribute
+    public class AttributeCollection : ISaveDataReadWrite<List<AttributeSaveData>>
     {
         /// Just so can view in Inspector
-        [SerializeField] List<T> attributes = new();
-        Dictionary<string, T> _attrsDict = new();
-        public List<T> Attributes
+        [SerializeField] List<Attribute> attributes = new();
+        Dictionary<string, Attribute> _attrsDict = new();
+        public List<Attribute> Attributes
         {
             get => _attrsDict.Values.ToList();
         }
 
-        public T this[string id]
+        public Attribute this[string id]
         {
             get => Get(id);
         }
 
-        public void ReadSaveJson(AttributeCollectionSaveData saveData)
+        public void ReadSaveJson(List<AttributeSaveData> saveData)
         {
-            foreach (var attr in saveData.Attributes)
+            foreach (var attrSaveData in saveData)
             {
-                if (Game.Attributes.TryGetData(attr.Id, out var attrData))
+                if (Game.Attributes.TryGetData(attrSaveData.Id, out var attrData))
                 {
-                    Type t = typeof(T);
-                    var constructor = t.GetConstructor(new Type[] { typeof(AttributeData) });
-                    if (constructor == null)
-                    {
-                        Debug.LogError($"No constructor found for type {t.Name} with a single parameter of type AttributeData");
-                        continue;
-                    }
-                    T newAttr = (T) constructor.Invoke(new object[] { attrData });
-                    newAttr.ReadSaveJson(attr);
+                    var newAttr = new Attribute(attrData);
+                    newAttr.ReadSaveJson(attrSaveData);
                     Add(newAttr);
+                }
+                else
+                {
+                    Game.Console.LogAndUnityLog($"Tried to retrieve Attribute '{attrSaveData.Id}', but it does not exists.");
                 }
             }
         }
         
-        public AttributeCollectionSaveData WriteSaveJson()
+        public List<AttributeSaveData> WriteSaveJson()
         {
-            throw new NotImplementedException();
+            var saveData = new List<AttributeSaveData>();
+
+            foreach (var attr in _attrsDict.Values.ToList())
+            {
+                saveData.Add(attr.WriteSaveJson());
+            }
+            
+            return saveData;
         }
 
-        public void Add(T attribute)
+        public void Add(Attribute attribute)
         {
             if (!attribute.IsValid) return;
 
@@ -69,6 +73,19 @@ namespace UZSG.Attributes
             else
             {
                 Game.Console.LogAndUnityLog($"Attribute [{attribute.Data.Id}] already exists within the collection.");
+            }
+        }
+
+        public void AddList(List<Attribute> attributes)
+        {
+            foreach (var attr in attributes)
+            {
+                if (_attrsDict.TryGetValue(attr.Id, out var xattr))
+                {
+                    Game.Console.LogWarning($"Duplicate attribute found '{attr.Id}', disregarding...");
+                    continue;
+                }
+                _attrsDict[attr.Id] = attr;
             }
         }
 
@@ -85,7 +102,7 @@ namespace UZSG.Attributes
             }
         }
 
-        public bool Remove(string id, out T attribute)
+        public bool Remove(string id, out Attribute attribute)
         {
             if (_attrsDict.ContainsKey(id))
             {
@@ -99,7 +116,7 @@ namespace UZSG.Attributes
             return false;
         }
 
-        public T Get(string id)
+        public Attribute Get(string id)
         {
             if (_attrsDict.ContainsKey(id))
             {
@@ -109,12 +126,36 @@ namespace UZSG.Attributes
             Game.Console.LogAndUnityLog($"Unable to retrieve Attribute '{id}' as it's not in the collection.");
             return null;
         }
+        
+        public T Get<T>(string id) where T : Attribute
+        {
+            if (_attrsDict.ContainsKey(id))
+            {
+                return (T) _attrsDict[id];
+            }
 
-        public bool TryGet(string id, out T attribute)
+            Game.Console.LogAndUnityLog($"Unable to retrieve Attribute '{id}' as it's not in the collection.");
+            return null;
+        }
+
+        public bool TryGet(string id, out Attribute attribute)
         {
             if (_attrsDict.ContainsKey(id))
             {
                 attribute = _attrsDict[id];
+                return true;
+            } 
+            
+            Game.Console.LogAndUnityLog($"Unable to retrieve Attribute '{id}' as it's not in the collection.");
+            attribute = Attribute.None;
+            return false;
+        }
+
+        public bool TryGet<T>(string id, out T attribute) where T : Attribute
+        {
+            if (_attrsDict.ContainsKey(id))
+            {
+                attribute = (T) _attrsDict[id];
                 return true;
             } 
             

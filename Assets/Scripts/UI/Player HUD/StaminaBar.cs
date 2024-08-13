@@ -15,7 +15,7 @@ namespace UZSG.UI
         float _originalAlphaFill;
         float _originalAlphaBuffer;
 
-        [SerializeField] VitalAttribute stamina;
+        [SerializeField] Attribute stamina;
         
         [SerializeField] Image barImage;
         [SerializeField] Image fillImage;
@@ -36,7 +36,7 @@ namespace UZSG.UI
         {
             if (attr == null || !attr.IsValid) return;
 
-            stamina = (VitalAttribute)attr;
+            stamina = attr;
             stamina.OnValueChanged += OnValueChanged;
             stamina.OnReachMaximum += OnReachMaximum;
             Refresh();

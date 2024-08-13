@@ -9,8 +9,8 @@ namespace UZSG.Objects
     {
         [SerializeField] protected ObjectData objectData;
         public ObjectData ObjectData => objectData;
-        [SerializeField] AttributeCollection<Attribute> attributes;
-        public AttributeCollection<Attribute> Attributes => attributes;
+        [SerializeField] AttributeCollection attributes;
+        public AttributeCollection Attributes => attributes;
         [SerializeField] protected AudioSourceController audioController;
         public AudioSourceController Audio => audioController;
 

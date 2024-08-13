@@ -12,6 +12,7 @@ namespace UZSG.Data
         [Header("Workstation")]
         public string WorkstationName;
         public AssetReference GUI;
+        public bool IncludePlayerRecipes;
         public List<RecipeData> IncludedRecipes;
     }
 }

@@ -1,6 +1,6 @@
 namespace UZSG.Saves
 {
-    public interface ISaveDataReadable<T> where T : SaveData
+    public interface ISaveDataReadable<T>
     {
         public void ReadSaveJson(T saveData);
     }

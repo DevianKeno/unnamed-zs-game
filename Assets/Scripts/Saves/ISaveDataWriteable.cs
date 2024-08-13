@@ -1,6 +1,6 @@
 namespace UZSG.Saves
 {
-    public interface ISaveDataWriteable<T> where T : SaveData
+    public interface ISaveDataWriteable<T>
     {
         public T WriteSaveJson();
     }

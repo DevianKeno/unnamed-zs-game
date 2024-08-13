@@ -13,6 +13,7 @@ using UZSG.Items;
 using UZSG.Entities;
 using TMPro;
 using UZSG.Objects;
+using UZSG.Crafting;
 
 namespace UZSG.UI
 {
@@ -83,6 +84,7 @@ namespace UZSG.UI
             InitializeElements();
             InitializeEvents();
             InitializeBagSlotUIs();
+            InitializeCraftingGUI();
             selector = Instantiate(selectorPrefab, transform).GetComponent<Selector>();
             frameController.SwitchToFrame("bag", force: true);
             InitializeInputs();
@@ -123,6 +125,11 @@ namespace UZSG.UI
             }
             
             Inventory.Bag.OnSlotItemChanged += OnBagSlotContentChanged;
+        }
+
+        void InitializeCraftingGUI()
+        {
+            playerCraftingGUI.SetPlayer(Player);   
         }
 
         void InitializeInputs()
@@ -166,6 +173,12 @@ namespace UZSG.UI
             {
                 rect.localScale = Vector3.one;
             }
+
+            playerCraftingGUI.ResetDisplayed();
+            playerCraftingGUI.SetPlayer(Player);
+            playerCraftingGUI.AddRecipesById(Player.SaveData.KnownRecipes);
+            playerCraftingGUI.InitializeCrafter(Player.Crafter);   
+
             selector.Hide();
             actionMap.Enable();
             Game.UI.ToggleCursor(true);

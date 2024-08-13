@@ -99,12 +99,11 @@ namespace UZSG.UI.HUD
 
         void BindPlayerAttributes()
         {
-            HealthBar.BindAttribute(Player.Vitals.Get("health"));
-            StaminaBar.BindAttribute(Player.Vitals.Get("stamina"));
-            HungerBar.BindAttribute(Player.Vitals.Get("hunger"));
-            HydrationBar.BindAttribute(Player.Vitals.Get("hydration"));
-
-            XPBar.BindAttribute(Player.Generic.Get("experience"));
+            HealthBar.BindAttribute(Player.Attributes.Get("health"));
+            StaminaBar.BindAttribute(Player.Attributes.Get("stamina"));
+            HungerBar.BindAttribute(Player.Attributes.Get("hunger"));
+            HydrationBar.BindAttribute(Player.Attributes.Get("hydration"));
+            XPBar.BindAttribute(Player.Attributes.Get("experience"));
         }
 
 

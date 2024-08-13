@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3372a5b7bb26d3f488d62bf6042f3f86, type: 3}
-  m_Name: bandage-2
+  m_Name: bandage 2
   m_EditorClassIdentifier: 
   Id: bandage_2
   Name: Bandage

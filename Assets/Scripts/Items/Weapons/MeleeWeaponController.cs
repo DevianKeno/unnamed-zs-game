@@ -42,7 +42,6 @@ namespace UZSG.Items.Weapons
 
         MeleeWeaponStateMachine stateMachine;
         public MeleeWeaponStateMachine StateMachine => stateMachine;
-        [SerializeField] AttributeCollection<GenericAttribute> runtimeAttributes;
 
         void Awake()
         {
@@ -79,7 +78,7 @@ namespace UZSG.Items.Weapons
 
         void RetrievePlayerAttributes()
         {
-            if (Player.Vitals.TryGet("stamina", out var attr))
+            if (Player.Attributes.TryGet("stamina", out var attr))
             {
                 playerStamina = attr;
                 _canAttack = true;

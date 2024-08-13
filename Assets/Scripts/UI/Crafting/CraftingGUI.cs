@@ -21,7 +21,7 @@ namespace UZSG.UI
         Player player;
 
         RecipeData _selectedRecipe;
-        List<CraftableItemUI> craftableItemUIs = new();
+        Dictionary<string, CraftableItemUI> craftableItemUIs = new();
         List<MaterialSlotUI> materialSlotUIs = new();
 
         [SerializeField] CraftedItemDisplayUI craftedItemDisplay;
@@ -89,11 +89,13 @@ namespace UZSG.UI
         void OnPlayerBagItemChanged(object sender, SlotItemChangedContext e)
         {
             //{
-                foreach (CraftableItemUI craftable in craftableItemUIs)
+                /// Update craftable list status
+                foreach (CraftableItemUI craftable in craftableItemUIs.Values)
                 {
                     UpdateCraftableStatusForPlayer(craftable);
                 }
 
+                /// Update displayed material count
                 foreach (var matSlot in materialSlotUIs)
                 {
                     if (player.Inventory.Bag.IdItemCount.TryGetValue(matSlot.Item.Id, out int count))
@@ -111,6 +113,9 @@ namespace UZSG.UI
 
         #region Craftables Item UIs
 
+        /// <summary>
+        /// Add recipes to be displayed by Recipe Id.
+        /// </summary>
         public void AddRecipesById(List<string> ids)
         {
             foreach (var id in ids)
@@ -121,6 +126,9 @@ namespace UZSG.UI
             LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
         }
 
+        /// <summary>
+        /// Add recipes to be displayed by Recipe Data.
+        /// </summary>
         public void AddRecipes(List<RecipeData> recipes)
         {
             foreach (var recipe in recipes)
@@ -138,13 +146,18 @@ namespace UZSG.UI
 
         public void CreateCraftableItemUI(RecipeData recipeData)
         {
+            if (craftableItemUIs.ContainsKey(recipeData.Output.Id)) /// disregard dupes
+            {
+                return;
+            }
+
             var craftableUI = Game.UI.Create<CraftableItemUI>("Craftable Item", craftablesHolder);
             craftableUI.SetRecipe(recipeData);
             craftableUI.OnClick += OnClickCraftable;
 
             UpdateCraftableStatusForPlayer(craftableUI);
 
-            craftableItemUIs.Add(craftableUI);
+            craftableItemUIs[recipeData.Output.Id] = craftableUI;
         }
 
         void UpdateCraftableStatusForPlayer(CraftableItemUI craftable)
@@ -172,7 +185,7 @@ namespace UZSG.UI
 
         void ClearCraftableItems()
         {
-            foreach (var craftable in craftableItemUIs)
+            foreach (var craftable in craftableItemUIs.Values)
             {
                 craftable.Destroy();
             }

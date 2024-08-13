@@ -7,10 +7,8 @@ namespace UZSG.Saves
     public class PlayerSaveData : SaveData
     {
         /// Attributes first
-        public AttributeCollectionSaveData VitalAttributes;
-        public AttributeCollectionSaveData GenericAttributes;
-        
-        public InventorySaveData Inventory;
-        public List<string> KnownRecipes;
+        public List<AttributeSaveData> Attributes = new();
+        public InventorySaveData Inventory = new();
+        public List<string> KnownRecipes = new();
     }
 }

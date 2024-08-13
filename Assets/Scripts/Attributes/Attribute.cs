@@ -5,22 +5,9 @@ using UnityEngine;
 using UZSG.Systems;
 using UZSG.Data;
 using UZSG.Saves;
-using System.Collections.Generic;
 
 namespace UZSG.Attributes
 {
-    public enum AttributeType {
-        Generic, Vital
-    }
-    
-    public enum VitalAttributeChangeType {
-        Static, Regen, Degen
-    }
-
-    public enum VitalAttributeTimeCycle {
-        Second, Tick
-    }
-    
     /// <summary>
     /// Base class for Attributes.
     /// </summary>
@@ -35,6 +22,7 @@ namespace UZSG.Attributes
         
         [SerializeField] protected AttributeData data;
         public AttributeData Data => data;
+        public string Id => data.Id;
         
         public Attribute(AttributeData data)
         {
@@ -44,6 +32,7 @@ namespace UZSG.Attributes
         public Attribute(string id)
         {
             this.data = Game.Attributes.GetData(id);
+            return;
         }
         
         [SerializeField, Tooltip("The current value.")]
@@ -150,11 +139,18 @@ namespace UZSG.Attributes
                 return Value / CurrentMaximum;
             }
         }
-
-        public bool LimitOverflow = true;
-        public bool LimitUnderflow = true;
-        protected float previousValue;
+        public bool IsFull
+        {
+            get
+            {
+                return Value >= CurrentMaximum;
+            }
+        }
         public bool IsValid => data != null;
+
+        [HideInInspector] public bool LimitOverflow = true;
+        [HideInInspector] public bool LimitUnderflow = true;
+        protected float previousValue;
 
 
         #region Events        
@@ -164,12 +160,18 @@ namespace UZSG.Attributes
         /// Meaning that if the value is modified, but is still the same, it is not called.
         /// </summary>
         public event EventHandler<AttributeValueChangedContext> OnValueChanged;
-        
         /// <summary>
         /// Fired everytime the Add() or Remove() methods are called.
         /// </summary>
         public event EventHandler<AttributeValueChangedContext> OnValueModify;
-
+        /// <summary>
+        /// Called when the value reaches its current maximum value.
+        /// </summary>
+        public event EventHandler<AttributeValueChangedContext> OnReachMaximum;
+        /// <summary>
+        /// Called when the value reaches its minimum value.
+        /// </summary>
+        public event EventHandler<AttributeValueChangedContext> OnReachMinimum;
         /// <summary>
         /// Called when the value reaches zero.
         /// </summary>
@@ -177,7 +179,11 @@ namespace UZSG.Attributes
 
         #endregion
 
-        internal virtual void Initialize() { }
+
+        internal virtual void Initialize()
+        {
+            
+        }
 
         protected void AddInternal(float value)
         {
@@ -246,6 +252,22 @@ namespace UZSG.Attributes
             };
 
             OnValueChanged?.Invoke(this, context);
+            
+            if (Value <= minimum)
+            {
+                if (previousValue > Minimum)
+                {
+                    OnReachMinimum?.Invoke(this, context);
+                }
+            }
+            else if (Value >= CurrentMaximum)
+            {
+                if (previousValue < CurrentMaximum)
+                {
+                    OnReachMaximum?.Invoke(this, context);
+                }
+            }
+            
             if (Value <= 0)
             {
                 OnReachZero?.Invoke(this, context);
@@ -294,10 +316,10 @@ namespace UZSG.Attributes
 
         public void ReadSaveJson(AttributeSaveData saveData)
         {
-            ReadSaveJson(saveData);
+            ReadSaveJson(saveData, initialize: true);
         }
         
-        public virtual void ReadSaveJSON(AttributeSaveData data, bool initialize = true)
+        public virtual void ReadSaveJson(AttributeSaveData data, bool initialize = true)
         {
             value = data.Value;
             minimum = data.Minimum;
@@ -313,9 +335,21 @@ namespace UZSG.Attributes
             }
         }
 
-        public AttributeSaveData WriteSaveJson()
+        public virtual AttributeSaveData WriteSaveJson()
         {
-            throw new NotImplementedException();
+            var saveData = new AttributeSaveData()
+            {
+                Id = Id,
+                Value = value,
+                Minimum = Minimum,
+                BaseMaximum = BaseMaximum,
+                Multiplier = Multiplier,
+                FlatBonus = FlatBonus,
+                LimitOverflow = LimitOverflow,
+                LimitUnderflow = LimitUnderflow,
+            };
+
+            return saveData;
         }
         
         #region Static

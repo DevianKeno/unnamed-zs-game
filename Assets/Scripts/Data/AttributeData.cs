@@ -10,7 +10,7 @@ namespace UZSG.Data
     {
         [Header("Attribute Data")]
         public string Name;
+        public string Group;
         [TextArea] public string Description;
-        public Attributes.AttributeType Type;
     }
 }

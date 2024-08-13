@@ -26,7 +26,7 @@ namespace UZSG.Perks
 
         void OnBeforeAttack()
         {
-            if (player.Vitals["stamina"].IsFull)
+            if (player.Attributes["stamina"].IsFull)
             {
 
             }

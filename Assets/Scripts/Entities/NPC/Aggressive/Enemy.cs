@@ -11,7 +11,7 @@ using System.Collections;
 
 namespace UZSG.Entities
 {
-    public abstract class Enemy : Entity, IDetectable
+    public abstract class Enemy : Entity, IAttributable, IDetectable
     {
         #region Agent movement related
 
@@ -50,7 +50,8 @@ namespace UZSG.Entities
         public EnemyData EnemyData => entityData as EnemyData;
         public string defaultPath; // Default file path of the specific enemy
         public EnemySaveData defaultData;
-        [SerializeField] protected AttributeCollection<GenericAttribute> generic;
+        [SerializeField] protected AttributeCollection attributes;
+        public AttributeCollection Attributes => attributes;
 
 
         #endregion
@@ -130,12 +131,15 @@ namespace UZSG.Entities
 
         void InitializeAttributes()
         {
-            generic = new();
-            generic.ReadSaveJson(defaultData.GenericAttributes);
-            _radius = generic.Get("site_radius").Value;
-            _speed = generic.Get("move_speed").Value;
-            RoamRadius = generic.Get("zombie_roam_radius").Value;
-            RoamInterval = generic.Get("zombie_roam_interval").Value;
+            /// Read save
+            attributes = new();
+            // attributes.ReadSaveJson(defaultData.A);
+
+            /// Access
+            _radius = Attributes.Get("site_radius").Value;
+            _speed = Attributes.Get("move_speed").Value;
+            RoamRadius = Attributes.Get("zombie_roam_radius").Value;
+            RoamInterval = Attributes.Get("zombie_roam_interval").Value;
         }
 
         #endregion

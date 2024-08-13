@@ -1,10 +1,6 @@
-using System;
-
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 
-using UZSG.Data;
 using UZSG.Entities;
 
 namespace UZSG.UnityEditor
@@ -12,16 +8,14 @@ namespace UZSG.UnityEditor
     [CustomEditor(typeof(PlayerEntityData))]
     public class PlayerEntityDataEditor : EntityDataEditor
     {
-        SerializedProperty vital,
-            generic,
+        SerializedProperty attributes,
             knownrecipes;
 
         protected override void OnEnable()
         {
             base.OnEnable();
             
-            vital = serializedObject.FindProperty("Vitals");
-            generic = serializedObject.FindProperty("Generic");
+            attributes = serializedObject.FindProperty("Attributes");
             knownrecipes = serializedObject.FindProperty("KnownRecipes");
         }
 
@@ -29,11 +23,21 @@ namespace UZSG.UnityEditor
         {
             serializedObject.Update();
             base.OnInspectorGUI();
+            PlayerEntityData data = (PlayerEntityData) target;
             
-            EditorGUILayout.PropertyField(vital);
-            EditorGUILayout.PropertyField(generic);
+            EditorGUILayout.PropertyField(attributes);
             EditorGUILayout.PropertyField(knownrecipes);
-            
+            if (GUILayout.Button("Save to Defaults Json"))
+            {
+                data.WriteDefaultsJson();
+                EditorUtility.SetDirty(data);
+            }
+            if (GUILayout.Button("Read to Defaults Json"))
+            {
+                data.ReadDefaultsJson();
+                EditorUtility.SetDirty(data);
+            }
+
             serializedObject.ApplyModifiedProperties();
         }
     }

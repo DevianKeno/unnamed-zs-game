@@ -10,9 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7266182500231018910}
   - component: {fileID: 6457100291753886462}
-  - component: {fileID: 1060515019585979714}
   m_Layer: 8
-  m_Name: Crafting Controller
+  m_Name: Crafter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -46,28 +45,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerEntity: {fileID: 8107631895800867322}
-  PlayerInventory:
-    _slots: []
   OutputContainer:
     _slots: []
---- !u!114 &1060515019585979714
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 875597890616857745}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4dbc5a32840240d46a92c188ced713ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  button:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  Test: {fileID: 0}
+  InputContainer:
+    _slots: []
 --- !u!1 &1560824521149795163
 GameObject:
   m_ObjectHideFlags: 0
@@ -575,7 +556,7 @@ GameObject:
   - component: {fileID: 7011254150909436731}
   - component: {fileID: 6573940630714393000}
   m_Layer: 0
-  m_Name: Inventory Handler
+  m_Name: Inventory
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1103,22 +1084,12 @@ MonoBehaviour:
   entityData: {fileID: 11400000, guid: c598e087ae8797c429748a8238d6885e, type: 2}
   audioSourceController: {fileID: 0}
   CanPickUpItems: 1
-  playerData:
-    VitalAttributes: []
-    GenericAttributes: []
   playerEntityData: {fileID: 11400000, guid: c598e087ae8797c429748a8238d6885e, type: 2}
-  vitals:
-    attributes: []
-  generic:
-    attributes: []
   attributes:
     attributes: []
   inventory: {fileID: 6573940630714393000}
-  craftingAgent: {fileID: 6457100291753886462}
+  crafter: {fileID: 6457100291753886462}
   audioController: {fileID: 5583044567273583744}
-  saveData:
-    VitalAttributes: []
-    GenericAttributes: []
 --- !u!114 &7617903866874250683
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1160,7 +1131,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 506e744f4f9c07d4db200eee5f5a0c4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AudioAssetsData: {fileID: 11400000, guid: 1909aa057d6bbca4cbcdffb7dfcbe936, type: 2}
+  AudioAssetsData: {fileID: 11400000, guid: eed9c45f6757aae48b1990646f079589, type: 2}
   Player: {fileID: 8107631895800867322}
 --- !u!114 &5659626291116057010
 MonoBehaviour:

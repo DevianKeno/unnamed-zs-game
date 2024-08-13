@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e18afb883e1451a4c82eb24298dc52e1, type: 3}
-  m_Name: health_regeneration
+  m_Name: mutation
   m_EditorClassIdentifier: 
-  Id: health_regeneration
-  Name: Health Regeneration
+  Id: mutation
+  Name: Mutation
+  Group: 
   Description: 
-  Type: 0

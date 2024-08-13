@@ -53,11 +53,11 @@ namespace UZSG.Inventory
 
         public void Initialize()
         {
-            var bagSlotCount = Mathf.FloorToInt(Player.Generic.Get("bag_slots_count").Value);
+            var bagSlotCount = Mathf.FloorToInt(Player.Attributes.Get("bag_slots_count").Value);
             _bag = new(bagSlotCount);
             _bag.OnExcessItem += OnBagExcessItem;
 
-            var hotbarSlotCount = Mathf.FloorToInt(Player.Generic.Get("hotbar_slots_count").Value);
+            var hotbarSlotCount = Mathf.FloorToInt(Player.Attributes.Get("hotbar_slots_count").Value);
             _hotbar = new(hotbarSlotCount);
             
             /// special treatment

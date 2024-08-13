@@ -20,6 +20,7 @@ using UZSG.Crafting;
 using UZSG.StatusEffects;
 using UZSG.Objects;
 using UZSG.Saves;
+using System.Linq;
 
 namespace UZSG.Entities
 {
@@ -34,24 +35,24 @@ namespace UZSG.Entities
     {
         public bool CanPickUpItems = true;
 
-        [SerializeField] PlayerSaveData playerData;
-        public PlayerSaveData PlayerData => playerData;
+        PlayerSaveData saveData;
+        public PlayerSaveData SaveData => saveData;
+        
         [SerializeField] PlayerEntityData playerEntityData;
         public PlayerEntityData PlayerEntityData => playerEntityData;
-        [SerializeField] AttributeCollection<VitalAttribute> vitals;
-        public AttributeCollection<VitalAttribute> Vitals => vitals;
-        [SerializeField] AttributeCollection<GenericAttribute> generic;
-        public AttributeCollection<GenericAttribute> Generic => generic;
-        [SerializeField] AttributeCollection<Attributes.Attribute> attributes;
-        public AttributeCollection<Attributes.Attribute> Attributes => attributes;
+
+        [SerializeField] AttributeCollection attributes;
+        public AttributeCollection Attributes => attributes;
+
         [SerializeField] InventoryHandler inventory;
         public InventoryHandler Inventory => inventory;
-        [SerializeField] PlayerCrafting craftingAgent;
-        public Crafter CraftingAgent => craftingAgent;
 
-        public Crafter ExternalCrafter;
-        StatusEffectCollection statusEffects;
+        [SerializeField] PlayerCrafting crafter;
+        public PlayerCrafting Crafter => crafter;
+
+        [SerializeField] StatusEffectCollection statusEffects;
         public StatusEffectCollection StatusEffects => statusEffects;
+
         [SerializeField] PlayerAudioSourceController audioController;
         public PlayerAudioSourceController Audio => audioController;
 
@@ -89,17 +90,16 @@ namespace UZSG.Entities
         public ActionStateMachine ActionStateMachine { get; private set; }
         public FPPController FPP { get; private set; }
 
-        /// <summary>
-        /// All Player Data
-        /// </summary>
-        const string playerDefaultsPath = "/Resources/Defaults/Entities/player_defaults.json";
-        public PlayerSaveData saveData;
-
         public bool CanJump
         {
             get
             {
-                return Vitals.Get("stamina").Value >= Generic.Get("jump_stamina_cost").Value && Controls.IsGrounded;
+                if (Attributes["stamina"].Value >= Attributes["jump_stamina_cost"].Value
+                && Controls.IsGrounded)
+                {
+                    return true;
+                }
+                return false;
             }
         }
 
@@ -122,14 +122,15 @@ namespace UZSG.Entities
         {
             Game.Console.Log("I, player, has been spawned!");
 
-            LoadDefaults();
-            // ReadSaveJson(); /// should be called not here
+            LoadDefaultsJson();
+            /// this should be placed not here
+            ReadSaveJson(saveData); /// currently loads default atm
 
             audioController.CreateAudioPool(8);
             audioController.LoadAudioAssetsData(playerEntityData.AudioAssetsData);
 
-            InitializeStateMachines();
             InitializeAttributes();
+            InitializeStateMachines();
             InitializeInventory();
             // InitializeCrafter();
             InitializeHUD();
@@ -146,10 +147,9 @@ namespace UZSG.Entities
             OnDoneInit?.Invoke(this, new());
         }
 
-        void LoadDefaults()
+        void LoadDefaultsJson()
         {
-            var defaultsJson = File.ReadAllText(Application.dataPath + playerDefaultsPath);
-            saveData = JsonUtility.FromJson<PlayerSaveData>(defaultsJson);
+            saveData = playerEntityData.GetDefaultsJson();
         }
 
         public void ReadSaveJson(PlayerSaveData saveData)
@@ -159,19 +159,14 @@ namespace UZSG.Entities
                 Game.Console.LogError($"Invalid PlayerSaveData loaded for Player");
                 return;
             }
-
-            /// Load attributes first
-            Vitals.ReadSaveJson(saveData.VitalAttributes);
-            Generic.ReadSaveJson(saveData.GenericAttributes);
-            inventory.ReadSaveJson(saveData.Inventory);
+            this.saveData = saveData; 
         }
-
+        
         public PlayerSaveData WriteSaveJson()
         {
             var saveData = new PlayerSaveData()
             {
-                VitalAttributes = Vitals.WriteSaveJson(),
-                GenericAttributes = Generic.WriteSaveJson(),
+                Attributes = attributes.WriteSaveJson(),
                 Inventory = inventory.WriteSaveJson(),
             };
 
@@ -180,11 +175,7 @@ namespace UZSG.Entities
 
         void InitializeAttributes()
         {
-            vitals = new();
-            vitals.ReadSaveJson(saveData.VitalAttributes);
-
-            generic = new();
-            generic.ReadSaveJson(saveData.GenericAttributes);
+            attributes.ReadSaveJson(saveData.Attributes);
         }
         
         void InitializeStateMachines()
@@ -209,7 +200,8 @@ namespace UZSG.Entities
         void InitializeInventory()
         {
             inventory.Initialize();
-            inventory.ReadSaveJson(new());
+            // inventory.ReadSaveJson(new());
+            // inventory.ReadSaveJson(saveData.Inventory);
 
             invUI = Game.UI.Create<PlayerInventoryWindow>("Player Inventory", show: false);
             invUI.Initialize(this);
@@ -232,7 +224,7 @@ namespace UZSG.Entities
 
         void InitializeCrafter()
         {
-            craftingAgent.InitializePlayer(this);
+            crafter.InitializePlayer(this);
             // craftingAgent.AddContainer(inventory.Bag);
             // craftingAgent.AddContainer(inventory.Hotbar);
         }
@@ -265,8 +257,8 @@ namespace UZSG.Entities
             if (Controls.IsRunning && Controls.IsMoving)
             {
                 /// Cache attributes for better performance
-                var runStaminaCost = Generic.Get("run_stamina_cost").Value;
-                Vitals.Get("stamina").Remove(runStaminaCost);
+                var runStaminaCost = Attributes.Get("run_stamina_cost").Value;
+                Attributes.Get("stamina").Remove(runStaminaCost);
             }
         }
 
@@ -285,21 +277,21 @@ namespace UZSG.Entities
         void OnJumpEnter(object sender, State<MoveStates>.ChangedContext e)
         {
             /// Consume Stamina on jump
-            if (Vitals.TryGet("stamina", out var stamina))
+            if (Attributes.TryGet("stamina", out var stamina))
             {
-                float jumpStaminaCost = Generic.Get("jump_stamina_cost").Value;
+                float jumpStaminaCost = Attributes.Get("jump_stamina_cost").Value;
                 stamina.Remove(jumpStaminaCost);
             }
             /// Consume Hunger on jump
-            if (Vitals.TryGet("hunger", out var hunger))
+            if (Attributes.TryGet("hunger", out var hunger))
             {
-                float jumpHungerCost = Generic.Get("jump_hunger_cost").Value;
+                float jumpHungerCost = Attributes.Get("jump_hunger_cost").Value;
                 hunger.Remove(jumpHungerCost);
             }
             /// Consume Hydration on jump
-            if (Vitals.TryGet("hydration", out var hydration))
+            if (Attributes.TryGet("hydration", out var hydration))
             {
-                float jumpHydrationCost = Generic.Get("jump_hydration_cost").Value;
+                float jumpHydrationCost = Attributes.Get("jump_hydration_cost").Value;
                 hydration.Remove(jumpHydrationCost);
             }
         }

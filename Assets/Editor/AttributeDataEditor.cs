@@ -10,10 +10,8 @@ namespace UZSG.UnityEditor
     public class AttributeDataEditor : BaseDataEditor
     {
         SerializedProperty nameProperty,
-            description,
-            type,
-            change,
-            cycle;
+            group,
+            description;
 
         protected override void OnEnable()
         {
@@ -21,9 +19,6 @@ namespace UZSG.UnityEditor
 
             nameProperty = serializedObject.FindProperty("Name");
             description = serializedObject.FindProperty("Description");
-            type = serializedObject.FindProperty("Type");
-            // change = serializedObject.FindProperty("Change");
-            // cycle = serializedObject.FindProperty("Cycle");
         }
 
         public override void OnInspectorGUI()
@@ -35,16 +30,6 @@ namespace UZSG.UnityEditor
             EditorGUILayout.Space();
             EditorGUILayout.PropertyField(nameProperty);
             EditorGUILayout.PropertyField(description);
-            EditorGUILayout.PropertyField(type);
-            if (attributeData.Type == AttributeType.Generic)
-            {
-
-            }
-            else if (attributeData.Type == AttributeType.Vital)
-            {
-                // EditorGUILayout.PropertyField(change);
-                // EditorGUILayout.PropertyField(cycle);
-            }
             
             serializedObject.ApplyModifiedProperties();
         }

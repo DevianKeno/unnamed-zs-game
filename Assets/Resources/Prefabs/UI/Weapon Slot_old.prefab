@@ -224,10 +224,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 179d4a2b432e9e046b993c41d6444e34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Index: 9
+  rect: {fileID: 0}
+  AnimationFactor: 0.3
   Item:
     _itemData: {fileID: 0}
     _count: 0
+  Index: 9
   image: {fileID: 3489798448610692726}
   indexTMP: {fileID: 1371347997584457696}
   itemDisplayUI: {fileID: 4358262817012527024}

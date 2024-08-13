@@ -37,13 +37,13 @@ namespace UZSG
             for (int i = 5; i < accessorySlots.Length; i++)
             {
                 ItemSlot newSlot = new(i);
-                newSlot.OnContentChanged += SlotContentChanged;
+                newSlot.OnItemChanged += SlotContentChanged;
                 newSlot.SlotType = ItemSlotType.Accessory;
                 accessorySlots[i] = newSlot;
             }
         }
 
-        void SlotContentChanged(object sender, ItemSlot.ContentChangedArgs e)
+        void SlotContentChanged(object sender, ItemSlot.ItemChangedContext e)
         {
             //
         }

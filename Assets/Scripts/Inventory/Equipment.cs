@@ -33,14 +33,14 @@ namespace UZSG.Inventory
         public void Initialize()
         {
             _hands = new(HandsIndex, ItemSlotType.Weapon);
-            _hands.OnContentChanged += SlotContentChanged;
+            _hands.OnItemChanged += SlotContentChangedInternal;
             _hands.Put(new("arms"));
 
             _mainhand = new(MainhandIndex, ItemSlotType.Weapon);
-            _mainhand.OnContentChanged += SlotContentChanged;
+            _mainhand.OnItemChanged += SlotContentChangedInternal;
 
             _offhand = new(OffhandIndex, ItemSlotType.Weapon);
-            _offhand.OnContentChanged += SlotContentChanged;
+            _offhand.OnItemChanged += SlotContentChangedInternal;
 
             _slots = new()
             {

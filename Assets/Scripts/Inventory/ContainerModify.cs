@@ -8,34 +8,67 @@ namespace UZSG
 {
     public partial class Container
     {
+        public event EventHandler<Item> OnExcessItem;
+
+        /// <summary>
+        /// Puts the Item to the nearest slot.
+        /// Tries to combine with the same existing Items in the Container.
+        /// </summary>
+        public virtual bool TryPutNearest(Item item)
+        {
+            /// Check first cached Item Id slots, for combining
+            if (CanPutItem(item, out var cachedSlots))
+            {
+                if (cachedSlots == null) /// Item does not exists yet in Container
+                {
+                    return TryPutNearestEmpty(item);
+                }
+
+                /// Put along cached slots
+                Item remaining = item;
+                foreach (var slot in cachedSlots)
+                {
+                    if (slot.TryCombine(remaining, out var excess))
+                    {
+                        remaining = excess;
+                        if (remaining.IsNone) break;
+                    }
+                    /// If for some reason, suddenly cannot put anymore ¯\_(ツ)_/¯
+                    /// but it shouldn't go here, because of the first gate clause
+                    else 
+                    {
+                        OnExcessItem?.Invoke(this, excess);
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            return false; 
+        }
+
         /// <summary>
         /// Tries to put the Item in the specified slot index.
         /// </summary>
-        public virtual bool TryPut(int slotIndex, Item item)
+        public virtual bool TryPutIn(int slotIndex, Item item)
         {
+            if (item.IsNone) return true;
             if (!Slots.IsValidIndex(slotIndex)) return false;
-            if (item == null || item.IsNone) return true;
 
             ItemSlot slot = Slots[slotIndex];
-            if (slot == null) return false; /// wdym slot ns null?
-            
             if (slot.IsEmpty)
             {
-                if (slot.TryPut(item))
-                {
-                    CacheItem(item, slot);
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return slot.TryPut(item);
             }
             else
             {
                 if (slot.TryCombine(item, out Item excess))
                 {
-                    CacheItem(item, slot);
+                    if (!excess.IsNone)
+                    {
+                        OnExcessItem?.Invoke(this, excess);
+                    }
                     return true;
                 }
                 else
@@ -49,64 +82,40 @@ namespace UZSG
         /// Tries to put the item to the nearest empty slot.
         /// Returns true if put succesfully, otherwise false.
         /// </summary>
-        public virtual bool TryPutNearest(Item item)
+        public virtual bool TryPutNearestEmpty(Item item)
         {
             if (item.IsNone) return true;
             if (IsFull) return false;
 
-            foreach (ItemSlot s in Slots)
+            foreach (ItemSlot slot in Slots)
             {
-                if (s == null) continue;
-                if (s.IsEmpty) /// just put
+                if (slot.IsEmpty) /// just put
                 {
-                    s.Put(item);
-                    CacheItem(item, s);
+                    slot.Put(item);
                     return true;
                 }
                 
-                if (s.TryCombine(item, out Item excess))
+                /// HmmHmmHmm, I think I can remove this 77% sure
+                if (slot.TryCombine(item, out Item excess))
                 {
-                    if (TryPutNearest(excess))
+                    if (TryPutNearestEmpty(excess))
                     {
-                        CacheItem(item, s);
                         return true;
                     }
+                    else
+                    {
+                        if (!excess.IsNone)
+                        {
+                            OnExcessItem?.Invoke(this, excess);
+                        }
+                    }
+
                     continue;
                 }
             }
+
             return false;
         }
-
-        /// <summary>
-        /// Tries to put the item to the nearest empty slot.
-        /// Returns true if put succesfully, otherwise false.
-        /// </summary>
-        public virtual bool TryPutNearest(Item item, out ItemSlot slot)
-        {
-            slot = null;
-            if (item.IsNone) return true;
-            if (IsFull) return false;
-
-            foreach (ItemSlot s in Slots)
-            {
-                if (s == null) continue;
-                if (s.IsEmpty) /// just put
-                {
-                    slot = s;
-                    s.Put(item);
-                    return true;
-                }
-                
-                if (s.TryCombine(item, out Item excess))
-                {
-                    slot = s; /// IDK ABOUT THIS
-                    if (TryPutNearest(excess)) return true;
-                    continue;
-                }
-            }
-            return false;
-        }
-
 
         /// <summary>
         /// Take entire stack.
@@ -123,7 +132,11 @@ namespace UZSG
             else
             {
                 var itemsToTake = slot.TakeAll();
-                UncacheItem(itemsToTake, slot);
+                // UncacheItem(itemsToTake, slot);
+                // OnSlotContentChanged?.Invoke(this, new()
+                // {
+                //     Slot = slot
+                // });
                 return itemsToTake;
             }
         }
@@ -137,18 +150,26 @@ namespace UZSG
 
             ItemSlot slot = Slots[slotIndex];
             if (slot.IsEmpty) return Item.None;
-
             
             var itemsToTake = slot.TakeItems(amount);
-            UncacheItem(itemsToTake, slot);
+            // UncacheItem(itemsToTake, slot);
+            // OnSlotContentChanged?.Invoke(this, new()
+            // {
+            //     Slot = slot
+            // });
             return itemsToTake;
         }
 
         public virtual void ClearItem(ItemSlot slot)
         {
-            if (slot.IsEmpty) return;
+            if (slot == null || slot.IsEmpty) return;
 
+            // UncacheItem(slot.Item, slot);
             slot.Clear();
+            // OnSlotContentChanged?.Invoke(this, new()
+            // {
+            //     Slot = slot
+            // });
         }
 
         public virtual void ClearItem(int slotIndex)

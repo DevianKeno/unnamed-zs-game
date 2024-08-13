@@ -13,9 +13,10 @@ namespace UZSG.Inventory
     [Serializable]
     public class ItemSlot
     {
-        public struct ContentChangedArgs
+        public struct ItemChangedContext
         {
-            public Item Item;
+            public Item OldItem { get; set; }
+            public Item NewItem { get; set; }
         }
         
         [SerializeField] int index;
@@ -27,21 +28,28 @@ namespace UZSG.Inventory
         {
             get
             {
-                return item == null || item.IsNone;
+                return item.IsNone;
             }
         }
         [SerializeField] public bool HasItem
         {
             get
             {
-                return item != null && !item.IsNone;
+                return !item.IsNone;
             }
         }
+
+        Item _previousItem = Item.None;
+
+        /// <summary>
+        /// Internal call before Container caching.
+        /// </summary>
+        internal event EventHandler<ItemChangedContext> OnItemChangedInternal;
 
         /// <summary>
         /// Called whenever the content of this Slot is changed.
         /// </summary>
-        public event EventHandler<ContentChangedArgs> OnContentChanged;
+        public event EventHandler<ItemChangedContext> OnItemChanged;
 
         public ItemSlot(int index)
         {
@@ -57,11 +65,12 @@ namespace UZSG.Inventory
             SlotType = slotType;
         }
 
-        void ContentChanged()
+        void ItemChangedInternal()
         {        
-            OnContentChanged?.Invoke(this, new()
+            OnItemChangedInternal?.Invoke(this, new()
             {
-                Item = item
+                OldItem = _previousItem,
+                NewItem = item,
             });
         }
 
@@ -72,8 +81,9 @@ namespace UZSG.Inventory
 
         public void Put(Item item)
         {
+            _previousItem = this.item;
             this.item = item;
-            ContentChanged();
+            ItemChangedInternal();
         }
 
         public bool TryPut(Item item)
@@ -81,8 +91,10 @@ namespace UZSG.Inventory
             /// Have trouble checking if the item's type fits the slot's type
             // if (!IsEmpty || !IsFits(item)) return false;
             if (!IsEmpty) return false;
+
+            _previousItem = this.item;
             this.item = item;
-            ContentChanged();
+            ItemChangedInternal();
             return true;
         }
 
@@ -93,8 +105,9 @@ namespace UZSG.Inventory
         
         public void Clear()
         {
-            item = Item.None;
-            ContentChanged();
+            _previousItem = this.item;
+            this.item = Item.None;
+            ItemChangedInternal();
         }
 
         /// <summary>
@@ -110,10 +123,11 @@ namespace UZSG.Inventory
                 return TakeAll();
             }
 
+            _previousItem = this.item;
             int remaining = item.Count - amount;
             Item toTake = new(item, amount);        /// Return a copy of the item with amount taken
             item = new(item, remaining);            /// Re-assign left items
-            ContentChanged();
+            ItemChangedInternal();
             return toTake;
         }
 
@@ -137,11 +151,13 @@ namespace UZSG.Inventory
         /// </summary>
         public bool TryCombine(Item toAdd, out Item excess)
         {
+            _previousItem = this.item;
             if (item.TryCombine(toAdd, out excess))
             {
-                ContentChanged();
+                ItemChangedInternal();
                 return true;
             }
+            
             return false;
         }
         

@@ -21,5 +21,7 @@ MonoBehaviour:
     m_SubObjectType: 
     m_EditorAssetChanged: 1
   Type: 1
+  AccelerationRate: 2
+  MaxSpeed: 10
   Generic:
   - {fileID: 11400000, guid: e1db9201565269c4caebcb12298f0665, type: 2}

@@ -14,8 +14,9 @@ namespace UZSG.WorldEvents.Raid
 {
     public class RaidController : EventBehaviour
     {
-        public RaidEventType RaidType;
+        public RaidEventType _raidType;
         [SerializeField] float _raidRemainingTime;
+        [SerializeField] float _remainingMobs;
 
         public void Initialize()
         {
@@ -32,12 +33,15 @@ namespace UZSG.WorldEvents.Raid
 
         void SpawnEnemy()
         {
-            throw new System.NotImplementedException();
+            HordeFormations hordeFormations = new();
+            {
+                hordeFormations.SpawnFormation(_raidType, 10);
+            }
         }
 
         void RewardPlayers()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void OnEventStart(object sender, WorldEventProperties properties)
@@ -51,7 +55,7 @@ namespace UZSG.WorldEvents.Raid
             }
 
             Game.Console.Log($"<color=#ad0909>Raid event started.</color>");
-            EventPrefab selectedEvent = @event.SelectedEvent;
+            List<EventPrefab> selectedEvents = @event.SelectedEvent;
             EventOngoing = true;
         }
     }

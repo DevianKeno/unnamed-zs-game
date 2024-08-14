@@ -78,24 +78,24 @@ namespace UZSG.WorldEvents
 
         void SpawnEvent(WorldEventProperties properties)
         {
-            EventPrefab? selectedEvent = SelectEvent(properties);
-            if (selectedEvent == null) return;
+            List<EventPrefab> selectedEvents = SelectEvent(properties);
+            if (selectedEvents == null) return;
 
             WorldEvent worldEvent = new()
             {
                 EventInfo = properties,
-                SelectedEvent = selectedEvent.Value
+                SelectedEvent = selectedEvents
             };
 
             SubscribeControllers(properties, worldEvent);
             worldEvent.Initialize();
         }
 
-        EventPrefab? SelectEvent(WorldEventProperties properties)
+        List<EventPrefab> SelectEvent(WorldEventProperties properties)
         {
             if (_countdown != properties.OccurEverySecond) return null;
             
-            EventPrefab selectedEvent;
+            List<EventPrefab> selectedEvents = new();
 
             if(properties.ChanceToOccur < UnityEngine.Random.Range(1, 100))
             {
@@ -104,31 +104,32 @@ namespace UZSG.WorldEvents
                 return null;
             }
 
-            // print("Event of type " + properties.Type + " occurred.");
             Game.Console.Log($"<color=#34d5eb>Event of type {properties.Type} occured.</color>");
 
-
             int chance = UnityEngine.Random.Range(1, 100);
-            List<EventPrefab> eventPrefabs = new();
-
             foreach (EventPrefab eventPrefab in properties.EventPrefab)
             {
-                if (eventPrefab.ChanceToOccur >= chance) eventPrefabs.Add(eventPrefab);
+                if (eventPrefab.ChanceToOccur >= chance) selectedEvents.Add(eventPrefab);
             }
-
-            if (eventPrefabs.Count > 1)
-                selectedEvent = eventPrefabs[UnityEngine.Random.Range(0, eventPrefabs.Count)];
-            else if (eventPrefabs.Count == 1)
-                selectedEvent = eventPrefabs[0];
-            else
+            
+            if (selectedEvents.Count == 0)
             {
                 // print("No event prefab selected.");
                 Game.Console.Log($"<color=#e8eb34>No event prefab selected.</color>");
                 return null;
             }
-            Game.Console.Log($"<color=#e8eb34>Event occured: {selectedEvent.Name}</color>");
-            // print("Event occurred: " + selectedEvent.Name);
-            return selectedEvent;
+            else if (selectedEvents.Count > 1 && !properties.AllowMultipleEvents)
+                selectedEvents = KeepOnlyAtIndex(selectedEvents, UnityEngine.Random.Range(0, selectedEvents.Count));
+            
+            foreach (EventPrefab eventPrefab in selectedEvents)
+                Game.Console.Log($"<color=#e8eb34>Event occured: {eventPrefab.Name}</color>");
+            
+            return selectedEvents;
+        }
+
+        public static List<T> KeepOnlyAtIndex<T>(List<T> originalList, int index)
+        {
+            return new List<T> { originalList[index] };
         }
 
         void SubscribeControllers(WorldEventProperties properties, WorldEvent eventHandler)

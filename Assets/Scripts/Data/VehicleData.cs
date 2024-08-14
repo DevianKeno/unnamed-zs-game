@@ -10,7 +10,7 @@ using UZSG.Systems;
 
 namespace UZSG.Data
 {
-    public enum VehicleType { None, NonFuel, Fuel }
+    public enum VehicleType { NonFuel, Fuel }
 
     [Serializable]
     [CreateAssetMenu(fileName = "New Vehicle Data", menuName = "UZSG/Vehicle Data")]
@@ -23,8 +23,9 @@ namespace UZSG.Data
         public VehicleType Type;
         public float AccelerationRate;
         public float MaxSpeed;
+        public float FuelConsumption;
         
-        [Header("Attributes")]
-        public List<AttributeData> Generic;
+        [Header("Vehicle Attributes")]
+        public List<AttributeData> Attributes;
     }
 }

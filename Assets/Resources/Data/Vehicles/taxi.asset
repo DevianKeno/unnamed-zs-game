@@ -10,18 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4decc72d49b4d8d4aa72345b41c09303, type: 3}
-  m_Name: bicycle
+  m_Name: taxi
   m_EditorClassIdentifier: 
-  Id: bicycle
-  Name: Bicycle
-  Description: A two wheeled mechanism that is designed for exercise.
+  Id: taxi
+  Name: Taxi
+  Description: A four-wheeled, four-seater vehicle for long distance but pricy travels.
   Model:
     m_AssetGUID: 45fbcb582516cc34e8ab1615ab38b43d
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 1
-  Type: 0
-  AccelerationRate: 2
-  MaxSpeed: 10
-  FuelConsumption: 0
-  Attributes: []
+  Type: 1
+  AccelerationRate: 5
+  MaxSpeed: 240
+  FuelConsumption: 2
+  Attributes:
+  - {fileID: 11400000, guid: e1db9201565269c4caebcb12298f0665, type: 2}
+  - {fileID: 11400000, guid: 9d7e09e676905bf47a9e1423574ef1f1, type: 2}

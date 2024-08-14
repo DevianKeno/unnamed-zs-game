@@ -51,7 +51,7 @@ public class VehicleController : MonoBehaviour
     {
         if(vehicle.Driver != null)
         {
-            vehicle.Driver.transform.localPosition = new Vector3(0, -1, 1);
+            vehicle.Driver.transform.localPosition = Vector3.zero;
 
             // Handle forward movement
             if (Input.GetKey(KeyCode.W))

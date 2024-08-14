@@ -1624,8 +1624,18 @@ MonoBehaviour:
   entityData: {fileID: 11400000, guid: 3bbb12e3042059d4abbf8d40af48316c, type: 2}
   audioSourceController: {fileID: 0}
   AttackRange: 0.5
-  _hasTargetInSite: 0
-  _hasTargetInAttack: 0
+  HealthAttri:
+    data: {fileID: 0}
+    value: 0
+    baseMaximum: 0
+    multiplier: 0
+    flatBonus: 0
+    LimitOverflow: 0
+    LimitUnderflow: 0
+  _health: 0
+  hasTargetInSite: 0
+  hasTargetInAttack: 0
+  isDead: 0
   RoamTime: 3
   _roamRadius: 0
   _roamInterval: 0
@@ -1638,6 +1648,7 @@ MonoBehaviour:
   PlayerLayer:
     serializedVersion: 2
     m_Bits: 256
+  animator: {fileID: 0}
   Hordetransform: {fileID: 0}
   defaultPath: 
   defaultData:

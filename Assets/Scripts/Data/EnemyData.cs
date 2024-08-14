@@ -8,5 +8,6 @@ namespace UZSG.Data
     [CreateAssetMenu(fileName = "New Enemy Data", menuName = "UZSG/Entity/Enemy Data")]
     public class EnemyData : EntityData
     {
+        
     }
 }

@@ -11,14 +11,54 @@
       "LimitUnderflow": true
     },
     {
-        "Id": "move_speed",
-        "Value": 300.0,
-        "Minimum": 0.0,
-        "BaseMaximum": 1000.0,
-        "Multiplier": 1.0,
-        "FlatBonus": 0.0,
-        "LimitOverflow": true,
-        "LimitUnderflow": true
+      "Id": "move_speed",
+      "Value": 2.0,
+      "Minimum": 0.0,
+      "BaseMaximum": 1000.0,
+      "Multiplier": 1.0,
+      "FlatBonus": 0.0,
+      "LimitOverflow": true,
+      "LimitUnderflow": true
+    },
+    {
+      "Id": "zombie_attack_radius",
+      "Value": 1.0,
+      "Minimum": 0.0,
+      "BaseMaximum": 1000.0,
+      "Multiplier": 1.0,
+      "FlatBonus": 0.0,
+      "LimitOverflow": true,
+      "LimitUnderflow": true
+    },
+    {
+      "Id": "zombie_roam_interval",
+      "Value": 12.0,
+      "Minimum": 0.0,
+      "BaseMaximum": 1000.0,
+      "Multiplier": 1.0,
+      "FlatBonus": 0.0,
+      "LimitOverflow": true,
+      "LimitUnderflow": true
+    },
+    {
+      "Id": "zombie_roam_radius",
+      "Value": 16.0,
+      "Minimum": 0.0,
+      "BaseMaximum": 1000.0,
+      "Multiplier": 1.0,
+      "FlatBonus": 0.0,
+      "LimitOverflow": true,
+      "LimitUnderflow": true
+    },
+    {
+      "Id": "zombie_site_radius",
+      "Value": 9.0,
+      "Minimum": 0.0,
+      "BaseMaximum": 1000.0,
+      "Multiplier": 1.0,
+      "FlatBonus": 0.0,
+      "LimitOverflow": true,
+      "LimitUnderflow": true
     }
   ]
 }

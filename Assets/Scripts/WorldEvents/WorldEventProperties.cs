@@ -9,6 +9,7 @@ namespace UZSG.WorldEvents
     {
         public WorldEventType Type;
         public bool Active;
+        public bool AllowMultipleEvents;
         public float ChanceToOccur;
         public int OccurEverySecond;
         public List<EventPrefab> EventPrefab;

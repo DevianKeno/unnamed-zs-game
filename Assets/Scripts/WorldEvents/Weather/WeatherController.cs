@@ -116,7 +116,7 @@ namespace UZSG.WorldEvents.Weather
             }
             
             Game.Console.Log($"<color=#ad0909>Weather event started.</color>");
-            EventPrefab selectedEvent = @event.SelectedEvent;
+            EventPrefab selectedEvent = @event.SelectedEvent[0];
             EventOngoing = true;
             SetWeather(selectedEvent.Prefab.GetComponent<RainDataHolder>().WeatherData);
         }        

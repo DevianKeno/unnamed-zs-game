@@ -11,4 +11,11 @@ namespace UZSG.WorldEvents.Raid
         Human,
     
     }
+    public enum RaidFormation
+    {
+        None,
+        Blob,
+        Line,
+        Waves
+    }
 }

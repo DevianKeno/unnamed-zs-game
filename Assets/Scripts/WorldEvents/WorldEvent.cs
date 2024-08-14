@@ -18,8 +18,8 @@ namespace UZSG.WorldEvents
             set => _eventInfo = value;
         }
 
-        EventPrefab _selectedEvent;
-        public EventPrefab SelectedEvent
+        List<EventPrefab> _selectedEvent;
+        public List<EventPrefab> SelectedEvent
         {
             get => _selectedEvent;
             set => _selectedEvent = value;

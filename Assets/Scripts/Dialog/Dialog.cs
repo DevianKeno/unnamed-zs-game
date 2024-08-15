@@ -12,8 +12,9 @@ namespace UZSG.DialogSystem
     {
         public Story story;
         public event Action<Char> OnTypeEffectUpdate;
-        
         public event Action<List<Choice>> OnChoiceEncounter;
+
+        public event Action OnStoryEnd;
         public float TypeEffectSpeed = 0.025f;
 
         public bool isTypingStopInvoke = false;
@@ -46,6 +47,11 @@ namespace UZSG.DialogSystem
                 return;
             }
             Debug.LogWarning("You have reached the end of the stoyr");
+        }
+
+        public bool isStoryEnd()
+        {
+            return !(story.currentChoices.Count > 0) && (!story.canContinue);
         }
 
         public string NextLine()
@@ -111,8 +117,15 @@ namespace UZSG.DialogSystem
 
         public IEnumerator TypeEffect() 
         {
+            
+            if (isStoryEnd())
+            {
+                OnStoryEnd?.Invoke();
+                yield return null;
+            }
             isTyping = true;
-            foreach(Char x in story.currentText)
+            string line = story.Continue();
+            foreach(Char x in line)
             {
                 if (isTypingStopInvoke)
                 {

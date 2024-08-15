@@ -48,10 +48,13 @@ namespace UZSG.DialogSystem
                 dialogInstance.StopTypeInvoke();
                 return;
             }
-
-            if (_choicePanelInstance != null) return;
             
-            dialogInstance.NextLine();
+            if (_choicePanelInstance != null) return;
+
+            if (dialogInstance.isStoryEnd())
+            {
+                return;
+            };
             StartCoroutine(dialogInstance.TypeEffect());
 
         }

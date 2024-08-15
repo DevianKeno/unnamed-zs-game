@@ -24,7 +24,7 @@ namespace UZSG.Players
 
         void PlayFootsteps()
         {
-            if (IsMoving && Player.Controls.IsGrounded && Player.Controls.Magnitude != 0f)
+            if(IsMoving && Player.Controls.IsGrounded && Player.Controls.Magnitude != 0f)
             {
 
                 // 2f is arbitrary, a number kinda feels right based on player magnitude
@@ -38,32 +38,32 @@ namespace UZSG.Players
                 {
                     _clipIndex = UnityEngine.Random.Range(0, 7);
 
-                        // add more if for more textures, idk what are the better implementation
-                        if (_texture == "grass")
-                        {
-                            PlaySound($"grass_walk_{_clipIndex}");
-                        }
-                        else if(_texture == "dirt")
-                        {
-                            PlaySound($"dirt_walk_{_clipIndex}");
-                        }
-                        else
-                        {
-                            
-                            PlaySound($"grass_walk_{_clipIndex}");
-                        }
-                        
-                        _timer = 0f;
+                    // add more if for more textures, idk what are the better implementation
+                    if (_texture == "grass")
+                    {
+                        PlaySound($"grass_walk_{_clipIndex}");
                     }
-                }
-                else
-                {
+                    else if(_texture == "dirt")
+                    {
+                        PlaySound($"dirt_walk_{_clipIndex}");
+                    }
+                    else if (_texture == "Sound_007_basecolor")
+                    {
+                        PlaySound($"dirt_walk_{_clipIndex}");
+                    }
+                    else
+                    {
+                            
+                        PlaySound($"grass_walk_{_clipIndex}");
+                    }
+                        
                     _timer = 0f;
                 }
-
-                yield return null;
             }
-            
+            else
+            {
+                _timer = 0f;
+            }
         }
 
         bool IsMoving
@@ -76,5 +76,6 @@ namespace UZSG.Players
                     return false;
             }
         }
+
     }
 }

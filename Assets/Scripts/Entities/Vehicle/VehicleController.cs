@@ -22,6 +22,53 @@ namespace UZSG.Entities.Vehicles
         InputAction _backInput;
         InputAction _switchInput;
 
+        [Header("Vehicle Setup")]
+        [Space(10)]
+        [Range(20, 190)]
+        public int maxSpeed = 90; //The maximum speed that the car can reach in km/h.
+        [Range(10, 120)]
+        public int maxReverseSpeed = 45; //The maximum speed that the car can reach while going on reverse in km/h.
+        [Space(20)]
+        public AnimationCurve powerCurve;   // Experimental Power/Torque Curve for more customized acceleration
+        public bool frontPower = true;   // Send Power to Front Wheels
+        public bool rearPower = true;   // Send Power to Rear Wheels
+        [Space(20)]
+        [Range(10, 45)]
+        public float maxSteeringAngle = 27; // The maximum angle that the tires can reach while rotating the steering wheel.
+        [Range(0.1f, 1f)]
+        public float steeringSpeed = 0.5f; // How fast the steering wheel turns.
+        [Space(20)]
+        [Range(100, 600)]
+        public int brakeForce = 350; // The strength of the wheel brakes.
+        [Range(1, 10)]
+        public int decelerationMultiplier = 2; // How fast the car decelerates when the user is not using the throttle.
+        [Range(1, 10)]
+        public int handbrakeDriftMultiplier = 5; // How much grip the car loses when the user hit the handbrake.
+        [Space(10)]
+        public GameObject bodyMassCenter;
+
+        // CAR DATA
+
+        [HideInInspector]
+        public float carSpeed; // Used to store the current speed of the car.
+        [HideInInspector]
+        public float powerToWheels; // Used to store final wheel torque
+        [HideInInspector]
+        public bool isTractionLocked; // Used to know whether the traction of the car is locked or not.
+        [HideInInspector]
+        public float defaultMaxSteerAngle; // Used to store the original max steering angle.
+
+        /*
+       IMPORTANT: The following variables should not be modified manually since their values are automatically given via script.
+        */
+        Rigidbody _carRigidbody; // Stores the car's rigidbody.
+        WheelCollider[] _wheels; // Store all wheel colliders.
+        float _steeringAxis; // Used to know whether the steering wheel has reached the maximum value. It goes from -1 to 1.
+        float _throttleAxis; // Used to know whether the throttle has reached the maximum value. It goes from -1 to 1.
+        float _localVelocityZ;
+        float _localVelocityX;
+        bool _deceleratingCar;
+
         Vector2 _driverInput;
 
         private void Awake()
@@ -36,14 +83,57 @@ namespace UZSG.Entities.Vehicles
             _moveInput = Game.Main.GetInputAction("Move", "Player Move");
             _backInput = Game.Main.GetInputAction("Back", "Global");
             _switchInput = Game.Main.GetInputAction("Change Seat", "Player Actions");
+            _carRigidbody = gameObject.GetComponent<Rigidbody>();
+            _carRigidbody.centerOfMass = bodyMassCenter.transform.localPosition;
         }
 
         private void FixedUpdate()
         {
+            // Compute car speed using one of the wheels
+            carSpeed = (2 * Mathf.PI * _frontWheelColliders[0].radius * _frontWheelColliders[0].rpm * 60) / 1000;
+
+            // Save the local velocity of the car in the z axis. Used to know if the car is going forward or backwards.
+            _localVelocityZ = transform.InverseTransformDirection(_carRigidbody.velocity).z;
+
             if (_vehicle.Driver != null)
             {
                 HandlePlayerPosition();
-                HandleGas();
+
+                // Vehicle Controls
+                if (Input.GetAxis("Vertical") == 1 || Input.GetKey(KeyCode.W))
+                {
+                    CancelInvoke("DecelerateVehicle");
+                    _deceleratingCar = false;
+                    HandleGas();
+                }
+                if (Input.GetAxis("Vertical") == -1 || Input.GetKey(KeyCode.S))
+                {
+                    CancelInvoke("DecelerateVehicle");
+                    _deceleratingCar = false;
+                    HandleReverse();
+                }
+                if (Input.GetAxis("Horizontal") == -1 || Input.GetKey(KeyCode.A))
+                {
+                    HandleLeftSteer();
+                }
+                if (Input.GetAxis("Horizontal") == 1 || Input.GetKey(KeyCode.D))
+                {
+                    HandleRightSteer();
+                }
+                if ((!Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.W)) || (Input.GetAxis("Vertical") == 0))
+                {
+                    ThrottleOff();
+                }
+                if ((!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D) || (Input.GetAxis("Horizontal") == -1) || (Input.GetAxis("Horizontal") == 1)) && _steeringAxis != 0f)
+                {
+                    ResetSteeringAngle();
+                }
+                if (Input.GetKey(KeyCode.Tilde))    // Reset pag tumaob, parang di nagana? idk kung tama ba yung tranform na tinatarget ko
+                {
+                    Quaternion targetRotation = Quaternion.identity;
+                    transform.rotation = targetRotation;
+                }
+
             }
         }
 
@@ -54,22 +144,275 @@ namespace UZSG.Entities.Vehicles
 
         public void HandleGas()
         {
+            // Sets throttle power to 1 smoothly
+            _throttleAxis = _throttleAxis + (Time.deltaTime * 3f);
+            if (_throttleAxis > 1f)
+            {
+                _throttleAxis = 1f;
+            }
+
+            //If the car is going backwards, then apply brakes in order to avoid strange
+            //behaviours. If the local velocity in the 'z' axis is less than -1f, then it
+            //is safe to apply positive torque to go forward.
+            if (_localVelocityZ < -1f)
+            {
+                HandleBrake();
+            }
+            else
+            {
+                if(Mathf.RoundToInt(carSpeed) < maxSpeed)
+                {
+                    //Normalize speed 0 to 1 to evaluate to the PowerCurve
+                    float _normalizedSpeed = Mathf.Clamp01(Mathf.Abs(carSpeed) / maxSpeed);
+                    float _availableTorque = powerCurve.Evaluate(_normalizedSpeed) * 10;
+                    powerToWheels = (_availableTorque * 150f) * _throttleAxis;
+
+                    print(powerToWheels);
+
+                    Drivetrain(powerToWheels);
+                }
+                else
+                {
+                    // Stop applying power when max speed is reached
+                    for (int i = 0; i < _frontWheelColliders.Count; i++)
+                    {
+                        _frontWheelColliders[i].motorTorque = 0;
+                    }
+
+                    for (int i = 0; i < _rearWheelColliders.Count; i++)
+                    {
+                        _rearWheelColliders[i].motorTorque = 0;
+                    }
+                }
+            }
+            
+        }
+
+        public void HandleLeftSteer()
+        {
+            //The following method turns the front car wheels to the left. The speed of this movement will depend on the steeringSpeed variable.
+            _steeringAxis = _steeringAxis - (Time.deltaTime * 10f * steeringSpeed);
+            if (_steeringAxis < -1f)
+            {
+                _steeringAxis = -1f;
+            }
+
+            var steeringAngle = _steeringAxis * maxSteeringAngle;
+            _frontWheelColliders[0].steerAngle = Mathf.Lerp(_frontWheelColliders[0].steerAngle, steeringAngle, steeringSpeed); // note to charles: sana LEFT WHEEL to
+            _frontWheelColliders[1].steerAngle = Mathf.Lerp(_frontWheelColliders[1].steerAngle, steeringAngle, steeringSpeed); // sana RIGHT WHEEL to
+        }
+
+        public void HandleRightSteer()
+        {
+            //The following method turns the front car wheels to the right. The speed of this movement will depend on the steeringSpeed variable.
+            _steeringAxis = _steeringAxis - (Time.deltaTime * 10f * steeringSpeed);
+            if (_steeringAxis < 1f)
+            {
+                _steeringAxis = 1f;
+            }
+
+            var steeringAngle = _steeringAxis * maxSteeringAngle;
+            _frontWheelColliders[0].steerAngle = Mathf.Lerp(_frontWheelColliders[0].steerAngle, steeringAngle, steeringSpeed); // note to charles: sana LEFT WHEEL to
+            _frontWheelColliders[1].steerAngle = Mathf.Lerp(_frontWheelColliders[1].steerAngle, steeringAngle, steeringSpeed); // sana RIGHT WHEEL to
+        }
+
+        public void HandleBrake()
+        {
             for (int i = 0; i < _frontWheelColliders.Count; i++)
             {
-                _frontWheelColliders[i].motorTorque = _driverInput.y * _vehicle.Vehicle.MaxSpeed;
+                _frontWheelColliders[i].brakeTorque = brakeForce;
+            }
+
+            for (int i = 0; i < _rearWheelColliders.Count; i++)
+            {
+                _rearWheelColliders[i].brakeTorque = brakeForce;
             }
         }
 
-        public void HandleSteer()
+        public void HandleReverse()
         {
+            // Sets throttle power to -1 smoothly
+            _throttleAxis = _throttleAxis - (Time.deltaTime * 3f);
+            if (_throttleAxis < -1f)
+            {
+                _throttleAxis = -1f;
+            }
 
+            //If the car is still going forward, then apply brakes in order to avoid strange
+            //behaviours. If the local velocity in the 'z' axis is greater than 1f, then it
+            //is safe to apply negative torque to go reverse.
+            if (_localVelocityZ > 1f)
+            {
+                HandleBrake();
+            }
+            else
+            {
+                if(Mathf.Abs(Mathf.RoundToInt(carSpeed)) < maxReverseSpeed)
+                {
+                    //Apply negative torque in all wheels to go in reverse if maxReverseSpeed has not been reached.
+                    for (int i = 0; i < _frontWheelColliders.Count; i++)
+                    {
+                        _frontWheelColliders[i].motorTorque = (decelerationMultiplier * 50f) * _throttleAxis;
+                        _frontWheelColliders[i].brakeTorque = 0;
+                    }
+
+                    for (int i = 0; i < _rearWheelColliders.Count; i++)
+                    {
+                        _rearWheelColliders[i].motorTorque = (decelerationMultiplier * 50f) * _throttleAxis;
+                        _rearWheelColliders[i].brakeTorque = 0;
+                    }
+                }
+                else
+                {
+                    //If the maxReverseSpeed has been reached, then stop applying torque to the wheels.
+                    // IMPORTANT: The maxReverseSpeed variable should be considered as an approximation; the speed of the car
+                    // could be a bit higher than expected.
+
+                    for (int i = 0; i < _frontWheelColliders.Count; i++)
+                    {
+                        _frontWheelColliders[i].motorTorque = 0;
+                    }
+
+                    for (int i = 0; i < _rearWheelColliders.Count; i++)
+                    {
+                        _rearWheelColliders[i].motorTorque = 0;
+                    }
+                }
+            }
         }
 
-        public void HandleBreak()
+        public void DecelerateVehicle()
         {
+            if (_throttleAxis != 0f)
+            {
+                if (_throttleAxis > 0f)
+                {
+                    _throttleAxis = _throttleAxis - (Time.deltaTime * 10f);
+                }
+                else if (_throttleAxis < 0f)
+                {
+                    _throttleAxis = _throttleAxis + (Time.deltaTime * 10f);
+                }
+                if (Mathf.Abs(_throttleAxis) < 0.15f)
+                {
+                    _throttleAxis = 0f;
+                }
+            }
+            _carRigidbody.velocity = _carRigidbody.velocity * (1f / (1f + (0.025f * decelerationMultiplier)));
+            // Since we want to decelerate the car, we are going to remove the torque from the wheels of the car.
+            for (int i = 0; i < _frontWheelColliders.Count; i++)
+            {
+                _frontWheelColliders[i].motorTorque = 0;
+            }
 
+            for (int i = 0; i < _rearWheelColliders.Count; i++)
+            {
+                _rearWheelColliders[i].motorTorque = 0;
+            }
+
+            // If the magnitude of the car's velocity is less than 0.25f (very slow velocity), then stop the car completely and
+            // also cancel the invoke of this method.
+            if (_carRigidbody.velocity.magnitude < 0.25f)
+            {
+                _carRigidbody.velocity = Vector3.zero;
+                CancelInvoke("DecelerateVehicle");
+            }
         }
 
+        public void ThrottleOff()
+        {
+            for (int i = 0; i < _frontWheelColliders.Count; i++)
+            {
+                _frontWheelColliders[i].motorTorque = 0;
+            }
+
+            for (int i = 0; i < _rearWheelColliders.Count; i++)
+            {
+                _rearWheelColliders[i].motorTorque = 0;
+            }
+        }
+
+        public void ResetSteeringAngle()
+        {
+            if (_steeringAxis < 0f)
+            {
+                _steeringAxis = _steeringAxis + (Time.deltaTime * 10f * steeringSpeed);
+            }
+            else if (_steeringAxis > 0f)
+            {
+                _steeringAxis = _steeringAxis - (Time.deltaTime * 10f * steeringSpeed);
+            }
+            if (Mathf.Abs(_frontWheelColliders[0].steerAngle) < 1f)
+            {
+                _steeringAxis = 0f;
+            }
+
+            var steeringAngle = _steeringAxis * maxSteeringAngle;
+            _frontWheelColliders[0].steerAngle = Mathf.Lerp(_frontWheelColliders[0].steerAngle, steeringAngle, steeringSpeed); // note to charles: sana LEFT WHEEL to
+            _frontWheelColliders[1].steerAngle = Mathf.Lerp(_frontWheelColliders[1].steerAngle, steeringAngle, steeringSpeed); // sana RIGHT WHEEL to
+        }
+
+        public void Drivetrain(float _wheelTorque)
+        {
+            if (frontPower == true && rearPower == true)
+            {
+                for (int i = 0; i < _frontWheelColliders.Count; i++)
+                {
+                    _frontWheelColliders[i].motorTorque = _wheelTorque / 2;
+                    _frontWheelColliders[i].brakeTorque = 0;
+                }
+
+                for (int i = 0; i < _rearWheelColliders.Count; i++)
+                {
+                    _rearWheelColliders[i].motorTorque = _wheelTorque / 2;
+                    _rearWheelColliders[i].brakeTorque = 0;
+                }
+            }
+            //Simulates FWD drivetrain for some reason
+            else if (frontPower == false && rearPower == true)
+            {
+                for (int i = 0; i < _frontWheelColliders.Count; i++)
+                {
+                    _frontWheelColliders[i].motorTorque = 0;
+                    _frontWheelColliders[i].brakeTorque = 0;
+                }
+
+                for (int i = 0; i < _rearWheelColliders.Count; i++)
+                {
+                    _rearWheelColliders[i].motorTorque = _wheelTorque;
+                    _rearWheelColliders[i].brakeTorque = 0;
+                }
+            }
+            //Simulates RWD drivetrain for some reason
+            else if (frontPower == true && rearPower == false)
+            {
+                for (int i = 0; i < _frontWheelColliders.Count; i++)
+                {
+                    _frontWheelColliders[i].motorTorque = _wheelTorque;
+                    _frontWheelColliders[i].brakeTorque = 0;
+                }
+
+                for (int i = 0; i < _rearWheelColliders.Count; i++)
+                {
+                    _rearWheelColliders[i].motorTorque = 0;
+                    _rearWheelColliders[i].brakeTorque = 0;
+                }
+            }
+            else
+            {
+                for (int i = 0; i < _frontWheelColliders.Count; i++)
+                {
+                    _frontWheelColliders[i].motorTorque = 0;
+                    _frontWheelColliders[i].brakeTorque = 0;
+                }
+
+                for (int i = 0; i < _rearWheelColliders.Count; i++)
+                {
+                    _rearWheelColliders[i].motorTorque = 0;
+                    _rearWheelColliders[i].brakeTorque = 0;
+                }
+            }
+        }
         #region Vehicle Control Functions 
         public void EnableGeneralVehicleControls()
         {

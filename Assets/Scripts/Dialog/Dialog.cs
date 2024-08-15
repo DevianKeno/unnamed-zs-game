@@ -4,12 +4,20 @@ using Mono.Cecil.Cil;
 using UnityEngine;
 using Ink.Runtime;
 using System;
+using System.Linq;
 
 namespace UZSG.DialogSystem
 {
-    public class Dialog : MonoBehaviour
+    public class Dialog
     {
         public Story story;
+        public event Action<Char> OnTypeEffectUpdate;
+        
+        public event Action<List<Choice>> OnChoiceEncounter;
+        public float TypeEffectSpeed = 0.025f;
+
+        public bool isTypingStopInvoke = false;
+        public bool isTyping = false;
 
         public void LoadStory(TextAsset asset)
         {
@@ -24,8 +32,20 @@ namespace UZSG.DialogSystem
             story.onDidContinue += onDidContinue;
         }
 
-        private bool isLoaded(){
+        private bool isLoaded()
+        {
             return story != null;
+        }
+
+
+        private void CheckpointCheck()
+        {
+            if (story.currentChoices.Count > 0)
+            {
+                OnChoiceEncounter?.Invoke(story.currentChoices);
+                return;
+            }
+            Debug.LogWarning("You have reached the end of the stoyr");
         }
 
         public string NextLine()
@@ -38,9 +58,14 @@ namespace UZSG.DialogSystem
             if (!story.canContinue)
             {
                 Debug.LogWarning("You either reached a choice or end of story");
+                CheckpointCheck();
                 return "";
-            }
+            } 
             return story.Continue();
+        }
+
+        public void StopTypeInvoke(){
+            isTypingStopInvoke = true;
         }
 
         public string CurrentLine()
@@ -73,13 +98,39 @@ namespace UZSG.DialogSystem
             story.ResetState();
         }
 
-        public void MakeChoice(int choiceIndex)
+        public void MakeChoice(Choice choice)
         {
-            if(!story.canContinue)
+            if(story.canContinue)
             {
                 Debug.LogError("You can't choose a choices while the story is in progress");
+                return;
             }
-            story.ChooseChoiceIndex(choiceIndex);
+
+            int i = story.currentChoices.IndexOf(choice);
+            story.ChooseChoiceIndex(i);
+        }
+
+        public IEnumerator TypeEffect() 
+        {
+            isTyping = true;
+            foreach(Char x in story.currentText)
+            {
+                if (isTypingStopInvoke)
+                {
+                    OnTypeEffectUpdate?.Invoke(x);
+                    continue;
+                }
+
+                OnTypeEffectUpdate?.Invoke(x);
+                if (isTypingStopInvoke) break;
+                yield return new WaitForSeconds(TypeEffectSpeed);
+
+            }
+
+            isTypingStopInvoke = false;
+            OnTypeEffectUpdate?.Invoke('\n');
+            isTyping = false;
+            CheckpointCheck();
         }
 
         public virtual void OnMakeChoices(Choice choice) {}

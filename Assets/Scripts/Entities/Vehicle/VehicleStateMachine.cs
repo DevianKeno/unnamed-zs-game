@@ -8,7 +8,7 @@ namespace UZSG.Entities.Vehicles
         Off, Idle, Forward, Reverse, Brake
     }
 
-    public class VehicleStateChange : StateMachine<VehicleStates>
+    public class VehicleStateMachine : StateMachine<VehicleStates>
     {
 
     }

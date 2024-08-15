@@ -1,95 +1,140 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UZSG.Entities;
+using UnityEngine.InputSystem.Controls;
 using UZSG.Systems;
 
-public class VehicleController : MonoBehaviour
+namespace UZSG.Entities.Vehicles
 {
-    /// <summary>
-    /// This vehicle controller is only for testing, I am not entirely sure how to perfectly implement this.
-    /// </summary>
-    [SerializeField] VehicleEntity vehicle;
-    Vector3 vehicleForward;
-    InputAction forward;
-    bool isPressingForward;
-
-    // Vehicle Speed Handler
-    float currentSpeed;
-    float turnSpeed = 100f;
-
-    private void Awake()
+    public class VehicleController : MonoBehaviour
     {
-        vehicle = this.GetComponent<VehicleEntity>();
-    }
+        [Header("Vehicle Variables")]
+        [SerializeField] VehicleEntity _vehicle;
+        [SerializeField] protected VehicleStateMachine _vehicleStateMachine;
+        List<WheelCollider> _frontWheelColliders;
+        List<WheelCollider> _rearWheelColliders;
 
-    private void Start()
-    {
-        vehicleForward = this.transform.forward;
-        forward = Game.Main.GetInputAction("Move", "Player Move");
-        forward.started += OnMoveInput;
-        forward.canceled += OnMoveInput;
-    }
+        [Header("Vehicle Input")]
+        InputAction _moveInput;
+        InputAction _backInput;
+        InputAction _switchInput;
 
-    private void OnMoveInput(InputAction.CallbackContext obj)
-    {
-        if (obj.started)
+        Vector2 _driverInput;
+
+        private void Awake()
         {
-            isPressingForward = true;
+            _vehicle = this.GetComponent<VehicleEntity>();
+            _frontWheelColliders = _vehicle.FrontVehicleWheels;
+            _rearWheelColliders = _vehicle.RearVehicleWheels;
         }
-        else
+
+        private void Start()
         {
-            isPressingForward = false;
+            _moveInput = Game.Main.GetInputAction("Move", "Player Move");
+            _backInput = Game.Main.GetInputAction("Back", "Global");
+            _switchInput = Game.Main.GetInputAction("Change Seat", "Player Actions");
         }
-        Debug.Log(isPressingForward);
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if(vehicle.Driver != null)
+        private void FixedUpdate()
         {
-            vehicle.Driver.transform.localPosition = Vector3.zero;
-
-            // Handle forward movement
-            if (Input.GetKey(KeyCode.W))
+            if (_vehicle.Driver != null)
             {
-                // Accelerate forward
-                currentSpeed = Mathf.Min(currentSpeed + vehicle.Vehicle.AccelerationRate * Time.deltaTime, vehicle.Vehicle.MaxSpeed);
-                vehicleForward = vehicle.transform.forward; // Update vehicleForward based on current rotation
-                vehicle.transform.position += vehicleForward * currentSpeed * Time.deltaTime;
-
-                // Handle turning
-                float turnInput = 0;
-                if (Input.GetKey(KeyCode.A))
-                {
-                    turnInput = -1; // Turn left
-                }
-                else if (Input.GetKey(KeyCode.D))
-                {
-                    turnInput = 1; // Turn right
-                }
-
-                if (turnInput != 0)
-                {
-                    // Rotate the vehicle around its Y-axis based on the input
-                    vehicle.transform.Rotate(Vector3.up * turnInput * turnSpeed * Time.deltaTime);
-                }
-            }
-            else if (Input.GetKey(KeyCode.S))
-            {
-                // Decelerate (reverse) if moving forward
-                currentSpeed = Mathf.Min(currentSpeed - vehicle.Vehicle.AccelerationRate * Time.deltaTime, vehicle.Vehicle.MaxSpeed);
-                vehicleForward = vehicle.transform.forward; // Update vehicleForward based on current rotation
-                vehicle.transform.position -= vehicleForward * currentSpeed * Time.deltaTime;
-            }
-            else
-            {
-                // Decelerate to stop when no key is pressed
-                currentSpeed = Mathf.MoveTowards(currentSpeed, 0, vehicle.Vehicle.AccelerationRate * Time.deltaTime);
+                HandlePlayerPosition();
+                HandleGas();
             }
         }
+
+        private void HandlePlayerPosition()
+        {
+            
+        }
+
+        public void HandleGas()
+        {
+            for (int i = 0; i < _frontWheelColliders.Count; i++)
+            {
+                _frontWheelColliders[i].motorTorque = _driverInput.y * _vehicle.Vehicle.MaxSpeed;
+            }
+        }
+
+        public void HandleSteer()
+        {
+
+        }
+
+        public void HandleBreak()
+        {
+
+        }
+
+        #region Vehicle Control Functions 
+        public void EnableGeneralVehicleControls()
+        {
+            _switchInput.performed += OnSwitchInputPerform;
+            _backInput.performed += OnBackInputPerform;
+        }
+
+        public void DisableGeneralVehicleControls()
+        {
+            _switchInput.performed -= OnSwitchInputPerform;
+            _backInput.performed -= OnBackInputPerform;
+        }
+
+        public void EnableVehicleControls()
+        {
+            _moveInput.started += OnMoveInput;
+            _moveInput.canceled += OnMoveInput;
+        }
+
+        public void DisableVehicleControls()
+        {
+            _moveInput.started -= OnMoveInput;
+            _moveInput.canceled -= OnMoveInput;
+        }
+
+        private void OnMoveInput(InputAction.CallbackContext context)
+        {
+            _driverInput = context.ReadValue<Vector2>();
+        }
+
+        private void OnBackInputPerform(InputAction.CallbackContext context)
+        {
+            GameObject playerUI = GetPlayerGameObjectFromContext(context);
+            // Testing Only
+            Player player = playerUI.GetComponent<PlayerReference>().PlayerEntity;
+            _vehicle.ExitVehicle(player);
+        }
+
+        private void OnSwitchInputPerform(InputAction.CallbackContext context)
+        {
+            GameObject playerUI = GetPlayerGameObjectFromContext(context);
+            // Testing Only
+            Player player = playerUI.GetComponent<PlayerReference>().PlayerEntity;
+            _vehicle.ChangeSeat(player);
+        }
+
+        private GameObject GetPlayerGameObjectFromContext(InputAction.CallbackContext context)
+        {
+            // Retrieve the input device from the action context
+            var control = context.action.controls.FirstOrDefault();
+            if (control != null)
+            {
+                var device = control.device;
+                // Find all PlayerInput components and look for the one associated with this device
+                var playerInputs = FindObjectsOfType<PlayerInput>();
+                foreach (var playerInput in playerInputs)
+                {
+                    if (playerInput.devices.Contains(device))
+                    {
+                        return playerInput.gameObject;
+                    }
+                }
+            }
+            return null;
+        }
+        #endregion
     }
 }

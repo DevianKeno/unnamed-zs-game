@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UZSG.Data;
+using UZSG.Entities.Vehicles;
 using UZSG.Interactions;
 using UZSG.Systems;
 
@@ -13,6 +14,8 @@ namespace UZSG.Entities
     {
         [Header("Vehicle Information")]
         [SerializeField] VehicleData vehicle; // vehicle data
+        [SerializeField] VehicleController _vehicleController;
+
 
         #region Vehicle Seats
         public Player Driver; // driver of the vehicle
@@ -21,10 +24,12 @@ namespace UZSG.Entities
         #endregion
 
         #region Other Important Values
-        InputAction backInput; // refers to the ESC button
-        InputAction switchInput; // refers to the F button when switching seats
-        Transform playerParent; // refers to the parent of the player in the game world
+        Transform _playerParent; // refers to the parent of the player in the game world
         #endregion
+
+        public GameObject Model;
+        public List<WheelCollider> FrontVehicleWheels;
+        public List<WheelCollider> RearVehicleWheels;
 
         public VehicleData Vehicle
         {
@@ -45,75 +50,28 @@ namespace UZSG.Entities
         public event EventHandler<InteractArgs> OnInteract;
 
         int _originalLayer;
-        GameObject model;
-        Rigidbody rb;
-        public Rigidbody Rigidbody => rb;
 
         protected virtual void Awake()
         {
-            model = transform.Find("Vehicle Body").gameObject;
-            rb = GetComponentInChildren<Rigidbody>();
-            _originalLayer = model.layer;
-            playerParent = this.transform.parent;
-        }
-
-        private void Start()
-        {
-            backInput = Game.Main.GetInputAction("Back", "Global");
-            switchInput = Game.Main.GetInputAction("Change Seat", "Player Actions");
-        }
-
-        private void OnBackInputPerform(InputAction.CallbackContext context)
-        {
-            GameObject playerUI = GetPlayerGameObjectFromContext(context);
-            // Testing Only
-            Player player = playerUI.GetComponent<PlayerReference>().PlayerEntity;
-            ExitVehicle(player);
-            switchInput.performed -= OnSwitchInputPerform;
-            backInput.performed -= OnBackInputPerform;
-        }
-
-        private void OnSwitchInputPerform(InputAction.CallbackContext context)
-        {
-            GameObject playerUI = GetPlayerGameObjectFromContext(context);
-            // Testing Only
-            Player player = playerUI.GetComponent<PlayerReference>().PlayerEntity;
-            ChangeSeat(player);
-        }
-
-        private GameObject GetPlayerGameObjectFromContext(InputAction.CallbackContext context)
-        {
-            // Retrieve the input device from the action context
-            var control = context.action.controls.FirstOrDefault();
-            if (control != null)
-            {
-                var device = control.device;
-                // Find all PlayerInput components and look for the one associated with this device
-                var playerInputs = FindObjectsOfType<PlayerInput>();
-                foreach (var playerInput in playerInputs)
-                {
-                    if (playerInput.devices.Contains(device))
-                    {
-                        return playerInput.gameObject;
-                    }
-                }
-            }
-            return null;
+            _vehicleController = gameObject.GetComponent<VehicleController>();
+            Model = transform.Find("Vehicle Body").gameObject;
+            _originalLayer = Model.layer;
+            _playerParent = this.transform.parent;
         }
 
         public void OnLookEnter()
         {
-            if (model != null && Driver == null)
+            if (Model != null && Driver == null)
             {
-                model.layer = LayerMask.NameToLayer("Outline");
+                Model.layer = LayerMask.NameToLayer("Outline");
             }
         }
 
         public void OnLookExit()
         {
-            if (model != null)
+            if (Model != null)
             {
-                model.layer = _originalLayer;
+                Model.layer = _originalLayer;
             }
         }
 
@@ -127,6 +85,8 @@ namespace UZSG.Entities
         public void EnterVehicle(Player player)
         {
             if (SeatsOccupied()) return;
+
+            player.Controls.SetControl("Jump", false);
 
             if (Driver == null)
             {
@@ -143,8 +103,7 @@ namespace UZSG.Entities
             {
                 collider.enabled = false;
             }
-            switchInput.performed += OnSwitchInputPerform;
-            backInput.performed += OnBackInputPerform; // Subscribe function for exiting
+            _vehicleController.EnableGeneralVehicleControls();
         }
 
         public bool SeatsOccupied()
@@ -161,6 +120,7 @@ namespace UZSG.Entities
             Driver = player;
             player.transform.SetParent(Seats[0], false);
             player.transform.localPosition = Vector3.zero;
+            _vehicleController.EnableVehicleControls();
         }
 
         public void EnterPassenger(Player player)
@@ -182,6 +142,7 @@ namespace UZSG.Entities
 
                 EnterPassenger(player);
                 Driver = null;
+                _vehicleController.DisableVehicleControls();
             }
             else
             {
@@ -231,22 +192,24 @@ namespace UZSG.Entities
                 collider.enabled = true;
             }
 
-            player.transform.SetParent(playerParent, false); // Set the player position to the parent
+            player.transform.SetParent(_playerParent, false); // Set the player position to the parent
 
-            player.Controls.Rigidbody.position = new(model.transform.position.x + 2,
-                                                     model.transform.position.y,
-                                                     model.transform.position.z);
+            player.Controls.Rigidbody.position = new(Model.transform.position.x + 2,
+                                                     Model.transform.position.y,
+                                                     Model.transform.position.z);
 
             player.Controls.Rigidbody.rotation = Quaternion.identity;
 
             if (player == Driver)
             {
                 Driver = null;
+                _vehicleController.DisableVehicleControls();
             }
             else if (Passengers.Contains(player))
             {
                 Passengers[Passengers.IndexOf(player)] = null;
             }
+            _vehicleController.DisableGeneralVehicleControls();
         }
     }
 }

@@ -18,7 +18,7 @@ namespace UZSG.DialogSystem
         public TextMeshProUGUI UIText;
         public GameObject ChoicePanelObject;
 
-        private GameObject choicePanelInstance;
+        private GameObject _choicePanelInstance;
         public GameObject ChoiceButton;
         private ChoicePanel _choicePanel;
 
@@ -49,7 +49,7 @@ namespace UZSG.DialogSystem
                 return;
             }
 
-            if (choicePanelInstance != null) return;
+            if (_choicePanelInstance != null) return;
             
             dialogInstance.NextLine();
             StartCoroutine(dialogInstance.TypeEffect());
@@ -69,23 +69,25 @@ namespace UZSG.DialogSystem
         //     TypeEffectInvokeNextLine();
         // }
 
-    
+        int selectedChoice;
 
         void OnChoiceEncounter(List<Choice> choices){
-            choicePanelInstance = Instantiate(ChoicePanelObject, transform.parent);
-            _choicePanel = choicePanelInstance.GetComponent<ChoicePanel>();
+            _choicePanelInstance = Instantiate(ChoicePanelObject, transform.parent);
+            _choicePanel = _choicePanelInstance.GetComponent<ChoicePanel>();
 
             foreach(Choice c in choices)
             {
                 GameObject choiceButtonInstance = Instantiate(ChoiceButton);
-                choiceButtonInstance.transform.SetParent(choicePanelInstance.transform);
+                choiceButtonInstance.transform.SetParent(_choicePanelInstance.transform);
 
                 Button choiceButtonInstanceButtonComponent = choiceButtonInstance.GetComponent<Button>();
                 TextMeshProUGUI choiceButtonInstanceTextComponent = choiceButtonInstanceButtonComponent.GetComponentInChildren<TextMeshProUGUI>();
-                
+                ChoiceContainer choiceContainer = choiceButtonInstance.GetComponent<ChoiceContainer>();
+                choiceContainer.ChoiceIndex = c.index;
+               
                 choiceButtonInstanceButtonComponent.onClick.AddListener(() =>
                 {
-                    dialogInstance.MakeChoice(c);
+                    dialogInstance.MakeChoice(choiceContainer.ChoiceIndex);
                     DestroyChoicePanel();
                     TypeEffectInvokeNextLine();
                 });
@@ -94,10 +96,12 @@ namespace UZSG.DialogSystem
             
         }
 
+
+
         void DestroyChoicePanel()
         {
-            var _tmpChoicePanelInstance = choicePanelInstance;
-            choicePanelInstance = null;
+            var _tmpChoicePanelInstance = _choicePanelInstance;
+            _choicePanelInstance = null;
             Destroy(_tmpChoicePanelInstance.gameObject);
         }
     }

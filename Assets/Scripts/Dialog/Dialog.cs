@@ -98,16 +98,15 @@ namespace UZSG.DialogSystem
             story.ResetState();
         }
 
-        public void MakeChoice(Choice choice)
+        public void MakeChoice(int choiceIndex)
         {
             if(story.canContinue)
             {
-                Debug.LogError("You can't choose a choices while the story is in progress");
+                Debug.LogError("You can't choose while the story is in progress");
                 return;
             }
 
-            int i = story.currentChoices.IndexOf(choice);
-            story.ChooseChoiceIndex(i);
+            story.ChooseChoiceIndex(choiceIndex);
         }
 
         public IEnumerator TypeEffect() 

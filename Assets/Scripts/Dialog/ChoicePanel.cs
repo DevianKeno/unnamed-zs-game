@@ -21,16 +21,16 @@ public class ChoicePanel : MonoBehaviour
 
     public void InstantiateChoices(List<Choice> choices)
     {
-        foreach(Choice c in choices)
-        {
-            GameObject choiceButtonInstance = Instantiate(ChoiceButton);
-            choiceButtonInstance.transform.SetParent(transform);
-            Button choiceButtonInstanceButtonComponent = choiceButtonInstance.GetComponent<Button>();
-            TextMeshProUGUI choiceButtonInstanceTextComponent = choiceButtonInstanceButtonComponent.GetComponentInChildren<TextMeshProUGUI>();
+        // foreach(Choice c in choices)
+        // {
+        //     GameObject choiceButtonInstance = Instantiate(ChoiceButton);
+        //     choiceButtonInstance.transform.SetParent(transform);
+        //     Button choiceButtonInstanceButtonComponent = choiceButtonInstance.GetComponent<Button>();
+        //     TextMeshProUGUI choiceButtonInstanceTextComponent = choiceButtonInstanceButtonComponent.GetComponentInChildren<TextMeshProUGUI>();
             
-            choiceButtonInstanceButtonComponent.onClick.AddListener(delegate{dialogInstance.MakeChoice(c);});
-            choiceButtonInstanceTextComponent.text = c.text;
-        }
+        //     choiceButtonInstanceButtonComponent.onClick.AddListener(delegate{dialogInstance.MakeChoice();});
+        //     choiceButtonInstanceTextComponent.text = c.text;
+        // }
     }
 
     // Update is called once per frame

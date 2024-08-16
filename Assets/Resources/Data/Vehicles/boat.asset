@@ -10,18 +10,30 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4decc72d49b4d8d4aa72345b41c09303, type: 3}
-  m_Name: bicycle
+  m_Name: boat
   m_EditorClassIdentifier: 
-  Id: bicycle
-  Name: Bicycle
-  Description: A two wheeled mechanism that is designed for exercise.
+  Id: 
+  Name: 
+  Description: 
   Model:
-    m_AssetGUID: 45fbcb582516cc34e8ab1615ab38b43d
+    m_AssetGUID: 
     m_SubObjectName: 
     m_SubObjectType: 
-    m_EditorAssetChanged: 1
+    m_EditorAssetChanged: 0
   Type: 0
-  AccelerationRate: 2
-  MaxSpeed: 10
   FuelConsumption: 0
+  maxSpeed: 90
+  maxReverseSpeed: 45
+  powerCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  frontPower: 1
+  rearPower: 1
+  maxSteeringAngle: 27
+  steeringSpeed: 0.5
+  brakeForce: 350
+  decelerationMultiplier: 2
   Attributes: []

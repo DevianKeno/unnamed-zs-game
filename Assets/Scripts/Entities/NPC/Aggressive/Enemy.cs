@@ -18,6 +18,7 @@ namespace UZSG.Entities
         public float AttackRange;  // range from which it follow, attacks Players (to remove)
         public EnemyActionStatesMachine EnemyStateMachine => enemyStateMachine;
         public Attributes.Attribute HealthAttri;
+        public Rigidbody rb;
         public bool _isInHorde;
         Player _target; // Current target of the enemy
         EnemyActionStates _actionState;
@@ -85,6 +86,7 @@ namespace UZSG.Entities
         public override void OnSpawn()
         {
             base.OnSpawn();
+            rb = GetComponent<Rigidbody>();
             defaultPath = entityDefaultsPath + $"{entityData.Id}_defaults.json";
             Initialize();
         }
@@ -171,7 +173,6 @@ namespace UZSG.Entities
             _enemyEntity.speed = Attributes.Get("move_speed").Value;
             HealthAttri = attributes.Get("health");
             _health = HealthAttri.Value;
-            Debug.Log("health:" + _health);
         }
 
         #endregion
@@ -284,9 +285,16 @@ namespace UZSG.Entities
 
         public void Chase()
         {
+            enemyStateMachine.ToState(EnemyActionStates.Chase);
+
+            // set rigid body to dynamic
+            rb.isKinematic = false;
+
+            // allow enemy movement
             _enemyEntity.isStopped = false;
             _enemyEntity.updateRotation = true;
-            enemyStateMachine.ToState(EnemyActionStates.Chase);
+
+            // chase player position
             _enemyEntity.SetDestination(_target.transform.position);
         }
 
@@ -328,6 +336,11 @@ namespace UZSG.Entities
         public void Attack()
         {
             enemyStateMachine.ToState(EnemyActionStates.Attack);
+
+            // set the rigid body of the enemy to kinematic
+            rb.isKinematic = true;
+
+            // prevent the enemy from moving when in attack range
             _enemyEntity.isStopped = true;
             _enemyEntity.updateRotation = false;
         }

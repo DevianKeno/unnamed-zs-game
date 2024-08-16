@@ -99,9 +99,9 @@ namespace UZSG
             Item toReturn = Item.None;
             var remaining = item.Count;
 
-            if (IdSlots.TryGetValue(item.Id, out var slots))
+            if (IdSlots.TryGetValue(item.Id, out var hashset))
             {
-                foreach (var slot in slots)
+                foreach (var slot in hashset.ToList())
                 {
                     var tookItem = slot.TakeItems(remaining);
                     toReturn.Combine(tookItem);
@@ -109,7 +109,7 @@ namespace UZSG
 
                     if (remaining <= 0) break;
                 }
-            }
+            }            
 
             return toReturn;
         }

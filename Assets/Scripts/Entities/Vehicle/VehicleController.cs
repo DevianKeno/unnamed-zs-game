@@ -20,35 +20,31 @@ namespace UZSG.Entities.Vehicles
         [Header("Vehicle Input")]
         InputAction _moveInput;
         InputAction _backInput;
+        InputAction _handbrakeInput;
         InputAction _switchInput;
 
         [Header("Vehicle Setup")]
-        [Space(10)]
-        [Range(20, 190)]
-        public int maxSpeed = 90; //The maximum speed that the car can reach in km/h.
-        [Range(10, 120)]
-        public int maxReverseSpeed = 45; //The maximum speed that the car can reach while going on reverse in km/h.
-        [Space(20)]
-        public AnimationCurve powerCurve;   // Experimental Power/Torque Curve for more customized acceleration
-        public bool frontPower = true;   // Send Power to Front Wheels
-        public bool rearPower = true;   // Send Power to Rear Wheels
-        [Space(20)]
-        [Range(10, 45)]
-        public float maxSteeringAngle = 27; // The maximum angle that the tires can reach while rotating the steering wheel.
-        [Range(0.1f, 1f)]
-        public float steeringSpeed = 0.5f; // How fast the steering wheel turns.
-        [Space(20)]
-        [Range(100, 600)]
-        public int brakeForce = 350; // The strength of the wheel brakes.
-        [Range(1, 10)]
-        public int decelerationMultiplier = 2; // How fast the car decelerates when the user is not using the throttle.
-        [Range(1, 10)]
-        public int handbrakeDriftMultiplier = 5; // How much grip the car loses when the user hit the handbrake.
-        [Space(10)]
         public GameObject bodyMassCenter;
 
         // CAR DATA
-
+        [HideInInspector]
+        public int maxSpeed; //The maximum speed that the car can reach in km/h.
+        [HideInInspector]
+        public int maxReverseSpeed; //The maximum speed that the car can reach while going on reverse in km/h.
+        [HideInInspector]
+        public AnimationCurve powerCurve;   // Experimental Power/Torque Curve for more customized acceleration
+        [HideInInspector]
+        public bool frontPower;   // Send Power to Front Wheels
+        [HideInInspector]
+        public bool rearPower;   // Send Power to Rear Wheels
+        [HideInInspector]
+        public float maxSteeringAngle; // The maximum angle that the tires can reach while rotating the steering wheel.
+        [HideInInspector]
+        public float steeringSpeed ; // How fast the steering wheel turns.
+        [HideInInspector]
+        public int brakeForce; // The strength of the wheel brakes.
+        [HideInInspector]
+        public int decelerationMultiplier; // How fast the car decelerates when the user is not using the throttle.
         [HideInInspector]
         public float carSpeed; // Used to store the current speed of the car.
         [HideInInspector]
@@ -62,7 +58,7 @@ namespace UZSG.Entities.Vehicles
        IMPORTANT: The following variables should not be modified manually since their values are automatically given via script.
         */
         Rigidbody _carRigidbody; // Stores the car's rigidbody.
-        WheelCollider[] _wheels; // Store all wheel colliders.
+        List<WheelCollider> _wheels; // Store all wheel colliders.
         float _steeringAxis; // Used to know whether the steering wheel has reached the maximum value. It goes from -1 to 1.
         float _throttleAxis; // Used to know whether the throttle has reached the maximum value. It goes from -1 to 1.
         float _localVelocityZ;
@@ -70,6 +66,7 @@ namespace UZSG.Entities.Vehicles
         bool _deceleratingCar;
 
         bool _isMoving;
+        bool _isHandbraked;
         Vector2 _driverInput;
 
         private void Awake()
@@ -77,15 +74,37 @@ namespace UZSG.Entities.Vehicles
             _vehicle = this.GetComponent<VehicleEntity>();
             _frontWheelColliders = _vehicle.FrontVehicleWheels;
             _rearWheelColliders = _vehicle.RearVehicleWheels;
+            _wheels = _frontWheelColliders.Concat(_rearWheelColliders).ToList();
         }
 
         private void Start()
         {
             _moveInput = Game.Main.GetInputAction("Move", "Player Move");
             _backInput = Game.Main.GetInputAction("Back", "Global");
+            _handbrakeInput = Game.Main.GetInputAction("Jump", "Player Move");
             _switchInput = Game.Main.GetInputAction("Change Seat", "Player Actions");
             _carRigidbody = gameObject.GetComponent<Rigidbody>();
-            _carRigidbody.centerOfMass = bodyMassCenter.transform.localPosition;
+
+            if (_carRigidbody.automaticCenterOfMass)
+            {
+                print(_carRigidbody.centerOfMass);
+            }
+            else
+            {
+                _carRigidbody.centerOfMass = bodyMassCenter.transform.localPosition;
+            }
+            
+
+            // Initialize vehicle setup
+            maxSpeed = _vehicle.Vehicle.maxSpeed;
+            maxReverseSpeed = _vehicle.Vehicle.maxReverseSpeed;
+            powerCurve = _vehicle.Vehicle.powerCurve;
+            frontPower = _vehicle.Vehicle.frontPower;
+            rearPower = _vehicle.Vehicle.rearPower;
+            maxSteeringAngle = _vehicle.Vehicle.maxSteeringAngle;
+            steeringSpeed = _vehicle.Vehicle.steeringSpeed;
+            brakeForce = _vehicle.Vehicle.brakeForce;
+            decelerationMultiplier = _vehicle.Vehicle.decelerationMultiplier;
         }
 
         private void FixedUpdate()
@@ -95,6 +114,8 @@ namespace UZSG.Entities.Vehicles
 
             // Save the local velocity of the car in the z axis. Used to know if the car is going forward or backwards.
             _localVelocityZ = transform.InverseTransformDirection(_carRigidbody.velocity).z;
+
+            print($"handbraking?: {_isHandbraked}");
 
             if (_vehicle.Driver != null)
             {
@@ -120,6 +141,12 @@ namespace UZSG.Entities.Vehicles
                 if (_driverInput.x > 0)
                 {
                     HandleRightSteer();
+                }
+                if (_isHandbraked)
+                {
+                    CancelInvoke("DecelerateVehicle");
+                    _deceleratingCar = false;
+                    HandleHandbrake();
                 }
                 if (_driverInput.y == 0)
                 {
@@ -281,6 +308,29 @@ namespace UZSG.Entities.Vehicles
             }
         }
 
+        public void HandleHandbrake()
+        {
+            for (int i = 0; i < _rearWheelColliders.Count; i++)
+            {
+                print("APPLYING HANDBRAKES");
+                _rearWheelColliders[i].brakeTorque = 2000f;
+            }
+
+            // Check for slip during handbrake
+            WheelHit[] _wheelHits = new WheelHit[4];
+
+            for(int i = 0; i < _wheels.Count; i++)
+            {
+                _wheels[i].GetGroundHit(out _wheelHits[i]);
+                float lateralSlip = _wheelHits[i].sidewaysSlip;
+
+                if (Math.Abs(lateralSlip) > 0.2f)
+                {
+                    print($"exceeding slip: {lateralSlip}");
+                }
+            }
+        }
+
         public void DecelerateVehicle()
         {
             if (_throttleAxis != 0f)
@@ -431,6 +481,10 @@ namespace UZSG.Entities.Vehicles
             _moveInput.performed += OnMoveInput;
             _moveInput.started += OnMoveInput;
             _moveInput.canceled += OnMoveInput;
+
+            _handbrakeInput.performed += OnHandbrakeInput;
+            _handbrakeInput.started += OnHandbrakeInput;
+            _handbrakeInput.canceled += OnHandbrakeInput;
         }
 
         public void DisableVehicleControls()
@@ -438,11 +492,24 @@ namespace UZSG.Entities.Vehicles
             _moveInput.performed -= OnMoveInput;
             _moveInput.started -= OnMoveInput;
             _moveInput.canceled -= OnMoveInput;
+
+            _handbrakeInput.performed += OnHandbrakeInput;
+            _handbrakeInput.started +=  OnHandbrakeInput;
+            _handbrakeInput.canceled += OnHandbrakeInput;
+
         }
 
         private void OnMoveInput(InputAction.CallbackContext context)
         {
             _driverInput = context.ReadValue<Vector2>();
+        }
+
+        private void OnHandbrakeInput(InputAction.CallbackContext context)
+        {
+            if (context.started)
+                _isHandbraked = true;
+            else
+                _isHandbraked = false;
         }
 
         private void OnBackInputPerform(InputAction.CallbackContext context)

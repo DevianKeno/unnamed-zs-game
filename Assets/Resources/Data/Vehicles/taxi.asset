@@ -21,9 +21,66 @@ MonoBehaviour:
     m_SubObjectType: 
     m_EditorAssetChanged: 1
   Type: 1
-  AccelerationRate: 5
-  MaxSpeed: 240
   FuelConsumption: 2
+  maxSpeed: 90
+  maxReverseSpeed: 45
+  powerCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.3
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.31870493
+      value: 0.76718396
+      inSlope: 0.9773249
+      outSlope: 0.9773249
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.5481186
+      value: 0.7325034
+      inSlope: 0.46134728
+      outSlope: 0.46134728
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.50034183
+      outWeight: 0.33610898
+    - serializedVersion: 3
+      time: 0.7993861
+      value: 0.5845655
+      inSlope: -0.42369637
+      outSlope: -0.42369637
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.56799287
+    - serializedVersion: 3
+      time: 1
+      value: 0.4
+      inSlope: -1.3168143
+      outSlope: -1.3168143
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.11630983
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  frontPower: 1
+  rearPower: 1
+  maxSteeringAngle: 27
+  steeringSpeed: 0.5
+  brakeForce: 350
+  decelerationMultiplier: 2
   Attributes:
   - {fileID: 11400000, guid: e1db9201565269c4caebcb12298f0665, type: 2}
   - {fileID: 11400000, guid: 9d7e09e676905bf47a9e1423574ef1f1, type: 2}

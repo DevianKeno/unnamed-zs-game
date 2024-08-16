@@ -11,28 +11,29 @@ using System.Collections;
 
 namespace UZSG.Entities
 {
-    public abstract class Enemy : Entity, IDetectable
+    public partial class Enemy : Entity, IDetectable
     {
         #region Agent movement related
 
         public float AttackRange;  // range from which it follow, attacks Players (to remove)
         public EnemyActionStatesMachine EnemyStateMachine => enemyStateMachine;
+        public Attributes.Attribute HealthAttri;
         Player _target; // Current target of the enemy
         EnemyActionStates _actionState;
         Vector3 _randomDestination; // Destination of agent
-        [SerializeField] bool _hasTargetInSite, _hasTargetInAttack; // checks if the player is in site, attack range or is a target
+        [SerializeField] float _health; //enemy health
+        [SerializeField] bool hasTargetInSite, hasTargetInAttack, isDead; // checks if the player is in site, attack range or is a target
         [SerializeField] float RoamTime; // Time it takes for the agent to travel a point
         [SerializeField] float _roamRadius; // Radius of which the agent can travel
         [SerializeField] float _roamInterval; // Interval before the model moves again
-        //[SerializeField] float _minWait, _maxWait; // waiting time before roaming again
-        //[SerializeField] float _waitTime; // actual waiting time of enemy in second
-        //[SerializeField] bool _isWaiting = false; // Track if the AI is currently waiting
         [SerializeField] float _distanceFromPlayer;
         [SerializeField] float _speed;
         [SerializeField] float _siteRadius, _attackRadius; // Radius of which the enemy detects the player
         [SerializeField] protected EnemyActionStatesMachine enemyStateMachine;
         [SerializeField] NavMeshAgent _enemyEntity; // the entity's agent movement
         [SerializeField] LayerMask PlayerLayer; // Layers that the enemy chases
+
+        [SerializeField] Animator animator; // Layers that the enemy chases
 
         
         #endregion
@@ -97,7 +98,7 @@ namespace UZSG.Entities
             if (player != null)
             {
                 _target = player; // set the current target of the enemy to they player found
-                _hasTargetInSite = true;
+                hasTargetInSite = true;
             }
         }
 
@@ -105,31 +106,31 @@ namespace UZSG.Entities
         {
             if (player != null)
             {
-                _hasTargetInAttack = true;
+                hasTargetInAttack = true;
             }
         }
 
         public void ResetPlayerIfNotInRange()
         {
             // Check if there is a target, then calculate the distance
-            if (_hasTargetInSite)
+            if (hasTargetInSite)
             {
                 _distanceFromPlayer = Vector3.Distance(_target.Position, transform.position); 
         
                 if (_siteRadius <= _distanceFromPlayer) // if target no longer in site reset target
                 {
                     _target = null;
-                    _hasTargetInSite = false;
+                    hasTargetInSite = false;
                     enemyStateMachine.ToState(EnemyActionStates.Roam);
                 }
                 else
                 {
                     // Check if no player in attack range, reset
-                    if (_hasTargetInAttack)
+                    if (hasTargetInAttack)
                     {
                         if (_attackRadius <= _distanceFromPlayer)
                         {
-                            _hasTargetInAttack = false;
+                            hasTargetInAttack = false;
                             enemyStateMachine.ToState(EnemyActionStates.Chase);
                         }
                     }
@@ -166,6 +167,9 @@ namespace UZSG.Entities
             _speed = Attributes.Get("move_speed").Value;
             _roamRadius = Attributes.Get("zombie_roam_radius").Value;
             _roamInterval = Attributes.Get("zombie_roam_interval").Value;
+            _enemyEntity.speed = Attributes.Get("move_speed").Value;
+            HealthAttri = attributes.Get("health");
+            _health = HealthAttri.Value;
         }
 
         #endregion
@@ -175,7 +179,7 @@ namespace UZSG.Entities
         {
             get
             {
-                if (_hasTargetInSite)
+                if (hasTargetInSite)
                 {
                     return true;
                 }
@@ -187,7 +191,7 @@ namespace UZSG.Entities
         {
             get
             {   
-                if (_hasTargetInAttack)
+                if (hasTargetInAttack)
                 {
                     return true;
                 }
@@ -198,14 +202,12 @@ namespace UZSG.Entities
         {
             get
             {
+                if (HealthAttri.Value <= 0)
+                {
+                    return true;
+                }
                 return false;
             }
-        }
-
-        public void TakeDamage(float damage)
-        {
-            var health = attributes.Get("health");
-            health.Remove(damage);
         }
 
         public bool IsSpecialAttackTriggered // determines if an event happened that triggered special Attack 1
@@ -289,6 +291,7 @@ namespace UZSG.Entities
         public void Chase()
         {
             _enemyEntity.isStopped = false;
+            _enemyEntity.updateRotation = true;
             enemyStateMachine.ToState(EnemyActionStates.Chase);
             _enemyEntity.SetDestination(_target.transform.position);
         }
@@ -318,6 +321,7 @@ namespace UZSG.Entities
                     _enemyEntity.SetDestination(navHit.position);
                     enemyStateMachine.ToState(EnemyActionStates.Roam);
                     RoamTime = UnityEngine.Random.Range(1.0f, _roamInterval); // Reset RoamTime for the next movement
+                    _enemyEntity.updateRotation = true;
                 }
             }
         }
@@ -332,12 +336,19 @@ namespace UZSG.Entities
             enemyStateMachine.ToState(EnemyActionStates.Attack);
             _enemyEntity.isStopped = true;
             _enemyEntity.updateRotation = false;
-            Debug.Log("Attack"); 
         }
         public void Die()
         {
             enemyStateMachine.ToState(EnemyActionStates.Die);
-            Debug.Log("Die"); 
+            /*Vector3 currentPosition = gameObject.transform.position;
+            _enemyEntity.isStopped = true;
+            _enemyEntity.updateRotation = false;
+            gameObject.transform.position = new Vector3(currentPosition.x, currentPosition.y + 0.3f, currentPosition.z);
+            gameObject.transform.rotation = Quaternion.Euler(0, 90, -90);
+            animator.enabled = false;*/
+            Game.Tick.OnSecond -= Game_Tick_OnSecond;
+            Game.Entity.Kill(this);
+            Debug.Log("Die");
         }
         public void SpecialAttack()
         {

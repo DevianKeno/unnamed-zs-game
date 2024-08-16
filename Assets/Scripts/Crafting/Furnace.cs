@@ -16,18 +16,17 @@ namespace UZSG.Crafting
 
         List<CraftingRoutine> furnaceRoutineList = new();
 
-        protected bool IsFurnaceFull()
+        protected bool IsFurnaceFull
         {
-            if (furnaceRoutineList.Count >= FurnaceCapacity)
+            get
             {
-                return true;
+                return furnaceRoutineList.Count >= FurnaceCapacity;
             }
-            return false;
         }
 
         public void PrepareCooking(RecipeData recipe)
         {
-            if (!IsFurnaceFull())
+            if (!IsFurnaceFull)
             {
                 print("Furnace is still busy");
                 return;
@@ -59,7 +58,7 @@ namespace UZSG.Crafting
             {
                 foreach (var routine in furnaceRoutineList)
                 {
-                    StartCoroutine(routine.CraftCoroutine());
+                    StartCoroutine(routine.StartCraftCoroutine());
                 }
             }
         }

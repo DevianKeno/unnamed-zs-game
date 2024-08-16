@@ -32,7 +32,7 @@ namespace UZSG.Crafting
             if (IsFuelRemainingAvailable()) return;
             if (!IsFuelAvailable()) return;
 
-            FuelContainer.TakeItems(0, 1);
+            FuelContainer.TakeFrom(0, 1);
             StartCoroutine(BurnFuel());
         }
 
@@ -42,11 +42,11 @@ namespace UZSG.Crafting
             
             if (!IsFuelRemainingAvailable())
             {
-                foreach(CraftingRoutine routine in _craftingRoutineInstance.routineList)
-                {
-                    StopCoroutine(routine.CraftCoroutine());
-                    routine.secondsElapsed = 0;
-                }
+                // foreach(CraftingRoutine routine in _craftingRoutineInstance.RoutineList)
+                // {
+                //     StopCoroutine(routine.CraftCoroutine());
+                //     // routine._secondsElapsed = 0; /// seconds "elapsed" is not something to set
+                // }
             }
         }
 

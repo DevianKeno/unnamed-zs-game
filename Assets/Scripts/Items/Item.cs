@@ -18,12 +18,17 @@ namespace UZSG.Items
     [Serializable]
     public struct Item : IComparable<Item>
     {
+        public const int MaxStackSize = 99999;
         public static Item None => new(data: null);
         
         [SerializeField] ItemData _itemData;
         public ItemData Data => _itemData;
         [SerializeField] int _count;
-        public readonly int Count => _count;
+        public int Count
+        {
+            get => _count;
+            set => _count = value;
+        }
         public readonly bool IsNone => _itemData == null;
         public readonly string Id => _itemData.Id;
 
@@ -55,20 +60,30 @@ namespace UZSG.Items
         {
             _itemData = Game.Items.GetData(id);
             _count = Math.Clamp(count, 0, EnsureStackSizeNotZero(_itemData.StackSize));
-        }
-                
+        }  
+                        
         /// <summary>
         /// Create a copy of the Item with a new count.
         /// </summary>
         public Item(Item other, int count = 1)
         {
             _itemData = other.Data;
-            _count = Math.Clamp(count, 0, EnsureStackSizeNotZero(_itemData.StackSize));
+            int stack = other.IsNone ? 0 : _itemData.StackSize;
+            _count = Math.Clamp(count, 0, EnsureStackSizeNotZero(stack));
         }
 
         #endregion
-        
-        
+
+
+        /// <summary>
+        /// Clamp this Item's count to either its StackSize or MaxStack.
+        /// </summary>
+        public void ClampStack(bool max = false)
+        {
+            int maxStack = max ? MaxStackSize : _itemData.StackSize;
+            _count = Math.Clamp(_count, 1, maxStack);
+        }
+
         /// <summary>
         /// Take an amount from this item.
         /// </summary>
@@ -80,16 +95,46 @@ namespace UZSG.Items
         
         /// <summary>
         /// Try to combine this Item with the other item.
+        /// Exceeding stack size.
         /// </summary>
-        public bool TryCombine(Item other, out Item excess)
+        public void Combine(Item other)
+        {
+            if (IsNone)
+            {
+                _itemData = other._itemData;
+            }
+            _count += other.Count;
+        }
+
+        /// <summary>
+        /// Try to combine this Item with the other item.
+        /// </summary>
+        public bool TryCombine(Item other, out Item excess, bool max = false)
+        {
+            excess = None;
+            if (!CanBeCombinedWith(other)) return false;
+
+            int maxStack = max ? MaxStackSize : Data.StackSize;
+            _count += other.Count;
+            if (_count > maxStack)
+            {
+                excess = new(this, _count - maxStack);
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Try to stack this Item until max stack size.
+        /// </summary>
+        public bool TryCombineMax(Item other, out Item excess)
         {
             excess = None;
             if (!CanBeCombinedWith(other)) return false;
 
             _count += other.Count;
-            if (_count > Data.StackSize)
+            if (_count > MaxStackSize)
             {
-                excess = new(this, _count - Data.StackSize);
+                excess = new(this, _count - MaxStackSize);
             }
             return true;
         }
@@ -118,13 +163,14 @@ namespace UZSG.Items
 
         /// <summary>
         /// Checks if this Item can be stacked with the other Item.
-        /// Returns false if the total of the combined Items exceeds the Item's stack size.
+        /// Returns false if the total of the combined Items exceeds the Item's stack size, unless maxed.
         /// </summary>
-        public readonly bool CanBeStackedWith(Item other)
+        public readonly bool CanBeStackedWith(Item other, bool max = false)
         {
             if (!CanBeCombinedWith(other)) return false;
             
-            return _count + other.Count <= _itemData.StackSize; /// Exceeds stack size
+            int maxStack = max ? MaxStackSize : _itemData.StackSize;
+            return _count + other.Count <= maxStack;
         }
 
         /// <summary>
@@ -137,7 +183,12 @@ namespace UZSG.Items
         
         static int EnsureStackSizeNotZero(int stackSize)
         {
-            return stackSize == 0 ? 1 : stackSize;
+            return stackSize <= 0 ? 1 : stackSize;
+        }
+
+        public static Item operator *(Item item, int value)
+        {
+            return new Item(item, item.Count * value);
         }
     }
 }

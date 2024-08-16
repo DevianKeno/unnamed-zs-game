@@ -11,7 +11,8 @@ namespace UZSG.Data
     {
         public string Name;
         public Item Output;
-        public Item[] Materials;
+        public int Yield => Output.Count;
+        public List<Item> Materials;
         public float DurationSeconds;
     }
 }

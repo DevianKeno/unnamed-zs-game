@@ -20,4 +20,4 @@ MonoBehaviour:
   Materials:
   - _itemData: {fileID: 11400000, guid: 35a7f50afca84d847b7a649f7d65b88b, type: 2}
     _count: 5
-  DurationSeconds: 0
+  DurationSeconds: 3

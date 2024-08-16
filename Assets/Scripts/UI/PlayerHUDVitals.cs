@@ -79,10 +79,10 @@ namespace UZSG.UI.HUD
 
         #region Callbacks
 
-        void OnHotbarSlotChanged(object sender, SlotItemChangedContext e)
+        void OnHotbarSlotChanged(object sender, ItemSlot.ItemChangedContext e)
         {
-            var hotbarOffset = e.Slot.Index + 3;
-            _hotbarSlotUIs[hotbarOffset].SetDisplayedItem(e.Slot.Item);
+            var hotbarOffset = e.ItemSlot.Index + 3;
+            _hotbarSlotUIs[hotbarOffset].SetDisplayedItem(e.ItemSlot.Item);
         }
 
         void OnStartHoverSlot(object sender, PointerEventData e)

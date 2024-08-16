@@ -86,9 +86,9 @@ namespace UZSG.UI.HUD
         }
         
 
-        void OnEquipmentSlotChanged(object sender, SlotItemChangedContext e)
+        void OnEquipmentSlotChanged(object sender, ItemSlot.ItemChangedContext e)
         {
-            _equipmentSlotUIs[e.Slot.Index].SetDisplayedItem(e.Slot.Item);
+            _equipmentSlotUIs[e.ItemSlot.Index].SetDisplayedItem(e.ItemSlot.Item);
         }
 
         void OnChangeHeldItem(HeldItemController heldItem)

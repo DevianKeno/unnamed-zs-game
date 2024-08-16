@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3225a92847421ec41a13a5cd94ac5446, type: 3}
+  m_Name: workbench_audio
+  m_EditorClassIdentifier: 
+  PoolSize: 2
+  Path: Assets/AddressableAssets/Objects/Workstations/workbench/audio
+  AudioClips:
+  - m_AssetGUID: 0231245b91276d149b07883a8a3164a5
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  - m_AssetGUID: 41fd29b96b60e744f8687dacd650463e
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0

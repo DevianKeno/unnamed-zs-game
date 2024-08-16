@@ -15,12 +15,17 @@ namespace UZSG.Inventory
     {
         public struct ItemChangedContext
         {
+            public ItemSlot ItemSlot { get; set; }
             public Item OldItem { get; set; }
             public Item NewItem { get; set; }
         }
         
         [SerializeField] int index;
-        public int Index => index;
+        public int Index
+        {
+            get { return index; }
+            set { index = value; }
+        }
         [SerializeField] Item item = Item.None;
         public Item Item => item;
         public ItemSlotType SlotType;
@@ -66,12 +71,15 @@ namespace UZSG.Inventory
         }
 
         void ItemChangedInternal()
-        {        
-            OnItemChangedInternal?.Invoke(this, new()
+        {
+            var context = new ItemChangedContext()
             {
+                ItemSlot = this,
                 OldItem = _previousItem,
                 NewItem = item,
-            });
+            };
+            OnItemChangedInternal?.Invoke(this, context);
+            OnItemChanged?.Invoke(this, context);
         }
 
         public Item View()
@@ -149,10 +157,11 @@ namespace UZSG.Inventory
         /// Tries to combine the Item in the Slot to given Item.
         /// Returns false if not the same item.
         /// </summary>
-        public bool TryCombine(Item toAdd, out Item excess)
+        public bool TryCombine(Item other, out Item excess, bool max = false)
         {
             _previousItem = this.item;
-            if (item.TryCombine(toAdd, out excess))
+            
+            if (item.TryCombine(other, out excess, max))
             {
                 ItemChangedInternal();
                 return true;

@@ -25,11 +25,11 @@ namespace UZSG.UI
             {
                 status = value;
                 
-                if (status == CraftableItemStatus.Uncraftable)
+                if (status == CraftableItemStatus.CannotCraft)
                 {
                     text.color = UncraftableTextColor;
                 }
-                else if (status == CraftableItemStatus.Craftable)
+                else if (status == CraftableItemStatus.CanCraft)
                 {
                     text.color = CraftableTextColor;
                 }

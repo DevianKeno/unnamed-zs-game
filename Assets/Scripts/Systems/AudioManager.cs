@@ -50,9 +50,9 @@ namespace UZSG.Systems
             };
         }
 
-        public async void LoadAudioAssets(List<AssetReference> assets)
+        public async void LoadAudioAssets(AudioAssetsData data)
         {
-            await LoadAudioAssetsAsync(assets, (result) =>
+            await LoadAudioAssetsAsync(data.AudioClips, (result) =>
             {
                 foreach (var item in result)
                 {

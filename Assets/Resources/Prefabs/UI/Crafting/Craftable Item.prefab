@@ -163,7 +163,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rect: {fileID: 0}
-  AnimationFactor: 0.3
+  FadeDuration: 0.3
   RecipeData: {fileID: 0}
   button: {fileID: 5202387477307214840}
   background: {fileID: 8132384543493191437}
@@ -204,8 +204,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 206.69, y: -40}
-  m_SizeDelta: {x: 233.38, y: 26.82}
+  m_AnchoredPosition: {x: 199.375, y: -40}
+  m_SizeDelta: {x: 218.75, y: 26.82}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1075777665571802134
 CanvasRenderer:
@@ -237,8 +237,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Very Long Item Name
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 960afe1775a30704d9fa63d5796f15b7, type: 2}
+  m_sharedMaterial: {fileID: 7478795734260216624, guid: 960afe1775a30704d9fa63d5796f15b7, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

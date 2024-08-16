@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UZSG.Systems;
 using UZSG.Inventory;
 using UZSG.Items;
+using System.Linq;
 
 namespace UZSG
 {
@@ -12,32 +13,91 @@ namespace UZSG
         int _freeSlotsCounter;
 
         /// <summary>
-        /// Checks if the given item can be put in the Container.
+        /// Check if the Item exists within the Container.
+        /// Takes into account the Count of the given Item.
+        /// Passing a None Item returns false.
         /// </summary>
-        public virtual bool CanPutItem(Item item, out HashSet<ItemSlot> slots)
+        public bool Contains(Item item)
         {
+            if (item.IsNone) return false;
+
+            if (_cachedIdItemCount.TryGetValue(item.Id, out var count))
+            {
+                return count >= item.Count;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Checks if ALL Items in the list exists within the container.
+        /// Takes into account the Count of the given Items.
+        /// </summary>
+        public bool ContainsAll(List<Item> items)
+        {
+            foreach (var item in items)
+            {
+                if (item.IsNone) continue;
+                if (!Contains(item)) return false;
+            }
+            
+            return true;
+        }
+        
+        /// <summary>
+        /// Finds the Item of Id in this Container.
+        /// Returns the list of Slots the Item is put in, which is empty if it does not exist.
+        /// </summary>
+        public List<ItemSlot> FindItem(string id)
+        {
+            if (_cachedIdSlots.TryGetValue(id, out var slots))
+            {
+                return slots.ToList(); 
+            }
+
+            return new();
+        }
+
+        /// <summary>
+        /// Finds the Item in this Container.
+        /// Returns the list of Slots the Item is put in, which is empty if it does not exist.
+        /// </summary>
+        public List<ItemSlot> FindItem(Item item)
+        {
+            return FindItem(item.Data.Id);
+        }
+
+        /// <summary>
+        /// Checks if the given Item can be put in the Container.
+        /// </summary>
+        /// <param name="max">Whether to allow max stacking, up to 99999.</param>
+        public bool CanPutItem(Item item, bool max = false)
+        {
+            if (item.IsNone) return true;
+
             /// Check first the cached ItemSlots containing the same Item
-            if (_cachedIdSlots.TryGetValue(item.Data.Id, out slots))
+            if (_cachedIdSlots.TryGetValue(item.Data.Id, out var slots))
             {
                 int nextCount = item.Count;
                 foreach (ItemSlot slot in slots)
                 {
-                    var tempItem = new Item(item, nextCount);
-                    if (slot.IsEmpty) return true;
-                    if (slot.Item.CanBeStackedWith(tempItem)) return true;
+                    var nextItem = new Item(item, nextCount);
+                    if (slot.Item.CanBeStackedWith(nextItem, max)) return true;
                     
                     nextCount -= slot.Item.Data.StackSize - slot.Item.Count;
                     if (nextCount <= 0) break;
                 }
             }
+            
             return CanPutNearestEmpty(item);
         }
 
         /// <summary>
-        /// Checks if the given items can be put in the Container.
-        /// Returns false if at least one item cannot be put in.
+        /// Checks if the given Items can be put in the Container.
+        /// Returns false if at least one Item cannot be put in.
         /// </summary>
-        public virtual bool CanPutItems(List<Item> items)
+        /// <param name="max">Whether to allow max stacking, up to 99999.</param>
+        public bool CanPutItems(List<Item> items, bool max = false)
         {
             if (IsFull) return false;
             
@@ -45,13 +105,16 @@ namespace UZSG
             foreach (var item in items)
             {
                 if (_freeSlotsCounter <= 0) return false;
-                if (!CanPutItem(item, out var slots)) return false;
+                if (!CanPutItem(item, max)) return false;
             }
 
             return true;
         }
 
-        public virtual bool CanPutNearestEmpty(Item item)
+        /// <summary>
+        /// Check if the given Item can be put to a nearest empty Slot.
+        /// </summary>
+        public bool CanPutNearestEmpty(Item item)
         {
             if (item.IsNone) return true;
             if (IsFull) return false;
@@ -64,81 +127,21 @@ namespace UZSG
                     return true;
                 }
             }
+
             return false;
         }
 
         /// <summary>
-        /// Check if the item exists within the container, regardless of amount.
+        /// Counts the Item present in this container.
         /// </summary>
-        public bool Contains(Item item, out ItemSlot slot)
+        public int CountItem(Item item)
         {
-            foreach (ItemSlot s in Slots)
+            if (_cachedIdItemCount.TryGetValue(item.Id, out var count))
             {
-                if (s.IsEmpty) continue;
-
-                if (s.Item.CompareTo(item))
-                {
-                    slot = s;
-                    return true;
-                }
+                return count;
             }
             
-            slot = null;
-            return false;
-        }
-
-        /// <summary>
-        /// Check if a specified amount of item exists within the container.
-        /// </summary>
-        [Obsolete("Use the property 'IdItemCount' instead.")]
-        public bool ContainsCount(Item item, int amount, out List<ItemSlot> slots)
-        {
-            slots = new();
-            int remaining = item.Count;
-            int count = 0;
-
-            foreach (ItemSlot slot in Slots)
-            {
-                if (slot.IsEmpty) continue;
-
-                if (slot.Item.CompareTo(item))
-                {
-                    count += slot.Item.Count;
-                    remaining -= slot.Item.Count;
-                    slots.Add(slot);
-
-                    if (count >= amount)
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return count >= item.Count;
-        }
-
-        /// <summary>
-        /// Counts the number of items inside the container and outputs the slots
-        /// </summary>
-        public int CountItem(Item item, out List<ItemSlot> slots)
-        {
-            slots = new();
-            int remaining = item.Count;
-            int count = 0;
-
-            foreach (ItemSlot slot in Slots)
-            {
-                if (slot.IsEmpty) continue;
-
-                if (slot.Item.CompareTo(item))
-                {
-                    count += slot.Item.Count;
-                    remaining -= slot.Item.Count;
-                    slots.Add(slot);
-                }
-            }
-
-            return count;
+            return 0;
         }
     }
 }

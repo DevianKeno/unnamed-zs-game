@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using UZSG.Inventory;
 using UZSG.Items;
 
@@ -8,50 +8,61 @@ namespace UZSG
 {
     public partial class Container
     {
+        /// <summary>
+        /// Called when there's an unhandled excess item.
+        /// </summary>
         public event EventHandler<Item> OnExcessItem;
 
         /// <summary>
-        /// Puts the Item to the nearest slot.
-        /// Tries to combine with the same existing Items in the Container.
+        /// Puts the Item to the nearest possible Slot.
+        /// Tries to combine it with the same existing Items in the Container, otherwise to an empty Slot.
         /// </summary>
-        public virtual bool TryPutNearest(Item item)
+        public bool TryPutNearest(Item item)
         {
-            /// Check first cached Item Id slots, for combining
-            if (CanPutItem(item, out var cachedSlots))
+            if (item.IsNone) return true;
+
+            /// Check first the cached ItemSlots containing the same Item
+            if (_cachedIdSlots.TryGetValue(item.Data.Id, out var slots))
             {
-                if (cachedSlots == null) /// Item does not exists yet in Container
+                var nextItem = item;
+                foreach (ItemSlot slot in slots)
                 {
-                    return TryPutNearestEmpty(item);
-                }
-
-                /// Put along cached slots
-                Item remaining = item;
-                foreach (var slot in cachedSlots)
-                {
-                    if (slot.TryCombine(remaining, out var excess))
+                    if (slot.TryCombine(nextItem, out Item excess))
                     {
-                        remaining = excess;
-                        if (remaining.IsNone) break;
-                    }
-                    /// If for some reason, suddenly cannot put anymore ¯\_(ツ)_/¯
-                    /// but it shouldn't go here, because of the first gate clause
-                    else 
-                    {
-                        OnExcessItem?.Invoke(this, excess);
-                        return false;
+                        if (excess.IsNone) return true;
+                        nextItem = excess;
                     }
                 }
+            }
+            /// new item
+            return TryPutNearestEmpty(item);
+        }
 
-                return true;
+        /// <summary>
+        /// Tries to put the item to the nearest empty slot.
+        /// Returns true if put succesfully, otherwise false.
+        /// </summary>
+        public bool TryPutNearestEmpty(Item item)
+        {
+            if (item.IsNone) return true;
+            if (IsFull) return false;
+
+            foreach (ItemSlot slot in Slots)
+            {
+                if (slot.IsEmpty) /// just put
+                {
+                    Slots[slot.Index].Put(item);
+                    return true;
+                }
             }
 
-            return false; 
+            return false;
         }
 
         /// <summary>
         /// Tries to put the Item in the specified slot index.
         /// </summary>
-        public virtual bool TryPutIn(int slotIndex, Item item)
+        public bool TryPutAt(int slotIndex, Item item)
         {
             if (item.IsNone) return true;
             if (!Slots.IsValidIndex(slotIndex)) return false;
@@ -59,7 +70,8 @@ namespace UZSG
             ItemSlot slot = Slots[slotIndex];
             if (slot.IsEmpty)
             {
-                return slot.TryPut(item);
+                slot.Put(item);
+                return true;
             }
             else
             {
@@ -79,48 +91,49 @@ namespace UZSG
         }
 
         /// <summary>
-        /// Tries to put the item to the nearest empty slot.
-        /// Returns true if put succesfully, otherwise false.
+        /// Take Items from this container given the Item.
+        /// If the given Item is more than what's stored in this container, it simply takes all.
         /// </summary>
-        public virtual bool TryPutNearestEmpty(Item item)
+        public virtual Item TakeItem(Item item)
         {
-            if (item.IsNone) return true;
-            if (IsFull) return false;
+            Item toReturn = Item.None;
+            var remaining = item.Count;
 
-            foreach (ItemSlot slot in Slots)
+            if (IdSlots.TryGetValue(item.Id, out var slots))
             {
-                if (slot.IsEmpty) /// just put
+                foreach (var slot in slots)
                 {
-                    slot.Put(item);
-                    return true;
-                }
-                
-                /// HmmHmmHmm, I think I can remove this 77% sure
-                if (slot.TryCombine(item, out Item excess))
-                {
-                    if (TryPutNearestEmpty(excess))
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        if (!excess.IsNone)
-                        {
-                            OnExcessItem?.Invoke(this, excess);
-                        }
-                    }
+                    var tookItem = slot.TakeItems(remaining);
+                    toReturn.Combine(tookItem);
+                    remaining -= tookItem.Count;
 
-                    continue;
+                    if (remaining <= 0) break;
                 }
             }
 
-            return false;
+            return toReturn;
+        }
+
+        /// <summary>
+        /// Take a list of Items from this container given the list of Items.
+        /// This takes all Items, even when other Items in the given list are not present in this Container.
+        /// </summary>
+        public virtual List<Item> TakeItems(List<Item> items)
+        {
+            List<Item> toReturn = new();
+
+            foreach (var item in items)
+            {
+                toReturn.Add(TakeItem(item));
+            }
+            
+            return toReturn;
         }
 
         /// <summary>
         /// Take entire stack.
         /// </summary>
-        public virtual Item Take(int slotIndex)
+        public virtual Item TakeFrom(int slotIndex)
         {
             if (!Slots.IsValidIndex(slotIndex)) return Item.None;
 
@@ -132,11 +145,6 @@ namespace UZSG
             else
             {
                 var itemsToTake = slot.TakeAll();
-                // UncacheItem(itemsToTake, slot);
-                // OnSlotContentChanged?.Invoke(this, new()
-                // {
-                //     Slot = slot
-                // });
                 return itemsToTake;
             }
         }
@@ -144,7 +152,7 @@ namespace UZSG
         /// <summary>
         /// Take some amount of Item from Slot.
         /// </summary>
-        public virtual Item TakeItems(int slotIndex, int amount)
+        public virtual Item TakeFrom(int slotIndex, int amount)
         {           
             if (!Slots.IsValidIndex(slotIndex)) return Item.None;
 
@@ -152,11 +160,6 @@ namespace UZSG
             if (slot.IsEmpty) return Item.None;
             
             var itemsToTake = slot.TakeItems(amount);
-            // UncacheItem(itemsToTake, slot);
-            // OnSlotContentChanged?.Invoke(this, new()
-            // {
-            //     Slot = slot
-            // });
             return itemsToTake;
         }
 
@@ -164,12 +167,7 @@ namespace UZSG
         {
             if (slot == null || slot.IsEmpty) return;
 
-            // UncacheItem(slot.Item, slot);
             slot.Clear();
-            // OnSlotContentChanged?.Invoke(this, new()
-            // {
-            //     Slot = slot
-            // });
         }
 
         public virtual void ClearItem(int slotIndex)

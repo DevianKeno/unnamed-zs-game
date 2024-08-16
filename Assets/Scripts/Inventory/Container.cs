@@ -16,6 +16,8 @@ namespace UZSG
     [Serializable]
     public partial class Container : ISaveDataReadWrite<ContainerSaveData>
     {
+        public const int MaxContainerSize = 999;
+
         protected int _slotCount;
         public int SlotCount
         {
@@ -39,12 +41,7 @@ namespace UZSG
         {
             get
             {
-                foreach (var slot in _slots)
-                {
-                    if (slot == null) continue;
-                    if (slot.IsEmpty) return false;
-                }
-                return true;
+                return FreeSlotsCount == 0;
             }
         }
     
@@ -62,7 +59,7 @@ namespace UZSG
         /// <summary>
         /// Called whenever the Item of a Slot is changed.
         /// </summary>
-        public event EventHandler<SlotItemChangedContext> OnSlotItemChanged;
+        public event EventHandler<ItemSlot.ItemChangedContext> OnSlotItemChanged;
 
         #endregion
 
@@ -76,21 +73,13 @@ namespace UZSG
             }
         }
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="slotsCount"></param>
-        public Container(int slotsCount)
+        public Container(int slotsCount = 0)
         {
-            _slotCount = Math.Clamp(slotsCount, 0, 999); /// Max container size
-            CreateSlots();
-        }
-
-        void CreateSlots()
-        {
+            _slotCount = Math.Clamp(slotsCount, 0, MaxContainerSize);
+            
             for (int i = 0; i < SlotCount; i++)
             {
-                ItemSlot newSlot = new(i, ItemSlotType.All);
+                var newSlot = new ItemSlot(i, ItemSlotType.All);
                 newSlot.OnItemChangedInternal += SlotContentChangedInternal;
                 _slots.Add(newSlot);
             }
@@ -114,20 +103,18 @@ namespace UZSG
                 CacheItem(context.NewItem, slot);
             }
 
-            _freeSlotsCounter = 0; /// reset to 0 lewl
             SlotContentChanged(slot, context);
         }
 
         protected virtual void SlotContentChanged(object sender, ItemSlot.ItemChangedContext context)
         {
-            OnSlotItemChanged?.Invoke(this, new()
-            {
-                Slot = (ItemSlot) sender
-            });
+            OnSlotItemChanged?.Invoke(this, context);
         }
 
         void CacheItem(Item item, ItemSlot slot)
         {
+            if (item.IsNone) return;
+            
             if (!_cachedIdSlots.TryGetValue(item.Id, out var hashset))
             {
                 hashset = new();
@@ -145,6 +132,8 @@ namespace UZSG
 
         void UncacheItem(Item item, ItemSlot slot)
         {
+            if (item.IsNone) return;
+
             if (_cachedIdSlots.TryGetValue(item.Id, out var hashset))
             {
                 hashset.Remove(slot);
@@ -167,42 +156,9 @@ namespace UZSG
                 }
             }
         }
-        
-        public virtual Item ViewItem(int slotIndex)
-        {
-            if (!Slots.IsValidIndex(slotIndex)) return Item.None;
-            return new(Slots[slotIndex].Item);
-        }
 
-        public virtual List<ItemSlot> FindItem(string id)
-        {
-            if (_cachedIdSlots.TryGetValue(id, out var slots))
-            {
-                return slots.ToList(); 
-            }
 
-            return new();
-        }
-
-        public virtual List<ItemSlot> FindItem(Item item)
-        {
-            if (_cachedIdSlots.TryGetValue(item.Data.Id, out var slots))
-            {
-                return slots.ToList(); 
-            }
-
-            return new();
-        }
-
-        [Obsolete("You are advised to use TryGetSlot() instead.")]
-        public ItemSlot GetSlot(int index)
-        {
-            if (!Slots.IsValidIndex(index))
-            {
-                return null;
-            }
-            return Slots[index];
-        }
+        #region Public methods
         
         public bool TryGetSlot(int index, out ItemSlot slot)
         {
@@ -215,6 +171,37 @@ namespace UZSG
             return true;
         }
 
+        public ItemSlot GetNearestEmptySlot()
+        {
+            if (IsFull) return null;
+
+            foreach (var slot in Slots)
+            {
+                if (slot.IsEmpty) return slot;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Extends this Container with another Container.
+        /// This is irreversible.
+        /// </summary>
+        public void Extend(Container other)
+        {
+            var slots = new List<ItemSlot>();
+            slots.AddRange(Slots);
+
+            foreach (var slot in other.Slots) /// Subscribe the new Slots to Container events
+            {
+                if (!slot.IsEmpty) CacheItem(slot.Item, slot);
+                slot.OnItemChangedInternal += SlotContentChangedInternal;
+            }
+
+            slots.AddRange(other.Slots); /// OGs are already subscribed :)
+            _slots = slots;
+        }
+
         public void ReadSaveJson(ContainerSaveData saveData)
         {
             throw new NotImplementedException();
@@ -224,5 +211,7 @@ namespace UZSG
         {
             throw new NotImplementedException();
         }
+
+        #endregion
     }
 }

@@ -1,14 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using UnityEngine;
+using MEC;
 
-using UZSG.Systems;
-using UZSG.Entities;
 using UZSG.Inventory;
 using UZSG.Items;
-using UZSG.UI;
 using UZSG.Data;
+using UZSG.Objects;
+using UZSG.Entities;
 
 namespace UZSG.Crafting
 {
@@ -17,23 +18,113 @@ namespace UZSG.Crafting
     /// </summary>
     public abstract class Crafter : MonoBehaviour
     {
+        Workstation workstation;
+        
+        int maxSimultaneousCrafts = 1;
+        int freeCraftSlots;
+        bool simultaneousCrafting = false;
+        bool autoCraftNext = true;
+
+        List<CraftingRoutine> routines = new();
+        public List<CraftingRoutine> Routines => routines;
+
         #region Events
 
         /// <summary>
-        /// Called when the crafter start crafting an Item.
-        /// </summary>
-        public event EventHandler<CraftingRoutine> OnCraftStart;
+        /// Called everytime the crafting routine notifies.
+        /// </summary>C
+        public event Action<CraftingRoutine> OnRoutineNotify;
         /// <summary>
         /// Called every second while the crafter crafts an Item.
+        /// <c>int</c> is total time elapsed.
         /// </summary>
-        public event EventHandler<CraftingRoutine> OnCraftSecondsss;
-        /// <summary>
-        /// Called when the crafter finishes crafting an Item.
-        /// </summary>
-        public event EventHandler<CraftingRoutine> OnCraftFinished;
+        public event Action<CraftingRoutine, int> OnRoutineSecond;
 
         #endregion
 
+
+        internal void Initialize(Workstation w)
+        {
+            this.workstation = w;
+            freeCraftSlots = w.WorkstationData.QueueSize;
+        }
+
+        public void CraftNewItem(ref CraftItemOptions options, bool begin = true)
+        {
+            var routine = new CraftingRoutine(options);
+            
+            routine.OnNotify += OnRoutineEventCall;
+            routine.OnCraftSecond += OnCraftSecond;
+
+            routines.Add(routine);
+            routine.Prepare();
+            if (begin && freeCraftSlots > 0)
+            {
+                CraftNext();
+            }
+        }
+
+        public void CraftNext()
+        {
+            if (!routines.Any()) return;
+
+            var nextRoutine = routines[0];
+            StartCoroutine(nextRoutine.StartCraftCoroutine());
+            freeCraftSlots--;
+        }
+
+        public void CancelIndex()
+        {
+
+        }
+
+        public void PauseAll()
+        {
+            
+        }
+
+
+        #region Crafting routine event callbacks
+
+        void OnRoutineEventCall(CraftingRoutine routine)
+        {            
+            if (routine.Status == CraftingRoutineStatus.Finished)
+            {
+                routines.Remove(routine);
+                routine.OnNotify -= OnRoutineEventCall;
+                routine.OnCraftSecond -= OnCraftSecond;
+                freeCraftSlots++;
+
+                if (autoCraftNext) CraftNext();
+            }
+
+            OnRoutineNotify?.Invoke(routine);
+        }
+
+        void OnCraftSecond(object sender, int timeElapsed)
+        {
+            OnRoutineSecond?.Invoke((CraftingRoutine) sender, timeElapsed);
+        }
+
+        #endregion
+
+        
+        // protected bool CheckMaterialAvailability(RecipeData recipe)
+        // {
+        //     foreach (Item material in recipe.Materials)
+        //     {
+        //         if (inputContainer.IdItemCount.TryGetValue(material.Id, out var count))
+        //         {
+        //             if (count < material.Count) return false; /// insufficient items
+        //         }
+        //         else /// item does not exist in the container
+        //         {
+        //             return false;
+        //         }
+        //     }
+
+        //     return true;
+        // }
 
         protected bool CheckMaterialAvailability(RecipeData recipe, Container input)
         {
@@ -43,7 +134,7 @@ namespace UZSG.Crafting
                 int totalItemCount = 0;
 
                 var tempSlots = new List<ItemSlot>();
-                totalItemCount += input.CountItem(material, out var slots);
+                totalItemCount += input.CountItem(material);
                 materialSlots.AddRange(tempSlots);
 
                 if (totalItemCount < material.Count)
@@ -113,14 +204,14 @@ namespace UZSG.Crafting
         protected void OnCraftSeconds(object sender, int secondsElapsed)
         {
             var _craftingInstanceSender = (CraftingRoutine) sender;
-            print($"Crafting: {_craftingInstanceSender.recipeData.Id} - {_craftingInstanceSender.TimeRemaining} seconds Remaining");
+            print($"Crafting: {_craftingInstanceSender.Recipe.Id} - {_craftingInstanceSender.SecondsLeft} seconds Remaining");
         }
 
-        protected void OnCraftFinish(object sender, CraftFinishedInfo unixTime)
+        protected void OnCraftFinish(object sender)
         {
             var _craftingInstanceSender = (CraftingRoutine) sender;
-            _craftingInstanceSender.output.TryPutNearest(new Item(_craftingInstanceSender.recipeData.Output));
-            _craftingInstanceSender.routineList.Remove(_craftingInstanceSender);
+            // _craftingInstanceSender.output.TryPutNearest(new Item(_craftingInstanceSender.Recipe.Output));
+            // _craftingInstanceSender.RoutineList.Remove(_craftingInstanceSender);
         }
     }
 }

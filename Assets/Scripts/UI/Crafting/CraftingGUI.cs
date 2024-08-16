@@ -1,83 +1,79 @@
 using System;
 using System.Collections.Generic;
 
-using UnityEditor.UI;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
 
 using UZSG.Crafting;
 using UZSG.Items;
 using UZSG.Systems;
-using UnityEngine.UI;
 using UZSG.Data;
 using UZSG.Inventory;
 using UZSG.Entities;
+using UZSG.Objects;
+
+using static UZSG.Crafting.CraftingRoutineStatus;
 
 namespace UZSG.UI
 {
-    public class CraftingGUI : WorkstationGUI
+    public class CraftingGUI : Window, IObjectGUI
     {
         Player player;
+        Workstation workstation;
 
         RecipeData _selectedRecipe;
+        public RecipeData SelectedRecipe => _selectedRecipe;
+        int _amountToCraft = 1;
+        public int AmountToCraft
+        {
+            get
+            {
+                return _amountToCraft;
+            }
+            set
+            {
+                _amountToCraft = value;
+                craftAmountInputField.text = $"{_amountToCraft}";
+            }
+        }
+
         Dictionary<string, CraftableItemUI> craftableItemUIs = new();
         List<MaterialCountUI> materialSlotUIs = new();
+        /// <summary>
+        /// Key is the Crafting Routine; Value is the UI element.
+        /// </summary>
+        Dictionary<CraftingRoutine, RadialProgressUI> _routineUIs = new();
+        List<ItemSlotUI> outputSlotUIs = new();
 
         [SerializeField] CraftedItemDisplayUI craftedItemDisplay;
         [SerializeField] RectTransform craftablesHolder;
         [SerializeField] RectTransform materialSlotsHolder;
-        [SerializeField] GameObject outputSlots;
+        [SerializeField] Transform queueSlotsHolder;
+        [SerializeField] Transform progressContainer;
+        [SerializeField] Transform outputSlotsHolder;
+        [SerializeField] TMP_InputField craftAmountInputField;
         [SerializeField] Button craftButton;
+
+        void Awake()
+        {
+            craftButton.onClick.AddListener(RequestCraftItem);
+        }
 
         /// <summary>
         /// Called when user clicks on a recipe, also referred here as a "Craftable Item".
         /// </summary>
         void OnClickCraftable(CraftableItemUI craftable)
         {
-            var selectedRecipe = craftable.RecipeData;
-            craftedItemDisplay.SetDisplayedRecipe(selectedRecipe);
-            DisplayMaterials(selectedRecipe);
-
-            if (PlayerHasMaterialsFor(selectedRecipe))
-            {
-                craftButton.interactable = true;
-            }
-            else
-            {
-                /// TODO, still interactable but prompt "Insufficient materials"
-                craftButton.interactable = false;
-            }
-
+            _selectedRecipe = craftable.RecipeData;
+            craftedItemDisplay.SetDisplayedRecipe(_selectedRecipe);
+            DisplayMaterials(_selectedRecipe);
             LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
         }
 
-        public void ResetDisplayed()
-        {
-            craftedItemDisplay.ResetDisplayed();
-            ClearCraftableItems();
-            ClearMaterialSlots();
-        }
 
-        public override void OnShow()
-        {
-            ResetDisplayed();
-
-            craftButton.onClick.AddListener(() =>
-            {
-                CraftItem();
-            });
-        }
-
-        public override void OnHide()
-        {
-            Unsubscribe();
-        }
-
-        void CraftItem()
-        {
-            // crafter.CraftItem(_selectedRecipe);
-        }
+        #region Public methods
 
         public void SetPlayer(Player player)
         {
@@ -85,8 +81,202 @@ namespace UZSG.UI
             // InitializePlayerEvents()
             player.Inventory.Bag.OnSlotItemChanged += OnPlayerBagItemChanged;
         }
+        
+        public void LinkWorkstation(Workstation workstation)
+        {
+            this.workstation = workstation;
 
-        void OnPlayerBagItemChanged(object sender, SlotItemChangedContext e)
+            CreateOutputSlotUIs(workstation.WorkstationData.OutputSize);
+            CreateQueueSlotUIs(workstation.WorkstationData.QueueSize);
+        }
+
+        public void IncrementAmountToCraft()
+        {
+            AmountToCraft++;
+        }
+
+        public void DecrementAmountToCraft()
+        {
+            AmountToCraft--;
+        }
+        
+        public void ResetDisplayed()
+        {
+            _selectedRecipe = null;
+            craftedItemDisplay.ResetDisplayed();
+            ClearCraftableItems();
+            ClearMaterialSlots();
+        }
+        
+        public override void OnShow()
+        {
+            ResetDisplayed();
+
+            if (workstation != null)
+            {
+                AddRecipes(workstation.WorkstationData.IncludedRecipes); /// by raw RecipeData
+                /// Situational by workstation
+                /// e.g., By Player recipes can also be crafted in Workbench (ofc if the Player knows it)
+                /// but not in smelting, etc. as said, situational
+                if (workstation.WorkstationData.IncludePlayerRecipes)
+                {
+                    AddRecipesById(player.SaveData.KnownRecipes); /// by raw Recipe Id. ID!!!!!!
+                }
+                workstation.OnCraft += OnWorkstationCraft;
+
+                /// Retrieve crafting routines
+                foreach (var r in workstation.Crafter.Routines)
+                {
+                    CreateRoutineProgressUI(r);
+                }
+            }
+        }
+
+        public override void OnHide()
+        {
+            player.Inventory.Bag.OnSlotItemChanged -= OnPlayerBagItemChanged;
+            this.player = null;
+
+            if (workstation != null)
+            {
+                workstation.OnCraft -= OnWorkstationCraft;
+            }
+
+            foreach (var ui in _routineUIs.Values)
+            {
+                Destroy(ui.gameObject);
+            }
+            _routineUIs.Clear();
+        }
+
+        #endregion
+
+
+        void CreateOutputSlotUIs(int size)
+        {
+            for (int i = 0; i < size; i++)
+            {
+                var slotUI = Game.UI.Create<ItemSlotUI>("Item Slot");
+                slotUI.name = $"Output Slot ({i})";
+                slotUI.transform.SetParent(outputSlotsHolder);
+                slotUI.Index = i;
+
+                slotUI.Link(workstation.OutputContainer[i]); /// link output container to UI
+                slotUI.OnMouseDown += OnOutputSlotClick;
+
+                slotUI.Show();
+                outputSlotUIs.Add(slotUI);
+            }
+        }
+        
+        void CreateQueueSlotUIs(int size)
+        {
+            for (int i = 0; i < size; i++)
+            {
+                var slotUI = Game.UI.Create<ItemSlotUI>("Item Slot");
+                slotUI.name = $"Queue Slot"; /// no index, they're shifting :P
+                slotUI.transform.SetParent(queueSlotsHolder);
+
+                // slotUI.OnMouseDown += OnQueueSlotClick; /// cancel craft
+
+                slotUI.Show();
+            }
+        }
+
+
+        #region Workstation callbacks
+
+        void OnWorkstationCraft(CraftingRoutine routine)
+        {
+            if (routine.Status == Prepared)
+            {
+                CreateRoutineProgressUI(routine);
+            }
+            else if (routine.Status == Started)
+            {
+                //
+            }
+            else if (routine.Status == Ongoing)
+            {
+                RefreshRoutineProgressUIs(routine);
+            }
+            else if (routine.Status == Finished)
+            {
+                var ui = _routineUIs[routine];
+                _routineUIs.Remove(routine);
+                Destroy(ui.gameObject);
+            }
+            else if (routine.Status == Canceled)
+            {
+                //
+            }
+        }
+        
+        void CreateRoutineProgressUI(CraftingRoutine routine)
+        {
+            var routineUI = Game.UI.Create<CraftingProgressUI>("Craft Progress UI");
+            var options = routine.Options;
+
+            routineUI.transform.SetParent(progressContainer, false);
+            routineUI.SetDisplayedItem(options.Recipe.Output);
+            routineUI.TotalTime = options.Recipe.DurationSeconds;
+            routineUI.Progress = routine.Progress;
+            _routineUIs[routine] = routineUI;
+        }
+
+        void Update()
+        {
+
+        }
+
+        void RefreshRoutineProgressUIs(CraftingRoutine routine)
+        {
+            if (_routineUIs.TryGetValue(routine, out var ui))
+            {
+                ui.Progress = routine.Progress;
+            }
+        }
+
+        #endregion
+
+
+        /// <summary>
+        /// Submit a request to the Workstation tied to this Crafting GUI to craft the recipe given the options.
+        /// </summary>
+        void RequestCraftItem()
+        {
+            if (_selectedRecipe == null)
+            {
+                throw new Exception("selected none recipe");
+            }
+            
+            #region TODO: inhibit negative values in the ui
+            #endregion
+            int maxTimes = Mathf.FloorToInt(_selectedRecipe.Output.Data.StackSize / _selectedRecipe.Yield);
+            var count = Math.Clamp(AmountToCraft, 1, maxTimes);
+            var options = new CraftItemOptions()
+            {
+                Recipe = _selectedRecipe,
+                Count = count,
+            };
+
+            workstation.TryCraft(ref options);
+        }
+
+        void OnOutputSlotClick(object sender, PointerEventData e)
+        {
+            var slot = ((ItemSlotUI) sender).ItemSlot;
+
+            if (e.button == PointerEventData.InputButton.Left)
+            {
+                if (slot.IsEmpty) return;
+                if (player.InventoryGUI.IsHoldingItem) return;
+
+                player.InventoryGUI.HoldItem(slot.TakeAll());
+            }
+        }
+
+        void OnPlayerBagItemChanged(object sender, ItemSlot.ItemChangedContext context)
         {
             //{
                 /// Update craftable list status
@@ -162,26 +352,16 @@ namespace UZSG.UI
 
         void UpdateCraftableStatusForPlayer(CraftableItemUI craftable)
         {
-            if (PlayerHasMaterialsFor(craftable.RecipeData))
+            if (player.Inventory.Bag.ContainsAll(craftable.RecipeData.Materials))
             {
-                craftable.Status = CraftableItemStatus.Craftable;
+                craftable.Status = CraftableItemStatus.CanCraft;
             }
             else
             {
-                craftable.Status = CraftableItemStatus.Uncraftable;
+                craftable.Status = CraftableItemStatus.CannotCraft;
             }
         }
 
-        bool PlayerHasMaterialsFor(RecipeData data)
-        {
-            foreach (var material in data.Materials)
-            {
-                if (!player.Inventory.Bag.IdItemCount.TryGetValue(material.Id, out int count)) return false;
-                if (count < material.Count) return false;
-            }
-
-            return true;
-        }
 
         void ClearCraftableItems()
         {
@@ -230,32 +410,6 @@ namespace UZSG.UI
                 Destroy(slot.gameObject);
             }
             materialSlotUIs.Clear();
-        }
-
-        public void InitializeCrafter(Crafter crafter)
-        {
-            Unsubscribe();
-            
-            crafter.OnCraftStart += OnCraftStart;
-        }
-
-        
-        #region Crafter event callbacks
-
-        void OnCraftStart(object sender, CraftingRoutine routine)
-        {
-            
-        }
-
-        #endregion
-
-
-        void Unsubscribe()
-        {
-            if (crafter == null) return;
-
-
-
         }
 
         #endregion

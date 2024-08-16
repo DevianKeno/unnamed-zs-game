@@ -16,7 +16,19 @@ namespace UZSG.UI
         public static Color Transparent => new(1f, 1f, 1f, 0f);
         public static Color Normal => new(0f, 0f, 0f, 0.5f);
         public static Color Hovered => new(0.2f, 0.2f, 0.2f, 0.5f);
+
+        public enum ClickType {
+            Pickup, Split, Clone
+        }
+
+        public struct ClickedContext
+        {
+            public ClickType ClickType { get; set; }
+            public PointerEventData PointerEventData { get; set; }
+        }
         
+        ItemSlot itemSlot;
+        public ItemSlot ItemSlot => itemSlot;
         [SerializeField] protected Item item = Item.None;
         public Item Item
         {
@@ -31,6 +43,12 @@ namespace UZSG.UI
         }
         public int Index;
 
+        [Space]
+        [SerializeField] protected Image image;
+        [SerializeField] protected TextMeshProUGUI indexTMP;
+        [SerializeField] protected ItemDisplayUI itemDisplayUI;
+        [SerializeField] protected Button button;
+
 
         #region Events
 
@@ -41,11 +59,6 @@ namespace UZSG.UI
 
         #endregion
 
-
-        [Space]
-        [SerializeField] protected Image image;
-        [SerializeField] protected TextMeshProUGUI indexTMP;
-        [SerializeField] protected ItemDisplayUI itemDisplayUI;
 
         protected virtual void OnValidate()
         {
@@ -66,6 +79,28 @@ namespace UZSG.UI
 
 
         #region Public methods
+
+        public override void OnShow()
+        {
+            if (itemSlot != null)
+            {
+                SetDisplayedItem(itemSlot.Item);
+            }
+        }
+
+        /// <summary>
+        /// Connects this Item Slot UI to given ItemSlot.        
+        /// </summary>
+        public void Link(ItemSlot slot)
+        {
+            itemSlot = slot;
+            slot.OnItemChanged += OnSlotItemChanged;
+        }
+
+        void OnSlotItemChanged(object sender, ItemSlot.ItemChangedContext e)
+        {
+            SetDisplayedItem(e.NewItem);
+        }
 
         public void SetDisplayedItem(Item item)
         {

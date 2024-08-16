@@ -13,6 +13,8 @@ namespace UZSG.Data
         public string WorkstationName;
         public AssetReference GUI;
         public bool IncludePlayerRecipes;
+        public int QueueSize;
+        public int OutputSize;
         public List<RecipeData> IncludedRecipes;
     }
 }

@@ -58,8 +58,8 @@ namespace UZSG.Entities
         public Vector3 Up => MainCamera.transform.up;
         public Vector3 EyeLevel => MainCamera.transform.position;
 
-        PlayerInventoryWindow invUI;
-        public PlayerInventoryWindow InventoryGUI => invUI;
+        PlayerInventoryUI invUI;
+        public PlayerInventoryUI InventoryGUI => invUI;
         PlayerHUDVitals _vitalsHUD;
         public PlayerHUDVitals VitalsHUD => _vitalsHUD;
         PlayerHUDInfo _infoHUD;
@@ -221,7 +221,7 @@ namespace UZSG.Entities
             // inventory.ReadSaveJson(new());
             // inventory.ReadSaveJson(saveData.Inventory);
 
-            invUI = Game.UI.Create<PlayerInventoryWindow>("Player Inventory", show: false);
+            invUI = Game.UI.Create<PlayerInventoryUI>("Player Inventory", show: false);
             invUI.Initialize(this);
 
             invUI.OnOpen += () =>

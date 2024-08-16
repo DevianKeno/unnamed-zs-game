@@ -145,6 +145,7 @@ MonoBehaviour:
   image: {fileID: 8132384543493191437}
   indexTMP: {fileID: 0}
   itemDisplayUI: {fileID: 6095100031986097828}
+  button: {fileID: 0}
   present: 0
   needed: 0
   countText: {fileID: 8626080680116665166}
@@ -216,8 +217,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 0/0
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 960afe1775a30704d9fa63d5796f15b7, type: 2}
+  m_sharedMaterial: {fileID: 7478795734260216624, guid: 960afe1775a30704d9fa63d5796f15b7, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

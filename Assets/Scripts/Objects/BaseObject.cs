@@ -11,19 +11,25 @@ namespace UZSG.Objects
         public ObjectData ObjectData => objectData;
         [SerializeField] AttributeCollection attributes;
         public AttributeCollection Attributes => attributes;
+        public bool HasAudio = false;
         [SerializeField] protected AudioSourceController audioController;
         public AudioSourceController Audio => audioController;
 
         protected virtual void Start()
         {
             InitializeAttributes();
-            Game.Audio.LoadAudioAssets(objectData.AudioAssetsData.AudioClips);
+            if (HasAudio) InitializeAudioController();
         }
 
         protected virtual void InitializeAttributes()
         {
             attributes = new();
             // attributes.InitializeFromData();
+        }
+        
+        protected virtual void InitializeAudioController()
+        {
+            audioController.LoadAudioAssetsData(objectData.AudioAssetsData);
         }
     }
 }

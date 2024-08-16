@@ -291,7 +291,7 @@ namespace UZSG.Players
             gotItem = Player.Inventory.Bag.TryPutNearest(item);
             if (gotItem)
             {
-                lookingAt = null;
+                    lookingAt = null;
                 OnPickupItem?.Invoke(item);
                 DestroyPickupedItem(itemEntity);
             }

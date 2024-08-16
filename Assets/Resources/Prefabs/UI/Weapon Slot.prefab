@@ -67,8 +67,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 9
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 960afe1775a30704d9fa63d5796f15b7, type: 2}
+  m_sharedMaterial: {fileID: 7478795734260216624, guid: 960afe1775a30704d9fa63d5796f15b7, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -225,14 +225,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rect: {fileID: 0}
-  AnimationFactor: 0.3
-  Item:
+  FadeDuration: 0.3
+  item:
     _itemData: {fileID: 0}
     _count: 0
   Index: 9
   image: {fileID: 3489798448610692726}
   indexTMP: {fileID: 1371347997584457696}
   itemDisplayUI: {fileID: 4358262817012527024}
+  button: {fileID: 0}
 --- !u!1001 &218314313446934649
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -335,6 +336,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4397969410178795938, guid: 69f9d656166c5f343947161e86d926db, type: 3}
       propertyPath: m_enableWordWrapping
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4574587701464950729, guid: 69f9d656166c5f343947161e86d926db, type: 3}
+      propertyPath: item._count
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5993031782858655458, guid: 69f9d656166c5f343947161e86d926db, type: 3}

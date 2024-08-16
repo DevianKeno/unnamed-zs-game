@@ -79,9 +79,9 @@ namespace UZSG.Entities.Vehicles
 
         private void Start()
         {
-            _moveInput = Game.Main.GetInputAction("Move", "Player Move");
+            _moveInput = Game.Main.GetInputAction("Move", "Vehicle Controls");
             _backInput = Game.Main.GetInputAction("Back", "Global");
-            _handbrakeInput = Game.Main.GetInputAction("Jump", "Player Move");
+            _handbrakeInput = Game.Main.GetInputAction("Jump", "Vehicle Controls");
             _switchInput = Game.Main.GetInputAction("Change Seat", "Player Actions");
             _carRigidbody = gameObject.GetComponent<Rigidbody>();
 
@@ -493,9 +493,9 @@ namespace UZSG.Entities.Vehicles
             _moveInput.started -= OnMoveInput;
             _moveInput.canceled -= OnMoveInput;
 
-            _handbrakeInput.performed += OnHandbrakeInput;
-            _handbrakeInput.started +=  OnHandbrakeInput;
-            _handbrakeInput.canceled += OnHandbrakeInput;
+            _handbrakeInput.performed -= OnHandbrakeInput;
+            _handbrakeInput.started -=  OnHandbrakeInput;
+            _handbrakeInput.canceled -= OnHandbrakeInput;
 
         }
 

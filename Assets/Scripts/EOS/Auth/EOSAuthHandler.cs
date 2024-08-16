@@ -21,28 +21,17 @@ namespace UZSG.EOS
         [SerializeField] Button signInBtn;
         [SerializeField] Button signOutBtn;
         [SerializeField] TextMeshProUGUI usernameTMP;
-        [SerializeField] TextMeshProUGUI greetingTMP;
         // [SerializeField] LoadingIconAnimation loadingIcon;
         
         void Awake()
         {
-            signInBtn.onClick.AddListener(OnSignInClick);
-            signOutBtn.onClick.AddListener(OnSignOutClick);
-        }
-
-        void Start()
-        {
-            SetUIForLogin();
+            signInBtn.onClick.AddListener(StartSignIn);
+            signOutBtn.onClick.AddListener(StartSignOut);
         }
 
         #region Login flow
-        public void OnSignInClick()
-        {
-            // devAuthWindow = Game.UI.Create<DevAuthWindow>("dev_auth_window");
-            // devAuthWindow.OnSignInBtnClick += OnStartLogin;
-        }
-
-        void OnStartLogin()
+        
+        void StartSignIn()
         {
             // devAuthWindow.OnSignInBtnClick -= OnStartLogin;
 
@@ -54,7 +43,6 @@ namespace UZSG.EOS
 
             SetAccountDisplayForLoading();
             usernameTMP.text = "Signing in...";
-            greetingTMP.gameObject.SetActive(false);
 
             var authType = LoginCredentialType.AccountPortal;//devAuthWindow.GetLoginType();
             if (authType == LoginCredentialType.AccountPortal)
@@ -76,7 +64,7 @@ namespace UZSG.EOS
             }
             else if (authType == LoginCredentialType.ExternalAuth)
             {
-                ConnectWithDiscord();
+                // ConnectWithDiscord();
             }
             else
             {
@@ -107,7 +95,7 @@ namespace UZSG.EOS
             if (info.ResultCode == Result.Success)
             {
                 // devAuthWindow.Destroy();
-                SetAccountDisplayForLogout();
+                // SetAccountDisplayForLogout();
 
                 var options = new QueryProductUserIdMappingsOptions()
                 {
@@ -154,11 +142,10 @@ namespace UZSG.EOS
 
 
         #region Logout flow
-        public void OnSignOutClick()
+        public void StartSignOut()
         {
             SetAccountDisplayForLoading();
             usernameTMP.text = "Logging out...";
-            greetingTMP.gameObject.SetActive(false);
 
             var options = new Epic.OnlineServices.Connect.LogoutOptions()
             {
@@ -225,28 +212,6 @@ namespace UZSG.EOS
             // loadingIcon.gameObject.SetActive(false); 
         }
 
-        void ConnectWithDiscord()
-        {
-            // if (Game.EOSManagers.Discord == null)
-            // {
-            //     Debug.LogError("Connect Login failed: DiscordManager unavailable");
-            //     SetUIForLogin();
-            //     return;
-            // }
-            // Game.EOSManagers.Discord.RequestOAuth2Token(OnDiscordAuthReceived);
-        }
-
-        void OnDiscordAuthReceived(string token)
-        {
-            if (token == null)
-            {
-                Debug.LogError("Connect Login failed: Unable to get Discord OAuth2 token");
-                SetUIForLogin();
-                return;
-            }
-            Game.EOS.StartConnectLoginWithOptions(ExternalCredentialType.DiscordAccessToken, token, onloginCallback: ConnectLoginTokenCallback);
-        }
-
         void ConnectLoginTokenCallback(Epic.OnlineServices.Connect.LoginCallbackInfo connectLoginCallbackInfo)
         {
             if (connectLoginCallbackInfo.ResultCode == Result.Success)
@@ -306,13 +271,11 @@ namespace UZSG.EOS
         public void SetDisplayedAccount(ExternalAccountInfo info)
         {
             usernameTMP.text = info.DisplayName;
-            greetingTMP.gameObject.SetActive(true);
         }
 
         public void SetDisplayedAccount(UserInfoData info)
         {
             usernameTMP.text = info.DisplayName;
-            greetingTMP.gameObject.SetActive(true);
         }
     }
 }

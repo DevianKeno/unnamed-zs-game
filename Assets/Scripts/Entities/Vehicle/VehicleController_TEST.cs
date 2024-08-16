@@ -56,7 +56,7 @@ public class VehicleController_TEST : MonoBehaviour
             if (Input.GetKey(KeyCode.W))
             {
                 // Accelerate forward
-                currentSpeed = Mathf.Min(currentSpeed + vehicle.Vehicle.AccelerationRate * Time.deltaTime, vehicle.Vehicle.MaxSpeed);
+                currentSpeed = Mathf.Min(currentSpeed + vehicle.Vehicle.decelerationMultiplier * Time.deltaTime, vehicle.Vehicle.maxSpeed);
                 vehicleForward = vehicle.transform.forward; // Update vehicleForward based on current rotation
                 vehicle.transform.position += vehicleForward * currentSpeed * Time.deltaTime;
 
@@ -80,14 +80,14 @@ public class VehicleController_TEST : MonoBehaviour
             else if (Input.GetKey(KeyCode.S))
             {
                 // Decelerate (reverse) if moving forward
-                currentSpeed = Mathf.Min(currentSpeed - vehicle.Vehicle.AccelerationRate * Time.deltaTime, vehicle.Vehicle.MaxSpeed);
+                currentSpeed = Mathf.Min(currentSpeed - vehicle.Vehicle.decelerationMultiplier * Time.deltaTime, vehicle.Vehicle.maxSpeed); // note to charles, tinanggal ko lang error, baka pede na tanggalin tong script na to? idk
                 vehicleForward = vehicle.transform.forward; // Update vehicleForward based on current rotation
                 vehicle.transform.position -= vehicleForward * currentSpeed * Time.deltaTime;
             }
             else
             {
                 // Decelerate to stop when no key is pressed
-                currentSpeed = Mathf.MoveTowards(currentSpeed, 0, vehicle.Vehicle.AccelerationRate * Time.deltaTime);
+                currentSpeed = Mathf.MoveTowards(currentSpeed, 0, vehicle.Vehicle.decelerationMultiplier * Time.deltaTime);
             }
         }
     }

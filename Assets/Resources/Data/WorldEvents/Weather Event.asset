@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   worldEvents:
     Type: 0
-    Active: 1
+    Active: 0
     AllowMultipleEvents: 0
     ChanceToOccur: 60
     OccurEverySecond: 2

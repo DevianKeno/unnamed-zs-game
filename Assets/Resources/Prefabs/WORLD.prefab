@@ -1891,7 +1891,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weatherController: {fileID: 748351840908937241}
   raidController: {fileID: 5666756653608356092}
-  InternalCountdown: 0
+  InternalClock: 0
   _countdown: 0
   WorldEvents: []
 --- !u!1 &6093328137344702639

@@ -2178,12 +2178,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5668126680943736175, guid: 045083471b927524cb2dc0f04bb61987, type: 3}
       propertyPath: WorldEvents.Array.size
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5668126680943736175, guid: 045083471b927524cb2dc0f04bb61987, type: 3}
       propertyPath: WorldEvents.Array.data[0]
       value: 
       objectReference: {fileID: 11400000, guid: 9183865816007fe4fa368808859ae3b4, type: 2}
+    - target: {fileID: 5668126680943736175, guid: 045083471b927524cb2dc0f04bb61987, type: 3}
+      propertyPath: WorldEvents.Array.data[1]
+      value: 
+      objectReference: {fileID: 11400000, guid: 20bc5c99b4fe9a14f9d1a9c499583a11, type: 2}
     - target: {fileID: 7563140517493066066, guid: 045083471b927524cb2dc0f04bb61987, type: 3}
       propertyPath: m_Color.b
       value: 0.0009803546

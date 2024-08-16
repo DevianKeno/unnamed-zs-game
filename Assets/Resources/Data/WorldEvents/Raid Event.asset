@@ -16,8 +16,8 @@ MonoBehaviour:
     Type: 2
     Active: 1
     AllowMultipleEvents: 1
-    ChanceToOccur: 20
-    OccurEverySecond: 10
+    ChanceToOccur: 80
+    OccurEverySecond: 2
     EventPrefab:
     - Name: Skinwalker
       Prefab: {fileID: 0}

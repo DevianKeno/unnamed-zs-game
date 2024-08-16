@@ -1234,9 +1234,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SiteRange: 12
   AttackRange: 1
+  CritterSiteRange: 20
   EnemyLayer:
     serializedVersion: 2
     m_Bits: 16384
+  WildlifeLayer:
+    serializedVersion: 2
+    m_Bits: 65536
 --- !u!54 &8394152581638175708
 Rigidbody:
   m_ObjectHideFlags: 0

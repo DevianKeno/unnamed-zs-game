@@ -5,10 +5,10 @@ using UZSG.Players;
 
 namespace UZSG.Entities
 {
-    public enum WildLifeActionStates {
+    public enum WildlifeActionStates {
         Roam, RunAway, Die
     }
-    public class WildLifeActionStatesMachine : StateMachine<WildLifeActionStates>
+    public class WildlifeActionStatesMachine : StateMachine<WildlifeActionStates>
     {
         
     }

@@ -26,8 +26,6 @@ namespace UZSG.Entities
         public override void OnSpawn()
         {
             base.OnSpawn();
-            
-            InitializeHitboxEvents();
         }
     }
 }

@@ -203,18 +203,36 @@ MonoBehaviour:
   entityData: {fileID: 11400000, guid: 3bbb12e3042059d4abbf8d40af48316c, type: 2}
   audioSourceController: {fileID: 0}
   AttackRange: 0.5
-  RoamRadius: 4
-  RoamInterval: 2
+  HealthAttri:
+    data: {fileID: 0}
+    value: 0
+    baseMaximum: 0
+    multiplier: 0
+    flatBonus: 0
+    LimitOverflow: 0
+    LimitUnderflow: 0
+  _health: 0
+  hasTargetInSite: 0
+  hasTargetInAttack: 0
+  isDead: 0
   RoamTime: 3
+  _roamRadius: 0
+  _roamInterval: 0
+  _distanceFromPlayer: 0
+  _speed: 0
+  _siteRadius: 0
+  _attackRadius: 0
   enemyStateMachine: {fileID: 5533417015105148321}
   _enemyEntity: {fileID: 2040430638346997429}
   PlayerLayer:
     serializedVersion: 2
     m_Bits: 256
+  animator: {fileID: 0}
+  Hordetransform: {fileID: 0}
   defaultPath: 
   defaultData:
-    GenericAttributes: []
-  generic:
+    Attributes: []
+  attributes:
     attributes: []
 --- !u!114 &6820198976887448944
 MonoBehaviour:
@@ -958,7 +976,7 @@ Transform:
   m_LocalRotation: {x: -0.21943837, y: 0.1702366, z: 0.08124329, w: 0.95721775}
   m_LocalPosition: {x: 0.0000054836273, y: 9.519659, z: 2.181923}
   m_LocalScale: {x: 0.9999999, y: 1, z: 0.9999999}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 5977715224649389227}
   - {fileID: 7551563900620026676}
@@ -1244,7 +1262,7 @@ Transform:
   m_LocalRotation: {x: -0.4059437, y: -0.06358904, z: -0.009524846, w: 0.9116334}
   m_LocalPosition: {x: 0.0000011920929, y: 46.627052, z: 0}
   m_LocalScale: {x: 0.9999999, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 8976751180276128231}
   m_Father: {fileID: 4817305478679688593}

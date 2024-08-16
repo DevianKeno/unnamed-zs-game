@@ -69,6 +69,7 @@ namespace UZSG.Entities.Vehicles
         float _localVelocityX;
         bool _deceleratingCar;
 
+        bool _isMoving;
         Vector2 _driverInput;
 
         private void Awake()
@@ -100,31 +101,31 @@ namespace UZSG.Entities.Vehicles
                 HandlePlayerPosition();
 
                 // Vehicle Controls
-                if (Input.GetAxis("Vertical") == 1 || Input.GetKey(KeyCode.W))
+                if (_driverInput.y > 0)
                 {
                     CancelInvoke("DecelerateVehicle");
                     _deceleratingCar = false;
                     HandleGas();
                 }
-                if (Input.GetAxis("Vertical") == -1 || Input.GetKey(KeyCode.S))
+                if (_driverInput.y < 0)
                 {
                     CancelInvoke("DecelerateVehicle");
                     _deceleratingCar = false;
                     HandleReverse();
                 }
-                if (Input.GetAxis("Horizontal") == -1 || Input.GetKey(KeyCode.A))
+                if (_driverInput.x < 0)
                 {
                     HandleLeftSteer();
                 }
-                if (Input.GetAxis("Horizontal") == 1 || Input.GetKey(KeyCode.D))
+                if (_driverInput.x > 0)
                 {
                     HandleRightSteer();
                 }
-                if ((!Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.W)) || (Input.GetAxis("Vertical") == 0))
+                if (_driverInput.y == 0)
                 {
                     ThrottleOff();
                 }
-                if ((!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D) || (Input.GetAxis("Horizontal") == -1) || (Input.GetAxis("Horizontal") == 1)) && _steeringAxis != 0f)
+                if ((_driverInput.x == 0) && _steeringAxis != 0f)
                 {
                     ResetSteeringAngle();
                 }
@@ -167,7 +168,6 @@ namespace UZSG.Entities.Vehicles
                     float _availableTorque = powerCurve.Evaluate(_normalizedSpeed) * 10;
                     powerToWheels = (_availableTorque * 150f) * _throttleAxis;
 
-                    print(powerToWheels);
 
                     Drivetrain(powerToWheels);
                 }
@@ -428,12 +428,14 @@ namespace UZSG.Entities.Vehicles
 
         public void EnableVehicleControls()
         {
+            _moveInput.performed += OnMoveInput;
             _moveInput.started += OnMoveInput;
             _moveInput.canceled += OnMoveInput;
         }
 
         public void DisableVehicleControls()
         {
+            _moveInput.performed -= OnMoveInput;
             _moveInput.started -= OnMoveInput;
             _moveInput.canceled -= OnMoveInput;
         }

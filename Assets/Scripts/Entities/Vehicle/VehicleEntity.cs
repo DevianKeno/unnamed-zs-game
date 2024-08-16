@@ -18,6 +18,7 @@ namespace UZSG.Entities
 
 
         #region Vehicle Seats
+        [Header("Vehicle Seats")]
         public Player Driver; // driver of the vehicle
         public List<Player> Passengers; // passenger of the vehicle
         public List<Transform> Seats; // transform of the seats of the vehicle
@@ -27,6 +28,7 @@ namespace UZSG.Entities
         Transform _playerParent; // refers to the parent of the player in the game world
         #endregion
 
+        [Header("Vehicle Parts")]
         public GameObject Model;
         public List<WheelCollider> FrontVehicleWheels;
         public List<WheelCollider> RearVehicleWheels;
@@ -210,6 +212,7 @@ namespace UZSG.Entities
                 Passengers[Passengers.IndexOf(player)] = null;
             }
             _vehicleController.DisableGeneralVehicleControls();
+            player.Controls.SetControl("Jump", true);
         }
     }
 }

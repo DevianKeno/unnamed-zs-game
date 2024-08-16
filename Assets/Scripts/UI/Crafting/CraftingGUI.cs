@@ -44,7 +44,7 @@ namespace UZSG.UI
         /// <summary>
         /// Key is the Crafting Routine; Value is the UI element.
         /// </summary>
-        Dictionary<CraftingRoutine, RadialProgressUI> _routineUIs = new();
+        Dictionary<CraftingRoutine, CraftingProgressUI> _routineUIs = new();
         List<ItemSlotUI> outputSlotUIs = new();
 
         [SerializeField] CraftedItemDisplayUI craftedItemDisplay;
@@ -59,6 +59,7 @@ namespace UZSG.UI
         void Awake()
         {
             craftButton.onClick.AddListener(RequestCraftItem);
+            craftAmountInputField.onEndEdit.AddListener(UpdateAmountToCraft);
         }
 
         /// <summary>
@@ -218,9 +219,7 @@ namespace UZSG.UI
             var options = routine.Options;
 
             routineUI.transform.SetParent(progressContainer, false);
-            routineUI.SetDisplayedItem(options.Recipe.Output);
-            routineUI.TotalTime = options.Recipe.DurationSeconds;
-            routineUI.Progress = routine.Progress;
+            routineUI.SetCraftingRoutine(routine);
             _routineUIs[routine] = routineUI;
         }
 
@@ -234,6 +233,7 @@ namespace UZSG.UI
             if (_routineUIs.TryGetValue(routine, out var ui))
             {
                 ui.Progress = routine.Progress;
+                ui.ProgressSingle = routine.ProgressSingle;
             }
         }
 
@@ -263,16 +263,29 @@ namespace UZSG.UI
             workstation.TryCraft(ref options);
         }
 
-        void OnOutputSlotClick(object sender, PointerEventData e)
+        void UpdateAmountToCraft(string value)
         {
-            var slot = ((ItemSlotUI) sender).ItemSlot;
+            int maxTimes = Mathf.FloorToInt(_selectedRecipe.Output.Data.StackSize / _selectedRecipe.Yield);
+            AmountToCraft = Math.Clamp(AmountToCraft, 1, maxTimes);
+        }
 
-            if (e.button == PointerEventData.InputButton.Left)
+        void OnOutputSlotClick(object sender, ItemSlotUI.ClickedContext ctx)
+        {
+            var slot = ((ItemSlotUI) sender).Slot;
+
+            if (ctx.Pointer.button == PointerEventData.InputButton.Left)
             {
                 if (slot.IsEmpty) return;
                 if (player.InventoryGUI.IsHoldingItem) return;
 
-                player.InventoryGUI.HoldItem(slot.TakeAll());
+                if (ctx.ClickType == ItemSlotUI.ClickType.FastDeposit)
+                {
+                    player.Inventory.Bag.TryPutNearest(slot.TakeAll());
+                }
+                else
+                {
+                    player.InventoryGUI.HoldItem(slot.TakeAll());
+                }
             }
         }
 

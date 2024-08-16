@@ -137,7 +137,7 @@ namespace UZSG.UI
             actionMap = Game.Main.GetActionMap("Inventory");
             inputs = Game.Main.GetActionsFromMap(actionMap);
 
-            inputs["Shift Click"].performed += (context) =>
+            inputs["Shift"].performed += (context) =>
             {
                 _isHoldingShift = context.ReadValue<float>() > 0; /// unsure
             };
@@ -276,22 +276,22 @@ namespace UZSG.UI
             _bagSlotUIs[e.ItemSlot.Index].SetDisplayedItem(e.ItemSlot.Item);
         }
 
-        void OnBagSlotHoverStart(object sender, PointerEventData e)
+        void OnBagSlotHoverStart(object sender, ItemSlotUI.ClickedContext e)
         {
             var slot = sender as ItemSlotUI;
             selector.Select(slot.transform as RectTransform);
         }
 
-        void OnBagSlotHoverEnd(object sender, PointerEventData e)
+        void OnBagSlotHoverEnd(object sender, ItemSlotUI.ClickedContext e)
         {
         }
 
-        void OnBagSlotClick(object sender, PointerEventData e)
+        void OnBagSlotClick(object sender, ItemSlotUI.ClickedContext e)
         {
             _selectedSlotUI = (ItemSlotUI) sender;
             _selectedSlot = Inventory.Bag[_selectedSlotUI.Index];
 
-            if (e.button == PointerEventData.InputButton.Left)
+            if (e.Pointer.button == PointerEventData.InputButton.Left)
             {
                 DestroyItemOptions();
 
@@ -320,7 +320,7 @@ namespace UZSG.UI
                     _lastSelectedSlotIndex = _selectedSlot.Index;
                 }
             }
-            else if (e.button == PointerEventData.InputButton.Right)
+            else if (e.Pointer.button == PointerEventData.InputButton.Right)
             {
                 if (_isHoldingItem) /// put 1 to selected slot
                 {

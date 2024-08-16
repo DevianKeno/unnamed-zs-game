@@ -7,6 +7,8 @@ using TMPro;
 
 using UZSG.Items;
 using UZSG.Inventory;
+using UnityEngine.InputSystem;
+using UZSG.Systems;
 
 namespace UZSG.UI
 {
@@ -18,17 +20,17 @@ namespace UZSG.UI
         public static Color Hovered => new(0.2f, 0.2f, 0.2f, 0.5f);
 
         public enum ClickType {
-            Pickup, Split, Clone
+            Pickup, Split, FastDeposit, Clone
         }
 
         public struct ClickedContext
         {
             public ClickType ClickType { get; set; }
-            public PointerEventData PointerEventData { get; set; }
+            public PointerEventData Pointer { get; set; }
         }
         
-        ItemSlot itemSlot;
-        public ItemSlot ItemSlot => itemSlot;
+        ItemSlot slot;
+        public ItemSlot Slot => slot;
         [SerializeField] protected Item item = Item.None;
         public Item Item
         {
@@ -52,10 +54,10 @@ namespace UZSG.UI
 
         #region Events
 
-        public event EventHandler<PointerEventData> OnMouseDown;
-        public event EventHandler<PointerEventData> OnMouseUp;
-        public event EventHandler<PointerEventData> OnHoverStart;
-        public event EventHandler<PointerEventData> OnHoverEnd;
+        public event EventHandler<ClickedContext> OnMouseDown,
+            OnMouseUp,
+            OnHoverStart, 
+            OnHoverEnd;
 
         #endregion
 
@@ -82,9 +84,9 @@ namespace UZSG.UI
 
         public override void OnShow()
         {
-            if (itemSlot != null)
+            if (slot != null)
             {
-                SetDisplayedItem(itemSlot.Item);
+                SetDisplayedItem(slot.Item);
             }
         }
 
@@ -93,7 +95,7 @@ namespace UZSG.UI
         /// </summary>
         public void Link(ItemSlot slot)
         {
-            itemSlot = slot;
+            this.slot = slot;
             slot.OnItemChanged += OnSlotItemChanged;
         }
 
@@ -124,24 +126,47 @@ namespace UZSG.UI
 
         public void OnPointerEnter(PointerEventData e)
         {
+            var context = new ClickedContext()
+            {
+                Pointer = e
+            };
+
             image.color = Hovered;
-            OnHoverStart?.Invoke(this, e);
+            OnHoverStart?.Invoke(this, context);
         }
 
         public void OnPointerExit(PointerEventData e)
         {
             Reset();
-            OnHoverEnd?.Invoke(this, e);
+            var context = new ClickedContext()
+            {
+                Pointer = e
+            };
+            OnHoverEnd?.Invoke(this, context);
         }
 
         public void OnPointerDown(PointerEventData e)
         {
-            OnMouseDown?.Invoke(this, e);
+            var context = new ClickedContext()
+            {
+                Pointer = e
+            };
+
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
+                context.ClickType = ClickType.FastDeposit;
+            }
+
+            OnMouseDown?.Invoke(this, context);
         }
 
         public void OnPointerUp(PointerEventData e)
         {
-            OnMouseUp?.Invoke(this, e);
+            var context = new ClickedContext()
+            {
+                Pointer = e
+            };
+            OnMouseUp?.Invoke(this, context);
         }
     }
 }

@@ -225,7 +225,7 @@ namespace UZSG.Objects
             }
         }
 
-        void OnRoutineSecond(CraftingRoutine routine, int timeElapsed)
+        void OnRoutineSecond(CraftingRoutine routine, float timeElapsed)
         {
             
         }

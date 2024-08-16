@@ -70,7 +70,7 @@ MonoBehaviour:
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
-  m_FillAmount: 1
+  m_FillAmount: 0.66999996
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
@@ -140,7 +140,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 30
+  m_text: 20
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 960afe1775a30704d9fa63d5796f15b7, type: 2}
   m_sharedMaterial: {fileID: 7478795734260216624, guid: 960afe1775a30704d9fa63d5796f15b7, type: 2}
@@ -279,7 +279,7 @@ MonoBehaviour:
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
-  m_FillAmount: 0
+  m_FillAmount: 0.66
   m_FillClockwise: 0
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
@@ -354,7 +354,7 @@ MonoBehaviour:
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
-  m_FillAmount: 0
+  m_FillAmount: 0.33
   m_FillClockwise: 0
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
@@ -455,14 +455,14 @@ MonoBehaviour:
   rect: {fileID: 0}
   FadeDuration: 0.3
   TotalTime: 30
-  TimeElapsed: 0
-  progress: 0
+  TimeElapsed: 9.900001
+  progress: 0.33
   fillInner: {fileID: 7923432395408976191}
   fillOuter: {fileID: 7113449821818616568}
   timeText: {fileID: 6336049840102730671}
-  TimeSingle: 3
+  TimeSingle: 10.55
   TimeElapsedSingle: 0
-  ProgressSingle: 0
+  progressSingle: 0.66
   itemDisplayUI: {fileID: 6416588923663086198}
   fillSingle: {fileID: 4295188001814682576}
 --- !u!1001 &7381539323404129727

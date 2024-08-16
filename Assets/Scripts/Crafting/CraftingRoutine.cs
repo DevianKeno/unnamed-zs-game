@@ -15,17 +15,35 @@ namespace UZSG.Crafting
         protected RecipeData recipe;
         public RecipeData Recipe => recipe;
         public CraftingRoutineStatus Status { get; set; }
-        public DateTime StartTime { get; set ;}
-        public DateTime EndTime { get; set ;}
-        // public List<Item> MaterialSets;
-        // public List<CraftingRoutine> RoutineList = new();
-        // public Container output;
-        public int SecondsElapsed { get; protected set; }
-        public int SecondsLeft => (int) Recipe.DurationSeconds - SecondsElapsed;
+        public DateTime StartTime { get; set;}
+        public DateTime EndTime { get; set;}
+        
         /// <summary>
-        /// 0-1
+        /// Seconds elapsed for the entire Crafting Routine.
         /// </summary>
-        public float Progress =>  SecondsElapsed / recipe.DurationSeconds;
+        public float SecondsElapsed { get; protected set; }
+        /// <summary>
+        /// Seconds left for the entire Crafting Routine.
+        /// </summary>
+        public float SecondsLeft => (int) Recipe.DurationSeconds * TotalYield - SecondsElapsed;
+        /// <summary>
+        /// Progress of the entire Crafting Routine. [0-1]
+        /// </summary>
+        public float Progress =>  (float)SecondsElapsed / (recipe.DurationSeconds * TotalYield);
+
+        /// <summary>
+        /// Seconds elapsed for one single craft in this Crafting Routine.
+        /// </summary>
+        public float SecondsElapsedSingle { get; protected set; }
+        /// <summary>
+        /// Seconds left for one single craft in this Crafting Routine.
+        /// </summary>
+        public float SecondsLeftSingle => (int) Recipe.DurationSeconds - SecondsElapsedSingle;
+        /// <summary>
+        /// Progress of a single crafted Item. [0-1]
+        /// </summary>
+        public float ProgressSingle => (float)SecondsElapsedSingle / recipe.DurationSeconds;
+        
         public int CurrentYield { get; protected set; } 
         public int RemainingYield { get; protected set; }
         public int TotalYield { get; protected set; }
@@ -34,14 +52,10 @@ namespace UZSG.Crafting
         protected ItemSlot outputSlot;
         public bool IsFueled { get; internal set; } 
 
-
         #region Events
         
         public event Action<CraftingRoutine> OnNotify;
-        /// <summary>
-        /// <c>int</c> is time remaining. /// pls change into formattable (4:20, 55)
-        /// </summary>
-        public event EventHandler<int> OnCraftSecond;
+        public event EventHandler<float> OnCraftSecond;
         public event EventHandler OnFuelCheck;
 
         #endregion
@@ -54,7 +68,7 @@ namespace UZSG.Crafting
             // this.output = conf.Output;
             // this.RoutineList = conf.RoutineList;
         }
-
+        
         public CraftingRoutine(CraftItemOptions options)
         {
             this.options = options;
@@ -79,19 +93,23 @@ namespace UZSG.Crafting
             SecondsElapsed = 0;
             CurrentYield = 0;
             RemainingYield = TotalYield;
-            for (int i = CurrentYield; i < TotalYield; i++)
+
+            for (int i = 0; i < TotalYield; i++)
             {
                 Status = CraftingRoutineStatus.Ongoing;
+                SecondsElapsedSingle = 0;
 
-                while (SecondsElapsed < Recipe.DurationSeconds)
+                while (SecondsElapsedSingle < Recipe.DurationSeconds)
                 {
                     if (IsFueled)
                     {
-                        OnFuelCheck?.Invoke(this, new());
+                        OnFuelCheck?.Invoke(this, EventArgs.Empty);
                     }
 
-                    yield return new WaitForSeconds(1f);
-                    SecondsElapsed++;
+                    yield return new WaitForSeconds(0.1f);
+                    SecondsElapsedSingle += 0.1f;
+                    SecondsElapsed += 0.1f;
+                    OnCraftSecond?.Invoke(this, SecondsLeftSingle);
                     OnNotify?.Invoke(this);
                 }
 
@@ -113,4 +131,3 @@ namespace UZSG.Crafting
         }
     }
 }
-

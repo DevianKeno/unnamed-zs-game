@@ -60,7 +60,17 @@ namespace UZSG.Items
         {
             _itemData = Game.Items.GetData(id);
             _count = Math.Clamp(count, 0, EnsureStackSizeNotZero(_itemData.StackSize));
-        }  
+        }
+                        
+        /// <summary>
+        /// Create a copy of the Item.
+        /// </summary>
+        public Item(Item other)
+        {
+            _itemData = other.Data;
+            int stack = other.IsNone ? 0 : _itemData.StackSize;
+            _count = Math.Clamp(other.Count, 0, EnsureStackSizeNotZero(stack));
+        }
                         
         /// <summary>
         /// Create a copy of the Item with a new count.

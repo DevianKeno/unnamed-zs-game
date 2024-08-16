@@ -3,6 +3,8 @@ using UnityEngine.UI;
 using TMPro;
 
 using UZSG.Items;
+using UZSG.Crafting;
+using System;
 
 namespace UZSG.UI
 {
@@ -13,14 +15,42 @@ namespace UZSG.UI
         public float TimeElapsedSingle;
 
         [Range(0, 1)]
-        public float ProgressSingle;
+        [SerializeField] protected float progressSingle;
+        public float ProgressSingle
+        {
+            get
+            {
+                return progressSingle;
+            }
+            set
+            {
+                progressSingle = Mathf.Clamp(value, 0, 1);
+                RefreshSingle();
+            }
+        }
 
         [SerializeField] protected ItemDisplayUI itemDisplayUI;
         [SerializeField] protected Image fillSingle;
         
-        public void SetDisplayedItem(Item item)
+        
+        protected override void OnValidate()
         {
-            itemDisplayUI.SetDisplayedItem(item);
+            base.OnValidate();
+
+            RefreshSingle();
+        }
+
+        public void RefreshSingle()
+        {
+            fillSingle.fillAmount = ProgressSingle;
+        }
+
+        public void SetCraftingRoutine(CraftingRoutine routine)
+        {
+            itemDisplayUI.SetDisplayedItem(routine.Recipe.Output);
+            TotalTime = routine.Recipe.DurationSeconds * routine.TotalYield;
+            Progress = routine.Progress;
+            ProgressSingle = routine.ProgressSingle;
         }
     }
 }

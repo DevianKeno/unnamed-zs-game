@@ -85,25 +85,25 @@ namespace UZSG.UI.HUD
             _hotbarSlotUIs[hotbarOffset].SetDisplayedItem(e.ItemSlot.Item);
         }
 
-        void OnStartHoverSlot(object sender, PointerEventData e)
+        void OnStartHoverSlot(object sender, ItemSlotUI.ClickedContext e)
         {
             
         }
 
-        void OnEndHoverSlot(object sender, PointerEventData e)
+        void OnEndHoverSlot(object sender, ItemSlotUI.ClickedContext e)
         {
             
         }
 
-        void OnClickHotbarSlot(object sender, PointerEventData e)
+        void OnClickHotbarSlot(object sender, ItemSlotUI.ClickedContext e)
         {
             ItemSlotUI slotUI = (ItemSlotUI) sender;
             // _selectedSlot = inventory.Bag[slotUI.Index];
 
-            if (e.button == PointerEventData.InputButton.Left)
+            if (e.Pointer.button == PointerEventData.InputButton.Left)
             {
 
-            } else if (e.button == PointerEventData.InputButton.Right)
+            } else if (e.Pointer.button == PointerEventData.InputButton.Right)
             {
 
             }

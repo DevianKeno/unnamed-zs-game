@@ -48,7 +48,6 @@ namespace UZSG.UI
             
             fillInner.fillAmount = 1 - progress;
             fillOuter.fillAmount = progress;
-
         }
 
         void UpdateTime()

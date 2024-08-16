@@ -21,7 +21,7 @@ namespace UZSG.Crafting
         Workstation workstation;
         
         int maxSimultaneousCrafts = 1;
-        int freeCraftSlots;
+        int availableCraftSlots;
         bool simultaneousCrafting = false;
         bool autoCraftNext = true;
 
@@ -38,7 +38,7 @@ namespace UZSG.Crafting
         /// Called every second while the crafter crafts an Item.
         /// <c>int</c> is total time elapsed.
         /// </summary>
-        public event Action<CraftingRoutine, int> OnRoutineSecond;
+        public event Action<CraftingRoutine, float> OnRoutineSecond;
 
         #endregion
 
@@ -46,7 +46,7 @@ namespace UZSG.Crafting
         internal void Initialize(Workstation w)
         {
             this.workstation = w;
-            freeCraftSlots = w.WorkstationData.QueueSize;
+            availableCraftSlots = maxSimultaneousCrafts;
         }
 
         public void CraftNewItem(ref CraftItemOptions options, bool begin = true)
@@ -58,19 +58,34 @@ namespace UZSG.Crafting
 
             routines.Add(routine);
             routine.Prepare();
-            if (begin && freeCraftSlots > 0)
+            if (begin && availableCraftSlots > 0)
             {
-                CraftNext();
+                CraftNextAvailable();
             }
         }
 
-        public void CraftNext()
+        public void CraftNextAvailable()
         {
             if (!routines.Any()) return;
 
-            var nextRoutine = routines[0];
-            StartCoroutine(nextRoutine.StartCraftCoroutine());
-            freeCraftSlots--;
+            var nextRoutine = GetNextRoutine();
+            if (nextRoutine != null)
+            {
+                StartCoroutine(nextRoutine.StartCraftCoroutine());
+                availableCraftSlots--;
+            }
+        }
+
+        CraftingRoutine GetNextRoutine()
+        {
+            foreach (var r in routines)
+            {
+                if (r.Status == CraftingRoutineStatus.Prepared)
+                {
+                    return r;
+                }
+            }
+            return null;
         }
 
         public void CancelIndex()
@@ -93,15 +108,15 @@ namespace UZSG.Crafting
                 routines.Remove(routine);
                 routine.OnNotify -= OnRoutineEventCall;
                 routine.OnCraftSecond -= OnCraftSecond;
-                freeCraftSlots++;
+                availableCraftSlots++;
 
-                if (autoCraftNext) CraftNext();
+                if (autoCraftNext) CraftNextAvailable();
             }
 
             OnRoutineNotify?.Invoke(routine);
         }
 
-        void OnCraftSecond(object sender, int timeElapsed)
+        void OnCraftSecond(object sender, float timeElapsed)
         {
             OnRoutineSecond?.Invoke((CraftingRoutine) sender, timeElapsed);
         }

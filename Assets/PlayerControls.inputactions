@@ -2070,7 +2070,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Shift Click",
+                    "name": "Shift",
                     "type": "Button",
                     "id": "0e696c50-45b5-41c8-a586-c390bbf00269",
                     "expectedControlType": "Button",
@@ -2100,17 +2100,6 @@
             "bindings": [
                 {
                     "name": "",
-                    "id": "fed551d3-cd46-4c7b-ac7f-f343ce8fbcd0",
-                    "path": "<Keyboard>/shift",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Shift Click",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "815ddf71-254c-48df-99a4-1acd9b8c92a2",
                     "path": "<Keyboard>/tab",
                     "interactions": "",
@@ -2128,28 +2117,6 @@
                     "processors": "",
                     "groups": "",
                     "action": "Hide",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "b7e5185c-78c4-423f-8f81-697c76a4f685",
-                    "path": "<Keyboard>/ctrl",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Ctrl",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "f152cddc-6ba2-4e48-8e8e-f8fddcbd4a84",
-                    "path": "<Keyboard>/alt",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Alt",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -2295,6 +2262,39 @@
                     "action": "Navigate Slots",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "b7e5185c-78c4-423f-8f81-697c76a4f685",
+                    "path": "<Keyboard>/ctrl",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Ctrl",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f152cddc-6ba2-4e48-8e8e-f8fddcbd4a84",
+                    "path": "<Keyboard>/alt",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Alt",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "fed551d3-cd46-4c7b-ac7f-f343ce8fbcd0",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Shift",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }

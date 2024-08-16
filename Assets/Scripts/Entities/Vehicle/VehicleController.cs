@@ -23,27 +23,32 @@ namespace UZSG.Entities.Vehicles
         InputAction _switchInput;
 
         [Header("Vehicle Setup")]
+        [Space(10)]
+        [Range(20, 190)]
+        public int maxSpeed = 90; //The maximum speed that the car can reach in km/h.
+        [Range(10, 120)]
+        public int maxReverseSpeed = 45; //The maximum speed that the car can reach while going on reverse in km/h.
+        [Space(20)]
+        public AnimationCurve powerCurve;   // Experimental Power/Torque Curve for more customized acceleration
+        public bool frontPower = true;   // Send Power to Front Wheels
+        public bool rearPower = true;   // Send Power to Rear Wheels
+        [Space(20)]
+        [Range(10, 45)]
+        public float maxSteeringAngle = 27; // The maximum angle that the tires can reach while rotating the steering wheel.
+        [Range(0.1f, 1f)]
+        public float steeringSpeed = 0.5f; // How fast the steering wheel turns.
+        [Space(20)]
+        [Range(100, 600)]
+        public int brakeForce = 350; // The strength of the wheel brakes.
+        [Range(1, 10)]
+        public int decelerationMultiplier = 2; // How fast the car decelerates when the user is not using the throttle.
+        [Range(1, 10)]
+        public int handbrakeDriftMultiplier = 5; // How much grip the car loses when the user hit the handbrake.
+        [Space(10)]
         public GameObject bodyMassCenter;
 
         // CAR DATA
-        [HideInInspector]
-        public int maxSpeed; //The maximum speed that the car can reach in km/h.
-        [HideInInspector]
-        public int maxReverseSpeed; //The maximum speed that the car can reach while going on reverse in km/h.
-        [HideInInspector]
-        public AnimationCurve powerCurve;   // Experimental Power/Torque Curve for more customized acceleration
-        [HideInInspector]
-        public bool frontPower;   // Send Power to Front Wheels
-        [HideInInspector]
-        public bool rearPower;   // Send Power to Rear Wheels
-        [HideInInspector]
-        public float maxSteeringAngle; // The maximum angle that the tires can reach while rotating the steering wheel.
-        [HideInInspector]
-        public float steeringSpeed; // How fast the steering wheel turns.
-        [HideInInspector]
-        public int brakeForce; // The strength of the wheel brakes.
-        [HideInInspector]
-        public int decelerationMultiplier; // How fast the car decelerates when the user is not using the throttle.
+
         [HideInInspector]
         public float carSpeed; // Used to store the current speed of the car.
         [HideInInspector]
@@ -64,6 +69,7 @@ namespace UZSG.Entities.Vehicles
         float _localVelocityX;
         bool _deceleratingCar;
 
+        bool _isMoving;
         Vector2 _driverInput;
 
         private void Awake()
@@ -79,28 +85,7 @@ namespace UZSG.Entities.Vehicles
             _backInput = Game.Main.GetInputAction("Back", "Global");
             _switchInput = Game.Main.GetInputAction("Change Seat", "Player Actions");
             _carRigidbody = gameObject.GetComponent<Rigidbody>();
-
-            if (_carRigidbody.automaticCenterOfMass)
-            {
-                // do not set center of mass manually if automatic calculation is enabled
-            }
-            else
-            {
-                _carRigidbody.centerOfMass = bodyMassCenter.transform.localPosition;
-            }
-            
-
-            // Initialize necessary starting data for the vehicle from data
-            maxSpeed = _vehicle.Vehicle.maxSpeed;
-            maxReverseSpeed = _vehicle.Vehicle.maxReverseSpeed;
-            powerCurve = _vehicle.Vehicle.powerCurve;
-            frontPower = _vehicle.Vehicle.frontPower;
-            rearPower = _vehicle.Vehicle.rearPower;
-            maxSteeringAngle = _vehicle.Vehicle.maxSteeringAngle;
-            steeringSpeed = _vehicle.Vehicle.steeringSpeed;
-            brakeForce = _vehicle.Vehicle.brakeForce;
-            decelerationMultiplier = _vehicle.Vehicle.decelerationMultiplier;
-
+            _carRigidbody.centerOfMass = bodyMassCenter.transform.localPosition;
         }
 
         private void FixedUpdate()
@@ -116,42 +101,31 @@ namespace UZSG.Entities.Vehicles
                 HandlePlayerPosition();
 
                 // Vehicle Controls
-                if (Input.GetAxis("Vertical") == 1 || Input.GetKey(KeyCode.W))
+                if (_driverInput.y > 0)
                 {
                     CancelInvoke("DecelerateVehicle");
                     _deceleratingCar = false;
                     HandleGas();
                 }
-                if (Input.GetAxis("Vertical") == -1 || Input.GetKey(KeyCode.S))
+                if (_driverInput.y < 0)
                 {
                     CancelInvoke("DecelerateVehicle");
                     _deceleratingCar = false;
                     HandleReverse();
                 }
-                if (Input.GetAxis("Horizontal") == -1 || Input.GetKey(KeyCode.A))
+                if (_driverInput.x < 0)
                 {
                     HandleLeftSteer();
                 }
-                if (Input.GetAxis("Horizontal") == 1 || Input.GetKey(KeyCode.D))
+                if (_driverInput.x > 0)
                 {
                     HandleRightSteer();
                 }
-                if (Input.GetKey(KeyCode.Space))
-                {
-                    CancelInvoke("DecelerateVehicle");
-                    _deceleratingCar = false;
-                    HandleHandbake();
-                }
-                if ((!Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.W)) && !Input.GetKey(KeyCode.Space) && !_deceleratingCar)
-                {
-                    InvokeRepeating("DecelerateVehicle", 0f, 0.1f);
-                    _deceleratingCar = true;
-                }
-                if ((!Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.W)) || (Input.GetAxis("Vertical") == 0))
+                if (_driverInput.y == 0)
                 {
                     ThrottleOff();
                 }
-                if ((!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D) || (Input.GetAxis("Horizontal") == -1) || (Input.GetAxis("Horizontal") == 1)) && _steeringAxis != 0f)
+                if ((_driverInput.x == 0) && _steeringAxis != 0f)
                 {
                     ResetSteeringAngle();
                 }
@@ -194,7 +168,6 @@ namespace UZSG.Entities.Vehicles
                     float _availableTorque = powerCurve.Evaluate(_normalizedSpeed) * 10;
                     powerToWheels = (_availableTorque * 150f) * _throttleAxis;
 
-                    print(powerToWheels);
 
                     Drivetrain(powerToWheels);
                 }
@@ -305,14 +278,6 @@ namespace UZSG.Entities.Vehicles
                         _rearWheelColliders[i].motorTorque = 0;
                     }
                 }
-            }
-        }
-
-        public void HandleHandbake()
-        {
-            for (int i = 0; i < _rearWheelColliders.Count; i++)
-            {
-                _rearWheelColliders[i].brakeTorque = brakeForce / 4;
             }
         }
 
@@ -463,12 +428,14 @@ namespace UZSG.Entities.Vehicles
 
         public void EnableVehicleControls()
         {
+            _moveInput.performed += OnMoveInput;
             _moveInput.started += OnMoveInput;
             _moveInput.canceled += OnMoveInput;
         }
 
         public void DisableVehicleControls()
         {
+            _moveInput.performed -= OnMoveInput;
             _moveInput.started -= OnMoveInput;
             _moveInput.canceled -= OnMoveInput;
         }

@@ -44,11 +44,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fddc5f8f127c5a84ea5730a18ec74560, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+<<<<<<< Updated upstream
+  _playerEntity: {fileID: 0}
+=======
+  InputContainer:
+    _slots: []
   _playerEntity: {fileID: 8107631895800867322}
   OutputContainer:
     _slots: []
-  InputContainer:
-    _slots: []
+--- !u!114 &1060515019585979714
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 875597890616857745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4dbc5a32840240d46a92c188ced713ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  button:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  Test: {fileID: 0}
+>>>>>>> Stashed changes
 --- !u!1 &1560824521149795163
 GameObject:
   m_ObjectHideFlags: 0
@@ -405,7 +427,7 @@ Camera:
   m_AllowMSAA: 1
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
-  m_OcclusionCulling: 1
+  m_OcclusionCulling: 0
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
 --- !u!114 &6655586573656511278

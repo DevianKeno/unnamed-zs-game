@@ -243,7 +243,7 @@ GameObject:
   - component: {fileID: 9037704188772628819}
   - component: {fileID: 3508535370081554930}
   - component: {fileID: 9201034041368115842}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Terrain_0_0_0315065e-9347-4842-81dc-2316b4b9b0a3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -934,7 +934,7 @@ Transform:
   m_GameObject: {fileID: 1945796660762417521}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 66.278, z: 0}
+  m_LocalPosition: {x: 0, y: 66.3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1014,7 +1014,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1100885317033965769}
   - component: {fileID: 7139172031012693667}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: TerrainGroup_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28698,6 +28698,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8714843530122813783, guid: 45fbcb582516cc34e8ab1615ab38b43d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -10.286
+      objectReference: {fileID: 0}
+    - target: {fileID: 8714843530122813783, guid: 45fbcb582516cc34e8ab1615ab38b43d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.209
+      objectReference: {fileID: 0}
     - target: {fileID: 4554187780595614637, guid: 40f96aaff95f534479b911626edf87ba, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -28723,6 +28731,10 @@ PrefabInstance:
     - target: {fileID: 7117429254705225922, guid: b9688c7ff986d904d95ee3e76150d6ed, type: 3}
       propertyPath: m_Name
       value: Pine Tree Fir (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7117429254705225922, guid: b9688c7ff986d904d95ee3e76150d6ed, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7605982315212044920, guid: b9688c7ff986d904d95ee3e76150d6ed, type: 3}
       propertyPath: m_LocalPosition.x
@@ -28786,6 +28798,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pine Tree Fir (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 7117429254705225922, guid: b9688c7ff986d904d95ee3e76150d6ed, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7605982315212044920, guid: b9688c7ff986d904d95ee3e76150d6ed, type: 3}
       propertyPath: m_LocalPosition.x
       value: 20.95
@@ -28847,6 +28863,10 @@ PrefabInstance:
     - target: {fileID: 7117429254705225922, guid: b9688c7ff986d904d95ee3e76150d6ed, type: 3}
       propertyPath: m_Name
       value: Pine Tree Fir (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7117429254705225922, guid: b9688c7ff986d904d95ee3e76150d6ed, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7605982315212044920, guid: b9688c7ff986d904d95ee3e76150d6ed, type: 3}
       propertyPath: m_LocalPosition.x
@@ -29008,6 +29028,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pine Tree Fir (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 7117429254705225922, guid: b9688c7ff986d904d95ee3e76150d6ed, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7605982315212044920, guid: b9688c7ff986d904d95ee3e76150d6ed, type: 3}
       propertyPath: m_LocalPosition.x
       value: -12.16
@@ -29131,6 +29155,10 @@ PrefabInstance:
     - target: {fileID: 7117429254705225922, guid: b9688c7ff986d904d95ee3e76150d6ed, type: 3}
       propertyPath: m_Name
       value: Pine Tree Fir (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7117429254705225922, guid: b9688c7ff986d904d95ee3e76150d6ed, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7605982315212044920, guid: b9688c7ff986d904d95ee3e76150d6ed, type: 3}
       propertyPath: m_LocalPosition.x
@@ -30068,6 +30096,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pine Tree Fir (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 7117429254705225922, guid: b9688c7ff986d904d95ee3e76150d6ed, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7605982315212044920, guid: b9688c7ff986d904d95ee3e76150d6ed, type: 3}
       propertyPath: m_LocalPosition.x
       value: 18.953001
@@ -30592,6 +30624,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pine Tree Fir (7)
       objectReference: {fileID: 0}
+    - target: {fileID: 7117429254705225922, guid: b9688c7ff986d904d95ee3e76150d6ed, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7605982315212044920, guid: b9688c7ff986d904d95ee3e76150d6ed, type: 3}
       propertyPath: m_LocalPosition.x
       value: -12.16
@@ -30898,6 +30934,38 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pine Tree Heart (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 9090100060184212582, guid: a0f64771363a92549ae07bec49eb859d, type: 3}
+      propertyPath: m_Size
+      value: 16.02675
+      objectReference: {fileID: 0}
+    - target: {fileID: 9090100060184212582, guid: a0f64771363a92549ae07bec49eb859d, type: 3}
+      propertyPath: m_LocalReferencePoint.x
+      value: 0.28672934
+      objectReference: {fileID: 0}
+    - target: {fileID: 9090100060184212582, guid: a0f64771363a92549ae07bec49eb859d, type: 3}
+      propertyPath: m_LocalReferencePoint.y
+      value: 7.468606
+      objectReference: {fileID: 0}
+    - target: {fileID: 9090100060184212582, guid: a0f64771363a92549ae07bec49eb859d, type: 3}
+      propertyPath: m_LocalReferencePoint.z
+      value: 0.04804802
+      objectReference: {fileID: 0}
+    - target: {fileID: 9090100060184212582, guid: a0f64771363a92549ae07bec49eb859d, type: 3}
+      propertyPath: m_LODs.Array.data[0].screenRelativeHeight
+      value: 0.59521854
+      objectReference: {fileID: 0}
+    - target: {fileID: 9090100060184212582, guid: a0f64771363a92549ae07bec49eb859d, type: 3}
+      propertyPath: m_LODs.Array.data[1].screenRelativeHeight
+      value: 0.2952666
+      objectReference: {fileID: 0}
+    - target: {fileID: 9090100060184212582, guid: a0f64771363a92549ae07bec49eb859d, type: 3}
+      propertyPath: m_LODs.Array.data[2].screenRelativeHeight
+      value: 0.10360849
+      objectReference: {fileID: 0}
+    - target: {fileID: 9090100060184212582, guid: a0f64771363a92549ae07bec49eb859d, type: 3}
+      propertyPath: m_LODs.Array.data[3].screenRelativeHeight
+      value: 0.0057697487
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -31017,6 +31085,10 @@ PrefabInstance:
     - target: {fileID: 7117429254705225922, guid: b9688c7ff986d904d95ee3e76150d6ed, type: 3}
       propertyPath: m_Name
       value: Pine Tree Fir (8)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7117429254705225922, guid: b9688c7ff986d904d95ee3e76150d6ed, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7605982315212044920, guid: b9688c7ff986d904d95ee3e76150d6ed, type: 3}
       propertyPath: m_LocalPosition.x
@@ -31138,9 +31210,45 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1603962250994591039}
     m_Modifications:
+    - target: {fileID: -3019612325245996612, guid: b9688c7ff986d904d95ee3e76150d6ed, type: 3}
+      propertyPath: m_Size
+      value: 11.96
+      objectReference: {fileID: 0}
+    - target: {fileID: -3019612325245996612, guid: b9688c7ff986d904d95ee3e76150d6ed, type: 3}
+      propertyPath: m_LODs.Array.data[1].renderers.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -3019612325245996612, guid: b9688c7ff986d904d95ee3e76150d6ed, type: 3}
+      propertyPath: m_LODs.Array.data[2].renderers.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -3019612325245996612, guid: b9688c7ff986d904d95ee3e76150d6ed, type: 3}
+      propertyPath: m_LODs.Array.data[2].screenRelativeHeight
+      value: 0.15324412
+      objectReference: {fileID: 0}
+    - target: {fileID: -3019612325245996612, guid: b9688c7ff986d904d95ee3e76150d6ed, type: 3}
+      propertyPath: m_LODs.Array.data[3].renderers.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -3019612325245996612, guid: b9688c7ff986d904d95ee3e76150d6ed, type: 3}
+      propertyPath: m_LODs.Array.data[3].screenRelativeHeight
+      value: 0.05390747
+      objectReference: {fileID: 0}
+    - target: {fileID: -3019612325245996612, guid: b9688c7ff986d904d95ee3e76150d6ed, type: 3}
+      propertyPath: m_LODs.Array.data[1].renderers.Array.data[0].renderer
+      value: 
+      objectReference: {fileID: 2087695033093278598}
+    - target: {fileID: 2585491103534933450, guid: b9688c7ff986d904d95ee3e76150d6ed, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7117429254705225922, guid: b9688c7ff986d904d95ee3e76150d6ed, type: 3}
       propertyPath: m_Name
       value: Pine Tree Fir
+      objectReference: {fileID: 0}
+    - target: {fileID: 7117429254705225922, guid: b9688c7ff986d904d95ee3e76150d6ed, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7605982315212044920, guid: b9688c7ff986d904d95ee3e76150d6ed, type: 3}
       propertyPath: m_LocalPosition.x
@@ -31187,6 +31295,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b9688c7ff986d904d95ee3e76150d6ed, type: 3}
+--- !u!23 &2087695033093278598 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 5201559422921655198, guid: b9688c7ff986d904d95ee3e76150d6ed, type: 3}
+  m_PrefabInstance: {fileID: 6113457472394725400}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4421054548594291296 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7605982315212044920, guid: b9688c7ff986d904d95ee3e76150d6ed, type: 3}

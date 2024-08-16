@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e18afb883e1451a4c82eb24298dc52e1, type: 3}
   m_Name: wildlife_site_radius
   m_EditorClassIdentifier: 
-  Id: zombie_site_radius
-  Name: Zombie Site Radius
-  Description: Zombie site Radius
-  Type: 0
+  Id: wildlife_site_radius
+  Name: Wildlife Site Radius
+  Group: 
+  Description: Wildlife Site Radius

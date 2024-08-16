@@ -1632,6 +1632,7 @@ MonoBehaviour:
     flatBonus: 0
     LimitOverflow: 0
     LimitUnderflow: 0
+  _isInHorde: 0
   _health: 0
   hasTargetInSite: 0
   hasTargetInAttack: 0

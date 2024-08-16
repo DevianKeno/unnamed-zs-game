@@ -4,6 +4,7 @@ using UnityEngine;
 
 using UZSG.Systems;
 using UZSG.Data;
+using UZSG.Interactions;
 
 namespace UZSG.Entities
 {
@@ -16,6 +17,7 @@ namespace UZSG.Entities
 
         [SerializeField] protected EntityData entityData;
         public EntityData EntityData => entityData;
+        public string Id => entityData.Id;
         public Vector3 Position
         {
             get { return transform.position; }
@@ -23,23 +25,40 @@ namespace UZSG.Entities
         }
         [SerializeField] protected AudioSourceController audioSourceController;
         public AudioSourceController AudioSourceController => audioSourceController;
+        protected EntityHitboxController hitboxes;
 
-        public string Id => entityData.Id;
+        void Awake()
+        {
+            hitboxes = GetComponent<EntityHitboxController>();
+        }
 
         internal void OnSpawnInternal()
         {
             OnSpawn();
+            InitializeHitboxEvents();
         }
 
         /// <summary>
         /// Called after the EntityManager spawned callback.
         /// You can modify the entity's attributes before this calls.
         /// </summary>
-        public virtual void OnSpawn() { }
+        public virtual void OnSpawn()
+        {
+        }
 
         public virtual void Kill()
         {
             Game.Entity.Kill(this);
         }
+        
+        protected void InitializeHitboxEvents()
+        {
+            foreach (var hitbox in hitboxes.Hitboxes)
+            {
+                hitbox.OnHit += OnCollision;
+            }
+        }
+        
+        protected virtual void OnCollision(object sender, CollisionHitInfo info) { }
     }
 }

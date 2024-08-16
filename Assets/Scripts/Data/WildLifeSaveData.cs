@@ -5,7 +5,7 @@ using UZSG.Saves;
 namespace UZSG.Data
 {
     [Serializable]
-    public class WildLifeSaveData : SaveData
+    public class WildlifeSaveData : SaveData
     {
         public List<AttributeSaveData> Attributes;
     }

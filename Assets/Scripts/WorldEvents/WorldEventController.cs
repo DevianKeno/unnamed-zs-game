@@ -15,11 +15,16 @@ namespace UZSG.WorldEvents
 {
     public class WorldEventController : MonoBehaviour
     {
-        WorldTimeController _timeController;
-        WeatherController _weatherController;
-        RaidController _raidController;
+        public WorldTimeController WorldTime => Game.World.CurrentWorld.Time;
+
+        [SerializeField] WeatherController weatherController;
+        public WeatherController Weather => weatherController;
+
+        [SerializeField] RaidController raidController;
+        public RaidController Raid => raidController;
+        
         float _currentTime = 0;
-        public int InternalCountdown = 0;
+        public int InternalClock = 0;
         [SerializeField] int _countdown = 0;
         int _maxCountdown = 0;
         int tempCount = 0;
@@ -37,13 +42,8 @@ namespace UZSG.WorldEvents
 
         void InitializeControllers()
         {
-            _timeController = this.GetComponent<WorldTimeController>();
-            _weatherController = this.GetComponent<WeatherController>();
-            _raidController = this.GetComponent<RaidController>();
-
-            _timeController.Initialize();
-            _weatherController.Initialize();
-            _raidController.Initialize();
+            weatherController.Initialize();
+            // raidController.Initialize();
         }
 
         void OnTick(TickInfo info)
@@ -52,14 +52,14 @@ namespace UZSG.WorldEvents
             float secondsCalculation = Game.Tick.SecondsPerTick * (Game.Tick.CurrentTick / 32f) * tickThreshold;
             _currentTime += secondsCalculation;
 
-            _timeController.OnTick(secondsCalculation);
-            _weatherController.OnTick(secondsCalculation);
-            _raidController.OnTick(secondsCalculation);
-            
+            WorldTime.OnTick(secondsCalculation);
+            Weather.OnTick(secondsCalculation);
+            // raidController.OnTick(secondsCalculation);
+
             if (Mathf.FloorToInt(_currentTime) > tempCount)
             {
                 tempCount = Mathf.FloorToInt(_currentTime);
-                InternalCountdown++;
+                InternalClock++;
                 if (_countdown >= _maxCountdown) 
                     _countdown = 1;
                 else 
@@ -73,7 +73,10 @@ namespace UZSG.WorldEvents
         {
             foreach (WorldEventData data in WorldEvents)
                 if (data.worldEvents.Active)
+                {
+                    print(data.worldEvents.Type);
                     SpawnEvent(data.worldEvents);
+                }
         }
 
         void SpawnEvent(WorldEventProperties properties)
@@ -93,14 +96,13 @@ namespace UZSG.WorldEvents
 
         List<EventPrefab> SelectEvent(WorldEventProperties properties)
         {
-            if (_countdown != properties.OccurEverySecond) return null;
+            if (_countdown % properties.OccurEverySecond != 0) return null;
             
             List<EventPrefab> selectedEvents = new();
 
             if(properties.ChanceToOccur < UnityEngine.Random.Range(1, 100))
             {
                 Game.Console.Log($"<color=#34d5eb>Event did not occur.</color>");
-                // Debug.Log("Event did not occur.");
                 return null;
             }
 
@@ -114,7 +116,6 @@ namespace UZSG.WorldEvents
             
             if (selectedEvents.Count == 0)
             {
-                // print("No event prefab selected.");
                 Game.Console.Log($"<color=#e8eb34>No event prefab selected.</color>");
                 return null;
             }
@@ -127,7 +128,7 @@ namespace UZSG.WorldEvents
             return selectedEvents;
         }
 
-        public static List<T> KeepOnlyAtIndex<T>(List<T> originalList, int index)
+        List<T> KeepOnlyAtIndex<T>(List<T> originalList, int index)
         {
             return new List<T> { originalList[index] };
         }
@@ -135,10 +136,10 @@ namespace UZSG.WorldEvents
         void SubscribeControllers(WorldEventProperties properties, WorldEvent eventHandler)
         {
             if (properties.Type == WorldEventType.Weather)
-                eventHandler.OnSpawnEvent += _weatherController.OnEventStart;
+                eventHandler.OnSpawnEvent += Weather.OnEventStart;
             
             if (properties.Type == WorldEventType.Raid)
-                eventHandler.OnSpawnEvent += _weatherController.OnEventStart;
+                eventHandler.OnSpawnEvent += Weather.OnEventStart;
         }
     }
 }

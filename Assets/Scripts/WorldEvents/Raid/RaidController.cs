@@ -14,28 +14,29 @@ namespace UZSG.WorldEvents.Raid
 {
     public class RaidController : EventBehaviour
     {
-        public RaidEventType _raidType;
+        RaidEventType _raidType;
+        RaidFormation _raidFormation;
         [SerializeField] float _raidRemainingTime;
         [SerializeField] float _remainingMobs;
 
-        public void Initialize()
-        {
+        // public void Initialize()
+        // {
 
-        }
+        // }
 
-        public void OnTick(float deltaTime)
-        {
-            if (_raidRemainingTime >= 0 || _raidRemainingTime != -1)
-            {
-                _raidRemainingTime -= deltaTime;
-            }
-        }
+        // public void OnTick(float deltaTime)
+        // {
+        //     if (_raidRemainingTime >= 0 || _raidRemainingTime != -1)
+        //     {
+        //         _raidRemainingTime -= deltaTime;
+        //     }
+        // }
 
         void SpawnEnemy()
         {
-            HordeFormations hordeFormations = new();
+            HordeFormations hordeInstance = new();
             {
-                hordeFormations.SpawnFormation(_raidType, 10);
+                hordeInstance.SpawnFormation(_raidType, _raidFormation, 10);
             }
         }
 
@@ -50,13 +51,16 @@ namespace UZSG.WorldEvents.Raid
             if (@event == null || EventOngoing)
             {
                 Game.Console.Log($"<color=#ad0909>Event is null or ongoing.</color>");
-                // print("Event is null or ongoing.");
                 return;
             }
 
             Game.Console.Log($"<color=#ad0909>Raid event started.</color>");
             List<EventPrefab> selectedEvents = @event.SelectedEvent;
             EventOngoing = true;
+            foreach (EventPrefab selectedEvent in selectedEvents)
+            {
+
+            }
         }
     }
 }

@@ -104,9 +104,6 @@ namespace UZSG.Systems
             Application.targetFrameRate = TargetFramerate;
         }
 
-        /// This should be inside World
-        public WorldEventController worldEventController;
-
         void InitializeManagers()
         {
             /// The console is initialized first thing
@@ -124,9 +121,6 @@ namespace UZSG.Systems
             entityManager.Initialize();
             particleManager.Initialize();
             recipeManager.Initialize();
-
-            /// This should be inside World
-            // worldEventController.Initialize();
 
             #endregion            
 

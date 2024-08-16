@@ -18,7 +18,7 @@ namespace UZSG.WorldEvents.Weather
         public WeatherData CurrentWeather;
         public WeatherData DefaultWeather;
         WeatherData _defaultWeather => DefaultWeather;
-        public WorldTimeController Time;
+        public WorldTimeController WorldTime => Game.World.CurrentWorld.Time;
         float _weatherDuration;
         [SerializeField] float _weatherCountdown;
 
@@ -99,8 +99,8 @@ namespace UZSG.WorldEvents.Weather
             ParticleSystem particle = _currentParticleSystem;
             FollowPlayer(particle);
 
-            Time.DayFogColor = Color.Lerp(Time.DayFogColor, _currentWeather.weatherProperties.DayFogColor, 1f);
-            Time.NightFogColor = Color.Lerp(Time.NightFogColor, _currentWeather.weatherProperties.NightFogColor, 1f);
+            WorldTime.DayFogColor = Color.Lerp(WorldTime.DayFogColor, _currentWeather.weatherProperties.DayFogColor, 1f);
+            WorldTime.NightFogColor = Color.Lerp(WorldTime.NightFogColor, _currentWeather.weatherProperties.NightFogColor, 1f);
             
             HandleChange();
         }

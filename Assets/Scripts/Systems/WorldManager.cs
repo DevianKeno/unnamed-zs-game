@@ -19,10 +19,11 @@ namespace UZSG.Systems
         bool _isInitialized;
         public bool IsInitialized => _isInitialized;
 
+        [SerializeField] World currentWorld;
         /// <summary>
         /// The currently loaded world.
         /// </summary>
-        public World CurrentWorld { get; set; }
+        public World CurrentWorld => currentWorld;
 
         /// <summary>
         /// Called after the World has been successfully initialized.
@@ -34,6 +35,8 @@ namespace UZSG.Systems
             Game.Console.Log("Initializing World...");
 
             RetrieveSavedWorlds();
+
+        currentWorld.Initialize();///testing
 
             OnDoneInit?.Invoke();
         }

@@ -7,27 +7,33 @@ namespace UZSG.WorldEvents.Raid
 {
     public class HordeFormations : MonoBehaviour
     {
-        public void SpawnFormation(RaidEventType raidEventType, int count)
+        public void SpawnFormation(RaidEventType raidType, RaidFormation raidFormation, int count)
         {
-            
+            switch(raidFormation)
+            {
+                case RaidFormation.Blob:
+                    SpawnAsBlob();
+                    break;
+                case RaidFormation.Line:
+                    SpawnAsLine();
+                    break;
+                case RaidFormation.Waves:
+                    SpawnInWaves();
+                    break;
+            }
         }
-    }
-    public class UndeadFormations
-    {
-        public void SpawnAsBlob()
+
+        void SpawnAsBlob()
         {
 
         }
-        public void SpawnAsLine()
+        void SpawnAsLine()
         {
 
         }
-    }
-    public class LivingFormations
-    {
-        public void SpawnInWaves()
+        void SpawnInWaves()
         {
-
+            throw new System.NotImplementedException();
         }
     }
 }

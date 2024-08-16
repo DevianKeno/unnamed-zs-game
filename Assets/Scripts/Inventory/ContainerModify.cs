@@ -109,7 +109,7 @@ namespace UZSG
 
                     if (remaining <= 0) break;
                 }
-            }            
+            }
 
             return toReturn;
         }

@@ -36,7 +36,7 @@ namespace UZSG.Systems
 
             RetrieveSavedWorlds();
 
-        currentWorld.Initialize();///testing
+            // currentWorld.Initialize();///testing
 
             OnDoneInit?.Invoke();
         }

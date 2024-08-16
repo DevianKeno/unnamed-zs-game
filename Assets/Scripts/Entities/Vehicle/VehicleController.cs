@@ -79,9 +79,9 @@ namespace UZSG.Entities.Vehicles
 
         private void Start()
         {
-            _moveInput = Game.Main.GetInputAction("Move", "Vehicle Controls");
+            _moveInput = Game.Main.GetInputAction("Vehicle Move", "Player Move");
             _backInput = Game.Main.GetInputAction("Back", "Global");
-            _handbrakeInput = Game.Main.GetInputAction("Jump", "Vehicle Controls");
+            _handbrakeInput = Game.Main.GetInputAction("Handbrake", "Player Move");
             _switchInput = Game.Main.GetInputAction("Change Seat", "Player Actions");
             _carRigidbody = gameObject.GetComponent<Rigidbody>();
 
@@ -115,7 +115,7 @@ namespace UZSG.Entities.Vehicles
             // Save the local velocity of the car in the z axis. Used to know if the car is going forward or backwards.
             _localVelocityZ = transform.InverseTransformDirection(_carRigidbody.velocity).z;
 
-            print($"handbraking?: {_isHandbraked}");
+            //print($"handbraking?: {_isHandbraked}");
 
             if (_vehicle.Driver != null)
             {
@@ -482,7 +482,6 @@ namespace UZSG.Entities.Vehicles
             _moveInput.started += OnMoveInput;
             _moveInput.canceled += OnMoveInput;
 
-            _handbrakeInput.performed += OnHandbrakeInput;
             _handbrakeInput.started += OnHandbrakeInput;
             _handbrakeInput.canceled += OnHandbrakeInput;
         }
@@ -493,7 +492,6 @@ namespace UZSG.Entities.Vehicles
             _moveInput.started -= OnMoveInput;
             _moveInput.canceled -= OnMoveInput;
 
-            _handbrakeInput.performed -= OnHandbrakeInput;
             _handbrakeInput.started -=  OnHandbrakeInput;
             _handbrakeInput.canceled -= OnHandbrakeInput;
 
@@ -506,6 +504,7 @@ namespace UZSG.Entities.Vehicles
 
         private void OnHandbrakeInput(InputAction.CallbackContext context)
         {
+            print($"context: {context.started}");
             if (context.started)
                 _isHandbraked = true;
             else

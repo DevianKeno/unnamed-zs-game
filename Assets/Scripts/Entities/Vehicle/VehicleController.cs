@@ -87,7 +87,7 @@ namespace UZSG.Entities.Vehicles
 
             if (_carRigidbody.automaticCenterOfMass)
             {
-                print(_carRigidbody.centerOfMass);
+                
             }
             else
             {
@@ -114,8 +114,6 @@ namespace UZSG.Entities.Vehicles
 
             // Save the local velocity of the car in the z axis. Used to know if the car is going forward or backwards.
             _localVelocityZ = transform.InverseTransformDirection(_carRigidbody.velocity).z;
-
-            //print($"handbraking?: {_isHandbraked}");
 
             if (_vehicle.Driver != null)
             {
@@ -194,7 +192,6 @@ namespace UZSG.Entities.Vehicles
                     float _normalizedSpeed = Mathf.Clamp01(Mathf.Abs(carSpeed) / maxSpeed);
                     float _availableTorque = powerCurve.Evaluate(_normalizedSpeed) * 10;
                     powerToWheels = (_availableTorque * 150f) * _throttleAxis;
-
 
                     Drivetrain(powerToWheels);
                 }
@@ -312,7 +309,6 @@ namespace UZSG.Entities.Vehicles
         {
             for (int i = 0; i < _rearWheelColliders.Count; i++)
             {
-                print("APPLYING HANDBRAKES");
                 _rearWheelColliders[i].brakeTorque = 2000f;
             }
 
@@ -326,7 +322,7 @@ namespace UZSG.Entities.Vehicles
 
                 if (Math.Abs(lateralSlip) > 0.2f)
                 {
-                    print($"exceeding slip: {lateralSlip}");
+                    // TO DO: sliding/skidding mechanic
                 }
             }
         }
@@ -504,7 +500,6 @@ namespace UZSG.Entities.Vehicles
 
         private void OnHandbrakeInput(InputAction.CallbackContext context)
         {
-            print($"context: {context.started}");
             if (context.started)
                 _isHandbraked = true;
             else

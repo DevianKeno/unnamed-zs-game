@@ -15,7 +15,7 @@ MonoBehaviour:
   Id: wooden_chest
   Name: Wooden Chest
   Model:
-    m_AssetGUID: 
+    m_AssetGUID: 258f08eb6b252104cae885b143c533d2
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0

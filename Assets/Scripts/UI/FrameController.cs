@@ -10,30 +10,35 @@ namespace UZSG.UI
 {
     public class FrameController : MonoBehaviour
     {
-        public enum SwitchFrameTime {
+        public enum SwitchStatus {
             Started, Finished
         }
 
         public struct SwitchFrameContext
         {
-            public SwitchFrameTime Time { get; set; }
+            public SwitchStatus Status { get; set; }
             public string Previous { get; set; }
             public string Next { get; set; }
         }
 
-        [SerializeField] bool _isTransitioning;
-        public bool IsTransitioning => _isTransitioning;
+        public Vector2 FrameSize;
+        public Vector2 InactiveFramePosition;
+        public float AnimationFactor = 0.5f;
+        public LeanTweenType Ease = LeanTweenType.easeOutExpo;
+        public bool IsTransitioning { get; private set; }
         [SerializeField] Frame currentFrame;
         public Frame CurrentFrame => currentFrame;
-        public float AnimationFactor = 0.5f;
-        public LeanTweenType TweenType = LeanTweenType.easeOutExpo;
-        public List<Frame> Frames = new();
+
+        string _previousFrame;
+        [SerializeField] List<Frame> frames = new();
 
         public event Action<SwitchFrameContext> OnSwitchFrame;
+
 
 #region Editor
         [SerializeField] string switchTo;
 #endregion
+
 
         void Start()
         {
@@ -41,6 +46,13 @@ namespace UZSG.UI
             {
                 currentFrame = transform.GetChild(0).GetComponent<Frame>();
             }
+        }
+
+        public void SwitchToFrame(int index)
+        {
+            if (!frames.IsValidIndex(index)) return;
+
+            SwitchToFrame(frames[index].Name, instant: false, force: false);
         }
 
         public void SwitchToFrame(string name)
@@ -58,13 +70,14 @@ namespace UZSG.UI
             Frame frame = GetFrame(name);
             if (frame == null) return;
 
-            if (_isTransitioning) return;
-            _isTransitioning = true;
+            if (IsTransitioning) return;
+            IsTransitioning = true;
 
+            _previousFrame = currentFrame.Name;
             var context = new SwitchFrameContext()
             {
-                Time = SwitchFrameTime.Started,
-                Previous = currentFrame.Name,
+                Status = SwitchStatus.Started,
+                Previous = _previousFrame,
                 Next = name,
             };
             OnSwitchFrame?.Invoke(context);
@@ -75,7 +88,7 @@ namespace UZSG.UI
                 {
                     /// Move current frame out of the way
                     LeanTween.move(currentFrame.Rect, new Vector2(-1920, 0f), AnimationFactor)
-                    .setEase(TweenType)
+                    .setEase(Ease)
                     .setOnComplete(() =>
                     {
                         currentFrame.Rect.anchoredPosition = new Vector2(1920, 0f);
@@ -83,41 +96,65 @@ namespace UZSG.UI
                 }
                 else if (!force)
                 {
-                    _isTransitioning = false;
+                    IsTransitioning = false;
                     return;
                 }
 
                 /// Move new frame into view
                 LeanTween.move(frame.Rect, Vector2.zero, AnimationFactor)
-                .setEase(TweenType)
-                .setOnComplete(() =>
+                .setEase(Ease)
+                .setOnComplete((() =>
                 {
                     currentFrame = frame;
                     currentFrame.transform.SetAsLastSibling();
-                    _isTransitioning = false;
+                    IsTransitioning = false;
 
-                    context.Time = SwitchFrameTime.Finished;
+                    context.Status = SwitchStatus.Finished;
                     OnSwitchFrame?.Invoke(context);
-                });
+                }));
                 LayoutRebuilder.ForceRebuildLayoutImmediate(frame.transform as RectTransform);
             }
             else
             {
-                _isTransitioning = true;
+                IsTransitioning = true;
                 currentFrame.Rect.anchoredPosition = new Vector2(-1920, 0f); /// Hide current frame
                 frame.Rect.anchoredPosition = Vector2.zero; /// Show new frame
                 currentFrame = frame;
                 currentFrame.transform.SetAsLastSibling();
                 LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
-                _isTransitioning = false;
-                context.Time = SwitchFrameTime.Finished;
+                IsTransitioning = false;
+                context.Status = SwitchStatus.Finished;
                 OnSwitchFrame?.Invoke(context);
             }
         }
 
+        public void AppendFrame(Frame frame, bool display = true)
+        {
+            frame.transform.SetParent(transform);
+            frame.Rect.sizeDelta = Vector2.zero;
+            frames.Add(frame);
+            if (display)
+            {
+                SwitchToFrame(frame.Name, instant: true);
+            }
+            else
+            {
+                frame.Rect.anchoredPosition = InactiveFramePosition;
+            }
+        }
+
+        public void RemoveFrame(Frame frame)
+        {
+            if (frames.Contains(frame))
+            {
+                frames.Remove(frame);
+            }
+            SwitchToFrame(_previousFrame, instant: true);
+        }
+
         public Frame GetFrame(string name)
         {
-            foreach (Frame f in Frames)
+            foreach (Frame f in frames)
             {
                 if (f.Name != name) continue;
                 return f;
@@ -139,9 +176,9 @@ namespace UZSG.UI
             Frame frame = null;
             if (int.TryParse(switchTo, out int index))
             {
-                if (index >= 0 && index < Frames.Count)
+                if (index >= 0 && index < frames.Count)
                 {
-                    frame = Frames[index];
+                    frame = frames[index];
                 }
             }
             else

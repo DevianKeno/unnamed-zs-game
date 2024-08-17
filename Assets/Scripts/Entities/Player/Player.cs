@@ -10,14 +10,14 @@ using UZSG.Inventory;
 using UZSG.Interactions;
 using UZSG.Attributes;
 using UZSG.Players;
-using UZSG.Data;
 using UZSG.FPP;
-using UZSG.UI;
 using UZSG.UI.HUD;
+using UZSG.UI.Players;
 using UZSG.Crafting;
 using UZSG.StatusEffects;
-using UZSG.Objects;
 using UZSG.Saves;
+using UZSG.UI.Objects;
+using UZSG.UI;
 
 namespace UZSG.Entities
 {
@@ -58,8 +58,8 @@ namespace UZSG.Entities
         public Vector3 Up => MainCamera.transform.up;
         public Vector3 EyeLevel => MainCamera.transform.position;
 
-        PlayerInventoryUI invUI;
-        public PlayerInventoryUI InventoryGUI => invUI;
+        InventoryUI invUI;
+        public InventoryUI InventoryGUI => invUI;
         PlayerHUDVitals _vitalsHUD;
         public PlayerHUDVitals VitalsHUD => _vitalsHUD;
         PlayerHUDInfo _infoHUD;
@@ -221,7 +221,7 @@ namespace UZSG.Entities
             // inventory.ReadSaveJson(new());
             // inventory.ReadSaveJson(saveData.Inventory);
 
-            invUI = Game.UI.Create<PlayerInventoryUI>("Player Inventory", show: false);
+            invUI = Game.UI.Create<InventoryUI>("Player Inventory", show: false);
             invUI.Initialize(this);
 
             invUI.OnOpen += () =>
@@ -335,19 +335,14 @@ namespace UZSG.Entities
             invUI.ToggleVisibility();
         }
 
-        void UseObject(BaseObject obj)
+        public void UseObjectGUI(ObjectGUI gui)
         {
-
+            invUI.AppendObjectGUI(gui, 1);
         }
 
-        public void UseWorkstation(Workstation workstation)
+        public void RemoveObjectGUI(ObjectGUI gui)
         {
-            invUI.SetWorkstation(workstation);
-        }
-
-        public void ResetToPlayerCraftingGUI()
-        {
-            invUI.ResetToPlayerCraftingGUI();
+            invUI.RemoveObjectGUI(gui);
         }
     }
 }

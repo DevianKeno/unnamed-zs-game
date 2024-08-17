@@ -6,7 +6,9 @@ namespace UZSG.UI
     [RequireComponent(typeof(RectTransform))]
     public class Frame : MonoBehaviour
     {
+        public string Id = "frame";
         public string Name = "Frame";
+        
         [SerializeField] RectTransform rect;
         public RectTransform Rect => rect;
 

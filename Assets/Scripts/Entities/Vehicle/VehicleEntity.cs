@@ -47,7 +47,7 @@ namespace UZSG.Entities
 
         public string Name => vehicle.Name;
 
-        public string ActionText => "Drive";
+        public string Action => "Drive";
 
         public event EventHandler<InteractArgs> OnInteract;
 

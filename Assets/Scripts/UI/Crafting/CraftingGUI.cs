@@ -13,16 +13,16 @@ using UZSG.Data;
 using UZSG.Inventory;
 using UZSG.Entities;
 using UZSG.Objects;
+using UZSG.UI.Objects;
 
 using static UZSG.Crafting.CraftingRoutineStatus;
 
-namespace UZSG.UI
+namespace UZSG.UI.Objects
 {
-    public class CraftingGUI : Window, IObjectGUI
+    public class CraftingGUI : ObjectGUI
     {
-        Player player;
-        Workstation workstation;
-
+        protected Workstation workstation;
+        public Workstation Workstation => workstation;
         RecipeData _selectedRecipe;
         public RecipeData SelectedRecipe => _selectedRecipe;
         int _amountToCraft = 1;
@@ -75,10 +75,10 @@ namespace UZSG.UI
 
         #region Public methods
 
-        public void SetPlayer(Player player)
+        public override void SetPlayer(Player player)
         {
-            this.player = player;
-            // InitializePlayerEvents()
+            base.SetPlayer(player);
+            
             player.Inventory.Bag.OnSlotItemChanged += OnPlayerBagItemChanged;
         }
         

@@ -1,23 +1,20 @@
-using System;
 using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using TMPro;
 
 using UZSG.Systems;
 using UZSG.Data;
 using UZSG.Inventory;
 using UZSG.Items;
 using UZSG.Entities;
-using TMPro;
-using UZSG.Objects;
-using UZSG.Crafting;
 
-namespace UZSG.UI
+namespace UZSG.UI.Players
 {
-    public partial class PlayerInventoryUI : Window, IInitializeable
+    public partial class InventoryUI : Window, IInitializeable
     {
         const string CraftingTitle = "Crafting"; /// this should be read from a Lang file
         
@@ -51,13 +48,7 @@ namespace UZSG.UI
         Selector selector;
 
         [Header("Inventory Components")]
-        [SerializeField] FrameController frameController;
         [SerializeField] GameObject bag;
-        [SerializeField] Transform craftingFrame;
-        [SerializeField] CraftingGUI playerCraftingGUI;
-        [SerializeField] TextMeshProUGUI titleText;
-        
-        [Header("Prefabs")]
         [SerializeField] GameObject selectorPrefab;
         
         InputActionMap actionMap;
@@ -225,51 +216,10 @@ namespace UZSG.UI
             CreateItemDisplay(item);
         }
 
-        /// <summary>
-        /// Replace the Player Crafting GUI with the Workstation GUI.
-        /// </summary>
-        public void SetWorkstation(Workstation workstation)
-        {
-            if (workstation == null) return; /// why would be null tho
-
-            playerCraftingGUI.Hide();
-            workstation.GUI.transform.SetParent(craftingFrame, false);
-            frameController.SwitchToFrame("crafting", instant: true);
-            /// Set the title text to the workstation's name
-            titleText.text = workstation.WorkstationData.WorkstationName;
-            Show();
-        }
-
-        public void ResetToPlayerCraftingGUI()
-        {
-            titleText.text = CraftingTitle;
-            playerCraftingGUI.Show();
-        }
-
         #endregion
 
 
         #region Event callbacks
-
-        void OnSwitchFrame(FrameController.SwitchFrameContext context)
-        {
-            /// Idk about this, selector might be visible on other frames
-            /// subject to change
-            if (context.Time == FrameController.SwitchFrameTime.Started)
-            {
-                selector.Hide();
-            }
-            else if (context.Time == FrameController.SwitchFrameTime.Finished)
-            {
-                if (context.Next == "bag")
-                {
-                    selector.Show();
-                }
-            }
-            
-            PutBackHeldItem();
-            DestroyItemOptions();
-        }
 
         void OnBagSlotContentChanged(object sender, ItemSlot.ItemChangedContext e)
         {

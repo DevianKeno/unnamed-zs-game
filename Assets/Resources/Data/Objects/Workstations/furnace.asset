@@ -20,7 +20,14 @@ MonoBehaviour:
     m_SubObjectType: 
     m_EditorAssetChanged: 0
   Attributes:
-  - {fileID: 0}
+  - data: {fileID: 11400000, guid: e1db9201565269c4caebcb12298f0665, type: 2}
+    value: 1000
+    baseMaximum: 0
+    multiplier: 0
+    flatBonus: 0
+    LimitOverflow: 0
+    LimitUnderflow: 0
+  HasAudio: 0
   AudioAssetsData: {fileID: 0}
   WorkstationName: Smelting
   GUI:
@@ -28,4 +35,7 @@ MonoBehaviour:
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
+  IncludePlayerRecipes: 0
+  QueueSize: 0
+  OutputSize: 0
   IncludedRecipes: []

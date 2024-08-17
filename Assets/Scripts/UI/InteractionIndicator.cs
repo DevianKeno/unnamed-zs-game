@@ -27,7 +27,7 @@ namespace UZSG.UI
                 return;
             }
             
-            actionText.text = obj.ActionText;
+            actionText.text = obj.Action;
             objectText.text = obj.Name;
             Show();
             LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);

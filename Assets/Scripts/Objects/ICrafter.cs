@@ -2,11 +2,9 @@ using UZSG.Crafting;
 
 namespace UZSG.Objects
 {
-    public interface IPlaceable
-    {
-        public virtual void Place() { }
-    }
-
+    /// <summary>
+    /// Represents stuff that has a Crafter logic attached to it.
+    /// </summary>
     public interface ICrafter
     {
         public Crafter Crafter { get; }

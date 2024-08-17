@@ -32,18 +32,33 @@ namespace UZSG.Entities
                 item = value;
             }
         }
-        public string Name => item.Data.Name;
-        public string ActionText
+        public string Name
         {
             get
             {
-                if (item.Data.Type == ItemType.Item ||
-                    item.Data.Type == ItemType.Tool || 
-                    item.Data.Type == ItemType.Equipment ||
-                    item.Data.Type == ItemType.Accessory) return "Pick Up";
-                if (item.Data.Type == ItemType.Weapon) return "Equip";
-                
-                return "Interact with";
+                if (item.Data.Type == ItemType.Item)
+                {
+                    return $"{item.Count} {item.Data.Name}";
+                }
+                else
+                {
+                    return $"{item.Data.Name}";
+                }
+            }
+        }
+        public string Action
+        {
+            get
+            {
+                return item.Data.Type switch
+                {
+                    ItemType.Item or
+                    ItemType.Tool or
+                    ItemType.Equipment or
+                    ItemType.Accessory => "Pick Up",
+                    ItemType.Weapon => "Equip",
+                    _ => "Interact with",
+                };
             }
         }
 

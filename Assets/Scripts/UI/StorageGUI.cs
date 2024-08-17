@@ -1,24 +1,18 @@
-using UZSG.Systems;
-using UZSG.Entities;
-using UZSG.Objects;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace UZSG.UI
+using UZSG.Systems;
+using UZSG.Objects;
+
+namespace UZSG.UI.Objects
 {
-    public class StorageGUI : Window, IObjectGUI
+    public class StorageGUI : ObjectGUI
     {
-        Player player;
-        Storage storage;
+        protected Storage storage;
+        public Storage Storage => storage;
         
         [SerializeField] Transform slotsHolder;
-
-        public void SetPlayer(Player player)
-        {
-            this.player = player;
-            // InitializePlayerEvents()
-            // player.Inventory.Bag.OnSlotItemChanged += OnPlayerBagItemChanged;
-        }
+        
         
         public void LinkStorage(Storage storage)
         {
@@ -37,13 +31,13 @@ namespace UZSG.UI
                 slotUI.Index = i;
 
                 slotUI.Link(storage.Container[i]);
-                slotUI.OnMouseDown += OnOutputSlotClick;
+                slotUI.OnMouseDown += OnStorageSlotClick;
 
                 slotUI.Show();
             }
         }
         
-        void OnOutputSlotClick(object sender, ItemSlotUI.ClickedContext ctx)
+        void OnStorageSlotClick(object sender, ItemSlotUI.ClickedContext ctx)
         {
             var slot = ((ItemSlotUI) sender).Slot;
 

@@ -2003,37 +2003,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!1 &1675453428
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1675453429}
-  m_Layer: 0
-  m_Name: GameObject
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1675453429
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1675453428}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0.9994268, z: 0, w: -0.033852894}
-  m_LocalPosition: {x: -1.58, y: 66.3, z: -4.309}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: -183.88, z: 0}
 --- !u!1 &1728544472
 GameObject:
   m_ObjectHideFlags: 0
@@ -2454,6 +2423,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: WORLD
       objectReference: {fileID: 0}
+    - target: {fileID: 3102132849409033875, guid: 045083471b927524cb2dc0f04bb61987, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 66.35
+      objectReference: {fileID: 0}
     - target: {fileID: 3304269742938537319, guid: 045083471b927524cb2dc0f04bb61987, type: 3}
       propertyPath: m_Color.b
       value: 0.3959755
@@ -2518,6 +2491,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5387064515134437002, guid: 045083471b927524cb2dc0f04bb61987, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7563140517493066066, guid: 045083471b927524cb2dc0f04bb61987, type: 3}
       propertyPath: m_Color.b
       value: 0.13745116
@@ -2561,4 +2538,3 @@ SceneRoots:
   - {fileID: 1576134487}
   - {fileID: 6075164487142275611}
   - {fileID: 1819902023}
-  - {fileID: 1675453429}

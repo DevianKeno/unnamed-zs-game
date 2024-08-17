@@ -12,7 +12,7 @@ namespace UZSG.Objects
     {
         public ResourceData ResourceData => objectData as ResourceData;
         public Item Item;
-        public string ActionText => "Pick up";
+        public string Action => "Pick up";
         public string Name => ResourceData.Name;
 
         public event EventHandler<InteractArgs> OnInteract;

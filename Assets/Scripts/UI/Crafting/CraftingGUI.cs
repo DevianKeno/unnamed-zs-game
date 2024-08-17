@@ -45,7 +45,6 @@ namespace UZSG.UI
         /// Key is the Crafting Routine; Value is the UI element.
         /// </summary>
         Dictionary<CraftingRoutine, CraftingProgressUI> _routineUIs = new();
-        List<ItemSlotUI> outputSlotUIs = new();
 
         [SerializeField] CraftedItemDisplayUI craftedItemDisplay;
         [SerializeField] RectTransform craftablesHolder;
@@ -166,7 +165,6 @@ namespace UZSG.UI
                 slotUI.OnMouseDown += OnOutputSlotClick;
 
                 slotUI.Show();
-                outputSlotUIs.Add(slotUI);
             }
         }
         

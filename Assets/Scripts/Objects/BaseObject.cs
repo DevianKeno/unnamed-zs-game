@@ -11,14 +11,15 @@ namespace UZSG.Objects
         public ObjectData ObjectData => objectData;
         [SerializeField] AttributeCollection attributes;
         public AttributeCollection Attributes => attributes;
-        public bool HasAudio = false;
         [SerializeField] protected AudioSourceController audioController;
         public AudioSourceController Audio => audioController;
+        [SerializeField] protected Animator animator;
+        public Animator Animator => animator;
 
         protected virtual void Start()
         {
             InitializeAttributes();
-            if (HasAudio) InitializeAudioController();
+            if (objectData.HasAudio) InitializeAudioController();
         }
 
         protected virtual void InitializeAttributes()

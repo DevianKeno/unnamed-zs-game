@@ -335,6 +335,11 @@ namespace UZSG.Entities
             invUI.ToggleVisibility();
         }
 
+        void UseObject(BaseObject obj)
+        {
+
+        }
+
         public void UseWorkstation(Workstation workstation)
         {
             invUI.SetWorkstation(workstation);

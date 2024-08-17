@@ -47,7 +47,7 @@ GameObject:
   - component: {fileID: 2396010862542012106}
   - component: {fileID: 1698227891661039361}
   m_Layer: 5
-  m_Name: smelting
+  m_Name: Smelting
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

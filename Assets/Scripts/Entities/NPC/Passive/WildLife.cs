@@ -173,17 +173,17 @@ namespace UZSG.Entities
             WildlifeStateMachine.ToState(WildlifeActionStates.Die);
             Game.Tick.OnSecond -= Game_Tick_OnSecond;
             Game.Entity.Kill(this);
-            Debug.Log("Die");
+            //Debug.Log("Die");
         }
 
         void Roam()
         {
-            Debug.Log("Roam");
+            //Debug.Log("Roam");
         }
 
         void RunAway()
         {
-            Debug.Log("RunAway");
+            //Debug.Log("RunAway");
         }
 
         public void ExecuteAction(WildlifeActionStates action) // execute an action depending on what state the entity is on

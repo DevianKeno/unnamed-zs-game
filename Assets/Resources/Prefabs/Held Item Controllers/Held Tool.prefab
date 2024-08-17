@@ -177,6 +177,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ItemData: {fileID: 0}
   audioSourceController: {fileID: 2726077485849005911}
+  attributes:
+    attributes: []
   attackRange: 2.5
   attackAngle: 120
   attackDuration: 0.1
@@ -185,8 +187,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 10240
   VisualizeAttack: 0
-  runtimeAttributes:
-    attributes: []
   attackStaminaCost: 0
 --- !u!114 &1320425707426966784
 MonoBehaviour:
@@ -202,6 +202,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _lockedUntil: 0
   _isTransitioning: 0
+  AllowReentry: 1
   InState: 0
   DebugMode: 0
 --- !u!114 &2726077485849005911
@@ -216,6 +217,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91fd57dad2e3b8844889a99ae9e028d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  AudioAssetsData: {fileID: 0}
 --- !u!1 &1804872665885607403
 GameObject:
   m_ObjectHideFlags: 0

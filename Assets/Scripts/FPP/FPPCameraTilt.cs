@@ -42,7 +42,8 @@ namespace UZSG.FPP
 
         void HandleCameraTilt()
         {
-            var localVelocity = transform.InverseTransformDirection(Player.Controls.Velocity);
+            // var localVelocity = transform.InverseTransformDirection(Player.Controls.Velocity);
+            var localVelocity = Player.Controls.LocalVelocity;
 
             if (Mathf.Abs(localVelocity.z) < MinSpeed)
             {

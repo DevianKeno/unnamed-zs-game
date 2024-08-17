@@ -195,6 +195,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _lockedUntil: 0
   _isTransitioning: 0
+  AllowReentry: 1
   InState: 0
   DebugMode: 0
 --- !u!114 &2726077485849005911

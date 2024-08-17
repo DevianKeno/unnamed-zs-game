@@ -72,6 +72,16 @@
       "LimitUnderflow": true
     },
     {
+      "Id": "walk_speed",
+      "Value": 150.0,
+      "Minimum": 0.0,
+      "BaseMaximum": 0.0,
+      "Multiplier": 1.0,
+      "FlatBonus": 0.0,
+      "LimitOverflow": true,
+      "LimitUnderflow": true
+    },
+    {
       "Id": "run_speed",
       "Value": 400.0,
       "Minimum": 0.0,

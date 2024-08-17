@@ -1632,6 +1632,7 @@ MonoBehaviour:
     flatBonus: 0
     LimitOverflow: 0
     LimitUnderflow: 0
+  rb: {fileID: 0}
   _isInHorde: 0
   _health: 0
   hasTargetInSite: 0
@@ -1737,6 +1738,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _lockedUntil: 0
   _isTransitioning: 0
+  AllowReentry: 0
   InState: 2
   DebugMode: 0
 --- !u!195 &6447642704647650390

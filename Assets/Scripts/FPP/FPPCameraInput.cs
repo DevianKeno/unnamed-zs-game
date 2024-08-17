@@ -30,6 +30,7 @@ namespace UZSG.FPP
         InputAction look;
 
         [Header("Components")]
+        public Transform Holder;
         [SerializeField] Camera FPPCamera;
         public Camera Camera => FPPCamera;
         [SerializeField] Animator animator;

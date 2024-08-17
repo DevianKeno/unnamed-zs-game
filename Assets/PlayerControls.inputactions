@@ -812,6 +812,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Toggle Walk",
+                    "type": "Button",
+                    "id": "b4c8537b-bdc1-46d4-bed2-553bc1180534",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Vehicle Move",
                     "type": "Value",
                     "id": "f841103d-3668-45aa-9bd6-639955b94168",
@@ -1224,6 +1233,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Handbrake",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e15ae4a2-14e9-4590-b511-ebc2210cefae",
+                    "path": "<Keyboard>/ctrl",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Toggle Walk",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

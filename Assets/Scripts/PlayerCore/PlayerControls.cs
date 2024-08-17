@@ -26,37 +26,44 @@ namespace UZSG.Players
         public Player Player;
         [Space]
 
-        public bool EnableMovementControls = true;
-
-
-        #region These should be read as attributes
-        /// <summary>
-        /// Cached movement values from the Player. This should subscribe to the OnValueChanged event.
-        /// </summary>
-        public float Acceleration;
-        public float MoveSpeed;
-        public float RunSpeed;
-        public float CrouchSpeed;
-        public float JumpSpeed = 2f;
+        public bool AllowMovement;
         public float TimeScale = 1f;
-
-        #endregion
 
         bool _isMovePressed;
         bool _isMovingBackwards;
         bool _isTransitioningCrouch;
+        bool _isWalking;
         bool _isRunning;
-        [SerializeField] float _targetSpeed;
+        bool _hasJumped;
+        [SerializeField] bool _runIsToggle = false;
+        [SerializeField] bool _crouchIsToggle = true;
+
+        [SerializeField] float acceleration = 10f;
+        float _walkSpeed;
+        float _moveSpeed;
+        float _runSpeed;
+        float _crouchSpeed;
+        float _jumpSpeed = 2f;
+        float _targetSpeed;
         float _crouchPosition;
         /// <summary>
         /// The input values performed in the current frame.
         /// </summary>
         FrameInput _frameInput;
         /// <summary>
+        /// The input values performed in the current frame.
+        /// </summary>
+        public FrameInput FrameInput => _frameInput;
+        /// <summary>
         /// The velocity to be applied for the current frame.
         /// </summary>
         Vector3 _frameVelocity;
+        MoveStates _targetMoveState;
 
+
+        #region Public properties
+
+        public bool IsWalking => _isWalking;
         /// <summary>
         /// If holding [Run] key and speed is greater than run threshold.
         /// </summary>
@@ -65,9 +72,12 @@ namespace UZSG.Players
         public bool IsCrouching => _isCrouching;
         public bool IsMoving
         {
-            get => Magnitude > 0f;
+            get => _frameInput.Move != Vector2.zero;
         }
-        public bool IsGrounded => groundChecker.IsGrounded;
+        public bool IsGrounded
+        {
+            get => groundChecker.IsGrounded;
+        }
         public bool IsFalling
         {
             get => _frameVelocity.y < 0f && !IsGrounded;
@@ -75,6 +85,10 @@ namespace UZSG.Players
         public Vector3 Velocity
         {
             get => rb.velocity;
+        }
+        public Vector3 LocalVelocity
+        {
+            get => Player.MainCamera.transform.InverseTransformDirection(Velocity);
         }
         public float Magnitude
         {
@@ -99,14 +113,17 @@ namespace UZSG.Players
         {
             get => IsGrounded;
         }
-
-        #region Events
-
-        public event EventHandler OnMoveStart;
-        public event EventHandler OnMoveStop;
+        Vector3 CameraForward
+        {
+            get
+            {
+                Vector3 camForward = Player.MainCamera.transform.forward;
+                camForward.y = 0f;
+                return camForward;
+            }
+        }
 
         #endregion
-
 
 
         [Header("Components")]
@@ -125,60 +142,60 @@ namespace UZSG.Players
         Dictionary<string, InputAction> inputs = new();
         public Dictionary<string, InputAction> Inputs => inputs;
         
+        
+        #region Initializing methods
+
+        void Awake()
+        {
+            Player = GetComponent<Player>();
+        }
+        
         internal void Initialize()
         {
             InitializeInputs();
             RetrieveAttributes();
-            
-            Game.Tick.OnTick += Tick;
         }
 
         void InitializeInputs()
         {
             actionMap = Game.Main.GetActionMap("Player Move");
             inputs = Game.Main.GetActionsFromMap(actionMap);
-
-            foreach (var input in inputs)
-            {
-                input.Value.performed += OnPerformInput;
-            }
             
-            inputs["Move"].performed += OnMoveInput;
-            inputs["Move"].started += OnMoveInput;
-            inputs["Move"].canceled += OnMoveInput;
+            inputs["Move"].performed += OnInputMove;
+            inputs["Move"].started += OnInputMove;
+            inputs["Move"].canceled += OnInputMove;
 
-            inputs["Jump"].started += OnJumpInput;          // Space (default)
-            inputs["Jump"].canceled += OnJumpInput;        
+            inputs["Jump"].started += OnInputJump;
+            inputs["Jump"].canceled += OnInputJump;        
 
-            inputs["Run"].started += OnRunInput;            // Shift (default)
-            inputs["Run"].canceled += OnRunInput;           
+            inputs["Run"].started += OnInputRun;
+            inputs["Run"].canceled += OnInputRun;           
 
-            inputs["Crouch"].started += OnCrouchInput;      // LCtrl (default)
-            inputs["Crouch"].canceled += OnCrouchInput;   
+            inputs["Toggle Walk"].performed += OnInputWalkToggle;
 
-            SetControlsEnabled(true);
+            inputs["Crouch"].started += OnInputCrouch;
+            inputs["Crouch"].canceled += OnInputCrouch;
+
+            Enable();
         }
 
-        void OnPerformInput(InputAction.CallbackContext context)
+        void RetrieveAttributes()
         {
-            OnInput?.Invoke(context);
+            _walkSpeed = Player.Attributes.Get("walk_speed").Value;
+            _moveSpeed = Player.Attributes.Get("move_speed").Value;
+            _runSpeed = Player.Attributes.Get("run_speed").Value;
+            _crouchSpeed = Player.Attributes.Get("crouch_speed").Value;
+            
+            _targetSpeed = _moveSpeed;
         }
 
-        public event Action<InputAction.CallbackContext> OnInput; 
-        
-        void Awake()
-        {
-            Player = GetComponent<Player>();
-        }
+        #endregion
+
 
         void FixedUpdate()
         {
             HandleMovement();
             UpdateStates();
-        }
-
-        void Tick(TickInfo t)
-        {
         }
 
         void HandleMovement()
@@ -188,54 +205,32 @@ namespace UZSG.Players
             ApplyMovement();
         }
 
-        void RetrieveAttributes()
-        {
-            /// These can be cached and track changes using events
-            /// Vitals
-            stamina = Player.Attributes.Get("stamina");
-            
-            /// Generic
-            MoveSpeed = Player.Attributes.Get("move_speed").Value;
-            RunSpeed = Player.Attributes.Get("run_speed").Value;
-            CrouchSpeed = Player.Attributes.Get("crouch_speed").Value;
-            jumpStaminaCost = Player.Attributes.Get("jump_stamina_cost").Value;
-            
-            _targetSpeed = MoveSpeed;
-        }
-
         void UpdateStates()
         {
-            if (_isMovePressed)
+            if (_isMovePressed && IsMoving && !_hasJumped)
             {
-                if (IsRunning)
-                {
-                    Player.MoveStateMachine.ToState(MoveStates.Run);
-                }
-                else
-                {
-                    Player.MoveStateMachine.ToState(MoveStates.Walk);
-                }
+                Player.MoveStateMachine.ToState(_targetMoveState);
             }
             else
             {
                 Player.MoveStateMachine.ToState(MoveStates.Idle);
             }
+
+            if (_hasJumped)
+            {
+                if (IsGrounded)
+                {
+                    _hasJumped = false;
+                }
+            }
         }
-
-
-        #region Cached attributes
-
-        Attributes.Attribute stamina;
-        float jumpStaminaCost;
-
-        #endregion
 
 
         #region Player input callbacks
 
-        void OnMoveInput(InputAction.CallbackContext context)
+        void OnInputMove(InputAction.CallbackContext context)
         {
-            if (!EnableMovementControls) return;
+            if (!AllowMovement) return;
 
             _frameInput.Move = context.ReadValue<Vector2>();
             _isMovePressed = _frameInput.Move.x != 0 || _frameInput.Move.y != 0;
@@ -244,23 +239,19 @@ namespace UZSG.Players
             CancelRunIfRunningBackwards();
         }
 
-        void CancelRunIfRunningBackwards()
+        void OnInputRun(InputAction.CallbackContext context)
         {
-            if (_isMovingBackwards && _isRunning)
-            {
-                ToggleRun(false);
-            }
-        }
-
-        void OnRunInput(InputAction.CallbackContext context)
-        {
-            if (!EnableMovementControls) return;
+            if (!AllowMovement) return;
             if (!IsGrounded) return;
 
             if (context.started)
             {
                 CancelRunBecauseOfOtherThings();
                 if (Player.FPP.IsPerforming) return;
+                if (IsWalking)
+                {
+                    ToggleWalk(false);
+                }
 
                 ToggleRun(true);
             }
@@ -270,17 +261,19 @@ namespace UZSG.Players
             }
         }
 
-        void CancelRunBecauseOfOtherThings()
+        void OnInputWalkToggle(InputAction.CallbackContext context)
         {
-            if (_isMovingBackwards)
+            if (IsRunning)
             {
                 ToggleRun(false);
             }
+
+            ToggleWalk(!IsWalking);
         }
 
-        void OnJumpInput(InputAction.CallbackContext context)
+        void OnInputJump(InputAction.CallbackContext context)
         {
-            if (!EnableMovementControls) return;
+            if (!AllowMovement) return;
 
             if (context.started)
             {
@@ -299,13 +292,11 @@ namespace UZSG.Players
             }
         }
 
-        [SerializeField] bool _crouchControlIsToggle = true;
-
-        void OnCrouchInput(InputAction.CallbackContext context)
+        void OnInputCrouch(InputAction.CallbackContext context)
         {
-            if (!EnableMovementControls) return;
+            if (!AllowMovement) return;
 
-            if (_crouchControlIsToggle)
+            if (_crouchIsToggle)
             {
                 if (context.started)
                 {
@@ -328,11 +319,20 @@ namespace UZSG.Players
         #endregion
 
 
-        Vector3 GetCameraForward()
+        void CancelRunIfRunningBackwards()
         {
-            Vector3 camForward = Player.MainCamera.transform.forward;
-            camForward.y = 0f;
-            return camForward;
+            if (_isMovingBackwards && _isRunning)
+            {
+                ToggleRun(false);
+            }
+        }
+
+        void CancelRunBecauseOfOtherThings()
+        {
+            if (_isMovingBackwards)
+            {
+                ToggleRun(false);
+            }
         }
 
         void ToggleRun(bool run)
@@ -344,36 +344,55 @@ namespace UZSG.Players
                     ToggleCrouch(false);
                 }
 
-                _targetSpeed = RunSpeed;
-                Player.MoveStateMachine.ToState(MoveStates.Run);
+                _targetSpeed = _runSpeed;
+                _targetMoveState = MoveStates.Run;
             }
             else
             {
-                _targetSpeed = MoveSpeed;
-                Player.MoveStateMachine.ToState(MoveStates.Idle);
+                _targetSpeed = _moveSpeed;
+                _targetMoveState = default;
             }
+
             _isRunning = run;
+        }
+        
+
+        void ToggleWalk(bool walk)
+        {
+            if (walk)
+            {
+                _targetSpeed = _walkSpeed;
+                _targetMoveState = MoveStates.Walk;
+            }
+            else
+            {
+                _targetSpeed = _moveSpeed;
+                _targetMoveState = default;
+            }
+
+            _isWalking = walk;
         }
 
         void HandleJump()
         {
             if (!IsGrounded) return;
-            
+
+            _hasJumped = true;
             Vector3 jumpVelocity = rb.velocity;
-            jumpVelocity.y = JumpSpeed * TimeScale;
+            jumpVelocity.y = _jumpSpeed * TimeScale;
             rb.velocity = jumpVelocity;
             Player.MoveStateMachine.ToState(MoveStates.Jump);
         }
 
         void HandleDirection()
         {
-            _frameVelocity = (_frameInput.Move.x * Player.MainCamera.transform.right) + (_frameInput.Move.y * GetCameraForward().normalized);
+            _frameVelocity = (_frameInput.Move.x * Player.MainCamera.transform.right) + (_frameInput.Move.y * CameraForward.normalized);
             _frameVelocity.Normalize();
         }
 
         void HandleRotation()
         {
-            model.rotation = Quaternion.LookRotation(GetCameraForward().normalized);
+            model.rotation = Quaternion.LookRotation(CameraForward.normalized);
         }
 
         void ApplyMovement()
@@ -383,7 +402,7 @@ namespace UZSG.Players
             /// No acceleration
             // rb.velocity = targetVelocity * TimeScale;
             /// With acceleration
-            rb.velocity = Vector3.Lerp(rb.velocity, targetVelocity, Acceleration * Time.fixedDeltaTime) * TimeScale;
+            rb.velocity = Vector3.Lerp(rb.velocity, targetVelocity, acceleration * Time.fixedDeltaTime) * TimeScale;
         }
 
         void ToggleCrouch(bool crouch)
@@ -396,13 +415,13 @@ namespace UZSG.Players
             
             if (crouch)
             {
-                _targetSpeed = CrouchSpeed;
+                _targetSpeed = _crouchSpeed;
                 _crouchPosition = Player.FPP.Camera.transform.position.y - 1f;
                 Player.InfoHUD.FadeVignette(1f);
             }
             else
             {
-                _targetSpeed = MoveSpeed;
+                _targetSpeed = _moveSpeed;
                 _crouchPosition = Player.FPP.Camera.transform.position.y + 1f;
                 Player.InfoHUD.FadeVignette(0f);
             }
@@ -423,26 +442,19 @@ namespace UZSG.Players
             }).setEaseOutExpo();
         }
 
+
+        #region Public methods
+
         public void Enable()
         {
             actionMap.Enable();
+            AllowMovement = true;
         }
 
         public void Disable()
         {
             actionMap.Disable();
-        }
-
-        void SetControlsEnabled(bool value)
-        {
-            if (value)
-            {
-                actionMap.Enable();
-            }
-            else
-            {
-                actionMap.Disable();
-            }
+            AllowMovement = false;
         }
 
         public void SetControl(string name, bool enabled)
@@ -459,5 +471,7 @@ namespace UZSG.Players
                 }
             }
         }
+
+        #endregion
     }
 }

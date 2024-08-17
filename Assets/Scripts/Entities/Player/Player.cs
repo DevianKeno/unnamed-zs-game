@@ -28,7 +28,7 @@ namespace UZSG.Entities
     /// <summary>
     /// Player entity.
     /// </summary>
-    public class Player : Entity, IPlayer
+    public partial class Player : Entity, IPlayer
     {
         public bool CanPickUpItems = true;
 
@@ -92,12 +92,8 @@ namespace UZSG.Entities
         {
             get
             {
-                if (Attributes["stamina"].Value >= Attributes["jump_stamina_cost"].Value
-                && Controls.IsGrounded)
-                {
-                    return true;
-                }
-                return false;
+                return Attributes["stamina"].Value >= Attributes["jump_stamina_cost"].Value
+                    && Controls.IsGrounded;
             }
         }
 
@@ -150,26 +146,8 @@ namespace UZSG.Entities
             saveData = playerEntityData.GetDefaultsJson<PlayerSaveData>();
         }
 
-        public void ReadSaveJson(PlayerSaveData saveData)
-        {
-            if (saveData == null)
-            {
-                Game.Console.LogError($"Invalid PlayerSaveData loaded for Player");
-                return;
-            }
-            this.saveData = saveData; 
-        }
-        
-        public PlayerSaveData WriteSaveJson()
-        {
-            var saveData = new PlayerSaveData()
-            {
-                Attributes = attributes.WriteSaveJson(),
-                Inventory = inventory.WriteSaveJson(),
-            };
 
-            return saveData;
-        }
+        #region Initializing methods
 
         void InitializeAttributes()
         {
@@ -178,32 +156,16 @@ namespace UZSG.Entities
             attributes["stamina"].OnValueModified += OnAttrStaminaModified;
         }
 
-
-        #region Attribute event callbacks
-
-        bool _allowStaminaRegen;
-        CoroutineHandle _delayedStaminaCoroutine;
-        void OnAttrStaminaModified(object sender, AttributeValueChangedContext e)
-        {
-            if (e.ValueChangedType == UZSG.Attributes.Attribute.ValueChangeType.Decreased)
-            {
-                _allowStaminaRegen = false;
-                Timing.KillCoroutines(_delayedStaminaCoroutine);
-                _delayedStaminaCoroutine = Timing.RunCoroutine(_DelayStaminaRegen());
-            }
-        }
-
-        #endregion
-
-
         void InitializeStateMachines()
         {
             MoveStateMachine.InitialState = MoveStateMachine.States[MoveStates.Idle];
 
+            MoveStateMachine.OnStateChanged += OnMoveStateChanged;
+
             MoveStateMachine.States[MoveStates.Idle].OnEnter += OnIdleEnter;
             MoveStateMachine.States[MoveStates.Run].OnEnter += OnRunEnter;
             MoveStateMachine.States[MoveStates.Jump].OnEnter += OnJumpEnter;
-            MoveStateMachine.States[MoveStates.Crouch].OnEnter += OnCrouchEnter;      
+            MoveStateMachine.States[MoveStates.Crouch].OnEnter += OnCrouchEnter;
         }
 
         void InitializeHUD()
@@ -238,8 +200,6 @@ namespace UZSG.Entities
             };
         }
 
-
-
         void InitializeCrafter()
         {
             crafter.InitializePlayer(this);
@@ -261,9 +221,12 @@ namespace UZSG.Entities
 
         void ParentMainCameraToFPPController()
         {
-            Camera.main.transform.SetParent(FPP.Camera.Camera.transform, false);
+            Camera.main.transform.SetParent(FPP.Camera.Holder, false);
             Camera.main.transform.localPosition = Vector3.zero;
         }
+
+        #endregion
+
 
         void Tick(TickInfo t)
         {
@@ -272,32 +235,27 @@ namespace UZSG.Entities
         }
 
 
-        void RegenerateStamina()
+        #region Attribute event callbacks
+
+        bool _allowStaminaRegen;
+        CoroutineHandle _delayedStaminaTimer;
+        void OnAttrStaminaModified(object sender, AttributeValueChangedContext e)
         {
-            if (_allowStaminaRegen)
+            if (e.ValueChangedType == UZSG.Attributes.Attribute.ValueChangeType.Decreased)
             {
-                Attributes.Get("stamina").Add(Attributes.Get("stamina_regen_per_tick").Value);
+                _allowStaminaRegen = false;
+                Timing.KillCoroutines(_delayedStaminaTimer);
+                _delayedStaminaTimer = Timing.RunCoroutine(_DelayStaminaRegen());
             }
         }
 
-        void ConsumeStaminaWhileRunning()
-        {
-            if (Controls.IsRunning && Controls.IsMoving)
-            {
-                /// Cache attributes for better performance
-                var runStaminaCost = Attributes.Get("run_stamina_cost").Value;
-                Attributes.Get("stamina").Remove(runStaminaCost);
-            }
-        }
+        #endregion
+
+
+        #region Move state machine callbacks
 
         void OnIdleEnter(object sender, State<MoveStates>.ChangedContext e)
         {
-        }
-
-        IEnumerator<float> _DelayStaminaRegen()
-        {
-            yield return Timing.WaitForSeconds(Attributes["stamina_regen_delay"].Value);
-            _allowStaminaRegen = true;
         }
 
         void OnRunEnter(object sender, State<MoveStates>.ChangedContext e)
@@ -329,10 +287,41 @@ namespace UZSG.Entities
                 hydration.Remove(jumpHydrationCost);
             }
         }
+
+        #endregion
+
+
+        #region Player input callbacks
         
         void OnPerformInventory(InputAction.CallbackContext context)
         {
             invUI.ToggleVisibility();
+        }
+
+        #endregion
+
+
+        #region Public methods
+
+        public void ReadSaveJson(PlayerSaveData saveData)
+        {
+            if (saveData == null)
+            {
+                Game.Console.LogError($"Invalid PlayerSaveData loaded for Player");
+                return;
+            }
+            this.saveData = saveData; 
+        }
+        
+        public PlayerSaveData WriteSaveJson()
+        {
+            var saveData = new PlayerSaveData()
+            {
+                Attributes = attributes.WriteSaveJson(),
+                Inventory = inventory.WriteSaveJson(),
+            };
+
+            return saveData;
         }
 
         public void UseObjectGUI(ObjectGUI gui)
@@ -343,6 +332,33 @@ namespace UZSG.Entities
         public void RemoveObjectGUI(ObjectGUI gui)
         {
             invUI.RemoveObjectGUI(gui);
+        }
+
+        #endregion
+
+
+        void RegenerateStamina()
+        {
+            if (_allowStaminaRegen)
+            {
+                Attributes.Get("stamina").Add(Attributes.Get("stamina_regen_per_tick").Value);
+            }
+        }
+
+        void ConsumeStaminaWhileRunning()
+        {
+            if (Controls.IsRunning && Controls.IsMoving)
+            {
+                /// Cache attributes for better performance
+                var runStaminaCost = Attributes.Get("run_stamina_cost").Value;
+                Attributes.Get("stamina").Remove(runStaminaCost);
+            }
+        }
+
+        IEnumerator<float> _DelayStaminaRegen()
+        {
+            yield return Timing.WaitForSeconds(Attributes["stamina_regen_delay"].Value);
+            _allowStaminaRegen = true;
         }
     }
 }

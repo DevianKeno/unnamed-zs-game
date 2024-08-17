@@ -24,6 +24,10 @@ namespace UZSG.Systems
         public float LockedUntil => _lockedUntil;
         [SerializeField] protected bool _isTransitioning = false;
         public bool IsTransitioning => _isTransitioning;
+        /// <summary>
+        /// Whether to allow reentry-ing the state.
+        /// </summary>
+        public bool AllowReentry = false;
 
         public E InState;
         public bool DebugMode = false;
@@ -44,6 +48,7 @@ namespace UZSG.Systems
         void Start()
         {
             if (InitialState != null) _currentState = InitialState;
+
             Game.Tick.OnTick += Tick;
         }
 
@@ -52,18 +57,21 @@ namespace UZSG.Systems
             if (InitialState != null) _currentState.Tick();
         }
 
+        public virtual void ToState(E state)
+        {
+            if (!_states.ContainsKey(state)) return;
+
+            ToState(_states[state]);
+        }
+
         /// <summary>
         /// Transition to state.
         /// </summary>
         public virtual void ToState(State<E> state)
         {
-            TrySwitchState(state);
-        }
+            if (state.Key.Equals(_currentState.Key) && !AllowReentry) return;
 
-        public virtual void ToState(E state)
-        {
-            if (!_states.ContainsKey(state)) return;
-            ToState(_states[state]);
+            TrySwitchState(state);
         }
 
         /// <summary>

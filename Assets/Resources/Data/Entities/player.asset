@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: player
   AssetReference:
-    m_AssetGUID: f228f153eb4ed3c48a4c928bce373dd1
+    m_AssetGUID: 04707f4850871b74da1bee390c903cfe
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
@@ -57,6 +57,13 @@ MonoBehaviour:
     LimitUnderflow: 1
   - data: {fileID: 11400000, guid: fe9f66b79d95e7948a4dfcb4512568c7, type: 2}
     value: 300
+    baseMaximum: 0
+    multiplier: 1
+    flatBonus: 0
+    LimitOverflow: 1
+    LimitUnderflow: 1
+  - data: {fileID: 11400000, guid: 272fbb1bf20dc634792af24c573351be, type: 2}
+    value: 150
     baseMaximum: 0
     multiplier: 1
     flatBonus: 0
@@ -135,6 +142,5 @@ MonoBehaviour:
   AudioAssetsData: {fileID: 11400000, guid: eed9c45f6757aae48b1990646f079589, type: 2}
   KnownRecipes:
   - {fileID: 11400000, guid: 2e41551279bc6c844802b36a217ef687, type: 2}
-  - {fileID: 11400000, guid: 0aed3dfb57c8719448a2cfc362752fc5, type: 2}
   - {fileID: 11400000, guid: d483b2fe74215824dbda5f2c35f2445a, type: 2}
   - {fileID: 11400000, guid: 314eca0960e514f46b436d87ec9f13fc, type: 2}

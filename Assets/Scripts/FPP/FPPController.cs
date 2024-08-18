@@ -58,6 +58,7 @@ namespace UZSG.FPP
         public FPPCameraInput Camera => cameraController;
         [SerializeField] FPPArmsController armsController;
         [SerializeField] FPPViewmodelController viewmodelController;
+        [SerializeField] FPPRecoilCamera recoilCamera;
         // [SerializeField] FPPAimDownSights adsController;
 
         Animator viewmodelAnimator;

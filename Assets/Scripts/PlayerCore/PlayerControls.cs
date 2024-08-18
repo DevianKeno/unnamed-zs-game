@@ -27,7 +27,13 @@ namespace UZSG.Players
         [Space]
 
         public bool AllowMovement;
-        public float TimeScale = 1f;
+
+        [Header("Parameters")]
+        public float Acceleration = 10f;
+        public float RotationDamping = 6f;
+        public float TurningAngle = 120f;
+        public bool RunIsToggle = false;
+        public bool CrouchIsToggle = true;
 
         bool _isMovePressed;
         bool _isMovingBackwards;
@@ -35,10 +41,6 @@ namespace UZSG.Players
         bool _isWalking;
         bool _isRunning;
         bool _hasJumped;
-        [SerializeField] bool _runIsToggle = false;
-        [SerializeField] bool _crouchIsToggle = true;
-
-        [SerializeField] float acceleration = 10f;
         float _walkSpeed;
         float _moveSpeed;
         float _runSpeed;
@@ -130,7 +132,7 @@ namespace UZSG.Players
         /// <summary>
         /// The Player's 3D model.
         /// </summary>
-        [SerializeField] Transform model;
+        public Transform Model;
         [SerializeField] Rigidbody rb;
         public Rigidbody Rigidbody => rb;
         public GroundChecker groundChecker;
@@ -194,15 +196,11 @@ namespace UZSG.Players
 
         void FixedUpdate()
         {
-            HandleMovement();
-            UpdateStates();
-        }
-
-        void HandleMovement()
-        {
             HandleDirection();
+            HandleTurning();
             HandleRotation();
             ApplyMovement();
+            UpdateStates();
         }
 
         void UpdateStates()
@@ -296,7 +294,7 @@ namespace UZSG.Players
         {
             if (!AllowMovement) return;
 
-            if (_crouchIsToggle)
+            if (CrouchIsToggle)
             {
                 if (context.started)
                 {
@@ -379,7 +377,7 @@ namespace UZSG.Players
 
             _hasJumped = true;
             Vector3 jumpVelocity = rb.velocity;
-            jumpVelocity.y = _jumpSpeed * TimeScale;
+            jumpVelocity.y = _jumpSpeed;
             rb.velocity = jumpVelocity;
             Player.MoveStateMachine.ToState(MoveStates.Jump);
         }
@@ -392,7 +390,38 @@ namespace UZSG.Players
 
         void HandleRotation()
         {
-            model.rotation = Quaternion.LookRotation(CameraForward.normalized);
+            if (IsMoving)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(CameraForward.normalized);
+                Model.rotation = Quaternion.Slerp(Model.rotation, targetRotation, RotationDamping * Time.deltaTime);
+            }
+        }
+
+        Quaternion _desiredRotation;
+
+        void HandleTurning()
+        {
+            if (!IsMoving) return;
+            {
+                Vector3 modelForward = Model.forward;
+                Vector3 cameraForward = Player.Forward;
+
+                if (Vector3.Angle(modelForward, cameraForward) > TurningAngle)
+                {
+                    Vector3 cross = Vector3.Cross(modelForward, cameraForward);
+
+                    if (cross.y > 0) /// turn right
+                    {
+                        Player.Animator.SetFloat("turn", 1f);
+                    }
+                    else if (cross.y < 0) /// turn left
+                    {
+                        Player.Animator.SetFloat("turn", -1f);
+                    }
+
+                    Player.MoveStateMachine.ToState(MoveStates.Turn);
+                }
+            }
         }
 
         void ApplyMovement()
@@ -402,7 +431,7 @@ namespace UZSG.Players
             /// No acceleration
             // rb.velocity = targetVelocity * TimeScale;
             /// With acceleration
-            rb.velocity = Vector3.Lerp(rb.velocity, targetVelocity, acceleration * Time.fixedDeltaTime) * TimeScale;
+            rb.velocity = Vector3.Lerp(rb.velocity, targetVelocity, Acceleration * Time.fixedDeltaTime);
         }
 
         void ToggleCrouch(bool crouch)

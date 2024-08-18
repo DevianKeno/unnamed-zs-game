@@ -25,6 +25,7 @@ namespace UZSG.Entities
         void OnMoveStateChanged(object sender, StateMachine<MoveStates>.StateChangedContext e)
         {
             var animId = GetAnimationName(e.To);
+            print($"Move state changed: Target [{animId}]");
             animator.CrossFade($"{animId}", CrossfadeTransitionDuration);
             animatorFPP.CrossFade($"{animId}", CrossfadeTransitionDuration);
         }

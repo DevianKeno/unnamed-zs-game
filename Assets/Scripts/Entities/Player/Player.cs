@@ -57,6 +57,7 @@ namespace UZSG.Entities
         public Vector3 Right => MainCamera.transform.right;
         public Vector3 Up => MainCamera.transform.up;
         public Vector3 EyeLevel => MainCamera.transform.position;
+        public Transform Model => Controls.Model;
 
         InventoryUI invUI;
         public InventoryUI InventoryGUI => invUI;
@@ -227,7 +228,7 @@ namespace UZSG.Entities
 
         #endregion
 
-
+        
         void Tick(TickInfo t)
         {
             ConsumeStaminaWhileRunning();

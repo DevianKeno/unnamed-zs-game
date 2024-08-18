@@ -7,6 +7,7 @@ using UnityEngine.Rendering.Universal;
 using UZSG.Systems;
 using UZSG.Entities;
 using UZSG.Items.Weapons;
+using System;
 
 namespace UZSG.FPP
 {

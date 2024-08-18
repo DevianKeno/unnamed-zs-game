@@ -253,7 +253,7 @@ Transform:
   m_GameObject: {fileID: 2866568475717327878}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2, z: 0}
+  m_LocalPosition: {x: 0, y: 1.9, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -478,7 +478,7 @@ Transform:
   m_GameObject: {fileID: 5228090432094909285}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.2, z: 0.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -654,7 +654,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 3582013876043017136}
@@ -967,8 +967,8 @@ MonoBehaviour:
   inventory: {fileID: 6573940630714393000}
   crafter: {fileID: 6457100291753886462}
   audioController: {fileID: 5583044567273583744}
-  Damping: 1
-  CrossfadeTransitionDuration: 0.2
+  Damping: 16
+  CrossfadeTransitionDuration: 0.1
   _targetX: 0
   _targetY: 0
   animator: {fileID: 7075778538306087425}
@@ -991,7 +991,7 @@ MonoBehaviour:
   _runIsToggle: 0
   _crouchIsToggle: 1
   acceleration: 10
-  model: {fileID: 94713427562349016}
+  Model: {fileID: 94713427562349016}
   rb: {fileID: 8394152581638175708}
   groundChecker: {fileID: 6313547803532779528}
   groundCheckerObject: {fileID: 1807161492040155152}
@@ -1046,6 +1046,7 @@ MonoBehaviour:
   cameraController: {fileID: 4657274095525333481}
   armsController: {fileID: 5105896103929999244}
   viewmodelController: {fileID: 2004487973244473114}
+  recoilCamera: {fileID: 0}
   cameraAnimationTarget: {fileID: 9155779205102779035}
   gunMuzzleController: {fileID: 0}
   heldItemsContainer: {fileID: 8334059616362085046}
@@ -1872,7 +1873,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 78830366d1503514da36901df59a79a3, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.333
+      value: -0.2
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 78830366d1503514da36901df59a79a3, type: 3}
       propertyPath: m_LocalRotation.w

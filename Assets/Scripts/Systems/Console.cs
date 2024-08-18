@@ -8,21 +8,6 @@ using UZSG.UI;
 
 namespace UZSG.Systems
 {
-    public struct CommandArgs
-    {
-        public string[] Args;
-
-        public readonly string this[int i]
-        {
-            get => Args[i];
-        }
-
-        public CommandArgs(string[] args)
-        {
-            Args = args;
-        }
-    }
-
     public sealed partial class Console : MonoBehaviour
     {
         bool _isInitialized;
@@ -36,11 +21,16 @@ namespace UZSG.Systems
 
         ConsoleWindow UI;
         
+
+        #region Events
         /// <summary>
         /// Called everytime the Console logs a message.
         /// </summary>
         public event Action<string> OnLogMessage;
         public event Action<Command> OnInvokeCommand;
+
+        #endregion
+
 
         InputAction toggleUI;
         Player _player;
@@ -54,13 +44,12 @@ namespace UZSG.Systems
 
             Log("Initializing console...");
             InitializeCommands();
-            InitializeInputs();
-            Log("Press F1 to hide console");
         }
 
         void OnLateInit()
         {
             UI = Game.UI.Create<ConsoleWindow>("Console Window");
+            InitializeInputs();
 
             Game.Entity.OnEntitySpawned += (info) =>
             {
@@ -86,56 +75,13 @@ namespace UZSG.Systems
         void InitializeInputs()
         {
             toggleUI = Game.Main.GetInputAction("Hide/Show", "Console Window");
-            toggleUI.performed += (ctx) =>
-            {
-                UI.ToggleVisibility();
-            };
+            toggleUI.performed += OnInputToggleUI;
+            toggleUI.Enable();
         }
 
-        /// <summary>
-        /// Create a new Console command.
-        /// </summary>
-        Command CreateCommand(string command, string description = "")
+        void OnInputToggleUI(InputAction.CallbackContext context)
         {
-            string[] args = command.Split(" ");
-
-            Command newCommand = new()
-            {
-                Name = args[0],
-                Syntax = command,
-                Description = description
-            };
-
-            string substr;
-            foreach (string arg in args[1..])
-            {
-                if (arg.Contains("|"))
-                {
-                    /// Represents AND arguments
-                    /// Currently unhandled logic
-                    string[] split = arg.Split("|");
-                }
-
-                if (arg.StartsWith("<") && arg.EndsWith(">")) /// Required argument
-                {
-                    substr = arg[1..^1];
-                    newCommand.Arguments.Add(new()
-                    {
-                        Type = Command.ArgumentType.Required
-                    });
-
-                } else if (arg.StartsWith("[") && arg.EndsWith("]")) /// Optional argument
-                {
-                    substr = arg[1..^1];
-                    newCommand.Arguments.Add(new()
-                    {
-                        Type = Command.ArgumentType.Optional
-                    });
-                }
-            }
-
-            _commandsDict[args[0]] = newCommand; 
-            return newCommand;           
+            UI.ToggleVisibility();
         }
 
         public void Run(string input)
@@ -183,6 +129,9 @@ namespace UZSG.Systems
                 PromptInvalid();
             }
         }
+
+
+        #region Public methods
 
         public void Write(string message)
         {
@@ -237,5 +186,7 @@ namespace UZSG.Systems
             Game.Console.LogWarning(message);
             Debug.LogWarning(message);
         }
+
+        #endregion
     }
 }

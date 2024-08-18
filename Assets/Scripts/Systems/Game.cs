@@ -1,13 +1,15 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
+
 using PlayEveryWare.EpicOnlineServices;
 
 using UZSG.UI;
 using UZSG.EOS;
-using UZSG.WorldEvents;
 
 namespace UZSG.Systems
 {
@@ -32,6 +34,8 @@ namespace UZSG.Systems
         /// </summary>
         public static EOSManager.EOSSingleton EOS => EOSManager.Instance;
         public static EOSSubManagers EOSManagers { get; private set; }
+        static WorldManager worldManager;
+        public static WorldManager World => worldManager;
         static AttributesManager attrManager;
         public static AttributesManager Attributes => attrManager;
         static EntityManager entityManager;
@@ -40,8 +44,6 @@ namespace UZSG.Systems
         public static ItemManager Items => itemManager;
         static RecipeManager recipeManager;
         public static RecipeManager Recipes => recipeManager;
-        static WorldManager worldManager;
-        public static WorldManager World => worldManager;
         static TimeManager timeManager;
         public static TimeManager Time => timeManager;
 
@@ -63,7 +65,30 @@ namespace UZSG.Systems
         internal event Action OnLateInit;
 
         PlayerInput mainInput;
-        public PlayerInput MainInput => mainInput;        
+        public PlayerInput MainInput => mainInput;
+
+
+        #region Public properties
+
+        public bool IsAlive { get; private set; }
+        public bool IsPaused { get; private set; }
+        public bool IsOnline
+        {
+            get
+            {
+                return EOSManager.Instance.GetEOSPlatformInterface() != null;
+            }
+        }
+        public bool IsHosting { get; private set; }
+        public Scene CurrentScene
+        {
+            get
+            {
+                return SceneManager.GetActiveScene();
+            }
+        }
+
+        #endregion
 
         void Awake()
         {
@@ -96,6 +121,7 @@ namespace UZSG.Systems
 
         void Start()
         {
+            IsAlive = true;
             InitializeManagers();
         }
 
@@ -125,10 +151,58 @@ namespace UZSG.Systems
             #endregion            
 
             OnLateInit?.Invoke();
+            
+            Console.Log("Press F1 to hide/show console");
         }
 
         
         #region Public methods
+
+        #region Scene management
+
+        event Action OnLoadSceneCompleted;
+
+        public void LoadScene(string sceneName, bool playTransition = true, float delayInSeconds = 0f, Action OnLoadSceneCompletedCallback = null)
+        {
+            try
+            {
+                OnLoadSceneCompleted += OnLoadSceneCompletedCallback;
+                // StartCoroutine(Load(sceneName, playTransition, Game.UI.TransitionOptions.AnimationSpeed / 2f));
+            }
+            catch (NullReferenceException e)
+            {
+                Debug.LogError($"Scene does not exist" + e);
+            }
+        }
+
+        IEnumerator Load(string scene, bool playTransition, float delayInSeconds)
+        {
+            var asyncOp = SceneManager.LoadSceneAsync(scene);
+            asyncOp.allowSceneActivation = false;
+
+            while (asyncOp.progress < 0.9f)
+            {
+                yield return null;
+            }
+
+            if (playTransition)
+            {
+                // Game.UI.PlayTransitionHalf(() =>
+                // {
+                //     asyncOp.allowSceneActivation = true;
+                //     Game.UI.PlayTransitionEnd(() =>
+                //     {
+                //         OnLoadSceneCompleted?.Invoke();
+                //         OnLoadSceneCompleted = null;
+                //     });
+                // });
+            }
+        }
+
+        #endregion
+
+        
+        #region Global input
         
         public InputAction GetInputAction(string actionName, string actionMapName)
         {
@@ -162,6 +236,8 @@ namespace UZSG.Systems
             }
             return inputs;
         }
+
+        #endregion
 
         #endregion
     }

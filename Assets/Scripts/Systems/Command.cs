@@ -1,15 +1,25 @@
 using System;
 using System.Collections.Generic;
 
-using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.EventSystems;
-
 namespace UZSG.Systems
 {
-    public struct CommandInvokedArgs
-    {
+    public enum CommandPermissionLevel {
+        Anybody, OperatorOnly, Administrator
+    }
 
+    public enum CommandLocationConstraint {
+        Anywhere, MenuOnly, WorldOnly,
+    }
+
+    public struct CreateCommandOptions
+    {
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string Syntax { get; set; }
+        public List<string> Aliases { get; set; }
+        public CommandPermissionLevel PermissionLevel { get; set; }
+        public CommandLocationConstraint LocationConstraint { get; set; }
+        public List<EventHandler<string[]>> Callbacks { get; set; }
     }
 
     public class Command
@@ -34,10 +44,14 @@ namespace UZSG.Systems
         /// Command description.
         /// </summary>
         public string Description { get; set; }
+        public List<string> Aliases { get; set; }
         /// <summary>
         /// The messages that follows the input.
         /// </summary>
         public List<Argument> Arguments = new();
+        public CommandPermissionLevel PermissionLevel { get; set;}
+        public CommandLocationConstraint LocationConstraint { get; set; }
+        public List<EventHandler<string[]>> Callbacks = new();
         public event EventHandler<string[]> OnInvoke;
         
         public void Invoke(string[] args)

@@ -58,6 +58,24 @@ namespace UZSG.EOS.Lobbies
             return !string.IsNullOrEmpty(Id);
         }
 
+        public bool TryGetAttribute(string KEY, out LobbyAttribute attribute)
+        {
+            attribute = Attributes.Find((LobbyAttribute attr) =>
+            {
+                return attr.Key == KEY;
+            });
+            return attribute != null;
+        }
+
+        public bool FindLobbyMember(ProductUserId memberId, out LobbyMember lobbyMember)
+        {
+            lobbyMember = Members.Find((LobbyMember member) =>
+            {
+                return member.ProductId == memberId;
+            });
+            return lobbyMember != null;
+        }
+
         /// <summary>
         /// Checks if the specified <c>ProductUserId</c> is the current owner
         /// </summary>

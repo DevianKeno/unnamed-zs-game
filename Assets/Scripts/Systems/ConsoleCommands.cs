@@ -1,10 +1,15 @@
 using System;
 using System.Collections.Generic;
+
 using UnityEngine;
+
 using UZSG.Crafting;
 using UZSG.Data;
 using UZSG.Entities;
 using UZSG.Items;
+
+using static UZSG.Systems.CommandPermissionLevel;
+using static UZSG.Systems.CommandLocationConstraint;
 
 namespace UZSG.Systems
 {
@@ -13,11 +18,128 @@ namespace UZSG.Systems
     /// </summary>
     public sealed partial class Console : MonoBehaviour, IInitializeable
     {
+        Command CreateCommand(CreateCommandOptions options)
+        {
+            // Create a new command using the options
+            Command newCommand = new()
+            {
+                Name = options.Name,
+                Syntax = options.Syntax,
+                Description = options.Description,
+                Aliases = options.Aliases,
+                PermissionLevel = options.PermissionLevel,
+                LocationConstraint = options.LocationConstraint,
+                Callbacks = options.Callbacks
+            };
+
+            // Parse the syntax into arguments if not provided
+            string[] args = options.Syntax.Split(" ");
+            string substr;
+            foreach (string arg in args[1..])
+            {
+                if (arg.Contains("|"))
+                {
+                    // Represents AND arguments
+                    // Currently unhandled logic
+                    string[] split = arg.Split("|");
+                }
+
+                if (arg.StartsWith("<") && arg.EndsWith(">")) // Required argument
+                {
+                    substr = arg[1..^1];
+                    newCommand.Arguments.Add(new()
+                    {
+                        Type = Command.ArgumentType.Required
+                    });
+                }
+                else if (arg.StartsWith("[") && arg.EndsWith("]")) // Optional argument
+                {
+                    substr = arg[1..^1];
+                    newCommand.Arguments.Add(new()
+                    {
+                        Type = Command.ArgumentType.Optional
+                    });
+                }
+            }
+
+            // Add the command to the dictionary
+            _commandsDict[options.Name] = newCommand;
+
+            return newCommand;
+        }
+
+        /// <summary>
+        /// Create a new Console command.
+        /// </summary>
+        Command CreateCommand(string command, string description = "")
+        {
+            string[] args = command.Split(" ");
+
+            Command newCommand = new()
+            {
+                Name = args[0],
+                Syntax = command,
+                Description = description
+            };
+
+            string substr;
+            foreach (string arg in args[1..])
+            {
+                if (arg.Contains("|"))
+                {
+                    /// Represents AND arguments
+                    /// Currently unhandled logic
+                    string[] split = arg.Split("|");
+                }
+
+                if (arg.StartsWith("<") && arg.EndsWith(">")) /// Required argument
+                {
+                    substr = arg[1..^1];
+                    newCommand.Arguments.Add(new()
+                    {
+                        Type = Command.ArgumentType.Required
+                    });
+
+                } else if (arg.StartsWith("[") && arg.EndsWith("]")) /// Optional argument
+                {
+                    substr = arg[1..^1];
+                    newCommand.Arguments.Add(new()
+                    {
+                        Type = Command.ArgumentType.Optional
+                    });
+                }
+            }
+
+            _commandsDict[args[0]] = newCommand; 
+            return newCommand;           
+        }
+
         void InitializeCommands()
         {
-            Log("Initializing command registry...");
+            Log("Initializing console command registry...");
+
             /// Arguments enclosed in <> are required, [] are optional
             
+            CreateCommand("attribute <target> <attribute>",
+                          "Modify an attribute of a given object.")
+                          .OnInvoke += CAttr;
+
+#region TEST
+
+            /// /attribute devi stamina value 100
+            // CreateCommand(new CreateCommandOptions()
+            // {
+            //     Name = "attribute",
+            //     Description = "Modify an attribute of a given object.",
+            //     Syntax = "attribute <target> <attribute> <property> <value>",
+            //     Aliases = { "attr" }, 
+            //     PermissionLevel = OperatorOnly,
+            //     LocationConstraint = WorldOnly,
+            //     Callbacks = { CAttr, /*CClear*/ }
+            // });
+
+#endregion
+
             CreateCommand("clear",
                           "Clears the console messages.")
                           .OnInvoke += CClear;
@@ -83,6 +205,14 @@ namespace UZSG.Systems
         /// ex. "/spawn item bandage"
         /// The args would consist of ["item", "bandage"]
 
+        /// <summary>
+        /// Clears the console messages.
+        /// </summary>
+        void CAttr(object sender, string[] args)
+        {
+            throw new NotImplementedException();
+        }        
+        
         /// <summary>
         /// Clears the console messages.
         /// </summary>

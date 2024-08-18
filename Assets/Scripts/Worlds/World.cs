@@ -10,9 +10,25 @@ using UZSG.WorldEvents;
 
 namespace UZSG.Worlds
 {
+    public enum WorldMultiplayerType {
+        Internet, Friends, LAN,
+    }
+
+    public struct WorldAttributes
+    {
+        public string LevelId;
+        public string WorldName;
+        public int MaxPlayers;
+        public bool IsMultiplayer;
+        public WorldMultiplayerType WorldMultiplayerType;
+    }
+
     public class World : MonoBehaviour
     {
         bool _isInitialized; /// to prevent initializing twice
+
+        WorldAttributes worldAttributes;
+        public WorldAttributes WorldAttributes => worldAttributes;
 
         [SerializeField] WorldTimeController timeController;
         public WorldTimeController Time => timeController;
@@ -79,6 +95,9 @@ namespace UZSG.Worlds
             }
         }
 
+
+        #region Public methods
+
         /// <summary>
         /// Returns the list of Entities of Id present in the World.
         /// </summary>
@@ -92,9 +111,6 @@ namespace UZSG.Worlds
             return new();
         }
 
-        public void LoadLevelAsync()
-        {
-            
-        }
+        #endregion
     }
 }

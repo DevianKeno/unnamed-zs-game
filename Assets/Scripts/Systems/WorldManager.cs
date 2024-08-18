@@ -1,7 +1,8 @@
 using System;
 
 using UnityEngine;
-
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 using UZSG.Saves;
 using UZSG.Worlds;
 
@@ -53,7 +54,30 @@ namespace UZSG.Systems
 
         public void LoadLevel(string name)
         {
-            // Game.Entity.Spawn("player", new (0f, 1f, 0f));
+            /// assuming we're already in the loading screen
         }
+
+        async void LoadLevelAsync(LevelData data)
+        {
+            var handle = Addressables.LoadAssetAsync<GameObject>(data.LevelAsset);
+            await handle.Task;
+            if (handle.Status == AsyncOperationStatus.Succeeded)
+            {
+                var level = Instantiate(handle.Result, transform);
+                var world = level.GetComponent<World>();
+                world.Initialize();
+            }
+            else
+            {
+                Game.Console.LogError($"Failed to load level '{data.Id}`");
+                /// go back to Title Screen
+            }
+        }
+    }
+
+    public class LevelData
+    {
+        public string Id;
+        public AssetReference LevelAsset;
     }
 }

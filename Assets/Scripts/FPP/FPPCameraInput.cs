@@ -19,9 +19,15 @@ namespace UZSG.FPP
         public float Sensitivity;
         public bool EnableControls = true;
 
+        bool _hasRecoil;
+        bool _isLooking;
+        /// <summary>
+        /// True if the Player is looking around with the mouse.
+        /// </summary>
+        public bool IsLooking => _isLooking;
+
         float _verticalRotation = 0f;
         float _horizontalRotation = 0f;
-        bool _hasRecoil;
         float _addedVerticalRecoil;
         float _addedHorizontalRecoil;
         float _recoilRecoverySpeedCached = 0f;
@@ -80,6 +86,9 @@ namespace UZSG.FPP
             if (!EnableControls) return;
 
             var lookInput = look.ReadValue<Vector2>();
+            _isLooking = lookInput.x != 0 || lookInput.y != 0;
+            // print($"Look: {lookInput}");
+            // print(_isLooking);
             float mouseX = lookInput.x * Sensitivity;// * Time.deltaTime;
             float mouseY = lookInput.y * Sensitivity;// * Time.deltaTime;
 

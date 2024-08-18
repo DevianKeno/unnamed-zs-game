@@ -1623,6 +1623,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entityData: {fileID: 11400000, guid: 3bbb12e3042059d4abbf8d40af48316c, type: 2}
   audioSourceController: {fileID: 0}
+  HasHitboxes: 0
   AttackRange: 0.5
   HealthAttri:
     data: {fileID: 0}

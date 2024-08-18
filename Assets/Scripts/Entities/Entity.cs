@@ -25,6 +25,8 @@ namespace UZSG.Entities
         }
         [SerializeField] protected AudioSourceController audioSourceController;
         public AudioSourceController AudioSourceController => audioSourceController;
+
+        public bool HasHitboxes = false;
         protected EntityHitboxController hitboxes;
 
         void Awake()
@@ -35,7 +37,7 @@ namespace UZSG.Entities
         internal void OnSpawnInternal()
         {
             OnSpawn();
-            InitializeHitboxEvents();
+            if (HasHitboxes) InitializeHitboxEvents();
         }
 
         /// <summary>
@@ -55,10 +57,10 @@ namespace UZSG.Entities
         {
             foreach (var hitbox in hitboxes.Hitboxes)
             {
-                hitbox.OnHit += OnCollision;
+                hitbox.OnHit += OnHitboxCollide;
             }
         }
         
-        protected virtual void OnCollision(object sender, CollisionHitInfo info) { }
+        protected virtual void OnHitboxCollide(object sender, HitboxCollisionInfo info) { }
     }
 }

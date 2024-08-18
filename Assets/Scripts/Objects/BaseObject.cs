@@ -26,7 +26,7 @@ namespace UZSG.Objects
         [SerializeField] protected Animator animator;
         public Animator Animator => animator;
         
-        public event EventHandler<CollisionHitInfo> OnHit;
+        public event EventHandler<HitboxCollisionInfo> OnHit;
 
 
         #region Initializing methods
@@ -78,7 +78,7 @@ namespace UZSG.Objects
             throw new NotImplementedException();
         }
 
-        public void HitBy(CollisionHitInfo info)
+        public void HitBy(HitboxCollisionInfo info)
         {
             throw new NotImplementedException();
         }

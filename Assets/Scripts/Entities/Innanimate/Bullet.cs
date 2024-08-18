@@ -120,7 +120,7 @@ namespace UZSG.Entities
 
         void OnHit(Vector3 point, Collider hitObject)
         {
-            var info = new CollisionHitInfo()
+            var info = new HitboxCollisionInfo()
             {
                 Type = CollisionType.Projectile,
                 Source = this,

@@ -20,7 +20,7 @@ MonoBehaviour:
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  Sprite: {fileID: 21300000, guid: 75a04606deb60ed40ac1bdf3e4dd36e2, type: 3}
+  Sprite: {fileID: 21300000, guid: e37b758c60edbc340aa1a8b9bded4108, type: 3}
   Type: 1
   Subtype: 5
   Weight: 2

@@ -10,7 +10,7 @@ namespace UZSG.Entities
     public class Hitbox : MonoBehaviour, ICollisionTarget
     {
         public HitboxPart Part;
-        public event EventHandler<CollisionHitInfo> OnHit;
+        public event EventHandler<HitboxCollisionInfo> OnHit;
 
         BoxCollider boxCollider;
 
@@ -19,7 +19,7 @@ namespace UZSG.Entities
             boxCollider = GetComponent<BoxCollider>();
         }
 
-        public void HitBy(CollisionHitInfo other)
+        public void HitBy(HitboxCollisionInfo other)
         {
             OnHit?.Invoke(this, other);
         }

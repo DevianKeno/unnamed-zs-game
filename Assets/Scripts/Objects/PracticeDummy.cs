@@ -11,7 +11,7 @@ namespace UZSG.Objects
 {
     public class PracticeDummy : BaseObject, IAttributable, ICollisionTarget
     {
-        public event EventHandler<CollisionHitInfo> OnHit;
+        public event EventHandler<HitboxCollisionInfo> OnHit;
 
         [SerializeField] GameObject model;
         
@@ -21,7 +21,7 @@ namespace UZSG.Objects
             base.Start();
         }
         
-        public void HitBy(CollisionHitInfo info)
+        public void HitBy(HitboxCollisionInfo info)
         {
             if (info.Type == CollisionType.Melee)
             {
@@ -48,13 +48,13 @@ namespace UZSG.Objects
             });
         }
 
-        void OnHitMelee(CollisionHitInfo other)
+        void OnHitMelee(HitboxCollisionInfo other)
         {
             AnimateHit();
             SpawnDamageText(other.ContactPoint);
         }
 
-        void OnHitProjectile(CollisionHitInfo other)
+        void OnHitProjectile(HitboxCollisionInfo other)
         {
             SpawnDamageText(other.ContactPoint);
         }

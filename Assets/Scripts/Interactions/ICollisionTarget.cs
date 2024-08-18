@@ -7,7 +7,7 @@ namespace UZSG.Interactions
         /// <summary>
         /// Called when this object is hit by an ICollisionSource.
         /// </summary>
-        public event EventHandler<CollisionHitInfo> OnHit;
-        public void HitBy(CollisionHitInfo info);
+        public event EventHandler<HitboxCollisionInfo> OnHit;
+        public void HitBy(HitboxCollisionInfo info);
     }
 }

@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace UZSG.Interactions
 {
-    public struct CollisionHitInfo
+    public struct HitboxCollisionInfo
     {
         public CollisionType Type { get; set; }
         public ICollisionSource Source { get; set; }

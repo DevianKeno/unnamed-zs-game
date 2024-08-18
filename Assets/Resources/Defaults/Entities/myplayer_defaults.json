@@ -179,6 +179,26 @@
       "FlatBonus": 0.0,
       "LimitOverflow": true,
       "LimitUnderflow": true
+    },
+    {
+      "Id": "experience",
+      "Value": 0.0,
+      "Minimum": 0.0,
+      "BaseMaximum": 100.0,
+      "Multiplier": 1.0,
+      "FlatBonus": 0.0,
+      "LimitOverflow": true,
+      "LimitUnderflow": true
+    },
+    {
+      "Id": "level",
+      "Value": 1.0,
+      "Minimum": 0.0,
+      "BaseMaximum": 0.0,
+      "Multiplier": 1.0,
+      "FlatBonus": 0.0,
+      "LimitOverflow": true,
+      "LimitUnderflow": true
     }
   ]
 }

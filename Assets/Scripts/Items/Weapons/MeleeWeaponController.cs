@@ -35,7 +35,7 @@ namespace UZSG.Items.Weapons
         
         #region Melee weapon events
 
-        public event Action<CollisionHitInfo> OnMeleeHit;
+        public event Action<HitboxCollisionInfo> OnMeleeHit;
 
         #endregion
 
@@ -232,7 +232,7 @@ namespace UZSG.Items.Weapons
         
         void OnHit(Vector3 point, Collider hitObject)
         {
-            var info = new CollisionHitInfo()
+            var info = new HitboxCollisionInfo()
             {
                 Type = CollisionType.Melee,
                 Source = this,

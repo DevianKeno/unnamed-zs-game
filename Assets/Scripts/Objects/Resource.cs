@@ -12,7 +12,7 @@ namespace UZSG.Objects
     public class Resource : BaseObject, ICollisionTarget
     {
         public ResourceData ResourceData => objectData as ResourceData;
-        public event EventHandler<CollisionHitInfo> OnHit;
+        public event EventHandler<HitboxCollisionInfo> OnHit;
         
         /// On load on world
         protected override void Start()
@@ -23,7 +23,7 @@ namespace UZSG.Objects
             Attributes["health"].Value = 10f;
         }
         
-        public virtual void HitBy(CollisionHitInfo other)
+        public virtual void HitBy(HitboxCollisionInfo other)
         {
         }
     }

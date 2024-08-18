@@ -93,9 +93,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a564f78c58895641a40f701e678fb66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enabled: 0
+  Player: {fileID: 8107631895800867322}
+  Slerp: 1
+  cameraFpp: {fileID: 4657274095525333481}
   source: {fileID: 0}
-  Target: {fileID: 7017140821926563795}
+  Target: {fileID: 1873134562759721657}
 --- !u!1 &1696359609177967074
 GameObject:
   m_ObjectHideFlags: 0
@@ -960,6 +962,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entityData: {fileID: 11400000, guid: fd9a4ce7bea70464290eed15b69cc9d1, type: 2}
   audioSourceController: {fileID: 0}
+  HasHitboxes: 0
   CanPickUpItems: 1
   playerEntityData: {fileID: 11400000, guid: fd9a4ce7bea70464290eed15b69cc9d1, type: 2}
   attributes:
@@ -987,10 +990,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Player: {fileID: 8107631895800867322}
   AllowMovement: 0
-  TimeScale: 1
-  _runIsToggle: 0
-  _crouchIsToggle: 1
-  acceleration: 10
+  Acceleration: 10
+  RotationDamping: 6
+  TurningAngle: 120
+  RunIsToggle: 0
+  CrouchIsToggle: 1
   Model: {fileID: 94713427562349016}
   rb: {fileID: 8394152581638175708}
   groundChecker: {fileID: 6313547803532779528}

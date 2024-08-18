@@ -23,7 +23,7 @@ namespace UZSG.Objects
             base.Start();
         }
 
-        public override void HitBy(CollisionHitInfo other)
+        public override void HitBy(HitboxCollisionInfo other)
         {
             float damage = 0;
 

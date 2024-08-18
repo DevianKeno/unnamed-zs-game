@@ -25,6 +25,9 @@ namespace UZSG.FPP
         [Space]
         
         bool _isEnabled;
+        bool _isBusy;
+        public bool IsBusy => _isBusy;
+
         [SerializeField] HeldItemController heldItem;
         public HeldItemController HeldItem => heldItem;
         /// <summary>
@@ -524,7 +527,7 @@ namespace UZSG.FPP
             if (_hasCameraAnimations)
             {
                 cameraAnimator?.Play(cameraAnim, 0, 0f);
-                cameraAnimationTarget.Enable();
+                cameraAnimationTarget.PlayAnimation();
             }
 
             /// viewmodelAnimator is used here because it's the one that
@@ -586,7 +589,7 @@ namespace UZSG.FPP
             yield return new WaitForSeconds(durationSeconds);
             _isPlayingAnimation = false;
             _isPerforming = false;
-            cameraAnimationTarget.Disable();
+            cameraAnimationTarget.StopAnimation();
             OnPerformFinish?.Invoke();
             yield return null;
         }

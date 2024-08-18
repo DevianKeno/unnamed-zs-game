@@ -13,7 +13,7 @@ namespace UZSG.Entities
 {
     public partial class Enemy : Entity, IDetectable
     {
-        protected override void OnCollision(object sender, CollisionHitInfo info)
+        protected override void OnHitboxCollide(object sender, HitboxCollisionInfo info)
         {
             if (info.Source.CollisionTag == "Projectile")
             {

@@ -1,11 +1,23 @@
 using System;
 using UnityEngine;
+using UZSG.Entities;
 
 namespace UZSG.FPP
 {
     public class FPPCameraAnimationTarget : MonoBehaviour
     {
-        [SerializeField] bool _enabled = false;
+        public Player Player;
+
+        bool _enabled = false;
+        public bool Enabled 
+        {
+            get { return _enabled; }
+            set { _enabled = value; }
+        }
+        public float Slerp = 1f;
+        bool _playAnimation;
+
+        [SerializeField] FPPCameraInput cameraFpp;
         [SerializeField] FPPCameraAnimationSource source;
         public FPPCameraAnimationSource Source
         {
@@ -16,12 +28,11 @@ namespace UZSG.FPP
             }
         }
         public Transform Target;
-
         Transform _cameraBone;
 
-        void Update()
+        void LateUpdate()
         {
-            if (!_enabled) return;
+            if (!Enabled) return;
 
             ApplyRotation();
         }
@@ -33,45 +44,73 @@ namespace UZSG.FPP
             if (source != null)
             {
                 _cameraBone = source.CameraBone;
-                _previousRotation = _cameraBone.rotation;
-                _enabled = true;
+                Enabled = true;
             }
             else
             {
                 _cameraBone = null;
-                _enabled = false;
+                _playAnimation = false;
+                Enabled = false;
             }
         }
 
-        public void Enable()
+        public void PlayAnimation()
         {
-            _enabled = true;
+            Enabled = true;
+            _playAnimation = true;
         }
 
-        public void Disable()
+        public void StopAnimation()
         {
-            _enabled = false;
+            Enabled = false;
+            _playAnimation = false;
         }
 
-        Quaternion _previousRotation;
-
-        void ApplyRotation()
+        void ApplyRotation() /// additively
         {
-            /// Instant
-            // Target.rotation = _cameraBone.rotation;
+            if (_playAnimation)
+            {
+                var targetRotation = Quaternion.Inverse(cameraFpp.transform.rotation) * _cameraBone.rotation;
+                Target.localRotation *= Quaternion.Slerp(Target.localRotation, targetRotation, Slerp / Time.deltaTime);
+            }
+            // else
+            // {
+            //     Target.localRotation *= Quaternion.Slerp(Target.localRotation, Quaternion.identity, Slerp / Time.deltaTime);
             
-            /// Slerp
-            Quaternion targetRotation = _cameraBone.rotation;
-            var rotationDelta = Quaternion.Slerp(Target.rotation, targetRotation, 1 / Time.deltaTime);
-            Target.rotation = rotationDelta;
-
-            /// idk
-            // Target.rotation = Quaternion.Slerp(
-            //     _previousRotation,
-            //     _cameraBone.rotation,
-            //     1 / Time.deltaTime
-            // );
-            // _previousRotation = Target.rotation;
+            //     print($"EVALLL {Target.localRotation} == {Quaternion.identity}");
+            //     if (Target.localRotation == Quaternion.identity)
+            //     {
+            //         print($"STOPPING ANIM! {Target.localRotation} == {Quaternion.identity}");
+            //         StopAnimation();
+            //         Enabled = false;
+            //     }
+            // }
         }
+
+
+        // void ApplyRotation() /// additively
+        // {
+        //     if (_playAnimation)
+        //     {
+        //         var targetRotation = Quaternion.Inverse(cameraFpp.transform.rotation) * _cameraBone.rotation;
+        //         Target.localRotation *= Quaternion.Slerp(Target.localRotation, targetRotation, Slerp / Time.deltaTime);
+        //     }
+        //     else
+        //     {
+        //         print("RESETTING!");
+        //         /// idk about this somebnody pls help me
+        //         if (cameraFpp.IsLooking) /// reset immediately
+        //         {
+        //             print("LOOKING! QUICK RESET GO");
+        //             Target.localRotation = Quaternion.identity; /// might be abrupt
+        //             StopAnimation();
+        //         }
+        //         else /// slerp :)
+        //         {
+        //             print("NOT LOOKING! SLERP ka muna");
+        //             Target.localRotation = Quaternion.Slerp(Target.localRotation, Quaternion.identity, Slerp / Time.deltaTime);
+        //         }
+        //     }
+        // }
     }
 }

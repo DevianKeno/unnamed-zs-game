@@ -63,7 +63,7 @@ MonoBehaviour:
     LimitOverflow: 1
     LimitUnderflow: 1
   - data: {fileID: 11400000, guid: 272fbb1bf20dc634792af24c573351be, type: 2}
-    value: 150
+    value: 110
     baseMaximum: 0
     multiplier: 1
     flatBonus: 0
@@ -77,7 +77,7 @@ MonoBehaviour:
     LimitOverflow: 1
     LimitUnderflow: 1
   - data: {fileID: 11400000, guid: 2d61d3236698a6a4e81d503fae1c7421, type: 2}
-    value: 150
+    value: 80
     baseMaximum: 0
     multiplier: 1
     flatBonus: 0
@@ -135,6 +135,20 @@ MonoBehaviour:
   - data: {fileID: 11400000, guid: b6b91ffe93b7ba749936e3f4fc186998, type: 2}
     value: 2
     baseMaximum: 2
+    multiplier: 1
+    flatBonus: 0
+    LimitOverflow: 1
+    LimitUnderflow: 1
+  - data: {fileID: 11400000, guid: 94b51b5be6f21db40a4c92ebcdade961, type: 2}
+    value: 0
+    baseMaximum: 100
+    multiplier: 1
+    flatBonus: 0
+    LimitOverflow: 1
+    LimitUnderflow: 1
+  - data: {fileID: 11400000, guid: 65ed971fe2fc7f5499ba1d36dfa93e58, type: 2}
+    value: 1
+    baseMaximum: 0
     multiplier: 1
     flatBonus: 0
     LimitOverflow: 1

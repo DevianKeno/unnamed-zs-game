@@ -12,12 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f06656af814a98459eed8719e97bbf2, type: 3}
   m_Name: practice_dummy
   m_EditorClassIdentifier: 
-  Id: 
-  Name: 
+  Id: practice_dummy
+  Name: Practice Dummy
   Model:
     m_AssetGUID: 
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
   Attributes: []
+  HasAudio: 0
   AudioAssetsData: {fileID: 0}

@@ -8,10 +8,8 @@ namespace UZSG.Saves
     [Serializable]
     public class EntitySaveData : SaveData
     {
+        public string Id;
         public TransformSaveData Transform;
-        
-        /// Attributes first
-        [Key(3)]
         public List<AttributeSaveData> Attributes = new();
     }
 }

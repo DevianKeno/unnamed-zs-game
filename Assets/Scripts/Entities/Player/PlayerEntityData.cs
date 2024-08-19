@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 using UnityEngine;
 using Newtonsoft.Json;
@@ -9,7 +10,6 @@ using UZSG.Systems;
 using UZSG.Data;
 using UZSG.Saves;
 using UZSG.Attributes;
-using System.Linq;
 
 namespace UZSG.Entities
 {

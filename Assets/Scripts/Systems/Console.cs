@@ -99,6 +99,12 @@ namespace UZSG.Systems
                 command = command.Replace("/", "");
             }
 
+            if (!_commandsDict.ContainsKey(command))
+            {
+                PromptInvalid();
+                return;
+            }
+            
             // try
             // {
                 _commandsDict[command].Invoke(args);

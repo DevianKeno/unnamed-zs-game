@@ -314,15 +314,18 @@ namespace UZSG.Entities
             this.saveData = saveData; 
         }
         
-        public PlayerSaveData WriteSaveJson()
+        public new PlayerSaveData WriteSaveJson()
         {
-            var saveData = new PlayerSaveData()
+            var esd = base.WriteSaveJson();
+            var psd = new PlayerSaveData
             {
+                Id = esd.Id,
+                Transform = esd.Transform,
                 Attributes = attributes.WriteSaveJson(),
-                Inventory = inventory.WriteSaveJson(),
+                Inventory = inventory.WriteSaveJson()
             };
 
-            return saveData;
+            return psd;
         }
 
         public void UseObjectGUI(ObjectGUI gui)

@@ -59,7 +59,7 @@ namespace UZSG.Systems
         {
             if (!_entitiesDict.ContainsKey(entityId))
             {
-                Game.Console.LogDebug($"Entity '{entityId}' does not exist!");
+                Game.Console.LogDebug($"Tried to spawn entity '{entityId}' but Id does not exists.");
                 return;
             }
 
@@ -76,9 +76,9 @@ namespace UZSG.Systems
                         {
                             Entity = entity
                         };
-                        OnEntitySpawned?.Invoke(info);
                         callback?.Invoke(info);
                         entity.OnSpawnInternal();
+                        OnEntitySpawned?.Invoke(info);
 
                         if (EnableLogging)
                         {
@@ -120,12 +120,12 @@ namespace UZSG.Systems
                         {
                             Entity = entity as T
                         };
+                        callback?.Invoke(info);
+                        entity.OnSpawnInternal();
                         OnEntitySpawned?.Invoke(new()
                         {
                             Entity = entity
                         });
-                        callback?.Invoke(info);
-                        entity.OnSpawnInternal();
                         
                         if (EnableLogging)
                         {

@@ -188,7 +188,7 @@ namespace UZSG.Systems
                         "Crafts item if player is interacting with workbench")
                         .OnInvoke += CWbcraft;
 
-            CreateCommand("world <create|load> <world_name>",
+            CreateCommand("world <create|load|save> <world_name>",
                           "")
                           .OnInvoke += CWorld;
 
@@ -426,11 +426,17 @@ namespace UZSG.Systems
             {
                 // Game.World.CreateWorld(args[1]);
 
-            } else if (args[0] == "load")
+            }
+            else if (args[0] == "load")
             {
                 string worldName = args[1];
 
-            } else
+            }
+            else if (args[0] == "save")
+            {
+                Game.World.CurrentWorld.SaveWorld();
+            }
+            else
             {
                 PromptInvalid("world");
             }

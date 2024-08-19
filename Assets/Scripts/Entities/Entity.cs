@@ -57,18 +57,32 @@ namespace UZSG.Entities
 
         public void ReadSaveJson(EntitySaveData saveData)
         {
-            
+            InitializeTransform(saveData.Transform);
         }
-
+        
         public EntitySaveData WriteSaveJson()
         {
             var saveData = new EntitySaveData()
             {
+                Id = entityData.Id,
                 Transform = new()
                 {
-                    Position = transform.position,
-                    Rotation = transform.rotation,
-                    LocalScale = transform.localScale,
+                    Position = new System.Numerics.Vector3(
+                        transform.position.x,
+                        transform.position.y,
+                        transform.position.z
+                    ),
+                    Rotation = new System.Numerics.Quaternion(
+                        transform.rotation.x,
+                        transform.rotation.y,
+                        transform.rotation.z,
+                        transform.rotation.w
+                    ),
+                    LocalScale = new System.Numerics.Vector3(
+                        transform.localScale.x,
+                        transform.localScale.y,
+                        transform.localScale.z
+                    )
                 }
             };
 
@@ -92,5 +106,27 @@ namespace UZSG.Entities
         }
         
         protected virtual void OnHitboxCollide(object sender, HitboxCollisionInfo info) { }
+        
+        void InitializeTransform(TransformSaveData data)
+        {
+            var position = new Vector3(
+                data.Position.X,
+                data.Position.Y,
+                data.Position.Z
+            );
+            var rotation = new Quaternion(
+                data.Rotation.X,
+                data.Rotation.Y,
+                data.Rotation.Z,
+                data.Rotation.W
+            );
+            var scale = new Vector3(
+                data.LocalScale.X,
+                data.LocalScale.Y,
+                data.LocalScale.Z
+            );
+            transform.SetPositionAndRotation(position, rotation);
+            transform.localScale = scale;
+        }
     }
 }

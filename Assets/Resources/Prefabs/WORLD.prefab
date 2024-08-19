@@ -430,6 +430,7 @@ MonoBehaviour:
   timeController: {fileID: 3392221486933040618}
   eventsController: {fileID: 5668126680943736175}
   entitiesContainer: {fileID: 3943697356474365655}
+  userObjectsContainer: {fileID: 0}
 --- !u!1 &1926754559115349247
 GameObject:
   m_ObjectHideFlags: 0

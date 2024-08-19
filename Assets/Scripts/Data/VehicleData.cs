@@ -41,6 +41,7 @@ namespace UZSG.Data
         public int brakeForce = 350; // The strength of the wheel brakes.
         [Range(1, 10)]
         public int decelerationMultiplier = 2; // How fast the car decelerates when the user is not using the throttle.
+        public float antiRoll = 5000f; // How strong the anti roll bar is
 
         [Header("Vehicle Attributes")]
         public List<AttributeData> Attributes;

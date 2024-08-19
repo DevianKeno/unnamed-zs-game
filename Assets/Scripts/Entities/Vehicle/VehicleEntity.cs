@@ -10,6 +10,7 @@ using UZSG.Systems;
 
 namespace UZSG.Entities
 {
+    [RequireComponent(typeof(Rigidbody), typeof(VehicleController), typeof(VehicleFunctionAnimation))]
     public class VehicleEntity : Entity, IInteractable
     {
         [Header("Vehicle Information")]

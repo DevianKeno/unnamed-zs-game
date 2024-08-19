@@ -125,6 +125,10 @@ namespace UZSG.Entities.Vehicles
             {
                 HandleCarMovement();
             }
+            else
+            {
+                Debug.Log("This car needs some lovin ;)");
+            }
         }
 
         private void HandleCarMovement()
@@ -519,7 +523,10 @@ namespace UZSG.Entities.Vehicles
         #region Vehicle Control Functions 
         public void EnableGeneralVehicleControls(Player player)
         {
+            player.Controls.SetControl("Move", false);
             player.Controls.SetControl("Jump", false);
+            player.Controls.SetControl("Crouch", false);
+            player.Controls.SetControl("Toggle Walk", false);
 
             _switchInput.performed += OnSwitchInputPerform;
             _backInput.performed += OnBackInputPerform;
@@ -527,7 +534,10 @@ namespace UZSG.Entities.Vehicles
 
         public void DisableGeneralVehicleControls(Player player)
         {
+            player.Controls.SetControl("Move", true);
             player.Controls.SetControl("Jump", true);
+            player.Controls.SetControl("Crouch", true);
+            player.Controls.SetControl("Toggle Walk", true);
 
             _switchInput.performed -= OnSwitchInputPerform;
             _backInput.performed -= OnBackInputPerform;

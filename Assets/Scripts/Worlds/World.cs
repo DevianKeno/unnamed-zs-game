@@ -1,34 +1,18 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.IO;
 
 using UnityEngine;
-using UnityEngine.AddressableAssets;
+using Newtonsoft.Json;
 
 using UZSG.Systems;
 using UZSG.Entities;
 using UZSG.WorldEvents;
 using UZSG.Saves;
 using UZSG.Objects;
-using MessagePack;
-using System.IO;
-using Newtonsoft.Json;
 
 namespace UZSG.Worlds
 {
-    public enum WorldMultiplayerType {
-        Internet, Friends, LAN,
-    }
-
-    public struct WorldAttributes
-    {
-        public string LevelId;
-        public string WorldName;
-        public int MaxPlayers;
-        public bool IsMultiplayer;
-        public WorldMultiplayerType WorldMultiplayerType;
-    }
-
     public class World : MonoBehaviour, ISaveDataReadWrite<WorldSaveData>
     {
         bool _isInitialized; /// to prevent initializing twice
@@ -44,6 +28,7 @@ namespace UZSG.Worlds
         [SerializeField] WorldEventController eventsController;
         public WorldEventController Events => eventsController;
 
+        bool _isActive;
         bool _hasValidSaveData;
         WorldSaveData _saveData;
 
@@ -52,8 +37,8 @@ namespace UZSG.Worlds
         /// </summary>
         Dictionary<string, List<Entity>> _cachedIdEntities = new();
 
+        [SerializeField] Transform objectsContainer;
         [SerializeField] Transform entitiesContainer;
-        [SerializeField] Transform userObjectsContainer;
         
 
         #region Initializing methods
@@ -68,6 +53,8 @@ namespace UZSG.Worlds
             
             Game.Entity.OnEntitySpawned += OnEntitySpawned;
             Game.Entity.OnEntityKilled += OnEntityKilled;
+
+            Game.Objects.OnObjectPlaced += OnObjectPlaced;
             Game.Tick.OnTick += Tick;
         }
 
@@ -105,7 +92,7 @@ namespace UZSG.Worlds
             Game.Console.Log("Saving objects...");
 
             _saveData.Objects = new();
-            foreach (Transform c in userObjectsContainer)
+            foreach (Transform c in objectsContainer) /// c is child
             {
                 if (!c.TryGetComponent<BaseObject>(out var obj)) continue;
                 
@@ -115,12 +102,15 @@ namespace UZSG.Worlds
         
         void LoadUserObjects()
         {
-            foreach (var c in _saveData.Objects)
+            foreach (var sd in _saveData.Objects) /// sd is saveData ;)
             {
-                // var obj = c.GetComponent<BaseObject>();
-                // _saveData.Objects.Add(obj.WriteSaveJson());
-
-                // var go = Game.O()
+                if (Game.Objects.TryGetData(sd.Id, out var data))
+                {
+                    Game.Objects.Place(sd.Id, callback: (info) =>
+                    {
+                        info.Object.ReadSaveJson(sd);
+                    });
+                }
             }
         }
 
@@ -134,15 +124,9 @@ namespace UZSG.Worlds
             {
                 if (!c.TryGetComponent<Entity>(out var etty)) continue;
                 // if (!etty.IsAlive) continue; 
+                if (etty is Player) continue;/// no n no nono this should save as soon as they quit
 
-                if (etty is Player p) /// no n no nono this should save as soon as they quit
-                {
-                    // _saveData.PlayerSaves.Add(p.WriteSaveJson());
-                }
-                else
-                {
-                    _saveData.EntitySaves.Add(etty.WriteSaveJson());
-                }
+                _saveData.EntitySaves.Add(etty.WriteSaveJson());
             }
         }
 
@@ -150,17 +134,11 @@ namespace UZSG.Worlds
         {
             foreach (var sd in _saveData.EntitySaves)
             {
-                if (sd is PlayerSaveData psd)
+                if (sd.Id == "player") continue;
+                Game.Entity.Spawn(sd.Id, callback: (info) =>
                 {
-                    
-                }
-                else
-                {
-                    Game.Entity.Spawn(sd.Id, callback: (info) =>
-                    {
-                        info.Entity.ReadSaveJson(sd);
-                    });
-                }
+                    info.Entity.ReadSaveJson(sd);
+                });
             }
         }
 
@@ -169,6 +147,11 @@ namespace UZSG.Worlds
 
         #region Event callbacks
 
+        void OnObjectPlaced(ObjectsManager.ObjectPlacedInfo info)
+        {
+            info.Object.transform.SetParent(objectsContainer.transform, worldPositionStays: true);
+            // CacheObjectId(info.Object); /// idk if we need to cache objects thoughhhhhh, wireless workbench?? sheeeesh
+        }
 
         void OnEntitySpawned(EntityManager.EntitySpawnedInfo info)
         {
@@ -247,6 +230,29 @@ namespace UZSG.Worlds
         public void SaveWorldAsync()
         {
                   
+        }
+
+        public void LoadWorld()
+        {
+            if (_isActive)
+            {
+                Game.Console.Log("Cannot load a World on top of an existing one.");
+                return;
+            }
+        }
+
+        public void ExitWorld(bool save = true)
+        {
+            if (save)
+            {
+                SaveWorld();
+            }
+
+            Game.Entity.OnEntitySpawned -= OnEntitySpawned;
+            Game.Entity.OnEntityKilled -= OnEntityKilled;
+
+            Game.Objects.OnObjectPlaced -= OnObjectPlaced;
+            Game.Tick.OnTick -= Tick;
         }
 
         #endregion

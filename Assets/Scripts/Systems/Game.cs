@@ -44,6 +44,8 @@ namespace UZSG.Systems
         public static ItemManager Items => itemManager;
         static RecipeManager recipeManager;
         public static RecipeManager Recipes => recipeManager;
+        static ObjectsManager objectsManager;
+        public static ObjectsManager Objects => objectsManager;
         static TimeManager timeManager;
         public static TimeManager Time => timeManager;
 
@@ -114,6 +116,7 @@ namespace UZSG.Systems
                 itemManager = GetComponentInChildren<ItemManager>();
                 recipeManager = GetComponentInChildren<RecipeManager>();
                 entityManager = GetComponentInChildren<EntityManager>();
+                objectsManager = GetComponentInChildren<ObjectsManager>();
             }
 
             mainInput = GetComponent<PlayerInput>();

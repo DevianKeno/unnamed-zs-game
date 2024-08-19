@@ -17,9 +17,6 @@ namespace UZSG.Systems
         Dictionary<string, ItemData> _itemsDict = new();
         Dictionary<string, GameObject> _cachedItemModels = new();
 
-        [SerializeField] AssetLabelReference itemsLabelReference;
-        [SerializeField] AssetLabelReference weaponsLabelReference;
-
         public event EventHandler<string> OnDoneLoadModel;
 
         internal void Initialize()
@@ -34,12 +31,6 @@ namespace UZSG.Systems
             {
                 _itemsDict[item.Id] = item;
             }
-
-            // Addressables.LoadAssetsAsync<ItemData>(itemsLabelReference, (a) =>
-            // {
-            //     Game.Console?.LogDebug($"Loading data for item {a.Id}");
-            //     _itemList[a.Id] = a;
-            // });
         }
 
         /// <summary>
@@ -76,20 +67,6 @@ namespace UZSG.Systems
                 Game.Console.Log($"Failed to load item id {itemId} as it does not exist.");
                 return false;
             }            
-        }
-
-        /// <summary>
-        /// Creates an Item object.
-        /// </summary>
-        public Item CreateItem(string id, int amount = 1)
-        {
-            if (_itemsDict.ContainsKey(id))
-            {
-                return new Item(_itemsDict[id], amount);
-            }
-            
-            Game.Console.Log("Invalid item id");
-            return Item.None;
         }
 
         public ItemData GetData(string id)

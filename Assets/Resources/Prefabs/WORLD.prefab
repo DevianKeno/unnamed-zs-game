@@ -32,8 +32,8 @@ Transform:
   m_Children:
   - {fileID: 2740809496562152626}
   - {fileID: 353497468767634863}
-  - {fileID: 3943697356474365655}
   - {fileID: 6914072609335877631}
+  - {fileID: 3943697356474365655}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5357546713876505897
@@ -52,7 +52,7 @@ MonoBehaviour:
   timeController: {fileID: 3392221486933040618}
   eventsController: {fileID: 5668126680943736175}
   entitiesContainer: {fileID: 3943697356474365655}
-  userObjectsContainer: {fileID: 6914072609335877631}
+  objectsContainer: {fileID: 6914072609335877631}
 --- !u!1 &3294744197836459953
 GameObject:
   m_ObjectHideFlags: 0

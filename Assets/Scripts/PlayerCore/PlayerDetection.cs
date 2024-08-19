@@ -18,6 +18,7 @@ namespace UZSG.Players
         void FixedUpdate()
         {
             FindEnemyInRange();
+            FindCritterInRange();
         }
 
         public struct EnemyCollidedEventArgs
@@ -30,7 +31,7 @@ namespace UZSG.Players
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.red; // Set the color of the gizmo
-            Gizmos.DrawWireSphere(transform.position, SiteRange); // Draw the wireframe sphere
+            Gizmos.DrawWireSphere(transform.position, CritterSiteRange); // Draw the wireframe sphere
         }
 
         public void FindEnemyInRange()

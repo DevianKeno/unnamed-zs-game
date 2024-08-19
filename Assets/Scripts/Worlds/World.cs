@@ -39,6 +39,7 @@ namespace UZSG.Worlds
 
         [SerializeField] Transform objectsContainer;
         [SerializeField] Transform entitiesContainer;
+        [SerializeField] Transform userObjectsContainer;
         
 
         #region Initializing methods

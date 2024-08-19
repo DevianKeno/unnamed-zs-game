@@ -13,7 +13,7 @@ namespace UZSG.Crafting
         public float FuelRemaining = 0;
         Container FuelContainer;
 
-        protected bool IsFuelRemainingAvailable()
+        public bool IsFuelRemainingAvailable()
         {
             return FuelRemaining > 0;
         }
@@ -33,8 +33,25 @@ namespace UZSG.Crafting
             if (!IsFuelAvailable()) return;
 
             FuelContainer.TakeFrom(0, 1);
+         
             StartCoroutine(BurnFuel());
         }
+
+        public override void CraftNewItem(ref CraftItemOptions options, bool begin = true)
+        {
+            var routine = new CraftingRoutine(options);
+            
+            routine.OnNotify += OnRoutineEventCall;
+            routine.OnCraftSecond += OnCraftSecond;
+
+            routines.Add(routine);
+            routine.Prepare();
+            if (begin && availableCraftSlots > 0)
+            {
+                CraftNextAvailable();
+            }
+        }
+
 
         public void OnFuelCheck(object sender, EventArgs e)
         {
@@ -42,13 +59,10 @@ namespace UZSG.Crafting
             
             if (!IsFuelRemainingAvailable())
             {
-                // foreach(CraftingRoutine routine in _craftingRoutineInstance.RoutineList)
-                // {
-                //     StopCoroutine(routine.CraftCoroutine());
-                //     // routine._secondsElapsed = 0; /// seconds "elapsed" is not something to set
-                // }
+                _craftingRoutineInstance.StopCrafting = true;
             }
         }
+
 
         IEnumerator BurnFuel()
         {

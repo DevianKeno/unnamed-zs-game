@@ -35,6 +35,7 @@ namespace UZSG.Objects
 
         public event EventHandler<InteractArgs> OnInteract;
         public event Action<CraftingRoutine> OnCraft;
+
         /// <summary>
         /// Listens to all output slots when their Item is changed.
         /// </summary>
@@ -143,10 +144,18 @@ namespace UZSG.Objects
             return true;
         }
 
-        public bool TryBurnCraft(ref CraftItemOptions options)
+        public bool TryFuelCraft(ref CraftItemOptions options)
         {
             var fuel_crafter = (FuelBasedCrafting) crafter;
-            if (crafter.Routines.Count >= WorkstationData.QueueSize)
+            if (!options.Recipe.RequiresFuel)
+            {
+                print("Your recipe does not require fuel to be crafted");
+                return false;
+            }
+
+            options.isFuelRequired = options.Recipe.RequiresFuel;
+
+            if (fuel_crafter.Routines.Count >= WorkstationData.QueueSize)
             {
                 return false;
             }
@@ -160,6 +169,7 @@ namespace UZSG.Objects
             }
 
             _ = inputContainer.TakeItems(totalMaterials);
+
             fuel_crafter.CraftNewItem(ref options);
             fuel_crafter.ConsumeFuel();
 

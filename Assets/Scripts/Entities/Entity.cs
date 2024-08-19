@@ -5,13 +5,14 @@ using UnityEngine;
 using UZSG.Systems;
 using UZSG.Data;
 using UZSG.Interactions;
+using UZSG.Saves;
 
 namespace UZSG.Entities
 {
     /// <summary>
     /// Represent dynamic objects that appear in the World.
     /// </summary>
-    public abstract class Entity : MonoBehaviour
+    public abstract class Entity : MonoBehaviour, ISaveDataReadWrite<EntitySaveData>
     {
         protected const string entityDefaultsPath = "/Resources/Defaults/Entities/";
 
@@ -28,6 +29,12 @@ namespace UZSG.Entities
 
         public bool HasHitboxes = false;
         protected EntityHitboxController hitboxes;
+
+        bool _isAlive;
+        public bool IsAlive => _isAlive;
+
+
+        #region Initializing methods
 
         void Awake()
         {
@@ -47,6 +54,29 @@ namespace UZSG.Entities
         public virtual void OnSpawn()
         {
         }
+
+        public void ReadSaveJson(EntitySaveData saveData)
+        {
+            
+        }
+
+        public EntitySaveData WriteSaveJson()
+        {
+            var saveData = new EntitySaveData()
+            {
+                Transform = new()
+                {
+                    Position = transform.position,
+                    Rotation = transform.rotation,
+                    LocalScale = transform.localScale,
+                }
+            };
+
+            return saveData;
+        }
+
+        #endregion
+        
 
         public virtual void Kill()
         {

@@ -9,10 +9,12 @@ using UZSG.Data;
 using UZSG.Attributes;
 using UZSG.UI.Objects;
 using UZSG.Interactions;
+using UZSG.Saves;
+using UZSG.Worlds;
 
 namespace UZSG.Objects
 {
-    public abstract class BaseObject : MonoBehaviour, IAttributable, IPlaceable, IPickupable, ICollisionTarget
+    public abstract class BaseObject : MonoBehaviour, IAttributable, IPlaceable, IPickupable, ICollisionTarget, ISaveDataReadWrite<UserObjectSaveData>
     {
         [SerializeField] protected ObjectData objectData;
         public ObjectData ObjectData => objectData;
@@ -69,6 +71,27 @@ namespace UZSG.Objects
                     }
                 }
             };
+        }
+
+        public void ReadSaveJson(UserObjectSaveData saveData)
+        {
+            transform.SetPositionAndRotation(saveData.Transform.Position, saveData.Transform.Rotation);
+            transform.localScale = saveData.Transform.LocalScale;
+        }
+
+        public UserObjectSaveData WriteSaveJson()
+        {
+            var saveData = new UserObjectSaveData()
+            {
+                Transform = new()
+                {
+                    Position = transform.position,
+                    Rotation = transform.rotation,
+                    LocalScale = transform.localScale,
+                }
+            };
+
+            return saveData;
         }
 
         #endregion

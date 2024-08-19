@@ -34,7 +34,6 @@ Transform:
   - {fileID: 353497468767634863}
   - {fileID: 6914072609335877631}
   - {fileID: 3943697356474365655}
-  - {fileID: 6914072609335877631}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5357546713876505897
@@ -52,8 +51,8 @@ MonoBehaviour:
   WorldName: testsavedworld
   timeController: {fileID: 3392221486933040618}
   eventsController: {fileID: 5668126680943736175}
-  entitiesContainer: {fileID: 3943697356474365655}
   objectsContainer: {fileID: 6914072609335877631}
+  entitiesContainer: {fileID: 3943697356474365655}
 --- !u!1 &3294744197836459953
 GameObject:
   m_ObjectHideFlags: 0

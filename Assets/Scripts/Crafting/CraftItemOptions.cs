@@ -13,6 +13,8 @@ namespace UZSG.Crafting
         /// Amount of times to craft the Recipe.
         /// </summary>
         public int Count { get; set; }
+
+        public bool IsFuel {get ; set; }
         public ItemSlot QueueSlot { get; set; }
         public ItemSlot OutputSlot { get; set; }
     }

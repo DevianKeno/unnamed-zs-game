@@ -143,6 +143,28 @@ namespace UZSG.Objects
             return true;
         }
 
+        public bool TryBurnCraft(ref CraftItemOptions options)
+        {
+            var fuel_crafter = (FuelBasedCrafting) crafter;
+            if (crafter.Routines.Count >= WorkstationData.QueueSize)
+            {
+                return false;
+            }
+
+            var totalMaterials = CalculateTotalMaterials(options);
+            if (!player.Inventory.Bag.ContainsAll(totalMaterials))
+            {
+                PlayNoMaterialsSound();
+                if (EnableDebugging) Game.Console.Log($"Tried to craft '{options.Recipe.Output.Id}' but had insufficient materials.");
+                return false;
+            }
+
+            _ = inputContainer.TakeItems(totalMaterials);
+            fuel_crafter.CraftNewItem(ref options);
+            fuel_crafter.ConsumeFuel();
+
+            return true;
+        }
         #endregion
 
 

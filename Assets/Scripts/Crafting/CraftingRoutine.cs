@@ -76,6 +76,7 @@ namespace UZSG.Crafting
             recipe = options.Recipe;
             TotalYield = options.Count;
             outputSlot = options.OutputSlot;
+            IsFueled = options.IsFuel;
         }
 
         public void Prepare()

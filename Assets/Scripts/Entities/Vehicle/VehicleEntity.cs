@@ -81,14 +81,14 @@ namespace UZSG.Entities
         {
             if (actor is not Player player) return;
 
+            _vehicleController.EnableVehicle();
             EnterVehicle(player);
         }
 
         public void EnterVehicle(Player player)
         {
-            if (SeatsOccupied()) return;
-
-            player.Controls.SetControl("Jump", false);
+            bool[] _areSeatsOccupied = SeatsOccupied();
+            if (_areSeatsOccupied[0] && _areSeatsOccupied[1]) return;
 
             if (Driver == null)
             {
@@ -105,16 +105,16 @@ namespace UZSG.Entities
             {
                 collider.enabled = false;
             }
-            _vehicleController.EnableGeneralVehicleControls();
+            _vehicleController.EnableGeneralVehicleControls(player);
         }
 
-        public bool SeatsOccupied()
+        public bool[] SeatsOccupied()
         {
             // Check if driver seat has a player set to it
             bool driverOccupied = Driver != null;
             //Check if passenger seat has a player set to it
             bool passengerOccupied = Passengers != null && Passengers.All(passenger => passenger != null);
-            return driverOccupied && passengerOccupied;
+            return new [] { driverOccupied, passengerOccupied };
         }
 
         public void EnterDriver(Player player)
@@ -148,7 +148,8 @@ namespace UZSG.Entities
             }
             else
             {
-                if (SeatsOccupied()) return;
+                bool[] _areSeatsOccupied = SeatsOccupied();
+                if (_areSeatsOccupied[0] && _areSeatsOccupied[1]) return;
 
                 int previousSeatIndex = Passengers.IndexOf(player);
                 ChangePassengerSeat(player, previousSeatIndex);
@@ -211,8 +212,17 @@ namespace UZSG.Entities
             {
                 Passengers[Passengers.IndexOf(player)] = null;
             }
-            _vehicleController.DisableGeneralVehicleControls();
-            player.Controls.SetControl("Jump", true);
+            _vehicleController.DisableGeneralVehicleControls(player);
+            CheckPassengers();
+        }
+
+        private void CheckPassengers()
+        {
+            bool[] _areSeatsOccupied = SeatsOccupied();
+            if ((_areSeatsOccupied[0] || _areSeatsOccupied[1]) == false)
+            {
+                _vehicleController.DisableVehicle();
+            }
         }
     }
 }

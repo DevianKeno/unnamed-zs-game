@@ -11,6 +11,9 @@ namespace UZSG.Entities.Vehicles
 {
     public class VehicleController : MonoBehaviour
     {
+        [Header("General Settings")]
+        [SerializeField] bool _isEnabled;
+
         [Header("Vehicle Variables")]
         [SerializeField] VehicleEntity _vehicle;
         [SerializeField] protected VehicleStateMachine _vehicleStateMachine;
@@ -65,7 +68,6 @@ namespace UZSG.Entities.Vehicles
         float _localVelocityX;
         bool _deceleratingCar;
 
-        bool _isMoving;
         bool _isHandbraked;
         Vector2 _driverInput;
 
@@ -75,6 +77,7 @@ namespace UZSG.Entities.Vehicles
             _frontWheelColliders = _vehicle.FrontVehicleWheels;
             _rearWheelColliders = _vehicle.RearVehicleWheels;
             _wheels = _frontWheelColliders.Concat(_rearWheelColliders).ToList();
+            _isEnabled = false;
         }
 
         private void Start()
@@ -107,7 +110,15 @@ namespace UZSG.Entities.Vehicles
             decelerationMultiplier = _vehicle.Vehicle.decelerationMultiplier;
         }
 
-        private void FixedUpdate()
+        private void Update()
+        {
+            if (_isEnabled)
+            {
+                HandleCarMovement();
+            }
+        }
+
+        private void HandleCarMovement()
         {
             // Compute car speed using one of the wheels
             carSpeed = (2 * Mathf.PI * _frontWheelColliders[0].radius * _frontWheelColliders[0].rpm * 60) / 1000;
@@ -117,8 +128,6 @@ namespace UZSG.Entities.Vehicles
 
             if (_vehicle.Driver != null)
             {
-                HandlePlayerPosition();
-
                 // Vehicle Controls
                 if (_driverInput.y > 0)
                 {
@@ -160,6 +169,7 @@ namespace UZSG.Entities.Vehicles
                     transform.rotation = targetRotation;
                 }
 
+                HandlePlayerPosition();
             }
         }
 
@@ -460,14 +470,18 @@ namespace UZSG.Entities.Vehicles
             }
         }
         #region Vehicle Control Functions 
-        public void EnableGeneralVehicleControls()
+        public void EnableGeneralVehicleControls(Player player)
         {
+            player.Controls.SetControl("Jump", false);
+
             _switchInput.performed += OnSwitchInputPerform;
             _backInput.performed += OnBackInputPerform;
         }
 
-        public void DisableGeneralVehicleControls()
+        public void DisableGeneralVehicleControls(Player player)
         {
+            player.Controls.SetControl("Jump", true);
+
             _switchInput.performed -= OnSwitchInputPerform;
             _backInput.performed -= OnBackInputPerform;
         }
@@ -541,6 +555,20 @@ namespace UZSG.Entities.Vehicles
             }
             return null;
         }
+        #endregion
+
+        #region General Settings Function
+
+        public void EnableVehicle()
+        {
+            _isEnabled = true;
+        }
+
+        public void DisableVehicle()
+        {
+            _isEnabled = false;
+        }
+
         #endregion
     }
 }

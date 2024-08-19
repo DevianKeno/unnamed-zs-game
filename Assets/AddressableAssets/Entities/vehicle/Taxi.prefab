@@ -1028,6 +1028,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _vehicle: {fileID: 0}
   _vehicleStateMachine: {fileID: 0}
+  bodyMassCenter: {fileID: 2967105230751013314}
   maxSpeed: 90
   maxReverseSpeed: 45
   powerCurve:
@@ -1069,8 +1070,6 @@ MonoBehaviour:
   steeringSpeed: 0.5
   brakeForce: 350
   decelerationMultiplier: 8
-  handbrakeDriftMultiplier: 5
-  bodyMassCenter: {fileID: 0}
   carSpeed: 0
   powerToWheels: 0
   isTractionLocked: 0

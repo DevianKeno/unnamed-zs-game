@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
+using UZSG.Entities;
 using UZSG.Systems;
 
 namespace UZSG.Entities.Vehicles
@@ -46,6 +47,8 @@ namespace UZSG.Entities.Vehicles
         [HideInInspector]
         public int decelerationMultiplier; // How fast the car decelerates when the user is not using the throttle.
         [HideInInspector]
+        public float antiRoll; // How strong the tranferring of forces in suspensions are/anti roll bar strength
+        [HideInInspector]
         public float carSpeed; // Used to store the current speed of the car.
         [HideInInspector]
         public float powerToWheels; // Used to store final wheel torque
@@ -53,12 +56,15 @@ namespace UZSG.Entities.Vehicles
         public bool isTractionLocked; // Used to know whether the traction of the car is locked or not.
         [HideInInspector]
         public float defaultMaxSteerAngle; // Used to store the original max steering angle.
+        [HideInInspector]
+        public List<WheelCollider> wheels; // Store all wheel colliders.
 
         /*
        IMPORTANT: The following variables should not be modified manually since their values are automatically given via script.
         */
         Rigidbody _carRigidbody; // Stores the car's rigidbody.
-        List<WheelCollider> _wheels; // Store all wheel colliders.
+        WheelCollider wheelL; // represents any wheel to the left
+        WheelCollider wheelR; //represents any wheel to the right
         float _steeringAxis; // Used to know whether the steering wheel has reached the maximum value. It goes from -1 to 1.
         float _throttleAxis; // Used to know whether the throttle has reached the maximum value. It goes from -1 to 1.
         float _localVelocityZ;
@@ -74,7 +80,7 @@ namespace UZSG.Entities.Vehicles
             _vehicle = this.GetComponent<VehicleEntity>();
             _frontWheelColliders = _vehicle.FrontVehicleWheels;
             _rearWheelColliders = _vehicle.RearVehicleWheels;
-            _wheels = _frontWheelColliders.Concat(_rearWheelColliders).ToList();
+            wheels = _frontWheelColliders.Concat(_rearWheelColliders).ToList();
         }
 
         private void Start()
@@ -105,6 +111,10 @@ namespace UZSG.Entities.Vehicles
             steeringSpeed = _vehicle.Vehicle.steeringSpeed;
             brakeForce = _vehicle.Vehicle.brakeForce;
             decelerationMultiplier = _vehicle.Vehicle.decelerationMultiplier;
+            antiRoll = _vehicle.Vehicle.antiRoll;
+
+            wheelL = _frontWheelColliders[0];
+            wheelR = _frontWheelColliders[1];
         }
 
         private void FixedUpdate()
@@ -112,8 +122,14 @@ namespace UZSG.Entities.Vehicles
             // Compute car speed using one of the wheels
             carSpeed = (2 * Mathf.PI * _frontWheelColliders[0].radius * _frontWheelColliders[0].rpm * 60) / 1000;
 
+            // Save the local velocity of the car in the x axis. Used to know if the car should lose traction.
+            _localVelocityX = transform.InverseTransformDirection(_carRigidbody.velocity).x;
+
             // Save the local velocity of the car in the z axis. Used to know if the car is going forward or backwards.
             _localVelocityZ = transform.InverseTransformDirection(_carRigidbody.velocity).z;
+
+            // Always execute anti roll bar for stability, has unexpected behaviors for unknown reasons (for boat and car-dboard, it works fine for hilux tho)
+            AntiRollBar();
 
             if (_vehicle.Driver != null)
             {
@@ -315,9 +331,9 @@ namespace UZSG.Entities.Vehicles
             // Check for slip during handbrake
             WheelHit[] _wheelHits = new WheelHit[4];
 
-            for(int i = 0; i < _wheels.Count; i++)
+            for(int i = 0; i < wheels.Count; i++)
             {
-                _wheels[i].GetGroundHit(out _wheelHits[i]);
+                wheels[i].GetGroundHit(out _wheelHits[i]);
                 float lateralSlip = _wheelHits[i].sidewaysSlip;
 
                 if (Math.Abs(lateralSlip) > 0.2f)
@@ -459,6 +475,38 @@ namespace UZSG.Entities.Vehicles
                 }
             }
         }
+
+        public void AntiRollBar()
+        {
+            WheelHit _hit;
+            float _travelL = 1.0f;
+            float _travelR = 1.0f;
+
+            bool groundedL = wheelL.GetGroundHit(out _hit);
+            if (groundedL)
+            {
+                _travelL = (-wheelL.transform.InverseTransformPoint(_hit.point).y - wheelL.radius) / wheelL.suspensionDistance;
+            }
+
+            bool groundedR = wheelR.GetGroundHit(out _hit);
+            if (groundedR)
+            {
+                _travelR = (-wheelR.transform.InverseTransformPoint(_hit.point).y - wheelR.radius) / wheelR.suspensionDistance;
+            }
+
+            float _antiRollForce = (_travelL - _travelR) * antiRoll;
+
+            if (groundedL)
+            {
+                _carRigidbody.AddForceAtPosition(wheelL.transform.up * -_antiRollForce, wheelL.transform.position);
+            }
+
+            if (groundedR)
+            {
+                _carRigidbody.AddForceAtPosition(wheelR.transform.up * _antiRollForce, wheelR.transform.position);
+            }
+        }
+
         #region Vehicle Control Functions 
         public void EnableGeneralVehicleControls()
         {

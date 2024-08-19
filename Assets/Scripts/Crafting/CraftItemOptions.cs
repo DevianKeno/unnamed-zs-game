@@ -14,7 +14,7 @@ namespace UZSG.Crafting
         /// </summary>
         public int Count { get; set; }
 
-        public bool IsFuel {get ; set; }
+        public bool isFuelRequired;
         public ItemSlot QueueSlot { get; set; }
         public ItemSlot OutputSlot { get; set; }
     }

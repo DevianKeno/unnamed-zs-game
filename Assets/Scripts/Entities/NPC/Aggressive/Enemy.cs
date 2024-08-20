@@ -155,7 +155,7 @@ namespace UZSG.Entities
         void InitializeAttributes()
         {
             attributes = new();
-            attributes.ReadSaveJson(defaultData.Attributes);
+            attributes.ReadSaveData(defaultData.Attributes);
             _siteRadius = Attributes.Get("zombie_site_radius").Value;
             _attackRadius = Attributes.Get("zombie_attack_radius").Value;
             _speed = Attributes.Get("move_speed").Value;

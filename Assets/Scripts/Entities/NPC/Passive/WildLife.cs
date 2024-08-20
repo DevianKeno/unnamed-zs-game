@@ -15,37 +15,20 @@ namespace UZSG.Entities
     { 
 
 
-        #region Wild Life Fundamental Data
+        #region Wild Life Movement and Fundamental Data
         public WildlifeActionStatesMachine WildlifeStateMachine => wildlifeStateMachine;
-        public float RoamTime;
-        
-        public Rigidbody rb;
-        public Attributes.Attribute HealthAttri;
         Player _playerToFlee; // the player that the critter flees from
-        NavMeshHit navHit;
+        bool _inSiteRange;
+        float _distanceFromPlayer, _siteRadius;
+        public Attributes.Attribute HealthAttri;
         WildlifeActionStates _actionState;
-        [SerializeField] NavMeshAgent wildlifeEntity;
-        
-        [SerializeField] bool _inSiteRange;
+        [SerializeField] NavMeshAgent WildlifeEntity;
         [SerializeField] protected WildlifeActionStatesMachine wildlifeStateMachine;
         [SerializeField] float health;
         [SerializeField] float speed;
 
 
         #endregion
-
-
-
-        #region Wild Life Movement Data
-
-        Vector3 _randomDestination;
-        Vector3 _fleeDestination;
-        float fleeDistance = 10.0f;
-        bool hasCalculatedFleeDestination;
-        [SerializeField] float _distanceFromPlayer, _siteRadius, _roamRadius, _roamInterval;
-
-        #endregion
-
 
 
         #region Wild Life Overall Data
@@ -70,7 +53,7 @@ namespace UZSG.Entities
 
         private void Game_Tick_OnSecond(SecondInfo info)
         {
-            ResetIfPlayerNotInRange();
+            ResetPlayerIfNotInRange();
         }
 
         protected virtual void FixedUpdate()
@@ -82,7 +65,6 @@ namespace UZSG.Entities
         public override void OnSpawn()
         {
             base.OnSpawn();
-            rb = GetComponent<Rigidbody>();
             defaultPath = entityDefaultsPath + $"{entityData.Id}_defaults.json";
             Initialize();
         }
@@ -109,10 +91,8 @@ namespace UZSG.Entities
 
             HealthAttri = attributes.Get("health");
             health = HealthAttri.Value;
-            wildlifeEntity.speed = attributes.Get("move_speed").Value;
-            _siteRadius = attributes.Get("wildlife_site_radius").Value;
-            _roamInterval = attributes.Get("wildlife_roam_interval").Value;
-            _roamRadius = attributes.Get("wildlife_roam_radius").Value;
+            WildlifeEntity.speed = attributes.Get("speed").Value;
+            _siteRadius = attributes.Get("site_radius").Value;
         }
 
         #endregion
@@ -135,7 +115,7 @@ namespace UZSG.Entities
             // remain na walang laman to unless umaatake ung critter
         }   
 
-        void ResetIfPlayerNotInRange()
+        void ResetPlayerIfNotInRange()
         {
             if (_inSiteRange)
             {
@@ -198,75 +178,12 @@ namespace UZSG.Entities
 
         void Roam()
         {
-            wildlifeStateMachine.ToState(WildlifeActionStates.Roam);
-            hasCalculatedFleeDestination = false;
-
-            // Continue moving toward the destination
-            RoamTime -= Time.deltaTime;
-            if (RoamTime <= 0)
-            {
-                // Get a random position
-                _randomDestination = UnityEngine.Random.insideUnitSphere * _roamRadius;
-                _randomDestination += transform.position;
-                NavMesh.SamplePosition(_randomDestination, out NavMeshHit navHit, _roamRadius, NavMesh.AllAreas);
-
-                // Set the agent's destination to the random point
-                wildlifeEntity.SetDestination(navHit.position);
-                RoamTime = UnityEngine.Random.Range(1.0f, _roamInterval); // Reset RoamTime for the next movement
-                wildlifeEntity.updateRotation = true;
-            }
+            //Debug.Log("Roam");
         }
 
         void RunAway()
         {
-            wildlifeStateMachine.ToState(WildlifeActionStates.RunAway);
-
-            // set rigid body to dynamic
-            rb.isKinematic = false;
-
-            if (!hasCalculatedFleeDestination)
-            {
-                _fleeDestination = CalculateFleeDestination;
-            }
-
-            // Run away from player with occasional zigzag
-            if (NavMesh.SamplePosition(_fleeDestination, out navHit, _roamRadius, NavMesh.AllAreas))
-            {
-                // Set the agent's destination to the flee destination
-                wildlifeEntity.SetDestination(navHit.position);
-                hasCalculatedFleeDestination = true;
-            }
-        }
-
-        Vector3 CalculateFleeDestination // Next movement with zigzag 
-        {
-            get
-            {
-                // Calculate direction vector from the wildlife to the player
-                Vector3 _directionToPlayer = _playerToFlee.transform.position - transform.position;
-
-                // Invert the direction to get the opposite direction
-                Vector3 _oppositeDirection = -_directionToPlayer;
-
-                // Normalize the direction to get a unit vector
-                Vector3 _fleeDirection = _oppositeDirection.normalized;
-
-                // Zigzag by alternating between left and right
-                Vector3 _zigzagDirection;
-                if (UnityEngine.Random.value > 0.5f)
-                {
-                    _zigzagDirection = Vector3.Cross(_fleeDirection, Vector3.up).normalized;
-                }
-                else
-                {
-                    _zigzagDirection = -Vector3.Cross(_fleeDirection, Vector3.up).normalized;
-                }
-
-                // New destination
-                fleeDistance = 20.0f;
-                Vector3 _fleeDestination = transform.position + (_fleeDirection + _zigzagDirection) * fleeDistance;
-                return _fleeDestination;
-            }
+            //Debug.Log("RunAway");
         }
 
         public void ExecuteAction(WildlifeActionStates action) // execute an action depending on what state the entity is on

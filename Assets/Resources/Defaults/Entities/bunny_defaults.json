@@ -12,16 +12,6 @@
     },
     {
       "Id": "move_speed",
-      "Value": 30.0,
-      "Minimum": 0.0,
-      "BaseMaximum": 0.0,
-      "Multiplier": 0.0,
-      "FlatBonus": 0.0,
-      "LimitOverflow": false,
-      "LimitUnderflow": false
-    },
-    {
-      "Id": "wildlife_site_radius",
       "Value": 20.0,
       "Minimum": 0.0,
       "BaseMaximum": 0.0,
@@ -31,17 +21,7 @@
       "LimitUnderflow": false
     },
     {
-      "Id": "wildlife_roam_radius",
-      "Value": 12.0,
-      "Minimum": 0.0,
-      "BaseMaximum": 0.0,
-      "Multiplier": 0.0,
-      "FlatBonus": 0.0,
-      "LimitOverflow": false,
-      "LimitUnderflow": false
-    },
-    {
-      "Id": "wildlife_roam_interval",
+      "Id": "wildlife_site_radius",
       "Value": 20.0,
       "Minimum": 0.0,
       "BaseMaximum": 0.0,

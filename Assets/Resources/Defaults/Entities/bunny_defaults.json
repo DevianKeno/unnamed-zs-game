@@ -1,4 +1,6 @@
 {
+  "Id": null,
+  "Transform": null,
   "Attributes": [
     {
       "Id": "health",
@@ -23,6 +25,26 @@
     {
       "Id": "wildlife_site_radius",
       "Value": 20.0,
+      "Minimum": 0.0,
+      "BaseMaximum": 0.0,
+      "Multiplier": 0.0,
+      "FlatBonus": 0.0,
+      "LimitOverflow": false,
+      "LimitUnderflow": false
+    },
+    {
+      "Id": "wildlife_roam_interval",
+      "Value": 18.0,
+      "Minimum": 0.0,
+      "BaseMaximum": 0.0,
+      "Multiplier": 0.0,
+      "FlatBonus": 0.0,
+      "LimitOverflow": false,
+      "LimitUnderflow": false
+    },
+    {
+      "Id": "wildlife_roam_radius",
+      "Value": 15.0,
       "Minimum": 0.0,
       "BaseMaximum": 0.0,
       "Multiplier": 0.0,

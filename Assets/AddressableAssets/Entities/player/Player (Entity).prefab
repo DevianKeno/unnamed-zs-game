@@ -260,6 +260,7 @@ GameObject:
   - component: {fileID: 9144966643444850028}
   - component: {fileID: 7126291028611460157}
   - component: {fileID: 2387450465932377105}
+  - component: {fileID: -3347734694974871184}
   - component: {fileID: 5342855004310521056}
   - component: {fileID: 8855759747402608191}
   - component: {fileID: 99515879283178584}
@@ -332,6 +333,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AudioAssetsData: {fileID: 11400000, guid: eed9c45f6757aae48b1990646f079589, type: 2}
   Player: {fileID: 7126291028611460157}
+--- !u!114 &-3347734694974871184
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7226565028708405948}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b363c6981a7273b429d2011edad97652, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SiteRange: 15
+  AttackRange: 1
+  CritterSiteRange: 20
+  EnemyLayer:
+    serializedVersion: 2
+    m_Bits: 16384
+  WildlifeLayer:
+    serializedVersion: 2
+    m_Bits: 65536
 --- !u!114 &5342855004310521056
 MonoBehaviour:
   m_ObjectHideFlags: 0

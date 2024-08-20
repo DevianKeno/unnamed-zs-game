@@ -11,19 +11,15 @@ using System.Collections;
 
 namespace UZSG.Entities
 {
-    public partial class Enemy : Entity, IDetectable
+    public partial class Enemy : NonPlayerCharacter, IDetectable
     {
         #region Agent movement and Fundamental data
 
         public float AttackRange;  // range from which it follow, attacks Players (to remove)
         public EnemyActionStatesMachine EnemyStateMachine => enemyStateMachine;
-        public Attributes.Attribute HealthAttri;
-        public Rigidbody rb;
         public bool _isInHorde;
-        Player _target; // Current target of the enemy
         EnemyActionStates _actionState;
         Vector3 _randomDestination; // Destination of agent
-        [SerializeField] float _health; //enemy health
         [SerializeField] bool hasTargetInSite, hasTargetInAttack, isDead; // checks if the player is in site, attack range or is a target
         [SerializeField] float RoamTime; // Time it takes for the agent to travel a point
         [SerializeField] float _roamRadius; // Radius of which the agent can travel
@@ -50,10 +46,7 @@ namespace UZSG.Entities
         #region Agent data
 
         public EnemyData EnemyData => entityData as EnemyData;
-        public string defaultPath; // Default file path of the specific enemy
         public EnemySaveData defaultData;
-        [SerializeField] protected AttributeCollection attributes;
-        public AttributeCollection Attributes => attributes;
 
 
         #endregion
@@ -86,8 +79,7 @@ namespace UZSG.Entities
         public override void OnSpawn()
         {
             base.OnSpawn();
-            rb = GetComponent<Rigidbody>();
-            defaultPath = entityDefaultsPath + $"{entityData.Id}_defaults.json";
+            _enemyEntity = GetComponent<NavMeshAgent>();
             Initialize();
         }
 
@@ -100,7 +92,7 @@ namespace UZSG.Entities
         {
             if (player != null)
             {
-                _target = player; // set the current target of the enemy to they player found
+                _player = player; // set the current target of the enemy to they player found
                 hasTargetInSite = true;
             }
         }
@@ -118,11 +110,11 @@ namespace UZSG.Entities
             // Check if there is a target, then calculate the distance
             if (hasTargetInSite)
             {
-                _distanceFromPlayer = Vector3.Distance(_target.Position, transform.position); 
+                _distanceFromPlayer = Vector3.Distance(_player.Position, transform.position); 
         
                 if (_siteRadius <= _distanceFromPlayer) // if target no longer in site reset target
                 {
-                    _target = null;
+                    _player = null;
                     hasTargetInSite = false;
                     enemyStateMachine.ToState(EnemyActionStates.Roam);
                 }
@@ -148,14 +140,14 @@ namespace UZSG.Entities
 
         void Initialize() 
         {
-            _target = null; // set player to none
+            _player = null; // set player to none
             LoadDefaults(); // read from JSON file the default enemy attributes
             InitializeAttributes(); // set the default attributes of the enemy
         }
 
-        void LoadDefaults()
+        public override void LoadDefaults()
         {
-            var defaultsJson = File.ReadAllText(Application.dataPath + defaultPath);
+            base.LoadDefaults();
             defaultData = JsonUtility.FromJson<EnemySaveData>(defaultsJson);
             Game.Console.Log("Enemy data: \n" + defaultData);
         }
@@ -164,7 +156,6 @@ namespace UZSG.Entities
         {
             attributes = new();
             attributes.ReadSaveJson(defaultData.Attributes);
-            
             _siteRadius = Attributes.Get("zombie_site_radius").Value;
             _attackRadius = Attributes.Get("zombie_attack_radius").Value;
             _speed = Attributes.Get("move_speed").Value;
@@ -172,7 +163,6 @@ namespace UZSG.Entities
             _roamInterval = Attributes.Get("zombie_roam_interval").Value;
             _enemyEntity.speed = Attributes.Get("move_speed").Value;
             HealthAttri = attributes.Get("health");
-            _health = HealthAttri.Value;
         }
 
         #endregion
@@ -205,11 +195,7 @@ namespace UZSG.Entities
         {
             get
             {
-                if (HealthAttri.Value <= 0)
-                {
-                    return true;
-                }
-                return false;
+                return IsDeadNPC; // bool stating if the npc is dead
             }
         }
 
@@ -295,7 +281,7 @@ namespace UZSG.Entities
             _enemyEntity.updateRotation = true;
 
             // chase player position
-            _enemyEntity.SetDestination(_target.transform.position);
+            _enemyEntity.SetDestination(_player.transform.position);
         }
 
         public void Roam()

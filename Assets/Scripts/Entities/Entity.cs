@@ -39,6 +39,8 @@ namespace UZSG.Entities
         void Awake()
         {
             hitboxes = GetComponent<EntityHitboxController>();
+
+            if (hitboxes != null) HasHitboxes=true;
         }
 
         internal void OnSpawnInternal()

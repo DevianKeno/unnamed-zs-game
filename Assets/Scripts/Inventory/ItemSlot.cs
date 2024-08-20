@@ -4,6 +4,7 @@ using UnityEngine;
 
 using UZSG.Data;
 using UZSG.Items;
+using UZSG.Saves;
 
 namespace UZSG.Inventory
 {
@@ -11,7 +12,7 @@ namespace UZSG.Inventory
     /// Represents a container where Items can be put in.
     /// </summary>
     [Serializable]
-    public class ItemSlot
+    public class ItemSlot : ISaveDataReadWrite<ItemSlotSaveData>
     {
         public struct ItemChangedContext
         {
@@ -69,6 +70,28 @@ namespace UZSG.Inventory
             item = Item.None;
             SlotType = slotType;
         }
+        
+
+        #region Save read/write
+
+        public void ReadSaveData(ItemSlotSaveData saveData)
+        {
+            
+        }
+
+        public ItemSlotSaveData WriteSaveData()
+        {
+            var saveData = new ItemSlotSaveData()
+            {
+                Index = index,
+                Item = Item.WriteSaveData(),
+            };
+
+            return saveData;
+        }
+
+        #endregion
+
 
         void ItemChangedInternal()
         {
@@ -81,6 +104,9 @@ namespace UZSG.Inventory
             OnItemChangedInternal?.Invoke(this, context);
             OnItemChanged?.Invoke(this, context);
         }
+
+
+        #region Public methods
 
         public Item View()
         {
@@ -169,6 +195,19 @@ namespace UZSG.Inventory
             
             return false;
         }
+
+        /// <summary>
+        /// Swap contents :)
+        /// </summary>
+        public static void SwapContents(ItemSlot a, ItemSlot b)
+        {
+            var temp = a.TakeItems();
+            a.Put(b.TakeItems());
+            b.Put(temp);
+        }
+
+        #endregion
+
         
         ItemSlotType MapItemTypeToSlotType(ItemType itemType)
         {
@@ -181,16 +220,6 @@ namespace UZSG.Inventory
                 ItemType.Accessory => ItemSlotType.Accessory,
                 _ => ItemSlotType.All
             };
-        }
-
-        /// <summary>
-        /// Swap contents :)
-        /// </summary>
-        public static void SwapContents(ItemSlot a, ItemSlot b)
-        {
-            var temp = a.TakeItems();
-            a.Put(b.TakeItems());
-            b.Put(temp);
         }
     }
 }

@@ -35,6 +35,7 @@ MonoBehaviour:
   AudioAssetsData: {fileID: 11400000, guid: 0305db7d3d2ded14aa7a997592ef039c, type: 2}
   HotbarIcon: {fileID: 0}
   Category: 1
+  Attributes: []
   MeleeType: 0
   BluntType: 0
   BladedType: 0

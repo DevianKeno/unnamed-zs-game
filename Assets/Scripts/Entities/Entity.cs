@@ -55,15 +55,16 @@ namespace UZSG.Entities
         {
         }
 
-        public void ReadSaveJson(EntitySaveData saveData)
+        public virtual void ReadSaveData(EntitySaveData saveData)
         {
             InitializeTransform(saveData.Transform);
         }
         
-        public EntitySaveData WriteSaveJson()
+        public virtual EntitySaveData WriteSaveData()
         {
             var saveData = new EntitySaveData()
             {
+                InstanceId = GetInstanceID(),
                 Id = entityData.Id,
                 Transform = new()
                 {
@@ -92,9 +93,9 @@ namespace UZSG.Entities
         #endregion
         
 
-        public virtual void Kill()
+        public virtual void Kill(bool notify = true)
         {
-            Game.Entity.Kill(this);
+            if (notify) Game.Entity.Kill(this);
         }
         
         protected void InitializeHitboxEvents()

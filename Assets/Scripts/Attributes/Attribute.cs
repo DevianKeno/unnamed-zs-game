@@ -136,6 +136,11 @@ namespace UZSG.Attributes
         {
             get
             {
+                if (CurrentMaximum <= 0)
+                {
+                    return 1f;
+                }
+                
                 return Value / CurrentMaximum;
             }
         }
@@ -314,7 +319,7 @@ namespace UZSG.Attributes
             return underflow;
         }
 
-        public void ReadSaveJson(AttributeSaveData saveData)
+        public void ReadSaveData(AttributeSaveData saveData)
         {
             ReadSaveJson(saveData, initialize: true);
         }
@@ -335,7 +340,7 @@ namespace UZSG.Attributes
             }
         }
 
-        public virtual AttributeSaveData WriteSaveJson()
+        public virtual AttributeSaveData WriteSaveData()
         {
             var saveData = new AttributeSaveData()
             {

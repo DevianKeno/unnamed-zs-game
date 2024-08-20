@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.IO;
@@ -7,15 +8,22 @@ using Newtonsoft.Json;
 
 using UZSG.Systems;
 using UZSG.Entities;
-using UZSG.WorldEvents;
 using UZSG.Saves;
 using UZSG.Objects;
+using UZSG.WorldEvents;
 
 namespace UZSG.Worlds
 {
     public class World : MonoBehaviour, ISaveDataReadWrite<WorldSaveData>
     {
+        #region Editor debugging only 
+        public bool LoadOnEnterPlayMode;
+        public bool SaveOnExitPlayMode;
+
+        #endregion
+        
         bool _isInitialized; /// to prevent initializing twice
+        
 
         WorldAttributes worldAttributes;
         public WorldAttributes WorldAttributes => worldAttributes;
@@ -36,6 +44,8 @@ namespace UZSG.Worlds
         /// Key is EntityData Id; Value is list of Entity instances of that Id.
         /// </summary>
         Dictionary<string, List<Entity>> _cachedIdEntities = new();
+        Dictionary<int, BaseObject> _objectInstanceIds = new();
+        Dictionary<int, Entity> _entityInstanceIds = new();
 
         [SerializeField] Transform objectsContainer;
         [SerializeField] Transform entitiesContainer;
@@ -48,9 +58,22 @@ namespace UZSG.Worlds
             if (_isInitialized) return;
             _isInitialized = true;
 
+            Game.Main.OnLateInit += OnLateInit;
+        }
+
+        void OnLateInit()
+        {
+            Game.Main.OnLateInit -= OnLateInit;
+
             timeController.Initialize();
-            eventsController.Initialize();
-            
+            // eventsController.Initialize();
+
+            RegisterInstances();
+            if (LoadOnEnterPlayMode)
+            {
+                LoadFromPath();
+            }
+
             Game.Entity.OnEntitySpawned += OnEntitySpawned;
             Game.Entity.OnEntityKilled += OnEntityKilled;
 
@@ -58,7 +81,30 @@ namespace UZSG.Worlds
             Game.Tick.OnTick += Tick;
         }
 
-        public void ReadSaveJson(WorldSaveData saveData)
+        /// <summary>
+        /// Register object/entity instances from the scene to avoid duplicates.
+        /// </summary>g
+        void RegisterInstances()
+        {
+            /// Objects
+            foreach (Transform c in objectsContainer)
+            {
+                if (c.TryGetComponent<BaseObject>(out var obj))
+                {
+                    _objectInstanceIds[obj.GetInstanceID()] = obj;
+                }
+            }
+            /// Entities
+            foreach (Transform c in entitiesContainer)
+            {
+                if (c.TryGetComponent<Entity>(out var etty))
+                {
+                    _entityInstanceIds[etty.GetInstanceID()] = etty;
+                }
+            }
+        }
+
+        public void ReadSaveData(WorldSaveData saveData)
         {
             if (saveData == null)
             {
@@ -68,6 +114,8 @@ namespace UZSG.Worlds
             
             this._saveData = saveData;
             _hasValidSaveData = true;
+            LoadObjects();
+            LoadEntities();
         }
 
         public async Task<WorldSaveData> WriteSaveJsonAsync()
@@ -77,7 +125,7 @@ namespace UZSG.Worlds
             return _saveData;
         }
         
-        public WorldSaveData WriteSaveJson()
+        public WorldSaveData WriteSaveData()
         {
             _saveData = new WorldSaveData();
             SaveObjects();
@@ -89,26 +137,30 @@ namespace UZSG.Worlds
 
         void SaveObjects()
         {
-            Game.Console.Log("Saving objects...");
+            Game.Console.Log("[World]: Saving objects...");
 
             _saveData.Objects = new();
             foreach (Transform c in objectsContainer) /// c is child
             {
                 if (!c.TryGetComponent<BaseObject>(out var obj)) continue;
                 
-                _saveData.Objects.Add(obj.WriteSaveJson());
+                _saveData.Objects.Add(obj.WriteSaveData());
             }
         }
         
-        void LoadUserObjects()
+        void LoadObjects()
         {
+            Game.Console.Log("[World]: Loading objects...");
+
             foreach (var sd in _saveData.Objects) /// sd is saveData ;)
             {
+                if (_objectInstanceIds.ContainsKey(sd.InstanceId)) continue;
+
                 if (Game.Objects.TryGetData(sd.Id, out var data))
                 {
                     Game.Objects.Place(sd.Id, callback: (info) =>
                     {
-                        info.Object.ReadSaveJson(sd);
+                        info.Object.ReadSaveData(sd);
                     });
                 }
             }
@@ -116,7 +168,7 @@ namespace UZSG.Worlds
 
         void SaveEntities()
         {
-            Game.Console.Log("Saving entities...");
+            Game.Console.Log("[World]: Saving entities...");
 
             _saveData.PlayerSaves = new();
             _saveData.EntitySaves = new();
@@ -126,18 +178,22 @@ namespace UZSG.Worlds
                 // if (!etty.IsAlive) continue; 
                 if (etty is Player) continue;/// no n no nono this should save as soon as they quit
 
-                _saveData.EntitySaves.Add(etty.WriteSaveJson());
+                _saveData.EntitySaves.Add(etty.WriteSaveData());
             }
         }
 
         void LoadEntities()
         {
+            Game.Console.Log("[World]: Loading entities...");
+
             foreach (var sd in _saveData.EntitySaves)
             {
+                if (_entityInstanceIds.ContainsKey(sd.InstanceId)) continue;
                 if (sd.Id == "player") continue;
+
                 Game.Entity.Spawn(sd.Id, callback: (info) =>
                 {
-                    info.Entity.ReadSaveJson(sd);
+                    info.Entity.ReadSaveData(sd);
                 });
             }
         }
@@ -191,6 +247,19 @@ namespace UZSG.Worlds
         }
 
 
+        void Cleanup()
+        {
+            Game.Console.Log("[World]: Cleaning up...");
+
+            foreach (var c in _entityInstanceIds.Values)
+            {
+                if (c is IWorldCleanupable etty)
+                {
+                    etty.Cleanup();
+                }
+            }
+        }
+
         #region Public methods
 
         /// <summary>
@@ -208,10 +277,10 @@ namespace UZSG.Worlds
 
         public void SaveWorld()
         {
-            Game.Console.Log("Saving world...");
+            Game.Console.Log("[World]: Saving world...");
             var time = UnityEngine.Time.time;
-            var json = WriteSaveJson();
 
+            var json = WriteSaveData();
             var settings = new JsonSerializerSettings()
             { 
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
@@ -223,8 +292,8 @@ namespace UZSG.Worlds
             File.WriteAllText(filepath, save);
 
             var elapsedTime = UnityEngine.Time.time - time; 
-            Game.Console.Log($"World saved. Took {elapsedTime:0.##} ms");
-            Debug.Log($"World saved to '{filepath}'");
+            Game.Console.Log($"[World]: World saved. Took {elapsedTime:0.##} ms");
+            Debug.Log($"[World]: World saved to '{filepath}'");
         }
 
         public void SaveWorldAsync()
@@ -236,13 +305,26 @@ namespace UZSG.Worlds
         {
             if (_isActive)
             {
-                Game.Console.Log("Cannot load a World on top of an existing one.");
+                Game.Console.Log("[World]: Cannot load a World on top of an existing one.");
                 return;
             }
+            
+            Game.Console.Log("[World]: Loading world...");
+        }
+
+        public void LoadFromPath()
+        {
+            var path = Application.persistentDataPath + $"/SavedWorlds/{WorldName}";
+            var filepath = path + "/data.json";
+            var dataJson = File.ReadAllText(filepath);
+            var wsd = JsonConvert.DeserializeObject<WorldSaveData>(dataJson);
+            ReadSaveData(wsd);
         }
 
         public void ExitWorld(bool save = true)
         {
+            Cleanup();
+
             if (save)
             {
                 SaveWorld();
@@ -253,6 +335,16 @@ namespace UZSG.Worlds
 
             Game.Objects.OnObjectPlaced -= OnObjectPlaced;
             Game.Tick.OnTick -= Tick;
+        }
+
+        #endregion
+
+
+        #region 
+        
+        void OnApplicationQuit()
+        {
+            ExitWorld(SaveOnExitPlayMode);
         }
 
         #endregion

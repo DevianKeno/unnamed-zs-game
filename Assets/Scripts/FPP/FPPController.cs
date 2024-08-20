@@ -550,7 +550,7 @@ namespace UZSG.FPP
         {
             if (heldItem is GunWeaponController weapon)
             {
-                var weaponData = weapon.ItemData as WeaponData;
+                var weaponData = weapon.WeaponData;
                 var recoilInfo = weaponData.RangedAttributes.RecoilAttributes;
 
                 cameraController.AddRecoilMotion(recoilInfo);
@@ -599,7 +599,9 @@ namespace UZSG.FPP
 
         float GetAnimationClipLength(Animator animator, string name)
         {
-            if (animator == null) return 0f;
+            #region TODO:change this to a flag
+            #endregion
+            if (animator == null || animator.runtimeAnimatorController == null) return 0f;
 
             foreach (var clip in animator.runtimeAnimatorController.animationClips)
             {

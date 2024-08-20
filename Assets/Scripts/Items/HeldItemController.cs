@@ -6,15 +6,22 @@ using UZSG.Data;
 using UZSG.Entities;
 using UZSG.Players;
 using UZSG.Attributes;
+using UZSG.Saves;
+using System;
 
 namespace UZSG.Items
 {
     /// <summary>
-    /// Controls the item held by something.
+    /// Controller for "Held Items".
     /// </summary>
-    public abstract class HeldItemController : MonoBehaviour, IAttributable
+    public abstract class HeldItemController : MonoBehaviour, IAttributable, ISaveDataReadWrite<ItemSaveData>
     {
-        public ItemData ItemData;
+        protected ItemData itemData;
+        public ItemData ItemData
+        {
+            get { return itemData; }
+            set { itemData = value; }
+        }
         protected Entity owner;
         public Entity Owner
         {
@@ -30,5 +37,33 @@ namespace UZSG.Items
 
         public abstract void Initialize();
         public abstract void SetStateFromAction(ActionStates state);
+
+        /// Save and Write for this "Held Item" as an "Item".
+        public virtual void ReadSaveData(ItemSaveData saveData)
+        {
+            attributes.ReadSaveData(saveData.Attributes);
+        }
+
+        public virtual ItemSaveData WriteSaveData()
+        {
+            var saveData = new ItemSaveData()
+            {
+                Id = itemData.Id,
+                Count = 1, /// useless for Held Item
+                Attributes = attributes.WriteSaveData(),
+            };
+
+            return saveData;
+        }
+
+        protected Item AsItem()
+        {
+            var item = new Item(ItemData.Id) /// 1 count of course
+            {
+                Attributes = attributes
+            };
+            
+            return item;
+        }
     }
 }

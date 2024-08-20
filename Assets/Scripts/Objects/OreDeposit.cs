@@ -15,9 +15,6 @@ namespace UZSG.Objects
         protected override void Start()
         {
             base.Start();
-            
-            Attributes.Add(new GenericAttribute("health"));
-            Attributes["health"].Value = 10f;
         }
 
         public override void HitBy(HitboxCollisionInfo other)

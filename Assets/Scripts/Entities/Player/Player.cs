@@ -119,7 +119,7 @@ namespace UZSG.Entities
 
             LoadDefaultsJson();
             /// this should be placed not here
-            ReadSaveJson(saveData); /// currently loads default atm
+            ReadSaveData(saveData); /// currently loads default atm
 
             audioController.CreateAudioPool(8);
             audioController.LoadAudioAssetsData(playerEntityData.AudioAssetsData);
@@ -152,7 +152,7 @@ namespace UZSG.Entities
 
         void InitializeAttributes()
         {
-            attributes.ReadSaveJson(saveData.Attributes);
+            attributes.ReadSaveData(saveData.Attributes);
 
             attributes["stamina"].OnValueModified += OnAttrStaminaModified;
         }
@@ -304,7 +304,7 @@ namespace UZSG.Entities
 
         #region Public methods
 
-        public void ReadSaveJson(PlayerSaveData saveData)
+        public void ReadSaveData(PlayerSaveData saveData)
         {
             if (saveData == null)
             {
@@ -314,15 +314,15 @@ namespace UZSG.Entities
             this.saveData = saveData; 
         }
         
-        public new PlayerSaveData WriteSaveJson()
+        public new PlayerSaveData WriteSaveData()
         {
-            var esd = base.WriteSaveJson();
+            var esd = base.WriteSaveData();
             var psd = new PlayerSaveData
             {
                 Id = esd.Id,
                 Transform = esd.Transform,
-                Attributes = attributes.WriteSaveJson(),
-                Inventory = inventory.WriteSaveJson()
+                Attributes = attributes.WriteSaveData(),
+                Inventory = inventory.WriteSaveData()
             };
 
             return psd;

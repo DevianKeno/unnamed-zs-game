@@ -55,7 +55,7 @@ namespace UZSG.Inventory
         {
             var bagSlotCount = Mathf.FloorToInt(Player.Attributes.Get("bag_slots_count").Value);
             _bag = new(bagSlotCount);
-            _bag.OnExcessItem += OnBagExcessItem;
+            // _bag.OnExcessItem += OnBagExcessItem;
 
             var hotbarSlotCount = Mathf.FloorToInt(Player.Attributes.Get("hotbar_slots_count").Value);
             _hotbar = new(hotbarSlotCount);
@@ -64,7 +64,7 @@ namespace UZSG.Inventory
             _equipment = new();
         }
 
-        void OnBagExcessItem(object sender, Item excess)
+        void OnBagExcessItem(Item excess)
         {
             if (excess.IsNone) return;
 
@@ -140,12 +140,12 @@ namespace UZSG.Inventory
             return null;
         }
 
-        public void ReadSaveJson(InventorySaveData data)
+        public void ReadSaveData(InventorySaveData data)
         {
             throw new NotImplementedException();
         }
 
-        public InventorySaveData WriteSaveJson()
+        public InventorySaveData WriteSaveData()
         {
             throw new NotImplementedException();
         }

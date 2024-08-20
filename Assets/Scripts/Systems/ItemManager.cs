@@ -29,8 +29,14 @@ namespace UZSG.Systems
             var items = Resources.LoadAll<ItemData>("Data/Items");
             foreach (var item in items)
             {
+                ValidateData(item);
                 _itemsDict[item.Id] = item;
             }
+        }
+
+        void ValidateData(ItemData item)
+        {
+            if (item.StackSize <= 0) item.StackSize = 1;
         }
 
         /// <summary>

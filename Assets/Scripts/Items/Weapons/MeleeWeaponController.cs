@@ -17,7 +17,6 @@ namespace UZSG.Items.Weapons
     public class MeleeWeaponController : HeldWeaponController, ICollisionSource
     {
         Player Player => owner as Player;
-        public WeaponData WeaponData => ItemData as WeaponData;
 
         public float attackRange;
         public float attackAngle;
@@ -42,6 +41,9 @@ namespace UZSG.Items.Weapons
 
         MeleeWeaponStateMachine stateMachine;
         public MeleeWeaponStateMachine StateMachine => stateMachine;
+
+
+        #region Initializing methods
 
         void Awake()
         {
@@ -89,6 +91,17 @@ namespace UZSG.Items.Weapons
                 _canAttack = false;
             }
         }
+
+        #endregion
+
+
+        #region Public methods
+        
+        public override void SetStateFromAction(ActionStates state)
+        {        
+        }
+
+        #endregion
 
 
         #region Player input callbacks
@@ -182,6 +195,9 @@ namespace UZSG.Items.Weapons
 
         IEnumerator CreateAttackRays()
         {
+
+
+
             float halfAngle = attackAngle / 2;
             float angleStep = attackAngle / (numberOfRays - 1);
             float stepTime = attackDuration / numberOfRays;
@@ -246,11 +262,6 @@ namespace UZSG.Items.Weapons
                 target.HitBy(info);
                 OnMeleeHit?.Invoke(info);
             }
-        }
-        
-        public override void SetStateFromAction(ActionStates state)
-        {
-            
         }
     }
 }

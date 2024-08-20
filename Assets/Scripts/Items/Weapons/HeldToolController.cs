@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -18,20 +19,25 @@ namespace UZSG.Items.Tools
     {
         public Player Player => owner as Player;
         public ToolData ToolData => ItemData as ToolData;
-        
+                
         public float attackRange;
         public float attackAngle;
         public float attackDuration;
+        public float attackDelay;
         public int numberOfRays;
         public LayerMask attackLayer;
+        public bool VisualizeAttack;
+
         bool _canAttack;
         bool _inhibitActions;
         bool _isAttacking;
 
-        public bool VisualizeAttack;
         public string CollisionTag => "Tool";
         ToolItemStateMachine stateMachine;
         public ToolItemStateMachine StateMachine => stateMachine;
+
+
+        #region Initializing methods
 
         void Awake()
         {
@@ -42,6 +48,7 @@ namespace UZSG.Items.Tools
         {
             InitializeAudioController();
             InitializeEventsFromOwnerInput();
+            LoadDefaultAttributes();
             RetrievePlayerAttributes();
         }
 
@@ -61,6 +68,14 @@ namespace UZSG.Items.Tools
             inputs["Secondary Action"].canceled += OnPlayerSecondary;
         }
 
+        void LoadDefaultAttributes()
+        {
+            attributes = new();
+            attributes.AddList(ToolData.Attributes);
+
+            attackDuration = attributes["attack_speed"].Value;
+        }
+
         void RetrievePlayerAttributes()
         {
             if (Player.Attributes.TryGet("stamina", out var attr))
@@ -77,13 +92,10 @@ namespace UZSG.Items.Tools
 
         void RetrieveToolAttributes()
         {
-            /// runtimeAttributes = ???
             
-            /// TEST ONLY
-            var durabilityAttr = new GenericAttribute("durability");
-            durabilityAttr.Add(100); 
-            Attributes.Add(durabilityAttr);
         }
+
+        #endregion
 
 
         #region Player input callbacks
@@ -138,7 +150,7 @@ namespace UZSG.Items.Tools
 
             ConsumeStamina();
             // PlaySound();
-            StartCoroutine(CreateAttackRays());
+            StartCoroutine(CreateAttackRays(GetAttackParams()));
             stateMachine.ToState(ToolItemStates.Attack);
             yield return new WaitForSeconds(0.5f); /// SOMETHING ATKSPD THOUGH NOT SO STRAIGHFROWARDS LOTS OF CALCS (short for calculations)
             
@@ -156,8 +168,19 @@ namespace UZSG.Items.Tools
             audioSourceController.PlaySound("swing1");
         }
         
-        IEnumerator CreateAttackRays()
+        MeleeAttackParameters GetAttackParams()
         {
+            #region TODO: Implement combos
+            #endregion
+            return ToolData.Attacks[0];
+        }
+
+        
+        
+        IEnumerator CreateAttackRays(MeleeAttackParameters atkParams)
+        {
+            yield return new WaitForSeconds(atkParams.Delay);
+            
             float halfAngle = attackAngle / 2;
             float angleStep = attackAngle / (numberOfRays - 1);
             float stepTime = attackDuration / numberOfRays;

@@ -87,7 +87,7 @@ namespace UZSG.Entities
         void InitializeAttributes()
         {
             attributes = new();
-            attributes.ReadSaveJson(defaultData.Attributes);
+            attributes.ReadSaveData(defaultData.Attributes);
 
             HealthAttri = attributes.Get("health");
             health = HealthAttri.Value;

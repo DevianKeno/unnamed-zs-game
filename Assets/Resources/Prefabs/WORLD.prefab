@@ -48,6 +48,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 730284244e024ae46a32862e31c1cbfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  LoadOnEnterPlayMode: 0
+  SaveOnExitPlayMode: 1
   WorldName: testsavedworld
   timeController: {fileID: 3392221486933040618}
   eventsController: {fileID: 5668126680943736175}

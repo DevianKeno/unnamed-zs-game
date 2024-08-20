@@ -82,7 +82,7 @@ namespace UZSG
                 foreach (ItemSlot slot in slots)
                 {
                     var nextItem = new Item(item, nextCount);
-                    if (slot.Item.CanBeStackedWith(nextItem, max)) return true;
+                    if (slot.Item.CanStackWith(nextItem, max)) return true;
                     
                     nextCount -= slot.Item.Data.StackSize - slot.Item.Count;
                     if (nextCount <= 0) break;

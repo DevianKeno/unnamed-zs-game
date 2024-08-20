@@ -14,7 +14,7 @@ using UZSG.Worlds;
 
 namespace UZSG.Objects
 {
-    public abstract class BaseObject : MonoBehaviour, IAttributable, IPlaceable, IPickupable, ICollisionTarget, ISaveDataReadWrite<UserObjectSaveData>
+    public abstract class BaseObject : MonoBehaviour, IAttributable, IPlaceable, IPickupable, ICollisionTarget
     {
         [SerializeField] protected ObjectData objectData;
         public ObjectData ObjectData => objectData;
@@ -27,6 +27,9 @@ namespace UZSG.Objects
         
         [SerializeField] protected Animator animator;
         public Animator Animator => animator;
+
+        protected bool isDirty;
+        public bool IsDirty => isDirty;
         
         public event EventHandler<HitboxCollisionInfo> OnHit;
 
@@ -73,15 +76,17 @@ namespace UZSG.Objects
             };
         }
 
-        public void ReadSaveJson(UserObjectSaveData saveData)
+        public void ReadSaveData(ObjectSaveData saveData)
         {
             InitializeTransform(saveData.Transform);
         }
 
-        public UserObjectSaveData WriteSaveJson()
+        public virtual ObjectSaveData WriteSaveData()
         {
-            var saveData = new UserObjectSaveData()
+            var saveData = new ObjectSaveData()
             {
+                InstanceId = GetInstanceID(),
+                Id = objectData.Id,
                 Transform = new()
                 {
                     Position = new System.Numerics.Vector3(
@@ -113,7 +118,7 @@ namespace UZSG.Objects
             throw new NotImplementedException();
         }
 
-        public void HitBy(HitboxCollisionInfo info)
+        public virtual void HitBy(HitboxCollisionInfo info)
         {
             throw new NotImplementedException();
         }

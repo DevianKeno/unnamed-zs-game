@@ -11,7 +11,7 @@ namespace UZSG
         /// <summary>
         /// Called when there's an unhandled excess item.
         /// </summary>
-        public event EventHandler<Item> OnExcessItem;
+        public event Action<Item> OnExcessItem;
 
         /// <summary>
         /// Puts the Item to the nearest possible Slot.
@@ -58,6 +58,32 @@ namespace UZSG
 
             return false;
         }
+        
+        /// <summary>
+        /// Puts the Item to the nearest possible Slot.
+        /// Tries to combine it with the same existing Items in the Container, otherwise to an empty Slot.
+        /// </summary>
+        public bool TryPutNearest(Item item, out Item excess)
+        {
+            excess = Item.None;
+            if (item.IsNone) return true;
+
+            /// Check first the cached ItemSlots containing the same Item
+            if (_cachedIdSlots.TryGetValue(item.Data.Id, out var slots))
+            {
+                var nextItem = item;
+                foreach (ItemSlot slot in slots)
+                {
+                    if (slot.TryCombine(nextItem, out excess))
+                    {
+                        if (excess.IsNone) return true;
+                        nextItem = excess;
+                    }
+                }
+            }
+            /// new item
+            return TryPutNearestEmpty(item);
+        } 
 
         /// <summary>
         /// Tries to put the Item in the specified slot index.
@@ -79,7 +105,7 @@ namespace UZSG
                 {
                     if (!excess.IsNone)
                     {
-                        OnExcessItem?.Invoke(this, excess);
+                        OnExcessItem?.Invoke(excess);
                     }
                     return true;
                 }

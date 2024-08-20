@@ -65,6 +65,7 @@ namespace UZSG.Objects
 
             LoadGUIAsset(WorkstationData.GUI, onLoadCompleted: (gui) =>
             {
+                gui.transform.SetParent(transform);
                 this.gui = (CraftingGUI) gui;
                 this.gui.LinkWorkstation(this);
             });

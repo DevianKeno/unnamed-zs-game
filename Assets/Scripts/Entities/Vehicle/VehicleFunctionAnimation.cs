@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,8 @@ public class VehicleFunctionAnimation : MonoBehaviour
     Vector3 WheelPosition;
     [HideInInspector]
     public List<WheelCollider> wheelColliders; // Store all wheel colliders.
+    [HideInInspector]
+    public Transform steeringWheelTransform;
 
     VehicleEntity vehicleEntity;
     VehicleController vehicleController;
@@ -26,16 +29,30 @@ public class VehicleFunctionAnimation : MonoBehaviour
         vehicleEntity = GetComponent<VehicleEntity>();
         vehicleController = GetComponent<VehicleController>();
         wheelColliders = vehicleEntity.FrontVehicleWheels.Concat(vehicleEntity.RearVehicleWheels).ToList();
+
+        steeringWheelTransform = this.transform.Find("Steer/Steering Wheel");
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        for (int i = 0; i < 2; i++)
+        AnimateWheelMesh();
+        AnimateSteerWheel();
+    }
+
+    void AnimateWheelMesh()
+    {
+        for (int i = 0; i < wheelColliders.Count; i++)
         {
             wheelColliders[i].GetWorldPose(out WheelPosition, out WheelRotation);
             wheelMeshes[i].transform.position = WheelPosition;
             wheelMeshes[i].transform.rotation = WheelRotation;
         }
+    }
+
+    void AnimateSteerWheel()
+    {
+        float wheelSteerAngle = Mathf.Lerp(wheelColliders[0].steerAngle, vehicleController.steeringAngle, vehicleController.steeringSpeed);
+        steeringWheelTransform.transform.localRotation =  Quaternion.Euler(0, 0, -wheelSteerAngle); // temporary fix since wheel rotation is in negative axis?
     }
 }

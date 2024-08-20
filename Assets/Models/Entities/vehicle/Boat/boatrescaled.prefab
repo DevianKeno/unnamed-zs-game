@@ -193,6 +193,7 @@ MonoBehaviour:
   steeringSpeed: 0
   brakeForce: 0
   decelerationMultiplier: 0
+  antiRoll: 0
   carSpeed: 0
   powerToWheels: 0
   isTractionLocked: 0
@@ -290,7 +291,7 @@ WheelCollider:
   m_GameObject: {fileID: 1671711309710728359}
   serializedVersion: 2
   m_Center: {x: 0, y: 0, z: 0}
-  m_Radius: 2.2
+  m_Radius: 2
   m_SuspensionSpring:
     spring: 35000
     damper: 4500
@@ -413,7 +414,7 @@ WheelCollider:
   m_GameObject: {fileID: 1909866998714149811}
   serializedVersion: 2
   m_Center: {x: 0, y: 0, z: 0}
-  m_Radius: 2.2
+  m_Radius: 2
   m_SuspensionSpring:
     spring: 35000
     damper: 4500
@@ -501,7 +502,7 @@ Transform:
   m_GameObject: {fileID: 2923735932770391287}
   serializedVersion: 2
   m_LocalRotation: {x: -0.6853967, y: 0.001142249, z: -0.016117742, w: 0.7279907}
-  m_LocalPosition: {x: 0.6523806, y: 0.6166526, z: -0.42715955}
+  m_LocalPosition: {x: 0.6523806, y: 0.5, z: -0.42715955}
   m_LocalScale: {x: 2.2239954, y: 0.46363252, z: 0.055346217}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -585,7 +586,7 @@ Transform:
   m_GameObject: {fileID: 3692774023617104109}
   serializedVersion: 2
   m_LocalRotation: {x: -0.4838409, y: 0.48545638, z: 0.50337017, w: 0.5261641}
-  m_LocalPosition: {x: 0.6345215, y: 0.68793917, z: 0.69023633}
+  m_LocalPosition: {x: 0.6345215, y: 0.5, z: 0.69023633}
   m_LocalScale: {x: 6.10957, y: 2.454563, z: 0.9779642}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -961,7 +962,7 @@ WheelCollider:
   m_GameObject: {fileID: 5537381150120457955}
   serializedVersion: 2
   m_Center: {x: 0, y: 0, z: 0}
-  m_Radius: 2.2
+  m_Radius: 2
   m_SuspensionSpring:
     spring: 35000
     damper: 4500
@@ -1326,7 +1327,7 @@ WheelCollider:
   m_GameObject: {fileID: 8903370949517338628}
   serializedVersion: 2
   m_Center: {x: 0, y: 0, z: 0}
-  m_Radius: 2.2
+  m_Radius: 2
   m_SuspensionSpring:
     spring: 35000
     damper: 4500

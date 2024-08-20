@@ -31,36 +31,27 @@ namespace UZSG.Entities.Vehicles
         public GameObject bodyMassCenter;
 
         // CAR DATA
-        [HideInInspector]
-        public int maxSpeed; //The maximum speed that the car can reach in km/h.
-        [HideInInspector]
-        public int maxReverseSpeed; //The maximum speed that the car can reach while going on reverse in km/h.
-        [HideInInspector]
-        public AnimationCurve powerCurve;   // Experimental Power/Torque Curve for more customized acceleration
-        [HideInInspector]
-        public bool frontPower;   // Send Power to Front Wheels
-        [HideInInspector]
-        public bool rearPower;   // Send Power to Rear Wheels
-        [HideInInspector]
-        public float maxSteeringAngle; // The maximum angle that the tires can reach while rotating the steering wheel.
-        [HideInInspector]
-        public float steeringSpeed ; // How fast the steering wheel turns.
-        [HideInInspector]
-        public int brakeForce; // The strength of the wheel brakes.
-        [HideInInspector]
-        public int decelerationMultiplier; // How fast the car decelerates when the user is not using the throttle.
-        [HideInInspector]
-        public float antiRoll; // How strong the tranferring of forces in suspensions are/anti roll bar strength
-        [HideInInspector]
-        public float carSpeed; // Used to store the current speed of the car.
-        [HideInInspector]
-        public float powerToWheels; // Used to store final wheel torque
-        [HideInInspector]
-        public bool isTractionLocked; // Used to know whether the traction of the car is locked or not.
-        [HideInInspector]
-        public float defaultMaxSteerAngle; // Used to store the original max steering angle.
-        [HideInInspector]
-        public List<WheelCollider> wheels; // Store all wheel colliders.
+        [HideInInspector] public float fuelCap;                     // Fuel Capacity
+        [HideInInspector] public float fuelConsumptionPerPower;     // Fuel Consumption based on current produced power
+        [HideInInspector] public float fuelCapacityPerSpeed;        // Fuel Consumption based on current speed
+        [HideInInspector] public float fuelEfficiencyMultiplier;    // Fuel efficiency, closer to 0 the better
+        [HideInInspector] public float fuelLevel;                   // I know you can read
+        [HideInInspector] public int maxSpeed;                      // The maximum speed that the car can reach in km/h.
+        [HideInInspector] public int maxReverseSpeed;               // The maximum speed that the car can reach while going on reverse in km/h.
+        [HideInInspector] public AnimationCurve powerCurve;         // Experimental Power/Torque Curve for more customized acceleration
+        [HideInInspector] public bool frontPower;                   // Send Power to Front Wheels
+        [HideInInspector] public bool rearPower;                    // Send Power to Rear Wheels
+        [HideInInspector] public float maxSteeringAngle;            // The maximum angle that the tires can reach while rotating the steering wheel.
+        [HideInInspector] public float steeringSpeed;               // How fast the steering wheel turns.
+        [HideInInspector] public int brakeForce;                    // The strength of the wheel brakes.
+        [HideInInspector] public int decelerationMultiplier;        // How fast the car decelerates when the user is not using the throttle.
+        [HideInInspector] public float antiRoll;                    // How strong the tranferring of forces in suspensions are/anti roll bar strength
+        [HideInInspector] public float steeringAngle;               // current Steering angle
+        [HideInInspector] public float carSpeed;                    // Used to store the current speed of the car.
+        [HideInInspector] public float powerToWheels;               // Used to store final wheel torque
+        [HideInInspector] public bool isTractionLocked;             // Used to know whether the traction of the car is locked or not.
+        [HideInInspector] public float defaultMaxSteerAngle;        // Used to store the original max steering angle.
+        [HideInInspector] public List<WheelCollider> wheels;        // Store all wheel colliders.
 
         /*
        IMPORTANT: The following variables should not be modified manually since their values are automatically given via script.
@@ -72,7 +63,9 @@ namespace UZSG.Entities.Vehicles
         float _throttleAxis; // Used to know whether the throttle has reached the maximum value. It goes from -1 to 1.
         float _localVelocityZ;
         float _localVelocityX;
+        float _fuelConsumption;
         bool _deceleratingCar;
+        bool _hasFuel;
 
         bool _isHandbraked;
         Vector2 _driverInput;
@@ -101,9 +94,15 @@ namespace UZSG.Entities.Vehicles
             {
                 _carRigidbody.centerOfMass = bodyMassCenter.transform.localPosition;
             }
-            
+
 
             // Initialize vehicle setup
+            fuelCap = _vehicle.Vehicle.fuelCapacity;
+            fuelConsumptionPerPower = _vehicle.Vehicle.fuelConsumptionPerPower;
+            fuelCapacityPerSpeed = _vehicle.Vehicle.fuelCapacityPerSpeed;
+            fuelEfficiencyMultiplier = _vehicle.Vehicle.fuelEfficiencyMultiplier;
+            fuelLevel = _vehicle.Vehicle.fuelCapacity; // this will always start with max capacity, need a fuel manager script to save and retrieve values from
+
             maxSpeed = _vehicle.Vehicle.maxSpeed;
             maxReverseSpeed = _vehicle.Vehicle.maxReverseSpeed;
             powerCurve = _vehicle.Vehicle.powerCurve;
@@ -142,17 +141,26 @@ namespace UZSG.Entities.Vehicles
             // Save the local velocity of the car in the z axis. Used to know if the car is going forward or backwards.
             _localVelocityZ = transform.InverseTransformDirection(_carRigidbody.velocity).z;
 
-            // Always execute anti roll bar for stability, has unexpected behaviors for unknown reasons (for boat and car-dboard, it works fine for hilux tho)
+            // Anti-roll's behavior is unkown if it's natural or some weird bug, anyways, you can set it to very low (<1000) or just 0 in vehicle data
             AntiRollBar();
 
             if (_vehicle.Driver != null)
             {
-                // Vehicle Controls
+                HandlePlayerPosition();
+
                 if (_driverInput.y > 0)
                 {
                     CancelInvoke("DecelerateVehicle");
                     _deceleratingCar = false;
-                    HandleGas();
+                    if (_hasFuel)
+                    {
+                        HandleGas();
+                    }
+                    else
+                    {
+                        ThrottleOff();
+                    }
+                    
                 }
                 if (_driverInput.y < 0)
                 {
@@ -250,9 +258,9 @@ namespace UZSG.Entities.Vehicles
                 _steeringAxis = -1f;
             }
 
-            var steeringAngle = _steeringAxis * maxSteeringAngle;
-            _frontWheelColliders[0].steerAngle = Mathf.Lerp(_frontWheelColliders[0].steerAngle, steeringAngle, steeringSpeed); // note to charles: sana LEFT WHEEL to
-            _frontWheelColliders[1].steerAngle = Mathf.Lerp(_frontWheelColliders[1].steerAngle, steeringAngle, steeringSpeed); // sana RIGHT WHEEL to
+            steeringAngle = _steeringAxis * maxSteeringAngle;
+            _frontWheelColliders[0].steerAngle = Mathf.Lerp(_frontWheelColliders[0].steerAngle, steeringAngle, steeringSpeed);
+            _frontWheelColliders[1].steerAngle = Mathf.Lerp(_frontWheelColliders[1].steerAngle, steeringAngle, steeringSpeed);
         }
 
         public void HandleRightSteer()
@@ -264,9 +272,9 @@ namespace UZSG.Entities.Vehicles
                 _steeringAxis = 1f;
             }
 
-            var steeringAngle = _steeringAxis * maxSteeringAngle;
-            _frontWheelColliders[0].steerAngle = Mathf.Lerp(_frontWheelColliders[0].steerAngle, steeringAngle, steeringSpeed); // note to charles: sana LEFT WHEEL to
-            _frontWheelColliders[1].steerAngle = Mathf.Lerp(_frontWheelColliders[1].steerAngle, steeringAngle, steeringSpeed); // sana RIGHT WHEEL to
+            steeringAngle = _steeringAxis * maxSteeringAngle;
+            _frontWheelColliders[0].steerAngle = Mathf.Lerp(_frontWheelColliders[0].steerAngle, steeringAngle, steeringSpeed);
+            _frontWheelColliders[1].steerAngle = Mathf.Lerp(_frontWheelColliders[1].steerAngle, steeringAngle, steeringSpeed);
         }
 
         public void HandleBrake()
@@ -300,7 +308,10 @@ namespace UZSG.Entities.Vehicles
             }
             else
             {
-                if(Mathf.Abs(Mathf.RoundToInt(carSpeed)) < maxReverseSpeed)
+                // Compute fuel level
+                FuelConsumption();
+
+                if (Mathf.Abs(Mathf.RoundToInt(carSpeed)) < maxReverseSpeed)
                 {
                     //Apply negative torque in all wheels to go in reverse if maxReverseSpeed has not been reached.
                     for (int i = 0; i < _frontWheelColliders.Count; i++)
@@ -422,13 +433,16 @@ namespace UZSG.Entities.Vehicles
                 _steeringAxis = 0f;
             }
 
-            var steeringAngle = _steeringAxis * maxSteeringAngle;
+            steeringAngle = _steeringAxis * maxSteeringAngle;
             _frontWheelColliders[0].steerAngle = Mathf.Lerp(_frontWheelColliders[0].steerAngle, steeringAngle, steeringSpeed); // note to charles: sana LEFT WHEEL to
             _frontWheelColliders[1].steerAngle = Mathf.Lerp(_frontWheelColliders[1].steerAngle, steeringAngle, steeringSpeed); // sana RIGHT WHEEL to
         }
 
         public void Drivetrain(float _wheelTorque)
         {
+            // Compute fuel level
+            FuelConsumption();
+
             if (frontPower == true && rearPower == true)
             {
                 for (int i = 0; i < _frontWheelColliders.Count; i++)
@@ -518,6 +532,17 @@ namespace UZSG.Entities.Vehicles
             {
                 _carRigidbody.AddForceAtPosition(wheelR.transform.up * _antiRollForce, wheelR.transform.position);
             }
+        }
+
+        public void FuelConsumption()
+        {
+            _fuelConsumption = ((powerToWheels * fuelConsumptionPerPower) + (carSpeed * fuelCapacityPerSpeed)) * fuelEfficiencyMultiplier;
+            fuelLevel -= _fuelConsumption * Time.deltaTime;
+            fuelLevel = Mathf.Clamp(fuelLevel, 0, fuelCap);
+
+            _hasFuel = fuelLevel > 0;
+
+            //print($"fuel consump: {_fuelConsumption}, fuel level: {fuelLevel}, has fuel: {_hasFuel}");
         }
 
         #region Vehicle Control Functions 

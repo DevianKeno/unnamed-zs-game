@@ -21,8 +21,14 @@ namespace UZSG.Data
         [TextArea] public string Description;
         public AssetReference Model;
         public VehicleType Type;
-        public float FuelConsumption;
 
+        // Fuel Consumption is modeled based on vehicle current power and speed 
+        public float fuelCapacity = 50;
+        public float fuelConsumptionPerPower = 0.0005f;
+        public float fuelCapacityPerSpeed = 0.002f;
+        public float fuelEfficiencyMultiplier = 1;
+
+        [Space(20)]
         [Range(20, 250)]
         public int maxSpeed = 90; //The maximum speed that the car can reach in km/h.
         [Range(10, 120)]

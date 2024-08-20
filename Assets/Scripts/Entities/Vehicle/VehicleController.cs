@@ -126,7 +126,7 @@ namespace UZSG.Entities.Vehicles
             }
             else
             {
-                Debug.Log("This car needs some lovin ;)");
+                // Debug.Log("This car needs some lovin ;)");
             }
         }
 

@@ -25,6 +25,8 @@ namespace UZSG.Objects
 
         Player player;
         Container inputContainer = new();
+
+        Container fuelSlots = new(1);
         List<ItemSlot> queueSlots = new();
         Container outputContainer = new();
         public Container OutputContainer => outputContainer;
@@ -56,10 +58,9 @@ namespace UZSG.Objects
         protected virtual void Place()
         {
             queueSlots = new(WorkstationData.QueueSize);
-            queueSlots = new();
             outputContainer = new(WorkstationData.OutputSize);
             outputContainer.OnSlotItemChanged += OnOutputSlotItemChanged;
-            
+
             crafter.Initialize(this);
             crafter.OnRoutineNotify += OnRoutineEventCall;
             crafter.OnRoutineSecond += OnRoutineSecond;
@@ -67,7 +68,16 @@ namespace UZSG.Objects
             LoadGUIAsset(WorkstationData.GUI, onLoadCompleted: (gui) =>
             {
                 gui.transform.SetParent(transform);
-                this.gui = (CraftingGUI) gui;
+
+                if (WorkstationData.RequiresFuel)
+                {
+                    this.gui = (FuelCraftingGUI) gui;
+                }
+                else
+                {
+                    this.gui = (CraftingGUI) gui;
+                }
+
                 this.gui.LinkWorkstation(this);
             });
         }

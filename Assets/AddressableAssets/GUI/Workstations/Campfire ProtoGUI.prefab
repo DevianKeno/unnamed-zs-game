@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2396010862542012106}
-  - component: {fileID: 1698227891661039361}
   - component: {fileID: 295462732573733337}
+  - component: {fileID: 2862962659455605532}
   m_Layer: 5
   m_Name: Campfire ProtoGUI
   m_TagString: Untagged
@@ -44,29 +44,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -633, y: 0}
   m_Pivot: {x: 1, y: 0.5}
---- !u!114 &1698227891661039361
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 339941873740230023}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 526e9833fbd494047a1a1496761644eb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rect: {fileID: 2396010862542012106}
-  FadeDuration: 0.3
-  frame: {fileID: 295462732573733337}
-  craftedItemDisplay: {fileID: 4249937519470014413}
-  craftablesHolder: {fileID: 2138215732113733263}
-  materialSlotsHolder: {fileID: 2933713883751522684}
-  queueSlotsHolder: {fileID: 5212558752008229769}
-  progressContainer: {fileID: 2246390321662267390}
-  outputSlotsHolder: {fileID: 862960834819238110}
-  craftAmountInputField: {fileID: 4699338088781027312}
-  craftButton: {fileID: 5157625171558415066}
 --- !u!114 &295462732573733337
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -82,6 +59,30 @@ MonoBehaviour:
   Id: workstation
   Name: workstation
   rect: {fileID: 2396010862542012106}
+--- !u!114 &2862962659455605532
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 339941873740230023}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8444cea3a4a5a2f42a2aa39bf29c5c43, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rect: {fileID: 2396010862542012106}
+  FadeDuration: 0.3
+  frame: {fileID: 295462732573733337}
+  craftedItemDisplay: {fileID: 4249937519470014413}
+  craftablesHolder: {fileID: 2138215732113733263}
+  materialSlotsHolder: {fileID: 2933713883751522684}
+  queueSlotsHolder: {fileID: 5212558752008229769}
+  progressContainer: {fileID: 2246390321662267390}
+  outputSlotsHolder: {fileID: 862960834819238110}
+  craftAmountInputField: {fileID: 4699338088781027312}
+  craftButton: {fileID: 5157625171558415066}
+  fuelSlot: {fileID: 1623354792305188395}
 --- !u!1 &803841983931506193
 GameObject:
   m_ObjectHideFlags: 0
@@ -3472,6 +3473,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 218b3dd085eba5c40820caed6b8fc32e, type: 3}
+--- !u!114 &1623354792305188395 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4030014523429988963, guid: 218b3dd085eba5c40820caed6b8fc32e, type: 3}
+  m_PrefabInstance: {fileID: 2407785665500738632}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 179d4a2b432e9e046b993c41d6444e34, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &4981116554203921669 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7226684566756821325, guid: 218b3dd085eba5c40820caed6b8fc32e, type: 3}
@@ -3852,10 +3864,6 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2567294758916954282, guid: 513f9b9052bfdab4ca8e314e3bf63d41, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 1698227891661039361}
-    - target: {fileID: 2567294758916954282, guid: 513f9b9052bfdab4ca8e314e3bf63d41, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
@@ -4150,10 +4158,6 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 2567294758916954282, guid: 513f9b9052bfdab4ca8e314e3bf63d41, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 1698227891661039361}
     - target: {fileID: 2567294758916954282, guid: 513f9b9052bfdab4ca8e314e3bf63d41, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2

@@ -11,7 +11,7 @@ namespace UZSG.Crafting
     {
         public Container InputContainer;
         public float FuelRemaining = 0;
-        Container FuelContainer;
+        public Container FuelContainer;
 
         public bool IsFuelRemainingAvailable()
         {
@@ -43,6 +43,7 @@ namespace UZSG.Crafting
             
             routine.OnNotify += OnRoutineEventCall;
             routine.OnCraftSecond += OnCraftSecond;
+            routine.OnFuelCheck += OnFuelCheck;
 
             routines.Add(routine);
             routine.Prepare();

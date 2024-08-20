@@ -145,14 +145,14 @@ namespace UZSG.Objects
 
         public bool TryFuelCraft(ref CraftItemOptions options)
         {
-            var fuel_crafter = (FuelBasedCrafting) crafter;
+            
             if (!options.Recipe.RequiresFuel)
             {
                 print("Your recipe does not require fuel to be crafted");
                 return false;
             }
 
-            options.isFuelRequired = options.Recipe.RequiresFuel;
+            var fuel_crafter = (FuelBasedCrafting) crafter;
 
             if (fuel_crafter.Routines.Count >= WorkstationData.QueueSize)
             {

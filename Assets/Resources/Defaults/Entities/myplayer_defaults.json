@@ -9,6 +9,9 @@
     "bandage",
     "first_aid_kit"
   ],
+  "InstanceId": 0,
+  "Id": null,
+  "Transform": null,
   "Attributes": [
     {
       "Id": "health",
@@ -199,6 +202,17 @@
       "FlatBonus": 0.0,
       "LimitOverflow": true,
       "LimitUnderflow": true
+    },
+    {
+      "Id": "perk_points",
+      "Value": 5.0,
+      "Minimum": 0.0,
+      "BaseMaximum": 0.0,
+      "Multiplier": 1.0,
+      "FlatBonus": 0.0,
+      "LimitOverflow": true,
+      "LimitUnderflow": true
     }
-  ]
+  ],
+  "Type": "PlayerSaveData"
 }

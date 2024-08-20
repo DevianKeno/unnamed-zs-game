@@ -7,6 +7,7 @@ using UnityEngine;
 using UZSG.Saves;
 using UZSG.Inventory;
 using UZSG.Items;
+using UZSG.Systems;
 
 namespace UZSG
 {
@@ -14,7 +15,7 @@ namespace UZSG
     /// Base class for all Containers that have ItemSlots.
     /// </summary>
     [Serializable]
-    public partial class Container : ISaveDataReadWrite<ContainerSaveData>
+    public partial class Container : ISaveDataReadWrite<List<ItemSlotSaveData>>
     {
         public const int MaxContainerSize = 999;
 
@@ -202,14 +203,35 @@ namespace UZSG
             _slots = slots;
         }
 
-        public void ReadSaveJson(ContainerSaveData saveData)
+        public void ReadSaveData(List<ItemSlotSaveData> saveData)
         {
-            throw new NotImplementedException();
+            if (saveData.Count > SlotCount)
+            {
+                Game.Console.LogWarning("[WARN]: ContainerSaveData has Items greater than the Container's capacity. You might lose some items.");
+            }
+            
+            foreach (var sd in saveData)
+            {
+                if (TryGetSlot(sd.Index, out var slot))
+                {
+                    slot.Put(new Item(sd.Item.Id, sd.Item.Count));
+                }
+            }
         }
 
-        public ContainerSaveData WriteSaveJson()
+        public virtual List<ItemSlotSaveData> WriteSaveData()
         {
-            throw new NotImplementedException();
+            var saveData = new List<ItemSlotSaveData>();
+
+            foreach (var s in _slots)
+            {
+                if (s.IsEmpty) continue; /// don't save empty slots
+                
+                var slotSd = s.WriteSaveData();
+                saveData.Add(slotSd);
+            }
+
+            return saveData;
         }
 
         #endregion

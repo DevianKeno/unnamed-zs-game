@@ -153,6 +153,13 @@ MonoBehaviour:
     flatBonus: 0
     LimitOverflow: 1
     LimitUnderflow: 1
+  - data: {fileID: 11400000, guid: 33706780b721a9d488dc079df744375a, type: 2}
+    value: 5
+    baseMaximum: 0
+    multiplier: 1
+    flatBonus: 0
+    LimitOverflow: 1
+    LimitUnderflow: 1
   AudioAssetsData: {fileID: 11400000, guid: eed9c45f6757aae48b1990646f079589, type: 2}
   KnownRecipes:
   - {fileID: 11400000, guid: 2e41551279bc6c844802b36a217ef687, type: 2}

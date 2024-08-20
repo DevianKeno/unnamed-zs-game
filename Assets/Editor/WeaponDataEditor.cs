@@ -13,6 +13,7 @@ namespace UZSG.UnityEditor
             bluntType,
             bladedType,
             rangedType,
+            attributes,
             meleeAttributes,
             rangedAttributes,
             armsAnimations,
@@ -26,6 +27,7 @@ namespace UZSG.UnityEditor
 
             hotbarIcon = serializedObject.FindProperty("HotbarIcon");
             category = serializedObject.FindProperty("Category");
+            attributes = serializedObject.FindProperty("Attributes");
             meleeType = serializedObject.FindProperty("MeleeType");
             bluntType = serializedObject.FindProperty("BluntType");
             bladedType = serializedObject.FindProperty("BladedType");
@@ -50,6 +52,8 @@ namespace UZSG.UnityEditor
             EditorGUILayout.LabelField("Weapon Attributes", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(hotbarIcon);
             EditorGUILayout.PropertyField(category);
+            EditorGUILayout.PropertyField(attributes);
+
             WeaponCategory weaponCategory = (WeaponCategory) category.enumValueIndex;
             if (weaponCategory == WeaponCategory.Melee)
             {

@@ -16,6 +16,9 @@ namespace UZSG.UI.Objects
         protected BaseObject baseObject;
         public BaseObject BaseObject => baseObject;
         protected Player player;
+        /// <summary>
+        /// The Player who's interacting with this GUI.
+        /// </summary>
         public Player Player => player;
 
         [SerializeField] Frame frame;

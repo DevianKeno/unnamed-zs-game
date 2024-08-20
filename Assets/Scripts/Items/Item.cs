@@ -4,6 +4,10 @@ using UnityEngine;
 
 using UZSG.Systems;
 using UZSG.Data;
+using UZSG.Saves;
+using UZSG.Attributes;
+using UnityEngine.Serialization;
+using System.Collections.Generic;
 
 namespace UZSG.Items
 {
@@ -16,21 +20,52 @@ namespace UZSG.Items
     /// Represents an Item with count.
     /// </summary>
     [Serializable]
-    public struct Item : IComparable<Item>
+    public class Item : IAttributable, IComparable<Item>, ISaveDataReadWrite<ItemSaveData>
     {
         public const int MaxStackSize = 99999;
         public static Item None => new(data: null);
         
-        [SerializeField] ItemData _itemData;
-        public ItemData Data => _itemData;
-        [SerializeField] int _count;
+        [FormerlySerializedAs("_itemData")]
+        [SerializeField] ItemData itemData;
+        public ItemData Data
+        {
+            get
+            {
+                return itemData;
+            }
+        }
+        [FormerlySerializedAs("_count")]
+        [SerializeField] int count;
         public int Count
         {
-            get => _count;
-            set => _count = value;
+            get
+            {
+                return count;
+            }
+            set
+            {
+                count = value;
+            }
         }
-        public readonly bool IsNone => _itemData == null;
-        public readonly string Id => _itemData.Id;
+        [SerializeField] AttributeCollection attributes;
+        public AttributeCollection Attributes
+        {
+            get
+            {
+                return attributes;
+            }
+            set
+            {
+                attributes = value;
+            }
+        }
+
+        public bool IsNone => itemData == null;
+        public string Id => itemData.Id;
+        /// <summary>
+        /// Called whenever this Item is changed/updated.
+        /// </summary>
+        public event Action OnChanged;
 
 
         #region Item constructors
@@ -40,8 +75,9 @@ namespace UZSG.Items
         /// </summary>
         public Item(ItemData data = null)
         {
-            _itemData = data;
-            _count = 0;
+            itemData = data;
+            count = 0;
+            OnChanged = null;
         }
 
         /// <summary>
@@ -49,8 +85,9 @@ namespace UZSG.Items
         /// </summary>
         public Item(ItemData data, int count = 1)
         {
-            _itemData = data;
-            _count = Math.Clamp(count, 0, EnsureStackSizeNotZero(_itemData.StackSize));
+            itemData = data;
+            this.count = Math.Clamp(count, 0, EnsureStackSizeNotZero(itemData.StackSize));
+            OnChanged = null;
         }
         
         /// <summary>
@@ -58,8 +95,9 @@ namespace UZSG.Items
         /// </summary>
         public Item(string id, int count = 1)
         {
-            _itemData = Game.Items.GetData(id);
-            _count = Math.Clamp(count, 0, EnsureStackSizeNotZero(_itemData.StackSize));
+            itemData = Game.Items.GetData(id);
+            this.count = Math.Clamp(count, 0, EnsureStackSizeNotZero(itemData.StackSize));
+            OnChanged = null;
         }
                         
         /// <summary>
@@ -67,9 +105,10 @@ namespace UZSG.Items
         /// </summary>
         public Item(Item other)
         {
-            _itemData = other.Data;
-            int stack = other.IsNone ? 0 : _itemData.StackSize;
-            _count = Math.Clamp(other.Count, 0, EnsureStackSizeNotZero(stack));
+            itemData = other.Data;
+            int stack = other.IsNone ? 0 : itemData.StackSize;
+            count = Math.Clamp(other.Count, 0, EnsureStackSizeNotZero(stack));
+            OnChanged = null;
         }
                         
         /// <summary>
@@ -77,21 +116,51 @@ namespace UZSG.Items
         /// </summary>
         public Item(Item other, int count = 1)
         {
-            _itemData = other.Data;
-            int stack = other.IsNone ? 0 : _itemData.StackSize;
-            _count = Math.Clamp(count, 0, EnsureStackSizeNotZero(stack));
+            itemData = other.Data;
+            int stack = other.IsNone ? 0 : itemData.StackSize;
+            this.count = Math.Clamp(count, 0, EnsureStackSizeNotZero(stack));
+            OnChanged = null;
+        }
+
+        #endregion
+        
+
+        #region Save read/write
+                
+        public void ReadSaveData(ItemSaveData saveData)
+        {
+            
+        }
+
+        public ItemSaveData WriteSaveData()
+        {
+            var saveData = new ItemSaveData()
+            {
+                Id = IsNone ? "none" : itemData.Id,
+                Count = count,
+            };
+
+            if (attributes != null)
+            {
+                saveData.HasAttributes = true;
+                saveData.Attributes = Attributes.WriteSaveData();
+            }
+
+            return saveData;
         }
 
         #endregion
 
+
+        #region Public methods
 
         /// <summary>
         /// Clamp this Item's count to either its StackSize or MaxStack.
         /// </summary>
         public void ClampStack(bool max = false)
         {
-            int maxStack = max ? MaxStackSize : _itemData.StackSize;
-            _count = Math.Clamp(_count, 1, maxStack);
+            int maxStack = max ? MaxStackSize : itemData.StackSize;
+            count = Math.Clamp(count, 1, maxStack);
         }
 
         /// <summary>
@@ -99,8 +168,9 @@ namespace UZSG.Items
         /// </summary>
         public Item Take(int amount)
         {
-            _count -= amount;
-            return new(_itemData, amount);
+            count -= amount;
+            OnChanged?.Invoke();
+            return new(itemData, amount);
         }
         
         /// <summary>
@@ -111,9 +181,10 @@ namespace UZSG.Items
         {
             if (IsNone)
             {
-                _itemData = other._itemData;
+                itemData = other.itemData;
             }
-            _count += other.Count;
+            count += other.Count;
+            OnChanged?.Invoke();
         }
 
         /// <summary>
@@ -122,14 +193,19 @@ namespace UZSG.Items
         public bool TryCombine(Item other, out Item excess, bool max = false)
         {
             excess = None;
-            if (!CanBeCombinedWith(other)) return false;
+            if (!CanCombineWith(other)) return false;
 
-            int maxStack = max ? MaxStackSize : Data.StackSize;
-            _count += other.Count;
-            if (_count > maxStack)
+            if (IsNone)
             {
-                excess = new(this, _count - maxStack);
+                itemData = other.itemData;
             }
+            int maxStack = max ? MaxStackSize : itemData.StackSize;
+            count += other.Count;
+            if (count > maxStack)
+            {
+                excess = new(this, count - maxStack);
+            }
+            OnChanged?.Invoke();
             return true;
         }
 
@@ -139,33 +215,36 @@ namespace UZSG.Items
         public bool TryCombineMax(Item other, out Item excess)
         {
             excess = None;
-            if (!CanBeCombinedWith(other)) return false;
+            if (!CanCombineWith(other)) return false;
 
-            _count += other.Count;
-            if (_count > MaxStackSize)
+            count += other.Count;
+            if (count > MaxStackSize)
             {
-                excess = new(this, _count - MaxStackSize);
+                excess = new(this, count - MaxStackSize);
             }
+            OnChanged?.Invoke();
             return true;
         }
         
         /// <summary>
         /// Try to stack this Item with the other item.
         /// </summary>
-        public bool TryCombineStack(Item other)
+        public bool TryStack(Item other)
         {
-            if (!CanBeStackedWith(other)) return false;
+            if (!CanStackWith(other)) return false;
 
-            _count += other.Count;
+            count += other.Count;
+            OnChanged?.Invoke();
             return true;
         }
 
         /// <summary>
         /// Checks if this Item can be combined with the other Item.
         /// </summary>
-        public readonly bool CanBeCombinedWith(Item other)
+        public bool CanCombineWith(Item other)
         {
-            if (!_itemData.IsStackable) return false;   /// Not stackable
+            if (IsNone) return true;                    /// This is an empty Item (lol)
+            if (!itemData.IsStackable) return false;    /// Not stackable
             if (!CompareTo(other)) return false;        /// Not the same
 
             return true;
@@ -175,30 +254,62 @@ namespace UZSG.Items
         /// Checks if this Item can be stacked with the other Item.
         /// Returns false if the total of the combined Items exceeds the Item's stack size, unless maxed.
         /// </summary>
-        public readonly bool CanBeStackedWith(Item other, bool max = false)
+        public bool CanStackWith(Item other, bool max = false)
         {
-            if (!CanBeCombinedWith(other)) return false;
-            
-            int maxStack = max ? MaxStackSize : _itemData.StackSize;
-            return _count + other.Count <= maxStack;
+            if (!CanCombineWith(other)) return false;
+
+            int maxStack = IsNone ? other.Data.StackSize : Data.StackSize;
+            maxStack = max ? MaxStackSize : maxStack;
+
+            return count + other.Count <= maxStack;
         }
 
         /// <summary>
-        /// Returns true if the items are the same.
+        /// Returns true if the Items are of the same Id.
         /// </summary>
-        public readonly bool CompareTo(Item other)
+        public bool CompareTo(Item other)
         {
-            return _itemData == other.Data;
+            return itemData == other.Data;
         }
+
+        /// <summary>
+        /// Multiply the count of this Item by the value.
+        /// </summary>
+        public static Item operator *(Item item, int value)
+        {
+            return new Item(item, item.Count * value);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Item item)
+            {
+                return itemData == item.Data;
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return itemData?.GetHashCode() ?? 0;
+        }
+
+        public static bool operator ==(Item left, Item right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(Item left, Item right)
+        {
+            return !Equals(left, right);
+        }
+
+        #endregion
+
         
         static int EnsureStackSizeNotZero(int stackSize)
         {
             return stackSize <= 0 ? 1 : stackSize;
-        }
-
-        public static Item operator *(Item item, int value)
-        {
-            return new Item(item, item.Count * value);
         }
     }
 }

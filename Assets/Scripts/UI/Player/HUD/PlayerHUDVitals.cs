@@ -19,8 +19,8 @@ namespace UZSG.UI.HUD
     {
         public Player Player;
         [Space]
-
-        Dictionary<int, ItemSlotUI> _hotbarSlotUIs = new();
+        
+        ItemSlot _lastSelectedSlot;
         
         [Header("Elements")]
         public GameObject hotbar;
@@ -53,12 +53,8 @@ namespace UZSG.UI.HUD
                 var slotUI = Game.UI.Create<ItemSlotUI>("Item Slot");
                 slotUI.name = $"Hotbar Slot ({i})";
                 slotUI.transform.SetParent(hotbar.transform);
-                slotUI.Index = index;
-                
-                slotUI.OnMouseDown += OnClickHotbarSlot;
-                slotUI.OnHoverStart += OnStartHoverSlot;
-                slotUI.OnHoverEnd += OnEndHoverSlot;
-                _hotbarSlotUIs[index] = slotUI;
+                slotUI.Link(Player.Inventory.Hotbar[i]);
+                slotUI.OnMouseDown += OnHotbarSlotClicked;
             }
         }
 
@@ -82,40 +78,49 @@ namespace UZSG.UI.HUD
         void OnHotbarSlotChanged(object sender, ItemSlot.ItemChangedContext e)
         {
             var hotbarOffset = e.ItemSlot.Index + 3;
-            _hotbarSlotUIs[hotbarOffset].SetDisplayedItem(e.ItemSlot.Item);
         }
 
-        void OnStartHoverSlot(object sender, ItemSlotUI.ClickedContext e)
+        void OnHotbarSlotClicked(object sender, ItemSlotUI.ClickedContext e)
         {
-            
-        }
+            var slot = ((ItemSlotUI) sender).Slot;
 
-        void OnEndHoverSlot(object sender, ItemSlotUI.ClickedContext e)
-        {
-            
-        }
+            if (!Player.InventoryGUI.IsVisible) return;
 
-        void OnClickHotbarSlot(object sender, ItemSlotUI.ClickedContext e)
-        {
-            ItemSlotUI slotUI = (ItemSlotUI) sender;
-            // _selectedSlot = inventory.Bag[slotUI.Index];
-
-            if (e.Pointer.button == PointerEventData.InputButton.Left)
+            if (e.Button == PointerEventData.InputButton.Left)
             {
+                if (Player.InventoryGUI.IsHoldingItem)
+                {
+                    var heldItem = Player.InventoryGUI.HeldItem;
 
-            } else if (e.Pointer.button == PointerEventData.InputButton.Right)
+                    if (slot.IsEmpty || slot.Item.CompareTo(heldItem))
+                    {
+                        slot.TryCombine(Player.InventoryGUI.TakeHeldItem(), out var excess);
+                        if (!excess.IsNone)
+                        {
+                            Player.InventoryGUI.HoldItem(excess);
+                        }
+                    }
+                    else /// item diff, swap
+                    {
+                        var tookItem = slot.TakeAll();
+                        var prevHeld = Player.InventoryGUI.SwapHeldWith(tookItem);
+                        slot.Put(prevHeld);
+                    }
+                }
+                else
+                {
+                    if (slot.IsEmpty) return;
+
+                    Player.InventoryGUI.HoldItem(slot.TakeAll());
+                    _lastSelectedSlot = slot;
+                }
+            }
+            else if (e.Button == PointerEventData.InputButton.Right)
             {
 
             }
         }
 
-        void UpdateAmmoCounter()
-        {
-            
-        }
-
         #endregion
-
-
     }
 }

@@ -6,8 +6,8 @@ namespace UZSG.Saves
     [Serializable]
     public class InventorySaveData : SaveData
     {
-        public ContainerSaveData Bag;
-        public ContainerSaveData Hotbar;
-        public ContainerSaveData Equipment;
+        public List<ItemSlotSaveData> Bag;
+        public List<ItemSlotSaveData> Hotbar;
+        public List<ItemSlotSaveData> Equipment;
     }
 }

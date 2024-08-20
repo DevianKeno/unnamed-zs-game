@@ -1,45 +1,43 @@
 using System;
 using System.Linq;
-using System.Reflection;
 using System.Collections.Generic;
 
 using UnityEngine;
 
 using UZSG.Systems;
-using UZSG.Data;
 using UZSG.Saves;
+using System.Collections;
 
 namespace UZSG.Attributes
 {
     /// <summary>
-    /// Represents a collection of attributes for an entity.
+    /// Represents a collection of Attributes for an Object.
     /// For performance, you can cache an Attribute first, then subscribe to events for tracking changes in its value.
     /// Individual attributes can also be indexed.
     /// </summary>
     [Serializable]
-    public class AttributeCollection : ISaveDataReadWrite<List<AttributeSaveData>>
+    public class AttributeCollection : IEnumerable<Attribute>, ISaveDataReadWrite<List<AttributeSaveData>>
     {
         /// Just so can view in Inspector
         [SerializeField] List<Attribute> attributes = new();
         Dictionary<string, Attribute> _attrsDict = new();
-        public List<Attribute> Attributes
-        {
-            get => _attrsDict.Values.ToList();
-        }
 
         public Attribute this[string id]
         {
             get => Get(id);
         }
 
-        public void ReadSaveJson(List<AttributeSaveData> saveData)
+        
+        #region Saves read/write
+
+        public void ReadSaveData(List<AttributeSaveData> saveData)
         {
             foreach (var attrSaveData in saveData)
             {
                 if (Game.Attributes.TryGetData(attrSaveData.Id, out var attrData))
                 {
                     var newAttr = new Attribute(attrData);
-                    newAttr.ReadSaveJson(attrSaveData);
+                    newAttr.ReadSaveData(attrSaveData);
                     Add(newAttr);
                 }
                 else
@@ -49,17 +47,20 @@ namespace UZSG.Attributes
             }
         }
         
-        public List<AttributeSaveData> WriteSaveJson()
+        public List<AttributeSaveData> WriteSaveData()
         {
             var saveData = new List<AttributeSaveData>();
 
             foreach (var attr in _attrsDict.Values.ToList())
             {
-                saveData.Add(attr.WriteSaveJson());
+                saveData.Add(attr.WriteSaveData());
             }
             
             return saveData;
         }
+
+        #endregion
+
 
         public void Add(Attribute attribute)
         {
@@ -82,7 +83,7 @@ namespace UZSG.Attributes
             {
                 if (_attrsDict.TryGetValue(attr.Id, out var xattr))
                 {
-                    Game.Console.LogWarning($"Duplicate attribute found '{attr.Id}', disregarding...");
+                    Game.Console.LogWarning($"Duplicate attribute found '{attr.Id}', disregarding...?");
                     continue;
                 }
                 _attrsDict[attr.Id] = attr;
@@ -116,6 +117,9 @@ namespace UZSG.Attributes
             return false;
         }
 
+        /// <summary>
+        /// Returns null if Attribute of Id is not present in this collection. Handle well :) or use TryGet
+        /// </summary>
         public Attribute Get(string id)
         {
             if (_attrsDict.ContainsKey(id))
@@ -127,6 +131,9 @@ namespace UZSG.Attributes
             return null;
         }
         
+        /// <summary>
+        /// Returns null if Attribute of Id is not present in this collection. Handle well :) or use TryGet
+        /// </summary>
         public T Get<T>(string id) where T : Attribute
         {
             if (_attrsDict.ContainsKey(id))
@@ -162,6 +169,16 @@ namespace UZSG.Attributes
             Game.Console.LogAndUnityLog($"Unable to retrieve Attribute '{id}' as it's not in the collection.");
             attribute = (T) Attribute.None;
             return false;
+        }
+        
+        public IEnumerator<Attribute> GetEnumerator()
+        {
+            return attributes.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }

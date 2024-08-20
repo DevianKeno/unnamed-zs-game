@@ -112,11 +112,11 @@ namespace UZSG.Systems
                 
                 tickSystem = GetComponentInChildren<TickSystem>();
                 attrManager = GetComponentInChildren<AttributesManager>();
-                particleManager = GetComponentInChildren<ParticleManager>();
+                objectsManager = GetComponentInChildren<ObjectsManager>();
                 itemManager = GetComponentInChildren<ItemManager>();
                 recipeManager = GetComponentInChildren<RecipeManager>();
                 entityManager = GetComponentInChildren<EntityManager>();
-                objectsManager = GetComponentInChildren<ObjectsManager>();
+                particleManager = GetComponentInChildren<ParticleManager>();
             }
 
             mainInput = GetComponent<PlayerInput>();
@@ -147,6 +147,7 @@ namespace UZSG.Systems
             tickSystem.Initialize();
             attrManager.Initialize();
             itemManager.Initialize();
+            objectsManager.Initialize();
             entityManager.Initialize();
             particleManager.Initialize();
             recipeManager.Initialize();

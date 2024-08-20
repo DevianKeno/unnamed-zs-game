@@ -27,8 +27,11 @@ namespace UZSG.Data
         
         [Header("Audio Data")]
         public AudioAssetsData AudioAssetsData;
-        
-        public virtual T GetDefaultsJson<T>() where T : SaveData
+       
+        /// <summary>
+        /// Retrieves the default parameters set in Unity by developers for this Entity.
+        /// </summary>
+        public virtual T GetDefaultsJson<T>()
         {
             var filepath = defaultsPath + $"{Id}_defaults.json";
 
@@ -37,17 +40,20 @@ namespace UZSG.Data
                 Game.Console.LogWarning($"'{Id}_defaults' not found, creating new one...");
                 WriteDefaultsJson();
             }
-            
-            var defaultsJson = File.ReadAllText(filepath);
-            return JsonConvert.DeserializeObject<T>(defaultsJson);
+
+            var json = File.ReadAllText(filepath);
+            return JsonConvert.DeserializeObject<T>(json);
         }
 
 #if UNITY_EDITOR
+        /// <summary>
+        /// 
+        /// </summary>
         public virtual void ReadDefaultsJson()
         {
             var filepath = defaultsPath + $"{Id}_defaults.json";
             var defaultsJson = File.ReadAllText(filepath);
-            var defaults = JsonConvert.DeserializeObject<PlayerSaveData>(defaultsJson);
+            var defaults = JsonConvert.DeserializeObject<EntitySaveData>(defaultsJson);
 
             /// Attributes
             Attributes.Clear();
@@ -57,7 +63,7 @@ namespace UZSG.Data
                 if (attrData != null)
                 {
                     var newAttr = new Attributes.Attribute(attrData);
-                    newAttr.ReadSaveJson(attrSave);
+                    newAttr.ReadSaveData(attrSave);
                     Attributes.Add(newAttr);
                 }
                 else
@@ -75,7 +81,7 @@ namespace UZSG.Data
             /// Attributes
             var ac = new AttributeCollection();
             ac.AddList(Attributes);
-            saveData.Attributes = ac.WriteSaveJson();
+            saveData.Attributes = ac.WriteSaveData();
 
             WriteToFile(saveData);
         }

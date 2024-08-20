@@ -24,29 +24,38 @@ MonoBehaviour:
   Type: 2
   Subtype: 4
   Weight: 0
-  StackSize: 0
+  StackSize: 1
+  IsFuel: 0
+  FuelDuration: 0
   IsMaterial: 0
   IsCraftable: 0
   Recipes: []
   SourceDescription: 
+  AudioAssetsData: {fileID: 0}
   ToolType: 0
   SwingDirection: 2
   Attributes:
-    attributes:
-    - data: {fileID: 11400000, guid: dfa56112f40946a428ee64518c941476, type: 2}
-      _value: 10
-      BaseMaximum: 0
-      Bonus: 0
-      _multiplier: 0
-      LimitOverflow: 0
-      LimitUnderflow: 0
-    - data: {fileID: 11400000, guid: 8065c7b302bdaf142aedd6761e5bbb15, type: 2}
-      _value: 100
-      BaseMaximum: 0
-      Bonus: 0
-      _multiplier: 0
-      LimitOverflow: 0
-      LimitUnderflow: 0
+  - data: {fileID: 11400000, guid: 8065c7b302bdaf142aedd6761e5bbb15, type: 2}
+    value: 250
+    baseMaximum: 250
+    multiplier: 0
+    flatBonus: 0
+    LimitOverflow: 0
+    LimitUnderflow: 0
+  - data: {fileID: 11400000, guid: dfa56112f40946a428ee64518c941476, type: 2}
+    value: 100
+    baseMaximum: 0
+    multiplier: 0
+    flatBonus: 0
+    LimitOverflow: 0
+    LimitUnderflow: 0
+  - data: {fileID: 11400000, guid: 5e71af7286d194c4c9bf489e08b9c33f, type: 2}
+    value: 12
+    baseMaximum: 0
+    multiplier: 0
+    flatBonus: 0
+    LimitOverflow: 0
+    LimitUnderflow: 0
   armsAnimations: {fileID: 0}
   viewmodel:
     m_AssetGUID: 

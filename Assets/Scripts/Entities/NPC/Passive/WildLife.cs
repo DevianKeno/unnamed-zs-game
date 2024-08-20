@@ -88,7 +88,7 @@ namespace UZSG.Entities
         void InitializeAttributes()
         {
             attributes = new();
-            attributes.ReadSaveJson(defaultData.Attributes);
+            attributes.ReadSaveData(defaultData.Attributes);
 
             HealthAttri = attributes.Get("health");
             wildlifeEntity.speed = attributes.Get("move_speed").Value;

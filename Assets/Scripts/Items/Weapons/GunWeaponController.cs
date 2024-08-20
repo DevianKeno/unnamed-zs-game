@@ -15,7 +15,6 @@ namespace UZSG.Items.Weapons
     public class GunWeaponController : HeldWeaponController, IReloadable
     {
         public Player Player => owner as Player;
-        public WeaponData WeaponData => ItemData as WeaponData;
 
         int _currentRounds;
         public int CurrentRounds

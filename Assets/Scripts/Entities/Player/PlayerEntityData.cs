@@ -22,20 +22,6 @@ namespace UZSG.Entities
     {
         public List<RecipeData> KnownRecipes;
 
-        public override PlayerSaveData GetDefaultsJson<PlayerSaveData>()
-        {
-            var filepath = defaultsPath + $"{Id}_defaults.json";
-
-            if (!File.Exists(filepath))
-            {
-                Game.Console.LogWarning($"'{Id}_defaults' not found, creating new one...");
-                WriteDefaultsJson();
-            }
-            
-            var defaultsJson = File.ReadAllText(filepath);
-            return JsonConvert.DeserializeObject<PlayerSaveData>(defaultsJson);
-        }
-
 #if UNITY_EDITOR
         public override void ReadDefaultsJson()
         {
@@ -71,7 +57,7 @@ namespace UZSG.Entities
             /// Attributes
             var ac = new AttributeCollection();
             ac.AddList(Attributes);
-            saveData.Attributes = ac.WriteSaveJson();
+            saveData.Attributes = ac.WriteSaveData();
 
             /// Inventory
             /// 

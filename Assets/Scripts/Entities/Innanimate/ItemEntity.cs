@@ -7,17 +7,20 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 using UZSG.Systems;
 using UZSG.Data;
 using UZSG.Interactions;
-using UZSG.Players;
 using UZSG.Items;
+using UZSG.Saves;
+using UZSG.Worlds;
 
 namespace UZSG.Entities
 {
     /// <summary>
     /// Items that appear in the world (e.g. Interactables, Pickupables, etc.)
     /// </summary>
-    public class ItemEntity : Entity, IInteractable
+    public class ItemEntity : Entity, IInteractable, IWorldCleanupable
     {
-        [SerializeField] Item item;
+        public const int DespawnTimeSeconds = 60;
+
+        [SerializeField] Item item = Item.None;
         /// <summary>
         /// Get the actual 'Item' from the Item Entity.
         /// </summary>
@@ -66,7 +69,7 @@ namespace UZSG.Entities
         /// <summary>
         /// Despawn time in seconds.
         /// </summary>
-        public float Age = 3600;
+        public int Age = DespawnTimeSeconds;
 
         int _originalLayer;
         GameObject model;
@@ -115,6 +118,7 @@ namespace UZSG.Entities
             {
                 LoadModel();
             }
+            Age = DespawnTimeSeconds;
             Game.Tick.OnSecond += Second;
         }
 
@@ -167,6 +171,44 @@ namespace UZSG.Entities
         {
             Game.Tick.OnSecond -= Second;
             Game.Entity.Kill(this);
+        }
+
+        public override void ReadSaveData(EntitySaveData saveData)
+        {
+            if (saveData is not ItemEntitySaveData sd) return;
+
+            base.ReadSaveData(saveData);
+            if (sd.Item.Id == "none") Destroy(gameObject);
+
+            item = new Item(sd.Item.Id, sd.Item.Count);
+            if (sd.Item.HasAttributes)
+            {
+                item.Attributes.ReadSaveData(sd.Item.Attributes);
+            }
+        }
+        
+        public override EntitySaveData WriteSaveData()
+        {
+            var sd = base.WriteSaveData();
+            
+            var saveData = new ItemEntitySaveData()
+            {
+                InstanceId = sd.InstanceId,
+                Id = entityData.Id,
+                Transform = sd.Transform,
+                Item = item.WriteSaveData(),
+                Age = Age
+            };
+
+            return saveData;
+        }
+
+        public void Cleanup()
+        {
+            if (item.IsNone)
+            {
+                Destroy(gameObject);
+            }
         }
     }
 }

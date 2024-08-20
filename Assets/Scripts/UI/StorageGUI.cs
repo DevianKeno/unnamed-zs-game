@@ -3,6 +3,11 @@ using UnityEngine.EventSystems;
 
 using UZSG.Systems;
 using UZSG.Objects;
+using UZSG.Items;
+using UZSG.Inventory;
+
+using static UnityEngine.EventSystems.PointerEventData.InputButton;
+using static UZSG.UI.ItemSlotUI.ClickType;
 
 namespace UZSG.UI.Objects
 {
@@ -10,10 +15,24 @@ namespace UZSG.UI.Objects
     {
         protected Storage storage;
         public Storage Storage => storage;
+
+        ItemSlot _lastSelectedSlot;
+        /// <summary>
+        /// If the last action is "putting" Items to a slot.
+        /// </summary>
+        bool _isPutting;
+        /// <summary>
+        /// If the last action is "getting" Items to a slot.
+        /// </summary>
+        bool _isGetting;
         
         [SerializeField] Transform slotsHolder;
-        
-        
+
+        public override void OnHide()
+        {
+            PutBackHeldItem();
+        }
+                
         public void LinkStorage(Storage storage)
         {
             this.storage = storage;
@@ -41,20 +60,92 @@ namespace UZSG.UI.Objects
         {
             var slot = ((ItemSlotUI) sender).Slot;
 
-            if (ctx.Pointer.button == PointerEventData.InputButton.Left)
+            if (ctx.Button == Left)
             {
-                if (slot.IsEmpty) return;
-                if (player.InventoryGUI.IsHoldingItem) return;
-
-                if (ctx.ClickType == ItemSlotUI.ClickType.FastDeposit)
+                if (ctx.ClickType == ShiftClick)
                 {
-                    player.Inventory.Bag.TryPutNearest(slot.TakeAll());
+                    FastDepositToBag(slot);
+                    return;
+                }
+
+                if (player.InventoryGUI.IsHoldingItem)
+                {
+                    var heldItem = player.InventoryGUI.HeldItem;
+
+                    if (slot.IsEmpty || slot.Item.CompareTo(heldItem))
+                    {
+                        slot.TryCombine(player.InventoryGUI.TakeHeldItem(), out var excess);
+                        if (!excess.IsNone)
+                        {
+                            player.InventoryGUI.HoldItem(excess);
+                        }
+                    }
+                    else /// item diff, swap
+                    {
+                        var tookItem = slot.TakeAll();
+                        var prevHeld = player.InventoryGUI.SwapHeldWith(tookItem);
+                        slot.Put(prevHeld);
+                    }
                 }
                 else
                 {
+                    if (slot.IsEmpty) return;
+
                     player.InventoryGUI.HoldItem(slot.TakeAll());
+                    _lastSelectedSlot = slot;
                 }
             }
+            else if (ctx.Button == Right)
+            {
+                if (player.InventoryGUI.IsHoldingItem) /// put 1 to target slot
+                {
+                    var heldItem = player.InventoryGUI.HeldItem;
+
+                    if (slot.IsEmpty)
+                    {
+                        _isPutting = true;
+                        _isGetting = false;
+
+                        slot.Put(heldItem.Take(1));
+                    }
+                    else
+                    {
+                        var toPut = new Item(heldItem, 1);
+                        if (slot.Item.CanStackWith(toPut))
+                        {
+                            slot.TryCombine(toPut, out _);
+                            heldItem.Take(1);
+                        }
+                    }
+                }
+                else /// take 1
+                {
+                    _isPutting = false;
+                    _isGetting = true;
+                }
+            }
+        }
+
+        void FastDepositToBag(ItemSlot slot)
+        {
+            // player.Inventory.Bag.OnExcessItem += PutBackExcess;
+
+            var item = slot.TakeAll();
+            player.Inventory.Bag.TryPutNearest(item);
+
+            // void PutBackExcess(Item excess)
+            // {
+            //     player.Inventory.Bag.OnExcessItem -= PutBackExcess;
+
+            //     slot.Put(excess);
+            // }
+        }
+
+        void PutBackHeldItem()
+        {
+            if (!player.InventoryGUI.IsHoldingItem) return;
+
+            player.Inventory.DropItem(player.InventoryGUI.TakeHeldItem());
         }
     }
 }

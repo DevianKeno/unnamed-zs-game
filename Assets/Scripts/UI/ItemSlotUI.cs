@@ -20,13 +20,14 @@ namespace UZSG.UI
         public static Color Hovered => new(0.2f, 0.2f, 0.2f, 0.5f);
 
         public enum ClickType {
-            Pickup, Split, FastDeposit, Clone
+            Pickup, Split, ShiftClick, Clone
         }
 
         public struct ClickedContext
         {
             public ClickType ClickType { get; set; }
             public PointerEventData Pointer { get; set; }
+            public readonly PointerEventData.InputButton Button => Pointer.button;
         }
         
         ItemSlot slot;
@@ -154,7 +155,11 @@ namespace UZSG.UI
 
             if (Input.GetKey(KeyCode.LeftShift))
             {
-                context.ClickType = ClickType.FastDeposit;
+                context.ClickType = ClickType.ShiftClick;
+            }
+            else
+            {
+                context.ClickType = ClickType.Pickup;
             }
 
             OnMouseDown?.Invoke(this, context);

@@ -258,7 +258,7 @@ namespace UZSG.Players
             bool gotItem; /// whether if the player had successfully picked up the item
             Item item = itemEntity.Item;
         
-            if (item.Data.Type == ItemType.Weapon)
+            if (item.Data.Type == ItemType.Weapon) /// put in equipment (if possible)
             {
                 if (Player.Inventory.Equipment.TryEquipWeapon(item, out EquipmentIndex index))
                 {
@@ -268,7 +268,7 @@ namespace UZSG.Players
                     return;
                 }
             }
-            else if (item.Data.Type == ItemType.Tool)
+            else if (item.Data.Type == ItemType.Tool) /// put in hotbar (if possible)
             {
                 if (Player.Inventory.Hotbar.TryPutNearest(item))
                 {

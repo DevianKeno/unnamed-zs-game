@@ -6,6 +6,7 @@ using UnityEngine.AddressableAssets;
 
 using UZSG.FPP;
 using UZSG.Items.Weapons;
+using System.Collections.Generic;
 
 namespace UZSG.Data
 {
@@ -25,12 +26,18 @@ namespace UZSG.Data
         [Header("Weapon Data")]
         public Sprite HotbarIcon;
         public WeaponCategory Category;
+        public List<Attributes.Attribute> Attributes;
         public WeaponMeleeType MeleeType;
         public WeaponBluntType BluntType;
         public WeaponBladedType BladedType;
         public WeaponRangedType RangedType;
+
+        #region
+        /// These attributes refer to the Weapon's specifications and whatnot,
+        /// and are different from the Attributes above
         public WeaponMeleeAttributes MeleeAttributes;
         public WeaponRangedAttributes RangedAttributes;
+        #endregion
 
         [Header("Viewmodel Data")]
         [SerializeField] AnimatorController armsAnimations;

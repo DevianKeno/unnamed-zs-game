@@ -10,6 +10,7 @@ namespace UZSG.UI.Players
 {
     public partial class InventoryUI : Window, IInitializeable
     {
+        Container externalContainer;
         Dictionary<ObjectGUI, Button> _appendedFrameButtons = new();
 
         [Header("Frames")]
@@ -73,6 +74,12 @@ namespace UZSG.UI.Players
                 HidePlayerCraftingGUI();
             }
 
+            if (gui is StorageGUI sgui)
+            {
+                externalContainer = sgui.Storage.Container;
+                _hasStorageGuiOpen = true;
+            }
+
             var go = Instantiate(frameButtonPrefab, frameButtonsHolder);
             go.transform.SetSiblingIndex(order < 0 ? 99 : order);
             go.name = $"Frame (Button)";
@@ -98,6 +105,12 @@ namespace UZSG.UI.Players
                 ShowPlayerCraftingGUI();
             }
 
+            if (gui is StorageGUI)
+            {
+                _hasStorageGuiOpen = false;
+                externalContainer = null;
+            }
+
             gui.Hide();
             if (_appendedFrameButtons.ContainsKey(gui))
             {
@@ -120,9 +133,9 @@ namespace UZSG.UI.Players
                 frameController.SwitchToFrame("crafting", instant: true);
                 Show();
             }
-            else if (gui is StorageGUI storageGui)
+            if (gui is StorageGUI storageGui)
             {
-
+                _hasStorageGuiOpen = true;
             }
             
             /// Set the title text to the workstation's name

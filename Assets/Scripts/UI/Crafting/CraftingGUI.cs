@@ -276,7 +276,7 @@ namespace UZSG.UI.Objects
                 if (slot.IsEmpty) return;
                 if (player.InventoryGUI.IsHoldingItem) return;
 
-                if (ctx.ClickType == ItemSlotUI.ClickType.FastDeposit)
+                if (ctx.ClickType == ItemSlotUI.ClickType.ShiftClick)
                 {
                     player.Inventory.Bag.TryPutNearest(slot.TakeAll());
                 }

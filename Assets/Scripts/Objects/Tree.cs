@@ -15,17 +15,20 @@ namespace UZSG.Objects
     public class Tree : Resource
     {
         public float ChopAngle = 8f; /// based on tree's size, hardness, mass?
+        
+        Quaternion _originalRotation;
         [SerializeField] Transform treeModel;
 
         /// On load on world
         protected override void Start()
         {
             base.Start();
+            _originalRotation = transform.rotation;
         }
 
         public override void HitBy(HitboxCollisionInfo other)
         {
-            float damage = 0;
+            float damage = 0f;
 
             if (other.Source is HeldToolController tool)
             {
@@ -54,7 +57,7 @@ namespace UZSG.Objects
                     }
                     
                     Game.Audio.Play("chop", transform.position);
-                    AnimateChop(-(tool.Owner as Player).Right);
+                    AnimateChop((tool.Owner as Player).Right);
                 }
                 else /// other tools deals half damage
                 {
@@ -67,6 +70,15 @@ namespace UZSG.Objects
             }
 
             Attributes["health"].Remove(damage);
+            if (Attributes["health"].Value <= 0)
+            {
+                Cutdown();
+            }
+        }
+
+        public void Cutdown()
+        {
+
         }
 
         void AnimateChop(Vector3 swingDirection)
@@ -75,6 +87,7 @@ namespace UZSG.Objects
 
             var targetRotation = Vector3.zero;
             targetRotation += swingDirection * ChopAngle;
+            targetRotation = Quaternion.Inverse(_originalRotation) * targetRotation;
 
             LeanTween.rotate(treeModel.gameObject, targetRotation, 0f)
             .setOnComplete(() =>

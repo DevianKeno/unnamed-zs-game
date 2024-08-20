@@ -82,7 +82,7 @@ namespace UZSG.UI.Objects
             player.Inventory.Bag.OnSlotItemChanged += OnPlayerBagItemChanged;
         }
         
-        public void LinkWorkstation(Workstation workstation)
+        public virtual void LinkWorkstation(Workstation workstation)
         {
             this.workstation = workstation;
 
@@ -152,7 +152,7 @@ namespace UZSG.UI.Objects
         #endregion
 
 
-        void CreateOutputSlotUIs(int size)
+        protected void CreateOutputSlotUIs(int size)
         {
             for (int i = 0; i < size; i++)
             {
@@ -168,7 +168,7 @@ namespace UZSG.UI.Objects
             }
         }
         
-        void CreateQueueSlotUIs(int size)
+        protected void CreateQueueSlotUIs(int size)
         {
             for (int i = 0; i < size; i++)
             {

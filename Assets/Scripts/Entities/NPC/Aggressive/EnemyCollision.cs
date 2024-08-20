@@ -11,9 +11,9 @@ using System.Collections;
 
 namespace UZSG.Entities
 {
-    public partial class Enemy : Entity, IDetectable
+    public partial class Enemy : NonPlayerCharacter
     {
-        protected override void OnHitboxCollide(object sender, HitboxCollisionInfo info)
+        /*protected override void OnHitboxCollide(object sender, HitboxCollisionInfo info)
         {
             if (info.Source.CollisionTag == "Projectile")
             {
@@ -47,6 +47,6 @@ namespace UZSG.Entities
         void SpawnBlood(Vector3 position)
         {
             Game.Particles.Create("blood_splat", position);
-        }
+        }*/
     }
 }

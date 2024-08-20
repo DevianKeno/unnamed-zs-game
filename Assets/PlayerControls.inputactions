@@ -1342,6 +1342,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Change Vehicle View",
+                    "type": "Button",
+                    "id": "f8806334-3c22-471e-a4c2-34fa3d0d26f3",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -1639,6 +1648,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Change Seat",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "30d50f9b-afc4-4284-98a0-eefef4542cae",
+                    "path": "<Keyboard>/#(Z)",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Change Vehicle View",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

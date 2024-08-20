@@ -12,6 +12,8 @@ namespace UZSG.Entities.Vehicles
 {
     public class VehicleController : MonoBehaviour
     {
+        VehicleSeatManager _vehicleSeatManager;
+
         [Header("General Settings")]
         [SerializeField] bool _isEnabled;
 
@@ -25,7 +27,8 @@ namespace UZSG.Entities.Vehicles
         InputAction _moveInput;
         InputAction _backInput;
         InputAction _handbrakeInput;
-        InputAction _switchInput;
+        InputAction _switchSeatInput;
+        InputAction _switchViewInput;
 
         [Header("Vehicle Setup")]
         public GameObject bodyMassCenter;
@@ -72,9 +75,10 @@ namespace UZSG.Entities.Vehicles
 
         private void Awake()
         {
-            _vehicle = this.GetComponent<VehicleEntity>();
-            _frontWheelColliders = _vehicle.FrontVehicleWheels;
-            _rearWheelColliders = _vehicle.RearVehicleWheels;
+            _vehicle = gameObject.GetComponent<VehicleEntity>();
+            _vehicleSeatManager = gameObject.GetComponent<VehicleSeatManager>();
+            _frontWheelColliders = _vehicle.FrontWheelColliders;
+            _rearWheelColliders = _vehicle.RearWheelColliders;
             wheels = _frontWheelColliders.Concat(_rearWheelColliders).ToList();
         }
 
@@ -83,7 +87,8 @@ namespace UZSG.Entities.Vehicles
             _moveInput = Game.Main.GetInputAction("Vehicle Move", "Player Move");
             _backInput = Game.Main.GetInputAction("Back", "Global");
             _handbrakeInput = Game.Main.GetInputAction("Handbrake", "Player Move");
-            _switchInput = Game.Main.GetInputAction("Change Seat", "Player Actions");
+            _switchSeatInput = Game.Main.GetInputAction("Change Seat", "Player Actions");
+            _switchViewInput = Game.Main.GetInputAction("Change Vehicle View", "Player Actions");
             _carRigidbody = gameObject.GetComponent<Rigidbody>();
 
             if (_carRigidbody.automaticCenterOfMass)
@@ -116,6 +121,8 @@ namespace UZSG.Entities.Vehicles
 
             wheelL = _frontWheelColliders[0];
             wheelR = _frontWheelColliders[1];
+
+            _hasFuel = fuelLevel > 0;
         }
 
         private void Update()
@@ -123,10 +130,6 @@ namespace UZSG.Entities.Vehicles
             if (_isEnabled)
             {
                 HandleCarMovement();
-            }
-            else
-            {
-                Debug.Log("This car needs some lovin ;)");
             }
         }
 
@@ -144,10 +147,8 @@ namespace UZSG.Entities.Vehicles
             // Anti-roll's behavior is unkown if it's natural or some weird bug, anyways, you can set it to very low (<1000) or just 0 in vehicle data
             AntiRollBar();
 
-            if (_vehicle.Driver != null)
+            if (_vehicleSeatManager.Driver != null)
             {
-                HandlePlayerPosition();
-
                 if (_driverInput.y > 0)
                 {
                     CancelInvoke("DecelerateVehicle");
@@ -160,7 +161,6 @@ namespace UZSG.Entities.Vehicles
                     {
                         ThrottleOff();
                     }
-                    
                 }
                 if (_driverInput.y < 0)
                 {
@@ -195,14 +195,7 @@ namespace UZSG.Entities.Vehicles
                     Quaternion targetRotation = Quaternion.identity;
                     transform.rotation = targetRotation;
                 }
-
-                HandlePlayerPosition();
             }
-        }
-
-        private void HandlePlayerPosition()
-        {
-            
         }
 
         public void HandleGas()
@@ -553,7 +546,8 @@ namespace UZSG.Entities.Vehicles
             player.Controls.SetControl("Crouch", false);
             player.Controls.SetControl("Toggle Walk", false);
 
-            _switchInput.performed += OnSwitchInputPerform;
+            _switchSeatInput.performed += OnSwitchSeatInputPerform;
+            _switchViewInput.performed += OnSwitchViewInputPerform;
             _backInput.performed += OnBackInputPerform;
         }
 
@@ -564,7 +558,8 @@ namespace UZSG.Entities.Vehicles
             player.Controls.SetControl("Crouch", true);
             player.Controls.SetControl("Toggle Walk", true);
 
-            _switchInput.performed -= OnSwitchInputPerform;
+            _switchSeatInput.performed -= OnSwitchSeatInputPerform;
+            _switchViewInput.performed -= OnSwitchViewInputPerform;
             _backInput.performed -= OnBackInputPerform;
         }
 
@@ -607,15 +602,23 @@ namespace UZSG.Entities.Vehicles
             GameObject playerUI = GetPlayerGameObjectFromContext(context);
             // Testing Only
             Player player = playerUI.GetComponent<PlayerReference>().PlayerEntity;
-            _vehicle.ExitVehicle(player);
+            _vehicleSeatManager.ExitVehicle(player);
         }
 
-        private void OnSwitchInputPerform(InputAction.CallbackContext context)
+        private void OnSwitchSeatInputPerform(InputAction.CallbackContext context)
         {
             GameObject playerUI = GetPlayerGameObjectFromContext(context);
             // Testing Only
             Player player = playerUI.GetComponent<PlayerReference>().PlayerEntity;
-            _vehicle.ChangeSeat(player);
+            _vehicleSeatManager.ChangeSeat(player);
+        }
+
+        private void OnSwitchViewInputPerform(InputAction.CallbackContext context)
+        {
+            GameObject playerUI = GetPlayerGameObjectFromContext(context);
+            // Testing Only
+            Player player = playerUI.GetComponent<PlayerReference>().PlayerEntity;
+            _vehicleSeatManager.ChangeVehicleView(player);
         }
 
         private GameObject GetPlayerGameObjectFromContext(InputAction.CallbackContext context)

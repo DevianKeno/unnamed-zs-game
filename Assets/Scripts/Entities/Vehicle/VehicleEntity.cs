@@ -15,24 +15,18 @@ namespace UZSG.Entities
     {
         [Header("Vehicle Information")]
         [SerializeField] VehicleData vehicle; // vehicle data
-        [SerializeField] VehicleController _vehicleController;
-
-
-        #region Vehicle Seats
-        [Header("Vehicle Seats")]
-        public Player Driver; // driver of the vehicle
-        public List<Player> Passengers; // passenger of the vehicle
-        public List<Transform> Seats; // transform of the seats of the vehicle
-        #endregion
-
-        #region Other Important Values
-        Transform _playerParent; // refers to the parent of the player in the game world
-        #endregion
+        VehicleSeatManager _vehicleSeatManager;
+        VehicleController _vehicleController;
 
         [Header("Vehicle Parts")]
         public GameObject Model;
-        public List<WheelCollider> FrontVehicleWheels;
-        public List<WheelCollider> RearVehicleWheels;
+        
+        [Header("Vehicle Wheel Colliders")]
+        public List<WheelCollider> FrontWheelColliders;
+        public List<WheelCollider> RearWheelColliders;
+
+        [Header("Vehicle Wheel Meshes")]
+        public List<GameObject> WheelMeshes;
 
         public VehicleData Vehicle
         {
@@ -57,14 +51,14 @@ namespace UZSG.Entities
         protected virtual void Awake()
         {
             _vehicleController = gameObject.GetComponent<VehicleController>();
+            _vehicleSeatManager = gameObject.GetComponent<VehicleSeatManager>();
             Model = transform.Find("Vehicle Body").gameObject;
             _originalLayer = Model.layer;
-            _playerParent = this.transform.parent;
         }
 
         public void OnLookEnter()
         {
-            if (Model != null && Driver == null)
+            if (Model != null && _vehicleSeatManager.Driver == null)
             {
                 Model.layer = LayerMask.NameToLayer("Outline");
             }
@@ -83,147 +77,7 @@ namespace UZSG.Entities
             if (actor is not Player player) return;
 
             _vehicleController.EnableVehicle();
-            EnterVehicle(player);
-        }
-
-        public void EnterVehicle(Player player)
-        {
-            bool[] _areSeatsOccupied = SeatsOccupied();
-            if (_areSeatsOccupied[0] && _areSeatsOccupied[1]) return;
-
-            if (Driver == null)
-            {
-                EnterDriver(player);
-            }
-            else
-            {
-                EnterPassenger(player);
-            }
-
-            player.Controls.Rigidbody.isKinematic = true; // "Disable" the Rigidbody
-            player.Controls.Rigidbody.useGravity = false;
-            foreach (CapsuleCollider collider in player.GetComponents<CapsuleCollider>()) // Disable the colliders
-            {
-                collider.enabled = false;
-            }
-            _vehicleController.EnableGeneralVehicleControls(player);
-        }
-
-        public bool[] SeatsOccupied()
-        {
-            // Check if driver seat has a player set to it
-            bool driverOccupied = Driver != null;
-            //Check if passenger seat has a player set to it
-            bool passengerOccupied = Passengers != null && Passengers.All(passenger => passenger != null);
-            return new [] { driverOccupied, passengerOccupied };
-        }
-
-        public void EnterDriver(Player player)
-        {
-            Driver = player;
-            player.transform.SetParent(Seats[0], false);
-            player.transform.localPosition = Vector3.zero;
-            _vehicleController.EnableVehicleControls();
-        }
-
-        public void EnterPassenger(Player player)
-        {
-            for(int i = 0; i < Passengers.Count; i++)
-            {
-                SetPassengerSeat(player, i);
-                return;
-            }
-        }
-
-        // Change Seat for Seated Players
-        public void ChangeSeat(Player player)
-        {
-            if (Driver == player)
-            {
-                // If all passengers are occupied
-                if (Passengers != null && Passengers.All(passenger => passenger != null)) return;
-
-                EnterPassenger(player);
-                Driver = null;
-                _vehicleController.DisableVehicleControls();
-            }
-            else
-            {
-                bool[] _areSeatsOccupied = SeatsOccupied();
-                if (_areSeatsOccupied[0] && _areSeatsOccupied[1]) return;
-
-                int previousSeatIndex = Passengers.IndexOf(player);
-                ChangePassengerSeat(player, previousSeatIndex);
-                Passengers[previousSeatIndex] = null;
-            }
-        }
-
-        // Change Seat for Passenger Players
-        public void ChangePassengerSeat(Player player, int previousSeat = 0)
-        {
-            if (previousSeat == Passengers.Count - 1)
-            {
-                EnterDriver(player);
-            }
-            else
-            {
-                for (int i = previousSeat + 1; i < Passengers.Count + 1; i++)
-                {
-                    SetPassengerSeat(player, i);
-                    return;
-                }
-            }
-        }
-
-        // Set the Seat of the Player to Next Seat Available
-        public void SetPassengerSeat(Player player, int seatPosition)
-        {
-            if (Passengers[seatPosition] == null)
-            {
-                Passengers[seatPosition] = player;
-                player.transform.SetParent(Seats[seatPosition + 1], false);
-                player.transform.localPosition = Vector3.zero;
-            }
-        }
-
-        // Exit Vehicle
-        public void ExitVehicle(Player player)
-        {
-            player.Controls.Rigidbody.isKinematic = false; // "Disable" the Rigidbody
-            player.Controls.Rigidbody.useGravity = true;
-            foreach (CapsuleCollider collider in player.GetComponents<CapsuleCollider>()) // Disable the colliders
-            {
-                collider.enabled = true;
-            }
-
-            player.transform.SetParent(_playerParent, false); // Set the player position to the parent
-
-            player.Controls.Rigidbody.position = new(Model.transform.position.x + 2,
-                                                     Model.transform.position.y,
-                                                     Model.transform.position.z);
-
-            player.Controls.Rigidbody.rotation = Quaternion.identity;
-
-            if (player == Driver)
-            {
-                Driver = null;
-                _vehicleController.DisableVehicleControls();
-            }
-            else if (Passengers.Contains(player))
-            {
-                Passengers[Passengers.IndexOf(player)] = null;
-            }
-            _vehicleController.DisableGeneralVehicleControls(player);
-            CheckPassengers();
-        }
-
-        private void CheckPassengers()
-        {
-            bool[] _areSeatsOccupied = SeatsOccupied();
-            if ((_areSeatsOccupied[0] || _areSeatsOccupied[1]) == false)
-            {
-                _vehicleController.DisableVehicle();
-            }
+            _vehicleSeatManager.EnterVehicle(player);
         }
     }
 }

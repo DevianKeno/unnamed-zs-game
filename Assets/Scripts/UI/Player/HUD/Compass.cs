@@ -81,7 +81,14 @@ namespace UZSG.UI.HUD
 
         void Shake1()
         {
-            float _compassTravel = FPPCamera.localEulerAngles.y / 360f;
+            // Get the forward vector of the camera
+            Vector3 forward = FPPCamera.transform.forward;
+
+            // Calculate the angle based on the forward vector
+            float angle = Mathf.Atan2(forward.x, forward.z) * Mathf.Rad2Deg;
+            angle = Mathf.Repeat(angle + 180, 360); // Adjust angle to match compass orientation
+
+            float _compassTravel = angle / 360f;
             Vector2 _newUVRect = new Rect(_compassTravel, 0, 1f, 1f).min;
 
             if (_newUVRect != _previousUVRect && Vector2.Distance(_newUVRect, _previousUVRect) > 0.05)
@@ -117,7 +124,14 @@ namespace UZSG.UI.HUD
         
         void Shake2()
         {
-            _targetAngle = FPPCamera.localEulerAngles.y / 360f;
+            // Get the forward vector of the camera
+            Vector3 forward = FPPCamera.transform.forward;
+
+            // Calculate the angle based on the forward vector
+            float angle = Mathf.Atan2(forward.x, forward.z) * Mathf.Rad2Deg;
+            angle = Mathf.Repeat(angle + 180, 360); // Adjust angle to match compass orientation
+
+            _targetAngle = angle / 360f;
             float currentAngle = compassImage.uvRect.x;
             float deltaAngle = _targetAngle - currentAngle;
             _velocity = Mathf.Lerp(_velocity, deltaAngle * _rotationSpeed, Time.deltaTime);
@@ -128,7 +142,14 @@ namespace UZSG.UI.HUD
 
         void Shake3()
         {
-            _targetAngle2 = FPPCamera.localEulerAngles.y / 360f;
+            // Get the forward vector of the camera
+            Vector3 forward = FPPCamera.transform.forward;
+
+            // Calculate the angle based on the forward vector
+            float angle = Mathf.Atan2(forward.x, forward.z) * Mathf.Rad2Deg;
+            angle = Mathf.Repeat(angle + 180, 360); // Adjust angle to match compass orientation
+
+            _targetAngle2 = angle / 360f;
             float displacement = _targetAngle2 - _currentAngle;
             float acceleration = _springConstant * displacement - _damping * _velocity2;
             _velocity2 += acceleration * Time.deltaTime;
@@ -138,7 +159,14 @@ namespace UZSG.UI.HUD
 
         void NoShake()
         {
-            compassImage.uvRect = new Rect(FPPCamera.localEulerAngles.y / 360f, 0, 1f, 1f);
+            // Get the forward vector of the camera
+            Vector3 forward = FPPCamera.transform.forward;
+
+            // Calculate the angle based on the forward vector
+            float angle = Mathf.Atan2(forward.x, forward.z) * Mathf.Rad2Deg;
+            angle = Mathf.Repeat(angle + 180, 360); // Adjust angle to match compass orientation
+
+            compassImage.uvRect = new Rect(angle / 360f, 0, 1f, 1f);
         }
     }
 }

@@ -18,14 +18,14 @@ namespace UZSG.Crafting
     /// </summary>
     public abstract class Crafter : MonoBehaviour
     {
-        Workstation workstation;
+        protected Workstation workstation;
         
-        int maxSimultaneousCrafts = 1;
-        int availableCraftSlots;
-        bool simultaneousCrafting = false;
-        bool autoCraftNext = true;
+        protected int maxSimultaneousCrafts = 1;
+        protected int availableCraftSlots;
+        protected bool simultaneousCrafting = false;
+        protected bool autoCraftNext = true;
 
-        List<CraftingRoutine> routines = new();
+        protected List<CraftingRoutine> routines = new();
         public List<CraftingRoutine> Routines => routines;
 
         #region Events
@@ -49,7 +49,7 @@ namespace UZSG.Crafting
             availableCraftSlots = maxSimultaneousCrafts;
         }
 
-        public void CraftNewItem(ref CraftItemOptions options, bool begin = true)
+        public virtual void CraftNewItem(ref CraftItemOptions options, bool begin = true)
         {
             var routine = new CraftingRoutine(options);
             
@@ -101,7 +101,7 @@ namespace UZSG.Crafting
 
         #region Crafting routine event callbacks
 
-        void OnRoutineEventCall(CraftingRoutine routine)
+        protected void OnRoutineEventCall(CraftingRoutine routine)
         {            
             if (routine.Status == CraftingRoutineStatus.Finished)
             {
@@ -116,7 +116,7 @@ namespace UZSG.Crafting
             OnRoutineNotify?.Invoke(routine);
         }
 
-        void OnCraftSecond(object sender, float timeElapsed)
+        protected void OnCraftSecond(object sender, float timeElapsed)
         {
             OnRoutineSecond?.Invoke((CraftingRoutine) sender, timeElapsed);
         }

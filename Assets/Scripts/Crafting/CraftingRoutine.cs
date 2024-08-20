@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem.Interactions;
 using UZSG.Data;
 using UZSG.Inventory;
 
@@ -50,7 +51,8 @@ namespace UZSG.Crafting
         protected CraftItemOptions options;
         public CraftItemOptions Options => options;
         protected ItemSlot outputSlot;
-        public bool IsFueled { get; internal set; } 
+        public bool IsFueled { get; internal set; }
+        public bool StopCrafting = false;
 
         #region Events
         
@@ -101,6 +103,13 @@ namespace UZSG.Crafting
 
                 while (SecondsElapsedSingle < Recipe.DurationSeconds)
                 {
+                    if (StopCrafting)
+                    {
+                        SecondsElapsedSingle = 0;
+                        StopCrafting = false;
+                        yield return null;
+                    }
+
                     if (IsFueled)
                     {
                         OnFuelCheck?.Invoke(this, EventArgs.Empty);

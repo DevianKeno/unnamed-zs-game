@@ -25,6 +25,8 @@ namespace UZSG.Objects
 
         Player player;
         Container inputContainer = new();
+
+        Container fuelSlots = new(1);
         List<ItemSlot> queueSlots = new();
         Container outputContainer = new();
         public Container OutputContainer => outputContainer;
@@ -35,6 +37,7 @@ namespace UZSG.Objects
 
         public event EventHandler<InteractArgs> OnInteract;
         public event Action<CraftingRoutine> OnCraft;
+
         /// <summary>
         /// Listens to all output slots when their Item is changed.
         /// </summary>
@@ -55,10 +58,9 @@ namespace UZSG.Objects
         protected virtual void Place()
         {
             queueSlots = new(WorkstationData.QueueSize);
-            queueSlots = new();
             outputContainer = new(WorkstationData.OutputSize);
             outputContainer.OnSlotItemChanged += OnOutputSlotItemChanged;
-            
+
             crafter.Initialize(this);
             crafter.OnRoutineNotify += OnRoutineEventCall;
             crafter.OnRoutineSecond += OnRoutineSecond;
@@ -66,7 +68,16 @@ namespace UZSG.Objects
             LoadGUIAsset(WorkstationData.GUI, onLoadCompleted: (gui) =>
             {
                 gui.transform.SetParent(transform);
-                this.gui = (CraftingGUI) gui;
+
+                if (WorkstationData.RequiresFuel)
+                {
+                    this.gui = (FuelCraftingGUI) gui;
+                }
+                else
+                {
+                    this.gui = (CraftingGUI) gui;
+                }
+
                 this.gui.LinkWorkstation(this);
             });
         }
@@ -143,6 +154,37 @@ namespace UZSG.Objects
             return true;
         }
 
+        public bool TryFuelCraft(ref CraftItemOptions options)
+        {
+            
+            if (!options.Recipe.RequiresFuel)
+            {
+                print("Your recipe does not require fuel to be crafted");
+                return false;
+            }
+
+            var fuel_crafter = (FuelBasedCrafting) crafter;
+
+            if (fuel_crafter.Routines.Count >= WorkstationData.QueueSize)
+            {
+                return false;
+            }
+
+            var totalMaterials = CalculateTotalMaterials(options);
+            if (!player.Inventory.Bag.ContainsAll(totalMaterials))
+            {
+                PlayNoMaterialsSound();
+                if (EnableDebugging) Game.Console.Log($"Tried to craft '{options.Recipe.Output.Id}' but had insufficient materials.");
+                return false;
+            }
+
+            _ = inputContainer.TakeItems(totalMaterials);
+
+            fuel_crafter.CraftNewItem(ref options);
+            fuel_crafter.ConsumeFuel();
+
+            return true;
+        }
         #endregion
 
 

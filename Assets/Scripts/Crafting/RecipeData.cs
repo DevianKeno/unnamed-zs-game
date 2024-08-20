@@ -13,6 +13,7 @@ namespace UZSG.Data
         public Item Output;
         public int Yield => Output.Count;
         public List<Item> Materials;
+        public bool RequiresFuel = false;
         public float DurationSeconds;
     }
 }

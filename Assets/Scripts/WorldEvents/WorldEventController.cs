@@ -91,7 +91,7 @@ namespace UZSG.WorldEvents
             {
                 EventData = eventData
             };
-            object selectedEvent = worldEvent.StartEvent();
+            var selectedEvent = worldEvent.StartEvent();
             if (selectedEvent == null) return;
             SubscribeControllers(eventData, worldEvent);
             worldEvent.SpawnEvent();

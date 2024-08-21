@@ -66,7 +66,7 @@ namespace UZSG.Worlds
             Game.Main.OnLateInit -= OnLateInit;
 
             timeController.Initialize();
-            // eventsController.Initialize();
+            eventsController.Initialize();
 
             RegisterInstances();
             if (LoadOnEnterPlayMode)

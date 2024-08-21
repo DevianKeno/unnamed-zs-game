@@ -936,18 +936,18 @@ AudioReverbZone:
   m_Enabled: 1
   m_MinDistance: 16
   m_MaxDistance: 26.7
-  m_ReverbPreset: 16
-  m_Room: -1000
-  m_RoomHF: -3300
-  m_DecayTime: 1.49
-  m_DecayHFRatio: 0.54
-  m_Reflections: -2560
-  m_ReflectionsDelay: 0.162
-  m_Reverb: -229
-  m_ReverbDelay: 0.088
+  m_ReverbPreset: 0
+  m_Room: -10000
+  m_RoomHF: -10000
+  m_DecayTime: 1
+  m_DecayHFRatio: 1
+  m_Reflections: -2602
+  m_ReflectionsDelay: 0.007
+  m_Reverb: 200
+  m_ReverbDelay: 0.011
   m_HFReference: 5000
-  m_Diffusion: 79
-  m_Density: 100
+  m_Diffusion: 0
+  m_Density: 0
   m_LFReference: 250
   m_RoomLF: 0
 --- !u!1 &2965723630034359457
@@ -1755,7 +1755,7 @@ MonoBehaviour:
   m_Center: {x: 0, y: 2, z: 0}
   m_LayerMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 33280
   m_UseGeometry: 0
   m_DefaultArea: 0
   m_GenerateLinks: 0

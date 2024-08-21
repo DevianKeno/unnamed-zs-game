@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6379a2b7d91791945abf1dc8c29cd406, type: 3}
+  m_Name: walker
+  m_EditorClassIdentifier: 
+  Id: walker
+  AssetReference:
+    m_AssetGUID: b974f07cddec4e04986cf4d7e3e83ab7
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  Name: Walker
+  Attributes:
+  - data: {fileID: 11400000, guid: e1db9201565269c4caebcb12298f0665, type: 2}
+    value: 200
+    baseMaximum: 100
+    multiplier: 1
+    flatBonus: 0
+    LimitOverflow: 1
+    LimitUnderflow: 1
+  - data: {fileID: 11400000, guid: fe9f66b79d95e7948a4dfcb4512568c7, type: 2}
+    value: 300
+    baseMaximum: 1000
+    multiplier: 1
+    flatBonus: 0
+    LimitOverflow: 1
+    LimitUnderflow: 1
+  - data: {fileID: 11400000, guid: e4ab3b3473a8d02419d401c83e60f203, type: 2}
+    value: 1
+    baseMaximum: 1000
+    multiplier: 1
+    flatBonus: 0
+    LimitOverflow: 1
+    LimitUnderflow: 1
+  - data: {fileID: 11400000, guid: c5a6f3b39d1f2084fab0716994ceae1c, type: 2}
+    value: 12
+    baseMaximum: 1000
+    multiplier: 1
+    flatBonus: 0
+    LimitOverflow: 1
+    LimitUnderflow: 1
+  - data: {fileID: 11400000, guid: acc338f9f7f062d439cb28459e143df3, type: 2}
+    value: 16
+    baseMaximum: 1000
+    multiplier: 1
+    flatBonus: 0
+    LimitOverflow: 1
+    LimitUnderflow: 1
+  - data: {fileID: 11400000, guid: daadff2edc464ee419de068690807275, type: 2}
+    value: 9
+    baseMaximum: 1000
+    multiplier: 1
+    flatBonus: 0
+    LimitOverflow: 1
+    LimitUnderflow: 1
+  AudioAssetsData: {fileID: 0}

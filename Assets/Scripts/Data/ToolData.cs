@@ -29,7 +29,7 @@ namespace UZSG.Data
         [Header("Tool Data")]
         // public Sprite HotbarIcon;
         public ToolType ToolType;
-        public List<MeleeAttackParameters> Attacks;
+        public List<MeleeAttackParametersData> Attacks;
         public ToolSwingDirection SwingDirection;
         public List<Attributes.Attribute> Attributes;
 

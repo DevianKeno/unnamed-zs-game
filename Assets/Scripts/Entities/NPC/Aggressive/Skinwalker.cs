@@ -11,7 +11,6 @@ namespace UZSG.Entities
 {
     public class Skinwalker : Enemy
     {
-
         protected override void Start()
         {
             base.Start();

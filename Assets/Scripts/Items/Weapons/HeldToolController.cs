@@ -12,6 +12,7 @@ using UZSG.Entities;
 using UZSG.Players;
 using UZSG.Attributes;
 using UZSG.Objects;
+using UZSG.Attacks;
 
 namespace UZSG.Items.Tools
 {
@@ -115,7 +116,6 @@ namespace UZSG.Items.Tools
             {
                 
             }
-            TryHarvestResource();
         }
 
         void OnPlayerSecondary(InputAction.CallbackContext context)
@@ -150,7 +150,8 @@ namespace UZSG.Items.Tools
 
             ConsumeStamina();
             // PlaySound();
-            StartCoroutine(CreateAttackRays(GetAttackParams()));
+            var atkParams = GetAttackParams();
+            CreateAttackRays(ref atkParams);
             stateMachine.ToState(ToolItemStates.Attack);
             yield return new WaitForSeconds(0.5f); /// SOMETHING ATKSPD THOUGH NOT SO STRAIGHFROWARDS LOTS OF CALCS (short for calculations)
             
@@ -172,89 +173,30 @@ namespace UZSG.Items.Tools
         {
             #region TODO: Implement combos
             #endregion
-            return ToolData.Attacks[0];
-        }
-
+            var data = ToolData.Attacks[0];
+            return MeleeAttacks.Parameters(data);
+        }      
         
-        
-        IEnumerator CreateAttackRays(MeleeAttackParameters atkParams)
+        void CreateAttackRays(ref MeleeAttackParameters atk)
         {
-            yield return new WaitForSeconds(atkParams.Delay);
-            
-            float halfAngle = attackAngle / 2;
-            float angleStep = attackAngle / (numberOfRays - 1);
-            float stepTime = attackDuration / numberOfRays;
-            Color rayColor;
-            
-            HashSet<int> hitEnemies = new();
+            atk.Origin = Player.EyeLevel;
+            atk.Up = Player.Up;
+            atk.Direction = Player.Forward;
 
-            for (int i = 0; i < numberOfRays; i++)
+            if (atk.SwingType == MeleeSwingType.Raycast)
             {
-                float currentAngle = halfAngle - (angleStep * i);
-                var direction = ToolData.SwingDirection switch // wdym its a fucking enum
-                {
-                    ToolSwingDirection.Upward => Quaternion.Euler(-currentAngle, 0, 0),
-                    ToolSwingDirection.Downward => Quaternion.Euler(currentAngle, 0, 0),
-                    ToolSwingDirection.Leftward => Quaternion.Euler(0, currentAngle, 0),
-                    ToolSwingDirection.Rightward => Quaternion.Euler(0, -currentAngle, 0),
-                };
-
-                Vector3 rayOrigin = Player.EyeLevel;
-
-                if (Physics.Raycast(rayOrigin, direction * Player.Forward, out RaycastHit hit, attackRange, attackLayer))
-                {
-                    int hitObjectId = hit.collider.GetInstanceID();
-
-                    if (!hitEnemies.Contains(hitObjectId))
-                    {
-                        hitEnemies.Add(hitObjectId);
-                        OnHit(hit.point, hit.collider);
-                        Debug.Log("Hit: " + hit.collider.name);
-                    }
-                    rayColor = Color.red;
-                }
-                else
-                {
-                    rayColor = Color.white;
-                }
-                
-                if (VisualizeAttack)
-                {
-                    Debug.DrawRay(rayOrigin, direction * Player.Forward * attackRange, rayColor, 1.0f);
-                }
-
-                yield return new WaitForSeconds(stepTime);
+                MeleeAttacks.Raycast(ref atk, OnToolAttackHit);
             }
-        }
-        
-        void OnHit(Vector3 point, Collider hitObject)
-        {
-            if (hitObject.TryGetComponent<Hitbox>(out var hitbox))
+            else if (atk.SwingType == MeleeSwingType.Swingcast)
             {
-                // CalculatedDamage = CalculateDamage(hitbox.Part);
-                hitbox.HitBy(new()
-                {
-                    Source = this,
-                    ContactPoint = point,
-                });
-                return;
-            }
-
-            var hit = hitObject.GetComponentInParent<BaseObject>();
-            if (hit is Resource resource)
-            {
-                resource.HitBy(new()
-                {
-                    Source = this,
-                    ContactPoint = point,
-                });
-                return;
+                MeleeAttacks.Swingcast(ref atk, OnToolAttackHit);
             }
         }
 
-        bool TryHarvestResource()
+        void OnToolAttackHit(HitboxCollisionInfo info)
         {
-            return false;
+            info.Source = this;
+            info.Target.HitBy(info);
         }
 
         public override void SetStateFromAction(ActionStates state)

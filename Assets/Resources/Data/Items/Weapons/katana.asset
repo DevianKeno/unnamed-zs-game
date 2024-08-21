@@ -43,6 +43,8 @@ MonoBehaviour:
     LimitOverflow: 0
     LimitUnderflow: 0
   MeleeType: 2
+  MeleeAttacks:
+  - {fileID: 11400000, guid: b5dd92f8b74bd124295f9972b0eb1ad4, type: 2}
   BluntType: 0
   BladedType: 3
   RangedType: 0

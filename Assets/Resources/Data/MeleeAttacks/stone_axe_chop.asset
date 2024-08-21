@@ -12,9 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b15b48c65734f5548975088a3200ffaf, type: 3}
   m_Name: stone_axe_chop
   m_EditorClassIdentifier: 
+  Id: stone_axe_chop
   SwingType: 0
+  Range: 1.4
+  Duration: 1
   Delay: 0.5
-  Speed: 0
-  Origin: {x: 0, y: 0, z: 0}
-  RayCount: 12
-  Angle: 120
+  Layer:
+    serializedVersion: 2
+    m_Bits: 26624
+  RayCount: 0
+  Angle: 0
+  Visualize: 1

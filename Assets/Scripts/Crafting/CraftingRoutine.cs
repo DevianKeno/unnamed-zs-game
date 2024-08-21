@@ -103,9 +103,11 @@ namespace UZSG.Crafting
             {
                 if (StopCrafting) //Pauses Craft whenever something StopCrafting is true
                 {
+                    SecondsElapsed -= SecondsElapsedSingle;
                     SecondsElapsedSingle = 0;
                     StopCrafting = false;
                     Status = CraftingRoutineStatus.Paused;
+                    OnNotify?.Invoke(this);
                     yield break;
                 }
 

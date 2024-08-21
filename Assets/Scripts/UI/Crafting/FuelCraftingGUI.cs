@@ -59,6 +59,11 @@ public class FuelCraftingGUI : CraftingGUI
                     {
                         player.InventoryGUI.HoldItem(excess);
                     }
+                    else
+                    {
+                        //if there is a routine still ongoing, ignite fuel
+                        //how tho...
+                    }
                 }
                 else /// item diff, swap
                 {

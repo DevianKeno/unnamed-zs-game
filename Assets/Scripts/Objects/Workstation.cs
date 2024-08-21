@@ -237,6 +237,10 @@ namespace UZSG.Objects
             {
                 OnCraft?.Invoke(routine);
             }
+            else if (routine.Status == Paused)
+            {
+                OnCraft?.Invoke(routine);
+            }
             else if (routine.Status == CraftSingle)
             {
                 var outputItem = new Item(routine.Recipe.Output);

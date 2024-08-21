@@ -50,6 +50,7 @@ namespace UZSG.Crafting
             routine.OnNotify += OnRoutineEventCall;
             routine.OnCraftSecond += OnCraftSecond;
             routine.OnFuelCheck += OnFuelCheck;
+            routine.IsFueled = true;
 
             routines.Add(routine);
             routine.Prepare();

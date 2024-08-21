@@ -186,8 +186,6 @@ namespace UZSG.Objects
 
             _ = inputContainer.TakeItems(totalMaterials);
 
-            fuel_crafter.CraftNewItem(ref options);
-
             if (!fuel_crafter.IsFuelRemainingAvailable())
             {
                 if(fuel_crafter.TryConsumeFuel())
@@ -199,6 +197,8 @@ namespace UZSG.Objects
                     return false;
                 }      
             }
+
+            fuel_crafter.CraftNewItem(ref options);
 
             return true;
         }

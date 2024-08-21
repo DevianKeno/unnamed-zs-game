@@ -7,9 +7,9 @@ namespace UZSG.WorldEvents.Raid
 {
     public class HordeFormations : MonoBehaviour
     {
-        public void SpawnFormation(RaidEventType raidType, RaidFormation raidFormation, int count)
+        public void SpawnFormation(RaidInstance raidInstance)
         {
-            switch(raidFormation)
+            switch(raidInstance.raidFormation)
             {
                 case RaidFormation.Blob:
                     SpawnAsBlob();
@@ -25,11 +25,11 @@ namespace UZSG.WorldEvents.Raid
 
         void SpawnAsBlob()
         {
-
+            
         }
         void SpawnAsLine()
         {
-
+            
         }
         void SpawnInWaves()
         {

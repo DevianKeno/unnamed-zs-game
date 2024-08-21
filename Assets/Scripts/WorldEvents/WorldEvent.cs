@@ -6,40 +6,104 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 using UZSG.Data;
+using UZSG.Entities;
+using UZSG.Systems;
 
 namespace UZSG.WorldEvents
 {
     public class WorldEvent
     {
-        WorldEventProperties _eventInfo;
-        public WorldEventProperties EventInfo 
-        {
-            get => _eventInfo;
-            set => _eventInfo = value;
-        }
+        WorldEventData _eventData;
+        public WorldEventData EventData { set => _eventData = value; }
+        
+        public event Action<WorldEvent> OnSpawnEvent;
+        public event Action<WorldEvent> OnEndEvent;
 
-        List<EventPrefab> _selectedEvent;
-        public List<EventPrefab> SelectedEvent
-        {
-            get => _selectedEvent;
-            set => _selectedEvent = value;
-        }
+        List<object> _selectedEvents = new();
+        public List<object> SelectedEvents => _selectedEvents;
 
-        public event EventHandler<WorldEventProperties> OnSpawnEvent;
-        public event EventHandler<WorldEventProperties> OnEndEvent;
-
-        void SpawnEvent()
+        public void SpawnEvent()
         {
-            OnSpawnEvent?.Invoke(this, _eventInfo);
+            OnSpawnEvent?.Invoke(this);
         }
         void EndEvent()
         {
-            OnEndEvent?.Invoke(this, _eventInfo);
+            OnEndEvent?.Invoke(this);
         }
 
-        public void Initialize()
+        public object StartEvent()
         {
-            SpawnEvent();
+            switch (_eventData.Type)
+            {
+                case WorldEventType.Weather:
+                    SelectWeatherToOccur(_eventData);
+                    break;
+                case WorldEventType.Raid:
+                    SelectRaidToOccur(_eventData);
+                    break;
+                default:
+                    return null;
+            };
+
+            return _selectedEvents;
+        }
+
+        WeatherEventInstance? SelectWeatherToOccur(WorldEventData eventData)
+        {
+            List<WeatherEventInstance> selectedEvents = new();
+            
+            int chance = UnityEngine.Random.Range(1, 100);
+            foreach (WeatherEventInstance weatherInstance in eventData.WeatherTypes)
+            {
+                if (weatherInstance.ChanceToOccur >= chance) selectedEvents.Add(weatherInstance);
+            }
+            if (selectedEvents.Count == 0)
+            {
+                Game.Console.Log($"<color=#e8eb34>No weather event selected.</color>");
+                return null;
+            }
+            else if (selectedEvents.Count > 1 && !eventData.AllowMultipleEvents)
+                selectedEvents = KeepOnlyAtIndex(selectedEvents, UnityEngine.Random.Range(0, selectedEvents.Count));
+            
+            foreach (WeatherEventInstance weatherInstance in selectedEvents)
+                Game.Console.Log($"<color=#e8eb34>Event occured: {weatherInstance.Name}</color>");  
+
+            _selectedEvents.Add(selectedEvents[0]);
+            return selectedEvents[0];
+        }
+
+        List<EnemyData> SelectRaidToOccur(WorldEventData eventData)
+        {
+            throw new NotImplementedException();
+        }
+
+        // void SelectEvent(WorldEventData eventData)
+        // {            
+        //     List<object> selectedEvents;
+
+        //     // int chance = UnityEngine.Random.Range(1, 100);
+        //     // foreach (EventPrefab eventPrefab in eventData.EventPrefab)
+        //     // {
+        //     //     if (eventPrefab.ChanceToOccur >= chance) selectedEvents.Add(eventPrefab);
+        //     // }
+            
+        //     if (selectedEvents.Count == 0)
+        //     {
+        //         Game.Console.Log($"<color=#e8eb34>No event prefab selected.</color>");
+        //         return null;
+        //     }
+        //     else if (selectedEvents.Count > 1 && !eventData.AllowMultipleEvents)
+        //         selectedEvents = KeepOnlyAtIndex(selectedEvents, UnityEngine.Random.Range(0, selectedEvents.Count));
+            
+        //     foreach (EventPrefab eventPrefab in selectedEvents)
+        //         Game.Console.Log($"<color=#e8eb34>Event occured: {eventPrefab.Name}</color>");
+            
+        //     _selectedEvents = selectedEvents;
+        // }
+
+        List<T> KeepOnlyAtIndex<T>(List<T> originalList, int index)
+        {
+            return new List<T> { originalList[index] };
         }
     }
 }

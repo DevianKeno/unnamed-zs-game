@@ -165,6 +165,12 @@ namespace UZSG.Objects
 
             var fuel_crafter = (FuelBasedCrafting) crafter;
 
+            if (!fuel_crafter.IsFuelRemainingAvailable() && !fuel_crafter.IsFuelAvailable())
+            {
+                print("You cannot use this without any kind of fuel");
+                return false;
+            }
+
             if (fuel_crafter.Routines.Count >= WorkstationData.QueueSize)
             {
                 return false;
@@ -181,7 +187,18 @@ namespace UZSG.Objects
             _ = inputContainer.TakeItems(totalMaterials);
 
             fuel_crafter.CraftNewItem(ref options);
-            fuel_crafter.ConsumeFuel();
+
+            if (!fuel_crafter.IsFuelRemainingAvailable())
+            {
+                if(fuel_crafter.TryConsumeFuel())
+                {
+                    fuel_crafter.StartBurn();
+                }
+                else 
+                {
+                    return false;
+                }      
+            }
 
             return true;
         }

@@ -36,6 +36,8 @@ MonoBehaviour:
     m_SubObjectType: 
     m_EditorAssetChanged: 0
   IncludePlayerRecipes: 0
+  RequiresFuel: 1
   QueueSize: 3
   OutputSize: 3
-  IncludedRecipes: []
+  IncludedRecipes:
+  - {fileID: 11400000, guid: a01b8268b0cc5624c82cc5906abc7fc4, type: 2}

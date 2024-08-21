@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.AI;
 using UZSG.Items;
@@ -13,12 +14,14 @@ namespace UZSG.Crafting
         public float FuelRemaining = 0;
         public Container FuelContainer;
 
+        private bool _mustContinue = false;
+
         public bool IsFuelRemainingAvailable()
         {
             return FuelRemaining > 0;
         }
 
-        protected bool IsFuelAvailable()
+        public bool IsFuelAvailable()
         {
             if (FuelContainer.Slots[0].IsEmpty)
             {
@@ -27,14 +30,17 @@ namespace UZSG.Crafting
             return true;
         }
 
-        public void ConsumeFuel()
+        public void StartBurn()
         {
-            if (IsFuelRemainingAvailable()) return;
-            if (!IsFuelAvailable()) return;
-
-            FuelContainer.TakeFrom(0, 1);
-         
             StartCoroutine(BurnFuel());
+        }
+
+        public bool TryConsumeFuel()
+        {
+            if (!IsFuelAvailable()) return false;
+            var fuel = FuelContainer.TakeFrom(0, 1);
+            FuelRemaining = fuel.Data.FuelDuration;
+            return true;
         }
 
         public override void CraftNewItem(ref CraftItemOptions options, bool begin = true)
@@ -64,6 +70,11 @@ namespace UZSG.Crafting
             }
         }
 
+        public void OnBurnStop(object sender, EventArgs e)
+        {
+
+        }
+
 
         IEnumerator BurnFuel()
         {
@@ -71,9 +82,14 @@ namespace UZSG.Crafting
             {
                 yield return new WaitForSeconds(1);
                 FuelRemaining -= 1;
+                print("Fuel Remaing: " + FuelRemaining);
                 if(!IsFuelRemainingAvailable())
                 {
-                    ConsumeFuel();
+                    if (routines.Count <= 0) yield break;
+                    if(TryConsumeFuel())
+                    {
+                        print("Fuel Consumed");
+                    }
                 }
             }
         }

@@ -9,12 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 873d4c4f155a35a46b4699d35b336ec7, type: 3}
-  m_Name: leaves
+  m_Script: {fileID: 11500000, guid: 53e3907a83a91d44fafffcd5e59dab0d, type: 3}
+  m_Name: CleanWater
   m_EditorClassIdentifier: 
-  Id: leaves
-  Name: Leaves
-  Description: Pile of leaves.
+  Id: clean_water
+  Name: Clean Water
+  Description: water without risk of diarhea or poisoning
   Model:
     m_AssetGUID: 
     m_SubObjectName: 
@@ -22,13 +22,19 @@ MonoBehaviour:
     m_EditorAssetChanged: 0
   Sprite: {fileID: 0}
   Type: 0
-  Subtype: 0
+  Subtype: 2
   Weight: 0
-  StackSize: 999
+  StackSize: 1
   IsFuel: 0
-  FuelDuration: 5
+  FuelDuration: 0
   IsMaterial: 0
-  IsCraftable: 0
-  Recipes: []
+  IsCraftable: 1
+  Recipes:
+  - {fileID: 11400000, guid: a01b8268b0cc5624c82cc5906abc7fc4, type: 2}
   SourceDescription: 
   AudioAssetsData: {fileID: 0}
+  recoveredAttributes: []
+  foodStatus:
+    CanBeCooked: 1
+    IsBurnt: 0
+    CanSpoil: 0

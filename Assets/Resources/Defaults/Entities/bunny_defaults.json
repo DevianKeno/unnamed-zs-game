@@ -1,4 +1,5 @@
 {
+  "InstanceId": 0,
   "Id": null,
   "Transform": null,
   "Attributes": [
@@ -10,7 +11,8 @@
       "Multiplier": 0.0,
       "FlatBonus": 0.0,
       "LimitOverflow": false,
-      "LimitUnderflow": false
+      "LimitUnderflow": false,
+      "Type": "AttributeSaveData"
     },
     {
       "Id": "move_speed",
@@ -20,7 +22,8 @@
       "Multiplier": 0.0,
       "FlatBonus": 0.0,
       "LimitOverflow": false,
-      "LimitUnderflow": false
+      "LimitUnderflow": false,
+      "Type": "AttributeSaveData"
     },
     {
       "Id": "wildlife_site_radius",
@@ -30,27 +33,31 @@
       "Multiplier": 0.0,
       "FlatBonus": 0.0,
       "LimitOverflow": false,
-      "LimitUnderflow": false
-    },
-    {
-      "Id": "wildlife_roam_interval",
-      "Value": 18.0,
-      "Minimum": 0.0,
-      "BaseMaximum": 0.0,
-      "Multiplier": 0.0,
-      "FlatBonus": 0.0,
-      "LimitOverflow": false,
-      "LimitUnderflow": false
+      "LimitUnderflow": false,
+      "Type": "AttributeSaveData"
     },
     {
       "Id": "wildlife_roam_radius",
-      "Value": 15.0,
+      "Value": 20.0,
       "Minimum": 0.0,
       "BaseMaximum": 0.0,
       "Multiplier": 0.0,
       "FlatBonus": 0.0,
       "LimitOverflow": false,
-      "LimitUnderflow": false
+      "LimitUnderflow": false,
+      "Type": "AttributeSaveData"
+    },
+    {
+      "Id": "wildlife_roam_interval",
+      "Value": 20.0,
+      "Minimum": 0.0,
+      "BaseMaximum": 0.0,
+      "Multiplier": 0.0,
+      "FlatBonus": 0.0,
+      "LimitOverflow": false,
+      "LimitUnderflow": false,
+      "Type": "AttributeSaveData"
     }
-  ]
+  ],
+  "Type": "EntitySaveData"
 }

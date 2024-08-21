@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5206075542676627595}
   - component: {fileID: 7882073532588256865}
   - component: {fileID: 6806230247643690916}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Leg2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -70,7 +70,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 1
@@ -109,6 +109,7 @@ GameObject:
   - component: {fileID: 3838884294663556308}
   - component: {fileID: 871604159294056728}
   - component: {fileID: -4207631162194028458}
+  - component: {fileID: 4007517960357616216}
   m_Layer: 16
   m_Name: bunny
   m_TagString: Untagged
@@ -149,6 +150,7 @@ MonoBehaviour:
   HasHitboxes: 0
   rb: {fileID: 3838884294663556308}
   IsDeadNPC: 0
+  _inSiteRange: 0
   wildlifeEntity: {fileID: 593016167884238189}
   wildlifeStateMachine: {fileID: -4207631162194028458}
   defaultData:
@@ -240,6 +242,23 @@ MonoBehaviour:
   AllowReentry: 0
   InState: 0
   DebugMode: 0
+--- !u!114 &4007517960357616216
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7160925464019355667}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27a6b92a60499204f96b0974a162440b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hitboxes:
+  - {fileID: 1304087010274726836}
+  - {fileID: 1640195858321343640}
+  - {fileID: 5206075542676627595}
+  - {fileID: 2107272629993223589}
 --- !u!1 &7864217886876182825
 GameObject:
   m_ObjectHideFlags: 0
@@ -252,7 +271,7 @@ GameObject:
   - component: {fileID: 2107272629993223589}
   - component: {fileID: 66653720301364917}
   - component: {fileID: 8113472317883535549}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -310,7 +329,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 1
@@ -347,7 +366,7 @@ GameObject:
   - component: {fileID: 1640195858321343640}
   - component: {fileID: 1699081641125798419}
   - component: {fileID: 1213619191562213887}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Leg1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -405,7 +424,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 1
@@ -442,7 +461,7 @@ GameObject:
   - component: {fileID: 1304087010274726836}
   - component: {fileID: 6823905431077824271}
   - component: {fileID: 7262664018074886943}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -500,7 +519,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 1
@@ -616,33 +635,8 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: ee832eee7e82c2d4eaacd100aec2f2a7, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7045116932100350919}
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ee832eee7e82c2d4eaacd100aec2f2a7, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 7523597488511709847}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ee832eee7e82c2d4eaacd100aec2f2a7, type: 3}
---- !u!1 &2558106126991353431 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: ee832eee7e82c2d4eaacd100aec2f2a7, type: 3}
-  m_PrefabInstance: {fileID: 3405106327500675846}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &7523597488511709847
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2558106126991353431}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 27a6b92a60499204f96b0974a162440b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hitboxes:
-  - {fileID: 1304087010274726836}
-  - {fileID: 1640195858321343640}
-  - {fileID: 5206075542676627595}
-  - {fileID: 2107272629993223589}
 --- !u!4 &2939697532162391277 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: ee832eee7e82c2d4eaacd100aec2f2a7, type: 3}

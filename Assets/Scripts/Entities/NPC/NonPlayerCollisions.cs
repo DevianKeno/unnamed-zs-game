@@ -18,6 +18,7 @@ namespace UZSG.Entities
         [SerializeField] protected bool IsDeadNPC;
         protected override void OnHitboxCollide(object sender, HitboxCollisionInfo info)
         {
+            Debug.LogWarning("collided on something");
             if (info.Source.CollisionTag == "Projectile")
             {
                 var hitbox = sender as Hitbox;

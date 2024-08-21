@@ -347,7 +347,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SiteRange: 15
   AttackRange: 1
-  CritterSiteRange: 20
+  CritterSiteRange: 12
   EnemyLayer:
     serializedVersion: 2
     m_Bits: 16384

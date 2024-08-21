@@ -147,7 +147,7 @@ namespace UZSG.Entities
         {
             get
             {
-                return false;
+                return IsDeadNPC; // bool stating if the npc is dead
             }
         }
 
@@ -175,7 +175,7 @@ namespace UZSG.Entities
             WildlifeStateMachine.ToState(WildlifeActionStates.Die);
             Game.Tick.OnSecond -= Game_Tick_OnSecond;
             Game.Entity.Kill(this);
-            //Debug.Log("Die");
+            Debug.Log("Die");
         }
 
         void Roam()

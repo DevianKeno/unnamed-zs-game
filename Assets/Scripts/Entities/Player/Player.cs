@@ -21,6 +21,9 @@ using UZSG.UI;
 
 namespace UZSG.Entities
 {
+    /// <summary>
+    /// Interface collection for Player Entity.
+    /// </summary>
     public interface IPlayer : IAttributable, IInteractActor, ISaveDataReadWrite<PlayerSaveData>
     {
     }
@@ -32,15 +35,10 @@ namespace UZSG.Entities
     {
         public bool CanPickUpItems = true;
 
-        PlayerSaveData saveData;
-        public PlayerSaveData SaveData => saveData;
+        public PlayerEntityData PlayerEntityData => (PlayerEntityData) entityData;
+        PlayerSaveData playerSaveData;
+        public PlayerSaveData SaveData => playerSaveData;
         
-        [SerializeField] PlayerEntityData playerEntityData;
-        public PlayerEntityData PlayerEntityData => playerEntityData;
-
-        [SerializeField] AttributeCollection attributes;
-        public AttributeCollection Attributes => attributes;
-
         [SerializeField] InventoryHandler inventory;
         public InventoryHandler Inventory => inventory;
 
@@ -98,10 +96,8 @@ namespace UZSG.Entities
             }
         }
 
-        public override void OnSpawn()
-        {
-            Initialize();
-        }
+
+        #region Initializing methods
 
         void Awake()
         {
@@ -113,16 +109,20 @@ namespace UZSG.Entities
             FPP = GetComponent<FPPController>();
         }
 
+        public override void OnSpawn()
+        {
+            LoadDefaultSaveData<PlayerSaveData>();
+            ReadSaveData((PlayerSaveData) saveData);
+
+            Initialize();
+        }
+
         void Initialize()
         {
             Game.Console.Log("I, player, has been spawned!");
 
-            LoadDefaultsJson();
-            /// this should be placed not here
-            ReadSaveData(saveData); /// currently loads default atm
-
             audioController.CreateAudioPool(8);
-            audioController.LoadAudioAssetsData(playerEntityData.AudioAssetsData);
+            audioController.LoadAudioAssetsData(PlayerEntityData.AudioAssetsData);
 
             InitializeAttributes();
             InitializeStateMachines();
@@ -141,19 +141,9 @@ namespace UZSG.Entities
             Game.Tick.OnTick += Tick;
             OnDoneInit?.Invoke(this, new());
         }
-
-        void LoadDefaultsJson()
-        {
-            saveData = playerEntityData.GetDefaultsJson<PlayerSaveData>();
-        }
-
-
-        #region Initializing methods
-
+        
         void InitializeAttributes()
         {
-            attributes.ReadSaveData(saveData.Attributes);
-
             attributes["stamina"].OnValueModified += OnAttrStaminaModified;
         }
 
@@ -302,16 +292,19 @@ namespace UZSG.Entities
         #endregion
 
 
-        #region Public methods
+        #region Saving/loading
 
         public void ReadSaveData(PlayerSaveData saveData)
         {
             if (saveData == null)
             {
-                Game.Console.LogError($"Invalid PlayerSaveData loaded for Player");
+                Game.Console.LogError($"Invalid PlayerSaveData loaded for Player.");
                 return;
             }
-            this.saveData = saveData; 
+            
+            base.ReadSaveData(saveData);
+
+            /// Load inventory, etc. and whatever the fuck not related to the Player
         }
         
         public new PlayerSaveData WriteSaveData()
@@ -327,6 +320,11 @@ namespace UZSG.Entities
 
             return psd;
         }
+        
+        #endregion
+
+
+        #region Public methods
 
         public void UseObjectGUI(ObjectGUI gui)
         {

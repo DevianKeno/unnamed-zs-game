@@ -14,12 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: skinwalker
   AssetReference:
-    m_AssetGUID: 033481a19307263458a06de1464ac025
+    m_AssetGUID: 44d1a8e6986fbc241bb3e29cb5264e40
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
   Name: Skinwalker
-  Attributes:
+  BaseAttributes:
   - data: {fileID: 11400000, guid: e1db9201565269c4caebcb12298f0665, type: 2}
     value: 100
     baseMaximum: 100
@@ -28,7 +28,7 @@ MonoBehaviour:
     LimitOverflow: 1
     LimitUnderflow: 1
   - data: {fileID: 11400000, guid: fe9f66b79d95e7948a4dfcb4512568c7, type: 2}
-    value: 300
+    value: 2
     baseMaximum: 1000
     multiplier: 1
     flatBonus: 0

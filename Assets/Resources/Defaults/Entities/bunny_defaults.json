@@ -26,6 +26,17 @@
       "Type": "AttributeSaveData"
     },
     {
+      "Id": "player_detection_radius",
+      "Value": 8.0,
+      "Minimum": 0.0,
+      "BaseMaximum": 0.0,
+      "Multiplier": 0.0,
+      "FlatBonus": 0.0,
+      "LimitOverflow": false,
+      "LimitUnderflow": false,
+      "Type": "AttributeSaveData"
+    },
+    {
       "Id": "wildlife_site_radius",
       "Value": 20.0,
       "Minimum": 0.0,

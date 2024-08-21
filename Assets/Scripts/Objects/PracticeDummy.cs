@@ -21,13 +21,13 @@ namespace UZSG.Objects
             base.Start();
         }
         
-        public void HitBy(HitboxCollisionInfo info)
+        public void AttackedBy(HitboxCollisionInfo info)
         {
-            if (info.Type == CollisionType.Melee)
+            if (info.ObjectType == ObjectCollisionType.Melee)
             {
                 OnHitMelee(info);
             }
-            else if (info.Type == CollisionType.Projectile)
+            else if (info.ObjectType == ObjectCollisionType.Projectile)
             {
                 OnHitProjectile(info);
             }

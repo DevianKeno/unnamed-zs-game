@@ -19,7 +19,7 @@ namespace UZSG.Attributes
     public class AttributeCollection : IEnumerable<Attribute>, ISaveDataReadWrite<List<AttributeSaveData>>
     {
         /// Just so can view in Inspector
-        [SerializeField] List<Attribute> attributes = new();
+        [SerializeField] List<Attribute> attributesReadOnly = new();
         Dictionary<string, Attribute> _attrsDict = new();
 
         public Attribute this[string id]
@@ -69,7 +69,7 @@ namespace UZSG.Attributes
             if (!_attrsDict.ContainsKey(attribute.Data.Id))
             {
                 _attrsDict[attribute.Data.Id] = attribute;
-                attributes.Add(attribute);
+                attributesReadOnly.Add(attribute);
             }
             else
             {
@@ -94,7 +94,7 @@ namespace UZSG.Attributes
         {
             if (_attrsDict.ContainsKey(id))
             {
-                attributes.Remove(_attrsDict[id]);
+                attributesReadOnly.Remove(_attrsDict[id]);
                 _attrsDict.Remove(id);
             }
             else
@@ -107,7 +107,7 @@ namespace UZSG.Attributes
         {
             if (_attrsDict.ContainsKey(id))
             {
-                attributes.Remove(_attrsDict[id]);
+                attributesReadOnly.Remove(_attrsDict[id]);
                 _attrsDict.Remove(id, out attribute);
                 return true;
             }
@@ -173,7 +173,7 @@ namespace UZSG.Attributes
         
         public IEnumerator<Attribute> GetEnumerator()
         {
-            return attributes.GetEnumerator();
+            return attributesReadOnly.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

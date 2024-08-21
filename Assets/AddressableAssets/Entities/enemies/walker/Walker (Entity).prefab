@@ -579,13 +579,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6786324724403839604}
-  - component: {fileID: 8648452243867871417}
+  - component: {fileID: 7999740600900502716}
   - component: {fileID: 2224819950650519137}
   - component: {fileID: 5579209754329764711}
-  - component: {fileID: 5002864878521246475}
   - component: {fileID: 6583129931448410585}
   - component: {fileID: 7116651654386742079}
-  m_Layer: 0
+  - component: {fileID: 5002864878521246475}
+  m_Layer: 14
   m_Name: Walker (Entity)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -606,9 +606,10 @@ Transform:
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 4619130899390222130}
+  - {fileID: 6988199063132129131}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
---- !u!114 &8648452243867871417
+--- !u!114 &7999740600900502716
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -617,35 +618,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 4923420121152070468}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4c6ff256352ca8840ae2ae8c6546c63f, type: 3}
+  m_Script: {fileID: 11500000, guid: cfabb457099849c4ea8fd6ea1e61960f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   entityData: {fileID: 11400000, guid: 733a73e5d945f434eafdbde123704a59, type: 2}
-  audioSourceController: {fileID: 0}
+  attributes:
+    attributesReadOnly: []
+  targetEntity: {fileID: 0}
+  IsAlive: 0
+  IsDead: 0
   HasHitboxes: 0
-  rb: {fileID: 0}
-  IsDeadNPC: 0
-  AttackRange: 0
-  _isInHorde: 0
-  hasTargetInSite: 0
-  hasTargetInAttack: 0
-  isDead: 0
-  RoamTime: 0
-  _roamRadius: 0
-  _roamInterval: 0
-  _distanceFromPlayer: 0
-  _speed: 0
-  _siteRadius: 0
-  _attackRadius: 0
-  enemyStateMachine: {fileID: 2224819950650519137}
-  _enemyEntity: {fileID: 5002864878521246475}
   PlayerLayer:
     serializedVersion: 2
     m_Bits: 256
+  _isInHordeMode: 0
+  _hasTargetInSight: 0
+  _hasTargetInAttackRange: 0
+  _roamTime: 0
+  _roamRadius: 0
+  _roamInterval: 0
+  _distanceFromPlayer: 0
+  _moveSpeed: 0
+  _siteRadius: 0
+  _attackRadius: 0
+  _randomDestination: {x: 0, y: 0, z: 0}
+  _currentActionState: 0
   animator: {fileID: 6509039278937967366}
-  Hordetransform: {fileID: 0}
-  defaultData:
-    Attributes: []
+  enemyStateMachine: {fileID: 2224819950650519137}
+  navMeshAgent: {fileID: 5002864878521246475}
+  hordeTransform: {fileID: 0}
 --- !u!114 &2224819950650519137
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -678,28 +679,6 @@ MonoBehaviour:
   hitboxes:
   - {fileID: 85719024693553621}
   - {fileID: 4423221204622220032}
---- !u!195 &5002864878521246475
-NavMeshAgent:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4923420121152070468}
-  m_Enabled: 1
-  m_AgentTypeID: -1372625422
-  m_Radius: 0.5
-  m_Speed: 3.5
-  m_Acceleration: 8
-  avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
-  m_AutoRepath: 1
-  m_Height: 2
-  m_BaseOffset: 0
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
 --- !u!54 &6583129931448410585
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -748,6 +727,28 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.6735749, y: 2.2439957, z: 0.4726982}
   m_Center: {x: 0.037664652, y: 1.1794319, z: 0.17827797}
+--- !u!195 &5002864878521246475
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4923420121152070468}
+  m_Enabled: 1
+  m_AgentTypeID: -1372625422
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1 &5585420439822717408
 GameObject:
   m_ObjectHideFlags: 0
@@ -1033,6 +1034,51 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Part: 0
+--- !u!1 &7581130955350013156
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6988199063132129131}
+  - component: {fileID: 2050884803010039394}
+  m_Layer: 0
+  m_Name: Audio
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6988199063132129131
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7581130955350013156}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6786324724403839604}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2050884803010039394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7581130955350013156}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91fd57dad2e3b8844889a99ae9e028d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AudioAssetsData: {fileID: 0}
 --- !u!1 &8460679643948033231
 GameObject:
   m_ObjectHideFlags: 0
@@ -1266,7 +1312,7 @@ Animator:
   m_GameObject: {fileID: 5427299040781866376}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: f91721a913f0c15429d80c6f82fc6e7e, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

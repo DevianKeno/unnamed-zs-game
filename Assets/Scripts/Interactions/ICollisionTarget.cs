@@ -2,6 +2,13 @@ using System;
 
 namespace UZSG.Interactions
 {
+    [Serializable]
+    public struct DamageContext
+    {
+        public float Value { get; set; }
+        public bool Penetration { get; set; }
+    }
+
     public interface ICollisionTarget
     {
         /// <summary>

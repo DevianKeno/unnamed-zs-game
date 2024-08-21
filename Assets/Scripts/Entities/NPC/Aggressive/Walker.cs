@@ -6,9 +6,9 @@ using UZSG.Items.Weapons;
 namespace UZSG.Entities
 {
     /// <summary>
-    /// Skinwalker class zombie.
+    /// Walker class zombie.
     /// </summary>
-    public class Skinwalker : Enemy
+    public class Walker : Enemy
     {
         protected override void OnHitboxCollision(object sender, HitboxCollisionInfo info)
         {

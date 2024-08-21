@@ -113,14 +113,15 @@ namespace UZSG.Objects
 
         #endregion
 
-        protected virtual void Destroy()
-        {
-            throw new NotImplementedException();
-        }
 
         public virtual void HitBy(HitboxCollisionInfo info)
         {
-            throw new NotImplementedException();
+            
+        }
+
+        protected virtual void Destroy()
+        {
+            
         }
 
         void InitializeTransform(TransformSaveData data)

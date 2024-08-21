@@ -15,7 +15,6 @@ namespace UZSG.Players
 
         void Awake()
         {
-            Player = GetComponent<Player>();
             Player.OnDoneInit += Init;
         }
 

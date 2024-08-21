@@ -56,7 +56,7 @@ namespace UZSG.Entities
             
             /// Attributes
             var ac = new AttributeCollection();
-            ac.AddList(Attributes);
+            ac.AddList(BaseAttributes);
             saveData.Attributes = ac.WriteSaveData();
 
             /// Inventory

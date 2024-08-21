@@ -1,185 +1,218 @@
 {
-  "Inventory": {
-    "Bag": null,
-    "Hotbar": null,
-    "Equipment": null
-  },
-  "KnownRecipes": [
-    "fiber_cord",
-    "fiber_cord_1",
-    "bandage",
-    "first_aid_kit"
-  ],
-  "Attributes": [
-    {
-      "Id": "health",
-      "Value": 100.0,
-      "Minimum": 0.0,
-      "BaseMaximum": 100.0,
-      "Multiplier": 1.0,
-      "FlatBonus": 0.0,
-      "LimitOverflow": true,
-      "LimitUnderflow": true
+    "Inventory": {
+      "Bag": null,
+      "Hotbar": null,
+      "Equipment": null
     },
-    {
-      "Id": "stamina",
-      "Value": 100.0,
-      "Minimum": 0.0,
-      "BaseMaximum": 100.0,
-      "Multiplier": 1.0,
-      "FlatBonus": 0.0,
-      "LimitOverflow": true,
-      "LimitUnderflow": true
-    },
-    {
-      "Id": "hunger",
-      "Value": 100.0,
-      "Minimum": 0.0,
-      "BaseMaximum": 100.0,
-      "Multiplier": 1.0,
-      "FlatBonus": 0.0,
-      "LimitOverflow": true,
-      "LimitUnderflow": true
-    },
-    {
-      "Id": "hydration",
-      "Value": 100.0,
-      "Minimum": 0.0,
-      "BaseMaximum": 100.0,
-      "Multiplier": 1.0,
-      "FlatBonus": 0.0,
-      "LimitOverflow": true,
-      "LimitUnderflow": true
-    },
-    {
-      "Id": "mutation",
-      "Value": 0.0,
-      "Minimum": 0.0,
-      "BaseMaximum": 100.0,
-      "Multiplier": 1.0,
-      "FlatBonus": 0.0,
-      "LimitOverflow": true,
-      "LimitUnderflow": true
-    },
-    {
-      "Id": "move_speed",
-      "Value": 300.0,
-      "Minimum": 0.0,
-      "BaseMaximum": 0.0,
-      "Multiplier": 1.0,
-      "FlatBonus": 0.0,
-      "LimitOverflow": true,
-      "LimitUnderflow": true
-    },
-    {
-      "Id": "walk_speed",
-      "Value": 150.0,
-      "Minimum": 0.0,
-      "BaseMaximum": 0.0,
-      "Multiplier": 1.0,
-      "FlatBonus": 0.0,
-      "LimitOverflow": true,
-      "LimitUnderflow": true
-    },
-    {
-      "Id": "run_speed",
-      "Value": 400.0,
-      "Minimum": 0.0,
-      "BaseMaximum": 0.0,
-      "Multiplier": 1.0,
-      "FlatBonus": 0.0,
-      "LimitOverflow": true,
-      "LimitUnderflow": true
-    },
-    {
-      "Id": "crouch_speed",
-      "Value": 150.0,
-      "Minimum": 0.0,
-      "BaseMaximum": 0.0,
-      "Multiplier": 1.0,
-      "FlatBonus": 0.0,
-      "LimitOverflow": true,
-      "LimitUnderflow": true
-    },
-    {
-      "Id": "run_stamina_cost",
-      "Value": 0.078125,
-      "Minimum": 0.0,
-      "BaseMaximum": 0.0,
-      "Multiplier": 1.0,
-      "FlatBonus": 0.0,
-      "LimitOverflow": true,
-      "LimitUnderflow": true
-    },
-    {
-      "Id": "jump_stamina_cost",
-      "Value": 20.0,
-      "Minimum": 0.0,
-      "BaseMaximum": 0.0,
-      "Multiplier": 1.0,
-      "FlatBonus": 0.0,
-      "LimitOverflow": true,
-      "LimitUnderflow": true
-    },
-    {
-      "Id": "jump_hunger_cost",
-      "Value": 0.33,
-      "Minimum": 0.0,
-      "BaseMaximum": 0.0,
-      "Multiplier": 1.0,
-      "FlatBonus": 0.0,
-      "LimitOverflow": true,
-      "LimitUnderflow": true
-    },
-    {
-      "Id": "jump_hydration_cost",
-      "Value": 0.33,
-      "Minimum": 0.0,
-      "BaseMaximum": 0.0,
-      "Multiplier": 1.0,
-      "FlatBonus": 0.0,
-      "LimitOverflow": true,
-      "LimitUnderflow": true
-    },
-    {
-      "Id": "bag_slots_count",
-      "Value": 18.0,
-      "Minimum": 0.0,
-      "BaseMaximum": 0.0,
-      "Multiplier": 1.0,
-      "FlatBonus": 0.0,
-      "LimitOverflow": true,
-      "LimitUnderflow": true
-    },
-    {
-      "Id": "hotbar_slots_count",
-      "Value": 2.0,
-      "Minimum": 0.0,
-      "BaseMaximum": 0.0,
-      "Multiplier": 1.0,
-      "FlatBonus": 0.0,
-      "LimitOverflow": true,
-      "LimitUnderflow": true
-    },
-    {
-      "Id": "stamina_regen_per_tick",
-      "Value": 0.078125,
-      "Minimum": 0.0,
-      "BaseMaximum": 100.0,
-      "Multiplier": 1.0,
-      "FlatBonus": 0.0,
-      "LimitOverflow": true,
-      "LimitUnderflow": true
-    },
-    {
-      "Id": "stamina_regen_delay",
-      "Value": 2.0,
-      "Minimum": 0.0,
-      "BaseMaximum": 2.0,
-      "Multiplier": 1.0,
-      "FlatBonus": 0.0,
-      "LimitOverflow": true,
-      "LimitUnderflow": true
-    }
-  ]
-}
+    "KnownRecipes": [
+      "fiber_cord",
+      "bandage",
+      "first_aid_kit"
+    ],
+    "InstanceId": 0,
+    "Id": null,
+    "Transform": null,
+    "Attributes": [
+      {
+        "Id": "health",
+        "Value": 100.0,
+        "Minimum": 0.0,
+        "BaseMaximum": 100.0,
+        "Multiplier": 1.0,
+        "FlatBonus": 0.0,
+        "LimitOverflow": true,
+        "LimitUnderflow": true
+      },
+      {
+        "Id": "stamina",
+        "Value": 100.0,
+        "Minimum": 0.0,
+        "BaseMaximum": 100.0,
+        "Multiplier": 1.0,
+        "FlatBonus": 0.0,
+        "LimitOverflow": true,
+        "LimitUnderflow": true
+      },
+      {
+        "Id": "hunger",
+        "Value": 100.0,
+        "Minimum": 0.0,
+        "BaseMaximum": 100.0,
+        "Multiplier": 1.0,
+        "FlatBonus": 0.0,
+        "LimitOverflow": true,
+        "LimitUnderflow": true
+      },
+      {
+        "Id": "hydration",
+        "Value": 100.0,
+        "Minimum": 0.0,
+        "BaseMaximum": 100.0,
+        "Multiplier": 1.0,
+        "FlatBonus": 0.0,
+        "LimitOverflow": true,
+        "LimitUnderflow": true
+      },
+      {
+        "Id": "mutation",
+        "Value": 0.0,
+        "Minimum": 0.0,
+        "BaseMaximum": 100.0,
+        "Multiplier": 1.0,
+        "FlatBonus": 0.0,
+        "LimitOverflow": true,
+        "LimitUnderflow": true
+      },
+      {
+        "Id": "move_speed",
+        "Value": 300.0,
+        "Minimum": 0.0,
+        "BaseMaximum": 0.0,
+        "Multiplier": 1.0,
+        "FlatBonus": 0.0,
+        "LimitOverflow": true,
+        "LimitUnderflow": true
+      },
+      {
+        "Id": "walk_speed",
+        "Value": 110.0,
+        "Minimum": 0.0,
+        "BaseMaximum": 0.0,
+        "Multiplier": 1.0,
+        "FlatBonus": 0.0,
+        "LimitOverflow": true,
+        "LimitUnderflow": true
+      },
+      {
+        "Id": "run_speed",
+        "Value": 400.0,
+        "Minimum": 0.0,
+        "BaseMaximum": 0.0,
+        "Multiplier": 1.0,
+        "FlatBonus": 0.0,
+        "LimitOverflow": true,
+        "LimitUnderflow": true
+      },
+      {
+        "Id": "crouch_speed",
+        "Value": 80.0,
+        "Minimum": 0.0,
+        "BaseMaximum": 0.0,
+        "Multiplier": 1.0,
+        "FlatBonus": 0.0,
+        "LimitOverflow": true,
+        "LimitUnderflow": true
+      },
+      {
+        "Id": "run_stamina_cost",
+        "Value": 0.078125,
+        "Minimum": 0.0,
+        "BaseMaximum": 0.0,
+        "Multiplier": 1.0,
+        "FlatBonus": 0.0,
+        "LimitOverflow": true,
+        "LimitUnderflow": true
+      },
+      {
+        "Id": "jump_stamina_cost",
+        "Value": 20.0,
+        "Minimum": 0.0,
+        "BaseMaximum": 0.0,
+        "Multiplier": 1.0,
+        "FlatBonus": 0.0,
+        "LimitOverflow": true,
+        "LimitUnderflow": true
+      },
+      {
+        "Id": "jump_hunger_cost",
+        "Value": 0.33,
+        "Minimum": 0.0,
+        "BaseMaximum": 0.0,
+        "Multiplier": 1.0,
+        "FlatBonus": 0.0,
+        "LimitOverflow": true,
+        "LimitUnderflow": true
+      },
+      {
+        "Id": "jump_hydration_cost",
+        "Value": 0.33,
+        "Minimum": 0.0,
+        "BaseMaximum": 0.0,
+        "Multiplier": 1.0,
+        "FlatBonus": 0.0,
+        "LimitOverflow": true,
+        "LimitUnderflow": true
+      },
+      {
+        "Id": "bag_slots_count",
+        "Value": 18.0,
+        "Minimum": 0.0,
+        "BaseMaximum": 0.0,
+        "Multiplier": 1.0,
+        "FlatBonus": 0.0,
+        "LimitOverflow": true,
+        "LimitUnderflow": true
+      },
+      {
+        "Id": "hotbar_slots_count",
+        "Value": 2.0,
+        "Minimum": 0.0,
+        "BaseMaximum": 0.0,
+        "Multiplier": 1.0,
+        "FlatBonus": 0.0,
+        "LimitOverflow": true,
+        "LimitUnderflow": true
+      },
+      {
+        "Id": "stamina_regen_per_tick",
+        "Value": 0.078125,
+        "Minimum": 0.0,
+        "BaseMaximum": 100.0,
+        "Multiplier": 1.0,
+        "FlatBonus": 0.0,
+        "LimitOverflow": true,
+        "LimitUnderflow": true
+      },
+      {
+        "Id": "stamina_regen_delay",
+        "Value": 2.0,
+        "Minimum": 0.0,
+        "BaseMaximum": 2.0,
+        "Multiplier": 1.0,
+        "FlatBonus": 0.0,
+        "LimitOverflow": true,
+        "LimitUnderflow": true
+      },
+      {
+        "Id": "experience",
+        "Value": 0.0,
+        "Minimum": 0.0,
+        "BaseMaximum": 100.0,
+        "Multiplier": 1.0,
+        "FlatBonus": 0.0,
+        "LimitOverflow": true,
+        "LimitUnderflow": true
+      },
+      {
+        "Id": "level",
+        "Value": 1.0,
+        "Minimum": 0.0,
+        "BaseMaximum": 0.0,
+        "Multiplier": 1.0,
+        "FlatBonus": 0.0,
+        "LimitOverflow": true,
+        "LimitUnderflow": true
+      },
+      {
+        "Id": "perk_points",
+        "Value": 5.0,
+        "Minimum": 0.0,
+        "BaseMaximum": 0.0,
+        "Multiplier": 1.0,
+        "FlatBonus": 0.0,
+        "LimitOverflow": true,
+        "LimitUnderflow": true
+      }
+    ],
+    "Type": "PlayerSaveData"
+  }

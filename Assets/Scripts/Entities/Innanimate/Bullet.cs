@@ -122,7 +122,7 @@ namespace UZSG.Entities
         {
             var info = new HitboxCollisionInfo()
             {
-                Type = CollisionType.Projectile,
+                ObjectType = ObjectCollisionType.Projectile,
                 Source = this,
                 ContactPoint = point,
             };

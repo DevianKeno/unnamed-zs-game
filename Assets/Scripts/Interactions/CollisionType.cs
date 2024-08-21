@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace UZSG.Interactions
 {
-    public enum CollisionType {
+    public enum ObjectCollisionType {
         Melee, Projectile,
     }
 }

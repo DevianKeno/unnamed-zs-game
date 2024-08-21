@@ -49,7 +49,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LoadOnEnterPlayMode: 0
-  SaveOnExitPlayMode: 1
+  SaveOnExitPlayMode: 0
   WorldName: testsavedworld
   timeController: {fileID: 3392221486933040618}
   eventsController: {fileID: 5668126680943736175}

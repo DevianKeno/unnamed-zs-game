@@ -1,97 +1,71 @@
-using System;
-using System.IO;
 using UnityEngine;
 using UnityEngine.AI;
-using UZSG.Attributes;
-using UZSG.Data;
-using UZSG.Players;
+
 using UZSG.Systems;
 using UZSG.Interactions;
-using System.Collections;
+using UZSG.Attributes;
 
 namespace UZSG.Entities
 {
-    public class Wildlife : NonPlayerCharacter, IDetectable
+    public class Wildlife : NonPlayerCharacter, IPlayerDetectable
     { 
-
-
         #region Wild Life Fundamental Data
-        public WildlifeActionStatesMachine WildlifeStateMachine => wildlifeStateMachine;
-        NavMeshHit _navHit;
-        Vector3 _randomDestination, _fleeDestination; // used for roaming and the fleeing state of the wildlife
-        float _distanceFromPlayer, _siteRadius, _roamInterval, _roamRadius, RoamTime, fleeDistance; // variables that determine wildlife state
-        WildlifeActionStates actionState;
-        [SerializeField] bool _inSiteRange;
-        [SerializeField] NavMeshAgent wildlifeEntity;
-        [SerializeField] protected WildlifeActionStatesMachine wildlifeStateMachine;
-
-
-        #endregion
-
-
-        #region 
 
         bool hasCalculatedFleeDestination;
+        [SerializeField] bool _inSiteRange;
+        float _distanceFromPlayer,
+            _siteRadius,
+            _roamInterval,
+            _roamRadius,
+            RoamTime,
+            fleeDistance;
+        Vector3 _randomDestination,
+            _fleeDestination;
+        // variables that determine wildlife state
+        NavMeshHit _navHit;
+        // used for roaming and the fleeing state of the wildlife
+
+        public float PlayerDetectionRadius
+        {
+            get
+            {
+                return attributes["player_detection_radius"].Value;
+            }
+        }
+
+        [Header("Components")]
+        [SerializeField] NavMeshAgent navMeshAgent;
+        WildlifeActionStates _currentActionState;
+        [SerializeField] protected WildlifeActionStatesMachine wildlifeStateMachine;
+        public WildlifeActionStatesMachine WildlifeStateMachine => wildlifeStateMachine;
 
         #endregion
 
 
-        #region Wild Life Overall Data
-
-        public WildlifeData WildlifeData => entityData as WildlifeData;
-        public WildlifeSaveData defaultData;
-
-        #endregion        
-
-
-        #region Start/Update/Initialize
-
-        protected virtual void Start()
-        {
-            actionState = HandleTransition;
-            ExecuteAction(actionState);
-            Game.Tick.OnSecond += Game_Tick_OnSecond;
-        }
-
-        private void Game_Tick_OnSecond(SecondInfo info)
-        {
-            ResetPlayerIfNotInRange();
-        }
-
-        protected virtual void FixedUpdate()
-        {
-            actionState = HandleTransition;
-            ExecuteAction(actionState);
-        }
+        #region Initializing methods
 
         public override void OnSpawn()
         {
             base.OnSpawn();
-            defaultPath = entityDefaultsPath + $"{entityData.Id}_defaults.json";
+
             Initialize();
         }
 
         void Initialize()
         {
-            _player = null; // set player to none
-            LoadDefaults(); // read from JSON file the default enemy attributes
-            InitializeAttributes(); // set the default attributes of the enemy
+            RetrieveAttributes();
+            targetEntity = null;
+            
+            Game.Tick.OnSecond += OnSecond;
         }
 
-        public override void LoadDefaults()
+        /// <summary>
+        /// Retrieve attribute values and cache
+        /// </summary>
+        void RetrieveAttributes()
         {
-            base.LoadDefaults();
-            defaultData = JsonUtility.FromJson<WildlifeSaveData>(defaultsJson);
-            Game.Console.Log("Wildlife data: \n" + defaultData);
-        }
+            navMeshAgent.speed = attributes.Get("move_speed").Value;
 
-        void InitializeAttributes()
-        {
-            attributes = new();
-            attributes.ReadSaveData(defaultData.Attributes);
-
-            HealthAttri = attributes.Get("health");
-            wildlifeEntity.speed = attributes.Get("move_speed").Value;
             _siteRadius = attributes.Get("wildlife_site_radius").Value;
             _roamInterval = attributes.Get("wildlife_roam_interval").Value;
             _roamRadius = attributes.Get("wildlife_roam_radius").Value;
@@ -99,15 +73,25 @@ namespace UZSG.Entities
 
         #endregion
 
+        protected virtual void FixedUpdate()
+        {
+            _currentActionState = HandleTransition();
+            ExecuteAction(_currentActionState);
+        }
+
+        void OnSecond(SecondInfo info)
+        {
+            ResetPlayerIfNotInRange();
+        }
 
 
         #region Sensor
 
-        public void PlayerSiteDetect(Player player)
+        public void DetectPlayer(Player player)
         {
             if (player != null)
             {
-                _player = player; // set the current target of the enemy to they player found
+                targetEntity = player; // set the current target of the enemy to they player found
                 _inSiteRange = true;
             }
         }
@@ -121,10 +105,10 @@ namespace UZSG.Entities
         {
             if (_inSiteRange)
             {
-                _distanceFromPlayer = Vector3.Distance(_player.Position, transform.position);
+                _distanceFromPlayer = Vector3.Distance(targetEntity.Position, transform.position);
                 if (_siteRadius <= _distanceFromPlayer)
                 {
-                    _player = null;
+                    targetEntity = null;
                     _inSiteRange = false;
                     wildlifeStateMachine.ToState(WildlifeActionStates.Roam);
                 }
@@ -143,29 +127,20 @@ namespace UZSG.Entities
             }
         }
 
-        bool IsDead
+        public WildlifeActionStates HandleTransition() // "sense" what's the state of the animal 
         {
-            get
+            if (IsDead)
             {
-                return IsDeadNPC; // bool stating if the npc is dead
+                return WildlifeActionStates.Die;
             }
-        }
 
-        public WildlifeActionStates HandleTransition // "sense" what's the state of the animal 
-        {
-            get
-            {
-                if (IsDead)
-                    return WildlifeActionStates.Die;
-                if (IsInSiteRange)
-                    return WildlifeActionStates.RunAway;
-                else
-                    return WildlifeActionStates.Roam;
-            }
+            if (IsInSiteRange)
+                return WildlifeActionStates.RunAway;
+            else
+                return WildlifeActionStates.Roam;
         }
 
         #endregion
-
 
 
         #region Actuator
@@ -173,7 +148,7 @@ namespace UZSG.Entities
         void Die()
         {
             WildlifeStateMachine.ToState(WildlifeActionStates.Die);
-            Game.Tick.OnSecond -= Game_Tick_OnSecond;
+            Game.Tick.OnSecond -= OnSecond;
             Game.Entity.Kill(this);
             Debug.Log("Die");
         }
@@ -193,9 +168,9 @@ namespace UZSG.Entities
                 NavMesh.SamplePosition(_randomDestination, out NavMeshHit navHit, _roamRadius, NavMesh.AllAreas);
 
                 // Set the agent's destination to the random point
-                wildlifeEntity.SetDestination(navHit.position);
+                navMeshAgent.SetDestination(navHit.position);
                 RoamTime = UnityEngine.Random.Range(1.0f, _roamInterval); // Reset RoamTime for the next movement
-                wildlifeEntity.updateRotation = true;
+                navMeshAgent.updateRotation = true;
             }
         }
 
@@ -215,7 +190,7 @@ namespace UZSG.Entities
             if (NavMesh.SamplePosition(_fleeDestination, out _navHit, _roamRadius, NavMesh.AllAreas))
             {
                 // Set the agent's destination to the flee destination
-                wildlifeEntity.SetDestination(_navHit.position);
+                navMeshAgent.SetDestination(_navHit.position);
                 hasCalculatedFleeDestination = true;
             }
         }
@@ -225,7 +200,7 @@ namespace UZSG.Entities
             get
             {
                 // Calculate direction vector from the wildlife to the player
-                Vector3 _directionToPlayer = _player.transform.position - transform.position;
+                Vector3 _directionToPlayer = targetEntity.transform.position - transform.position;
 
                 // Invert the direction to get the opposite direction
                 Vector3 _oppositeDirection = -_directionToPlayer;

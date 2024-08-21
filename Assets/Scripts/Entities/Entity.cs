@@ -1,65 +1,79 @@
-using System;
-
 using UnityEngine;
 
 using UZSG.Systems;
 using UZSG.Data;
-using UZSG.Interactions;
 using UZSG.Saves;
+using UZSG.Attributes;
 
 namespace UZSG.Entities
 {
     /// <summary>
-    /// Represent dynamic objects that appear in the World.
+    /// Base class for dynamic objects that appear in the World.
     /// </summary>
-    public abstract class Entity : MonoBehaviour, ISaveDataReadWrite<EntitySaveData>
+    public abstract class Entity : MonoBehaviour, IAttributable, ISaveDataReadWrite<EntitySaveData>
     {
-        protected const string entityDefaultsPath = "/Resources/Defaults/Entities/";
-
+        bool _hasAlreadySpawned = false;
+        
         [SerializeField] protected EntityData entityData;
         public EntityData EntityData => entityData;
+        /// <summary>
+        /// Shorthand to get EntityData Id.
+        /// </summary>
         public string Id => entityData.Id;
+        protected EntitySaveData saveData;
+
+        [SerializeField] protected AttributeCollection attributes;
+        public AttributeCollection Attributes => attributes;
+
         public Vector3 Position
         {
             get { return transform.position; }
             set { transform.position = value; }
         }
-        [SerializeField] protected AudioSourceController audioSourceController;
-        public AudioSourceController AudioSourceController => audioSourceController;
-
-        public bool HasHitboxes = false;
-        protected EntityHitboxController hitboxes;
-
-        bool _isAlive;
-        public bool IsAlive => _isAlive;
 
 
         #region Initializing methods
 
-        void Awake()
+        protected virtual void Start()
         {
-            hitboxes = GetComponent<EntityHitboxController>();
-
-            if (hitboxes != null) HasHitboxes=true;
+            OnSpawnInternal();
         }
 
         internal void OnSpawnInternal()
         {
+            if (_hasAlreadySpawned) return;
+            _hasAlreadySpawned = true;
+
             OnSpawn();
-            if (HasHitboxes) InitializeHitboxEvents();
+        }
+
+        protected virtual void LoadDefaultSaveData<T>() where T : EntitySaveData
+        {
+            saveData = entityData.GetDefaultSaveData<T>();
         }
 
         /// <summary>
         /// Called after the EntityManager spawned callback.
         /// You can modify the entity's attributes before this calls.
         /// </summary>
-        public virtual void OnSpawn()
-        {
-        }
+        public virtual void OnSpawn() { }
+
+        #endregion
+        
 
         public virtual void ReadSaveData(EntitySaveData saveData)
         {
-            InitializeTransform(saveData.Transform);
+            this.saveData = saveData;
+             
+            if (saveData.Transform != null)
+            {
+                ReadTransformSaveData(saveData.Transform);
+            }
+            /// Read attributes()
+            attributes = new();
+            attributes.ReadSaveData(saveData.Attributes);
+
+            /// Read etc.
         }
         
         public virtual EntitySaveData WriteSaveData()
@@ -91,26 +105,8 @@ namespace UZSG.Entities
 
             return saveData;
         }
-
-        #endregion
         
-
-        public virtual void Kill(bool notify = true)
-        {
-            if (notify) Game.Entity.Kill(this);
-        }
-        
-        protected void InitializeHitboxEvents()
-        {
-            foreach (var hitbox in hitboxes.Hitboxes)
-            {
-                hitbox.OnHit += OnHitboxCollide;
-            }
-        }
-        
-        protected virtual void OnHitboxCollide(object sender, HitboxCollisionInfo info) { }
-        
-        void InitializeTransform(TransformSaveData data)
+        void ReadTransformSaveData(TransformSaveData data)
         {
             var position = new Vector3(
                 data.Position.X,
@@ -131,5 +127,15 @@ namespace UZSG.Entities
             transform.SetPositionAndRotation(position, rotation);
             transform.localScale = scale;
         }
+
+
+        #region Public methods
+
+        public virtual void Kill(bool notify = true)
+        {
+            if (notify) Game.Entity.Kill(this);
+        }
+
+        #endregion
     }
 }

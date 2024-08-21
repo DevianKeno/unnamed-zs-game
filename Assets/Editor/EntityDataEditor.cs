@@ -10,7 +10,7 @@ namespace UZSG.UnityEditor
     {
         SerializedProperty assetReference,
             nameProperty,
-            attributes,
+            baseAttributes,
             audioAssetsData;
 
         protected override void OnEnable()
@@ -19,7 +19,7 @@ namespace UZSG.UnityEditor
             
             assetReference = serializedObject.FindProperty("AssetReference");
             nameProperty = serializedObject.FindProperty("Name");
-            attributes = serializedObject.FindProperty("Attributes");
+            baseAttributes = serializedObject.FindProperty("BaseAttributes");
             audioAssetsData = serializedObject.FindProperty("AudioAssetsData");
         }
 
@@ -31,7 +31,7 @@ namespace UZSG.UnityEditor
             
             EditorGUILayout.PropertyField(assetReference);
             EditorGUILayout.PropertyField(nameProperty);
-            EditorGUILayout.PropertyField(attributes);
+            EditorGUILayout.PropertyField(baseAttributes);
             
             if (GUILayout.Button("Save to Defaults Json"))
             {

@@ -4,24 +4,19 @@ using UnityEngine;
 
 namespace UZSG.Entities
 {
-    public enum HitboxPart {
-        Head, Body, Arms, Legs
-    }
-
     public class EntityHitboxController : MonoBehaviour
     {
         [SerializeField] List<Hitbox> hitboxes;
         public List<Hitbox> Hitboxes => hitboxes;
 
-
 #if UNITY_EDITOR
         public void ReinitializeeHitboxes()
         {
             hitboxes = new();
-            GetHitboxFromChildren(transform);
+            GetHitboxFromChildrenRecursive(transform);
         }
 
-        void GetHitboxFromChildren(Transform transform)
+        void GetHitboxFromChildrenRecursive(Transform transform)
         {
             foreach (Transform child in transform)
             {
@@ -30,10 +25,9 @@ namespace UZSG.Entities
                     hitbox.GetComponent<Collider>().isTrigger = true;
                     hitboxes.Add(hitbox);
                 }
-                GetHitboxFromChildren(child);
+                GetHitboxFromChildrenRecursive(child);
             }
         }
 #endif
     }
-
 }

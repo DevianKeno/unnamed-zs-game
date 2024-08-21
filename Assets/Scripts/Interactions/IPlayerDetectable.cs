@@ -1,11 +1,17 @@
-using System;
+using UnityEngine;
 using UZSG.Entities;
 
 namespace UZSG.Interactions
 {
-    public interface IDetectable
+    /// <summary>
+    /// Represents entities that are detectable by the Player (or the other way around?)
+    /// </summary>
+    public interface IPlayerDetectable
     {
-        public void PlayerSiteDetect(Player player);
-        public void PlayerAttackDetect(Player player);
+        public Vector3 Position { get; }
+        public float PlayerDetectionRadius { get; }
+
+        public void DetectPlayer(Player player);
+        public void PlayerAttackDetect(Player player); /// paghiwalayin mo to pre detectable nga tapos may attack??
     }
 }

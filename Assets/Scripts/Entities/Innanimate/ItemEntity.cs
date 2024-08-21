@@ -72,14 +72,19 @@ namespace UZSG.Entities
         public int Age = DespawnTimeSeconds;
 
         int _originalLayer;
+        bool _isModelLoaded;
+
         GameObject model;
         Rigidbody rb;
         public Rigidbody Rigidbody => rb;
 
+
+        #region Initializing methods
+
         protected virtual void Awake()
         {
-            model = transform.Find("box").gameObject;
             rb = GetComponentInChildren<Rigidbody>();
+            model = transform.Find("box").gameObject;
             _originalLayer = model.layer;
         }
 
@@ -88,16 +93,26 @@ namespace UZSG.Entities
             LoadModel();
         }
 
+        public override void OnSpawn()
+        {
+            base.OnSpawn();
+
+            LoadModel();
+            Age = DespawnTimeSeconds;
+            Game.Tick.OnSecond += Second;
+        }
+
         void LoadModel()
         {
+            if (_isModelLoaded) return;
             if (item.IsNone)
             {
-                Game.Console.LogWarning($"Item in {transform.position} is not set.");
+                Game.Console.LogWarning($"Item in {transform.position} is a None Item.");
                 return;
             }
             if (!item.Data.Model.IsSet())
             {
-                Game.Console.LogWarning($"The item {item.Data.Id} has no model to load.");
+                Game.Console.LogWarning($"The model asset of Item {item.Data.Id} is missing or not set.");
                 return;
             }
 
@@ -108,18 +123,9 @@ namespace UZSG.Entities
                     Destroy(model);
                     model = Instantiate(a.Result, transform);
                     model.ChangeTag("Interactable");
+                    _isModelLoaded = true;
                 }
             };            
-        }
-
-        public override void OnSpawn()
-        {
-            if (!item.IsNone)
-            {
-                LoadModel();
-            }
-            Age = DespawnTimeSeconds;
-            Game.Tick.OnSecond += Second;
         }
 
         void Second(SecondInfo e)
@@ -130,6 +136,41 @@ namespace UZSG.Entities
                 Despawn();
             }
         }
+
+        public override void ReadSaveData(EntitySaveData saveData)
+        {
+            if (saveData is not ItemEntitySaveData sd) return;
+
+            base.ReadSaveData(saveData);
+            if (sd.Item.Id == "none") Destroy(gameObject);
+
+            item = new Item(sd.Item.Id, sd.Item.Count);
+            if (sd.Item.HasAttributes)
+            {
+                item.Attributes.ReadSaveData(sd.Item.Attributes);
+            }
+        }
+        
+        public override EntitySaveData WriteSaveData()
+        {
+            var sd = base.WriteSaveData();
+            
+            var saveData = new ItemEntitySaveData()
+            {
+                InstanceId = sd.InstanceId,
+                Id = entityData.Id,
+                Transform = sd.Transform,
+                Item = item.WriteSaveData(),
+                Age = Age
+            };
+
+            return saveData;
+        }
+
+        #endregion
+
+
+        #region Public methods
 
         public void Interact(IInteractActor actor, InteractArgs args)
         {
@@ -173,36 +214,6 @@ namespace UZSG.Entities
             Game.Entity.Kill(this);
         }
 
-        public override void ReadSaveData(EntitySaveData saveData)
-        {
-            if (saveData is not ItemEntitySaveData sd) return;
-
-            base.ReadSaveData(saveData);
-            if (sd.Item.Id == "none") Destroy(gameObject);
-
-            item = new Item(sd.Item.Id, sd.Item.Count);
-            if (sd.Item.HasAttributes)
-            {
-                item.Attributes.ReadSaveData(sd.Item.Attributes);
-            }
-        }
-        
-        public override EntitySaveData WriteSaveData()
-        {
-            var sd = base.WriteSaveData();
-            
-            var saveData = new ItemEntitySaveData()
-            {
-                InstanceId = sd.InstanceId,
-                Id = entityData.Id,
-                Transform = sd.Transform,
-                Item = item.WriteSaveData(),
-                Age = Age
-            };
-
-            return saveData;
-        }
-
         public void Cleanup()
         {
             if (item.IsNone)
@@ -210,5 +221,7 @@ namespace UZSG.Entities
                 Destroy(gameObject);
             }
         }
+
+        #endregion
     }
 }

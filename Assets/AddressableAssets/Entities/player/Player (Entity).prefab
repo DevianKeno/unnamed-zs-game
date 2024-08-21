@@ -32,6 +32,63 @@ Transform:
   - {fileID: 2794694494416374383}
   m_Father: {fileID: 9144966643444850028}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5983665071047775233
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4554423867586316467}
+  - component: {fileID: 5934312054179663322}
+  m_Layer: 0
+  m_Name: Player Detection
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4554423867586316467
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5983665071047775233}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 9144966643444850028}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5934312054179663322
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5983665071047775233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b363c6981a7273b429d2011edad97652, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 7126291028611460157}
+  Layers:
+    serializedVersion: 2
+    m_Bits: 81920
+  EnemyLayer:
+    serializedVersion: 2
+    m_Bits: 16384
+  WildlifeLayer:
+    serializedVersion: 2
+    m_Bits: 65536
+  SiteRange: 15
+  AttackRange: 1
+  CritterSiteRange: 12
 --- !u!1 &6445073646006960955
 GameObject:
   m_ObjectHideFlags: 0
@@ -259,8 +316,6 @@ GameObject:
   m_Component:
   - component: {fileID: 9144966643444850028}
   - component: {fileID: 7126291028611460157}
-  - component: {fileID: 2387450465932377105}
-  - component: {fileID: -3347734694974871184}
   - component: {fileID: 5342855004310521056}
   - component: {fileID: 8855759747402608191}
   - component: {fileID: 99515879283178584}
@@ -289,6 +344,7 @@ Transform:
   - {fileID: 4535755280644001122}
   - {fileID: 4879530985947953621}
   - {fileID: 717776930599615464}
+  - {fileID: 4554423867586316467}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7126291028611460157
@@ -304,12 +360,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   entityData: {fileID: 11400000, guid: fd9a4ce7bea70464290eed15b69cc9d1, type: 2}
-  audioSourceController: {fileID: 0}
-  HasHitboxes: 0
+  attributes:
+    attributesReadOnly: []
   CanPickUpItems: 1
   playerEntityData: {fileID: 11400000, guid: fd9a4ce7bea70464290eed15b69cc9d1, type: 2}
   attributes:
-    attributes: []
+    attributesReadOnly: []
   inventory: {fileID: 0}
   crafter: {fileID: 0}
   audioController: {fileID: 7673908435453613517}
@@ -319,41 +375,6 @@ MonoBehaviour:
   _targetY: 0
   animator: {fileID: 5776680941843051959}
   animatorFPP: {fileID: 0}
---- !u!114 &2387450465932377105
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7226565028708405948}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 506e744f4f9c07d4db200eee5f5a0c4c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  AudioAssetsData: {fileID: 11400000, guid: eed9c45f6757aae48b1990646f079589, type: 2}
-  Player: {fileID: 7126291028611460157}
---- !u!114 &-3347734694974871184
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7226565028708405948}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b363c6981a7273b429d2011edad97652, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SiteRange: 15
-  AttackRange: 1
-  CritterSiteRange: 12
-  EnemyLayer:
-    serializedVersion: 2
-    m_Bits: 16384
-  WildlifeLayer:
-    serializedVersion: 2
-    m_Bits: 65536
 --- !u!114 &5342855004310521056
 MonoBehaviour:
   m_ObjectHideFlags: 0

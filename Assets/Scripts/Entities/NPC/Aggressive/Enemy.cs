@@ -1,99 +1,109 @@
-using System;
-using System.IO;
 using UnityEngine;
 using UnityEngine.AI;
-using UZSG.Attributes;
+
 using UZSG.Data;
-using UZSG.Players;
 using UZSG.Systems;
 using UZSG.Interactions;
-using System.Collections;
+using UZSG.Attributes;
 
 namespace UZSG.Entities
 {
-    public partial class Enemy : NonPlayerCharacter, IDetectable
+    public partial class Enemy : NonPlayerCharacter, IPlayerDetectable
     {
-        #region Agent movement and Fundamental data
+        public EnemyData EnemyData => entityData as EnemyData;
 
-        public float AttackRange;  // range from which it follow, attacks Players (to remove)
-        public EnemyActionStatesMachine EnemyStateMachine => enemyStateMachine;
-        public bool _isInHorde;
-        EnemyActionStates _actionState;
-        Vector3 _randomDestination; // Destination of agent
-        [SerializeField] bool hasTargetInSite, hasTargetInAttack, isDead; // checks if the player is in site, attack range or is a target
-        [SerializeField] float RoamTime; // Time it takes for the agent to travel a point
+        [Header("Agent Information")]
+        public LayerMask PlayerLayer; // Layers that the enemy chases
+        [SerializeField] bool _isInHordeMode;
+        [SerializeField] bool _hasTargetInSight; // checks if the player is in site, attack range or is a target
+        [SerializeField] bool _hasTargetInAttackRange;
+        [SerializeField] float _roamTime; // Time it takes for the agent to travel a point
         [SerializeField] float _roamRadius; // Radius of which the agent can travel
         [SerializeField] float _roamInterval; // Interval before the model moves again
         [SerializeField] float _distanceFromPlayer;
-        [SerializeField] float _speed;
-        [SerializeField] float _siteRadius, _attackRadius; // Radius of which the enemy detects the player
+        [SerializeField] float _moveSpeed;
+        [SerializeField] float _siteRadius;
+        [SerializeField] float _attackRadius; // Radius of which the enemy detects the player
+        [SerializeField] Vector3 _randomDestination; // Destination of agent
+        [SerializeField] EnemyActionStates _currentActionState;
+
+
+        #region Properties
+
+        public float PlayerDetectionRadius
+        {
+            get
+            {
+                return attributes["player_detection_radius"].Value;
+            }
+        }
+
+        #endregion
+
+
+        [Header("Components")]
+        [SerializeField] Animator animator;
+        public Animator Animator => animator;
         [SerializeField] protected EnemyActionStatesMachine enemyStateMachine;
-        [SerializeField] NavMeshAgent _enemyEntity; // the entity's agent
-        [SerializeField] LayerMask PlayerLayer; // Layers that the enemy chases
-        [SerializeField] Animator animator; // Layers that the enemy chases
-
-        
-        #endregion
+        public EnemyActionStatesMachine EnemyStateMachine => enemyStateMachine;
+        [SerializeField] NavMeshAgent navMeshAgent;
+        public Transform hordeTransform;
 
 
-        #region Horde Setting
-        
-        public Transform Hordetransform;
-
-        #endregion
-
-
-        #region Agent data
-
-        public EnemyData EnemyData => entityData as EnemyData;
-        public EnemySaveData defaultData;
-
-
-        #endregion
-
-
-        #region Enemy Start/Update
-        protected virtual void Start()
-        {
-            _actionState = HandleTransition;
-            ExecuteAction(_actionState);
-            Game.Tick.OnSecond += Game_Tick_OnSecond;
-        }
-
-        private void Game_Tick_OnSecond(SecondInfo info)
-        {
-            ResetPlayerIfNotInRange();
-        }
-
-        protected virtual void LateUpdate()
-        {
-            
-        }
-
-        void FixedUpdate()
-        {
-            _actionState = HandleTransition;
-            ExecuteAction(_actionState);
-        }
+        #region Initializing methods
 
         public override void OnSpawn()
         {
             base.OnSpawn();
-            _enemyEntity = GetComponent<NavMeshAgent>();
+
             Initialize();
+        }
+
+        void Initialize() 
+        {
+            RetrieveAttributes();
+            targetEntity = null;
+
+            Game.Tick.OnSecond += OnSecond;
+        }
+
+        /// <summary>
+        /// Retrieve attribute values and cache
+        /// </summary>
+        void RetrieveAttributes()
+        {
+            navMeshAgent.speed = Attributes.Get("move_speed").Value;
+            _moveSpeed = Attributes.Get("move_speed").Value;
+
+            _siteRadius = Attributes.Get("zombie_site_radius").Value;
+            _attackRadius = Attributes.Get("zombie_attack_radius").Value;
+            _roamRadius = Attributes.Get("zombie_roam_radius").Value;
+            _roamInterval = Attributes.Get("zombie_roam_interval").Value;
         }
 
         #endregion
 
 
+        protected virtual void FixedUpdate()
+        {
+            _currentActionState = HandleTransition();
+            ExecuteAction(_currentActionState);
+        }
+
+        void OnSecond(SecondInfo s)
+        {
+            ResetTargetIfNotInRange();
+        }
+
+
         #region Agent Player Detection
 
-        public void PlayerSiteDetect(Player player)
+        public void DetectPlayer(Player player)
         {
             if (player != null)
             {
-                _player = player; // set the current target of the enemy to they player found
-                hasTargetInSite = true;
+                targetEntity = player; // set the current target of the enemy to they player found
+                _hasTargetInSight = true;
             }
         }
 
@@ -101,31 +111,31 @@ namespace UZSG.Entities
         {
             if (player != null)
             {
-                hasTargetInAttack = true;
+                _hasTargetInAttackRange = true;
             }
         }
 
-        public void ResetPlayerIfNotInRange()
+        public void ResetTargetIfNotInRange()
         {
             // Check if there is a target, then calculate the distance
-            if (hasTargetInSite)
+            if (_hasTargetInSight)
             {
-                _distanceFromPlayer = Vector3.Distance(_player.Position, transform.position); 
+                _distanceFromPlayer = Vector3.Distance(targetEntity.Position, transform.position); 
         
                 if (_siteRadius <= _distanceFromPlayer) // if target no longer in site reset target
                 {
-                    _player = null;
-                    hasTargetInSite = false;
+                    targetEntity = null;
+                    _hasTargetInSight = false;
                     enemyStateMachine.ToState(EnemyActionStates.Roam);
                 }
                 else
                 {
                     // Check if no player in attack range, reset to chase
-                    if (hasTargetInAttack)
+                    if (_hasTargetInAttackRange)
                     {
                         if (_attackRadius <= _distanceFromPlayer)
                         {
-                            hasTargetInAttack = false;
+                            _hasTargetInAttackRange = false;
                             enemyStateMachine.ToState(EnemyActionStates.Chase);
                         }
                     }
@@ -136,66 +146,28 @@ namespace UZSG.Entities
         #endregion
 
 
-        #region Agent Loading Default Data
-
-        void Initialize() 
-        {
-            _player = null; // set player to none
-            LoadDefaults(); // read from JSON file the default enemy attributes
-            InitializeAttributes(); // set the default attributes of the enemy
-        }
-
-        public override void LoadDefaults()
-        {
-            base.LoadDefaults();
-            defaultData = JsonUtility.FromJson<EnemySaveData>(defaultsJson);
-            Game.Console.Log("Enemy data: \n" + defaultData);
-        }
-
-        void InitializeAttributes()
-        {
-            attributes = new();
-            attributes.ReadSaveData(defaultData.Attributes);
-            _siteRadius = Attributes.Get("zombie_site_radius").Value;
-            _attackRadius = Attributes.Get("zombie_attack_radius").Value;
-            _speed = Attributes.Get("move_speed").Value;
-            _roamRadius = Attributes.Get("zombie_roam_radius").Value;
-            _roamInterval = Attributes.Get("zombie_roam_interval").Value;
-            _enemyEntity.speed = Attributes.Get("move_speed").Value;
-            HealthAttri = attributes.Get("health");
-        }
-
-        #endregion
-
         #region Agent sensors
-        public bool IsInSiteRange  // determines if enemy can Chase Player or Roam map
+        
+        public bool HasTargetInSight  // determines if enemy can Chase Player or Roam map
         {
             get
             {
-                if (hasTargetInSite)
-                {
-                    return true;
-                }
-                return false;
+                return _hasTargetInSight;
             }
         }
 
-        public bool IsInAttackrange // determines if enemy can Attack Player
+        public bool HasTargetInAttackRange // determines if enemy can Attack Player
         {
             get
             {   
-                if (hasTargetInAttack)
-                {
-                    return true;
-                }
-                return false;
+                return _hasTargetInAttackRange;
             }
         }
-        public bool IsNoHealth // determines if the enemy is dead
+        public bool HasNoHealth // determines if the enemy is dead
         {
             get
             {
-                return IsDeadNPC; // bool stating if the npc is dead
+                return IsDead; // bool stating if the npc is dead
             }
         }
 
@@ -206,7 +178,7 @@ namespace UZSG.Entities
                 return false;
             }
         }
-        public bool IsSpecialAttackTriggered2 // determines if an event happened that triggered special Attack 2
+        public bool IsSpecialAttack2Triggered // determines if an event happened that triggered special Attack 2
         {
             get
             {
@@ -214,53 +186,50 @@ namespace UZSG.Entities
             }
         }
 
-        public bool IsHordeMode
+        public bool IsInHordeMode
         {
             get
             {   // TODO: palitan mo yung "jericho_method" sa method na nagrereturn ng bool; true if in hordemode (lalakad straight line), false if hindi horde mode zombie
-                if (_isInHorde)
+                if (_isInHordeMode)
                 {
-                    if (IsInSiteRange)
+                    if (HasTargetInSight)
                     {
                         return false;
                     }
-                    Hordetransform.SetPositionAndRotation(new Vector3(1, 2, 1), Quaternion.Euler(0, 30, 0));
+                    hordeTransform.SetPositionAndRotation(new Vector3(1, 2, 1), Quaternion.Euler(0, 30, 0));
                     return true;
                 }
                 return false;
             }
         }
 
-        public EnemyActionStates HandleTransition // "sense" what's the state of the enemy 
+        public EnemyActionStates HandleTransition() // "sense" what's the state of the enemy 
         {
-            get
+            if (IsDead)
             {
-                // if enemy has no health, state is dead
-                if (IsNoHealth)
+                return EnemyActionStates.Die;
+            }
+
+            // if enemy is in horde mode
+            // if (IsHordeMode)
+            // {
+            //     return EnemyActionStates.Horde;
+            // }
+
+            if (HasTargetInSight)
+            {
+                if (HasTargetInAttackRange) 
                 {
-                    return EnemyActionStates.Die;
+                    return EnemyActionStates.Attack;
                 }
-                // if enemy is in horde mode
-                // if (IsHordeMode)
-                // {
-                //     return EnemyActionStates.Horde;
-                // }
-                // if Player not in Chase range
-                if (!IsInSiteRange)
+                else /// keep chasing
                 {
-                    return EnemyActionStates.Roam;
+                    return EnemyActionStates.Chase;
                 }
-                else
-                {
-                    if (!IsInAttackrange) // If no player found in attack range keep chasing
-                    {
-                        return EnemyActionStates.Chase;
-                    }
-                    else
-                    {
-                        return EnemyActionStates.Attack;
-                    }
-                }
+            }
+            else
+            {
+                return EnemyActionStates.Roam;
             }
         }
 
@@ -277,27 +246,27 @@ namespace UZSG.Entities
             rb.isKinematic = false;
 
             // allow enemy movement
-            _enemyEntity.isStopped = false;
-            _enemyEntity.updateRotation = true;
+            navMeshAgent.isStopped = false;
+            navMeshAgent.updateRotation = true;
 
             // chase player position
-            _enemyEntity.SetDestination(_player.transform.position);
+            navMeshAgent.SetDestination(targetEntity.transform.position);
         }
 
         public void Roam()
         {
-            _enemyEntity.isStopped = false;
+            navMeshAgent.isStopped = false;
             // Check if the enemy has reached its destination and is actively moving
-            if (_enemyEntity.remainingDistance >= 0.002f && _enemyEntity.remainingDistance <= _enemyEntity.stoppingDistance)
+            if (navMeshAgent.remainingDistance >= 0.002f && navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance)
             {
-                _enemyEntity.isStopped = true;
-                _enemyEntity.updateRotation = false;
+                navMeshAgent.isStopped = true;
+                navMeshAgent.updateRotation = false;
             }
             else
             {
                 // Continue moving toward the destination
-                RoamTime -= Time.deltaTime;
-                if (RoamTime <= 0)
+                _roamTime -= Time.deltaTime;
+                if (_roamTime <= 0)
                 {
                     // Get a random position
                     _randomDestination = UnityEngine.Random.insideUnitSphere * _roamRadius;
@@ -306,10 +275,10 @@ namespace UZSG.Entities
                     NavMesh.SamplePosition(_randomDestination, out NavMeshHit navHit, _roamRadius, NavMesh.AllAreas);
 
                     // Set the agent's destination to the random point
-                    _enemyEntity.SetDestination(navHit.position);
+                    navMeshAgent.SetDestination(navHit.position);
                     enemyStateMachine.ToState(EnemyActionStates.Roam);
-                    RoamTime = UnityEngine.Random.Range(1.0f, _roamInterval); // Reset RoamTime for the next movement
-                    _enemyEntity.updateRotation = true;
+                    _roamTime = UnityEngine.Random.Range(1.0f, _roamInterval); // Reset RoamTime for the next movement
+                    navMeshAgent.updateRotation = true;
                 }
             }
         }
@@ -327,13 +296,13 @@ namespace UZSG.Entities
             rb.isKinematic = true;
 
             // prevent the enemy from moving when in attack range
-            _enemyEntity.isStopped = true;
-            _enemyEntity.updateRotation = false;
+            navMeshAgent.isStopped = true;
+            navMeshAgent.updateRotation = false;
         }
         public void Die()
         {
             enemyStateMachine.ToState(EnemyActionStates.Die);
-            Game.Tick.OnSecond -= Game_Tick_OnSecond;
+            Game.Tick.OnSecond -= OnSecond;
             Game.Entity.Kill(this);
             Debug.Log("Die");
         }
@@ -353,10 +322,10 @@ namespace UZSG.Entities
             enemyStateMachine.ToState(EnemyActionStates.Horde);
 
             // Set the starting position and rotation of the zombie
-            transform.SetPositionAndRotation(Hordetransform.position, Hordetransform.rotation);
+            transform.SetPositionAndRotation(hordeTransform.position, hordeTransform.rotation);
 
             // Move forward according to speed
-            transform.Translate(Vector3.forward * (_speed * Time.deltaTime));
+            transform.Translate(Vector3.forward * (_moveSpeed * Time.deltaTime));
         }
 
         public void ExecuteAction(EnemyActionStates action) // execute an action depending on what state the entity is on
@@ -391,7 +360,5 @@ namespace UZSG.Entities
         }
 
         #endregion
-
-
     }
 }

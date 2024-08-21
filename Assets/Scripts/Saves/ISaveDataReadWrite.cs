@@ -5,5 +5,6 @@ namespace UZSG.Saves
     /// </summary>
     public interface ISaveDataReadWrite<T> : ISaveDataReadable<T>, ISaveDataWriteable<T>
     {
+        
     }
 }

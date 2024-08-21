@@ -21,9 +21,7 @@ namespace UZSG.Data
         [Header("Entity Data")]
         public AssetReference AssetReference;
         public string Name;
-        
-        [Header("Base Attributes")]
-        public List<Attributes.Attribute> Attributes;
+        public List<Attributes.Attribute> BaseAttributes;
         
         [Header("Audio Data")]
         public AudioAssetsData AudioAssetsData;
@@ -31,7 +29,7 @@ namespace UZSG.Data
         /// <summary>
         /// Retrieves the default parameters set in Unity by developers for this Entity.
         /// </summary>
-        public virtual T GetDefaultsJson<T>()
+        public virtual T GetDefaultSaveData<T>() where T : EntitySaveData
         {
             var filepath = defaultsPath + $"{Id}_defaults.json";
 
@@ -56,7 +54,7 @@ namespace UZSG.Data
             var defaults = JsonConvert.DeserializeObject<EntitySaveData>(defaultsJson);
 
             /// Attributes
-            Attributes.Clear();
+            BaseAttributes.Clear();
             foreach (var attrSave in defaults.Attributes)
             {
                 var attrData = Resources.Load<AttributeData>($"Data/Attributes/{attrSave.Id}");
@@ -64,7 +62,7 @@ namespace UZSG.Data
                 {
                     var newAttr = new Attributes.Attribute(attrData);
                     newAttr.ReadSaveData(attrSave);
-                    Attributes.Add(newAttr);
+                    BaseAttributes.Add(newAttr);
                 }
                 else
                 {
@@ -80,7 +78,7 @@ namespace UZSG.Data
             
             /// Attributes
             var ac = new AttributeCollection();
-            ac.AddList(Attributes);
+            ac.AddList(BaseAttributes);
             saveData.Attributes = ac.WriteSaveData();
 
             WriteToFile(saveData);

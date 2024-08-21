@@ -222,6 +222,7 @@ namespace UZSG.Items.Weapons
         void OnMeleeAttackHit(HitboxCollisionInfo info)
         {
             info.Source = this;
+            info.CollisionType = HitboxCollisionType.Attack;
             info.Target.HitBy(info);
             OnMeleeHit?.Invoke(info);
         }

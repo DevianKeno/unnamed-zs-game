@@ -11,6 +11,7 @@ using UZSG.Data;
 using UZSG.Entities;
 using UZSG.Players;
 using UZSG.Attributes;
+using UZSG.Attacks;
 
 namespace UZSG.Items.Weapons
 {
@@ -175,13 +176,22 @@ namespace UZSG.Items.Weapons
 
             ConsumeStamina();
             PlaySound();
-            StartCoroutine(CreateAttackRays());
+            var atkParams = GetAttackParams();
+            CreateAttackRays(ref atkParams);
             stateMachine.ToState(MeleeWeaponStates.Attack);
             yield return new WaitForSeconds(0.5f); /// SOMETHING ATKSPD THOUGH NOT SO STRAIGHFROWARDS LOTS OF CALCS (short for calculations)
             
             _inhibitActions = false;
             _isAttacking = false;
         }
+        
+        MeleeAttackParameters GetAttackParams()
+        {
+            #region TODO: Implement combos
+            #endregion
+            var data = WeaponData.MeleeAttacks[0];
+            return MeleeAttacks.Parameters(data);
+        }   
 
         void ConsumeStamina()
         {
@@ -193,51 +203,27 @@ namespace UZSG.Items.Weapons
             audioSourceController.PlaySound("swing1");
         }
 
-        IEnumerator CreateAttackRays()
+        void CreateAttackRays(ref MeleeAttackParameters atk)
         {
+            atk.Origin = Player.EyeLevel;
+            atk.Up = Player.Up;
+            atk.Direction = Player.Forward;
 
-
-
-            float halfAngle = attackAngle / 2;
-            float angleStep = attackAngle / (numberOfRays - 1);
-            float stepTime = attackDuration / numberOfRays;
-            Color rayColor;
-            
-            HashSet<int> targets = new();
-
-            for (int i = 0; i < numberOfRays; i++)
+            if (atk.SwingType == MeleeSwingType.Raycast)
             {
-                float currentAngle = halfAngle - (angleStep * i);
-                Vector3 direction = Quaternion.Euler(0, currentAngle, 0) * Player.Forward;
-                Vector3 rayOrigin = Player.EyeLevel;
-                Vector3 forceDirection = Vector3.zero;
-
-                if (Physics.Raycast(rayOrigin, direction, out RaycastHit hit, attackRange, attackLayer))
-                {
-                    int hitObjectId = hit.collider.GetInstanceID();
-
-                    if (!targets.Contains(hitObjectId))
-                    {
-                        targets.Add(hitObjectId);
-                        forceDirection = CalculateForceDirection(hit.point, hit.normal, direction);
-                        OnHit(hit.point, hit.collider);
-
-                    }
-                    rayColor = Color.red;
-                }
-                else
-                {
-                    rayColor = Color.white;
-                }
-                
-                if (VisualizeAttack)
-                {
-                    Debug.DrawRay(hit.point, forceDirection * 2, Color.green, 1.0f);
-                    Debug.DrawRay(rayOrigin, direction * attackRange, rayColor, 1.0f);
-                }
-
-                yield return new WaitForSeconds(stepTime);
+                MeleeAttacks.Raycast(ref atk, OnMeleeAttackHit);
             }
+            else if (atk.SwingType == MeleeSwingType.Swingcast)
+            {
+                MeleeAttacks.Swingcast(ref atk, OnMeleeAttackHit);
+            }
+        }
+
+        void OnMeleeAttackHit(HitboxCollisionInfo info)
+        {
+            info.Source = this;
+            info.Target.HitBy(info);
+            OnMeleeHit?.Invoke(info);
         }
 
         Vector3 CalculateForceDirection(Vector3 contactPoint, Vector3 contactNormal, Vector3 swingDirection)
@@ -245,22 +231,12 @@ namespace UZSG.Items.Weapons
             Vector3 reflectDirection = Vector3.Reflect(swingDirection, contactNormal);
             return reflectDirection;
         }
-        
-        void OnHit(Vector3 point, Collider hitObject)
-        {
-            var info = new HitboxCollisionInfo()
-            {
-                Type = CollisionType.Melee,
-                Source = this,
-                ContactPoint = point,
-            };
 
-            var target = hitObject.GetComponentInParent<ICollisionTarget>();
-            if (target != null)
+        internal void SetMeleeCollider(MeleeWeaponCollider mwc)
+        {
+            if (mwc != null)
             {
-                info.Target = target;
-                target.HitBy(info);
-                OnMeleeHit?.Invoke(info);
+                mwc.OnCollide += OnMeleeAttackHit;
             }
         }
     }

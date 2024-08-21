@@ -35,7 +35,7 @@ MonoBehaviour:
   AudioAssetsData: {fileID: 0}
   ToolType: 0
   Attacks:
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 14135167df702b84ba563457ee7d6e8a, type: 2}
   SwingDirection: 2
   Attributes:
   - data: {fileID: 11400000, guid: dfa56112f40946a428ee64518c941476, type: 2}

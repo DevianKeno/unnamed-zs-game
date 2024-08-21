@@ -28,6 +28,7 @@ namespace UZSG.Data
         public WeaponCategory Category;
         public List<Attributes.Attribute> Attributes;
         public WeaponMeleeType MeleeType;
+        public List<MeleeAttackParametersData> MeleeAttacks;
         public WeaponBluntType BluntType;
         public WeaponBladedType BladedType;
         public WeaponRangedType RangedType;

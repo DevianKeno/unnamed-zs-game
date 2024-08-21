@@ -175,7 +175,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ec348d07db17e941a966fe79cfe2c9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ItemData: {fileID: 0}
   audioSourceController: {fileID: 2726077485849005911}
   attributes:
     attributes: []
@@ -187,7 +186,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 10240
   VisualizeAttack: 0
-  attackStaminaCost: 10
+  attackStaminaCost: 0
 --- !u!114 &2726077485849005911
 MonoBehaviour:
   m_ObjectHideFlags: 0

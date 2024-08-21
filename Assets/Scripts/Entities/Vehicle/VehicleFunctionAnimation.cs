@@ -45,8 +45,7 @@ public class VehicleFunctionAnimation : MonoBehaviour
         for (int i = 0; i < wheelColliders.Count; i++)
         {
             wheelColliders[i].GetWorldPose(out WheelPosition, out WheelRotation);
-            wheelMeshes[i].transform.position = WheelPosition;
-            wheelMeshes[i].transform.rotation = WheelRotation;
+            wheelMeshes[i].transform.SetPositionAndRotation(WheelPosition, WheelRotation);
         }
     }
 

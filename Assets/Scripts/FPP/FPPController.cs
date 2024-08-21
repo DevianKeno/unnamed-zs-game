@@ -13,6 +13,7 @@ using UZSG.Inventory;
 using UZSG.Items;
 using UZSG.Items.Weapons;
 using UZSG.Items.Tools;
+using UZSG.Attacks;
 
 namespace UZSG.FPP
 {
@@ -68,6 +69,7 @@ namespace UZSG.FPP
         Animator cameraAnimator;
         [SerializeField] FPPCameraAnimationTarget cameraAnimationTarget;
         [SerializeField] GunMuzzleController gunMuzzleController;
+        [SerializeField] MeleeWeaponCollider meleeWeaponCollider;
         [SerializeField] GameObject heldItemsContainer;
         
         [Header("Held Item Controller Prefabs")]
@@ -410,6 +412,17 @@ namespace UZSG.FPP
                 gunMuzzleController = null;
             }
 
+            /// This should not be here
+            /// Attach Gun Muzzle Controller
+            if (currentViewmodel.Model.TryGetComponent(out MeleeWeaponCollider meleeCollider))
+            {
+                meleeWeaponCollider = meleeCollider;
+            }
+            else
+            {
+                meleeWeaponCollider = null;
+            }
+
             return;
         }
 
@@ -427,6 +440,7 @@ namespace UZSG.FPP
         {
             if (heldItem is MeleeWeaponController meleeWeapon)
             {
+                meleeWeapon.SetMeleeCollider(meleeWeaponCollider);
                 meleeWeapon.StateMachine.OnStateChanged -= OnMeleeWeaponStateChanged;
                 
                 meleeWeapon.StateMachine.OnStateChanged += OnMeleeWeaponStateChanged;

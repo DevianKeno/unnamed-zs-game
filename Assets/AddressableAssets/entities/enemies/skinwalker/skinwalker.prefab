@@ -203,26 +203,14 @@ MonoBehaviour:
   entityData: {fileID: 11400000, guid: 3bbb12e3042059d4abbf8d40af48316c, type: 2}
   audioSourceController: {fileID: 0}
   HasHitboxes: 0
-  rb: {fileID: 0}
-  IsDeadNPC: 0
+  rb: {fileID: 4342932713843885093}
   AttackRange: 0.5
   _isInHorde: 0
   hasTargetInSite: 0
   hasTargetInAttack: 0
   isDead: 0
-  RoamTime: 3
-  _roamRadius: 0
-  _roamInterval: 0
-  _distanceFromPlayer: 0
-  _speed: 0
-  _siteRadius: 0
-  _attackRadius: 0
   enemyStateMachine: {fileID: 5533417015105148321}
   _enemyEntity: {fileID: 2040430638346997429}
-  PlayerLayer:
-    serializedVersion: 2
-    m_Bits: 256
-  animator: {fileID: 0}
   Hordetransform: {fileID: 0}
   defaultData:
     Attributes: []

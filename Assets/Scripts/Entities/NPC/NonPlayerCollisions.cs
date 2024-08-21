@@ -15,7 +15,7 @@ namespace UZSG.Entities
     {
         
         protected Attributes.Attribute HealthAttri;
-        [SerializeField] protected bool IsDeadNPC;
+        protected bool IsDeadNPC;
         protected override void OnHitboxCollide(object sender, HitboxCollisionInfo info)
         {
             Debug.LogWarning("collided on something");

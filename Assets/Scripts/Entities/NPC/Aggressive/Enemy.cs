@@ -15,22 +15,20 @@ namespace UZSG.Entities
     {
         #region Agent movement and Fundamental data
 
-        public float AttackRange;  // range from which it follow, attacks Players (to remove)
+        protected float AttackRange;  // range from which it follow, attacks Players (to remove)
         public EnemyActionStatesMachine EnemyStateMachine => enemyStateMachine;
         public bool _isInHorde;
         EnemyActionStates _actionState;
         Vector3 _randomDestination; // Destination of agent
+        float RoamTime; // Time it takes for the agent to travel a point
+        float _roamRadius; // Radius of which the agent can travel
+        float _roamInterval; // Interval before the model moves again
+        float _distanceFromPlayer;
+        float _speed;
+        float _siteRadius, _attackRadius; // Radius of which the enemy detects the player
         [SerializeField] bool hasTargetInSite, hasTargetInAttack, isDead; // checks if the player is in site, attack range or is a target
-        [SerializeField] float RoamTime; // Time it takes for the agent to travel a point
-        [SerializeField] float _roamRadius; // Radius of which the agent can travel
-        [SerializeField] float _roamInterval; // Interval before the model moves again
-        [SerializeField] float _distanceFromPlayer;
-        [SerializeField] float _speed;
-        [SerializeField] float _siteRadius, _attackRadius; // Radius of which the enemy detects the player
         [SerializeField] protected EnemyActionStatesMachine enemyStateMachine;
         [SerializeField] NavMeshAgent _enemyEntity; // the entity's agent
-        [SerializeField] LayerMask PlayerLayer; // Layers that the enemy chases
-        [SerializeField] Animator animator; // Layers that the enemy chases
 
         
         #endregion
@@ -38,7 +36,7 @@ namespace UZSG.Entities
 
         #region Horde Setting
         
-        public Transform Hordetransform;
+        protected Transform Hordetransform;
 
         #endregion
 

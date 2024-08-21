@@ -1,19 +1,27 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UZSG.Data;
 
 namespace UZSG.WorldEvents
 {    
     [Serializable]
-    public struct EventPrefab
+    public class EventPrefab<T>
     {
-        public string Name;
-        public GameObject Prefab;
-        public float ChanceToOccur;
+        List<T> selectedEvents = new();
+    }
 
-        public static explicit operator List<object>(EventPrefab v)
-        {
-            throw new NotImplementedException();
-        }
+    [Serializable]
+    public struct WeatherInstanceProperties
+    {
+        public WeatherData WeatherData;
+        public float ChanceToOccur;
+    }
+
+    [Serializable]
+    public struct RaidInstanceProperties
+    {
+        public EnemyData EnemyData;
+        public float ChanceToOccur;
     }
 }

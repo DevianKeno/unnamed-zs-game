@@ -63,7 +63,7 @@ namespace UZSG.WorldEvents.Weather
             }
         }
 
-        void FollowPlayer(ParticleSystem particle)
+        void InitiateRainOnPlayer(ParticleSystem particle)
         {
             print("Following player");
             if (Camera.main.transform == null) return;
@@ -86,18 +86,21 @@ namespace UZSG.WorldEvents.Weather
             for (int i = 0; i < parent.childCount; i++) Destroy(parent.GetChild(i).gameObject);
         }
 
-        public void SetWeather(WeatherData weather)
+        public void SetWeather(WeatherData data)
         {
-            _currentWeather = weather;
-            CurrentWeather = weather;
+            _currentWeather = data;
+            CurrentWeather = data;
             _weatherDuration = _currentWeather.weatherAttributes.DurationSeconds;
             _weatherCountdown = _weatherDuration;
-            _currentParticleSystem = weather.particleSystem;
+            _currentParticleSystem = data.particleSystem;
             
             DeleteChildren(ParticleParent.transform);
 
             ParticleSystem particle = _currentParticleSystem;
-            FollowPlayer(particle);
+
+            // var go = Instantiate(data.Particles);
+
+            InitiateRainOnPlayer(particle);
 
             WorldTime.DayFogColor = Color.Lerp(WorldTime.DayFogColor, _currentWeather.weatherProperties.DayFogColor, 1f);
             WorldTime.NightFogColor = Color.Lerp(WorldTime.NightFogColor, _currentWeather.weatherProperties.NightFogColor, 1f);
@@ -105,20 +108,22 @@ namespace UZSG.WorldEvents.Weather
             HandleChange();
         }
 
-        public void OnEventStart(object sender, WorldEventProperties properties)
+        public void OnEventStart(WorldEvent worldEvent)
         {
-            var @event = sender as WorldEvent;
-            if (@event == null || EventOngoing)
+            print("titeng hamog");
+            if (worldEvent == null || EventOngoing)
             {
                 Game.Console.Log($"<color=#ad0909>Event is null or ongoing.</color>");
-                // print("Event is null or ongoing.");
+                print("Event is null or ongoing.");
                 return;
             }
             
             Game.Console.Log($"<color=#ad0909>Weather event started.</color>");
-            EventPrefab selectedEvent = @event.SelectedEvent[0];
+            WeatherEventInstance selectedEvent = (WeatherEventInstance)worldEvent.SelectedEvents[0];
+            print(selectedEvent.Name);
             EventOngoing = true;
-            SetWeather(selectedEvent.Prefab.GetComponent<RainDataHolder>().WeatherData);
+            
+            SetWeather(selectedEvent.WeatherData);
         }        
     }
 }

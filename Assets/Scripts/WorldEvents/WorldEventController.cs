@@ -10,6 +10,7 @@ using UZSG.Data;
 using UZSG.Worlds;
 using UZSG.WorldEvents.Weather;
 using UZSG.WorldEvents.Raid;
+using System.Reflection;
 
 namespace UZSG.WorldEvents
 {
@@ -36,8 +37,8 @@ namespace UZSG.WorldEvents
             Game.Tick.OnTick += OnTick;
             
             foreach (WorldEventData data in WorldEvents)
-                if (data.worldEvents.OccurEverySecond > _maxCountdown)
-                    _maxCountdown = data.worldEvents.OccurEverySecond;
+                if (data.OccurEverySecond > _maxCountdown)
+                    _maxCountdown = data.OccurEverySecond;
         }
 
         void InitializeControllers()
@@ -72,74 +73,38 @@ namespace UZSG.WorldEvents
         void HandleEvents()
         {
             foreach (WorldEventData data in WorldEvents)
-                if (data.worldEvents.Active)
-                {
-                    print(data.worldEvents.Type);
-                    SpawnEvent(data.worldEvents);
-                }
+                if (data.Enabled && _countdown % data.OccurEverySecond == 0)
+                    SpawnEvent(data);
         }
 
-        void SpawnEvent(WorldEventProperties properties)
+        void SpawnEvent(WorldEventData eventData)
         {
-            List<EventPrefab> selectedEvents = SelectEvent(properties);
-            if (selectedEvents == null) return;
-
-            WorldEvent worldEvent = new()
-            {
-                EventInfo = properties,
-                SelectedEvent = selectedEvents
-            };
-
-            SubscribeControllers(properties, worldEvent);
-            worldEvent.Initialize();
-        }
-
-        List<EventPrefab> SelectEvent(WorldEventProperties properties)
-        {
-            if (_countdown % properties.OccurEverySecond != 0) return null;
-            
-            List<EventPrefab> selectedEvents = new();
-
-            if(properties.ChanceToOccur < UnityEngine.Random.Range(1, 100))
+            if(eventData.ChanceToOccur < UnityEngine.Random.Range(1, 100))
             {
                 Game.Console.Log($"<color=#34d5eb>Event did not occur.</color>");
-                return null;
+                return;
             }
 
-            Game.Console.Log($"<color=#34d5eb>Event of type {properties.Type} occured.</color>");
-
-            int chance = UnityEngine.Random.Range(1, 100);
-            foreach (EventPrefab eventPrefab in properties.EventPrefab)
+            Game.Console.Log($"<color=#34d5eb>Event of type {eventData.Type} occured.</color>");
+            
+            WorldEvent worldEvent = new()
             {
-                if (eventPrefab.ChanceToOccur >= chance) selectedEvents.Add(eventPrefab);
-            }
-            
-            if (selectedEvents.Count == 0)
-            {
-                Game.Console.Log($"<color=#e8eb34>No event prefab selected.</color>");
-                return null;
-            }
-            else if (selectedEvents.Count > 1 && !properties.AllowMultipleEvents)
-                selectedEvents = KeepOnlyAtIndex(selectedEvents, UnityEngine.Random.Range(0, selectedEvents.Count));
-            
-            foreach (EventPrefab eventPrefab in selectedEvents)
-                Game.Console.Log($"<color=#e8eb34>Event occured: {eventPrefab.Name}</color>");
-            
-            return selectedEvents;
+                EventData = eventData
+            };
+            object selectedEvent = worldEvent.StartEvent();
+            if (selectedEvent == null) return;
+            SubscribeControllers(eventData, worldEvent);
+            worldEvent.SpawnEvent();
         }
 
-        List<T> KeepOnlyAtIndex<T>(List<T> originalList, int index)
-        {
-            return new List<T> { originalList[index] };
-        }
 
-        void SubscribeControllers(WorldEventProperties properties, WorldEvent eventHandler)
+        void SubscribeControllers(WorldEventData eventData, WorldEvent eventHandler)
         {
-            if (properties.Type == WorldEventType.Weather)
+            if (eventData.Type == WorldEventType.Weather)
                 eventHandler.OnSpawnEvent += Weather.OnEventStart;
             
-            if (properties.Type == WorldEventType.Raid)
-                eventHandler.OnSpawnEvent += Weather.OnEventStart;
+            if (eventData.Type == WorldEventType.Raid)
+                eventHandler.OnSpawnEvent += Raid.OnEventStart;
         }
     }
 }

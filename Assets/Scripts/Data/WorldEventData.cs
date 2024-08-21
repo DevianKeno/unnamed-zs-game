@@ -9,10 +9,32 @@ using UZSG.WorldEvents;
 
 namespace UZSG.Data
 {
+    [Serializable]
+    public struct WeatherEventInstance
+    {
+        public string Name;
+        public WeatherData WeatherData;
+        public float ChanceToOccur;
+    }
+
+    [Serializable]
+    public struct RaidEventInstance
+    {
+        public string Name;
+        public EnemyData EnemyData;
+        public float ChanceToOccur;
+    }
+
     [CreateAssetMenu(fileName = "New World Event Data", menuName = "UZSG/World Event Data")]
     [Serializable]
     public class WorldEventData : ScriptableObject
     {
-        public WorldEventProperties worldEvents;
+        public WorldEventType Type;
+        public bool Enabled;
+        public bool AllowMultipleEvents;
+        public float ChanceToOccur;
+        public int OccurEverySecond;
+        public List<WeatherEventInstance> WeatherTypes;
+        public List<RaidEventInstance> RaidTypes;
     }
 }

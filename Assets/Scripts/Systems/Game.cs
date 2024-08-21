@@ -104,6 +104,7 @@ namespace UZSG.Systems
             Application.targetFrameRate = TargetFramerate;
         }
 
+
         void InitializeManagers()
         {
             /// The console is initialized first thing

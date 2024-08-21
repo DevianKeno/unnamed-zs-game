@@ -17,6 +17,8 @@ namespace UZSG.UnityEditor
             subType,
             isMaterial,
             isCraftable,
+            isFuel,
+            fuelDuration,
             recipes,
             audioAssetsData,
             weight,
@@ -35,6 +37,8 @@ namespace UZSG.UnityEditor
             subType = serializedObject.FindProperty("Subtype");
             isMaterial = serializedObject.FindProperty("IsMaterial");
             isCraftable = serializedObject.FindProperty("IsCraftable");
+            isFuel = serializedObject.FindProperty("IsFuel");
+            fuelDuration = serializedObject.FindProperty("FuelDuration");
             recipes = serializedObject.FindProperty("Recipes");
             weight = serializedObject.FindProperty("Weight");
             sourceDesc = serializedObject.FindProperty("SourceDescription");
@@ -62,6 +66,8 @@ namespace UZSG.UnityEditor
             EditorGUILayout.LabelField("Crafting", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(isMaterial);
             EditorGUILayout.PropertyField(isCraftable);
+            EditorGUILayout.PropertyField(isFuel);
+            EditorGUILayout.PropertyField(fuelDuration);
             if (GUILayout.Button("Get Recipes"))
             {
                 GetRecipes(itemData);

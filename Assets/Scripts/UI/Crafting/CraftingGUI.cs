@@ -241,7 +241,7 @@ namespace UZSG.UI.Objects
         /// <summary>
         /// Submit a request to the Workstation tied to this Crafting GUI to craft the recipe given the options.
         /// </summary>
-        void RequestCraftItem()
+        protected virtual void RequestCraftItem()
         {
             if (_selectedRecipe == null)
             {
@@ -250,14 +250,26 @@ namespace UZSG.UI.Objects
             
             #region TODO: inhibit negative values in the ui
             #endregion
+
+            if (_selectedRecipe.Output.Count < 0)
+            {
+                print("invalid recipe count");
+                return;
+            }
+
             int maxTimes = Mathf.FloorToInt(_selectedRecipe.Output.Data.StackSize / _selectedRecipe.Yield);
             var count = Math.Clamp(AmountToCraft, 1, maxTimes);
             var options = new CraftItemOptions()
+            
             {
                 Recipe = _selectedRecipe,
                 Count = count,
             };
-
+            if (_selectedRecipe.RequiresFuel)
+            {
+                workstation.TryFuelCraft(ref options);
+                return;
+            }
             workstation.TryCraft(ref options);
         }
 

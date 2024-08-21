@@ -53,7 +53,7 @@ namespace UZSG.Crafting
 
         public void StartCooking()
         {
-            ConsumeFuel();
+            TryConsumeFuel();
             if (IsFuelRemainingAvailable())
             {
                 foreach (var routine in furnaceRoutineList)

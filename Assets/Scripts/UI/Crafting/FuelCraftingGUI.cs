@@ -37,28 +37,6 @@ public class FuelCraftingGUI : CraftingGUI
 
     private void OnFuelSlotClick(object sender, ItemSlotUI.ClickedContext ctx)
     {
-        // var slot = ((ItemSlotUI) sender).Slot;
-
-        //     if (ctx.Pointer.button == PointerEventData.InputButton.Left)
-        //     {
-        //         if (slot.IsEmpty){
-        //             if (player.InventoryGUI.IsHoldingItem)
-        //             {
-        //                 slot.TryPut(player.InventoryGUI.TakeHeldItem());
-        //                 return;
-        //             }
-        //         }
-                
-
-        //         if (ctx.ClickType == ItemSlotUI.ClickType.ShiftClick)
-        //         {
-        //             player.Inventory.Bag.TryPutNearest(slot.TakeAll());
-        //         }
-        //         else
-        //         {
-        //             player.InventoryGUI.HoldItem(slot.TakeAll());
-        //         }
-        //     }
 
         var slot = ((ItemSlotUI) sender).Slot;
 
@@ -97,34 +75,5 @@ public class FuelCraftingGUI : CraftingGUI
                 // _lastSelectedSlot = slot;
             }
         }
-        // else if (ctx.Button == Right)
-        // {
-        //     if (player.InventoryGUI.IsHoldingItem) /// put 1 to target slot
-        //     {
-        //         var heldItem = player.InventoryGUI.HeldItem;
-
-        //         if (slot.IsEmpty)
-        //         {
-        //             _isPutting = true;
-        //             _isGetting = false;
-
-        //             slot.Put(heldItem.Take(1));
-        //         }
-        //         else
-        //         {
-        //             var toPut = new Item(heldItem, 1);
-        //             if (slot.Item.CanStackWith(toPut))
-        //             {
-        //                 slot.TryCombine(toPut, out _);
-        //                 heldItem.Take(1);
-        //             }
-        //         }
-        //     }
-        //     else /// take 1
-        //     {
-        //         _isPutting = false;
-        //         _isGetting = true;
-        //     }
-        // }
     }
 }

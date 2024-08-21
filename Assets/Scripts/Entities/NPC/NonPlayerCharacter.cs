@@ -36,6 +36,10 @@ namespace UZSG.Entities
             rb = GetComponent<Rigidbody>();
             defaultPath = entityDefaultsPath + $"{entityData.Id}_defaults.json";
             Initialize();
+
+            // Ragdoll Initialization
+            GetRagdollComponents();
+            RagdollOff();
         }
 
         #endregion

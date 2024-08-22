@@ -33,10 +33,11 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b5ca12c8083c14f47bbdf161ccdcdc18, type: 2}
   SourceDescription: 
   AudioAssetsData: {fileID: 11400000, guid: 0305db7d3d2ded14aa7a997592ef039c, type: 2}
-  HotbarIcon: {fileID: 0}
+  HotbarIcon: {fileID: 21300000, guid: bef22cfac9f4f404ea3c5c6d57068547, type: 3}
   Category: 1
   Attributes: []
   MeleeType: 0
+  MeleeAttacks: []
   BluntType: 0
   BladedType: 0
   RangedType: 4

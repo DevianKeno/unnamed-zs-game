@@ -125,6 +125,7 @@ namespace UZSG.Entities
 
             InitializeAttributes();
             InitializeStateMachines();
+            InitializeAnimator();
             InitializeInventory();
             // InitializeCrafter();
             InitializeHUD();
@@ -251,11 +252,7 @@ namespace UZSG.Entities
         void OnRunEnter(object sender, State<MoveStates>.ChangedContext e)
         {
         }
-
-        void OnCrouchEnter(object sender, State<MoveStates>.ChangedContext e)
-        {
-        }
-
+        
         void OnJumpEnter(object sender, State<MoveStates>.ChangedContext e)
         {
             /// Consume Stamina on jump

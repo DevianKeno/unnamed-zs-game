@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2710049105216003616}
   - component: {fileID: 2817165491788947211}
   m_Layer: 0
-  m_Name: Terrain_0_0_e7ad197a-b9a3-4660-bd6c-311b0d5ea39b
+  m_Name: GameWorld Terrain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

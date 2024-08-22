@@ -87,16 +87,16 @@ namespace UZSG.Entities
 
         #region Sensor
 
-        public void DetectPlayer(Player player)
+        public void DetectPlayer(Entity etty)
         {
-            if (player != null)
+            if (etty != null && etty is Player player)
             {
                 targetEntity = player; // set the current target of the enemy to they player found
                 _inSiteRange = true;
             }
         }
 
-        public void PlayerAttackDetect(Player player)
+        public void PlayerAttackDetect(Entity etty)
         {
             // remain na walang laman to unless umaatake ung critter
         }   

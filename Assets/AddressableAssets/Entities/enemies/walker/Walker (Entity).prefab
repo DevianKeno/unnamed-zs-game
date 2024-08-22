@@ -580,6 +580,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6786324724403839604}
   - component: {fileID: 7999740600900502716}
+  - component: {fileID: 8327613411202617107}
   - component: {fileID: 2224819950650519137}
   - component: {fileID: 5579209754329764711}
   - component: {fileID: 6583129931448410585}
@@ -644,9 +645,27 @@ MonoBehaviour:
   _randomDestination: {x: 0, y: 0, z: 0}
   _currentActionState: 0
   animator: {fileID: 6509039278937967366}
-  enemyStateMachine: {fileID: 2224819950650519137}
+  moveStateMachine: {fileID: 8327613411202617107}
+  actionStateMachine: {fileID: 2224819950650519137}
   navMeshAgent: {fileID: 5002864878521246475}
   hordeTransform: {fileID: 0}
+--- !u!114 &8327613411202617107
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4923420121152070468}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80ba3c08b2872bc429e0dc4caed0a649, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _lockedUntil: 0
+  _isTransitioning: 0
+  AllowReentry: 0
+  InState: 0
+  DebugMode: 0
 --- !u!114 &2224819950650519137
 MonoBehaviour:
   m_ObjectHideFlags: 0

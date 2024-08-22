@@ -52,7 +52,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectData: {fileID: 11400000, guid: c8dba431012e0a7428ea3d0a7cea2ba1, type: 2}
   attributes:
-    attributes: []
+    attributesReadOnly: []
   audioController: {fileID: 0}
   animator: {fileID: 0}
   crafter: {fileID: 4317794303918389214}
@@ -177,7 +177,7 @@ AudioSource:
   MinDistance: 0
   MaxDistance: 16
   Pan2D: 0
-  rolloffMode: 0
+  rolloffMode: 1
   BypassEffects: 0
   BypassListenerEffects: 0
   BypassReverbZones: 0
@@ -210,7 +210,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0

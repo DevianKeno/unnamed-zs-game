@@ -30,6 +30,11 @@ namespace UZSG.Entities
             get { return transform.position; }
             set { transform.position = value; }
         }
+        public Quaternion Rotation
+        {
+            get { return transform.rotation; }
+            set { transform.rotation = value; }
+        }
 
 
         #region Initializing methods

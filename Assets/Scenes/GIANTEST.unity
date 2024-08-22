@@ -4581,10 +4581,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 908580955271994560, guid: 17e3f806c62ae814fa68b33e3d4745ef, type: 3}
-      propertyPath: panLevelCustomCurve.m_Curve.Array.data[0].value
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2931395029122073337, guid: 17e3f806c62ae814fa68b33e3d4745ef, type: 3}
       propertyPath: m_Name
       value: Campfire (Object)

@@ -5,6 +5,11 @@ using UZSG.Data;
 using UZSG.Systems;
 using UZSG.Interactions;
 using UZSG.Attributes;
+using System.Collections.Generic;
+using System;
+using UZSG.Players;
+
+using static UZSG.Entities.EnemyActionStates;
 
 namespace UZSG.Entities
 {
@@ -44,8 +49,10 @@ namespace UZSG.Entities
         [Header("Components")]
         [SerializeField] Animator animator;
         public Animator Animator => animator;
-        [SerializeField] protected EnemyActionStatesMachine enemyStateMachine;
-        public EnemyActionStatesMachine EnemyStateMachine => enemyStateMachine;
+        [SerializeField] protected EnemyMoveStateMachine moveStateMachine;
+        public EnemyMoveStateMachine MoveStateMachine => moveStateMachine;
+        [SerializeField] protected EnemyActionStateMachine actionStateMachine;
+        public EnemyActionStateMachine ActionStateMachine => actionStateMachine;
         [SerializeField] NavMeshAgent navMeshAgent;
         public Transform hordeTransform;
 
@@ -56,12 +63,9 @@ namespace UZSG.Entities
         {
             base.OnSpawn();
 
-            Initialize();
-        }
-
-        void Initialize() 
-        {
             RetrieveAttributes();
+            InitializeAnimator();
+            InitializeActuators();
             targetEntity = null;
 
             Game.Tick.OnSecond += OnSecond;
@@ -98,18 +102,25 @@ namespace UZSG.Entities
 
         #region Agent Player Detection
 
-        public void DetectPlayer(Player player)
+        /// <summary>
+        /// Set this Enemy's target to the given Entity.
+        /// </summary>
+        /// <param name="etty"></param>
+        public void DetectPlayer(Entity etty)
         {
-            if (player != null)
+            if (etty != null && etty is Player player)
             {
-                targetEntity = player; // set the current target of the enemy to they player found
+                targetEntity = player; 
                 _hasTargetInSight = true;
+
+                Rotation = Quaternion.LookRotation(player.Position);
+                actionStateMachine.ToState(EnemyActionStates.Scream, lockForSeconds: 2f);
             }
         }
 
-        public void PlayerAttackDetect(Player player)
+        public void PlayerAttackDetect(Entity etty)
         {
-            if (player != null)
+            if (etty != null && etty is Player player)
             {
                 _hasTargetInAttackRange = true;
             }
@@ -126,7 +137,7 @@ namespace UZSG.Entities
                 {
                     targetEntity = null;
                     _hasTargetInSight = false;
-                    enemyStateMachine.ToState(EnemyActionStates.Roam);
+                    actionStateMachine.ToState(EnemyActionStates.Roam);
                 }
                 else
                 {
@@ -136,7 +147,7 @@ namespace UZSG.Entities
                         if (_attackRadius <= _distanceFromPlayer)
                         {
                             _hasTargetInAttackRange = false;
-                            enemyStateMachine.ToState(EnemyActionStates.Chase);
+                            actionStateMachine.ToState(EnemyActionStates.Chase);
                         }
                     }
                 }
@@ -148,37 +159,50 @@ namespace UZSG.Entities
 
         #region Agent sensors
         
-        public bool HasTargetInSight  // determines if enemy can Chase Player or Roam map
+        /// <summary>
+        /// determines if enemy can Chase Player or Roam map
+        /// </summary>
+        public bool HasTargetInSight 
         {
             get
             {
                 return _hasTargetInSight;
             }
         }
-
-        public bool HasTargetInAttackRange // determines if enemy can Attack Player
+        /// <summary>
+        /// determines if enemy can Attack Player
+        /// </summary>
+        public bool HasTargetInAttackRange
         {
             get
             {   
                 return _hasTargetInAttackRange;
             }
         }
-        public bool HasNoHealth // determines if the enemy is dead
+        /// <summary>
+        /// determines if the enemy is dead
+        /// </summary>
+        public bool HasNoHealth
         {
             get
             {
-                return IsDead; // bool stating if the npc is dead
+                return IsDead;
             }
         }
-
-        public bool IsSpecialAttackTriggered // determines if an event happened that triggered special Attack 1
+        /// <summary>
+        /// determines if an event happened that triggered special Attack 1
+        /// </summary>
+        public bool IsSpecialAttackTriggered
         {
             get
             {
                 return false;
             }
         }
-        public bool IsSpecialAttack2Triggered // determines if an event happened that triggered special Attack 2
+        /// <summary>
+        /// Whether if an event happened that triggered special Attack 2
+        /// </summary>
+        public bool IsSpecialAttack2Triggered
         {
             get
             {
@@ -203,14 +227,17 @@ namespace UZSG.Entities
             }
         }
 
-        public EnemyActionStates HandleTransition() // "sense" what's the state of the enemy 
+        /// <summary>
+        /// "sense" what's the state of the enemy 
+        /// </summary>
+        /// <returns></returns>
+        public EnemyActionStates HandleTransition()
         {
             if (IsDead)
             {
                 return EnemyActionStates.Die;
             }
 
-            // if enemy is in horde mode
             // if (IsHordeMode)
             // {
             //     return EnemyActionStates.Horde;
@@ -238,125 +265,184 @@ namespace UZSG.Entities
 
         #region Agent actuator
 
-        public void Chase()
+        void InitializeActuators() /// uncalled yet
         {
-            enemyStateMachine.ToState(EnemyActionStates.Chase);
+            actionStateMachine[EnemyActionStates.Idle].OnEnter += OnActionIdleEnter;
+            actionStateMachine[EnemyActionStates.Chase].OnEnter += OnActionChaseEnter;
+        }
 
-            // set rigid body to dynamic
+        void OnActionIdleEnter(object sender, State<EnemyActionStates>.ChangedContext e)
+        {
+            if (e.PreviousState == EnemyActionStates.Scream)
+            {
+
+            }
+        }
+
+        void OnActionChaseEnter(object sender, State<EnemyActionStates>.ChangedContext e)
+        {
+            /// might run twice because of this and ExecuteAction()
+            // Chase();
+        }
+
+        /// <summary>
+        /// Execute an action depending on what state the entity is on
+        /// </summary>
+        public void ExecuteAction(EnemyActionStates state) 
+        {
+            switch (state)
+            {
+                case EnemyActionStates.Idle:
+                    Idle();
+                    break;
+
+                case EnemyActionStates.Chase:
+                    Chase();
+                    break;
+
+                case EnemyActionStates.Roam:
+                    Roam();
+                    break;
+
+                case EnemyActionStates.Attack2:
+                    Attack2();
+                    break;
+
+                case EnemyActionStates.Attack:
+                    Attack();
+                    break;
+
+                case EnemyActionStates.Die:
+                    Die();
+                    break;
+
+                case EnemyActionStates.SpecialAttack:
+                    SpecialAttack();
+                    break;
+
+                case EnemyActionStates.SpecialAttack2:
+                    SpecialAttack2();
+                    break;
+
+                case EnemyActionStates.Horde:
+                    Horde();
+                    break;
+            }
+        }
+
+        void Idle()
+        {
+
+        }
+
+        void Chase()
+        {
+            actionStateMachine.ToState(EnemyActionStates.Chase);
+
+            /// set rigid body to dynamic
             rb.isKinematic = false;
 
-            // allow enemy movement
+            /// allow enemy movement
             navMeshAgent.isStopped = false;
             navMeshAgent.updateRotation = true;
 
-            // chase player position
+            /// chase player position
             navMeshAgent.SetDestination(targetEntity.transform.position);
+
+            /// Switch move state machine to run state on chase :)
+            EnemyMoveStates targetMoveState = EnemyMoveStates.Walk;
+            // if (runType == Jog)
+            // {
+            //     targetMoveState = EnemyMoveStates.Jog;
+            // }
+            // else if (runType == Run)
+            // {
+                targetMoveState = EnemyMoveStates.Run;
+            // }
+            
+            moveStateMachine.ToState(targetMoveState);
         }
 
-        public void Roam()
+        void Roam()
         {
             navMeshAgent.isStopped = false;
-            // Check if the enemy has reached its destination and is actively moving
+            /// Check if the enemy has reached its destination and is actively moving
             if (navMeshAgent.remainingDistance >= 0.002f && navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance)
             {
                 navMeshAgent.isStopped = true;
                 navMeshAgent.updateRotation = false;
+                moveStateMachine.ToState(EnemyMoveStates.Idle);
+                actionStateMachine.ToState(EnemyActionStates.Idle);
             }
             else
             {
-                // Continue moving toward the destination
+                /// Continue moving toward the destination
                 _roamTime -= Time.deltaTime;
                 if (_roamTime <= 0)
                 {
-                    // Get a random position
+                    /// Get a random position
                     _randomDestination = UnityEngine.Random.insideUnitSphere * _roamRadius;
                     _randomDestination += transform.position;
 
                     NavMesh.SamplePosition(_randomDestination, out NavMeshHit navHit, _roamRadius, NavMesh.AllAreas);
 
-                    // Set the agent's destination to the random point
+                    /// Set the agent's destination to the random point
                     navMeshAgent.SetDestination(navHit.position);
-                    enemyStateMachine.ToState(EnemyActionStates.Roam);
+                    moveStateMachine.ToState(EnemyMoveStates.Walk);
+                    actionStateMachine.ToState(EnemyActionStates.Roam);
                     _roamTime = UnityEngine.Random.Range(1.0f, _roamInterval); // Reset RoamTime for the next movement
                     navMeshAgent.updateRotation = true;
                 }
             }
         }
 
-        public void Attack2() 
+        void Attack2() 
         {
-            enemyStateMachine.ToState(EnemyActionStates.Attack2);
+            actionStateMachine.ToState(EnemyActionStates.Attack2);
             Debug.Log("Attack2"); 
         }
-        public void Attack()
-        {
-            enemyStateMachine.ToState(EnemyActionStates.Attack);
 
-            // set the rigid body of the enemy to kinematic
+        void Attack()
+        {
+            actionStateMachine.ToState(EnemyActionStates.Attack);
+
+            /// set the rigid body of the enemy to kinematic
             rb.isKinematic = true;
 
-            // prevent the enemy from moving when in attack range
+            /// prevent the enemy from moving when in attack range
             navMeshAgent.isStopped = true;
             navMeshAgent.updateRotation = false;
         }
-        public void Die()
+
+        void SpecialAttack()
         {
-            enemyStateMachine.ToState(EnemyActionStates.Die);
+            actionStateMachine.ToState(EnemyActionStates.SpecialAttack);
+            Debug.Log("SpecialAttack"); 
+        }
+
+        public void SpecialAttack2()
+        {
+            actionStateMachine.ToState(EnemyActionStates.SpecialAttack2);
+            Debug.Log("SpecialAttack2"); 
+        }
+
+        void Die()
+        {
+            actionStateMachine.ToState(EnemyActionStates.Die);
             Game.Tick.OnSecond -= OnSecond;
             Game.Entity.Kill(this);
             Debug.Log("Die");
         }
-        public void SpecialAttack()
-        {
-            enemyStateMachine.ToState(EnemyActionStates.SpecialAttack);
-            Debug.Log("SpecialAttack"); 
-        }
-        public void SpecialAttack2()
-        {
-            enemyStateMachine.ToState(EnemyActionStates.SpecialAttack2);
-            Debug.Log("SpecialAttack2"); 
-        }
 
-        public void Horde()
+        void Horde()
         {
-            enemyStateMachine.ToState(EnemyActionStates.Horde);
+            actionStateMachine.ToState(EnemyActionStates.Horde);
 
-            // Set the starting position and rotation of the zombie
+            /// Set the starting position and rotation of the zombie
             transform.SetPositionAndRotation(hordeTransform.position, hordeTransform.rotation);
 
-            // Move forward according to speed
+            /// Move forward according to speed
             transform.Translate(Vector3.forward * (_moveSpeed * Time.deltaTime));
-        }
-
-        public void ExecuteAction(EnemyActionStates action) // execute an action depending on what state the entity is on
-        {
-            switch (action)
-            {
-                case EnemyActionStates.Chase:
-                    Chase();
-                    break;
-                case EnemyActionStates.Roam:
-                    Roam();
-                    break;
-                case EnemyActionStates.Attack2:
-                    Attack2();
-                    break;
-                case EnemyActionStates.Attack:
-                    Attack();
-                    break;
-                case EnemyActionStates.Die:
-                    Die();
-                    break;
-                case EnemyActionStates.SpecialAttack:
-                    SpecialAttack();
-                    break;
-                case EnemyActionStates.SpecialAttack2:
-                    SpecialAttack2();
-                    break;
-                case EnemyActionStates.Horde:
-                    Horde();
-                    break;
-            }
         }
 
         #endregion

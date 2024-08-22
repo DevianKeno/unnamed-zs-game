@@ -37,6 +37,14 @@ namespace UZSG.Systems
         /// </summary>
         public event EventHandler<StateChangedContext> OnStateChanged;
 
+        public State<E> this[E state]
+        {
+            get
+            {
+                return _states[state];
+            }
+        }
+
         void Awake()
         {
             foreach (E state in Enum.GetValues(typeof(E)))

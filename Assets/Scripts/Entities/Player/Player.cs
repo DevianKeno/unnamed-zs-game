@@ -36,8 +36,7 @@ namespace UZSG.Entities
         public bool CanPickUpItems = true;
 
         public PlayerEntityData PlayerEntityData => (PlayerEntityData) entityData;
-        PlayerSaveData playerSaveData;
-        public PlayerSaveData SaveData => playerSaveData;
+        public PlayerSaveData SaveData => (PlayerSaveData) saveData;
         
         [SerializeField] InventoryHandler inventory;
         public InventoryHandler Inventory => inventory;

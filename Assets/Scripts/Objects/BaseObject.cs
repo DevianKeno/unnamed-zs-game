@@ -19,7 +19,7 @@ namespace UZSG.Objects
         [SerializeField] protected ObjectData objectData;
         public ObjectData ObjectData => objectData;
 
-        [SerializeField] AttributeCollection attributes;
+        [SerializeField] protected AttributeCollection attributes;
         public AttributeCollection Attributes => attributes;
 
         [SerializeField] protected AudioSourceController audioController;
@@ -38,30 +38,24 @@ namespace UZSG.Objects
 
         protected virtual void Start()
         {
-            InitializeAttributes();
             if (objectData.HasAudio) InitializeAudioController();
-        }
-
-        protected virtual void InitializeAttributes()
-        {
-            attributes = new();
-            // attributes.InitializeFromData();
         }
         
         protected virtual void InitializeAudioController()
         {
+            audioController ??= gameObject.AddComponent<AudioSourceController>();
             audioController.LoadAudioAssetsData(objectData.AudioAssetsData);
         }
 
-        protected virtual void LoadGUIAsset(AssetReference asset, Action<ObjectGUI> onLoadCompleted = null)
+        protected virtual void LoadGUIAsset(AssetReference guiAsset, Action<ObjectGUI> onLoadCompleted = null)
         {
-            if (!asset.IsSet())
+            if (!guiAsset.IsSet())
             {
                 Game.Console.LogAndUnityLog($"There's no GUI set for Workstation '{objectData.Id}'. This won't be usable unless otherwise you set its GUI.");
                 return;
             }
 
-            Addressables.LoadAssetAsync<GameObject>(asset).Completed += (a) =>
+            Addressables.LoadAssetAsync<GameObject>(guiAsset).Completed += (a) =>
             {
                 if (a.Status == AsyncOperationStatus.Succeeded)
                 {

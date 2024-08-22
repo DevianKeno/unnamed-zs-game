@@ -23,6 +23,7 @@ namespace UZSG.Objects
         protected override void Start()
         {
             base.Start();
+            
             _originalRotation = transform.rotation;
         }
 

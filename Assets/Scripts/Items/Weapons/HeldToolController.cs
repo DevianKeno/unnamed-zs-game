@@ -10,33 +10,60 @@ using UZSG.Data;
 using UZSG.Interactions;
 using UZSG.Entities;
 using UZSG.Players;
-using UZSG.Attributes;
-using UZSG.Objects;
 using UZSG.Attacks;
+using MEC;
 
 namespace UZSG.Items.Tools
 {
+    /// <summary>
+    /// Controller for held Tools.
+    /// </summary>
     public class HeldToolController : HeldItemController, ICollisionSource
     {
         public Player Player => owner as Player;
         public ToolData ToolData => ItemData as ToolData;
-                
-        public float attackRange;
-        public float attackAngle;
-        public float attackDuration;
-        public float attackDelay;
-        public int numberOfRays;
-        public LayerMask attackLayer;
-        public bool VisualizeAttack;
-
-        bool _canAttack;
+        
         bool _inhibitActions;
         bool _isAttacking;
+        bool _onCooldown;
 
         public string CollisionTag => "Tool";
         ToolItemStateMachine stateMachine;
         public ToolItemStateMachine StateMachine => stateMachine;
 
+        public bool IsBroken
+        {
+            get
+            {
+                return attributes["durability"].Value <= 0;
+            }
+        }
+
+        /// <summary>
+        /// Whether if the Owner (Player) can use (Attack) this tool.
+        /// </summary>
+        public bool CanUse
+        {
+            get
+            {
+                if (IsBroken) return false;
+                if (_onCooldown) return false;
+
+                if (owner.Attributes.TryGet("stamina", out var ownerStamina))
+                {
+                    if (owner.Attributes.TryGet("tool_stamina_cost_multiplier", out var multiplier))
+                    {
+                        return ownerStamina.Value >= (attributes["stamina_cost"].Value * multiplier.Value);
+                    }
+                    else
+                    {
+                        return ownerStamina.Value >= attributes["stamina_cost"].Value;
+                    }
+                }
+
+                return false;
+            }
+        }
 
         #region Initializing methods
 
@@ -47,10 +74,9 @@ namespace UZSG.Items.Tools
 
         public override void Initialize()
         {
+            LoadDefaultAttributes();
             InitializeAudioController();
             InitializeEventsFromOwnerInput();
-            LoadDefaultAttributes();
-            RetrievePlayerAttributes();
         }
 
         void InitializeAudioController()
@@ -73,22 +99,6 @@ namespace UZSG.Items.Tools
         {
             attributes = new();
             attributes.AddList(ToolData.Attributes);
-
-            attackDuration = attributes["attack_speed"].Value;
-        }
-
-        void RetrievePlayerAttributes()
-        {
-            if (Player.Attributes.TryGet("stamina", out var attr))
-            {
-                playerStamina = attr;
-                _canAttack = true;
-            }
-            else
-            {
-                Game.Console.LogWarning($"Player {Player.name} does not have a 'stamina' attribute. They will not be able to use '{ItemData.Id}'.");
-                _canAttack = false;
-            }
         }
 
         void RetrieveToolAttributes()
@@ -107,7 +117,7 @@ namespace UZSG.Items.Tools
             
             if (context.started)
             {
-                if (CanAttack())
+                if (CanUse)
                 {
                     StartCoroutine(AttackCoroutine());
                 }
@@ -124,19 +134,6 @@ namespace UZSG.Items.Tools
         }
 
         #endregion
-
-        Attributes.Attribute playerStamina;
-        [SerializeField] float attackStaminaCost;
-        bool CanAttack()
-        {
-            if (!_canAttack) return false;
-            if (playerStamina.Value < attackStaminaCost)
-            {
-                return false;
-            }
-
-            return true;
-        }
 
         IEnumerator AttackCoroutine()
         {
@@ -161,12 +158,25 @@ namespace UZSG.Items.Tools
 
         void ConsumeStamina()
         {
-            playerStamina.Remove(attackStaminaCost);
+            owner.Attributes["stamina"].Remove(attributes["stamina_cost"].Value);
         }
 
         void PlaySound()
         {
             audioSourceController.PlaySound("swing1");
+        }
+
+        IEnumerator<float> CooldownAttack()
+        {
+            _onCooldown = true;
+
+            float cdSeconds = 0f;
+            if (attributes.TryGet("attack_speed", out var atkSpd))
+            {
+                cdSeconds = 1f / atkSpd.Value; 
+            }
+            yield return Timing.WaitForSeconds(cdSeconds);
+            _onCooldown = false;
         }
         
         MeleeAttackParameters GetAttackParams()
@@ -179,6 +189,8 @@ namespace UZSG.Items.Tools
         
         void CreateAttackRays(ref MeleeAttackParameters atk)
         {
+            Timing.RunCoroutine(CreateRaycastRays(atk));
+            
             atk.Origin = Player.EyeLevel;
             atk.Up = Player.Up;
             atk.Direction = Player.Forward;
@@ -193,6 +205,35 @@ namespace UZSG.Items.Tools
             }
         }
 
+        IEnumerator<float> CreateRaycastRays(MeleeAttackParameters atk)
+        {
+            Color rayColor = Color.yellow;
+
+            yield return Timing.WaitForSeconds(atk.Delay);
+
+            if (Physics.Raycast(Player.EyeLevel, Player.Forward, out RaycastHit hit, atk.Range, atk.Layer))
+            {
+                var target = hit.collider.GetComponentInParent<ICollisionTarget>();
+                if (target != null)
+                {
+                    OnToolAttackHit(new()
+                    {
+                        Target = target,
+                        Collider = hit.collider,
+                        ContactPoint = hit.point,
+                    });
+                    rayColor = Color.red;
+                }
+            }
+
+            if (atk.Visualize)
+            {
+                Debug.DrawRay(atk.Origin, atk.Direction * atk.Range, rayColor, 1.0f);
+            }
+
+            yield break;
+        }
+        
         void OnToolAttackHit(HitboxCollisionInfo info)
         {
             info.Source = this;

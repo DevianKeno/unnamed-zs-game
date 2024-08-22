@@ -59,6 +59,13 @@ MonoBehaviour:
     flatBonus: 0
     LimitOverflow: 0
     LimitUnderflow: 0
+  - data: {fileID: 11400000, guid: 6cc27a9a88960994aa1a49dd6eae0b21, type: 2}
+    value: 8
+    baseMaximum: 0
+    multiplier: 1
+    flatBonus: 0
+    LimitOverflow: 0
+    LimitUnderflow: 0
   armsAnimations: {fileID: 9100000, guid: f5cdbb08b40400c43a5f923466fff658, type: 2}
   viewmodel:
     m_AssetGUID: edb001579d6d28941bf07b932487f05e

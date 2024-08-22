@@ -126,7 +126,7 @@ namespace UZSG.Entities.Vehicles
             _hasFuel = fuelLevel > 0;
         }
 
-        private void Update()
+        private void FixedUpdate()
         {
             if (_isEnabled)
             {

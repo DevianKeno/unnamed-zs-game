@@ -593,7 +593,7 @@ GameObject:
   - component: {fileID: 1164789117596443589}
   - component: {fileID: 7882567048533104114}
   - component: {fileID: 655436523473313622}
-  - component: {fileID: 7316724617797799849}
+  - component: {fileID: 6084272699904397090}
   m_Layer: 0
   m_Name: test_vehicle
   m_TagString: Untagged
@@ -632,11 +632,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   entityData: {fileID: 11400000, guid: bdc11134a60ef4f4ab23e5c699dd5c07, type: 2}
-  audioSourceController: {fileID: 0}
-  HasHitboxes: 0
+  attributes:
+    attributesReadOnly: []
   vehicle: {fileID: 11400000, guid: 6ea39bf6c05579b49b8dfbe7188bbbbf, type: 2}
-  _vehicleSeatManager: {fileID: 0}
-  _vehicleController: {fileID: 0}
   Model: {fileID: 0}
   FrontWheelColliders:
   - {fileID: 2055923612955433024}
@@ -715,6 +713,11 @@ MonoBehaviour:
   _vehicle: {fileID: 0}
   _vehicleStateMachine: {fileID: 0}
   bodyMassCenter: {fileID: 0}
+  fuelCap: 0
+  fuelConsumptionPerPower: 0
+  fuelCapacityPerSpeed: 0
+  fuelEfficiencyMultiplier: 0
+  fuelLevel: 0
   maxSpeed: 90
   maxReverseSpeed: 45
   powerCurve:
@@ -757,12 +760,13 @@ MonoBehaviour:
   brakeForce: 350
   decelerationMultiplier: 8
   antiRoll: 0
+  steeringAngle: 0
   carSpeed: 0
   powerToWheels: 0
   isTractionLocked: 0
   defaultMaxSteerAngle: 0
   wheels: []
---- !u!114 &7316724617797799849
+--- !u!114 &6084272699904397090
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -771,9 +775,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 5389592526893413457}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64c94da305ec49047a3fb650f99bd574, type: 3}
+  m_Script: {fileID: 11500000, guid: f5cbe72662d90314daa5d762f0c5133d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  wheelColliders: []
+  steeringWheelTransform: {fileID: 0}
 --- !u!1 &6091814323974195608
 GameObject:
   m_ObjectHideFlags: 0

@@ -16,7 +16,7 @@ namespace UZSG.Entities
     /// <summary>
     /// Items that appear in the world (e.g. Interactables, Pickupables, etc.)
     /// </summary>
-    public class ItemEntity : Entity, IInteractable, IWorldCleanupable
+    public class ItemEntity : Entity, ILookable, IInteractable, IWorldCleanupable
     {
         public const int DespawnTimeSeconds = 60;
 
@@ -64,7 +64,7 @@ namespace UZSG.Entities
                 };
             }
         }
-
+        public LookableType LookableType => LookableType.Interactable; 
         public event EventHandler<InteractArgs> OnInteract;
         /// <summary>
         /// Despawn time in seconds.

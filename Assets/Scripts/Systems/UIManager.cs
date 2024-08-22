@@ -248,6 +248,11 @@ namespace UZSG.UI
             return default;
         }
 
+        /// <summary>
+        /// Creates a UI blocker for a given UI element. Clicking outside the element's bounds invokes the Action onClick.
+        /// Only spawns one blocker, and executes one action then destroys itself.
+        /// </summary>
+        /// <returns>The Blocker gameObject.</returns>
         public GameObject CreateBlocker(IUIElement forElement = null, Action onClick = null)
         {
             var blocker = Create("Blocker");
@@ -256,6 +261,13 @@ namespace UZSG.UI
             if (forElement != null)
             {
                 blocker.transform.SetSiblingIndex((forElement as MonoBehaviour).transform.GetSiblingIndex());
+                if (forElement is Window w)
+                {
+                    w.OnClose += () =>
+                    {
+                        Destroy(blocker);
+                    };
+                }
             }
             else
             {

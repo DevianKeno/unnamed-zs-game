@@ -33,24 +33,32 @@ MonoBehaviour:
   SourceDescription: 
   AudioAssetsData: {fileID: 0}
   ToolType: 0
+  Attacks: []
   SwingDirection: 2
   Attributes:
-  - data: {fileID: 11400000, guid: 8065c7b302bdaf142aedd6761e5bbb15, type: 2}
-    value: 250
-    baseMaximum: 250
-    multiplier: 0
-    flatBonus: 0
-    LimitOverflow: 0
-    LimitUnderflow: 0
   - data: {fileID: 11400000, guid: dfa56112f40946a428ee64518c941476, type: 2}
-    value: 100
+    value: 28
     baseMaximum: 0
     multiplier: 0
     flatBonus: 0
     LimitOverflow: 0
     LimitUnderflow: 0
+  - data: {fileID: 11400000, guid: 8065c7b302bdaf142aedd6761e5bbb15, type: 2}
+    value: 180
+    baseMaximum: 250
+    multiplier: 0
+    flatBonus: 0
+    LimitOverflow: 0
+    LimitUnderflow: 0
   - data: {fileID: 11400000, guid: 5e71af7286d194c4c9bf489e08b9c33f, type: 2}
-    value: 12
+    value: 18
+    baseMaximum: 0
+    multiplier: 0
+    flatBonus: 0
+    LimitOverflow: 0
+    LimitUnderflow: 0
+  - data: {fileID: 11400000, guid: 6cc27a9a88960994aa1a49dd6eae0b21, type: 2}
+    value: 24
     baseMaximum: 0
     multiplier: 0
     flatBonus: 0

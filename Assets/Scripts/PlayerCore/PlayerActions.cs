@@ -11,6 +11,7 @@ using UZSG.Interactions;
 using UZSG.Entities;
 using UZSG.Inventory;
 using UZSG.Items;
+using Mono.Cecil;
 
 namespace UZSG.Players
 {
@@ -43,6 +44,7 @@ namespace UZSG.Players
         InteractionIndicator interactionIndicator;
 
         public event Action<Item> OnPickupItem;
+        public event Action<ILookable> OnLookAtSomething;
         
         InputActionMap actionMap;
         public InputActionMap ActionMap => actionMap;
@@ -156,14 +158,23 @@ namespace UZSG.Players
                         lookingAt = interactable;
                         lookingAt.OnLookEnter();
                         interactionIndicator.Indicate(lookingAt);
+                        // OnLookAtSomething?.Invoke(interactable);
                         return;
                     }
+                }
+
+                var lookable = hit.collider.GetComponentInParent<ILookable>();
+                if (lookable != null)
+                {
+                    OnLookAtSomething?.Invoke(lookable);
+                    return;
                 }
             }
 
             interactionIndicator.Hide();
             lookingAt?.OnLookExit();
             lookingAt = null;
+            OnLookAtSomething?.Invoke(null);
         }
 
 

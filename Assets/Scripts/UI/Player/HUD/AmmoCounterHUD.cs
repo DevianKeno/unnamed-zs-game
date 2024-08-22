@@ -13,7 +13,7 @@ namespace UZSG.UI.HUD
         [SerializeField] TextMeshProUGUI reserveAmmoText;
         [SerializeField] TextMeshProUGUI firingModeText;
 
-        public void Initialize(GunWeaponController gun)
+        public void DisplayWeaponStats(GunWeaponController gun)
         {
             ClipSize = gun.WeaponData.RangedAttributes.ClipSize;
             SetClip(gun.CurrentRounds);

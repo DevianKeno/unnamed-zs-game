@@ -47,6 +47,7 @@ namespace UZSG.UI.Players
         List<FadeableElement> _fadeableElements = new();
         
         ChoiceWindow itemOptions;
+        public ChoiceWindow ItemOptions => itemOptions;
         bool _hasDisplayedItem;
         ItemDisplayUI displayedItem;
         Selector selector;
@@ -365,7 +366,8 @@ namespace UZSG.UI.Players
                 itemOptions.Destroy();
             }
             itemOptions = Game.UI.Create<ChoiceWindow>("Choice Window", show: false);
-            itemOptions.Position = _selectedSlotUI.Rect.position;
+            // itemOptions.Position = _selectedSlotUI.Rect.position;
+            itemOptions.Position = Vector2.zero;
             itemOptions.Label = _selectedSlot.Item.Data.Name;
 
             var item = _selectedSlot.Item;

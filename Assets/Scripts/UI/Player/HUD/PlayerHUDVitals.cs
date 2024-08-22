@@ -21,9 +21,14 @@ namespace UZSG.UI.HUD
         [Space]
         
         ItemSlot _lastSelectedSlot;
+        Dictionary<int, ItemSlotUI> _equipmentSlotUIs = new();
         
         [Header("Elements")]
         public GameObject hotbar;
+        public AmmoCounterHUD AmmoCounter;
+        public GameObject equipment;
+        public TextMeshProUGUI equippedWeaponTMP;
+        public WeaponDetailsUI weaponDetails;
         public AttributeBar HealthBar;
         public AttributeBar StaminaBar;
         public AttributeBar HungerBar;
@@ -40,6 +45,7 @@ namespace UZSG.UI.HUD
 
             Player = player;
             BindPlayerAttributes();
+            InitializeEquipmentSlots();
             InitializeHotbarSlots();
             InitializeEvents();
         }
@@ -58,9 +64,26 @@ namespace UZSG.UI.HUD
             }
         }
 
+        void InitializeEquipmentSlots()
+        {
+            /// Equipment slots are already set
+            int index = 1; /// Only 1 (mainhand) and 2 (offhand), as 0 (arms) is not displayed :)
+            foreach (Transform child in equipment.transform)
+            {
+                if (child.TryGetComponent<ItemSlotUI>(out var slotUI)) /// there might be other GameObjects
+                {
+                    slotUI.Link(Player.Inventory.Equipment[index]);
+                    slotUI.OnMouseDown += OnEquipmentSlotClick;
+                    _equipmentSlotUIs[index] = slotUI;
+                    index++;
+                }
+            }
+        }
+
         void InitializeEvents()
         {
-            Player.Inventory.Hotbar.OnSlotItemChanged += OnHotbarSlotChanged;
+            Player.FPP.OnChangeHeldItem += OnChangeHeldItem;
+            Player.InventoryGUI.frameController.OnSwitchFrame += OnInvSwitchFrame;
         }
 
         void BindPlayerAttributes()
@@ -73,12 +96,7 @@ namespace UZSG.UI.HUD
         }
 
 
-        #region Callbacks
-
-        void OnHotbarSlotChanged(object sender, ItemSlot.ItemChangedContext e)
-        {
-            var hotbarOffset = e.ItemSlot.Index + 3;
-        }
+        #region Event callbacks (from all over)
 
         void OnHotbarSlotClicked(object sender, ItemSlotUI.ClickedContext e)
         {
@@ -118,6 +136,72 @@ namespace UZSG.UI.HUD
             else if (e.Button == PointerEventData.InputButton.Right)
             {
 
+            }
+        }
+
+        void OnEquipmentSlotClick(object sender, ItemSlotUI.ClickedContext e)
+        {
+            if (!Player.InventoryGUI.IsVisible) return;
+
+            var slotUI = (ItemSlotUI) sender; 
+            var slot = slotUI.Slot; 
+
+            if (slot.IsEmpty) return;
+
+            if (Player.InventoryGUI.ItemOptions.IsVisible)
+            {
+                Player.InventoryGUI.ItemOptions.Destroy();
+            }
+            
+            /// Create equipped Item options
+            var options = Game.UI.Create<ChoiceWindow>("Choice Window", show: false);
+            Game.UI.CreateBlocker(forElement: options, onClick: () =>
+            {
+                options.Destroy();
+            });
+
+            options.Pivot = UI.Pivot.BottomRight;
+            options.Position = Vector2.zero;
+            options.Label = slot.Item.Data.Name;
+            
+            options.AddChoice("Unequip")
+            .AddCallback(() =>
+            {
+                if (Player.Inventory.Bag.IsFull) return;
+
+            });
+
+            options.Show();
+        }
+
+        void OnChangeHeldItem(HeldItemController heldItem)
+        {
+            if (heldItem == null) return;
+
+            if (heldItem is GunWeaponController gun)
+            {
+                weaponDetails.SetGunVariant();
+                AmmoCounter.SetClip(gun.CurrentRounds);
+                AmmoCounter.SetReserve(999);
+                AmmoCounter.SetFiringMode(gun.CurrentFiringMode);
+            }
+            else
+            {
+                weaponDetails.SetMeleeVariant();
+            }
+
+            equippedWeaponTMP.text = heldItem.ItemData.Name;
+        }
+
+        void OnInvSwitchFrame(FrameController.SwitchFrameContext context)
+        {
+            if (context.Next == "equipment")
+            {
+                equipment.gameObject.SetActive(true);
+            }
+            else
+            {
+                equipment.gameObject.SetActive(false);
             }
         }
 

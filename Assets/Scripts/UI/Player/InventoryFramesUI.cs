@@ -15,7 +15,7 @@ namespace UZSG.UI.Players
         Dictionary<ObjectGUI, Button> _appendedFrameButtons = new();
 
         [Header("Frames")]
-        [SerializeField] FrameController frameController;
+        public FrameController frameController;
         /// <summary>
         /// The text displayed at the top right
         /// </summary>

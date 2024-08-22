@@ -8,6 +8,22 @@ using UZSG.Systems;
 namespace UZSG.UI
 {
     /// <summary>
+    /// Helper class for RectTransform pivot values.
+    /// </summary>
+    public class Pivot
+    {
+        public static Vector2 TopLeft => new (0, 1);
+        public static Vector2 TopMiddle => new (0.5f, 1);
+        public static Vector2 TopRight => new (1, 1);
+        public static Vector2 MiddleLeft => new (0, 0.5f);
+        public static Vector2 Center => new (0.5f, 0.5f);
+        public static Vector2 MiddleRight => new (1, 0.5f);
+        public static Vector2 BottomLeft => new (0, 0);
+        public static Vector2 BottomMiddle => new (0.5f, 0);
+        public static Vector2 BottomRight => new (1, 0);
+    }
+
+    /// <summary>
     /// Windows are UI elements that can be shown or hidden.
     /// </summary>
     public class Window : MonoBehaviour, IUIElement
@@ -17,10 +33,15 @@ namespace UZSG.UI
         [field: Space]
 
         public bool IsVisible { get; set; }
-        public Vector3 Position
+        public Vector2 Position
         {
-            get { return rect.transform.position; }
-            set { rect.transform.position = value; }
+            get { return rect.anchoredPosition; }
+            set { rect.anchoredPosition = value; }
+        }
+        public Vector2 Pivot
+        {
+            get { return rect.pivot; }
+            set { rect.pivot = value; }
         }
         public float FadeDuration = 0.3f;
         

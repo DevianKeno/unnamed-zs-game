@@ -284,7 +284,7 @@ MonoBehaviour:
   rect: {fileID: 0}
   FadeDuration: 0.3
   indicator: {fileID: 8250109019733149546}
-  actionText: {fileID: 0}
+  actionText: {fileID: 8250109019658285424}
   objectText: {fileID: 8250109019658285424}
 --- !u!1 &8401173355290518190
 GameObject:

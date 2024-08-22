@@ -9,7 +9,7 @@ using UZSG.Systems;
 
 namespace UZSG.Objects
 {
-    public class OreDeposit : Resource
+    public class OreDeposit : Resource, ILookable
     {        
         /// On load on world
         protected override void Start()
@@ -17,11 +17,13 @@ namespace UZSG.Objects
             base.Start();
         }
 
-        public override void HitBy(HitboxCollisionInfo other)
+        public override void HitBy(HitboxCollisionInfo info)
         {
+            base.HitBy(info);
+
             float damage = 0;
 
-            if (other.Source is HeldToolController tool)
+            if (info.Source is HeldToolController tool)
             {
                 if (tool.Attributes.TryGet("efficiency", out var efficiency))
                 {

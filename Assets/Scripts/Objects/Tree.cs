@@ -35,6 +35,8 @@ namespace UZSG.Objects
 
         public override void HitBy(HitboxCollisionInfo info)
         {
+            base.HitBy(info);
+
             float damage = 0f;
 
             if (info.Source is HeldToolController tool)

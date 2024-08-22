@@ -52,24 +52,29 @@ namespace UZSG.Entities.Vehicles
         [HideInInspector] public float steeringAngle;               // current Steering angle
         [HideInInspector] public float carSpeed;                    // Used to store the current speed of the car.
         [HideInInspector] public float powerToWheels;               // Used to store final wheel torque
-        [HideInInspector] public bool isTractionLocked;             // Used to know whether the traction of the car is locked or not.
-        [HideInInspector] public float defaultMaxSteerAngle;        // Used to store the original max steering angle.
-        [HideInInspector] public float rbCarSpeed;                  // Used to store the vehicle speed in measured by the rigidbody.
+        [HideInInspector] public float defaultMaxSteerAngle;        // Used to store the original max steering angle. (will be used if lock steer will be required in future)
+        [HideInInspector] public float turnRadius;                  // To store turn radius of the vehicle
         [HideInInspector] public List<WheelCollider> wheels;        // Store all wheel colliders.
 
         /*
        IMPORTANT: The following variables should not be modified manually since their values are automatically given via script.
         */
-        Rigidbody _carRigidbody; // Stores the car's rigidbody.
-        WheelCollider wheelL; // represents any wheel to the left
-        WheelCollider wheelR; //represents any wheel to the right
-        float _steeringAxis; // Used to know whether the steering wheel has reached the maximum value. It goes from -1 to 1.
-        float _throttleAxis; // Used to know whether the throttle has reached the maximum value. It goes from -1 to 1.
+        Rigidbody _carRigidbody;                                    // Stores the car's rigidbody.
+        WheelCollider wheelL;                                       // represents any wheel to the left
+        WheelCollider wheelR;                                       // Represents any wheel to the right
+        float _steeringAxis;                                        // Used to know whether the steering wheel has reached the maximum value. It goes from -1 to 1.
+        float _throttleAxis;                                        // Used to know whether the throttle has reached the maximum value. It goes from -1 to 1.
         float _localVelocityZ;
         float _localVelocityX;
         float _fuelConsumption;
         bool _deceleratingCar;
         bool _hasFuel;
+
+        // Experimental Ackermann Steering
+        float _wheelBase;                                           // Length from the center of the front wheel to rear wheel
+        float _rearTrack;                                           // Length between the two wheels
+        float _ackermannLeftAngle;
+        float _ackermannRightAngle;
 
         bool _isHandbraked;
         Vector2 _driverInput;
@@ -114,7 +119,6 @@ namespace UZSG.Entities.Vehicles
             powerCurve = _vehicle.Vehicle.powerCurve;
             frontPower = _vehicle.Vehicle.frontPower;
             rearPower = _vehicle.Vehicle.rearPower;
-            maxSteeringAngle = _vehicle.Vehicle.maxSteeringAngle;
             steeringSpeed = _vehicle.Vehicle.steeringSpeed;
             brakeForce = _vehicle.Vehicle.brakeForce;
             decelerationMultiplier = _vehicle.Vehicle.decelerationMultiplier;
@@ -124,6 +128,11 @@ namespace UZSG.Entities.Vehicles
             wheelR = _frontWheelColliders[1];
 
             _hasFuel = fuelLevel > 0;
+
+            // Initialize required measures for ackermann steering
+            _wheelBase = Vector3.Distance(wheelL.transform.localPosition, _rearWheelColliders[0].transform.localPosition);
+            _rearTrack = (Vector3.Distance(_rearWheelColliders[0].transform.localPosition, _rearWheelColliders[1].transform.localPosition)) / 2;  // get only the center
+            turnRadius = _vehicle.Vehicle.turnRadius;
         }
 
         private void FixedUpdate()
@@ -138,7 +147,6 @@ namespace UZSG.Entities.Vehicles
         {
             // Compute car speed using one of the wheels
             carSpeed = (2 * Mathf.PI * _frontWheelColliders[0].radius * _frontWheelColliders[0].rpm * 60) / 1000;
-            rbCarSpeed = _carRigidbody.velocity.magnitude;
 
             // Save the local velocity of the car in the x axis. Used to know if the car should lose traction.
             _localVelocityX = transform.InverseTransformDirection(_carRigidbody.velocity).x;
@@ -254,8 +262,12 @@ namespace UZSG.Entities.Vehicles
             }
 
             steeringAngle = _steeringAxis * maxSteeringAngle;
-            _frontWheelColliders[0].steerAngle = Mathf.Lerp(_frontWheelColliders[0].steerAngle, steeringAngle, steeringSpeed);
-            _frontWheelColliders[1].steerAngle = Mathf.Lerp(_frontWheelColliders[1].steerAngle, steeringAngle, steeringSpeed);
+
+            _ackermannLeftAngle = Mathf.Rad2Deg * Mathf.Atan(_wheelBase / (turnRadius - _rearTrack)) * _steeringAxis;
+            _ackermannRightAngle = Mathf.Rad2Deg * Mathf.Atan(_wheelBase / (turnRadius + _rearTrack)) * _steeringAxis;
+
+            _frontWheelColliders[0].steerAngle = Mathf.Lerp(_frontWheelColliders[0].steerAngle, _ackermannLeftAngle, steeringSpeed);
+            _frontWheelColliders[1].steerAngle = Mathf.Lerp(_frontWheelColliders[1].steerAngle, _ackermannRightAngle, steeringSpeed);
         }
 
         public void HandleRightSteer()
@@ -268,8 +280,12 @@ namespace UZSG.Entities.Vehicles
             }
 
             steeringAngle = _steeringAxis * maxSteeringAngle;
-            _frontWheelColliders[0].steerAngle = Mathf.Lerp(_frontWheelColliders[0].steerAngle, steeringAngle, steeringSpeed);
-            _frontWheelColliders[1].steerAngle = Mathf.Lerp(_frontWheelColliders[1].steerAngle, steeringAngle, steeringSpeed);
+
+            _ackermannLeftAngle = Mathf.Rad2Deg * Mathf.Atan(_wheelBase / (turnRadius + _rearTrack)) * _steeringAxis;
+            _ackermannRightAngle = Mathf.Rad2Deg * Mathf.Atan(_wheelBase / (turnRadius - _rearTrack)) * _steeringAxis;
+
+            _frontWheelColliders[0].steerAngle = Mathf.Lerp(_frontWheelColliders[0].steerAngle, _ackermannLeftAngle, steeringSpeed);
+            _frontWheelColliders[1].steerAngle = Mathf.Lerp(_frontWheelColliders[1].steerAngle, _ackermannRightAngle, steeringSpeed);
         }
 
         public void HandleBrake()
@@ -428,9 +444,11 @@ namespace UZSG.Entities.Vehicles
                 _steeringAxis = 0f;
             }
 
-            steeringAngle = _steeringAxis * maxSteeringAngle;
-            _frontWheelColliders[0].steerAngle = Mathf.Lerp(_frontWheelColliders[0].steerAngle, steeringAngle, steeringSpeed); // note to charles: sana LEFT WHEEL to
-            _frontWheelColliders[1].steerAngle = Mathf.Lerp(_frontWheelColliders[1].steerAngle, steeringAngle, steeringSpeed); // sana RIGHT WHEEL to
+            _ackermannLeftAngle *= _steeringAxis;
+            _ackermannRightAngle *= _steeringAxis;
+
+            _frontWheelColliders[0].steerAngle = Mathf.Lerp(_frontWheelColliders[0].steerAngle, _ackermannLeftAngle, steeringSpeed); // note to charles: sana LEFT WHEEL to
+            _frontWheelColliders[1].steerAngle = Mathf.Lerp(_frontWheelColliders[1].steerAngle, _ackermannRightAngle, steeringSpeed); // sana RIGHT WHEEL to
         }
 
         public void Drivetrain(float _wheelTorque)

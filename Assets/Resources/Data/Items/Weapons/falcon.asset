@@ -34,7 +34,9 @@ MonoBehaviour:
   AudioAssetsData: {fileID: 11400000, guid: 770e8dc20b148af4fb0d5f3988e0f429, type: 2}
   HotbarIcon: {fileID: 0}
   Category: 1
+  Attributes: []
   MeleeType: 0
+  MeleeAttacks: []
   BluntType: 0
   BladedType: 0
   RangedType: 1
@@ -80,7 +82,7 @@ MonoBehaviour:
       RecoveryDuration: 0
   armsAnimations: {fileID: 9100000, guid: 90b9a7adc1ec7d441af891b9381f35bf, type: 2}
   viewmodel:
-    m_AssetGUID: cd5becb5424bd3a439752ef528f86a74
+    m_AssetGUID: 13edfeffdf303464dac87a6a494cc5e3
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 1

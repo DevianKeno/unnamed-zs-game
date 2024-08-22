@@ -56,6 +56,7 @@ namespace UZSG.UI.Players
         [SerializeField] ItemDetailsUI itemDetailsUI;
         [SerializeField] GameObject bag;
         [SerializeField] GameObject selectorPrefab;
+        [SerializeField] Button closeButton;
         
         InputActionMap actionMap;
         Dictionary<string, InputAction> inputs = new();
@@ -90,7 +91,7 @@ namespace UZSG.UI.Players
             // itemDetailsUI = Game.UI.Create<ItemDetailsUI>("Item Details UI");
             frameController.SwitchToFrame("bag", force: true);
             InitializeInputs();
-            
+            closeButton.onClick.AddListener(Hide);
         }
 
         void InitializeElements()

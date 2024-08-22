@@ -61,12 +61,6 @@ namespace UZSG.Objects
             }
         }
         
-        protected virtual void LoadAudioAssets()
-        {
-            // audioController ??= gameObject.AddComponent<AudioSourceController>();
-            // audioController.LoadAudioAssetsData(objectData.AudioAssetsData);
-        }
-
         protected virtual void LoadGUIAsset(AssetReference guiAsset, Action<ObjectGUI> onLoadCompleted = null)
         {
             if (!guiAsset.IsSet())
@@ -79,8 +73,7 @@ namespace UZSG.Objects
             {
                 if (a.Status == AsyncOperationStatus.Succeeded)
                 {
-                    var go = Instantiate(a.Result);
-                    
+                    var go = Instantiate(a.Result, transform);
                     if (go.TryGetComponent<ObjectGUI>(out var gui))
                     {
                         onLoadCompleted?.Invoke(gui);

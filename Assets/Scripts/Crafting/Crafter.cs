@@ -76,11 +76,34 @@ namespace UZSG.Crafting
             }
         }
 
+        public void ContinueRemainingCraft()
+        {
+            if (!routines.Any()) return;
+
+            var pausedRoutine = GetPausedRoutine();
+            if (pausedRoutine != null)
+            {
+                StartCoroutine(pausedRoutine.StartCraftCoroutine());
+            }
+        }
+
         CraftingRoutine GetNextRoutine()
         {
             foreach (var r in routines)
             {
                 if (r.Status == CraftingRoutineStatus.Prepared)
+                {
+                    return r;
+                }
+            }
+            return null;
+        }
+
+        CraftingRoutine GetPausedRoutine()
+        {
+            foreach (var r in routines)
+            {
+                if (r.Status == CraftingRoutineStatus.Paused)
                 {
                     return r;
                 }

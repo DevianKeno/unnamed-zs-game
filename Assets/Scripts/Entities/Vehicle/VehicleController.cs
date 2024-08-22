@@ -14,8 +14,8 @@ namespace UZSG.Entities.Vehicles
     {
         VehicleSeatManager _vehicleSeatManager;
 
-        [Header("General Settings")]
-        [SerializeField] bool _isEnabled;
+        //[Header("General Settings")]
+        bool _isEnabled = false;
 
         [Header("Vehicle Variables")]
         [SerializeField] VehicleEntity _vehicle;
@@ -54,6 +54,7 @@ namespace UZSG.Entities.Vehicles
         [HideInInspector] public float powerToWheels;               // Used to store final wheel torque
         [HideInInspector] public bool isTractionLocked;             // Used to know whether the traction of the car is locked or not.
         [HideInInspector] public float defaultMaxSteerAngle;        // Used to store the original max steering angle.
+        [HideInInspector] public float rbCarSpeed;                  // Used to store the vehicle speed in measured by the rigidbody.
         [HideInInspector] public List<WheelCollider> wheels;        // Store all wheel colliders.
 
         /*
@@ -137,6 +138,7 @@ namespace UZSG.Entities.Vehicles
         {
             // Compute car speed using one of the wheels
             carSpeed = (2 * Mathf.PI * _frontWheelColliders[0].radius * _frontWheelColliders[0].rpm * 60) / 1000;
+            rbCarSpeed = _carRigidbody.velocity.magnitude;
 
             // Save the local velocity of the car in the x axis. Used to know if the car should lose traction.
             _localVelocityX = transform.InverseTransformDirection(_carRigidbody.velocity).x;
@@ -652,6 +654,11 @@ namespace UZSG.Entities.Vehicles
         public void DisableVehicle()
         {
             _isEnabled = false;
+        }
+
+        public bool VehicleIsUsableState()
+        {
+            return _isEnabled; 
         }
 
         #endregion

@@ -17,6 +17,7 @@ namespace UZSG.Entities
         [SerializeField] VehicleData vehicle; // vehicle data
         VehicleSeatManager _vehicleSeatManager;
         VehicleController _vehicleController;
+        VehicleAudioManager _vehicleAudioManager;
 
         [Header("Vehicle Parts")]
         public GameObject Model;
@@ -52,6 +53,7 @@ namespace UZSG.Entities
         {
             _vehicleController = gameObject.GetComponent<VehicleController>();
             _vehicleSeatManager = gameObject.GetComponent<VehicleSeatManager>();
+            _vehicleAudioManager = gameObject.GetComponent<VehicleAudioManager>();
             Model = transform.Find("Vehicle Body").gameObject;
             _originalLayer = Model.layer;
         }
@@ -78,6 +80,8 @@ namespace UZSG.Entities
 
             _vehicleController.EnableVehicle();
             _vehicleSeatManager.EnterVehicle(player);
+            _vehicleAudioManager.PlayerInVehicle();
+
         }
     }
 }

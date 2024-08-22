@@ -199,6 +199,9 @@ namespace UZSG.UI.Objects
             {
                 RefreshRoutineProgressUIs(routine);
             }
+            else if (routine.Status == Paused){
+                RefreshRoutineProgressUIs(routine);
+            }
             else if (routine.Status == Finished)
             {
                 var ui = _routineUIs[routine];

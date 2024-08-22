@@ -51,6 +51,7 @@ public class FuelCraftingGUI : CraftingGUI
             if (player.InventoryGUI.IsHoldingItem)
             {
                 var heldItem = player.InventoryGUI.HeldItem;
+                var fbc = (FuelBasedCrafting)workstation.Crafter;
 
                 if (slot.IsEmpty || slot.Item.CompareTo(heldItem))
                 {
@@ -58,6 +59,19 @@ public class FuelCraftingGUI : CraftingGUI
                     if (!excess.IsNone)
                     {
                         player.InventoryGUI.HoldItem(excess);
+                    }
+                    else
+                    {
+                        //if there is a routine still ongoing, ignite fuel
+                        //how tho...
+                        if (fbc.Routines.Count > 0)
+                        {
+                            if (fbc.TryConsumeFuel())
+                            {
+                                fbc.StartBurn();
+                            }
+                            fbc.ContinueRemainingCraft();
+                        }
                     }
                 }
                 else /// item diff, swap

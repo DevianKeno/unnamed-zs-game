@@ -8,7 +8,7 @@ using UZSG.Inventory;
 namespace UZSG.Crafting 
 {
     public enum CraftingRoutineStatus {
-        Prepared, Started, Ongoing, CraftSingle, Finished, Canceled
+        Prepared, Started, Ongoing, CraftSingle, Finished, Canceled, Paused
     }
 
     public class CraftingRoutine
@@ -82,6 +82,11 @@ namespace UZSG.Crafting
 
         public void Prepare()
         {
+            SecondsElapsed = 0;
+            SecondsElapsedSingle = 0;
+            CurrentYield = 0;
+            RemainingYield = TotalYield;
+
             Status = CraftingRoutineStatus.Prepared;
             OnNotify?.Invoke(this);
         }
@@ -92,45 +97,51 @@ namespace UZSG.Crafting
             StartTime = DateTime.Now;
             OnNotify?.Invoke(this);
 
-            SecondsElapsed = 0;
-            CurrentYield = 0;
-            RemainingYield = TotalYield;
+            // RemainingYield = TotalYield;
 
-            for (int i = 0; i < TotalYield; i++)
+            while (RemainingYield > 0)
             {
-                Status = CraftingRoutineStatus.Ongoing;
-                SecondsElapsedSingle = 0;
-
-                while (SecondsElapsedSingle < Recipe.DurationSeconds)
+                if (StopCrafting) //Pauses Craft whenever something StopCrafting is true
                 {
-                    if (StopCrafting)
-                    {
-                        SecondsElapsedSingle = 0;
-                        StopCrafting = false;
-                        yield return null;
-                    }
-
-                    if (IsFueled)
-                    {
-                        OnFuelCheck?.Invoke(this, EventArgs.Empty);
-                    }
-
-                    yield return new WaitForSeconds(0.1f);
-                    SecondsElapsedSingle += 0.1f;
-                    SecondsElapsed += 0.1f;
-                    OnCraftSecond?.Invoke(this, SecondsLeftSingle);
+                    SecondsElapsed -= SecondsElapsedSingle;
+                    SecondsElapsedSingle = 0;
+                    StopCrafting = false;
+                    Status = CraftingRoutineStatus.Paused;
                     OnNotify?.Invoke(this);
+                    yield break;
                 }
 
-                CurrentYield++;
-                RemainingYield--;
-                Status = CraftingRoutineStatus.CraftSingle;
+                Status = CraftingRoutineStatus.Ongoing;
+
+                if (IsFueled)
+                {
+                    OnFuelCheck?.Invoke(this, EventArgs.Empty);
+                }
+
+                yield return new WaitForSeconds(0.1f);
+                SecondsElapsedSingle += 0.1f;
+                SecondsElapsed += 0.1f;
+                OnCraftSecond?.Invoke(this, SecondsLeftSingle);
+                OnNotify?.Invoke(this);
+
+                if (SecondsElapsedSingle >= Recipe.DurationSeconds)
+                {
+                    Status = CraftingRoutineStatus.CraftSingle;
+                    OnNotify?.Invoke(this);
+                    SecondsElapsedSingle -= Recipe.DurationSeconds;
+                    CurrentYield++;
+                    RemainingYield = TotalYield - CurrentYield;
+                }
+            }
+
+            if (!(Status == CraftingRoutineStatus.Paused))
+            {
+                Status = CraftingRoutineStatus.Finished;
+                EndTime = DateTime.Now;
                 OnNotify?.Invoke(this);
             }
 
-            Status = CraftingRoutineStatus.Finished;
-            EndTime = DateTime.Now;
-            OnNotify?.Invoke(this);
+            
         }
 
         public void Cancel()

@@ -647,8 +647,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   entityData: {fileID: 11400000, guid: bdc11134a60ef4f4ab23e5c699dd5c07, type: 2}
-  audioSourceController: {fileID: 0}
-  HasHitboxes: 0
+  attributes:
+    attributesReadOnly: []
   vehicle: {fileID: 11400000, guid: 63f28035625936b48b2823dd6a5004ce, type: 2}
   Model: {fileID: 0}
   FrontWheelColliders:
@@ -797,7 +797,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  twoSoundSystem: 1
+  twoSoundSystem: 0
   normedSpeedThreshold: 0.654
   minPitch: 1
   _sourceIdle: {fileID: 4223011832935015685}

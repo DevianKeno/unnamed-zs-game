@@ -21,9 +21,6 @@ namespace UZSG.Objects
 
         [SerializeField] protected AttributeCollection attributes;
         public AttributeCollection Attributes => attributes;
-
-        // [SerializeField] protected AudioSourceController audioController;
-        // public AudioSourceController Audio => audioController;
         
         [SerializeField] protected Animator animator;
         public Animator Animator => animator;
@@ -60,12 +57,6 @@ namespace UZSG.Objects
                 Game.Audio.LoadAudioAssets(objectData.AudioAssetsData);
             }
         }
-        
-        protected virtual void LoadAudioAssets()
-        {
-            // audioController ??= gameObject.AddComponent<AudioSourceController>();
-            // audioController.LoadAudioAssetsData(objectData.AudioAssetsData);
-        }
 
         protected virtual void LoadGUIAsset(AssetReference guiAsset, Action<ObjectGUI> onLoadCompleted = null)
         {
@@ -79,7 +70,7 @@ namespace UZSG.Objects
             {
                 if (a.Status == AsyncOperationStatus.Succeeded)
                 {
-                    var go = Instantiate(a.Result);
+                    var go = Instantiate(a.Result, Vector3.zero, Quaternion.identity, transform);
                     
                     if (go.TryGetComponent<ObjectGUI>(out var gui))
                     {

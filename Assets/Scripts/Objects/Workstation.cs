@@ -67,8 +67,6 @@ namespace UZSG.Objects
 
             LoadGUIAsset(WorkstationData.GUI, onLoadCompleted: (gui) =>
             {
-                gui.transform.SetParent(transform);
-
                 if (WorkstationData.RequiresFuel)
                 {
                     this.gui = (FuelCraftingGUI) gui;

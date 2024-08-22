@@ -311,11 +311,11 @@ RectTransform:
   - {fileID: 3375687863821745067}
   - {fileID: 4416055892674564035}
   - {fileID: 2837250380059921115}
-  m_Father: {fileID: 8148007497670560763}
+  m_Father: {fileID: 226868355165448386}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -1600, y: -284.2}
+  m_AnchoredPosition: {x: -1599.4, y: -313}
   m_SizeDelta: {x: 586.56, y: -743.2323}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4271689309514645253
@@ -374,7 +374,7 @@ MonoBehaviour:
     itemData: {fileID: 0}
     count: 0
     attributes:
-      attributes: []
+      attributesReadOnly: []
   itemDisplay: {fileID: 5591126747180918906}
   nameText: {fileID: 7352114192446614035}
   descriptionText: {fileID: 8717109782528394300}
@@ -804,10 +804,9 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 2416554142431172294}
-  - {fileID: 8148007497670560763}
-  - {fileID: 7320609207999582006}
   - {fileID: 6906899641208122389}
+  - {fileID: 7320609207999582006}
+  - {fileID: 8148007497670560763}
   m_Father: {fileID: 226868355165448386}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -831,12 +830,12 @@ MonoBehaviour:
   InactiveFramePosition: {x: 1278, y: 0}
   AnimationFactor: 0.5
   Ease: 18
-  currentFrame: {fileID: 4239096195865769545}
+  currentFrame: {fileID: 2297440530018438015}
   frames:
   - {fileID: 2297440530018438015}
   - {fileID: 7578991593108478184}
   - {fileID: 4239096195865769545}
-  switchTo: 2
+  switchTo: 0
 --- !u!1 &2347811104475225977
 GameObject:
   m_ObjectHideFlags: 0
@@ -1214,12 +1213,12 @@ RectTransform:
   m_Children:
   - {fileID: 1546201777687310865}
   - {fileID: 6443237272364482453}
-  m_Father: {fileID: 6890029664816355300}
+  m_Father: {fileID: 226868355165448386}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0.33339584, y: 1}
-  m_AnchoredPosition: {x: -533.7467, y: 0}
-  m_SizeDelta: {x: 214.74673, y: 0}
+  m_AnchoredPosition: {x: 0.5, y: 0}
+  m_SizeDelta: {x: 1.0000305, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &4460319820841239274
 GameObject:
@@ -2786,6 +2785,8 @@ RectTransform:
   - {fileID: 2393242323072492567}
   - {fileID: 2191633827479873739}
   - {fileID: 6093909539013106074}
+  - {fileID: 2416554142431172294}
+  - {fileID: 8461696087125054046}
   - {fileID: 6890029664816355300}
   - {fileID: 4021711515332301148}
   - {fileID: 4422109135773111838}
@@ -2831,6 +2832,7 @@ MonoBehaviour:
   itemDetailsUI: {fileID: 2372161832819943542}
   bag: {fileID: 9108677017342296465}
   selectorPrefab: {fileID: 4703142867302330524, guid: de582ed54f6da9e40b695f3411e80524, type: 3}
+  closeButton: {fileID: 7240020653883601109}
 --- !u!114 &4826785070200666852
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2880,12 +2882,11 @@ RectTransform:
   - {fileID: 3301420920870814455}
   - {fileID: 1577234300686031398}
   - {fileID: 4555622943327753579}
-  - {fileID: 8461696087125054046}
   m_Father: {fileID: 6890029664816355300}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 1278.88, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2297440530018438015
@@ -3002,7 +3003,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 1278.88, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &4239096195865769545
@@ -4942,6 +4943,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 75496786348238149, guid: 513f9b9052bfdab4ca8e314e3bf63d41, type: 3}
   m_PrefabInstance: {fileID: 5177279849627035775}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7240020653883601109 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2567294758916954282, guid: 513f9b9052bfdab4ca8e314e3bf63d41, type: 3}
+  m_PrefabInstance: {fileID: 5177279849627035775}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &6170205851958512384
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5727,7 +5739,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 339941873740230023, guid: 8b9076dfe34b2c54c8bdb46a2f702503, type: 3}
       propertyPath: m_Name
-      value: crafting
+      value: Player Crafting GUI
       objectReference: {fileID: 0}
     - target: {fileID: 393694953450732518, guid: 8b9076dfe34b2c54c8bdb46a2f702503, type: 3}
       propertyPath: m_AnchorMax.y

@@ -1,10 +1,11 @@
+using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
 using UZSG.Systems;
 using UZSG.UI.Objects;
-using System.Collections.Generic;
 
 namespace UZSG.UI.Players
 {
@@ -111,16 +112,17 @@ namespace UZSG.UI.Players
                 externalContainer = null;
             }
 
-            gui.Hide();
             if (_appendedFrameButtons.ContainsKey(gui))
             {
                 var btn = _appendedFrameButtons[gui];
                 Destroy(btn.gameObject);
                 _appendedFrameButtons.Remove(gui);
             }
+            frameController.RemoveFrame(gui.Frame);
+
+            gui.Hide();
         }
         
-
         /// <summary>
         /// Replace the Player Crafting GUI with the Workstation GUI.
         /// </summary>

@@ -19,30 +19,58 @@ namespace UZSG.Items.Weapons
     {
         Player Player => owner as Player;
 
-        public float attackRange;
-        public float attackAngle;
-        public float attackDuration;
-        public int numberOfRays;
-        public LayerMask attackLayer;
         bool _canAttack;
         bool _inhibitActions;
         bool _isAttacking;
+        bool _onCooldown;
 
         public bool VisualizeAttack;
 
         public string CollisionTag => "Melee";
 
-        
+
+        MeleeWeaponStateMachine stateMachine;
+        public MeleeWeaponStateMachine StateMachine => stateMachine;
+
         #region Melee weapon events
 
         public event Action<HitboxCollisionInfo> OnMeleeHit;
 
         #endregion
 
+        public bool IsBroken
+        {
+            get
+            {
+                return attributes["durability"].Value <= 0;
+            }
+        }
 
-        MeleeWeaponStateMachine stateMachine;
-        public MeleeWeaponStateMachine StateMachine => stateMachine;
+        /// <summary>
+        /// Whether if the Owner (Player) can use (Attack) this tool.
+        /// </summary>
+        public bool CanUse
+        {
+            get
+            {
+                if (IsBroken) return false;
+                if (_onCooldown) return false;
 
+                if (owner.Attributes.TryGet("stamina", out var ownerStamina))
+                {
+                    if (owner.Attributes.TryGet("melee_stamina_cost_multiplier", out var multiplier))
+                    {
+                        return ownerStamina.Value >= (attributes["stamina_cost"].Value * multiplier.Value);
+                    }
+                    else
+                    {
+                        return ownerStamina.Value >= attributes["stamina_cost"].Value;
+                    }
+                }
+
+                return false;
+            }
+        }
 
         #region Initializing methods
 
@@ -55,7 +83,6 @@ namespace UZSG.Items.Weapons
         {
             InitializeAudioController();
             InitializeEventsFromOwnerInput();
-            RetrievePlayerAttributes();
         }
 
         void InitializeAudioController()
@@ -63,8 +90,6 @@ namespace UZSG.Items.Weapons
             audioSourceController.LoadAudioAssetsData(WeaponData.AudioAssetsData);
             audioSourceController.CreateAudioPool(size: 8); 
         }
-
-        Attributes.Attribute playerStamina;
 
         void InitializeEventsFromOwnerInput()
         {
@@ -79,19 +104,6 @@ namespace UZSG.Items.Weapons
             inputs["Secondary Action"].canceled += OnPlayerSecondary;
         }
 
-        void RetrievePlayerAttributes()
-        {
-            if (Player.Attributes.TryGet("stamina", out var attr))
-            {
-                playerStamina = attr;
-                _canAttack = true;
-            }
-            else
-            {
-                Game.Console.LogWarning($"Player {Player.name} does not have a 'stamina' attribute. They will not be able to use '{ItemData.Id}'.");
-                _canAttack = false;
-            }
-        }
 
         #endregion
 
@@ -113,7 +125,7 @@ namespace UZSG.Items.Weapons
             
             if (context.started)
             {
-                if (CanAttack())
+                if (CanUse)
                 {
                     StartCoroutine(AttackCoroutine());
                 }
@@ -152,18 +164,6 @@ namespace UZSG.Items.Weapons
             _inhibitActions = false;
         }
 
-        [SerializeField] float attackStaminaCost;
-        bool CanAttack()
-        {
-            if (!_canAttack) return false;
-            if (playerStamina.Value < attackStaminaCost)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
         IEnumerator AttackCoroutine()
         {
             if (_inhibitActions || _isAttacking)
@@ -195,7 +195,7 @@ namespace UZSG.Items.Weapons
 
         void ConsumeStamina()
         {
-            playerStamina.Remove(attackStaminaCost);
+            owner.Attributes["stamina"].Remove(attributes["stamina_cost"].Value);
         }
 
         void PlaySound()

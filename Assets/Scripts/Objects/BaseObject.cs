@@ -22,14 +22,31 @@ namespace UZSG.Objects
         [SerializeField] protected AttributeCollection attributes;
         public AttributeCollection Attributes => attributes;
 
-        [SerializeField] protected AudioSourceController audioController;
-        public AudioSourceController Audio => audioController;
+        // [SerializeField] protected AudioSourceController audioController;
+        // public AudioSourceController Audio => audioController;
         
         [SerializeField] protected Animator animator;
         public Animator Animator => animator;
 
         protected bool isDirty;
         public bool IsDirty => isDirty;
+        
+        /// <summary>
+        /// The transform position of this Object. 
+        /// </summary>
+        public Vector3 Position
+        {
+            get { return transform.position; }
+            set { transform.position = value; }
+        }
+        /// <summary>
+        /// The transform rotation of this Object. 
+        /// </summary>
+        public Quaternion Rotation
+        {
+            get { return transform.rotation; }
+            set { transform.rotation = value; }
+        }
         
         public event EventHandler<HitboxCollisionInfo> OnHit;
 
@@ -38,13 +55,16 @@ namespace UZSG.Objects
 
         protected virtual void Start()
         {
-            if (objectData.HasAudio) InitializeAudioController();
+            if (objectData.HasAudio)
+            {
+                Game.Audio.LoadAudioAssets(objectData.AudioAssetsData);
+            }
         }
         
-        protected virtual void InitializeAudioController()
+        protected virtual void LoadAudioAssets()
         {
-            audioController ??= gameObject.AddComponent<AudioSourceController>();
-            audioController.LoadAudioAssetsData(objectData.AudioAssetsData);
+            // audioController ??= gameObject.AddComponent<AudioSourceController>();
+            // audioController.LoadAudioAssetsData(objectData.AudioAssetsData);
         }
 
         protected virtual void LoadGUIAsset(AssetReference guiAsset, Action<ObjectGUI> onLoadCompleted = null)

@@ -21,7 +21,7 @@ MonoBehaviour:
     m_EditorAssetChanged: 0
   Attributes:
   - data: {fileID: 11400000, guid: e1db9201565269c4caebcb12298f0665, type: 2}
-    value: 250
+    value: 20
     baseMaximum: 0
     multiplier: 1
     flatBonus: 0
@@ -34,5 +34,5 @@ MonoBehaviour:
     itemData: {fileID: 11400000, guid: 28840410f2d8d0444ae7781a4c648d85, type: 2}
     count: 1
     attributes:
-      attributes: []
+      attributesReadOnly: []
   Instances: []

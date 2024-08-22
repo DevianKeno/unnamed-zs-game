@@ -47,7 +47,7 @@ namespace UZSG.Objects
                         }
                     }
 
-                    Game.Audio.Play("mine_pickaxe", transform.position);
+                    Game.Audio.PlayInWorld("mine_pickaxe", Position);
                 }
                 else /// other tools deals half damage
                 {

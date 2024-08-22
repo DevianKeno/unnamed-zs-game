@@ -34,6 +34,18 @@ namespace UZSG.Attributes
             this.data = Game.Attributes.GetData(id);
             return;
         }
+
+        public Attribute(Attribute attr)
+        {
+            data = attr.Data;
+            value = attr.value;
+            minimum = attr.Minimum;
+            baseMaximum = attr.BaseMaximum;
+            multiplier = attr.Multiplier;
+            flatBonus = attr.FlatBonus;
+            LimitOverflow = attr.LimitOverflow;
+            LimitUnderflow = attr.LimitUnderflow;
+        }
         
         [SerializeField, Tooltip("The current value.")]
         protected float value = 0f;

@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4734211055726018466}
-  - component: {fileID: 9090100060184212582}
   - component: {fileID: 4769905854740593563}
+  - component: {fileID: 9090100060184212582}
   m_Layer: 0
   m_Name: Pine Tree Heart (Resource)
   m_TagString: Untagged
@@ -34,6 +34,85 @@ Transform:
   - {fileID: 4953467319527457486}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 47.1, z: 0}
+--- !u!114 &4769905854740593563
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5402238674860959000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6eb8c224c411d014d9a52dc4bff8b4d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objectData: {fileID: 11400000, guid: 8d25832abdf540b40b79ed393a0861ef, type: 2}
+  attributes:
+    attributesReadOnly: []
+  animator: {fileID: 0}
+  ChopAngle: 1
+  fallAnimationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0.0038095242
+      value: -0.0022934675
+      inSlope: 0.12580359
+      outSlope: 0.12580359
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.20772864
+    - serializedVersion: 3
+      time: 0.5705567
+      value: 0.28797185
+      inSlope: 1.4808697
+      outSlope: 1.4808697
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.29931465
+    - serializedVersion: 3
+      time: 0.86481386
+      value: 1.1111668
+      inSlope: 0.08688774
+      outSlope: 0.08688774
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.40948012
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.90442055
+      value: 0.8990913
+      inSlope: -2.5548236
+      outSlope: -2.5548236
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 1
+      outWeight: 0.6852954
+    - serializedVersion: 3
+      time: 0.9724614
+      value: 1.0546741
+      inSlope: 1.7708718
+      outSlope: 1.7708718
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 1
+    - serializedVersion: 3
+      time: 1.0064697
+      value: 0.997406
+      inSlope: -1.6839448
+      outSlope: -1.6839448
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  MaxFallingAngle: 80
+  treeModel: {fileID: 4953467319527457486}
 --- !u!205 &9090100060184212582
 LODGroup:
   m_ObjectHideFlags: 0
@@ -68,25 +147,6 @@ LODGroup:
     renderers:
     - renderer: {fileID: 2347606361429083773}
   m_Enabled: 1
---- !u!114 &4769905854740593563
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5402238674860959000}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6eb8c224c411d014d9a52dc4bff8b4d6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  objectData: {fileID: 11400000, guid: 8d25832abdf540b40b79ed393a0861ef, type: 2}
-  attributes:
-    attributes: []
-  audioController: {fileID: 0}
-  animator: {fileID: 0}
-  ChopAngle: 1
-  treeModel: {fileID: 4953467319527457486}
 --- !u!1001 &4842769506101994789
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -178,19 +238,19 @@ PrefabInstance:
     - target: {fileID: -1526315023177031852, guid: 39b489a4227078342b88e98dd3635192, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: c692e915c6a7e9d44b3cfd76537b1ecc, type: 2}
+      objectReference: {fileID: 2100000, guid: 59455a717acf41f42bbd449855681afe, type: 2}
     - target: {fileID: -164481825537149297, guid: 39b489a4227078342b88e98dd3635192, type: 3}
       propertyPath: m_Layer
       value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 408653686846637540, guid: 39b489a4227078342b88e98dd3635192, type: 3}
       propertyPath: m_CastShadows
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 408653686846637540, guid: 39b489a4227078342b88e98dd3635192, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: c692e915c6a7e9d44b3cfd76537b1ecc, type: 2}
+      objectReference: {fileID: 2100000, guid: 59455a717acf41f42bbd449855681afe, type: 2}
     - target: {fileID: 919132149155446097, guid: 39b489a4227078342b88e98dd3635192, type: 3}
       propertyPath: m_Name
       value: pine_tree_heart
@@ -200,9 +260,17 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1446317025356153247, guid: 39b489a4227078342b88e98dd3635192, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1446317025356153247, guid: 39b489a4227078342b88e98dd3635192, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: c692e915c6a7e9d44b3cfd76537b1ecc, type: 2}
+      objectReference: {fileID: 2100000, guid: 59455a717acf41f42bbd449855681afe, type: 2}
+    - target: {fileID: 1446317025356153247, guid: 39b489a4227078342b88e98dd3635192, type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: 2b2204f91dae9e340ba57542090b35ff, type: 2}
     - target: {fileID: 3843391252007280236, guid: 39b489a4227078342b88e98dd3635192, type: 3}
       propertyPath: m_Layer
       value: 13

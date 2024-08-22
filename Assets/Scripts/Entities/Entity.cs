@@ -25,11 +25,17 @@ namespace UZSG.Entities
         [SerializeField] protected AttributeCollection attributes;
         public AttributeCollection Attributes => attributes;
 
+        /// <summary>
+        /// The transform position of this Entity. 
+        /// </summary>
         public Vector3 Position
         {
             get { return transform.position; }
             set { transform.position = value; }
         }
+        /// <summary>
+        /// The transform rotation of this Entity. 
+        /// </summary>
         public Quaternion Rotation
         {
             get { return transform.rotation; }

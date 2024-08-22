@@ -15,7 +15,13 @@ namespace UZSG.Objects
     public class Tree : Resource
     {
         public float ChopAngle = 8f; /// based on tree's size, hardness, mass?
-        
+        /// <summary>
+        /// Tree falling animation curve when cut down.
+        /// </summary>
+        public AnimationCurve fallAnimationCurve;
+        public float FallDuration = 5f;
+        public float MaxFallingAngle = 80f;
+
         Quaternion _originalRotation;
         [SerializeField] Transform treeModel;
 
@@ -27,11 +33,11 @@ namespace UZSG.Objects
             _originalRotation = transform.rotation;
         }
 
-        public override void HitBy(HitboxCollisionInfo other)
+        public override void HitBy(HitboxCollisionInfo info)
         {
             float damage = 0f;
 
-            if (other.Source is HeldToolController tool)
+            if (info.Source is HeldToolController tool)
             {
                 if (tool.Attributes.TryGet("efficiency", out var efficiency))
                 {
@@ -57,7 +63,7 @@ namespace UZSG.Objects
                         }
                     }
                     
-                    Game.Audio.Play("chop", transform.position);
+                    Game.Audio.PlayInWorld("tree_chop_wood", info.ContactPoint);
                     AnimateChop((tool.Owner as Player).Right);
                 }
                 else /// other tools deals half damage
@@ -70,6 +76,7 @@ namespace UZSG.Objects
                 damage *= 0.1f;
             }
 
+            /// Remove Tree health
             Attributes["health"].Remove(damage);
             if (Attributes["health"].Value <= 0)
             {
@@ -79,7 +86,15 @@ namespace UZSG.Objects
 
         public void Cutdown()
         {
-
+            Game.Audio.PlayInWorld("tree_fell", Position);
+            /// Tree falling animation
+            LeanTween.value(0, 1, FallDuration)
+            .setOnUpdate((float i) =>
+            {
+                var t = fallAnimationCurve.Evaluate(i);
+                var x = Mathf.Lerp(Rotation.x, MaxFallingAngle, t);
+                Rotation = Quaternion.Euler(x, Rotation.y, Rotation.z);
+            });
         }
 
         void AnimateChop(Vector3 swingDirection)

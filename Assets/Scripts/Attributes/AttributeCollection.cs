@@ -86,7 +86,8 @@ namespace UZSG.Attributes
                     Game.Console.LogWarning($"Duplicate attribute found '{attr.Id}', disregarding...?");
                     continue;
                 }
-                _attrsDict[attr.Id] = attr;
+
+                _attrsDict[attr.Id] = new(attr);
             }
         }
 

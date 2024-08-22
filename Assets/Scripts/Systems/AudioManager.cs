@@ -14,6 +14,7 @@ namespace UZSG.Systems
     {        
         bool _isInitialized;
         public bool IsInitialized => _isInitialized;
+
         Dictionary<string, AudioClip> _audioClipsDict = new();
         
         [SerializeField] AudioSource Global;
@@ -28,6 +29,14 @@ namespace UZSG.Systems
                 _audioClipsDict[clip.name] = clip;
             }
         }
+        
+        AudioSource InstantiateAudioSource()
+        {
+            return Instantiate(audioSourcePrefab, transform).GetComponent<AudioSource>();
+        }
+
+        
+        #region Public methods
 
         public struct LoadAudioAssetContext
         {
@@ -56,7 +65,10 @@ namespace UZSG.Systems
             {
                 foreach (var item in result)
                 {
-                    _audioClipsDict[item.name] = item;;
+                    if (!_audioClipsDict.ContainsKey(item.name))
+                    {
+                        _audioClipsDict[item.name] = item;
+                    }
                 }
             });
         }
@@ -106,70 +118,41 @@ namespace UZSG.Systems
             onComplete?.Invoke(audioClips);
         }
 
-        
-        #region Public methods
-
-        Dictionary<string, AudioSource> _playingAudios = new();
-
         public void Play(string name)
         {
             if (_audioClipsDict.TryGetValue(name, out var clip))
             {
-                Global.clip = clip;
-                Global.Play();
+                PlayClipAsNewSource(clip);
             }
         }
-        
-        public void Play(string name, Vector3 position)
+
+        public void PlayInWorld(string name, Vector3 position)
         {
             if (_audioClipsDict.TryGetValue(name, out var clip))
             {
-                Global.clip = _audioClipsDict[name];
-                Global.Play();
+                PlayClipAsNewSource3D(clip, position);
             }
         }
         
-        public void Play(string name, Vector3 position, Transform parent)
+        public void PlayClipAsNewSource(AudioClip clip)
         {
-            if (_audioClipsDict.TryGetValue(name, out var clip))
-            {
-                Global.clip = _audioClipsDict[name];
-                Global.Play();
-            }
+            var source = InstantiateAudioSource();
+            source.clip = clip;
+            source.spatialBlend = 0f;
+            source.Play();
+            Destroy(source, source.clip.length);
         }
 
-        public void CreateAudioPool()
+        public void PlayClipAsNewSource3D(AudioClip clip, Vector3 position)
         {
-
+            var source = InstantiateAudioSource();
+            source.transform.position = position;
+            source.clip = clip;
+            source.spatialBlend = 1;
+            source.Play();
+            Destroy(source, source.clip.length);
         }
 
-        public void PlaySolo(string name, bool restart = false)
-        {
-            if (string.IsNullOrEmpty(name)) return;
-            if (!_audioClipsDict.TryGetValue(name, out var newClip))
-            {
-                Game.Console.Log($"[Audio]: The audio '{name}' does not exists.");
-                return;
-            }
-            if (_playingAudios.TryGetValue(name, out var audioSource) && !restart)
-            {
-                Game.Console.Log($"[Audio]: The audio '{name}' is currently playing");
-                return;
-            }
-            
-            audioSource.Stop();
-            Destroy(audioSource.gameObject);
-            audioSource = InstantiateAudioSource();
-            audioSource.clip = newClip;
-            audioSource.spatialBlend = 0;
-            audioSource.Play();
-        }
-
-        AudioSource InstantiateAudioSource()
-        {
-            return Instantiate(audioSourcePrefab, transform).GetComponent<AudioSource>();
-        }
-        
         #endregion
     }
 }

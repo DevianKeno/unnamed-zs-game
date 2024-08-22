@@ -289,7 +289,7 @@ namespace UZSG.Objects
         {
             if (gui.IsVisible)
             {
-                audioController.PlaySound("craft");
+                Game.Audio.Play("craft");
             }
         }
 
@@ -297,7 +297,7 @@ namespace UZSG.Objects
         {
             if (gui.IsVisible)
             {
-                audioController.PlaySound("insufficient_materials");
+                Game.Audio.Play("insufficient_materials");
             }
         }
 

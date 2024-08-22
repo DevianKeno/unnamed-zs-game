@@ -28,7 +28,7 @@ namespace UZSG.Objects
             {
                 if (player.Inventory.Bag.TryPutNearest(new Item(Item)))
                 {
-                    Game.Audio.Play("pick", transform.position);
+                    Game.Audio.PlayInWorld("pick", transform.position);
                     Destroy(gameObject);
                 }
             }

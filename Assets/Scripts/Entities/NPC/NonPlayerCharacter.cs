@@ -39,6 +39,7 @@ namespace UZSG.Entities
             InitializeHitboxes();
             LoadDefaultSaveData<EntitySaveData>();
             ReadSaveData(saveData);
+            IsAlive = true;
         }
 
         void InitializeHitboxes()

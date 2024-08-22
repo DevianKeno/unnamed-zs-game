@@ -78,7 +78,6 @@ namespace UZSG.Entities
         {
             navMeshAgent.speed = Attributes.Get("move_speed").Value;
             _moveSpeed = Attributes.Get("move_speed").Value;
-
             _siteRadius = Attributes.Get("zombie_site_radius").Value;
             _attackRadius = Attributes.Get("zombie_attack_radius").Value;
             _roamRadius = Attributes.Get("zombie_roam_radius").Value;
@@ -103,7 +102,7 @@ namespace UZSG.Entities
         #region Agent Player Detection
 
         /// <summary>
-        /// Set this Enemy's target to the given Entity.
+        /// Set this Enemy's target to the detected player then show detection animation.
         /// </summary>
         /// <param name="etty"></param>
         public void DetectPlayer(Entity etty)

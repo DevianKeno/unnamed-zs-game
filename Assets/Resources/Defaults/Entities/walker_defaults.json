@@ -22,7 +22,7 @@
     },
     {
       "Id": "player_detection_radius",
-      "Value": 12.0,
+      "Value": 20.0,
       "Minimum": 0.0,
       "BaseMaximum": 0.0,
       "Multiplier": 0.0,

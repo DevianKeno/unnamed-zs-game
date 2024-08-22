@@ -28,7 +28,7 @@ public class VehicleFunctionAnimation : MonoBehaviour
     {
         vehicleEntity = GetComponent<VehicleEntity>();
         vehicleController = GetComponent<VehicleController>();
-        steeringWheelTransform = this.transform.Find("Steer/Steering Wheel");
+        steeringWheelTransform = this.transform.Find("Steering Group/Steering Column");
         wheelColliders = vehicleEntity.FrontWheelColliders.Concat(vehicleEntity.RearWheelColliders).ToList();
         wheelMeshes = vehicleEntity.WheelMeshes;
     }

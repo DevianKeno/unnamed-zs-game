@@ -9,6 +9,7 @@ namespace UZSG.Entities.Vehicles
     {
         VehicleEntity _vehicle;
         VehicleController _vehicleController;
+        VehicleAudioManager _audioManager;
 
         #region Vehicle Seats
         [Header("Vehicle Player Seats")]
@@ -29,6 +30,7 @@ namespace UZSG.Entities.Vehicles
         {
             _vehicle = gameObject.GetComponent<VehicleEntity>();
             _vehicleController = gameObject.GetComponent<VehicleController>();
+            _audioManager = gameObject.GetComponent<VehicleAudioManager>();
             _playerParent = this.transform.parent;
         }
 
@@ -185,9 +187,17 @@ namespace UZSG.Entities.Vehicles
         private void CheckPassengers()
         {
             bool[] _areSeatsOccupied = SeatsOccupied();
-            if ((_areSeatsOccupied[0] || _areSeatsOccupied[1]) == false)
+            if ((_areSeatsOccupied[0] && _areSeatsOccupied[1]) == false)
             {
+                print("0");
+                _audioManager.NoPlayerInVehicle();
+                _audioManager.NoPlayerInVehicle();
+            }
+            else if ((_areSeatsOccupied[0] || _areSeatsOccupied[1]) == false)
+            {
+                print("1");
                 _vehicleController.DisableVehicle();
+                
             }
         }
     }

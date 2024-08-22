@@ -316,10 +316,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b2c48c6cea2972408f392505069022d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemsLabelReference:
-    m_LabelString: items
-  weaponsLabelReference:
-    m_LabelString: weapon
 --- !u!1 &283768976
 GameObject:
   m_ObjectHideFlags: 0
@@ -3895,6 +3891,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c771ff587a2763643bfe60dd70b8c644, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentWorld: {fileID: 0}
 --- !u!1001 &1818356764
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4020,7 +4017,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TargetFramerate: -1
-  worldEventController: {fileID: 1948226130}
 --- !u!4 &1819902023
 Transform:
   m_ObjectHideFlags: 0
@@ -4414,7 +4410,6 @@ MonoBehaviour:
   InstantiateWeatherInEditor: 0
   CurrentWeather: {fileID: 11400000, guid: 51da26a6cfe31fd4ebd9a1ff6725bc7a, type: 2}
   DefaultWeather: {fileID: 11400000, guid: 51da26a6cfe31fd4ebd9a1ff6725bc7a, type: 2}
-  Time: {fileID: 1948226128}
   _weatherCountdown: -1
   ParticleParent: {fileID: 428117581}
 --- !u!114 &1948226130
@@ -4429,7 +4424,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c93b1d27ce51a94ca77de43aceace1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  InternalCountdown: 0
+  weatherController: {fileID: 0}
+  raidController: {fileID: 0}
+  InternalClock: 0
   _countdown: 0
   WorldEvents:
   - {fileID: 11400000, guid: 9183865816007fe4fa368808859ae3b4, type: 2}
@@ -4577,7 +4574,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2364538523787461896, guid: 9f8e90eec140a1341a36851e1658ada1, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -11.33477
+      value: 34.6
       objectReference: {fileID: 0}
     - target: {fileID: 2364538523787461896, guid: 9f8e90eec140a1341a36851e1658ada1, type: 3}
       propertyPath: m_LocalPosition.y

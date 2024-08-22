@@ -25,8 +25,7 @@ namespace UZSG.Objects
 
         Player player;
         Container inputContainer = new();
-
-        Container fuelSlots = new(1);
+        Container fuelSlots = new();
         List<ItemSlot> queueSlots = new();
         Container outputContainer = new();
         public Container OutputContainer => outputContainer;
@@ -43,8 +42,6 @@ namespace UZSG.Objects
         /// </summary>
         event Action<ItemSlot.ItemChangedContext> onOutputSlotItemChanged;
         public bool EnableDebugging = false;
-
-        InputAction backAction;
         
         protected override void Start()
         {
@@ -60,6 +57,7 @@ namespace UZSG.Objects
             queueSlots = new(WorkstationData.QueueSize);
             outputContainer = new(WorkstationData.OutputSize);
             outputContainer.OnSlotItemChanged += OnOutputSlotItemChanged;
+            fuelSlots = new(WorkstationData.FuelSlotsSize);
 
             crafter.Initialize(this);
             crafter.OnRoutineNotify += OnRoutineEventCall;

@@ -14,9 +14,10 @@ namespace UZSG.Data
         public AssetReference GUI;
         public bool IncludePlayerRecipes;
 
-        public bool RequiresFuel;
         public int QueueSize;
         public int OutputSize;
+        public bool RequiresFuel;
+        public int FuelSlotsSize;
         public List<RecipeData> IncludedRecipes;
     }
 }

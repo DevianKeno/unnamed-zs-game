@@ -57,7 +57,7 @@ namespace UZSG.Objects
                 Game.Audio.LoadAudioAssets(objectData.AudioAssetsData);
             }
         }
-
+        
         protected virtual void LoadGUIAsset(AssetReference guiAsset, Action<ObjectGUI> onLoadCompleted = null)
         {
             if (!guiAsset.IsSet())

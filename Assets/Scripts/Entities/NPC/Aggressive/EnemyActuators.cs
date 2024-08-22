@@ -10,6 +10,7 @@ using System;
 using UZSG.Players;
 
 using static UZSG.Entities.EnemyActionStates;
+using System.Collections;
 
 namespace UZSG.Entities
 {
@@ -20,11 +21,11 @@ namespace UZSG.Entities
         /// <summary>
         /// Initialize the Move & Action states of the Enemy. (i.e. idle, roam, chase, attack, etc.)
         /// </summary>
-        void InitializeActuators() /// uncalled yet
+        void InitializeActuators()
         {
             actionStateMachine[EnemyActionStates.Idle].OnEnter += OnActionIdleEnter;
             actionStateMachine[EnemyActionStates.Chase].OnEnter += OnActionChaseEnter;
-            actionStateMachine[EnemyActionStates.Chase].OnEnter += OnActionChaseEnter;
+            actionStateMachine[EnemyActionStates.Attack].OnEnter += OnActionAttackEnter;
             actionStateMachine[EnemyActionStates.Chase].OnEnter += OnActionChaseEnter;
         }
 
@@ -42,51 +43,27 @@ namespace UZSG.Entities
             // Chase();
         }
 
-        /// <summary>
-        /// Execute an action depending on what state the entity is on
-        /// </summary>
-        public void ExecuteAction(EnemyActionStates state) 
+        void OnActionAttackEnter(object sender, State<EnemyActionStates>.ChangedContext e)
         {
-            switch (state)
-            {
-                case EnemyActionStates.Idle:
-                    Idle();
-                    break;
-
-                case EnemyActionStates.Chase:
-                    Chase();
-                    break;
-
-                case EnemyActionStates.Roam:
-                    Roam();
-                    break;
-
-                case EnemyActionStates.Attack2:
-                    Attack2();
-                    break;
-
-                case EnemyActionStates.Attack:
-                    Attack();
-                    break;
-
-                case EnemyActionStates.Die:
-                    Die();
-                    break;
-
-                case EnemyActionStates.SpecialAttack:
-                    SpecialAttack();
-                    break;
-
-                case EnemyActionStates.SpecialAttack2:
-                    SpecialAttack2();
-                    break;
-
-                case EnemyActionStates.Horde:
-                    Horde();
-                    break;
-            }
+            /// might run twice because of this and ExecuteAction()
+            // Chase();
         }
 
+        IEnumerator FacePlayerAndScream(Player player)
+        {
+            // Rotate towards the player
+            Quaternion targetRotation = Quaternion.LookRotation(player.Position - transform.position);
+
+            while (Quaternion.Angle(transform.rotation, targetRotation) > 0.1f)
+            {
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 2);
+                yield return null; // Wait for the next frame
+            }
+
+            // Once facing the player, scream
+            actionStateMachine.ToState(EnemyActionStates.Scream, lockForSeconds: 2f);
+        }
+        
         void Idle()
         {
 

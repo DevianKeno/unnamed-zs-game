@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
-
+using UnityEditor;
 using UZSG.Data;
 using UZSG.Systems;
 using UZSG.Interactions;
@@ -10,11 +10,22 @@ using System;
 using UZSG.Players;
 
 using static UZSG.Entities.EnemyActionStates;
+using System.Collections;
 
 namespace UZSG.Entities
 {
+        
     public partial class Enemy : NonPlayerCharacter, IPlayerDetectable
     {
+        /**/
+        public static void Clear()
+        {
+            // This simply calls the Clear method in the Console window
+            var logEntries = System.Type.GetType("UnityEditor.LogEntries,UnityEditor.dll");
+            var clearMethod = logEntries.GetMethod("Clear", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
+            clearMethod.Invoke(null, null);
+        }
+
         public EnemyData EnemyData => entityData as EnemyData;
 
         [Header("Agent Information")]
@@ -62,6 +73,7 @@ namespace UZSG.Entities
         public override void OnSpawn()
         {
             base.OnSpawn();
+            Clear();
 
             RetrieveAttributes();
             InitializeAnimator();
@@ -89,8 +101,7 @@ namespace UZSG.Entities
 
         protected virtual void FixedUpdate()
         {
-            _currentActionState = HandleTransition();
-            ExecuteAction(_currentActionState);
+            
         }
 
         void OnSecond(SecondInfo s)
@@ -112,8 +123,7 @@ namespace UZSG.Entities
                 targetEntity = player; 
                 _hasTargetInSight = true;
 
-                Rotation = Quaternion.LookRotation(player.Position);
-                actionStateMachine.ToState(EnemyActionStates.Scream, lockForSeconds: 2f);
+                StartCoroutine(FacePlayerAndScream(player));
             }
         }
 

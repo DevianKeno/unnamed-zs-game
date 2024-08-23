@@ -24,6 +24,7 @@ namespace UZSG.Data
         [Header("Resource")]
         public ToolType ToolType;
         public Item Yield;
+        public float PickupDuration;
         public List<ResourceInstances> Instances;
     }
 }

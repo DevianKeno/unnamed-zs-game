@@ -1,29 +1,39 @@
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
 using UZSG.Items;
 
 namespace UZSG.UI
 {
     public class PickupsIndicator : Window
     {
-        [SerializeField] Image itemImage;
-        [SerializeField] TextMeshProUGUI itemNameTMP;
-        [SerializeField] TextMeshProUGUI countTMP;
+        Dictionary<string, PickupItemEntryUI> entryUIs = new();
 
-        public void SetDisplayedItem(Item item)
+        public GameObject pickupEntryPrefab;
+
+        public void AddEntry(Item item)
         {
-            if (item.IsNone) return;
-
-            itemImage.sprite = item.Data.Sprite;
-            itemNameTMP.text = item.Data.Name;
-            countTMP.text = item.Count.ToString();
+            if (entryUIs.TryGetValue(item.Id, out PickupItemEntryUI ui))
+            {
+                ui.IncrementCount(item);
+            }
+            else
+            {
+                ui = Instantiate(pickupEntryPrefab, transform).GetComponent<PickupItemEntryUI>();
+                ui.transform.SetAsLastSibling();
+                ui.SetDisplayedItem(item);
+                ui.OnExpire += RemoveEntry;
+                entryUIs[item.Id] = ui;
+            }
         }
 
-        public void PlayAnimation()
+        public void RemoveEntry(PickupItemEntryUI entry)
         {
-            Show();
-            Destroy(gameObject, 3f);
+            entry.OnExpire -= RemoveEntry;
+
+            if (entryUIs.ContainsValue(entry))
+            {
+                entryUIs.Remove(entry.Item.Id);
+            }
         }
     }
 }

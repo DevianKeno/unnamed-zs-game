@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 namespace UZSG.Entities
@@ -14,6 +15,7 @@ namespace UZSG.Entities
         {
             hitboxes = new();
             GetHitboxFromChildrenRecursive(transform);
+            EditorUtility.SetDirty(this);
         }
 
         void GetHitboxFromChildrenRecursive(Transform transform)

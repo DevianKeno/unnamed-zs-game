@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3368051457756452303}
   - component: {fileID: 8911721755231410503}
   - component: {fileID: 8821765983699097211}
+  - component: {fileID: 1978988548548734858}
   m_Layer: 5
   m_Name: Pickups Indicator Container
   m_TagString: Untagged
@@ -77,6 +78,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 2
   m_VerticalFit: 2
+--- !u!114 &1978988548548734858
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2540306188592480915}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de8a7329ca3379e4f8a044f2c6477526, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rect: {fileID: 3368051457756452303}
+  FadeDuration: 0.3
+  pickupEntryPrefab: {fileID: 6082794761968572716, guid: c436a25d2bd12b34182a0a50f0bc04f7, type: 3}
 --- !u!1 &6478721122352780109
 GameObject:
   m_ObjectHideFlags: 0
@@ -351,15 +367,11 @@ MonoBehaviour:
   Player: {fileID: 0}
   VignetteEase: 21
   VignetteFadeDuration: 0.44
-  equipment: {fileID: 0}
-  AmmoCounter: {fileID: 0}
-  equippedWeaponTMP: {fileID: 0}
-  weaponDetails: {fileID: 0}
   crosshair: {fileID: 142077827921252402}
   allCrosshair: {fileID: 4073046482514566878}
   compass: {fileID: 7323213583556788009}
   vignette: {fileID: 8480167236494745018}
-  pickupsIndicatorContainer: {fileID: 2540306188592480915}
+  pickupsIndicator: {fileID: 1978988548548734858}
 --- !u!1 &8006889853831149891
 GameObject:
   m_ObjectHideFlags: 0

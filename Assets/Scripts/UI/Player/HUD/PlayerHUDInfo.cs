@@ -7,6 +7,7 @@ using TMPro;
 
 using UZSG.Systems;
 using UZSG.Entities;
+using UZSG.Objects;
 using UZSG.Inventory;
 using UZSG.Items;
 using UZSG.Items.Weapons;
@@ -30,7 +31,8 @@ namespace UZSG.UI.HUD
         public SwitchCrosshair allCrosshair;
         public Compass compass;
         public Image vignette;
-        public GameObject pickupsIndicatorContainer;
+        public PickupsIndicator pickupsIndicator;
+        public RadialProgressUI pickupTimer;
 
         ResourceHealthRingUI resourceHealthRingUI;
 
@@ -81,17 +83,17 @@ namespace UZSG.UI.HUD
 
         void OnPlayerPickupedItem(Item item)
         {
-            var indicator = Game.UI.Create<PickupsIndicator>("Pickups Indicator", show: false);
-            indicator.transform.SetParent(pickupsIndicatorContainer.transform); 
-            indicator.SetDisplayedItem(item);
-            indicator.PlayAnimation();
+            if (!item.IsNone)
+            {
+                pickupsIndicator.AddEntry(item);
+            }
         }
 
         #endregion
 
 
         #region Public methods
-        
+
         public void FadeVignette(float alpha)
         {
             LeanTween.cancel(vignette.rectTransform);

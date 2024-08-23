@@ -104,6 +104,16 @@
         "LimitUnderflow": true
       },
       {
+        "Id": "jump_height",
+        "Value": 6,
+        "Minimum": 0.0,
+        "BaseMaximum": 0.0,
+        "Multiplier": 1.0,
+        "FlatBonus": 0.0,
+        "LimitOverflow": true,
+        "LimitUnderflow": true
+      },
+      {
         "Id": "run_stamina_cost",
         "Value": 0.078125,
         "Minimum": 0.0,
@@ -165,7 +175,7 @@
       },
       {
         "Id": "stamina_regen_per_tick",
-        "Value": 0.078125,
+        "Value": 0.333,
         "Minimum": 0.0,
         "BaseMaximum": 100.0,
         "Multiplier": 1.0,

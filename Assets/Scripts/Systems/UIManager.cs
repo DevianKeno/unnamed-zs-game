@@ -92,7 +92,7 @@ namespace UZSG.UI
 
         void InitializeUIPrefabs()
         {
-            Game.Console.Log("Initializing UI Prefabs...");
+            Game.Console.Log("Loading UI Prefabs...");
             foreach (GameObject element in Resources.LoadAll<GameObject>("Prefabs/UI"))
             {
                 prefabsDict[element.name] = element;
@@ -101,8 +101,8 @@ namespace UZSG.UI
 
         void InitializeIcons()
         {
-            Game.Console.Log("Initializing Icons...");
-            foreach (var sprite in Resources.LoadAll<Sprite>("Prefabs/Resources/Textures/Icons"))
+            Game.Console.Log("Loading Icons...");
+            foreach (var sprite in Resources.LoadAll<Sprite>("Textures/Icons"))
             {
                 _icons[sprite.name] = sprite;
             }
@@ -112,6 +112,9 @@ namespace UZSG.UI
         {
             ToggleCursor();
         }
+
+        
+        #region Public methods
 
         public void ToggleCursor()
         {
@@ -282,5 +285,7 @@ namespace UZSG.UI
 
             return blocker;
         }
+
+        #endregion
     }
 }

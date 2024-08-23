@@ -32,7 +32,6 @@ namespace UZSG.UI.HUD
         public Image vignette;
         public GameObject pickupsIndicatorContainer;
 
-        bool _hasVisibleResourceUI;
         ResourceHealthRingUI resourceHealthRingUI;
 
         internal void Initialize(Player player)

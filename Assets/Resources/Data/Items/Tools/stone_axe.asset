@@ -60,7 +60,7 @@ MonoBehaviour:
     LimitOverflow: 0
     LimitUnderflow: 0
   - data: {fileID: 11400000, guid: 6cc27a9a88960994aa1a49dd6eae0b21, type: 2}
-    value: 8
+    value: 4
     baseMaximum: 0
     multiplier: 1
     flatBonus: 0

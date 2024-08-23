@@ -66,6 +66,7 @@ namespace UZSG.Objects
                     }
                     
                     Game.Audio.PlayInWorld("tree_chop_wood", info.ContactPoint);
+                    Game.Particles.Spawn("Tree Bark Break", info.ContactPoint);
                     AnimateChop((tool.Owner as Player).Right);
                 }
                 else /// other tools deals half damage

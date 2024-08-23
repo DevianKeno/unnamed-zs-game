@@ -47,8 +47,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectData: {fileID: 11400000, guid: 9905aa6b0a0ea864b87f41927fd7add9, type: 2}
   attributes:
-    attributes: []
-  audioController: {fileID: 0}
+    attributesReadOnly: []
+  animator: {fileID: 0}
+  ShowUI: 1
 --- !u!1001 &8538490023043621305
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -127,7 +128,7 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: dc60d6e2518275a40808a2c9b3019616, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 5224271577168078362}
+      addedObject: {fileID: 7842206689518946497}
   m_SourcePrefab: {fileID: 100100000, guid: dc60d6e2518275a40808a2c9b3019616, type: 3}
 --- !u!4 &8211317842885609042 stripped
 Transform:
@@ -139,8 +140,8 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: dc60d6e2518275a40808a2c9b3019616, type: 3}
   m_PrefabInstance: {fileID: 8538490023043621305}
   m_PrefabAsset: {fileID: 0}
---- !u!65 &5224271577168078362
-BoxCollider:
+--- !u!64 &7842206689518946497
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -157,6 +158,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 2.022532, y: 1.4969223, z: 2.0147333}
-  m_Center: {x: 0.053878546, y: 0.6544472, z: 0.14134645}
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4155123388272035590, guid: dc60d6e2518275a40808a2c9b3019616, type: 3}

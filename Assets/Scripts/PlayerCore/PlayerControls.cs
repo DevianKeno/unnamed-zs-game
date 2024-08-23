@@ -377,7 +377,7 @@ namespace UZSG.Players
 
             _hasJumped = true;
             Vector3 jumpVelocity = rb.velocity;
-            jumpVelocity.y = _jumpSpeed;
+            jumpVelocity.y = Player.Attributes["jump_height"].Value;
             rb.velocity = jumpVelocity;
             Player.MoveStateMachine.ToState(MoveStates.Jump);
         }

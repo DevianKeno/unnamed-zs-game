@@ -7,6 +7,7 @@ using UZSG.Objects;
 using UZSG.Attributes;
 using UZSG.Data;
 using UnityEditor.Overlays;
+using UZSG.Systems;
 
 namespace UZSG.UI
 {
@@ -73,9 +74,18 @@ namespace UZSG.UI
             Progress = ((Attributes.Attribute) sender).ValueMaxRatio;
         }
 
-        Sprite GetIconFromToolType(ToolType type)
+        Sprite GetToolTypeIcon(ToolType type)
         {
-            return null;
+            var name = type switch
+            {
+                ToolType.Any => "tool_any",
+                ToolType.Axe => "tool_axe",
+                ToolType.Pickaxe => "tool_pickaxe",
+                ToolType.Shovel => "tool_shovel",
+                _ => "hand"
+            };
+
+            return Game.UI.GetIcon(name);
         }
 
         public void Refresh()
@@ -87,7 +97,7 @@ namespace UZSG.UI
         public void DisplayResource(Resource resource)
         {
             Label = resource.ResourceData.Name;
-            Icon = GetIconFromToolType(resource.ResourceData.ToolType);
+            Icon = GetToolTypeIcon(resource.ResourceData.ToolType);
 
             if (resource.Attributes.TryGet("health", out health))
             {

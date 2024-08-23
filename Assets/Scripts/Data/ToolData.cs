@@ -12,7 +12,7 @@ using UZSG.Attributes;
 namespace UZSG.Data
 {
     public enum ToolType {
-        Axe, Pickaxe, Shovel,
+        Any, Axe, Pickaxe, Shovel,
     }
 
     public enum ToolSwingDirection {

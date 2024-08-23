@@ -13,7 +13,7 @@ namespace UZSG.Systems
     {
         bool _isInitialized;
         public bool IsInitialized => _isInitialized;
-        Dictionary<string, ParticleData> _particlesDict = new();
+        Dictionary<string, GameObject> _particlesDict = new();
 
         internal void Initialize()
         {
@@ -21,28 +21,39 @@ namespace UZSG.Systems
             _isInitialized = true;
             
             var startTime = Time.time;
-            Game.Console.Log("Reading data: Particles...");
-            foreach (var particle in Resources.LoadAll<ParticleData>("Data/Particles"))
+            Game.Console.Log("Loading Particles...");
+            foreach (var particle in Resources.LoadAll<GameObject>("Prefabs/Particles"))
             {
-                _particlesDict[particle.Id] = particle;
+                _particlesDict[particle.name] = particle;
             }
         }
 
         /// <summary>
         /// Creates an Item object.
         /// </summary>
-        public void Create(string id, Vector3 position)
+        public void Spawn(string name, Vector3 position)
         {
-            if (_particlesDict.TryGetValue(id, out var particleData))
+            if (_particlesDict.TryGetValue(name, out var particle))
             {
-                Addressables.LoadAssetAsync<GameObject>(particleData.Asset).Completed += (a) =>
-                {
-                    if (a.Status == AsyncOperationStatus.Succeeded)
-                    {
-                        Instantiate(a.Result, position, Quaternion.identity, transform);
-                    }
-                };
+                var go = Instantiate(particle, position, Quaternion.identity, transform);
             }
         }
+
+        // /// <summary>
+        // /// Creates an Item object.
+        // /// </summary>
+        // public void Create(string id, Vector3 position)
+        // {
+        //     if (_particlesDict.TryGetValue(id, out var particleData))
+        //     {
+        //         Addressables.LoadAssetAsync<GameObject>(particleData.Asset).Completed += (a) =>
+        //         {
+        //             if (a.Status == AsyncOperationStatus.Succeeded)
+        //             {
+        //                 Instantiate(a.Result, position, Quaternion.identity, transform);
+        //             }
+        //         };
+        //     }
+        // }
     }
 }

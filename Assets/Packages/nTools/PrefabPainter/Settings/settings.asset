@@ -3010,13 +3010,13 @@ MonoBehaviour:
       settings:
         brushRadius: 20
         brushSpacing: 5
-        brushOverlapCheckMode: 0
+        brushOverlapCheckMode: 1
         brushOverlapDistance: 0.5
-        brushOverlapCheckObjects: 1
+        brushOverlapCheckObjects: 0
         brushOverlapCheckLayers:
           serializedVersion: 2
           m_Bits: 0
-        surfaceOffset: 0
+        surfaceOffset: -1
         orientationTransformMode: 0
         orientationMode: 2
         alongBrushStroke: 0
@@ -3026,7 +3026,7 @@ MonoBehaviour:
         randomizeOrientationZ: 0
         scaleTransformMode: 0
         scaleMode: 0
-        scaleUniformMin: 1
+        scaleUniformMin: 0.75
         scaleUniformMax: 1.35
         scalePerAxisMin: {x: 1, y: 1, z: 1}
         scalePerAxisMax: {x: 1, y: 1, z: 1}

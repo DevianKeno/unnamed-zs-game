@@ -47,14 +47,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectData: {fileID: 11400000, guid: 9bce1b7dbf5051541b7c91bae5967ef6, type: 2}
   attributes:
-    attributes: []
-  audioController: {fileID: 0}
+    attributesReadOnly: []
   animator: {fileID: 0}
   Item:
     itemData: {fileID: 11400000, guid: fe31e13f437bd6d429adfd67ab6ba40b, type: 2}
     count: 1
     attributes:
-      attributes: []
+      attributesReadOnly: []
 --- !u!1001 &8363785689195212395
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -164,5 +163,5 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.2761345, y: 0.6264038, z: 0.30657625}
-  m_Center: {x: 0.016231298, y: 0.2638092, z: 0.0002887249}
+  m_Size: {x: 0.7343483, y: 1.0236206, z: 0.72707367}
+  m_Center: {x: 0.16117668, y: 0.4951477, z: 0.056551933}

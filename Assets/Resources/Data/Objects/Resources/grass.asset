@@ -28,4 +28,6 @@ MonoBehaviour:
     count: 0
     attributes:
       attributesReadOnly: []
+  PickupDuration: 1
+  MaxInteractDistance: 3
   Instances: []

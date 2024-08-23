@@ -27,7 +27,7 @@ namespace UZSG.Objects
         {
             if (actor is Player player)
             {
-                player.Actions.StartPickupRoutine(ResourceData.PickupDuration, onTimerNotify: (status) =>
+                player.Actions.StartPickupRoutine(this, onTimerNotify: (status) =>
                 {
                     if (status == Players.PlayerActions.PickupStatus.Finished)
                     {

@@ -189,29 +189,38 @@ namespace UZSG.Players
         RadialProgressUI pickupRingUI;
         float _pickupDeltaTime;
         MEC.CoroutineHandle pickupTimerHandle;
+        /// <summary>
+        /// The position of the object the Player is currently interacting with.
+        /// To compare distance and cancel when too far.
+        /// </summary>
+        Vector3 _actionPosition;
+        float _actionMaxDistance;
         
         InputAction backInput;
 
-        public void StartPickupRoutine(float duration, Action<PickupStatus> onTimerNotify = null)
+        public void StartPickupRoutine(Objects.ResourcePickup resource, Action<PickupStatus> onTimerNotify = null)
         {
             if (_isBusy) return;
 
-            if (duration > 0)
+            var pickupTime = resource.ResourceData.PickupDuration;
+            if (pickupTime > 0)
             {
                 _isBusy = true;
                 DisableControlsOnPickupResource();
                 pickupRingUI = Game.UI.Create<RadialProgressUI>("Pickup Ring UI");
-                pickupRingUI.TotalTime = duration;
+                pickupRingUI.TotalTime = pickupTime;
                 pickupRingUI.Progress = 0f;
                 _pickupDeltaTime = 0f;
+                _actionPosition = resource.Position;
+                _actionMaxDistance = resource.ResourceData.MaxInteractDistance;
 
                 // backInput.performed += CancelCurrentAction;
 
                 Timing.KillCoroutines(pickupTimerHandle);
                 pickupTimerHandle = Timing.RunCoroutine(
-                    UpdatePickupRoutine(duration, onTimerNotify));
+                    UpdatePickupRoutine(pickupTime, onTimerNotify));
             }
-            else
+            else /// insnant
             {
                 FinishPickupRoutine(onTimerNotify);
             }
@@ -223,6 +232,13 @@ namespace UZSG.Players
             {
                 _pickupDeltaTime += Time.deltaTime;
                 pickupRingUI.Progress = _pickupDeltaTime / duration;
+                
+                if (Vector3.Distance(_actionPosition, Player.Position) > _actionMaxDistance)
+                {
+                    /// player is now too far away from the object
+                    CancelPickupResource(onTimerNotify);
+                    yield break;
+                }
                 if (_pickupDeltaTime >= duration)
                 {
                     FinishPickupRoutine(onTimerNotify);

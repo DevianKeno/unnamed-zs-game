@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 81bc2aaa978c22b40abc135224c57da0, type: 3}
-  m_Name: iron_pickaxe
+  m_Name: steel_pickaxe
   m_EditorClassIdentifier: 
   Id: iron_pickaxe
   Name: Iron Pickaxe
@@ -28,7 +28,7 @@ MonoBehaviour:
   IsFuel: 0
   FuelDuration: 0
   IsMaterial: 0
-  IsCraftable: 0
+  IsCraftable: 1
   Recipes: []
   SourceDescription: 
   AudioAssetsData: {fileID: 0}

@@ -10,43 +10,35 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 72e1d5853de97a54aa491bcf19eb9d39, type: 3}
-  m_Name: katana
+  m_Name: longbow
   m_EditorClassIdentifier: 
-  Id: katana
-  Name: Katana
+  Id: longbow
+  Name: Longbow
   Description: 
   Model:
-    m_AssetGUID: ce0c1c137c546c54ab1b00d6a785a5ef
+    m_AssetGUID: 
     m_SubObjectName: 
     m_SubObjectType: 
-    m_EditorAssetChanged: 1
-  Sprite: {fileID: 21300000, guid: a8ee1e1ec748a65418b843c6e66fbba4, type: 3}
+    m_EditorAssetChanged: 0
+  Sprite: {fileID: 0}
   Type: 1
   Subtype: 5
-  Weight: 1.6
+  Weight: 0
   StackSize: 1
   IsFuel: 0
   FuelDuration: 0
   IsMaterial: 0
-  IsCraftable: 0
+  IsCraftable: 1
   Recipes: []
   SourceDescription: 
-  AudioAssetsData: {fileID: 11400000, guid: b148036c70abbf04ea8e6a34d2c1f0fd, type: 2}
+  AudioAssetsData: {fileID: 0}
   HotbarIcon: {fileID: 0}
-  Category: 0
-  Attributes:
-  - data: {fileID: 11400000, guid: 8065c7b302bdaf142aedd6761e5bbb15, type: 2}
-    value: 120
-    baseMaximum: 120
-    multiplier: 1
-    flatBonus: 0
-    LimitOverflow: 0
-    LimitUnderflow: 0
-  MeleeType: 2
-  MeleeAttacks:
-  - {fileID: 11400000, guid: b5dd92f8b74bd124295f9972b0eb1ad4, type: 2}
+  Category: 1
+  Attributes: []
+  MeleeType: 0
+  MeleeAttacks: []
   BluntType: 0
-  BladedType: 3
+  BladedType: 0
   RangedType: 0
   MeleeAttributes:
     BaseDamage: 0
@@ -90,10 +82,10 @@ MonoBehaviour:
       RecoveryDuration: 0
   armsAnimations: {fileID: 0}
   viewmodel:
-    m_AssetGUID: 002eb34bcdb99af42851b5e064f55b72
+    m_AssetGUID: 
     m_SubObjectName: 
     m_SubObjectType: 
-    m_EditorAssetChanged: 1
+    m_EditorAssetChanged: 0
   viewmodelOffsets:
     Position: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0}

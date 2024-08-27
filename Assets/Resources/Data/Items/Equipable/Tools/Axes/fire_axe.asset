@@ -1,0 +1,89 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81bc2aaa978c22b40abc135224c57da0, type: 3}
+  m_Name: fire_axe
+  m_EditorClassIdentifier: 
+  Id: fire_axe
+  Name: Fire Axe
+  Description: tf is this -JP
+  Model:
+    m_AssetGUID: 82dc7cb9561efdb429d0c810ba8eb4db
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  Sprite: {fileID: 0}
+  Type: 2
+  Subtype: 4
+  Weight: 0
+  StackSize: 1
+  IsFuel: 0
+  FuelDuration: 0
+  IsMaterial: 0
+  IsCraftable: 0
+  Recipes: []
+  SourceDescription: 
+  AudioAssetsData: {fileID: 0}
+  ToolType: 0
+  Attacks: []
+  SwingDirection: 2
+  Attributes:
+  - data: {fileID: 11400000, guid: dfa56112f40946a428ee64518c941476, type: 2}
+    value: 28
+    baseMaximum: 0
+    multiplier: 0
+    flatBonus: 0
+    LimitOverflow: 0
+    LimitUnderflow: 0
+  - data: {fileID: 11400000, guid: 8065c7b302bdaf142aedd6761e5bbb15, type: 2}
+    value: 180
+    baseMaximum: 250
+    multiplier: 0
+    flatBonus: 0
+    LimitOverflow: 0
+    LimitUnderflow: 0
+  - data: {fileID: 11400000, guid: 5e71af7286d194c4c9bf489e08b9c33f, type: 2}
+    value: 18
+    baseMaximum: 0
+    multiplier: 0
+    flatBonus: 0
+    LimitOverflow: 0
+    LimitUnderflow: 0
+  - data: {fileID: 11400000, guid: 6cc27a9a88960994aa1a49dd6eae0b21, type: 2}
+    value: 24
+    baseMaximum: 0
+    multiplier: 0
+    flatBonus: 0
+    LimitOverflow: 0
+    LimitUnderflow: 0
+  armsAnimations: {fileID: 0}
+  viewmodel:
+    m_AssetGUID: 
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  viewmodelOffsets:
+    Position: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+  anims:
+    Idle: 
+    Move: 
+    Primary: 
+    PrimaryHold: 
+    PrimaryRelease: 
+    PrimaryVariant: []
+    Secondary: 
+    SecondaryHold: 
+    SecondaryRelease: 
+    Equip: 
+    Dequip: 
+  audioData:
+    AudioAssetIds: []

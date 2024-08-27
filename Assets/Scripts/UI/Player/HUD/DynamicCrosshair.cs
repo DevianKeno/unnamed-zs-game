@@ -53,7 +53,7 @@ namespace UZSG.UI.HUD
             {
                 _baseRecoilValue = CalculateBaseRecoilMultiplier(gunWeapon.WeaponData.RangedAttributes.Spread);
 
-                gunWeapon.StateMachine.OnStateChanged += OnGunWeaponStateChanged;
+                gunWeapon.StateMachine.OnTransition += OnGunWeaponStateChanged;
             }
             else
             {
@@ -114,7 +114,7 @@ namespace UZSG.UI.HUD
             _recoilMultiplier = 1.0f;
         }
 
-        void OnGunWeaponStateChanged(object sender, StateMachine<GunWeaponStates>.StateChangedContext e)
+        void OnGunWeaponStateChanged(StateMachine<GunWeaponStates>.TransitionContext e)
         {
             if (e.To == GunWeaponStates.Fire)
             {

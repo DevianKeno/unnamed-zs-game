@@ -108,8 +108,8 @@ namespace UZSG.FPP
 
         void InitializeEvents()
         {
-            Player.MoveStateMachine.OnStateChanged += OnPlayerMoveStateChanged;
-            Player.ActionStateMachine.OnStateChanged += OnPlayerActionStateChanged;
+            Player.MoveStateMachine.OnTransition += OnPlayerMoveStateChanged;
+            Player.ActionStateMachine.OnTransition += OnPlayerActionStateChanged;
         }
 
         IEnumerator StartPerform(float duration = 0.25f)
@@ -441,23 +441,23 @@ namespace UZSG.FPP
             if (heldItem is MeleeWeaponController meleeWeapon)
             {
                 meleeWeapon.SetMeleeCollider(meleeWeaponCollider);
-                meleeWeapon.StateMachine.OnStateChanged -= OnMeleeWeaponStateChanged;
+                meleeWeapon.StateMachine.OnTransition -= OnMeleeWeaponStateChanged;
                 
-                meleeWeapon.StateMachine.OnStateChanged += OnMeleeWeaponStateChanged;
+                meleeWeapon.StateMachine.OnTransition += OnMeleeWeaponStateChanged;
             }
             else if (heldItem is GunWeaponController rangedWeapon)
             {
-                rangedWeapon.StateMachine.OnStateChanged -= OnRangedWeaponStateChanged;
+                rangedWeapon.StateMachine.OnTransition -= OnRangedWeaponStateChanged;
                 rangedWeapon.OnFire -= OnWeaponFired;
 
-                rangedWeapon.StateMachine.OnStateChanged += OnRangedWeaponStateChanged;
+                rangedWeapon.StateMachine.OnTransition += OnRangedWeaponStateChanged;
                 rangedWeapon.OnFire += OnWeaponFired;
             }
             else if (heldItem is HeldToolController tool)
             {
-                tool.StateMachine.OnStateChanged -= OnToolWeaponStateChanged;
+                tool.StateMachine.OnTransition -= OnToolWeaponStateChanged;
                 
-                tool.StateMachine.OnStateChanged += OnToolWeaponStateChanged;
+                tool.StateMachine.OnTransition += OnToolWeaponStateChanged;
             }
         }
 
@@ -475,11 +475,12 @@ namespace UZSG.FPP
 
         #region Event callbacks
 
-        void OnPlayerMoveStateChanged(object sender, StateMachine<MoveStates>.StateChangedContext e)
+        void OnPlayerMoveStateChanged(StateMachine<MoveStates>.TransitionContext e)
         {
+
         }
         
-        void OnPlayerActionStateChanged(object sender, StateMachine<ActionStates>.StateChangedContext e)
+        void OnPlayerActionStateChanged(StateMachine<ActionStates>.TransitionContext e)
         {
             if (heldItem == null) return;
             if (_isPerforming) return;
@@ -496,7 +497,7 @@ namespace UZSG.FPP
             // }
         }
 
-        void OnWeaponStateChanged(object sender, StateMachine<Enum>.StateChangedContext e)
+        void OnWeaponStateChanged(StateMachine<Enum>.TransitionContext e)
         {
             if (heldItem == null) return;
 
@@ -504,7 +505,7 @@ namespace UZSG.FPP
             PlayAnimations(animId);
         }
 
-        void OnMeleeWeaponStateChanged(object sender, StateMachine<MeleeWeaponStates>.StateChangedContext e)
+        void OnMeleeWeaponStateChanged(StateMachine<MeleeWeaponStates>.TransitionContext e)
         {
             if (heldItem == null) return;
 
@@ -512,7 +513,7 @@ namespace UZSG.FPP
             PlayAnimations(animId);
         }
 
-        void OnRangedWeaponStateChanged(object sender, StateMachine<GunWeaponStates>.StateChangedContext e)
+        void OnRangedWeaponStateChanged(StateMachine<GunWeaponStates>.TransitionContext e)
         {
             if (heldItem == null) return;
             
@@ -520,7 +521,7 @@ namespace UZSG.FPP
             PlayAnimations(animId);
         }
 
-        void OnToolWeaponStateChanged(object sender, StateMachine<ToolItemStates>.StateChangedContext e)
+        void OnToolWeaponStateChanged(StateMachine<ToolItemStates>.TransitionContext e)
         {
             if (heldItem == null) return;
 

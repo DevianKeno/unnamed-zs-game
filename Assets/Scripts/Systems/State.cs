@@ -12,34 +12,31 @@ namespace UZSG.Systems
     {
         public struct ChangedContext
         {
-            public EState PreviousState;
-            public EState NextState;
+            public EState From { get; set; }
+            public EState To { get; set; }
         }
         
         EState _key;
+        /// <summary>
+        /// The enum value of this State.
+        /// </summary>
         public EState Key => _key;
-        bool _isLocked;
-        public bool IsLocked => _isLocked;
 
 
         #region State events
 
         /// <summary>
-        /// Called once when entering this State.
+        /// Called once when transitioning to this State.
         /// </summary>
-        public event EventHandler<ChangedContext> OnEnter;
+        public event Action<StateMachine<EState>.TransitionContext> OnTransition;
         /// <summary>
-        /// Called every game tick when in this State.
+        /// Called every Unity's Update cycle.
         /// </summary>
-        public event EventHandler<ChangedContext> OnTick;
+        public event Action OnUpdate;
         /// <summary>
-        /// Called every realtime second when in this State.
+        /// Called every Unity's FixedUpdate cycle.
         /// </summary>
-        public event EventHandler<ChangedContext> OnSecond;
-        /// <summary>
-        /// Called once when exiting this State.
-        /// </summary>
-        public event EventHandler<ChangedContext> OnExit;
+        public event Action OnFixedUpdate;
 
         #endregion
 
@@ -49,41 +46,29 @@ namespace UZSG.Systems
             _key = key;
         }
 
-        public void Lock(bool value)
+        public virtual void Enter(StateMachine<EState>.TransitionContext context)
         {
-            _isLocked = value;
+            OnTransition?.Invoke(context);
         }
 
-        public virtual void Enter()
+        public virtual void Update()
         {
-            OnEnter?.Invoke(this, new()
-            {
-
-            });
+            OnUpdate?.Invoke();
         }
 
-        public virtual void Tick()
+        public virtual void FixedUpdate()
         {
-            OnTick?.Invoke(this, new()
-            {
-
-            });
+            OnFixedUpdate?.Invoke();
         }
 
         public virtual void Second()
         {
-            OnSecond?.Invoke(this, new()
-            {
-
-            });
+            OnUpdate?.Invoke();
         }
 
-        public virtual void Exit()
+        public virtual void Exit(StateMachine<EState>.TransitionContext context)
         {
-            OnExit?.Invoke(this, new()
-            {
-
-            });
+            OnTransition?.Invoke(context);
         }
     }
 }

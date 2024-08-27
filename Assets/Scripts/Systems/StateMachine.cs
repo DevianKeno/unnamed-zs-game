@@ -9,12 +9,15 @@ namespace UZSG.Systems
     /// </summary>
     public abstract class StateMachine<E> : MonoBehaviour where E : Enum
     {
-        public struct StateChangedContext
+        /// <summary>
+        /// Information on State transition.
+        /// </summary>
+        public struct TransitionContext
         {
             public E From { get; set; }
             public E To { get; set; }
         }
-        
+
         Dictionary<E, State<E>> _states = new();
         public Dictionary<E, State<E>> States => _states;
         public State<E> InitialState;
@@ -28,14 +31,16 @@ namespace UZSG.Systems
         /// Whether to allow reentry-ing the state.
         /// </summary>
         public bool AllowReentry = false;
-
+        /// <summary>
+        /// The current State of this StateMachine. [Read Only]
+        /// </summary>
         public E InState;
         public bool DebugMode = false;
         
         /// <summary>
-        /// Calles everytime before the State changes.
+        /// Called everytime before the State changes.
         /// </summary>
-        public event EventHandler<StateChangedContext> OnStateChanged;
+        public event Action<TransitionContext> OnTransition;
 
         public State<E> this[E state]
         {
@@ -56,86 +61,86 @@ namespace UZSG.Systems
         void Start()
         {
             if (InitialState != null) _currentState = InitialState;
-
-            Game.Tick.OnTick += Tick;
-            Game.Tick.OnSecond += Second;
         }
 
-        void OnDestroy()
+        void Update()
         {
-            Game.Tick.OnTick -= Tick;
-            Game.Tick.OnSecond -= Second;
+            if (InitialState != null) _currentState.Update();
         }
 
-        void Tick(TickInfo e)
+        void FixedUpdate()
         {
-            if (InitialState != null) _currentState.Tick();
+            if (InitialState != null) _currentState.FixedUpdate();
         }
 
-        void Second(SecondInfo s)
-        {
-            if (InitialState != null) _currentState.Second();
-        }
-
-        public virtual void ToState(E state)
-        {
-            if (!_states.ContainsKey(state)) return;
-
-            ToState(_states[state]);
-        }
-
-        /// <summary>
-        /// Transition to state.
-        /// </summary>
-        public virtual void ToState(State<E> state)
-        {
-            if (state.Key.Equals(_currentState.Key) && !AllowReentry) return;
-
-            TrySwitchState(state);
-        }
-
-        /// <summary>
-        /// Transition to state and prevent from transitioning to other states for a certain amount of seconds.
-        /// </summary>
-        public virtual void ToState(State<E> state, float lockForSeconds)
-        {
-            TrySwitchState(state, lockForSeconds);
-        }
+        #region Public methods
         
-        public virtual void ToState(E state, float lockForSeconds)
+        /// <summary>
+        /// Transition to state. Pass lockForSeconds to prevent from transitioning to other states for a certain amount of seconds.
+        /// </summary>
+        public void ToState(E state, float lockForSeconds = 0f)
         {
             if (!_states.ContainsKey(state)) return;
-            ToState(_states[state], lockForSeconds);
+            
+            ToStateE(_states[state], lockForSeconds);
         }
 
+        /// <summary>
+        /// Lock the current state for a seconds.
+        /// </summary>
         public virtual void LockForSeconds(float seconds)
         {
-            _lockedUntil = Time.time + seconds;
+            _lockedUntil = Time.realtimeSinceStartup + seconds;
+        }
+
+        #endregion
+
+        void ToStateE(State<E> state, float lockForSeconds)
+        {
+            /// Return if same state transition and does not allow re-entrying 
+            if (state.Key.Equals(_currentState.Key) && !AllowReentry) return;
+
+            if (!TrySwitchState(state, lockForSeconds))
+            {
+                if (DebugMode)
+                {
+                    Debug.Log($"Cannot switch to {state.Key} - State locked until {_lockedUntil}");
+                }
+            }
         }
 
         bool TrySwitchState(State<E> state, float lockForSeconds = 0f)
         {
-            if (Time.time < _lockedUntil)
+            if (Time.realtimeSinceStartup < _lockedUntil)
             {
+                if (DebugMode)
+                {
+                    Debug.Log($"State transition to {state.Key} blocked. Locked until {_lockedUntil}");
+                }
                 return false;
             }
-            _isTransitioning = true;
-            _lockedUntil = Time.time + lockForSeconds;
 
-            OnStateChanged?.Invoke(this, new()
+            _isTransitioning = true;
+            _lockedUntil = Time.realtimeSinceStartup + lockForSeconds;
+
+            var context = new TransitionContext()
             {
                 From = _currentState.Key,
                 To = state.Key
-            });
-            _currentState.Exit();
+            };
+            OnTransition?.Invoke(context);
+            
+            _currentState.Exit(context);
             _currentState = state;
             InState = state.Key;
-            _currentState.Enter();
+            _currentState.Enter(context);
             _isTransitioning = false;
+
             if (DebugMode) 
             {
                 Debug.Log("Switched to state " + state);
             }
+            
             return true;
         }
     }

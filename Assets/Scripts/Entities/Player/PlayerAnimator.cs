@@ -26,23 +26,24 @@ namespace UZSG.Entities
         
         void InitializeAnimator()
         {
-            MoveStateMachine[MoveStates.Crouch].OnEnter += OnCrouchEnter;
-            MoveStateMachine[MoveStates.Crouch].OnExit += OnCrouchExit;
+            MoveStateMachine[MoveStates.Crouch].OnTransition += OnCrouchState;
         }
 
-        void OnCrouchEnter(object sender, State<MoveStates>.ChangedContext e)
+        void OnCrouchState(StateMachine<MoveStates>.TransitionContext e)
         {
-            print("entered crouch");
-            animator.CrossFade($"stand_to_crouch", CrossfadeTransitionDuration);
+            if (e.From == MoveStates.Crouch)
+            {
+                print("exited crouch");
+                animator.CrossFade($"crouch_to_stand", CrossfadeTransitionDuration);
+            }
+            else if (e.To == MoveStates.Crouch)
+            {
+                print("entered crouch");
+                animator.CrossFade($"stand_to_crouch", CrossfadeTransitionDuration);
+            }
         }
 
-        void OnCrouchExit(object sender, State<MoveStates>.ChangedContext e)
-        {
-            print("exited crouch");
-            animator.CrossFade($"crouch_to_stand", CrossfadeTransitionDuration);
-        }
-
-        void OnMoveStateChanged(object sender, StateMachine<MoveStates>.StateChangedContext e)
+        void OnMoveStateChanged(StateMachine<MoveStates>.TransitionContext e)
         {
             var animId = GetAnimationName(e.To);
             animator.CrossFade($"{animId}", CrossfadeTransitionDuration);

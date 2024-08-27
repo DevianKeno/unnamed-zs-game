@@ -151,12 +151,13 @@ namespace UZSG.Entities
         {
             MoveStateMachine.InitialState = MoveStateMachine.States[MoveStates.Idle];
 
-            MoveStateMachine.OnStateChanged += OnMoveStateChanged;
+            MoveStateMachine.OnTransition += OnMoveStateChanged;
 
-            MoveStateMachine.States[MoveStates.Idle].OnEnter += OnIdleEnter;
-            MoveStateMachine.States[MoveStates.Run].OnEnter += OnRunEnter;
-            MoveStateMachine.States[MoveStates.Jump].OnEnter += OnJumpEnter;
-            MoveStateMachine.States[MoveStates.Crouch].OnEnter += OnCrouchEnter;
+            MoveStateMachine.States[MoveStates.Idle].OnTransition += OnIdleState;
+            MoveStateMachine.States[MoveStates.Run].OnTransition += OnRunState;
+            MoveStateMachine.States[MoveStates.Jump].OnTransition += OnJumpState;
+            /// Moved to PlayerAnimator.cs
+            // MoveStateMachine.States[MoveStates.Crouch].OnTransition += OnCrouchState;
         }
 
         void InitializeHUD()
@@ -245,15 +246,15 @@ namespace UZSG.Entities
 
         #region Move state machine callbacks
 
-        void OnIdleEnter(object sender, State<MoveStates>.ChangedContext e)
+        void OnIdleState(StateMachine<MoveStates>.TransitionContext e)
         {
         }
 
-        void OnRunEnter(object sender, State<MoveStates>.ChangedContext e)
+        void OnRunState(StateMachine<MoveStates>.TransitionContext e)
         {
         }
         
-        void OnJumpEnter(object sender, State<MoveStates>.ChangedContext e)
+        void OnJumpState(StateMachine<MoveStates>.TransitionContext e)
         {
             /// Consume Stamina on jump
             if (Attributes.TryGet("stamina", out var stamina))

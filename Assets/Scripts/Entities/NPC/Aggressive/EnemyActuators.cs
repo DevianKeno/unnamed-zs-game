@@ -23,29 +23,28 @@ namespace UZSG.Entities
         /// </summary>
         void InitializeActuators()
         {
-            actionStateMachine[EnemyActionStates.Idle].OnEnter += OnActionIdleEnter;
+            actionStateMachine[EnemyActionStates.Idle].OnTransition += OnActionIdleEnter;
             
-            actionStateMachine[EnemyActionStates.Chase].OnEnter += OnActionChaseEnter;
-            actionStateMachine[EnemyActionStates.Chase].OnTick += OnActionChaseEnter;
+            actionStateMachine[EnemyActionStates.Chase].OnUpdate += OnActionChaseUpdate;
 
-            actionStateMachine[EnemyActionStates.Attack].OnEnter += OnActionAttackEnter;
-            actionStateMachine[EnemyActionStates.Roam].OnEnter += OnActionAttackEnter;
+            actionStateMachine[EnemyActionStates.Attack].OnTransition += OnActionAttackEnter;
+            actionStateMachine[EnemyActionStates.Roam].OnTransition += OnActionAttackEnter;
         }
 
-        void OnActionIdleEnter(object sender, State<EnemyActionStates>.ChangedContext e)
+        void OnActionIdleEnter(StateMachine<EnemyActionStates>.TransitionContext e)
         {
-            if (e.PreviousState == EnemyActionStates.Scream)
+            if (e.From == EnemyActionStates.Scream)
             {
 
             }
         }
 
-        void OnActionChaseEnter(object sender, State<EnemyActionStates>.ChangedContext e)
+        void OnActionChaseUpdate()
         {
             Chase();
         }
 
-        void OnActionAttackEnter(object sender, State<EnemyActionStates>.ChangedContext e)
+        void OnActionAttackEnter(StateMachine<EnemyActionStates>.TransitionContext e)
         {
             Attack();
         }

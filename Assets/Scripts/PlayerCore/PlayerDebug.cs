@@ -22,8 +22,8 @@ namespace UZSG.Players
         {
             UI = Instantiate(UIPrefab, Game.UI.Canvas.transform).GetComponent<PlayerDebugUI>();
 
-            Player.MoveStateMachine.OnStateChanged += MovementStateChanged;
-            Player.ActionStateMachine.OnStateChanged += ActionStateChanged;
+            Player.MoveStateMachine.OnTransition += MovementStateChanged;
+            Player.ActionStateMachine.OnTransition += ActionStateChanged;
         }
 
         void FixedUpdate()
@@ -39,12 +39,12 @@ Player movement physics:
 ";*/
         }
 
-        void MovementStateChanged(object sender, StateMachine<MoveStates>.StateChangedContext e)
+        void MovementStateChanged(StateMachine<MoveStates>.TransitionContext e)
         {
             UI.movementStateText.text = $"Move state: {e.To}";
         }
 
-        void ActionStateChanged(object sender, StateMachine<ActionStates>.StateChangedContext e)
+        void ActionStateChanged(StateMachine<ActionStates>.TransitionContext e)
         {
             UI.actionStateText.text = $"Action state: {e.To}";
         }
@@ -52,8 +52,8 @@ Player movement physics:
         void OnDisable()
         {
             Player.OnDoneInit -= Init;
-            Player.MoveStateMachine.OnStateChanged -= MovementStateChanged;
-            Player.ActionStateMachine.OnStateChanged -= ActionStateChanged;
+            Player.MoveStateMachine.OnTransition -= MovementStateChanged;
+            Player.ActionStateMachine.OnTransition -= ActionStateChanged;
         }
     }
 }

@@ -15,8 +15,8 @@ namespace UZSG.Entities
     {
         void InitializeAnimator()
         {
-            moveStateMachine.OnStateChanged += OnMoveStateChanged;
-            actionStateMachine.OnStateChanged += OnActionStateChanged;
+            moveStateMachine.OnTransition += OnMoveStateChanged;
+            actionStateMachine.OnTransition += OnActionStateChanged;
         }
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace UZSG.Entities
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void OnMoveStateChanged(object sender, StateMachine<EnemyMoveStates>.StateChangedContext e)
+        void OnMoveStateChanged(StateMachine<EnemyMoveStates>.TransitionContext e)
         {
             if (e.To == EnemyMoveStates.Idle)
             {
@@ -42,7 +42,7 @@ namespace UZSG.Entities
             }
         }
 
-        void OnActionStateChanged(object sender, StateMachine<EnemyActionStates>.StateChangedContext e)
+        void OnActionStateChanged(StateMachine<EnemyActionStates>.TransitionContext e)
         {
             if (e.To == EnemyActionStates.Idle)
             {

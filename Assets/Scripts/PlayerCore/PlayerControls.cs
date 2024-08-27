@@ -42,6 +42,7 @@ namespace UZSG.Players
 
         #endregion
 
+        public bool CanCoyoteJump => groundChecker.CanCoyoteJump;
         bool _isMovePressed;
         bool _isMovingBackwards;
         bool _isTransitioningCrouch;
@@ -124,7 +125,7 @@ namespace UZSG.Players
         public InputActionMap ActionMap => actionMap;
         Dictionary<string, InputAction> inputs = new();
         public Dictionary<string, InputAction> Inputs => inputs;
-        
+
         internal void Initialize()
         {
             InitializeInputs();
@@ -168,7 +169,8 @@ namespace UZSG.Players
         
         void Awake()
         {
-            Player = GetComponent<Player>();
+        Player = GetComponent<Player>();
+        groundChecker = groundCheckerObject.GetComponent<GroundChecker>();
         }
 
         void FixedUpdate()
@@ -199,7 +201,7 @@ namespace UZSG.Players
             RunSpeed = Player.Attributes.Get("run_speed").Value;
             CrouchSpeed = Player.Attributes.Get("crouch_speed").Value;
             jumpStaminaCost = Player.Attributes.Get("jump_stamina_cost").Value;
-            
+
             _targetSpeed = MoveSpeed;
         }
 
@@ -356,10 +358,10 @@ namespace UZSG.Players
         }
 
         void HandleJump()
-        {
-            if (!IsGrounded) return;
+        {   
+            if (!CanCoyoteJump && !IsGrounded) return;
             
-            Vector3 jumpVelocity = rb.velocity;
+            Vector3 jumpVelocity = rb.velocity * 2;
             jumpVelocity.y = JumpSpeed * TimeScale;
             rb.velocity = jumpVelocity;
             Player.MoveStateMachine.ToState(MoveStates.Jump);

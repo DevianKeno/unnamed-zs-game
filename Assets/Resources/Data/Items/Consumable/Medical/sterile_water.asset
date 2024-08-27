@@ -10,24 +10,25 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 873d4c4f155a35a46b4699d35b336ec7, type: 3}
-  m_Name: first_aid_kit
+  m_Name: sterile_water
   m_EditorClassIdentifier: 
-  Id: first_aid_kit
-  Name: First Aid Kit
-  Description: Healing item.
+  Id: sterile_water
+  Name: Sterile Wter
+  Description: 
   Model:
-    m_AssetGUID: 2c64cb256d6caf6478c497288aada1bf
+    m_AssetGUID: 
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  Sprite: {fileID: 21300000, guid: 92c14a7bf54dd634fae4eb0b24e3be6d, type: 3}
+  Sprite: {fileID: 0}
   Type: 0
   Subtype: 3
-  Weight: 2
+  Weight: 0
   StackSize: 1
+  IsFuel: 0
+  FuelDuration: 0
   IsMaterial: 1
   IsCraftable: 1
-  Recipes:
-  - {fileID: 11400000, guid: 314eca0960e514f46b436d87ec9f13fc, type: 2}
-  - {fileID: 11400000, guid: 70c3322715fb47a42bae1c4ac67841e7, type: 2}
-  SourceDescription: 'Crafter using '
+  Recipes: []
+  SourceDescription: 
+  AudioAssetsData: {fileID: 0}

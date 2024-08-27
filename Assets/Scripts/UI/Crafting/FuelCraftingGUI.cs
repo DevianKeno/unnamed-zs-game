@@ -16,8 +16,10 @@ public class FuelCraftingGUI : CraftingGUI
 {
 
     public ItemSlotUI fuelSlot;
+    public FuelBar fuelBar;
 
-    protected void CreateFuelSlotUI(){
+    protected void CreateFuelSlotUI()
+    {
 
     }
 
@@ -28,12 +30,19 @@ public class FuelCraftingGUI : CraftingGUI
         var fbc = (FuelBasedCrafting)workstation.Crafter;
         fbc.FuelContainer = new(1);
 
+        fbc.OnFuelUpdate += OnFuelUpdate;
+        fbc.OnFuelReload += OnFuelReload;
+        fuelBar.fuelBasedCraftingInstance = fbc;
+        
+
         CreateOutputSlotUIs(workstation.WorkstationData.OutputSize);
         CreateQueueSlotUIs(workstation.WorkstationData.QueueSize);
 
         fuelSlot.Link(fbc.FuelContainer.Slots[0]);
         fuelSlot.OnMouseDown += OnFuelSlotClick;
     }
+
+
 
     private void OnFuelSlotClick(object sender, ItemSlotUI.ClickedContext ctx)
     {
@@ -89,5 +98,15 @@ public class FuelCraftingGUI : CraftingGUI
                 // _lastSelectedSlot = slot;
             }
         }
+    }
+
+    private void OnFuelUpdate()
+    {
+        fuelBar.UpdateFuelRemaining();
+    }
+
+    private void OnFuelReload(float fuelDuration)
+    {
+        fuelBar.UpdateMaxFuel(fuelDuration);
     }
 }

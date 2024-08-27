@@ -13,6 +13,9 @@ namespace UZSG.Crafting
         public Container InputContainer;
         public float FuelRemaining = 0;
         public Container FuelContainer;
+        public Action OnFuelUpdate;
+
+        public Action<float> OnFuelReload;
 
         private bool _mustContinue = false;
 
@@ -40,6 +43,8 @@ namespace UZSG.Crafting
             if (!IsFuelAvailable()) return false;
             var fuel = FuelContainer.TakeFrom(0, 1);
             FuelRemaining = fuel.Data.FuelDuration;
+            OnFuelReload?.Invoke(fuel.Data.FuelDuration);
+            OnFuelUpdate?.Invoke();
             return true;
         }
 
@@ -83,6 +88,7 @@ namespace UZSG.Crafting
             {
                 yield return new WaitForSeconds(1);
                 FuelRemaining -= 1;
+                OnFuelUpdate?.Invoke();
                 print("Fuel Remaing: " + FuelRemaining);
                 if(!IsFuelRemainingAvailable())
                 {

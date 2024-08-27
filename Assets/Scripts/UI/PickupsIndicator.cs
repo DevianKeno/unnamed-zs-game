@@ -22,6 +22,7 @@ namespace UZSG.UI
                 ui.transform.SetAsLastSibling();
                 ui.SetDisplayedItem(item);
                 ui.OnExpire += RemoveEntry;
+                ui.Show();
                 entryUIs[item.Id] = ui;
             }
         }

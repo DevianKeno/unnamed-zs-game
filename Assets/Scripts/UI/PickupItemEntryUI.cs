@@ -9,10 +9,20 @@ namespace UZSG.UI
     public class PickupItemEntryUI : Window
     {
         public Item Item;
+        public float AnimationFactor = 0.5f;
         public float LifetimeDuration;
+
+        [Header("Animation Settings")]
+        [Header("Item Sprite")]
+        public LeanTweenType IconEase;
+
+        [Header("Item Name")]
+        public float xDistance = 10f;
+        public LeanTweenType NameEase;
 
         float _lifetime;
 
+        [SerializeField] Image bgImage;
         [SerializeField] Image itemImage;
         [SerializeField] TextMeshProUGUI itemNameTMP;
         [SerializeField] TextMeshProUGUI countTMP;
@@ -34,14 +44,55 @@ namespace UZSG.UI
             _lifetime = 0f;
         }
 
+        /// <summary>
+        /// Set the UIs alpha to 0 and and offsets and stuff
+        /// </summary>
+        void SetUIForEntry()
+        {
+            bgImage.color = Color.white;
+            bgImage.CrossFadeAlpha(0f, 0f, true);
+
+            itemImage.CrossFadeAlpha(0f, 0f, true);
+            itemImage.rectTransform.localScale = Vector3Ext.FromValue(0.95f);
+
+            itemNameTMP.CrossFadeAlpha(0f, 0f, true);
+            var nameRect = itemNameTMP.rectTransform.anchoredPosition;
+            nameRect.x += xDistance;
+            itemNameTMP.rectTransform.anchoredPosition = nameRect;
+
+            countTMP.CrossFadeAlpha(0f, 0f, true);
+        }
+
+        void AnimateEntry()
+        {
+            bgImage.CrossFadeColor(Color.black, AnimationFactor, false, true);
+            bgImage.CrossFadeAlpha(1f, AnimationFactor, false);
+
+            itemImage.CrossFadeAlpha(1f, AnimationFactor, true);
+            LeanTween.scale(itemImage.rectTransform, Vector3.one, AnimationFactor)
+            .setEase(IconEase);
+
+            itemNameTMP.CrossFadeAlpha(1f, 0f, false);
+            LeanTween.moveX(itemNameTMP.rectTransform, itemNameTMP.rectTransform.anchoredPosition.x - xDistance, AnimationFactor)
+            .setEase(NameEase);
+
+            countTMP.CrossFadeAlpha(1f, AnimationFactor, false);
+        }
+
+        void AnimateExit()
+        {
+            
+        }
+
         public override void OnShow()
         {
-            /// Animate show
+            SetUIForEntry();
+            AnimateEntry();
         }
 
         public override void OnHide()
         {
-            /// Animate hide
+            AnimateExit();
         }
 
         public void SetDisplayedItem(Item item)

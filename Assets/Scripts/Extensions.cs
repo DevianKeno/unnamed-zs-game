@@ -1,5 +1,15 @@
+using System.Numerics;
+
 namespace UZSG
 {
+    public static class Vector3Ext
+    {
+        public static UnityEngine.Vector3 FromValue(float value)
+        {
+            return new UnityEngine.Vector3(value, value, value);
+        }
+    }
+
     public static class Extensions
     {
         public static bool IsValidIndex<T>(this System.Collections.Generic.List<T> list, int index)
@@ -32,6 +42,7 @@ namespace UZSG
                 }
             }
         }
+
 
         private static bool IsValidTag(string tag)
         {

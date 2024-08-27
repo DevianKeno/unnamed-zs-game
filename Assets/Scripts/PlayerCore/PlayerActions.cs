@@ -191,13 +191,15 @@ namespace UZSG.Players
                 _actionPosition = resource.Position;
                 _actionMaxDistance = resource.ResourceData.MaxInteractDistance;
 
+                #region TODO: cancel action on global back Input [ESC]
                 // backInput.performed += CancelCurrentAction;
+                #endregion
 
                 Timing.KillCoroutines(pickupTimerHandle);
                 pickupTimerHandle = Timing.RunCoroutine(
                     UpdatePickupRoutine(pickupTime, onTimerNotify));
             }
-            else /// insnant
+            else /// instant
             {
                 FinishPickupRoutine(onTimerNotify);
             }

@@ -20,6 +20,7 @@ namespace UZSG.Interactions
         /// The name of the object displayed when looking at the Interactable.
         /// </summary>
         public abstract string Name { get; }
+        public bool AllowInteractions { get; set; }
 
         public event EventHandler<InteractArgs> OnInteract;
 

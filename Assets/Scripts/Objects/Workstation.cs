@@ -22,6 +22,7 @@ namespace UZSG.Objects
         public WorkstationData WorkstationData => objectData as WorkstationData;
         public string Action => "Use";
         public string Name => objectData.Name;
+        public bool AllowInteractions { get; set; } = true;
 
         Player player;
         Container inputContainer = new();

@@ -15,6 +15,7 @@ namespace UZSG.Objects
         public StorageData StorageData => objectData as StorageData;
         public string Action => "Open";
         public string Name => objectData.Name;
+        public bool AllowInteractions { get; set; } = true;
         
         Player player;
         Container container = new();

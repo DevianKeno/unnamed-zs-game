@@ -696,7 +696,7 @@ MonoBehaviour:
     count: 0
     attributes:
       attributesReadOnly: []
-  AnimationFactor: 0.5
+  AnimationFactor: 0.33
   LifetimeDuration: 2
   IconEase: 18
   xDistance: 10

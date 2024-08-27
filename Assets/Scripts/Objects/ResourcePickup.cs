@@ -15,6 +15,7 @@ namespace UZSG.Objects
         public Item Item;
         public string Action => "Pick up";
         public string Name => ResourceData.Name;
+        public bool AllowInteractions { get; set; } = true;
 
         public event EventHandler<InteractArgs> OnInteract;
 
@@ -27,6 +28,8 @@ namespace UZSG.Objects
         {
             if (actor is Player player)
             {
+                if (player.Inventory.Bag.IsFull) return;
+                
                 player.Actions.StartPickupRoutine(this, onTimerNotify: (status) =>
                 {
                     if (status == Players.PlayerActions.PickupStatus.Finished)

@@ -13,6 +13,8 @@ namespace UZSG.Entities
     [RequireComponent(typeof(Rigidbody), typeof(VehicleController), typeof(VehicleFunctionAnimation))]
     public class VehicleEntity : Entity, IInteractable
     {
+        public bool AllowInteractions { get; set; } = true;
+
         [Header("Vehicle Information")]
         [SerializeField] VehicleData vehicle; // vehicle data
         VehicleSeatManager _vehicleSeatManager;

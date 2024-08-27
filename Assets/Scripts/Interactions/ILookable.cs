@@ -13,5 +13,6 @@ namespace UZSG.Interactions
     public interface ILookable
     {
         public LookableType LookableType { get; }
+        public bool AllowInteractions { get; set; }
     }
 }

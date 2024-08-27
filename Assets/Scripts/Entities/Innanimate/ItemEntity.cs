@@ -65,11 +65,12 @@ namespace UZSG.Entities
             }
         }
         public LookableType LookableType => LookableType.Interactable; 
-        public event EventHandler<InteractArgs> OnInteract;
+        public bool AllowInteractions { get; set; } = true;
         /// <summary>
         /// Despawn time in seconds.
         /// </summary>
         public int Age = DespawnTimeSeconds;
+        public event EventHandler<InteractArgs> OnInteract;
 
         int _originalLayer;
         bool _isModelLoaded;

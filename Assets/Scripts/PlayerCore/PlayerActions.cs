@@ -155,7 +155,7 @@ namespace UZSG.Players
                 if (hit.collider != null && hit.collider.CompareTag("Interactable"))
                 {
                     var interactable = hit.collider.GetComponentInParent<IInteractable>();
-                    if (interactable != null)
+                    if (interactable != null && interactable.AllowInteractions)
                     {
                         lookingAt?.OnLookExit();
                         lookingAt = interactable;
@@ -167,7 +167,7 @@ namespace UZSG.Players
                 }
 
                 var lookable = hit.collider.GetComponentInParent<ILookable>();
-                if (lookable != null)
+                if (lookable != null && lookable.AllowInteractions)
                 {
                     OnLookAtSomething?.Invoke(lookable);
                     return;
@@ -411,7 +411,7 @@ namespace UZSG.Players
             gotItem = Player.Inventory.Bag.TryPutNearest(item);
             if (gotItem)
             {
-                    lookingAt = null;
+                lookingAt = null;
                 OnPickupItem?.Invoke(item);
                 DestroyPickupedItem(itemEntity);
             }

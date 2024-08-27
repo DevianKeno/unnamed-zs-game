@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc8fecea64fdc8e4aa38d82f83efa010, type: 3}
+  m_Name: heavy_footwear
+  m_EditorClassIdentifier: 
+  Id: heavy_footwear
+  Name: Heavy Footwear
+  Description: 
+  Model:
+    m_AssetGUID: 
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  Sprite: {fileID: 0}
+  Type: 4
+  Subtype: 6
+  Weight: 0
+  StackSize: 1
+  IsFuel: 0
+  FuelDuration: 0
+  IsMaterial: 0
+  IsCraftable: 1
+  Recipes: []
+  SourceDescription: 
+  AudioAssetsData: {fileID: 0}
+  Piece: 3
+  Category: 2
+  Attributes:
+    BaseDurability: 0
+    BaseDefense: 0
+    BaseWeight: 0
+    MeleeResistance: 0
+    RangedResistance: 0

@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 81bc2aaa978c22b40abc135224c57da0, type: 3}
-  m_Name: fire_axe
+  m_Name: steel_pickaxe
   m_EditorClassIdentifier: 
-  Id: fire_axe
-  Name: Fire Axe
+  Id: steel_pickaxe
+  Name: Steel Pickaxe
   Description: 
   Model:
-    m_AssetGUID: 82dc7cb9561efdb429d0c810ba8eb4db
+    m_AssetGUID: 695d97c0eaa4c714fa58af62d3bbb34b
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
@@ -28,39 +28,39 @@ MonoBehaviour:
   IsFuel: 0
   FuelDuration: 0
   IsMaterial: 0
-  IsCraftable: 0
+  IsCraftable: 1
   Recipes: []
   SourceDescription: 
   AudioAssetsData: {fileID: 0}
-  ToolType: 0
+  ToolType: 1
   Attacks: []
-  SwingDirection: 2
+  SwingDirection: 1
   Attributes:
   - data: {fileID: 11400000, guid: dfa56112f40946a428ee64518c941476, type: 2}
-    value: 28
+    value: 20
     baseMaximum: 0
-    multiplier: 0
+    multiplier: 1
     flatBonus: 0
     LimitOverflow: 0
     LimitUnderflow: 0
   - data: {fileID: 11400000, guid: 8065c7b302bdaf142aedd6761e5bbb15, type: 2}
-    value: 180
+    value: 250
     baseMaximum: 250
-    multiplier: 0
+    multiplier: 1
     flatBonus: 0
     LimitOverflow: 0
     LimitUnderflow: 0
-  - data: {fileID: 11400000, guid: 5e71af7286d194c4c9bf489e08b9c33f, type: 2}
-    value: 18
+  - data: {fileID: 11400000, guid: 4657969845031b54996716d3851a3f8e, type: 2}
+    value: 20
     baseMaximum: 0
-    multiplier: 0
+    multiplier: 1
     flatBonus: 0
     LimitOverflow: 0
     LimitUnderflow: 0
   - data: {fileID: 11400000, guid: 6cc27a9a88960994aa1a49dd6eae0b21, type: 2}
-    value: 24
+    value: 20
     baseMaximum: 0
-    multiplier: 0
+    multiplier: 1
     flatBonus: 0
     LimitOverflow: 0
     LimitUnderflow: 0

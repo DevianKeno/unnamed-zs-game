@@ -10,7 +10,15 @@ namespace UZSG.Systems
     {
         bool _isInitialized;
         public bool IsInitialized => _isInitialized;
+        /// <summary>
+        /// Keys is Recipe Id, Value is RecipeData.
+        /// </summary>
         Dictionary<string, RecipeData> _recipeDict = new();
+        /// <summary>
+        /// Represents the collection (all) of Recipes where this Item is used as a material.
+        /// Key is ItemData Id, Value is collection of Recipe Ids.
+        /// </summary>
+        Dictionary<string, HashSet<string>> _materialIndex = new();
         [SerializeField] AssetLabelReference assetLabelReference;
 
         internal void Initialize()

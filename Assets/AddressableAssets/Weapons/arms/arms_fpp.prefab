@@ -154,6 +154,10 @@ PrefabInstance:
       value: 10
       objectReference: {fileID: 0}
     - target: {fileID: -5301560096106150513, guid: 20d93768ba1c8d34ba92740279aa0a80, type: 3}
+      propertyPath: m_Name
+      value: Armature
+      objectReference: {fileID: 0}
+    - target: {fileID: -5301560096106150513, guid: 20d93768ba1c8d34ba92740279aa0a80, type: 3}
       propertyPath: m_Layer
       value: 10
       objectReference: {fileID: 0}

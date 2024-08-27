@@ -134,16 +134,16 @@ namespace UZSG.Objects
             LeanTween.rotate(treeModel.gameObject, targetRotation, 0f)
             .setOnComplete(() =>
             {
-                ResetTransforms();
+                ResetChopAngle();
             });
         }
 
         void DestroySelf()
         {
-            /// play some particles and stuff
+            /// play some wood/bark explosion particles and stuff
         }
 
-        void ResetTransforms()
+        void ResetChopAngle()
         {
             LeanTween.rotate(treeModel.gameObject, Vector3.zero, 0.33f)
             .setEaseOutExpo();

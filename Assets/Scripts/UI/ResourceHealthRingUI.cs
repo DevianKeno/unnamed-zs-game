@@ -66,7 +66,10 @@ namespace UZSG.UI
 
         void OnDestroy()
         {
-            health.OnValueChanged -= OnHealthChanged;
+            if (health != null)
+            {
+                health.OnValueChanged -= OnHealthChanged;
+            }
         }
 
         void OnHealthChanged(object sender, AttributeValueChangedContext e)
@@ -107,7 +110,7 @@ namespace UZSG.UI
                 health.OnValueChanged += OnHealthChanged;
             }
 
-            LayoutRebuilder.ForceRebuildLayoutImmediate(Rect);
+            Rebuild();
         }
     }
 }

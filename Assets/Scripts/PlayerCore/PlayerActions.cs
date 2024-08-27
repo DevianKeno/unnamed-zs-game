@@ -116,31 +116,8 @@ namespace UZSG.Players
             InteractionSphereCast();
         }
 
-        public void Enable()
+        void Tick(TickInfo e)
         {
-            actionMap.Enable();
-            _allowInteractions = true;
-        }
-
-        public void Disable()
-        {
-            actionMap.Disable();
-            _allowInteractions = false;
-        }
-
-        public void SetControl(string name, bool enabled)
-        {
-            if (inputs.ContainsKey(name))
-            {
-                if (enabled)
-                {
-                    inputs[name].Enable();
-                }
-                else
-                {
-                    inputs[name].Disable();
-                }
-            }
         }
 
         void InteractionSphereCast()
@@ -294,6 +271,11 @@ namespace UZSG.Players
             if (!int.TryParse(context.control.displayName, out int index)) return;
 
             var slot = Player.Inventory.GetEquipmentOrHotbarSlot(index);
+            if (slot == null)
+            {
+                Game.Console.LogAndUnityLog($"Tried to access Hotbar Slot {index}, but it's not available yet (wear a toolbelt or smth.)");
+                return;
+            }
             if (slot.HasItem)
             {
                 Player.FPP.EquipHeldItem(slot.Item.Data.Id);
@@ -363,9 +345,7 @@ namespace UZSG.Players
         #endregion
 
 
-        void Tick(TickInfo e)
-        {
-        }
+        #region Public methods
 
         /// <summary>
         /// Pick up item from ItemEntity and put in the inventory.
@@ -416,6 +396,43 @@ namespace UZSG.Players
                 DestroyPickupedItem(itemEntity);
             }
         }
+
+        /// <summary>
+        /// Enable Player actions. This include:
+        /// - Picking up items
+        /// - Interacting with pickups/objects
+        /// - Equipping items via hotbar
+        /// - etc. idk
+        /// </summary>
+        public void Enable()
+        {
+            actionMap.Enable();
+            _allowInteractions = true;
+        }
+
+        public void Disable()
+        {
+            actionMap.Disable();
+            _allowInteractions = false;
+        }
+
+        public void SetControl(string name, bool enabled)
+        {
+            if (inputs.ContainsKey(name))
+            {
+                if (enabled)
+                {
+                    inputs[name].Enable();
+                }
+                else
+                {
+                    inputs[name].Disable();
+                }
+            }
+        }
+
+        #endregion
+
 
         void DestroyPickupedItem(Entity item)
         {

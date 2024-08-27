@@ -21,6 +21,7 @@ namespace UZSG.Systems
         public bool EnableLogging;
         /// <summary>
         /// Contains the list of all spawnable entities in the game.
+        /// Key is Entity Id, Value is EntityData.
         /// </summary>
         Dictionary<string, EntityData> _entitiesDict = new();
         

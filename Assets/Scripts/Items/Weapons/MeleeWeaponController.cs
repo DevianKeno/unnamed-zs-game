@@ -24,10 +24,7 @@ namespace UZSG.Items.Weapons
         bool _isAttacking;
         bool _onCooldown;
 
-        public bool VisualizeAttack;
-
         public string CollisionTag => "Melee";
-
 
         MeleeWeaponStateMachine stateMachine;
         public MeleeWeaponStateMachine StateMachine => stateMachine;

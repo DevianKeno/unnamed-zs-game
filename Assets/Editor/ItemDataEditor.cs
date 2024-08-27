@@ -66,16 +66,21 @@ namespace UZSG.UnityEditor
             EditorGUILayout.LabelField("Crafting", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(isMaterial);
             EditorGUILayout.PropertyField(isCraftable);
-            EditorGUILayout.PropertyField(isFuel);
-            EditorGUILayout.PropertyField(fuelDuration);
-            if (GUILayout.Button("Get Recipes"))
+            if (itemData.IsCraftable)
             {
-                GetRecipes(itemData);
+                if (GUILayout.Button("Get Recipes"))
+                {
+                    GetRecipes(itemData);
+                }
+                EditorGUILayout.PropertyField(recipes);
             }
-            EditorGUILayout.PropertyField(recipes);
+            EditorGUILayout.PropertyField(isFuel);
+            if (itemData.IsFuel)
+            {
+                EditorGUILayout.PropertyField(fuelDuration);
+            }
 
             EditorGUILayout.Space();
-            EditorGUILayout.LabelField("Audio Data", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(audioAssetsData);
 
             // ItemType itemType = (ItemType) type.enumValueIndex;

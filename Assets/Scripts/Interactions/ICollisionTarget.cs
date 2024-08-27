@@ -9,6 +9,9 @@ namespace UZSG.Interactions
         public bool Penetration { get; set; }
     }
 
+    /// <summary>
+    /// Represents stuff that is targeted by collisions, which are ICollisionSources.
+    /// </summary>
     public interface ICollisionTarget
     {
         /// <summary>

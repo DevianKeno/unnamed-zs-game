@@ -35,8 +35,9 @@ namespace UZSG.Players
         public bool RunIsToggle = false;
         public bool CrouchIsToggle = true;
 
-        bool _isMovePressed;
+        bool _isAnyMovePressed;
         bool _isMovingBackwards;
+        bool _isMovingSideways;
         bool _isTransitioningCrouch;
         bool _isWalking;
         bool _isRunning;
@@ -84,6 +85,18 @@ namespace UZSG.Players
         {
             get => _frameVelocity.y < 0f && !IsGrounded;
         }
+        public bool CanRun
+        {
+            get => !_isMovingBackwards || !_isMovingSideways;
+        }
+        /// <summary>
+        /// Whether if the Player can Camera bob in FPP.
+        /// </summary>
+        public bool CanBob
+        {
+            get => IsGrounded;
+        }
+
         public Vector3 Velocity
         {
             get => rb.velocity;
@@ -110,10 +123,6 @@ namespace UZSG.Players
         public float VerticalSpeed
         {
             get => new Vector3(0f, rb.velocity.y, 0f).magnitude;
-        }
-        public bool CanBob
-        {
-            get => IsGrounded;
         }
         Vector3 CameraForward
         {
@@ -205,7 +214,7 @@ namespace UZSG.Players
 
         void UpdateStates()
         {
-            if (_isMovePressed && IsMoving && !_hasJumped)
+            if (_isAnyMovePressed && IsMoving && !_hasJumped)
             {
                 Player.MoveStateMachine.ToState(_targetMoveState);
             }
@@ -231,7 +240,8 @@ namespace UZSG.Players
             if (!AllowMovement) return;
 
             _frameInput.Move = context.ReadValue<Vector2>();
-            _isMovePressed = _frameInput.Move.x != 0 || _frameInput.Move.y != 0;
+            _isAnyMovePressed = _frameInput.Move.x != 0 || _frameInput.Move.y != 0;
+            _isMovingSideways = _frameInput.Move.x != 0;
             _isMovingBackwards = _frameInput.Move.y < 0;
 
             CancelRunIfRunningBackwards();
@@ -242,9 +252,8 @@ namespace UZSG.Players
             if (!AllowMovement) return;
             if (!IsGrounded) return;
 
-            if (context.started)
+            if (context.started || CanRun)
             {
-                CancelRunBecauseOfOtherThings();
                 if (Player.FPP.IsPerforming) return;
                 if (IsWalking)
                 {
@@ -320,14 +329,6 @@ namespace UZSG.Players
         void CancelRunIfRunningBackwards()
         {
             if (_isMovingBackwards && _isRunning)
-            {
-                ToggleRun(false);
-            }
-        }
-
-        void CancelRunBecauseOfOtherThings()
-        {
-            if (_isMovingBackwards)
             {
                 ToggleRun(false);
             }

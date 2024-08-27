@@ -17,14 +17,15 @@ namespace UZSG.Items.Weapons
 {
     public class MeleeWeaponController : HeldWeaponController, ICollisionSource
     {
-        Player Player => owner as Player;
+        public Player Player => owner as Player;
+        public string CollisionTag => "Melee";
 
         bool _canAttack;
         bool _inhibitActions;
         bool _isAttacking;
         bool _onCooldown;
-
-        public string CollisionTag => "Melee";
+        
+        float StaminaCost => attributes["stamina_cost"] != null ? attributes["stamina_cost"].Value : 0f;
 
         MeleeWeaponStateMachine stateMachine;
         public MeleeWeaponStateMachine StateMachine => stateMachine;
@@ -39,7 +40,12 @@ namespace UZSG.Items.Weapons
         {
             get
             {
-                return attributes["durability"].Value <= 0;
+                if (attributes.TryGet("durability", out var durability))
+                {
+                    return durability.Value <= 0;
+                }
+
+                return false; /// no durability = unbreakabled
             }
         }
 
@@ -57,11 +63,11 @@ namespace UZSG.Items.Weapons
                 {
                     if (owner.Attributes.TryGet("melee_stamina_cost_multiplier", out var multiplier))
                     {
-                        return ownerStamina.Value >= (attributes["stamina_cost"].Value * multiplier.Value);
+                        return ownerStamina.Value >= (StaminaCost * multiplier.Value);
                     }
                     else
                     {
-                        return ownerStamina.Value >= attributes["stamina_cost"].Value;
+                        return ownerStamina.Value >= StaminaCost;
                     }
                 }
 
@@ -193,7 +199,7 @@ namespace UZSG.Items.Weapons
 
         void ConsumeStamina()
         {
-            owner.Attributes["stamina"].Remove(attributes["stamina_cost"].Value);
+            owner.Attributes["stamina"].Remove(StaminaCost);
         }
 
         void PlaySound()

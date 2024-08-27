@@ -13,11 +13,11 @@ using static UZSG.Entities.EnemyActionStates;
 
 namespace UZSG.Entities
 {
-    public partial class Enemy : NonPlayerCharacter, IPlayerDetectable
+    public partial class Enemy : NonPlayerCharacter
     {
         #region Agent sensors
         
-        /// <summary>
+        /*/// <summary>
         /// determines if enemy can Chase Player or Roam map
         /// </summary>
         public bool HasTargetInSight 
@@ -89,7 +89,7 @@ namespace UZSG.Entities
         /// "sense" what's the state of the enemy 
         /// </summary>
         /// <returns></returns>
-        public EnemyActionStates HandleTransition()
+        /*public EnemyActionStates HandleTransition()
         {
             if (IsDead)
             {
@@ -116,7 +116,7 @@ namespace UZSG.Entities
             {
                 return EnemyActionStates.Roam;
             }
-        }
+        }*/
 
         #endregion
     }

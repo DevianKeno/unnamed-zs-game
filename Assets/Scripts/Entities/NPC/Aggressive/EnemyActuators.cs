@@ -14,7 +14,7 @@ using System.Collections;
 
 namespace UZSG.Entities
 {
-    public partial class Enemy : NonPlayerCharacter, IPlayerDetectable
+    public partial class Enemy : NonPlayerCharacter
     {
         #region Agent actuator
 
@@ -24,9 +24,12 @@ namespace UZSG.Entities
         void InitializeActuators()
         {
             actionStateMachine[EnemyActionStates.Idle].OnEnter += OnActionIdleEnter;
+            
             actionStateMachine[EnemyActionStates.Chase].OnEnter += OnActionChaseEnter;
+            actionStateMachine[EnemyActionStates.Chase].OnTick += OnActionChaseEnter;
+
             actionStateMachine[EnemyActionStates.Attack].OnEnter += OnActionAttackEnter;
-            actionStateMachine[EnemyActionStates.Chase].OnEnter += OnActionChaseEnter;
+            actionStateMachine[EnemyActionStates.Roam].OnEnter += OnActionAttackEnter;
         }
 
         void OnActionIdleEnter(object sender, State<EnemyActionStates>.ChangedContext e)
@@ -39,29 +42,12 @@ namespace UZSG.Entities
 
         void OnActionChaseEnter(object sender, State<EnemyActionStates>.ChangedContext e)
         {
-            /// might run twice because of this and ExecuteAction()
-            // Chase();
+            Chase();
         }
 
         void OnActionAttackEnter(object sender, State<EnemyActionStates>.ChangedContext e)
         {
-            /// might run twice because of this and ExecuteAction()
-            // Chase();
-        }
-
-        IEnumerator FacePlayerAndScream(Player player)
-        {
-            // Rotate towards the player
-            Quaternion targetRotation = Quaternion.LookRotation(player.Position - transform.position);
-
-            while (Quaternion.Angle(transform.rotation, targetRotation) > 0.1f)
-            {
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 2);
-                yield return null; // Wait for the next frame
-            }
-
-            // Once facing the player, scream
-            actionStateMachine.ToState(EnemyActionStates.Scream, lockForSeconds: 2f);
+            Attack();
         }
         
         void Idle()
@@ -71,7 +57,10 @@ namespace UZSG.Entities
 
         void Chase()
         {
-            actionStateMachine.ToState(EnemyActionStates.Chase);
+            /// Set the states to chasing mode
+            // _currentActionState = EnemyActionStates.Idle;
+            // CurrentMoveState = EnemyMoveStates.Run;
+            moveStateMachine.ToState(EnemyMoveStates.Run);
 
             /// set rigid body to dynamic
             rb.isKinematic = false;
@@ -84,17 +73,36 @@ namespace UZSG.Entities
             navMeshAgent.SetDestination(targetEntity.transform.position);
 
             /// Switch move state machine to run state on chase :)
-            EnemyMoveStates targetMoveState = EnemyMoveStates.Walk;
+            ///EnemyMoveStates targetMoveState = EnemyMoveStates.Walk;
             // if (runType == Jog)
             // {
             //     targetMoveState = EnemyMoveStates.Jog;
             // }
             // else if (runType == Run)
             // {
-                targetMoveState = EnemyMoveStates.Run;
+                ///targetMoveState = EnemyMoveStates.Run;
             // }
-            
-            moveStateMachine.ToState(targetMoveState);
+        }
+
+        IEnumerator FacePlayerAndScream()
+        {
+            /// Rotate towards the player
+            Quaternion targetRotation = Quaternion.LookRotation(targetEntity.Position - transform.position);
+            while (Quaternion.Angle(transform.rotation, targetRotation) > 0.1f)
+            {
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * RotationDamping); /// change 6 to RotationDamping
+                yield return null;
+            }
+
+            /// Once facing the player, scream
+            actionStateMachine.ToState(EnemyActionStates.Scream, lockForSeconds: 2f);
+            // _currentActionState = EnemyActionStates.Scream;
+
+            /// Wait for the scream duration
+            yield return new WaitForSeconds(2f);
+
+            /// just chase player
+            actionStateMachine.ToState(EnemyActionStates.Chase);
         }
 
         void Roam()
@@ -138,7 +146,8 @@ namespace UZSG.Entities
 
         void Attack()
         {
-            actionStateMachine.ToState(EnemyActionStates.Attack);
+            // Set the movement from running to idle
+            moveStateMachine.ToState(EnemyMoveStates.Idle);
 
             /// set the rigid body of the enemy to kinematic
             rb.isKinematic = true;

@@ -17,7 +17,9 @@ namespace UZSG.Entities
         
     public partial class Enemy : NonPlayerCharacter, IPlayerDetectable
     {
-        /**/
+        /// <summary>
+        /// Clear console messages.
+        /// </summary>
         public static void Clear()
         {
             // This simply calls the Clear method in the Console window
@@ -27,9 +29,11 @@ namespace UZSG.Entities
         }
 
         public EnemyData EnemyData => entityData as EnemyData;
+        public float RotationDamping = 6f;
 
         [Header("Agent Information")]
         public LayerMask PlayerLayer; // Layers that the enemy chases
+        [SerializeField] bool _hasAlreadyScreamed;
         [SerializeField] bool _isInHordeMode;
         [SerializeField] bool _hasTargetInSight; // checks if the player is in site, attack range or is a target
         [SerializeField] bool _hasTargetInAttackRange;
@@ -41,7 +45,14 @@ namespace UZSG.Entities
         [SerializeField] float _siteRadius;
         [SerializeField] float _attackRadius; // Radius of which the enemy detects the player
         [SerializeField] Vector3 _randomDestination; // Destination of agent
-        [SerializeField] EnemyActionStates _currentActionState;
+        public EnemyActionStates CurrentActionState
+        {
+            get => actionStateMachine.CurrentState.Key;
+        }
+        public EnemyMoveStates CurrentMoveState
+        {
+            get => moveStateMachine.CurrentState.Key;
+        }
 
 
         #region Properties
@@ -78,7 +89,6 @@ namespace UZSG.Entities
             RetrieveAttributes();
             InitializeAnimator();
             InitializeActuators();
-            targetEntity = null;
 
             Game.Tick.OnSecond += OnSecond;
         }
@@ -101,7 +111,7 @@ namespace UZSG.Entities
 
         protected virtual void FixedUpdate()
         {
-            
+
         }
 
         void OnSecond(SecondInfo s)
@@ -118,22 +128,27 @@ namespace UZSG.Entities
         /// <param name="etty"></param>
         public void DetectPlayer(Entity etty)
         {
-            if (etty != null && etty is Player player)
+            if (etty != null && etty is Player player && !_hasTargetInSight)
             {
-                targetEntity = player; 
                 _hasTargetInSight = true;
+                targetEntity = player; 
 
-                StartCoroutine(FacePlayerAndScream(player));
+                // Scream at player then chase
+                if (!_hasAlreadyScreamed)
+                {
+                    _hasAlreadyScreamed = true;
+                    StartCoroutine(FacePlayerAndScream());
+                }
             }
         }
 
-        public void PlayerAttackDetect(Entity etty)
+        /*public void AttackPlayer(Entity etty)
         {
             if (etty != null && etty is Player player)
             {
-                _hasTargetInAttackRange = true;
+                actionStateMachine.ToState(EnemyActionStates.Attack);
             }
-        }
+        }*/
 
         public void ResetTargetIfNotInRange()
         {
@@ -146,7 +161,7 @@ namespace UZSG.Entities
                 {
                     targetEntity = null;
                     _hasTargetInSight = false;
-                    actionStateMachine.ToState(EnemyActionStates.Roam);
+                    _hasAlreadyScreamed = false;
                 }
                 else
                 {
@@ -155,8 +170,7 @@ namespace UZSG.Entities
                     {
                         if (_attackRadius <= _distanceFromPlayer)
                         {
-                            _hasTargetInAttackRange = false;
-                            actionStateMachine.ToState(EnemyActionStates.Chase);
+
                         }
                     }
                 }

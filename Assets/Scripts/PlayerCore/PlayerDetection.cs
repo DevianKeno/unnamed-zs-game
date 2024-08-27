@@ -10,7 +10,7 @@ namespace UZSG.Players
     {
         [SerializeField] Player player;
         public LayerMask Layers;
-        public float PlayerDetectionRange;
+        public float PlayerDetectionRange, PlayerAttackableRange;
 
         void FixedUpdate()
         {

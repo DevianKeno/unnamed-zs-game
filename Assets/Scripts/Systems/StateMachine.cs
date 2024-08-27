@@ -58,11 +58,23 @@ namespace UZSG.Systems
             if (InitialState != null) _currentState = InitialState;
 
             Game.Tick.OnTick += Tick;
+            Game.Tick.OnSecond += Second;
+        }
+
+        void OnDestroy()
+        {
+            Game.Tick.OnTick -= Tick;
+            Game.Tick.OnSecond -= Second;
         }
 
         void Tick(TickInfo e)
         {
             if (InitialState != null) _currentState.Tick();
+        }
+
+        void Second(SecondInfo s)
+        {
+            if (InitialState != null) _currentState.Second();
         }
 
         public virtual void ToState(E state)

@@ -723,9 +723,8 @@ MonoBehaviour:
   steeringAngle: 0
   carSpeed: 0
   powerToWheels: 0
-  isTractionLocked: 0
   defaultMaxSteerAngle: 0
-  rbCarSpeed: 0
+  turnRadius: 0
   wheels: []
 --- !u!114 &8205610463454806732
 MonoBehaviour:

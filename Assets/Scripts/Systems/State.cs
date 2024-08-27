@@ -21,7 +21,9 @@ namespace UZSG.Systems
         bool _isLocked;
         public bool IsLocked => _isLocked;
 
-        [field: Header("Events")]       
+
+        #region State events
+
         /// <summary>
         /// Called once when entering this State.
         /// </summary>
@@ -31,17 +33,20 @@ namespace UZSG.Systems
         /// </summary>
         public event EventHandler<ChangedContext> OnTick;
         /// <summary>
+        /// Called every realtime second when in this State.
+        /// </summary>
+        public event EventHandler<ChangedContext> OnSecond;
+        /// <summary>
         /// Called once when exiting this State.
         /// </summary>
         public event EventHandler<ChangedContext> OnExit;
 
+        #endregion
+
+
         public State(EState key)
         {
             _key = key;
-        }
-
-        public State()
-        {
         }
 
         public void Lock(bool value)
@@ -60,6 +65,14 @@ namespace UZSG.Systems
         public virtual void Tick()
         {
             OnTick?.Invoke(this, new()
+            {
+
+            });
+        }
+
+        public virtual void Second()
+        {
+            OnSecond?.Invoke(this, new()
             {
 
             });

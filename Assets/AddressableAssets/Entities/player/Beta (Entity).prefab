@@ -994,15 +994,7 @@ MonoBehaviour:
   Layers:
     serializedVersion: 2
     m_Bits: 81920
-  EnemyLayer:
-    serializedVersion: 2
-    m_Bits: 16384
-  WildlifeLayer:
-    serializedVersion: 2
-    m_Bits: 65536
-  SiteRange: 12
-  AttackRange: 1
-  CritterSiteRange: 20
+  PlayerDetectionRange: 24
 --- !u!1 &9031321928697203625
 GameObject:
   m_ObjectHideFlags: 0

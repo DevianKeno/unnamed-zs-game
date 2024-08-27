@@ -1,51 +1,20 @@
 using System;
 using UnityEngine;
+using UnityEngine.UIElements;
 using UZSG.Entities;
 using UZSG.Interactions;
 
 namespace UZSG.Players
-{      
-    public struct EnemyCollidedEventArgs
-    {   
-        public Player Player;
-        public bool InChase;
-        public Collider[] Enemies;
-    }
-    
+{
     public class PlayerDetection : MonoBehaviour 
     {
         [SerializeField] Player player;
-        [Space]
-
-
-        public LayerMask Layers,
-            EnemyLayer,
-            WildlifeLayer; // Layers that the enemy chases
-        public float SiteRange, AttackRange, CritterSiteRange; // range from which Players is in site/attack
-        /// <summary>
-        /// the enemy found in a specific collider
-        /// </summary>
-        Enemy _enemyFound; 
-        /// <summary>
-        /// the critter found in a specific collider
-        /// </summary>
-        Wildlife _detectedWildlife; 
-        /// <summary>
-        /// the critter found in a specific collider
-        /// </summary>
-        IPlayerDetectable _detectedEntity; 
-        
-        /// Array of objects that is within entity range
-        Collider[] _hitSiteColliders,
-            _hitAttackColliders,
-            _hitSiteWildlifeColliders;
-        
-        public event EventHandler<EnemyCollidedEventArgs> OnEnemyInRange;
+        public LayerMask Layers;
+        public float PlayerDetectionRange, PlayerAttackableRange;
 
         void FixedUpdate()
         {
             CastDetectionSphere();
-
             // FindEnemyInRange();
             // FindCritterInRange();
         }
@@ -53,13 +22,12 @@ namespace UZSG.Players
         void OnDrawGizmos()
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(transform.position, CritterSiteRange);
+            Gizmos.DrawWireSphere(transform.position, 20);
         }
 
         public void CastDetectionSphere()
         {
-            var detectedColliders = Physics.OverlapSphere(player.Position, 24, Layers);
-            
+            Collider[] detectedColliders = Physics.OverlapSphere(transform.position, PlayerDetectionRange, Layers);
             foreach (var collider in detectedColliders)
             {
                 if (collider.TryGetComponent<IPlayerDetectable>(out var detectable))
@@ -71,8 +39,31 @@ namespace UZSG.Players
                 }
             }
         }
+        /*public LayerMask 
+            EnemyLayer,
+            WildlifeLayer; // Layers that the enemy chases
 
-        public void FindEnemyInRange()
+        public float SiteRange, AttackRange, CritterSiteRange; // range from which Players is in site/attack
+
+        /// <summary>
+        /// the enemy found in a specific collider
+        /// </summary>
+        Enemy _enemyFound; 
+        /// <summary>
+        /// the critter found in a specific collider
+        /// </summary>
+        Wildlife _detectedWildlife; 
+        /// <summary>
+        /// the critter found in a specific collider
+        /// </summary>
+        IPlayerDetectable _detectedEntity;
+
+        /// Array of objects that is within entity range
+        Collider[] _hitSiteColliders,
+            _hitAttackColliders,
+            _hitSiteWildlifeColliders;*/
+
+        /*public void FindEnemyInRange()
         {
             // Find enemy within the range
             _hitSiteColliders = Physics.OverlapSphere(transform.position, SiteRange, EnemyLayer);
@@ -123,6 +114,6 @@ namespace UZSG.Players
                     detectable.DetectPlayer(player);
                 }
             }
-        }
+        }*/
     }
 }

@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 873d4c4f155a35a46b4699d35b336ec7, type: 3}
+  m_Name: wooden_plank
+  m_EditorClassIdentifier: 
+  Id: wooden_plank
+  Name: Wooden Plank
+  Description: Used for crafting a variety of structures, from basic barricades to
+    more complex buildings.
+  Model:
+    m_AssetGUID: 51b487738cbcc74419a5bfb372e39f77
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  Sprite: {fileID: 21300000, guid: d17e428e71a6adf4e8e9c7648ca5e36c, type: 3}
+  Type: 0
+  Subtype: 0
+  Weight: 0
+  StackSize: 999
+  IsFuel: 0
+  FuelDuration: 0
+  IsMaterial: 1
+  IsCraftable: 1
+  Recipes: []
+  SourceDescription: Wooden planks can be obtained by crafting or found in storage
+    locations such as chests scattered throughout the world.
+  AudioAssetsData: {fileID: 0}

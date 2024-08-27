@@ -36,6 +36,7 @@ namespace UZSG.Players
         public bool CrouchIsToggle = true;
 
         bool _isAnyMovePressed;
+        public bool CanCoyoteJump => groundChecker.CanCoyoteJump;
         bool _isMovingBackwards;
         bool _isMovingSideways;
         bool _isTransitioningCrouch;
@@ -374,10 +375,9 @@ namespace UZSG.Players
 
         void HandleJump()
         {
-            if (!IsGrounded) return;
+            if (!CanCoyoteJump && !IsGrounded) return;
 
             _hasJumped = true;
-            Vector3 jumpVelocity = rb.velocity;
             jumpVelocity.y = Player.Attributes["jump_height"].Value;
             rb.velocity = jumpVelocity;
             Player.MoveStateMachine.ToState(MoveStates.Jump);

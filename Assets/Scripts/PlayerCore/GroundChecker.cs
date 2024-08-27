@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UIElements;
 using UZSG.Entities;
@@ -27,21 +28,35 @@ namespace UZSG.Players
 
         [SerializeField] BoxCollider boxCollider;
 
+        float coyoteTime = 0.2f;
+        [SerializeField] bool _canCoyoteJump;
+        public bool CanCoyoteJump => _canCoyoteJump;
+
+        IEnumerator StartCoyoteTime()
+        {
+            _canCoyoteJump = true;
+            yield return new WaitForSeconds(coyoteTime);
+            _canCoyoteJump = false;
+        }
+
         public void OnTriggerEnter(Collider other)
         {
             _isGrounded = true;
+            _canCoyoteJump = true;
             GroundTextureDetection();
         }
 
         public void OnTriggerStay(Collider other)
         {
             _isGrounded = true;
+            _canCoyoteJump = true;
             GroundTextureDetection();
         }
 
         public void OnTriggerExit(Collider other)
         {
             _isGrounded = false;
+            StartCoroutine(StartCoyoteTime());
         }
 
         public void GroundTextureDetection()

@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 873d4c4f155a35a46b4699d35b336ec7, type: 3}
+  m_Name: bandage
+  m_EditorClassIdentifier: 
+  Id: bandage
+  Name: Bandage
+  Description: Stops bleeding.
+  Model:
+    m_AssetGUID: ccea5945f4750e048930c3dfdda097aa
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  Sprite: {fileID: 21300000, guid: 0b41dee45f3265f48b75a1cf6b8f34e1, type: 3}
+  Type: 0
+  Subtype: 1
+  Weight: 0
+  StackSize: 999
+  IsMaterial: 0
+  IsCraftable: 1
+  Recipes:
+  - {fileID: 11400000, guid: d483b2fe74215824dbda5f2c35f2445a, type: 2}
+  - {fileID: 11400000, guid: cb32aeaee9a8ee84cbd5456637994761, type: 2}
+  - {fileID: 11400000, guid: f000b8f0a93320d41b27404c408c6c63, type: 2}
+  SourceDescription: 

@@ -332,9 +332,6 @@ namespace UZSG.Entities
             invUI.RemoveObjectGUI(gui);
         }
 
-        #endregion
-
-
         void RegenerateStamina()
         {
             if (_allowStaminaRegen)
@@ -358,5 +355,7 @@ namespace UZSG.Entities
             yield return Timing.WaitForSeconds(Attributes["stamina_regen_delay"].Value);
             _allowStaminaRegen = true;
         }
+        
+        #endregion
     }
 }

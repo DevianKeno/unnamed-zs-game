@@ -81,6 +81,7 @@ namespace UZSG.Items.Weapons
 
         public override void Initialize()
         {
+            LoadDefaultAttributes();
             InitializeAudioController();
             InitializeEventsFromOwnerInput();
         }

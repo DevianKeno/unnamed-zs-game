@@ -135,9 +135,9 @@ namespace UZSG.UI
 
         // }
 
-        public void Destroy(float delay = 0f)
+        public void Destroy(float delay = 0f, bool invokeOnHideEvent = true)
         {
-            Hide();
+            if (invokeOnHideEvent) Hide();
             Destroy(gameObject, delay);
         }
 
@@ -175,6 +175,11 @@ namespace UZSG.UI
         public void Move(Vector3 position)
         {
             rect.position = position;
+        }
+
+        public void Rebuild()
+        {
+            LayoutRebuilder.ForceRebuildLayoutImmediate(rect);
         }
     }
 }

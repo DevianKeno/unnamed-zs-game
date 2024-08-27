@@ -32,7 +32,7 @@ namespace UZSG.Entities
             }
             set
             {
-                item = value;
+                item = new(value);
             }
         }
         public string Name

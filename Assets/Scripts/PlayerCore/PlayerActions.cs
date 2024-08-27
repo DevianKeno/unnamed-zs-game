@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.InputSystem;
+using MEC;
 
 using UZSG.Systems;
 using UZSG.Data;
@@ -11,7 +12,6 @@ using UZSG.Interactions;
 using UZSG.Entities;
 using UZSG.Inventory;
 using UZSG.Items;
-using Mono.Cecil;
 
 namespace UZSG.Players
 {
@@ -29,12 +29,13 @@ namespace UZSG.Players
         public float MaxInteractDistance;
         public float HoldThresholdMilliseconds = 200f;
         
-        float _holdTimer;
         bool _hadLeftClicked;
         bool _hadRightClicked;
         bool _isHoldingLeftClick;
         bool _isHoldingRightClick;
+        bool _isBusy;
         bool _allowInteractions = true;
+        float _holdTimer;
         /// <summary>
         /// The interactable object the Player is currently looking at.
         /// </summary>
@@ -82,6 +83,8 @@ namespace UZSG.Players
             inputs["Hotbar"].performed += OnNumberSlotSelect;               // Tab/E (default)
 
             inputs["Unholster"].performed += OnUnholster;               // X (default)
+            
+            backInput = Game.Main.GetInputAction("Back", "Global");
         }
 
         void Update()
@@ -176,6 +179,112 @@ namespace UZSG.Players
             lookingAt = null;
             OnLookAtSomething?.Invoke(null);
         }
+
+
+        #region Pickup action
+        
+        public enum PickupStatus {
+            Started, Finished, Canceled 
+        }
+        RadialProgressUI pickupRingUI;
+        float _pickupDeltaTime;
+        MEC.CoroutineHandle pickupTimerHandle;
+        /// <summary>
+        /// The position of the object the Player is currently interacting with.
+        /// To compare distance and cancel when too far.
+        /// </summary>
+        Vector3 _actionPosition;
+        float _actionMaxDistance;
+        
+        InputAction backInput;
+
+        public void StartPickupRoutine(Objects.ResourcePickup resource, Action<PickupStatus> onTimerNotify = null)
+        {
+            if (_isBusy) return;
+
+            var pickupTime = resource.ResourceData.PickupDuration;
+            if (pickupTime > 0)
+            {
+                _isBusy = true;
+                DisableControlsOnPickupResource();
+                pickupRingUI = Game.UI.Create<RadialProgressUI>("Pickup Ring UI");
+                pickupRingUI.TotalTime = pickupTime;
+                pickupRingUI.Progress = 0f;
+                _pickupDeltaTime = 0f;
+                _actionPosition = resource.Position;
+                _actionMaxDistance = resource.ResourceData.MaxInteractDistance;
+
+                // backInput.performed += CancelCurrentAction;
+
+                Timing.KillCoroutines(pickupTimerHandle);
+                pickupTimerHandle = Timing.RunCoroutine(
+                    UpdatePickupRoutine(pickupTime, onTimerNotify));
+            }
+            else /// insnant
+            {
+                FinishPickupRoutine(onTimerNotify);
+            }
+        }
+
+        IEnumerator<float> UpdatePickupRoutine(float duration, Action<PickupStatus> onTimerNotify)
+        {
+            while (_pickupDeltaTime < duration)
+            {
+                _pickupDeltaTime += Time.deltaTime;
+                pickupRingUI.Progress = _pickupDeltaTime / duration;
+                
+                if (Vector3.Distance(_actionPosition, Player.Position) > _actionMaxDistance)
+                {
+                    /// player is now too far away from the object
+                    CancelPickupResource(onTimerNotify);
+                    yield break;
+                }
+                if (_pickupDeltaTime >= duration)
+                {
+                    FinishPickupRoutine(onTimerNotify);
+                    yield break;
+                }
+                yield return Timing.WaitForOneFrame;
+            }
+        }
+
+        void FinishPickupRoutine(Action<PickupStatus> onTimerNotify)
+        {
+            _isBusy = false;
+            pickupRingUI.Destroy();
+            pickupRingUI = null;
+            EnableControlsOnPickupResource();
+            onTimerNotify?.Invoke(PickupStatus.Finished);
+            onTimerNotify = null;
+        }
+        
+        void CancelPickupResource(Action<PickupStatus> onTimerNotify)
+        {
+            Timing.KillCoroutines(pickupTimerHandle);
+            if (pickupRingUI != null)
+            {
+                pickupRingUI.Destroy();
+            }
+            
+            _isBusy = false;
+            pickupRingUI.Destroy();
+            pickupRingUI = null;
+            EnableControlsOnPickupResource();
+            onTimerNotify?.Invoke(PickupStatus.Canceled);
+            onTimerNotify = null;
+        }
+
+        void EnableControlsOnPickupResource()
+        {
+            Enable();
+        }
+
+        void DisableControlsOnPickupResource()
+        {
+            Disable();
+        }
+
+        #endregion
 
 
         #region Input callbacks

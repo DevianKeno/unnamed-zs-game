@@ -1,5 +1,6 @@
 using System;
-
+using System.Collections.Generic;
+using UnityEngine.UIElements;
 using UZSG.Data;
 using UZSG.Entities;
 using UZSG.Interactions;
@@ -26,11 +27,24 @@ namespace UZSG.Objects
         {
             if (actor is Player player)
             {
-                if (player.Inventory.Bag.TryPutNearest(new Item(Item)))
+                player.Actions.StartPickupRoutine(this, onTimerNotify: (status) =>
                 {
-                    Game.Audio.PlayInWorld("pick", transform.position);
-                    Destroy(gameObject);
-                }
+                    if (status == Players.PlayerActions.PickupStatus.Finished)
+                    {
+                        if (player.Inventory.Bag.TryPutNearest(new Item(Item)))
+                        {
+                            Game.Audio.PlayInWorld("pick", Position);
+                            Destroy(gameObject);
+                        }
+                        else
+                        {
+                            Game.Entity.Spawn<ItemEntity>("item_entity", Position, callback: (info) =>
+                            {
+                                info.Entity.Item = Item;
+                            });
+                        }
+                    }
+                });
             }
         }
     }

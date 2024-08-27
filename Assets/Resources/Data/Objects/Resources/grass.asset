@@ -15,7 +15,7 @@ MonoBehaviour:
   Id: Grass
   Name: Grass
   Model:
-    m_AssetGUID: 
+    m_AssetGUID: ebf497d975a37754c94de9848b636eee
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
@@ -28,4 +28,6 @@ MonoBehaviour:
     count: 0
     attributes:
       attributesReadOnly: []
+  PickupDuration: 1
+  MaxInteractDistance: 3
   Instances: []

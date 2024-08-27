@@ -24,6 +24,8 @@ namespace UZSG.Data
         [Header("Resource")]
         public ToolType ToolType;
         public Item Yield;
+        public float PickupDuration;
+        public float MaxInteractDistance;
         public List<ResourceInstances> Instances;
     }
 }

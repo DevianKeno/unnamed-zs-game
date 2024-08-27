@@ -17,6 +17,8 @@ namespace UZSG.Crafting
 
         public Action<float> OnFuelReload;
 
+        private float FuelConsumptionRate = 0.1f;
+
         private bool _mustContinue = false;
 
         public bool IsFuelRemainingAvailable()
@@ -86,8 +88,8 @@ namespace UZSG.Crafting
         {
             while (IsFuelRemainingAvailable())
             {
-                yield return new WaitForSeconds(1);
-                FuelRemaining -= 1;
+                yield return new WaitForSeconds(FuelConsumptionRate);
+                FuelRemaining -= FuelConsumptionRate;
                 OnFuelUpdate?.Invoke();
                 print("Fuel Remaing: " + FuelRemaining);
                 if(!IsFuelRemainingAvailable())

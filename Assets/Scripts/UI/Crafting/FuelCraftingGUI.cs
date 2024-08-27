@@ -33,6 +33,7 @@ public class FuelCraftingGUI : CraftingGUI
         fbc.OnFuelUpdate += OnFuelUpdate;
         fbc.OnFuelReload += OnFuelReload;
         fuelBar.fuelBasedCraftingInstance = fbc;
+        fuelBar.Value = 0;
         
 
         CreateOutputSlotUIs(workstation.WorkstationData.OutputSize);
@@ -73,7 +74,7 @@ public class FuelCraftingGUI : CraftingGUI
                     {
                         //if there is a routine still ongoing, ignite fuel
                         //how tho...
-                        if (fbc.Routines.Count > 0)
+                        if (fbc.Routines.Count > 0 && !fbc.IsFuelRemainingAvailable())
                         {
                             if (fbc.TryConsumeFuel())
                             {

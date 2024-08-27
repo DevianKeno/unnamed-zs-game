@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81bc2aaa978c22b40abc135224c57da0, type: 3}
   m_Name: steel_pickaxe
   m_EditorClassIdentifier: 
-  Id: iron_pickaxe
-  Name: Iron Pickaxe
+  Id: steel_pickaxe
+  Name: Steel Pickaxe
   Description: 
   Model:
     m_AssetGUID: 695d97c0eaa4c714fa58af62d3bbb34b

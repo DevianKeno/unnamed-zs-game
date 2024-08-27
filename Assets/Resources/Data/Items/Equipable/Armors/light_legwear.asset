@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dc8fecea64fdc8e4aa38d82f83efa010, type: 3}
-  m_Name: light_headgear
+  m_Name: light_legwear
   m_EditorClassIdentifier: 
-  Id: light_headgear
-  Name: Light Headgear
+  Id: light_legwear
+  Name: Light Legwear
   Description: 
   Model:
     m_AssetGUID: 
@@ -32,7 +32,7 @@ MonoBehaviour:
   Recipes: []
   SourceDescription: 
   AudioAssetsData: {fileID: 0}
-  Piece: 0
+  Piece: 2
   Category: 0
   Attributes:
     BaseDurability: 0

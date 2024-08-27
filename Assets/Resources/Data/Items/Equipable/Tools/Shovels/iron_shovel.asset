@@ -21,20 +21,20 @@ MonoBehaviour:
     m_SubObjectType: 
     m_EditorAssetChanged: 0
   Sprite: {fileID: 0}
-  Type: 0
-  Subtype: 0
+  Type: 2
+  Subtype: 4
   Weight: 0
   StackSize: 1
   IsFuel: 0
   FuelDuration: 0
   IsMaterial: 0
-  IsCraftable: 0
+  IsCraftable: 1
   Recipes: []
   SourceDescription: 
   AudioAssetsData: {fileID: 0}
-  ToolType: 0
+  ToolType: 3
   Attacks: []
-  SwingDirection: 0
+  SwingDirection: 1
   Attributes: []
   armsAnimations: {fileID: 0}
   viewmodel:

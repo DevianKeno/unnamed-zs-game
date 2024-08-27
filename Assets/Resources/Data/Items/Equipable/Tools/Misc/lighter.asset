@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81bc2aaa978c22b40abc135224c57da0, type: 3}
   m_Name: lighter
   m_EditorClassIdentifier: 
-  Id: 
-  Name: 
+  Id: lighter
+  Name: lighter
   Description: 
   Model:
     m_AssetGUID: 
@@ -21,14 +21,14 @@ MonoBehaviour:
     m_SubObjectType: 
     m_EditorAssetChanged: 0
   Sprite: {fileID: 0}
-  Type: 0
-  Subtype: 0
+  Type: 2
+  Subtype: 4
   Weight: 0
   StackSize: 1
   IsFuel: 0
   FuelDuration: 0
   IsMaterial: 0
-  IsCraftable: 0
+  IsCraftable: 1
   Recipes: []
   SourceDescription: 
   AudioAssetsData: {fileID: 0}

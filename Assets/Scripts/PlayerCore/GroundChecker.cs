@@ -25,12 +25,12 @@ namespace UZSG.Players
         int _numIndices;
 
         public bool IsGrounded => _isGrounded;
+        public bool CanCoyoteJump => _canCoyoteJump;
 
         [SerializeField] BoxCollider boxCollider;
 
         float coyoteTime = 0.2f;
         [SerializeField] bool _canCoyoteJump;
-        public bool CanCoyoteJump => _canCoyoteJump;
 
         IEnumerator StartCoyoteTime()
         {
@@ -69,11 +69,11 @@ namespace UZSG.Players
                     Debug.DrawLine(rayStart.position, hit.point, Color.red);
                 }
                 
-                if (hit.collider.TryGetComponent<Terrain>(out Terrain _terrain))
+                if (hit.collider.TryGetComponent(out Terrain _terrain))
                 {
                     GetTexture(_terrain, hit.point);
                 }
-                else if (hit.collider.TryGetComponent<Renderer>(out Renderer _renderer))
+                else if (hit.collider.TryGetComponent(out Renderer _renderer))
                 {
                     GetRenderMaterial(_renderer);
                 }
@@ -89,14 +89,15 @@ namespace UZSG.Players
             }
         }
 
-        private void GetTexture(Terrain terrain, Vector3 hitPoint)
+        void GetTexture(Terrain terrain, Vector3 hitPoint)
         {
             Vector3 _terrainPosition = hitPoint - terrain.transform.position;
-            Vector3 _splatMapPosition = new Vector3(_terrainPosition.x / terrain.terrainData.size.x, 0, _terrainPosition.z / terrain.terrainData.size.z);
-
+            Vector3 _splatMapPosition = new(
+                _terrainPosition.x / terrain.terrainData.size.x,
+                0,
+                _terrainPosition.z / terrain.terrainData.size.z);
             int x = Mathf.FloorToInt(_splatMapPosition.x * terrain.terrainData.alphamapWidth);
             int z = Mathf.FloorToInt(_splatMapPosition.z * terrain.terrainData.alphamapHeight);
-
             float[,,] _alphaMap = terrain.terrainData.GetAlphamaps(x, z, 1, 1);
 
             if (!_blendTerrainSounds)
@@ -114,7 +115,7 @@ namespace UZSG.Players
             }
         }
 
-        private void GetRenderMaterial(Renderer renderer) 
+        void GetRenderMaterial(Renderer renderer) 
         {
             texture = renderer.material.GetTexture("_MainTex").name;
         }

@@ -6,20 +6,11 @@ using UnityEngine.InputSystem;
 
 using UZSG.Systems;
 using UZSG.Entities;
-using UZSG.Attributes;
 
 namespace UZSG.Players
 {
-    public struct FrameInput
-    {
-        public Vector2 Move { get; set; }
-        public bool HasPressedJump { get; set; }
-        public bool HasPressedInteract { get; set; }
-        public bool HasPressedInventory { get; set; }
-    }
-
     /// <summary>
-    /// Controls the player movement.
+    /// Controls the Player movement controls.
     /// </summary>
     public class PlayerControls : MonoBehaviour
     {
@@ -29,27 +20,27 @@ namespace UZSG.Players
         public bool AllowMovement;
 
         [Header("Parameters")]
-        public float Acceleration = 10f;
+        public float MoveAcceleration = 10f;
         public float RotationDamping = 6f;
         public float TurningAngle = 120f;
         public bool RunIsToggle = false;
         public bool CrouchIsToggle = true;
 
         bool _isAnyMovePressed;
-        public bool CanCoyoteJump => groundChecker.CanCoyoteJump;
         bool _isMovingBackwards;
         bool _isMovingSideways;
         bool _isTransitioningCrouch;
         bool _isWalking;
         bool _isRunning;
         bool _hasJumped;
-        float _walkSpeed;
-        float _moveSpeed;
-        float _runSpeed;
-        float _crouchSpeed;
-        float _jumpSpeed = 2f;
-        float _targetSpeed;
-        float _crouchPosition;
+
+        // float _walkSpeed;
+        // float _moveSpeed;
+        // float _runSpeed;
+        // float _crouchSpeed;
+        // float _jumpSpeed = 2f;
+        float _targetMoveSpeed;
+        float _crouchingCameraPosition;
         /// <summary>
         /// The input values performed in the current frame.
         /// </summary>
@@ -76,6 +67,10 @@ namespace UZSG.Players
         public bool IsCrouching => _isCrouching;
         public bool IsMoving
         {
+            /// For some reason, this does not equate to zero,
+            /// even when the player is not moving and standing still
+            /// Bug?
+            // get => rb.velocity != Vector3.zero;
             get => _frameInput.Move != Vector2.zero;
         }
         public bool IsGrounded
@@ -88,7 +83,7 @@ namespace UZSG.Players
         }
         public bool CanRun
         {
-            get => !_isMovingBackwards || !_isMovingSideways;
+            get => !_isMovingBackwards && !_isMovingSideways;
         }
         /// <summary>
         /// Whether if the Player can Camera bob in FPP.
@@ -97,7 +92,10 @@ namespace UZSG.Players
         {
             get => IsGrounded;
         }
-
+        public bool CanCoyoteJump
+        {
+            get => groundChecker.CanCoyoteJump;
+        }
         public Vector3 Velocity
         {
             get => rb.velocity;
@@ -191,14 +189,42 @@ namespace UZSG.Players
             Enable();
         }
 
+        /// <summary>
+        /// Key is Attribute Id, Value is the Value of that Attribute.
+        /// </summary>
+        Dictionary<string, float> _cachedAttributeValues = new();
+
         void RetrieveAttributes()
         {
-            _walkSpeed = Player.Attributes.Get("walk_speed").Value;
-            _moveSpeed = Player.Attributes.Get("move_speed").Value;
-            _runSpeed = Player.Attributes.Get("run_speed").Value;
-            _crouchSpeed = Player.Attributes.Get("crouch_speed").Value;
+            /// Attributes to cache
+            string[] attrIds = new[]
+            {
+                "walk_speed",
+                "move_speed",
+                "run_speed",
+                "crouch_speed",
+                "jump_height",
+            };
+
+            foreach (string id in attrIds)
+            {
+                var attr = Player.Attributes.Get(id);
+                _cachedAttributeValues[id] = attr.Value;
+                attr.OnValueChanged += UpdateAttributeValue;
+            }
+
+            void UpdateAttributeValue(object sender, Attributes.AttributeValueChangedContext ctx)
+            {
+                var attr = (Attributes.Attribute) sender;
+                _cachedAttributeValues[attr.Id] = attr.Value;
+            }
+
+            // _walkSpeed = Player.Attributes.Get("walk_speed").Value;
+            // _moveSpeed = Player.Attributes.Get("move_speed").Value;
+            // _runSpeed = Player.Attributes.Get("run_speed").Value;
+            // _crouchSpeed = Player.Attributes.Get("crouch_speed").Value;
             
-            _targetSpeed = _moveSpeed;
+            // _targetSpeed = _moveSpeed;
         }
 
         #endregion
@@ -241,11 +267,11 @@ namespace UZSG.Players
             if (!AllowMovement) return;
 
             _frameInput.Move = context.ReadValue<Vector2>();
-            _isAnyMovePressed = _frameInput.Move.x != 0 || _frameInput.Move.y != 0;
-            _isMovingSideways = _frameInput.Move.x != 0;
-            _isMovingBackwards = _frameInput.Move.y < 0;
+            _isAnyMovePressed = _frameInput.Move.x != 0f || _frameInput.Move.y != 0f;
+            _isMovingSideways = _frameInput.Move.x != 0f;
+            _isMovingBackwards = _frameInput.Move.y < 0f;
 
-            CancelRunIfRunningBackwards();
+            CancelRunIfNotRunningForwards();
         }
 
         void OnInputRun(InputAction.CallbackContext context)
@@ -327,9 +353,9 @@ namespace UZSG.Players
         #endregion
 
 
-        void CancelRunIfRunningBackwards()
+        void CancelRunIfNotRunningForwards()
         {
-            if (_isMovingBackwards && _isRunning)
+            if (_isRunning && (_isMovingSideways || _isMovingBackwards))
             {
                 ToggleRun(false);
             }
@@ -344,12 +370,12 @@ namespace UZSG.Players
                     ToggleCrouch(false);
                 }
 
-                _targetSpeed = _runSpeed;
+                _targetMoveSpeed = _cachedAttributeValues["run_speed"];
                 _targetMoveState = MoveStates.Run;
             }
             else
             {
-                _targetSpeed = _moveSpeed;
+                _targetMoveSpeed = _cachedAttributeValues["move_speed"];
                 _targetMoveState = default;
             }
 
@@ -361,12 +387,12 @@ namespace UZSG.Players
         {
             if (walk)
             {
-                _targetSpeed = _walkSpeed;
+                _targetMoveSpeed = _cachedAttributeValues["walk_speed"];
                 _targetMoveState = MoveStates.Walk;
             }
             else
             {
-                _targetSpeed = _moveSpeed;
+                _targetMoveSpeed = _cachedAttributeValues["move_speed"];
                 _targetMoveState = default;
             }
 
@@ -375,10 +401,11 @@ namespace UZSG.Players
 
         void HandleJump()
         {
-            if (!CanCoyoteJump && !IsGrounded) return;
+            if (!IsGrounded) return;
 
             _hasJumped = true;
-            jumpVelocity.y = Player.Attributes["jump_height"].Value;
+            Vector3 jumpVelocity = rb.velocity;
+            jumpVelocity.y = _cachedAttributeValues["jump_height"];
             rb.velocity = jumpVelocity;
             Player.MoveStateMachine.ToState(MoveStates.Jump);
         }
@@ -427,12 +454,12 @@ namespace UZSG.Players
 
         void ApplyMovement()
         {
-            var targetVelocity = _frameVelocity * (_targetSpeed * Time.fixedDeltaTime);
+            var targetVelocity = _frameVelocity * (_targetMoveSpeed * Time.fixedDeltaTime);
             targetVelocity.y = rb.velocity.y;
             /// No acceleration
             // rb.velocity = targetVelocity * TimeScale;
             /// With acceleration
-            rb.velocity = Vector3.Lerp(rb.velocity, targetVelocity, Acceleration * Time.fixedDeltaTime);
+            rb.velocity = Vector3.Lerp(rb.velocity, targetVelocity, MoveAcceleration * Time.fixedDeltaTime);
         }
 
         void ToggleCrouch(bool crouch)
@@ -445,31 +472,31 @@ namespace UZSG.Players
             
             if (crouch)
             {
-                _targetSpeed = _crouchSpeed;
-                _crouchPosition = Player.FPP.Camera.transform.position.y - 1f;
+                _targetMoveSpeed = _cachedAttributeValues["crouch_speed"];
+                _crouchingCameraPosition = Player.FPP.Camera.transform.position.y - 1f;
                 Player.InfoHUD.FadeVignette(1f);
             }
             else
             {
-                _targetSpeed = _moveSpeed;
-                _crouchPosition = Player.FPP.Camera.transform.position.y + 1f;
+                _targetMoveSpeed = _cachedAttributeValues["move_speed"];
+                _crouchingCameraPosition = Player.FPP.Camera.transform.position.y + 1f;
                 Player.InfoHUD.FadeVignette(0f);
             }
             _isCrouching = crouch;
 
-            LeanTween.value(gameObject, Player.FPP.Camera.transform.position.y, _crouchPosition, transitionSpeed)
+            LeanTween.value(gameObject, Player.FPP.Camera.transform.position.y, _crouchingCameraPosition, transitionSpeed)
             .setOnUpdate((float i) =>
             {   
                 Player.FPP.Camera.transform.position = new Vector3(
                     Player.FPP.Camera.transform.position.x,
                     i,
-                    Player.FPP.Camera.transform.position.z
-                );
+                    Player.FPP.Camera.transform.position.z);
             })
             .setOnComplete(() =>
             {
                 _isTransitioningCrouch = false;
-            }).setEaseOutExpo();
+            })
+            .setEaseOutExpo();
         }
 
 

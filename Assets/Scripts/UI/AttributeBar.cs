@@ -20,6 +20,7 @@ namespace UZSG.UI
             attribute = attr;
             attribute.OnValueChanged += OnValueChanged;
             Refresh();
+            Rebuild();
         }
 
         protected virtual void OnValueChanged(object sender, AttributeValueChangedContext info)

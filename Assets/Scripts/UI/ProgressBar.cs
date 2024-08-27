@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace UZSG.UI
 {
-    public class ProgressBar : MonoBehaviour
+    public class ProgressBar : Window
     {
         [SerializeField, Range(0, 100)]
         protected float _value;

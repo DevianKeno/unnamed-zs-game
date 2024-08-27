@@ -15,7 +15,6 @@ namespace UZSG.Items.Weapons
     public class BowWeaponController : HeldWeaponController, IReloadable
     {
         public Player Player => owner as Player;
-        public WeaponData WeaponData => ItemData as WeaponData;
 
         bool _isHoldingLeftClick;
         bool _isLoaded;

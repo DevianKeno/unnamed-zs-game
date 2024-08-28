@@ -18,15 +18,15 @@ MonoBehaviour:
     itemData: {fileID: 11400000, guid: c07c7608f18db0c489be4d13ef9652a5, type: 2}
     count: 1
     attributes:
-      attributes: []
+      attributesReadOnly: []
   Materials:
   - itemData: {fileID: 11400000, guid: fe31e13f437bd6d429adfd67ab6ba40b, type: 2}
-    count: 10
+    count: 20
     attributes:
-      attributes: []
+      attributesReadOnly: []
   - itemData: {fileID: 11400000, guid: 28840410f2d8d0444ae7781a4c648d85, type: 2}
     count: 10
     attributes:
-      attributes: []
+      attributesReadOnly: []
   RequiresFuel: 1
   DurationSeconds: 15

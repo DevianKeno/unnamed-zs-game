@@ -93,11 +93,15 @@ namespace UZSG.UI.Objects
         public void IncrementAmountToCraft()
         {
             AmountToCraft++;
+            ClearMaterialSlots();
+            DisplayMaterials(_selectedRecipe);
         }
 
         public void DecrementAmountToCraft()
         {
             AmountToCraft--;
+            ClearMaterialSlots();
+            DisplayMaterials(_selectedRecipe);
         }
         
         public void ResetDisplayed()
@@ -417,7 +421,7 @@ namespace UZSG.UI.Objects
         {
             var matSlot = Game.UI.Create<MaterialCountUI>("Material Count", materialSlotsHolder);
             matSlot.SetDisplayedItem(material);
-            matSlot.Needed = material.Count;
+            matSlot.Needed = material.Count * AmountToCraft;
 
             /// Retrieve cached count for Item of Id
             if (player.Inventory.Bag.IdItemCount.TryGetValue(material.Id, out var count))

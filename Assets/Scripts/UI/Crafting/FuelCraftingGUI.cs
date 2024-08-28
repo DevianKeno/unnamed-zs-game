@@ -16,17 +16,26 @@ public class FuelCraftingGUI : CraftingGUI
 {
 
     public ItemSlotUI fuelSlot;
+    public FuelBar fuelBar;
 
-    protected void CreateFuelSlotUI(){
+    protected void CreateFuelSlotUI()
+    {
 
     }
 
+    //links specifically to FuelBasedCrafting type of crafter
     public override void LinkWorkstation(Workstation workstation)
     {
         this.workstation = workstation;
 
         var fbc = (FuelBasedCrafting)workstation.Crafter;
         fbc.FuelContainer = new(1);
+
+        fbc.OnFuelUpdate += OnFuelUpdate;
+        fbc.OnFuelReload += OnFuelReload;
+        fuelBar.fuelBasedCraftingInstance = fbc;
+        fuelBar.Value = 0;
+        
 
         CreateOutputSlotUIs(workstation.WorkstationData.OutputSize);
         CreateQueueSlotUIs(workstation.WorkstationData.QueueSize);
@@ -35,6 +44,7 @@ public class FuelCraftingGUI : CraftingGUI
         fuelSlot.OnMouseDown += OnFuelSlotClick;
     }
 
+    //A series of decision tree for fuel slot logic 
     private void OnFuelSlotClick(object sender, ItemSlotUI.ClickedContext ctx)
     {
 
@@ -64,7 +74,7 @@ public class FuelCraftingGUI : CraftingGUI
                     {
                         //if there is a routine still ongoing, ignite fuel
                         //how tho...
-                        if (fbc.Routines.Count > 0)
+                        if (fbc.Routines.Count > 0 && !fbc.IsFuelRemainingAvailable())
                         {
                             if (fbc.TryConsumeFuel())
                             {
@@ -89,5 +99,18 @@ public class FuelCraftingGUI : CraftingGUI
                 // _lastSelectedSlot = slot;
             }
         }
+    }
+
+
+    //An event function called by the FuelBasedCrafting whenever it sends back its fuel status 
+    private void OnFuelUpdate()
+    {
+        fuelBar.UpdateFuelRemaining();
+    }
+
+    //An event function called by the FuelBasedCrafting whenever it consumes a new fuel
+    private void OnFuelReload(float fuelDuration)
+    {
+        fuelBar.UpdateMaxFuel(fuelDuration);
     }
 }

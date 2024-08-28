@@ -18,7 +18,8 @@ namespace UZSG.UI
             set
             {
                 present = value;
-                countText.text = $"{value}/{needed}";
+                if (present < needed) countText.text = $"<color=\"red\">{value}</color>/{needed}";
+                else countText.text = $"{value}/{needed}";
             }
         }
         /// <summary>
@@ -34,7 +35,8 @@ namespace UZSG.UI
             set
             {
                 needed = value;
-                countText.text = $"{present}/{value}";
+                if (present < needed) countText.text = $"<color=\"red\">{value}</color>/{needed}";
+                else countText.text = $"{value}/{needed}";
             }
         }
 

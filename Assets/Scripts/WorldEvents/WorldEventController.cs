@@ -74,15 +74,22 @@ namespace UZSG.WorldEvents
         {
             foreach (WorldEventData data in WorldEvents)
                 if (data.Enabled && _countdown % data.OccurEverySecond == 0)
-                    SpawnEvent(data);
+                {
+                    WorldEvent worldEvent = CreateEvent(data);
+                    
+                    if (worldEvent == null) return;
+
+                    SubscribeControllers(data, worldEvent);
+                    worldEvent.SpawnEvent();
+                }
         }
 
-        void SpawnEvent(WorldEventData eventData)
+        WorldEvent CreateEvent(WorldEventData eventData)
         {
             if(eventData.ChanceToOccur < UnityEngine.Random.Range(1, 100))
             {
                 Game.Console.Log($"<color=#34d5eb>Event did not occur.</color>");
-                return;
+                return null;
             }
 
             Game.Console.Log($"<color=#34d5eb>Event of type {eventData.Type} occured.</color>");
@@ -91,10 +98,10 @@ namespace UZSG.WorldEvents
             {
                 EventData = eventData
             };
-            var selectedEvent = worldEvent.StartEvent();
-            if (selectedEvent == null) return;
-            SubscribeControllers(eventData, worldEvent);
-            worldEvent.SpawnEvent();
+            var selectedEvent = worldEvent.PrepareEvent();
+            if (selectedEvent == null) return null;
+
+            return worldEvent;
         }
 
 

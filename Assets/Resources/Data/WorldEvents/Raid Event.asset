@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: Raid Event
   m_EditorClassIdentifier: 
   Type: 2
-  properties:
-    Enabled: 0
-    AllowMultipleEvents: 0
-    ChanceToOccur: 0
-    OccurEverySecond: 0
-    EventPrefab:
-    - Name: 
-      ChanceToOccur: 0
-    WeatherTypes: []
+  Enabled: 0
+  AllowMultipleEvents: 1
+  ChanceToOccur: 50
+  OccurEverySecond: 300
+  WeatherTypes: []
+  RaidTypes:
+  - Name: Skinwalker
+    EnemyData: {fileID: 11400000, guid: 3bbb12e3042059d4abbf8d40af48316c, type: 2}
+    ChanceToOccur: 100

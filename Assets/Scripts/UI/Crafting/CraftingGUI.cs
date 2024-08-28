@@ -99,6 +99,11 @@ namespace UZSG.UI.Objects
 
         public void DecrementAmountToCraft()
         {
+            if (AmountToCraft - 1 < 1)
+            {
+                print("You reached the minimum amount of number to craft");
+                return;
+            }
             AmountToCraft--;
             ClearMaterialSlots();
             DisplayMaterials(_selectedRecipe);

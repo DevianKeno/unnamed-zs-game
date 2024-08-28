@@ -21,11 +21,14 @@ namespace UZSG.Crafting
 
         private bool _mustContinue = false;
 
+
+        //Checks if there is a consumed fuel remaining in the crafting instance
         public bool IsFuelRemainingAvailable()
         {
             return FuelRemaining > 0;
         }
 
+        //checks if the fuel slot has fuel in it
         public bool IsFuelAvailable()
         {
             if (FuelContainer.Slots[0].IsEmpty)
@@ -35,11 +38,15 @@ namespace UZSG.Crafting
             return true;
         }
 
+
+        //Burns consumed fuel
         public void StartBurn()
         {
             StartCoroutine(BurnFuel());
         }
 
+
+        //Tries to consume fuel if available
         public bool TryConsumeFuel()
         {
             if (!IsFuelAvailable()) return false;
@@ -50,6 +57,7 @@ namespace UZSG.Crafting
             return true;
         }
 
+        //an override function of CraftNewItem specifically for fuel based crafting
         public override void CraftNewItem(ref CraftItemOptions options, bool begin = true)
         {
             var routine = new CraftingRoutine(options);
@@ -67,7 +75,7 @@ namespace UZSG.Crafting
             }
         }
 
-
+        //An event function called whenever a crafting routine request the status of fuel in the crafting
         public void OnFuelCheck(object sender, EventArgs e)
         {
             var _craftingRoutineInstance = (CraftingRoutine)sender;
@@ -78,12 +86,8 @@ namespace UZSG.Crafting
             }
         }
 
-        public void OnBurnStop(object sender, EventArgs e)
-        {
 
-        }
-
-
+        //A couroutine responsible for the burning of consumed fuel inside the crafting instance
         IEnumerator BurnFuel()
         {
             while (IsFuelRemainingAvailable())

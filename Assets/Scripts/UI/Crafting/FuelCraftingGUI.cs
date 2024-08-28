@@ -23,6 +23,7 @@ public class FuelCraftingGUI : CraftingGUI
 
     }
 
+    //links specifically to FuelBasedCrafting type of crafter
     public override void LinkWorkstation(Workstation workstation)
     {
         this.workstation = workstation;
@@ -43,8 +44,7 @@ public class FuelCraftingGUI : CraftingGUI
         fuelSlot.OnMouseDown += OnFuelSlotClick;
     }
 
-
-
+    //A series of decision tree for fuel slot logic 
     private void OnFuelSlotClick(object sender, ItemSlotUI.ClickedContext ctx)
     {
 
@@ -101,11 +101,14 @@ public class FuelCraftingGUI : CraftingGUI
         }
     }
 
+
+    //An event function called by the FuelBasedCrafting whenever it sends back its fuel status 
     private void OnFuelUpdate()
     {
         fuelBar.UpdateFuelRemaining();
     }
 
+    //An event function called by the FuelBasedCrafting whenever it consumes a new fuel
     private void OnFuelReload(float fuelDuration)
     {
         fuelBar.UpdateMaxFuel(fuelDuration);

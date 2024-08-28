@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 873d4c4f155a35a46b4699d35b336ec7, type: 3}
+  m_Name: string
+  m_EditorClassIdentifier: 
+  Id: string
+  Name: String
+  Description: Used for securing shelters, climbing, binding materials such as weapons,
+    tools, and other materials or creating traps.
+  Model:
+    m_AssetGUID: eecebd2413096f44ba4836c22fcec141
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  Sprite: {fileID: 21300000, guid: 7c94355edf7386a4c947a97de1c9bf5d, type: 3}
+  Type: 0
+  Subtype: 0
+  Weight: 0
+  StackSize: 999
+  IsFuel: 0
+  FuelDuration: 0
+  IsMaterial: 1
+  IsCraftable: 1
+  Recipes: []
+  SourceDescription: Strings can be crafted from natural fibers like vines and plants
+    or be found randomly across the environment.
+  AudioAssetsData: {fileID: 0}

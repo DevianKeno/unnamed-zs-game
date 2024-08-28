@@ -22,7 +22,7 @@ namespace UZSG.Entities
             actionStateMachine[EnemyActionStates.Chase].OnFixedUpdate += OnChaseFixedUpdate;
 
             actionStateMachine[EnemyActionStates.Attack].OnTransition += OnAttackEnter;
-            actionStateMachine[EnemyActionStates.Roam].OnTransition += OnAttackEnter;
+            actionStateMachine[EnemyActionStates.Roam].OnFixedUpdate += OnRoamFixedUpdate;
         }
 
         void OnActionIdleEnter(StateMachine<EnemyActionStates>.TransitionContext e)
@@ -33,6 +33,11 @@ namespace UZSG.Entities
             {
                 /// Do something when transitioning from Scream to Idle
             }
+        }
+
+        void OnRoamFixedUpdate()
+        {
+            Roam();
         }
 
         void OnChaseFixedUpdate()
@@ -81,21 +86,21 @@ namespace UZSG.Entities
         {
             /// Rotate towards the player
             Quaternion targetRotation = Quaternion.LookRotation(targetEntity.Position - transform.position);
-            while (Quaternion.Angle(transform.rotation, targetRotation) > 0.1f)
+            while (Quaternion.Angle(transform.rotation, targetRotation) > 2f)
             {
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * RotationDamping); /// change 6 to RotationDamping
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * RotationDamping);
+                Debug.Log("waiting");
                 yield return null;
             }
 
             /// Once facing the player, scream
             actionStateMachine.ToState(EnemyActionStates.Scream, lockForSeconds: 2f);
-            // _currentActionState = EnemyActionStates.Scream;
-
-            /// Wait for the scream duration
+            Debug.Log("screamed");
             yield return new WaitForSeconds(2f);
 
             /// just chase player
             actionStateMachine.ToState(EnemyActionStates.Chase);
+            Debug.Log("chase");
         }
 
         void Roam()

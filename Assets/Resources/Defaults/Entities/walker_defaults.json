@@ -63,7 +63,7 @@
     },
     {
       "Id": "zombie_site_radius",
-      "Value": 9.0,
+      "Value": 22.0,
       "Minimum": 0.0,
       "BaseMaximum": 1000.0,
       "Multiplier": 1.0,

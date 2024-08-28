@@ -277,8 +277,8 @@ namespace UZSG.Worlds
 
         /// <summary>
         /// Returns the list of Entities of Id present in the World.
+        /// Returns an empty list if no Entity/s exists of Id.
         /// </summary>
-        /// <param name="id"></param>
         public List<Entity> GetEntitiesById(string id)
         {
             if (_cachedIdEntities.TryGetValue(id, out var list))

@@ -28,7 +28,7 @@ namespace UZSG.Data
         public bool IsStackable => StackSize > 1;
         public int StackSize = 1;
         public bool IsFuel;
-        public float FuelDuration;
+        public int FuelDuration;
 
         /// Crafting
         public bool IsMaterial;

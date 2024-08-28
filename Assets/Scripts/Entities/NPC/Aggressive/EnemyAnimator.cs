@@ -26,7 +26,7 @@ namespace UZSG.Entities
         {
             if (e.To == EnemyMoveStates.Idle)
             {
-                animator.CrossFade("idle", 0.1f);
+                animator.CrossFade("idle_drunk", 0.1f);
             }
             else if (e.To == EnemyMoveStates.Run)
             {
@@ -42,30 +42,12 @@ namespace UZSG.Entities
         {
             if (e.To == EnemyActionStates.Idle)
             {
-                animator.CrossFade("idle", 0.1f);
+                animator.CrossFade("idle_drunk", 0.1f);
             }
             else if (e.To == EnemyActionStates.Scream)
             {
                 animator.CrossFade("scream", 0.1f);
             }
-        }
-
-        void SwitchAndLoopAnimation(string animationName)
-        {
-            // CrossFade to transition to the desired animation
-            animator.CrossFade(animationName, 0.1f);
-
-            // Use a coroutine to wait until the crossfade transition is done
-            StartCoroutine(LockAnimation(animationName));
-        }
-
-        IEnumerator LockAnimation(string animationName)
-        {
-            // Wait until the crossfade is done
-            yield return new WaitForSeconds(0.1f);
-
-            // Lock the animation in a loop
-            animator.Play(animationName);
         }
     }
 }

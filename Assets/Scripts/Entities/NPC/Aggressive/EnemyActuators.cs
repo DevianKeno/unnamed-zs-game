@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 
 using UnityEngine;
@@ -16,22 +17,28 @@ namespace UZSG.Entities
         /// </summary>
         void InitializeActuators()
         {
-            actionStateMachine[EnemyActionStates.Idle].OnTransition += OnActionIdleEnter;
-
             actionStateMachine[EnemyActionStates.Chase].EnableFixedUpdateCall = true;
             actionStateMachine[EnemyActionStates.Chase].OnFixedUpdate += OnChaseFixedUpdate;
 
-            actionStateMachine[EnemyActionStates.Attack].OnTransition += OnAttackEnter;
+            actionStateMachine[EnemyActionStates.Roam].EnableFixedUpdateCall = true;
             actionStateMachine[EnemyActionStates.Roam].OnFixedUpdate += OnRoamFixedUpdate;
+
+            actionStateMachine[EnemyActionStates.Attack].OnTransition += OnAttackEnter;
+            actionStateMachine[EnemyActionStates.Die].OnTransition += OnDieEnter;
+            actionStateMachine[EnemyActionStates.Idle].OnTransition += OnIdleEnter;
         }
 
-        void OnActionIdleEnter(StateMachine<EnemyActionStates>.TransitionContext e)
+        private void OnDieEnter(StateMachine<EnemyActionStates>.TransitionContext context)
         {
-            /// Idk what works better
-            // if (e.From == EnemyActionStates.Scream)
+            Die();
+        }
+
+        void OnIdleEnter(StateMachine<EnemyActionStates>.TransitionContext e)
+        {
+            // if enemy went from screaming to idling
             if (e.From == EnemyActionStates.Scream && e.To == EnemyActionStates.Idle)
             {
-                /// Do something when transitioning from Scream to Idle
+                /// roam, idle, scream
             }
         }
 
@@ -49,38 +56,7 @@ namespace UZSG.Entities
         {
             Attack();
         }
-        
-        void Idle()
-        {
 
-        }
-
-        void Chase()
-        {
-            /// Set the states to chasing mode
-            moveStateMachine.ToState(EnemyMoveStates.Run);
-
-            /// set rigid body to dynamic
-            rb.isKinematic = false;
-
-            /// allow enemy movement
-            navMeshAgent.isStopped = false;
-            navMeshAgent.updateRotation = true;
-
-            /// chase player position
-            navMeshAgent.SetDestination(targetEntity.transform.position);
-
-            /// Switch move state machine to run state on chase :)
-            ///EnemyMoveStates targetMoveState = EnemyMoveStates.Walk;
-            // if (runType == Jog)
-            // {
-            //     targetMoveState = EnemyMoveStates.Jog;
-            // }
-            // else if (runType == Run)
-            // {
-                ///targetMoveState = EnemyMoveStates.Run;
-            // }
-        }
 
         IEnumerator FacePlayerAndScream()
         {
@@ -89,18 +65,15 @@ namespace UZSG.Entities
             while (Quaternion.Angle(transform.rotation, targetRotation) > 2f)
             {
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * RotationDamping);
-                Debug.Log("waiting");
                 yield return null;
             }
 
             /// Once facing the player, scream
             actionStateMachine.ToState(EnemyActionStates.Scream, lockForSeconds: 2f);
-            Debug.Log("screamed");
             yield return new WaitForSeconds(2f);
 
             /// just chase player
             actionStateMachine.ToState(EnemyActionStates.Chase);
-            Debug.Log("chase");
         }
 
         void Roam()
@@ -136,12 +109,6 @@ namespace UZSG.Entities
             }
         }
 
-        void Attack2() 
-        {
-            actionStateMachine.ToState(EnemyActionStates.Attack2);
-            Debug.Log("Attack2"); 
-        }
-
         void Attack()
         {
             // Set the movement from running to idle
@@ -153,6 +120,35 @@ namespace UZSG.Entities
             /// prevent the enemy from moving when in attack range
             navMeshAgent.isStopped = true;
             navMeshAgent.updateRotation = false;
+        }
+
+        void Die()
+        {
+            Game.Tick.OnSecond -= OnSecond;
+            Game.Entity.Kill(this);
+            Debug.Log("Die");
+        }
+
+        void Chase()
+        {
+            /// Set the states to chasing mode
+            moveStateMachine.ToState(EnemyMoveStates.Run);
+
+            /// set rigid body to dynamic
+            rb.isKinematic = false;
+
+            /// allow enemy movement
+            navMeshAgent.isStopped = false;
+            navMeshAgent.updateRotation = true;
+
+            /// chase player position
+            navMeshAgent.SetDestination(targetEntity.transform.position);
+        }
+
+        /*void Attack2() 
+        {
+            actionStateMachine.ToState(EnemyActionStates.Attack2);
+            Debug.Log("Attack2"); 
         }
 
         void SpecialAttack()
@@ -167,14 +163,6 @@ namespace UZSG.Entities
             Debug.Log("SpecialAttack2"); 
         }
 
-        void Die()
-        {
-            actionStateMachine.ToState(EnemyActionStates.Die);
-            Game.Tick.OnSecond -= OnSecond;
-            Game.Entity.Kill(this);
-            Debug.Log("Die");
-        }
-
         void Horde()
         {
             actionStateMachine.ToState(EnemyActionStates.Horde);
@@ -184,7 +172,7 @@ namespace UZSG.Entities
 
             /// Move forward according to speed
             transform.Translate(Vector3.forward * (_moveSpeed * Time.deltaTime));
-        }
+        }*/
 
         #endregion
     }

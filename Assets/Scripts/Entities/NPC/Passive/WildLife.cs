@@ -33,6 +33,14 @@ namespace UZSG.Entities
             }
         }
 
+        public float PlayerAttackableRadius
+        {
+            get
+            {
+                return attributes["player_detection_radius"].Value;
+            }
+        }
+
         [Header("Components")]
         [SerializeField] NavMeshAgent navMeshAgent;
         WildlifeActionStates _currentActionState;
@@ -86,6 +94,11 @@ namespace UZSG.Entities
 
 
         #region Sensor
+
+        public void AttackPlayer(Entity etty)
+        {
+            
+        }
 
         public void DetectPlayer(Entity etty)
         {

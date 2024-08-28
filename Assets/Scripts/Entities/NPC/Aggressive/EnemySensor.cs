@@ -38,13 +38,13 @@ namespace UZSG.Entities
             }
         }
 
-        /*public void AttackPlayer(Entity etty)
+        public void AttackPlayer(Entity etty)
         {
             if (etty != null && etty is Player player)
             {
                 actionStateMachine.ToState(EnemyActionStates.Attack);
             }
-        }*/
+        }
 
         public void ResetTargetIfNotInRange()
         {
@@ -53,11 +53,12 @@ namespace UZSG.Entities
             {
                 _distanceFromPlayer = Vector3.Distance(targetEntity.Position, transform.position); 
         
-                if (_siteRadius <= _distanceFromPlayer) // if target no longer in site reset target
+                if (_siteRadius <= _distanceFromPlayer) // if target no longer in site reset target and roam (idle state)
                 {
                     targetEntity = null;
                     _hasTargetInSight = false;
                     _hasAlreadyScreamed = false;
+                    actionStateMachine.ToState(EnemyActionStates.Roam);
                 }
                 else
                 {
@@ -70,6 +71,21 @@ namespace UZSG.Entities
                         }
                     }
                 }
+            }
+        }
+
+        #endregion
+
+
+
+
+        #region Zombie Dying
+
+        public void KillZombieIfDead()
+        {
+            if (IsDead)
+            {
+                actionStateMachine.ToState(EnemyActionStates.Die);
             }
         }
 

@@ -65,6 +65,14 @@ namespace UZSG.Entities
             }
         }
 
+        public float PlayerAttackableRadius
+        {
+            get
+            {
+                return attributes["player_detection_radius"].Value;
+            }
+        }
+
         #endregion
 
 
@@ -117,6 +125,7 @@ namespace UZSG.Entities
         void OnSecond(SecondInfo s)
         {
             ResetTargetIfNotInRange();
+            KillZombieIfDead();
         }
 
     }

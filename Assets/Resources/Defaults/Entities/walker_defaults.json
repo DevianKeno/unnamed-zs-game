@@ -21,6 +21,7 @@
       "LimitUnderflow": true
     },
     {
+      "Comment":"This must be shorter than the zombie_site_radius for the code to work",
       "Id": "player_detection_radius",
       "Value": 20.0,
       "Minimum": 0.0,

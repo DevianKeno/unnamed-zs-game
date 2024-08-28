@@ -44,6 +44,11 @@ namespace UZSG.Systems
             }
         }
 
+        Transform GetTransformParent()
+        {
+            return Game.World.HasWorld ? Game.World.CurrentWorld.entitiesContainer : transform;
+        }
+        
 
         #region Public methods
     
@@ -69,7 +74,7 @@ namespace UZSG.Systems
             {
                 if (a.Status == AsyncOperationStatus.Succeeded)
                 {
-                    var go = Instantiate(a.Result, position, Quaternion.identity, transform);
+                    var go = Instantiate(a.Result, position, Quaternion.identity, GetTransformParent());
                     go.name = $"{ettyData.Name} (Entity)";
                     if (go.TryGetComponent(out Entity entity)) /// what do making entity without an entity component!!
                     {
@@ -93,7 +98,7 @@ namespace UZSG.Systems
                 Game.Console.LogDebug($"Tried to spawn entity {entityId}, but failed miserably");
             };
         }
-        
+
         public delegate void OnEntitySpawnComplete<T>(EntitySpawnedInfo<T> info);
         public struct EntitySpawnedInfo<T>
         {
@@ -113,7 +118,7 @@ namespace UZSG.Systems
             {
                 if (a.Status == AsyncOperationStatus.Succeeded)
                 {
-                    var go = Instantiate(a.Result, position, Quaternion.identity, transform);
+                    var go = Instantiate(a.Result, position, Quaternion.identity, GetTransformParent());
                     go.name = $"{ettyData.Name} (Entity)";
                     if (go.TryGetComponent(out Entity entity))
                     {
@@ -154,7 +159,7 @@ namespace UZSG.Systems
             {
                 if (a.Status == AsyncOperationStatus.Succeeded)
                 {
-                    var go = Instantiate(a.Result, position, Quaternion.identity, transform);
+                    var go = Instantiate(a.Result, position, Quaternion.identity, GetTransformParent());
                     go.name = $"Item '{id}' (Entity)";
                     if (go.TryGetComponent(out ItemEntity itemEntity)) /// this has a zero chance to fail >:(
                     {

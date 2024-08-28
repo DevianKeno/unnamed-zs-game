@@ -47,8 +47,8 @@ namespace UZSG.Worlds
         Dictionary<int, BaseObject> _objectInstanceIds = new();
         Dictionary<int, Entity> _entityInstanceIds = new();
 
-        [SerializeField] Transform objectsContainer;
-        [SerializeField] Transform entitiesContainer;
+        public Transform objectsContainer;
+        public Transform entitiesContainer;
         
 
         #region Initializing methods

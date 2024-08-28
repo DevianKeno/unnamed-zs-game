@@ -19,17 +19,22 @@ namespace UZSG.Systems
     {
         bool _isInitialized;
         public bool IsInitialized => _isInitialized;
-
         [SerializeField] World currentWorld;
         /// <summary>
         /// The currently loaded world.
         /// </summary>
         public World CurrentWorld => currentWorld;
+        public bool HasWorld { get; private set; } = false;
 
         /// <summary>
         /// Called after the World has been successfully initialized.
         /// </summary>
         public event Action OnDoneInit;
+
+        void Awake()
+        {
+            if (currentWorld != null) HasWorld = true;
+        }
 
         internal void Initialize()
         {

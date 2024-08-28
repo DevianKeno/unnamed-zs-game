@@ -1,22 +1,15 @@
+using System.Collections;
+
 using UnityEngine;
 using UnityEngine.AI;
 
-using UZSG.Data;
 using UZSG.Systems;
-using UZSG.Interactions;
-using UZSG.Attributes;
-using System.Collections.Generic;
-using System;
-using UZSG.Players;
-
-using static UZSG.Entities.EnemyActionStates;
-using System.Collections;
 
 namespace UZSG.Entities
 {
     public partial class Enemy : NonPlayerCharacter
     {
-        #region Agent actuator
+        #region Action state handlers
 
         /// <summary>
         /// Initialize the Move & Action states of the Enemy. (i.e. idle, roam, chase, attack, etc.)
@@ -24,27 +17,30 @@ namespace UZSG.Entities
         void InitializeActuators()
         {
             actionStateMachine[EnemyActionStates.Idle].OnTransition += OnActionIdleEnter;
-            
-            actionStateMachine[EnemyActionStates.Chase].OnUpdate += OnActionChaseUpdate;
 
-            actionStateMachine[EnemyActionStates.Attack].OnTransition += OnActionAttackEnter;
-            actionStateMachine[EnemyActionStates.Roam].OnTransition += OnActionAttackEnter;
+            actionStateMachine[EnemyActionStates.Chase].EnableFixedUpdateCall = true;
+            actionStateMachine[EnemyActionStates.Chase].OnFixedUpdate += OnChaseFixedUpdate;
+
+            actionStateMachine[EnemyActionStates.Attack].OnTransition += OnAttackEnter;
+            actionStateMachine[EnemyActionStates.Roam].OnTransition += OnAttackEnter;
         }
 
         void OnActionIdleEnter(StateMachine<EnemyActionStates>.TransitionContext e)
         {
-            if (e.From == EnemyActionStates.Scream)
+            /// Idk what works better
+            // if (e.From == EnemyActionStates.Scream)
+            if (e.From == EnemyActionStates.Scream && e.To == EnemyActionStates.Idle)
             {
-
+                /// Do something when transitioning from Scream to Idle
             }
         }
 
-        void OnActionChaseUpdate()
+        void OnChaseFixedUpdate()
         {
             Chase();
         }
 
-        void OnActionAttackEnter(StateMachine<EnemyActionStates>.TransitionContext e)
+        void OnAttackEnter(StateMachine<EnemyActionStates>.TransitionContext e)
         {
             Attack();
         }
@@ -57,8 +53,6 @@ namespace UZSG.Entities
         void Chase()
         {
             /// Set the states to chasing mode
-            // _currentActionState = EnemyActionStates.Idle;
-            // CurrentMoveState = EnemyMoveStates.Run;
             moveStateMachine.ToState(EnemyMoveStates.Run);
 
             /// set rigid body to dynamic

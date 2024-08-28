@@ -1,13 +1,9 @@
-using UnityEngine;
-using UnityEngine.AI;
+using System.Collections;
 
-using UZSG.Data;
+using UnityEngine;
+
 using UZSG.Systems;
 using UZSG.Interactions;
-using UZSG.Attributes;
-using System;
-using UZSG.Players;
-using System.Collections;
 
 namespace UZSG.Entities
 {

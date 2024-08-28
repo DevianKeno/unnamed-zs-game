@@ -17,29 +17,24 @@ namespace UZSG.Players
         public Player Player;
         [Space]
 
-        public bool AllowMovement;
-
         [Header("Parameters")]
+        public bool AllowMovement;
         public float MoveAcceleration = 10f;
         public float RotationDamping = 6f;
         public float TurningAngle = 120f;
         public bool RunIsToggle = false;
         public bool CrouchIsToggle = true;
 
-        bool _isAnyMovePressed;
-        bool _isMovingBackwards;
-        bool _isMovingSideways;
-        bool _isTransitioningCrouch;
-        bool _isWalking;
-        bool _isRunning;
-        bool _hasJumped;
-
-        // float _walkSpeed;
-        // float _moveSpeed;
-        // float _runSpeed;
-        // float _crouchSpeed;
-        // float _jumpSpeed = 2f;
+        [Header("Serialized Fields")]
+        [SerializeField] bool _isAnyMovePressed;
+        [SerializeField] bool _isMovingBackwards,
+            _isMovingSideways,
+            _isWalking,
+            _isRunning,
+            _hasJumped;
         float _targetMoveSpeed;
+
+        bool _isTransitioningCrouch;
         float _crouchingCameraPosition;
         /// <summary>
         /// The input values performed in the current frame.
@@ -218,13 +213,8 @@ namespace UZSG.Players
                 var attr = (Attributes.Attribute) sender;
                 _cachedAttributeValues[attr.Id] = attr.Value;
             }
-
-            // _walkSpeed = Player.Attributes.Get("walk_speed").Value;
-            // _moveSpeed = Player.Attributes.Get("move_speed").Value;
-            // _runSpeed = Player.Attributes.Get("run_speed").Value;
-            // _crouchSpeed = Player.Attributes.Get("crouch_speed").Value;
             
-            // _targetSpeed = _moveSpeed;
+            _targetMoveSpeed = _cachedAttributeValues["move_speed"];
         }
 
         #endregion
@@ -412,12 +402,15 @@ namespace UZSG.Players
 
         void HandleDirection()
         {
-            _frameVelocity = (_frameInput.Move.x * Player.MainCamera.transform.right) + (_frameInput.Move.y * CameraForward.normalized);
+            var x = _frameInput.Move.x * Player.MainCamera.transform.right;
+            var y = _frameInput.Move.y * CameraForward.normalized;
+            _frameVelocity = x + y;
             _frameVelocity.Normalize();
         }
 
         void HandleRotation()
         {
+            /// Handle the rotation of the Player model only when moving
             if (IsMoving)
             {
                 Quaternion targetRotation = Quaternion.LookRotation(CameraForward.normalized);

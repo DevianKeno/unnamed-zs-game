@@ -39,6 +39,7 @@ namespace UZSG.Systems
         
         /// <summary>
         /// Called everytime before the State changes.
+        /// Use this if you want to the events of the State Machine itself.
         /// </summary>
         public event Action<TransitionContext> OnTransition;
 
@@ -56,21 +57,38 @@ namespace UZSG.Systems
             {
                 _states[state] = new State<E>(state);
             }
+
+            /// Set InitialState to the first enum value if it's not manually set
+            InitialState ??= _states[(E)Enum.GetValues(typeof(E)).GetValue(0)];
         }
 
         void Start()
         {
-            if (InitialState != null) _currentState = InitialState;
+            /// If InitialState is not null, set _currentState to it
+            if (InitialState != null)
+            {
+                _currentState = InitialState;
+            }
+            else
+            {
+                Game.Console.LogAndUnityLog("InitialState is not set, StateMachine will not start with a valid state.");
+            }
         }
 
         void Update()
         {
-            if (InitialState != null) _currentState.Update();
+            if (_currentState.EnableUpdateCall)
+            {
+                _currentState.Update();
+            }
         }
 
         void FixedUpdate()
         {
-            if (InitialState != null) _currentState.FixedUpdate();
+            if (_currentState.EnableFixedUpdateCall)
+            {
+                _currentState.FixedUpdate();
+            }
         }
 
         #region Public methods

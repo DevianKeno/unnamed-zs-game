@@ -175,6 +175,7 @@ namespace UZSG.Attributes
         /// <summary>
         /// Fired everytime ONLY IF the value of this attribute is CHANGED.
         /// Meaning that if the value is modified, but is still the same, it is not called.
+        /// Also fired everytime the Add() or Remove() methods are called.
         /// </summary>
         public event EventHandler<AttributeValueChangedContext> OnValueChanged;
         /// <summary>
@@ -182,15 +183,15 @@ namespace UZSG.Attributes
         /// </summary>
         public event EventHandler<AttributeValueChangedContext> OnValueModified;
         /// <summary>
-        /// Called when the value reaches its current maximum value.
+        /// Called once everytime the value reaches its current maximum value.
         /// </summary>
         public event EventHandler<AttributeValueChangedContext> OnReachMaximum;
         /// <summary>
-        /// Called when the value reaches its minimum value.
+        /// Called once everytime the value reaches its minimum value.
         /// </summary>
         public event EventHandler<AttributeValueChangedContext> OnReachMinimum;
         /// <summary>
-        /// Called when the value reaches zero.
+        /// Called once everytime the value reaches or passes zero.
         /// </summary>
         public event EventHandler<AttributeValueChangedContext> OnReachZero;
 
@@ -258,9 +259,9 @@ namespace UZSG.Attributes
         }
         
         protected virtual bool ValueChanged()
-        {            
-            float valueChange = Mathf.Abs(value - previousValue);
-            if (valueChange <= 0) return false;
+        {
+            float valueChange = value - previousValue;
+            if (Mathf.Abs(valueChange) <= 0) return false;
 
             AttributeValueChangedContext context = new()
             {
@@ -284,10 +285,23 @@ namespace UZSG.Attributes
                     OnReachMaximum?.Invoke(this, context);
                 }
             }
-            
-            if (Value <= 0)
+
+            /// Check for passing zero based on the direction of the change
+            if (valueChange < 0 && Value <= 0)
             {
-                OnReachZero?.Invoke(this, context);
+                /// If the value decreased and passed below or equal to zero
+                if (previousValue > 0)
+                {
+                    OnReachZero?.Invoke(this, context);
+                }
+            }
+            else if (valueChange > 0 && Value >= 0)
+            {
+                /// If the value increased and passed above or equal to zero
+                if (previousValue < 0)
+                {
+                    OnReachZero?.Invoke(this, context);
+                }
             }
 
             return true;

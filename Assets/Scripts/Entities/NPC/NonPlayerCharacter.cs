@@ -16,10 +16,11 @@ namespace UZSG.Entities
         /// This entity has a target, whatever they want to do with it.
         /// </summary>
         [SerializeField] protected Entity targetEntity = null;
-        [SerializeField] protected bool IsAlive;
-        [SerializeField] protected bool IsDead;
-        
+        public bool IsAlive { get; protected set;}
+        public bool IsDead { get; protected set;}
         public bool HasHitboxes = false;
+
+        [Header("NPC Components")]
         protected EntityHitboxController hitboxController;
         protected Rigidbody rb;
         public Rigidbody Rigidbody => rb;

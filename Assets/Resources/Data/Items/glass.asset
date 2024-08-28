@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 873d4c4f155a35a46b4699d35b336ec7, type: 3}
+  m_Name: glass
+  m_EditorClassIdentifier: 
+  Id: glass
+  Name: Glass
+  Description: Used  for letting light into shelters, storing liquids, preserving
+    food, and crafting tools that improves visibility
+  Model:
+    m_AssetGUID: b68a75a8ccb2dd9468de02423ee2259c
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  Sprite: {fileID: 21300000, guid: 90c07d701c806d7498880a5ad03ff67d, type: 3}
+  Type: 0
+  Subtype: 0
+  Weight: 0
+  StackSize: 999
+  IsFuel: 0
+  FuelDuration: 0
+  IsMaterial: 1
+  IsCraftable: 1
+  Recipes: []
+  SourceDescription: Glass can be obtained by melting sand in a high-heat furnace,
+    it can also be found randomly across the world, more specifically, in storages
+    present in houses.
+  AudioAssetsData: {fileID: 0}

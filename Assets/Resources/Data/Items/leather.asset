@@ -14,18 +14,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: leather
   Name: Leather
-  Description: Made from animal hide.
+  Description: used for crafting various items and gear.
   Model:
-    m_AssetGUID: 
+    m_AssetGUID: 4870fa976155f6b46a674070612896ce
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  Sprite: {fileID: 0}
+  Sprite: {fileID: 21300000, guid: a575eb8aa7b53864d84411e5dc4453fb, type: 3}
   Type: 0
   Subtype: 0
   Weight: 0
-  IsStackable: 1
   StackSize: 999
+  IsFuel: 0
+  FuelDuration: 0
   IsMaterial: 1
   IsCraftable: 0
   Recipes: []
+  SourceDescription: Leather cannot be found directly in the environment but can
+    be obtained from storage spaces within the game world. It can be reliably acquired
+    by hunting various animals, as they guarantee a leather drop. Skinwalkers, on
+    the other hand, also has the chance to drop leather, but this is not guaranteed.
+  AudioAssetsData: {fileID: 0}

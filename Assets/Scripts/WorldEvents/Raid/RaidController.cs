@@ -8,12 +8,14 @@ using UnityEngine;
 using UZSG.Systems;
 using UZSG.Data;
 using UZSG.Worlds;
+using UZSG.Entities;
 
 
 namespace UZSG.WorldEvents.Raid
 {
     public struct RaidInstance
     {
+        public string enemyId; 
         public RaidEventType raidType;
         public RaidFormation raidFormation;
         public int mobCount;
@@ -26,21 +28,42 @@ namespace UZSG.WorldEvents.Raid
         [SerializeField] float _raidRemainingTime;
         [SerializeField] float _remainingMobs;
 
+        RaidInstance _raidInstance;
+
 
         /// TEMPORARY VALUES THAT WILL BE REPLACED WHEN A MORE SOPHISTICATED SYSTEM IS IMPLEMENTED
         public int worldDifficulty = 1;
         public int numberOfPlayers = 1;
         public float difficultyMultiplier = 0.3f;
 
-        void SpawnEnemy()
+        void PerformRaidEventProcessing(List<RaidEventInstance> selectedEvents)
         {
-            HordeFormations hordeInstance = new();
+            foreach (RaidEventInstance raidEvent in selectedEvents)
             {
-                hordeInstance.SpawnFormation(CalculateRaidDifficulty());
+                _raidInstance.enemyId = raidEvent.EnemyData.Id;
+                SpawnHorde();
             }
         }
 
-        RaidInstance CalculateRaidDifficulty()
+        void SelectPlayerToSpawnHordeOn()
+        {
+            throw new NotImplementedException();
+        }
+
+        void SpawnHorde()
+        {
+            HordeFormations hordeFormation = new();
+            {
+                hordeFormation.SpawnFormation(DetermineRaid());
+            }
+
+            RaidInstanceHandler raidInstance = new()
+            {
+                HordeFormations = hordeFormation
+            };
+        }
+
+        RaidInstance DetermineRaid()
         {
             float enemiesPerPlayer = numberOfPlayers * 3f;
             float enemyMultiplier = enemiesPerPlayer * (worldDifficulty * difficultyMultiplier);
@@ -58,6 +81,7 @@ namespace UZSG.WorldEvents.Raid
 
             RaidInstance newRaidInstance = new()
             {
+                enemyId = _raidInstance.enemyId,
                 raidType = _raidType,
                 raidFormation = _raidFormation,
                 mobCount = totalEnemies
@@ -75,12 +99,12 @@ namespace UZSG.WorldEvents.Raid
             }
 
             Game.Console.Log($"<color=#ad0909>Raid event started.</color>");
-            // List<EventPrefab> selectedEvents = worldEvent.SelectedEvent;
-            // EventOngoing = true;
-            // foreach (EventPrefab selectedEvent in selectedEvents)
-            // {
-                
-            // }
+            EventOngoing = true;
+            List<RaidEventInstance> selectedEvents = new();
+            foreach (object selectedEvent in worldEvent.SelectedEvents)
+                selectedEvents.Add((RaidEventInstance)selectedEvent);
+
+            PerformRaidEventProcessing(selectedEvents);
         }
     }
 }

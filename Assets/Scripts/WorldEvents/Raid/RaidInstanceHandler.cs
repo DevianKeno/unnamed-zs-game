@@ -6,6 +6,12 @@ namespace UZSG.WorldEvents.Raid
 {
     public class RaidInstanceHandler : MonoBehaviour
     {
+        HordeFormations hordeFormations;
+        public HordeFormations HordeFormations 
+        {
+            get => hordeFormations;
+            set => hordeFormations = value;
+        }
         
     }
 }

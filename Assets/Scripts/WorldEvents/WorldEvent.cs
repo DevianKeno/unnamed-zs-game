@@ -26,12 +26,7 @@ namespace UZSG.WorldEvents
         {
             OnSpawnEvent?.Invoke(this);
         }
-        void EndEvent()
-        {
-            OnEndEvent?.Invoke(this);
-        }
-
-        public object StartEvent()
+        public object PrepareEvent()
         {
             switch (_eventData.Type)
             {
@@ -65,16 +60,36 @@ namespace UZSG.WorldEvents
             else if (selectedEvents.Count > 1 && !eventData.AllowMultipleEvents)
                 selectedEvents = KeepOnlyAtIndex(selectedEvents, UnityEngine.Random.Range(0, selectedEvents.Count));
             
-            foreach (WeatherEventInstance weatherInstance in selectedEvents)
-                Game.Console.Log($"<color=#e8eb34>Event occured: {weatherInstance.Name}</color>");  
+            Game.Console.Log($"<color=#e8eb34>Event occured: {selectedEvents[0].Name}</color>");  
 
             _selectedEvents.Add(selectedEvents[0]);
             return selectedEvents[0];
         }
 
-        List<EnemyData> SelectRaidToOccur(WorldEventData eventData)
+        List<RaidEventInstance> SelectRaidToOccur(WorldEventData eventData)
         {
-            throw new NotImplementedException();
+            List<RaidEventInstance> selectedEvents = new();
+
+            int chance = UnityEngine.Random.Range(1, 100);
+            foreach (RaidEventInstance raidInstance in eventData.RaidTypes)
+            {
+                if (raidInstance.ChanceToOccur >= chance) selectedEvents.Add(raidInstance);
+            }
+            if (selectedEvents.Count == 0)
+            {
+                Game.Console.Log($"<color=#e8eb34>No raid event selected.</color>");
+                return null;
+            }
+            else if (selectedEvents.Count > 1 && !eventData.AllowMultipleEvents)
+                selectedEvents = KeepOnlyAtIndex(selectedEvents, UnityEngine.Random.Range(0, selectedEvents.Count));
+
+            foreach (RaidEventInstance raidInstance in selectedEvents)
+                {
+                    Game.Console.Log($"<color=#e8eb34>Event occured: {raidInstance.Name}</color>");
+                    _selectedEvents.Add(raidInstance);
+                }
+            
+            return selectedEvents;
         }
 
         // void SelectEvent(WorldEventData eventData)

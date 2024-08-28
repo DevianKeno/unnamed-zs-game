@@ -12,15 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 620a62696fb735d45ad7ef83cd46f876, type: 3}
   m_Name: default_weathers
   m_EditorClassIdentifier: 
-  Type: 2
-  Enabled: 0
+  Type: 0
+  Enabled: 1
   AllowMultipleEvents: 0
-  ChanceToOccur: 0
-  OccurEverySecond: 0
-  EventPrefab: []
+  ChanceToOccur: 50
+  OccurEverySecond: 2
   WeatherTypes:
-  - WeatherData: {fileID: 11400000, guid: 50660b8c3907d3240a9406b94d73f48a, type: 2}
-    ChanceToOccur: 50
+  - Name: Rainy
+    WeatherData: {fileID: 11400000, guid: 50660b8c3907d3240a9406b94d73f48a, type: 2}
+    ChanceToOccur: 100
   RaidTypes:
-  - EnemyData: {fileID: 11400000, guid: 3bbb12e3042059d4abbf8d40af48316c, type: 2}
+  - Name: 
+    EnemyData: {fileID: 11400000, guid: 3bbb12e3042059d4abbf8d40af48316c, type: 2}
     ChanceToOccur: 0

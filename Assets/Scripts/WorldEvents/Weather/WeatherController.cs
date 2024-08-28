@@ -32,8 +32,8 @@ namespace UZSG.WorldEvents.Weather
             CurrentWeather = CurrentWeather == null ? DefaultWeather : CurrentWeather;
             _currentParticleSystem = CurrentWeather.particleSystem;
             SetWeather(CurrentWeather);
-            
         }
+
         void OnValidate()
         {
             CurrentWeather = CurrentWeather == null ? DefaultWeather : CurrentWeather;
@@ -110,11 +110,9 @@ namespace UZSG.WorldEvents.Weather
 
         public void OnEventStart(WorldEvent worldEvent)
         {
-            print("titeng hamog");
             if (worldEvent == null || EventOngoing)
             {
                 Game.Console.Log($"<color=#ad0909>Event is null or ongoing.</color>");
-                print("Event is null or ongoing.");
                 return;
             }
             

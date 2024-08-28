@@ -20,7 +20,7 @@ namespace UZSG.Systems
         public bool IsInitialized => _isInitialized;
         public bool EnableLogging;
         /// <summary>
-        /// Contains the list of all spawnable entities in the game.
+        /// Contains the list of all spawnABLE entities in the game.
         /// Key is Entity Id, Value is EntityData.
         /// </summary>
         Dictionary<string, EntityData> _entitiesDict = new();

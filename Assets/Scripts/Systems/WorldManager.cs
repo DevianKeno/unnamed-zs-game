@@ -38,8 +38,6 @@ namespace UZSG.Systems
 
         internal void Initialize()
         {
-            Game.Console.Log("Initializing World...");
-
             RetrieveSavedWorlds();
 
             currentWorld.Initialize();///testing

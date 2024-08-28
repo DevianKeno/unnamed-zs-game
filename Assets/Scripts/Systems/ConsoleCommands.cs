@@ -238,23 +238,38 @@ namespace UZSG.Systems
 
         void CEntity(object sender, string[] args)
         {
-            if (args[0] == "query")
+            if (args[0] == "query" || args[0] == "q")
             {
                 var id = args[1];
                 if (Game.Entity.IsValidId(id))
                 {
                     var ettyList = Game.World.CurrentWorld.GetEntitiesById(id);
-                    var msg = $"Entity Id: '{id}' | Count: {ettyList.Count}\n";
+                    var msg = $"Entity Id: '{id}' | Total Count: {ettyList.Count}";
+                    
                     foreach (var etty in ettyList)
                     {
-                        msg += $"{etty.Id}, ";
+                        msg += $"'{etty.Id}':[{etty.GetInstanceID()}], ";
                     }
-                }
 
-                return;
+                    Game.Console.Log(msg);
+                }
+                else
+                {
+                    Game.Console.Log($"'{id}' is not a valid entity Id");
+                }
             }
-            
-            throw new KeyNotFoundException();
+            else if (args[0] == "select" || args[0] == "s")
+            {
+                var id = args[1];
+                if (Game.Entity.IsValidId(id))
+                {
+                    
+                }
+            }
+            else
+            {
+                throw new KeyNotFoundException();
+            }
         }
 
         /// <summary>

@@ -44,7 +44,13 @@ namespace UZSG.Worlds
         /// Key is EntityData Id; Value is list of Entity instances of that Id.
         /// </summary>
         Dictionary<string, List<Entity>> _cachedIdEntities = new();
+        /// <summary>
+        /// All Objects by their Instance Id.
+        /// </summary>
         Dictionary<int, BaseObject> _objectInstanceIds = new();
+        /// <summary>
+        /// All Entities by their Instance Id.
+        /// </summary>
         Dictionary<int, Entity> _entityInstanceIds = new();
 
         public Transform objectsContainer;
@@ -58,6 +64,7 @@ namespace UZSG.Worlds
             if (_isInitialized) return;
             _isInitialized = true;
 
+            Game.Console.Log($"[World]: Initializing world...");
             Game.Main.OnLateInit += OnLateInit;
         }
 
@@ -66,9 +73,9 @@ namespace UZSG.Worlds
             Game.Main.OnLateInit -= OnLateInit;
 
             timeController.Initialize();
-            eventsController.Initialize();
+            // eventsController.Initialize();
 
-            RegisterInstances();
+            RegisterExistingInstances();
             if (LoadOnEnterPlayMode)
             {
                 LoadFromPath();
@@ -76,7 +83,6 @@ namespace UZSG.Worlds
 
             Game.Entity.OnEntitySpawned += OnEntitySpawned;
             Game.Entity.OnEntityKilled += OnEntityKilled;
-
             Game.Objects.OnObjectPlaced += OnObjectPlaced;
             Game.Tick.OnTick += Tick;
         }
@@ -84,7 +90,7 @@ namespace UZSG.Worlds
         /// <summary>
         /// Register object/entity instances from the scene to avoid duplicates.
         /// </summary>g
-        void RegisterInstances()
+        void RegisterExistingInstances()
         {
             /// Objects
             foreach (Transform c in objectsContainer)
@@ -94,12 +100,14 @@ namespace UZSG.Worlds
                     _objectInstanceIds[obj.GetInstanceID()] = obj;
                 }
             }
+
             /// Entities
             foreach (Transform c in entitiesContainer)
             {
                 if (c.TryGetComponent<Entity>(out var etty))
                 {
                     _entityInstanceIds[etty.GetInstanceID()] = etty;
+                    CacheEntity(etty);
                 }
             }
         }
@@ -212,7 +220,7 @@ namespace UZSG.Worlds
         void OnEntitySpawned(EntityManager.EntitySpawnedInfo info)
         {
             info.Entity.transform.SetParent(entitiesContainer.transform, worldPositionStays: true);
-            CacheEntityId(info.Entity);
+            CacheEntity(info.Entity);
         }
 
         void OnEntityKilled(EntityManager.EntityKilledInfo info)
@@ -228,13 +236,14 @@ namespace UZSG.Worlds
 
         }
 
-        void CacheEntityId(Entity etty)
+        void CacheEntity(Entity etty)
         {
             if (!_cachedIdEntities.TryGetValue(etty.Id, out var list))
             {
                 list = new();
                 _cachedIdEntities[etty.Id] = list;
             }
+
             list.Add(etty);
         }
 
@@ -243,6 +252,10 @@ namespace UZSG.Worlds
             if (_cachedIdEntities.ContainsKey(etty.Id))
             {
                 _cachedIdEntities[etty.Id].Remove(etty);
+                if (_cachedIdEntities[etty.Id].Count == 0)
+                {
+                    _cachedIdEntities.Remove(etty.Id);
+                }
             }
         }
 

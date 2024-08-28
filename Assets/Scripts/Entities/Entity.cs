@@ -12,7 +12,9 @@ namespace UZSG.Entities
     /// </summary>
     public abstract class Entity : MonoBehaviour, IAttributable, ISaveDataReadWrite<EntitySaveData>
     {
-        bool _hasAlreadySpawned = false;
+        [SerializeField] int instanceId; /// so we can see In inspector
+        public int InstanceId => instanceId;
+        [Space]
         
         [SerializeField] protected EntityData entityData;
         public EntityData EntityData => entityData;
@@ -21,6 +23,7 @@ namespace UZSG.Entities
         /// </summary>
         public string Id => entityData.Id;
         protected EntitySaveData saveData;
+        bool _hasAlreadySpawned = false;
 
         [SerializeField] protected AttributeCollection attributes;
         public AttributeCollection Attributes => attributes;
@@ -54,6 +57,7 @@ namespace UZSG.Entities
         {
             if (_hasAlreadySpawned) return;
             _hasAlreadySpawned = true;
+            instanceId = GetInstanceID();
 
             OnSpawn();
         }

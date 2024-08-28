@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UZSG.FPP;
 
 namespace UZSG.Entities.Vehicles
 {
@@ -24,6 +25,7 @@ namespace UZSG.Entities.Vehicles
         #region Other Important Values
         Transform _playerParent; // refers to the parent of the player in the game world
         Transform _mainCameraParent; // refers to the Main Camera Parent
+        FPPCameraInput _cameraInput;
         #endregion
 
         private void Awake()
@@ -47,15 +49,30 @@ namespace UZSG.Entities.Vehicles
             {
                 EnterPassenger(player);
             }
+
+            // Toggle Camera for Vehicle View
             _mainCameraParent = player.MainCamera.transform.parent;
             player.MainCamera.transform.SetParent(TPPCameraView, false);
+
+            // Disable Player Camera Look
+            _cameraInput = player.transform.Find("FPP Camera Controller").GetComponent<FPPCameraInput>();
+            _cameraInput.EnableControls = false;
+
+            // Rotate PlayerCamera Accordingly to the Car
+            player.transform.Find("FPP Camera Controller").transform.localRotation = Quaternion.Euler(0, 0, 0);
+
+            // Toggle Third Person Model to Match Vehicle Transform
             player.Model.rotation = Quaternion.LookRotation(_vehicle.Model.transform.forward);
+
+            // Toggle Player Variables
             player.Controls.Rigidbody.isKinematic = true; // "Disable" the Rigidbody
             player.Controls.Rigidbody.useGravity = false;
             foreach (CapsuleCollider collider in player.GetComponents<CapsuleCollider>()) // Disable the colliders
             {
                 collider.enabled = false;
             }
+
+            // Toggle Vehicle Controls
             _vehicleController.EnableGeneralVehicleControls(player);
         }
 
@@ -141,10 +158,21 @@ namespace UZSG.Entities.Vehicles
             if (_mainCameraParent.transform.Find("Main Camera") == null)
             {
                 player.MainCamera.transform.SetParent(_mainCameraParent, false);
+
+                // Enable Player Camera Look
+                _cameraInput = player.transform.Find("FPP Camera Controller").GetComponent<FPPCameraInput>();
+                _cameraInput.EnableControls = true;
             }
             else
             {
                 player.MainCamera.transform.SetParent(TPPCameraView, false);
+
+                // Disable Player Camera Look
+                _cameraInput = player.transform.Find("FPP Camera Controller").GetComponent<FPPCameraInput>();
+                _cameraInput.EnableControls = false;
+
+                // Rotate PlayerCamera Accordingly to the Car
+                player.transform.Find("FPP Camera Controller").transform.localRotation = Quaternion.Euler(0, 0, 0);
             }
         }
 
@@ -158,9 +186,14 @@ namespace UZSG.Entities.Vehicles
                 collider.enabled = true;
             }
 
-            player.transform.SetParent(_playerParent, false); // Set the player position to the parent
+            player.transform.SetParent(_playerParent, false); // Set the player position to the environment
 
+            // Set the Main Camera Back to the Player
             player.MainCamera.transform.SetParent(_mainCameraParent, false);
+
+            // Enable Player Camera Look
+            _cameraInput = player.transform.Find("FPP Camera Controller").GetComponent<FPPCameraInput>();
+            _cameraInput.EnableControls = true;
 
             _mainCameraParent = null;
 

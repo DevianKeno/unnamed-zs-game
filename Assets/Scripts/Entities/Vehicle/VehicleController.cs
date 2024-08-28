@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
 using UZSG.Entities;
+using UZSG.FPP;
 using UZSG.Systems;
 
 namespace UZSG.Entities.Vehicles
@@ -574,6 +575,7 @@ namespace UZSG.Entities.Vehicles
         public void DisableGeneralVehicleControls(Player player)
         {
             player.Controls.SetControl("Move", true);
+            player.Controls.SetControl("Look", true);
             player.Controls.SetControl("Jump", true);
             player.Controls.SetControl("Crouch", true);
             player.Controls.SetControl("Toggle Walk", true);

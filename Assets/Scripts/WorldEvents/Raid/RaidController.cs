@@ -41,20 +41,34 @@ namespace UZSG.WorldEvents.Raid
             foreach (RaidEventInstance raidEvent in selectedEvents)
             {
                 _raidInstance.enemyId = raidEvent.EnemyData.Id;
-                SpawnHorde();
+                SpawnHorde(SelectPlayerToSpawnHordeOn());
             }
         }
 
-        void SelectPlayerToSpawnHordeOn()
+        Player SelectPlayerToSpawnHordeOn()
         {
-            throw new NotImplementedException();
+            var player = Game.World.CurrentWorld.GetEntitiesById("player");
+
+            if (player.Count > 1)
+            {
+                return player[UnityEngine.Random.Range(0, player.Count)] as Player;
+            }
+            else if (player.Count == 1)
+            {
+                return player[0] as Player;
+            }
+            else
+            {
+                Game.Console.Log($"<color=#ad0909>No player found.</color>");
+                return null;
+            }
         }
 
-        void SpawnHorde()
+        void SpawnHorde(Player selectedPlayer)
         {
             HordeFormations hordeFormation = new();
             {
-                hordeFormation.SpawnFormation(DetermineRaid());
+                hordeFormation.HandlePrerequisites(DetermineRaid(), selectedPlayer);
             }
 
             RaidInstanceHandler raidInstance = new()
@@ -72,9 +86,11 @@ namespace UZSG.WorldEvents.Raid
             switch (UnityEngine.Random.Range(0, 1))
             {
                 case 0:
+                    Game.Console.Log($"<color=#ad0909>Spawning blob formation.</color>");
                     _raidFormation = RaidFormation.Blob;
                     break;
                 case 1:
+                    Game.Console.Log($"<color=#ad0909>Spawning line formation.</color>");
                     _raidFormation = RaidFormation.Line;
                     break;
             }
@@ -99,7 +115,7 @@ namespace UZSG.WorldEvents.Raid
             }
 
             Game.Console.Log($"<color=#ad0909>Raid event started.</color>");
-            EventOngoing = true;
+            // EventOngoing = true;
             List<RaidEventInstance> selectedEvents = new();
             foreach (object selectedEvent in worldEvent.SelectedEvents)
                 selectedEvents.Add((RaidEventInstance)selectedEvent);

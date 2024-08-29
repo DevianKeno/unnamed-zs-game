@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2905171576473759945}
   - component: {fileID: 1933274311426169265}
   - component: {fileID: 7525531303691631334}
+  - component: {fileID: -6932608607510636764}
   m_Layer: 0
   m_Name: Cloth
   m_TagString: Untagged
@@ -83,3 +84,24 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &-6932608607510636764
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4641309512968686247}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.022476766, y: 0.023474071, z: 0.009560904}
+  m_Center: {x: -0.0004199827, y: -0.002826789, z: -0.00093296514}

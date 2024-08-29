@@ -86,6 +86,7 @@ namespace UZSG.Entities.Vehicles
         {
             // Enable Player Camera Look
             _cameraInput = player.transform.Find("FPP Camera Controller").GetComponent<FPPCameraInput>();
+            _cameraInput.ResetCameraPosition = true;
             _cameraInput.ToggleControls(isEnabled);
         }
 

@@ -48,9 +48,6 @@ namespace UZSG.Entities.Vehicles
             // Toggle Camera for Vehicle View
             _mainCameraParent = player.MainCamera.transform.parent;
             player.MainCamera.transform.SetParent(TPPCameraView, false);
-            
-            // Rotate PlayerCamera Accordingly to the Car
-            player.transform.Find("FPP Camera Controller").transform.localRotation = Quaternion.Euler(0, 0, 0);
 
             // Toggle Third Person Model to Match Vehicle Transform
             player.Model.rotation = Quaternion.LookRotation(_vehicle.Model.transform.forward);
@@ -158,9 +155,6 @@ namespace UZSG.Entities.Vehicles
                 player.MainCamera.transform.SetParent(TPPCameraView, false);
 
                 _vehicle.InputHandler.ToggleFPPCamera(player, false);
-
-                // Rotate PlayerCamera Accordingly to the Car
-                player.transform.Find("FPP Camera Controller").transform.localRotation = Quaternion.Euler(0, 0, 0);
             }
         }
 
@@ -174,19 +168,17 @@ namespace UZSG.Entities.Vehicles
                 collider.enabled = true;
             }
 
-            player.transform.SetParent(_playerParent, false); // Set the player position to the environment
+            // Enable Player Camera Look
+            _vehicle.InputHandler.ToggleFPPCamera(player, true);
 
             // Set the Main Camera Back to the Player
             player.MainCamera.transform.SetParent(_mainCameraParent, false);
 
-            // Enable Player Camera Look
-            _vehicle.InputHandler.ToggleFPPCamera(player, true);
-
-            _mainCameraParent = null;
+            player.transform.SetParent(_playerParent, false); // Set the player position to the environment
 
             player.Controls.Rigidbody.position = new(transform.position.x + 2,
                                                      transform.position.y,
-                                                     transform.position.z);
+                                                     transform.position.z + 2);
 
             player.Controls.Rigidbody.rotation = Quaternion.identity;
             player.Model.transform.rotation = Quaternion.identity;
@@ -202,6 +194,7 @@ namespace UZSG.Entities.Vehicles
             }
             _vehicle.InputHandler.ToggleGeneralControls(player, false);
             CheckPassengers();
+            _mainCameraParent = null;
         }
 
         private void CheckPassengers()

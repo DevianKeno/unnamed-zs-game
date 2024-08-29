@@ -86,7 +86,7 @@ namespace UZSG.Entities.Vehicles
         {
             // Enable Player Camera Look
             _cameraInput = player.transform.Find("FPP Camera Controller").GetComponent<FPPCameraInput>();
-            _cameraInput.EnableControls = isEnabled;
+            _cameraInput.ToggleControls(isEnabled);
         }
 
         #region Input Action Callbacks

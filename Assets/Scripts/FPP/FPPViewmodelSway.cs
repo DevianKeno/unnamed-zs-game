@@ -51,7 +51,7 @@ namespace UZSG.FPP
             Quaternion pivotAdjustment = Quaternion.Euler(RotationOffset);
             Quaternion swayRotation = rotationX * rotationY * pivotAdjustment;
 
-            Quaternion targetRotation = _originalRotation * swayRotation;
+            Quaternion targetRotation = Quaternion.Inverse(transform.localRotation) * swayRotation;
 
             transform.localRotation = Quaternion.Slerp(
                 transform.localRotation,

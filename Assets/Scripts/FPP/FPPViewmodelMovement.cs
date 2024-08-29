@@ -51,7 +51,10 @@ namespace UZSG.FPP
                 _targetOffset += Vector3.left * Amount;
             }
 
-            transform.localPosition = Vector3.Lerp(transform.localPosition, _initialPosition + _targetOffset, Time.deltaTime * Speed);
+            transform.localPosition = Vector3.Lerp(
+                transform.localPosition,
+                _initialPosition + _targetOffset,
+                Time.deltaTime * Speed);
         }
     }
 }

@@ -36,9 +36,12 @@ namespace UZSG.FPP
         /// <summary>
         /// Realigns the viewmodel arms given its offset values.
         /// </summary>
-        public void SetTransformOffset(ViewmodelOffsets offsets)
+        public void SetViewmodelSettings(ViewmodelSettings settings)
         {
-            armsHolder.SetLocalPositionAndRotation(offsets.Position, Quaternion.Euler(offsets.Rotation));
+            if (settings.UseOffsets)
+            {
+                armsHolder.SetLocalPositionAndRotation(settings.PositionOffset, Quaternion.Euler(settings.RotationOffset));
+            }
         }
     }
 }

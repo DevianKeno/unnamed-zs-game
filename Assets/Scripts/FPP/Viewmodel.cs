@@ -14,7 +14,7 @@ namespace UZSG.FPP
     {
         [field: SerializeField] public ItemData ItemData { get; set; }
         [field: SerializeField] public GameObject Model { get; set; }
-        [field: SerializeField] public ViewmodelOffsets Offsets { get; set; }
+        [field: SerializeField] public ViewmodelSettings Settings { get; set; }
         [field: SerializeField] public AnimatorController ArmsAnimations { get; set; }
         [field: SerializeField] public Animator ModelAnimator { get; set; }
         [field: SerializeField] public Animator CameraAnimator { get; set; }

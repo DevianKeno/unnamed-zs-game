@@ -460,8 +460,8 @@ namespace UZSG.FPP
                 meleeWeaponCollider = null;
             }
 
-            armsController.SetTransformOffset(viewmodel.Offsets);
-            viewmodelController.SetTransformOffset(viewmodel.Offsets);
+            armsController.SetViewmodelSettings(viewmodel.Settings);
+            viewmodelController.SetViewmodelSettings(viewmodel.Settings);
 
             return;
         }

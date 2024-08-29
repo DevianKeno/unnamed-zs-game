@@ -39,8 +39,8 @@ namespace UZSG.Data
         public AnimatorController ArmsAnimations => armsAnimations;
         [SerializeField] AssetReference viewmodel;
         public AssetReference Viewmodel => viewmodel;
-        [SerializeField] ViewmodelOffsets viewmodelOffsets;
-        public ViewmodelOffsets Offsets => viewmodelOffsets;
+        [SerializeField] ViewmodelSettings viewmodelOffsets;
+        public ViewmodelSettings Settings => viewmodelOffsets;
         [SerializeField] EquipmentAnimationData anims;
         public EquipmentAnimationData Animations => anims;
         [SerializeField] EquipmentAudioData audioData;

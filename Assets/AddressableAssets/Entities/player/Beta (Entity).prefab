@@ -156,9 +156,9 @@ GameObject:
   - component: {fileID: 2415535297879970657}
   - component: {fileID: 2004487973244473114}
   - component: {fileID: 7766360178944467007}
-  - component: {fileID: 6206635905438684906}
   - component: {fileID: 5902371368100368436}
   - component: {fileID: 5069990445555364325}
+  - component: {fileID: 6206635905438684906}
   m_Layer: 8
   m_Name: Viewmodel Holder
   m_TagString: Untagged
@@ -218,28 +218,18 @@ MonoBehaviour:
     Recovery: 1
     MaintainForwardLook: 0
     LookDistance: 16
+    TransformDamping: 0
+    RunningPosition: {x: 0, y: 0, z: 0}
+    RunningRotation: {x: 0, y: 0, z: 0}
   RunBob:
     Amplitude: -0.15
     Frequency: 0.85
     Recovery: 1
     MaintainForwardLook: 0
     LookDistance: 16
---- !u!114 &6206635905438684906
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1696359609177967074}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 44432118235eb9641bdd9da78bbdd674, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Player: {fileID: 8107631895800867322}
-  Enabled: 1
-  BreatheSpeed: 1
-  BreatheAmount: 0.01
+    TransformDamping: 1
+    RunningPosition: {x: 0, y: 0, z: 0}
+    RunningRotation: {x: 0, y: 0, z: 0}
 --- !u!114 &5902371368100368436
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -275,6 +265,22 @@ MonoBehaviour:
   Enabled: 1
   Amount: 0.01
   Speed: 2
+--- !u!114 &6206635905438684906
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1696359609177967074}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44432118235eb9641bdd9da78bbdd674, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Player: {fileID: 8107631895800867322}
+  Enabled: 1
+  BreatheSpeed: 1
+  BreatheAmount: 0.01
 --- !u!1 &2866568475717327878
 GameObject:
   m_ObjectHideFlags: 0
@@ -326,6 +332,7 @@ MonoBehaviour:
   Player: {fileID: 8107631895800867322}
   Sensitivity: 0.1
   EnableControls: 1
+  ResetCameraPosition: 0
   Holder: {fileID: 1873134562759721657}
   FPPCamera: {fileID: 8061303154701812193}
   animator: {fileID: 0}
@@ -591,24 +598,36 @@ MonoBehaviour:
     Recovery: 6
     MaintainForwardLook: 1
     LookDistance: 10
+    TransformDamping: 0
+    RunningPosition: {x: 0, y: 0, z: 0}
+    RunningRotation: {x: 0, y: 0, z: 0}
   RunBob:
     Amplitude: 3
     Frequency: 1.1
     Recovery: 8
     MaintainForwardLook: 1
     LookDistance: 10
+    TransformDamping: 0
+    RunningPosition: {x: 0, y: 0, z: 0}
+    RunningRotation: {x: 0, y: 0, z: 0}
   CrouchBob:
     Amplitude: 2
     Frequency: 0.5
     Recovery: 6
     MaintainForwardLook: 1
     LookDistance: 10
+    TransformDamping: 0
+    RunningPosition: {x: 0, y: 0, z: 0}
+    RunningRotation: {x: 0, y: 0, z: 0}
   _bobToUse:
     Amplitude: 0
     Frequency: 0
     Recovery: 0
     MaintainForwardLook: 0
     LookDistance: 0
+    TransformDamping: 0
+    RunningPosition: {x: 0, y: 0, z: 0}
+    RunningRotation: {x: 0, y: 0, z: 0}
 --- !u!114 &1760353934298345573
 MonoBehaviour:
   m_ObjectHideFlags: 0

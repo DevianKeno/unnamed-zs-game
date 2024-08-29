@@ -33,6 +33,8 @@ namespace UZSG.Entities
         [Header("Vehicle Wheel Meshes")]
         public List<GameObject> WheelMeshes;
 
+        public Camera TPPCamera;
+        
         public VehicleData VehicleData
         {
             get

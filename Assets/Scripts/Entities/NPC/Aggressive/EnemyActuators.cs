@@ -80,8 +80,9 @@ namespace UZSG.Entities
         {
             navMeshAgent.isStopped = false;
             /// Check if the enemy has reached its destination and is actively moving
-            if (navMeshAgent.remainingDistance >= 0.002f && navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance)
+            if (navMeshAgent.remainingDistance >= 1f && navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance)
             {
+                Debug.Log("Not Moving");
                 navMeshAgent.isStopped = true;
                 navMeshAgent.updateRotation = false;
                 moveStateMachine.ToState(EnemyMoveStates.Idle);
@@ -89,22 +90,36 @@ namespace UZSG.Entities
             }
             else
             {
-                /// Continue moving toward the destination
-                _roamTime -= Time.deltaTime;
-                if (_roamTime <= 0)
+                Debug.Log("Still Moving");
+                // if there is a player found chase the player instead of roaming
+                if (_hasTargetInSight)
                 {
-                    /// Get a random position
-                    _randomDestination = UnityEngine.Random.insideUnitSphere * _roamRadius;
-                    _randomDestination += transform.position;
+                    // Scream at player then chase
+                    if (!_hasAlreadyScreamed)
+                    {
+                        _hasAlreadyScreamed = true;
+                        StartCoroutine(FacePlayerAndScream());
+                    }
+                }
+                else
+                {
+                    /// Continue moving toward the destination
+                    _roamTime -= Time.deltaTime;
+                    if (_roamTime <= 0)
+                    {
+                        /// Get a random position
+                        _randomDestination = UnityEngine.Random.insideUnitSphere * _roamRadius;
+                        _randomDestination += transform.position;
 
-                    NavMesh.SamplePosition(_randomDestination, out NavMeshHit navHit, _roamRadius, NavMesh.AllAreas);
+                        NavMesh.SamplePosition(_randomDestination, out NavMeshHit navHit, _roamRadius, NavMesh.AllAreas);
 
-                    /// Set the agent's destination to the random point
-                    navMeshAgent.SetDestination(navHit.position);
-                    moveStateMachine.ToState(EnemyMoveStates.Walk);
-                    actionStateMachine.ToState(EnemyActionStates.Roam);
-                    _roamTime = UnityEngine.Random.Range(1.0f, _roamInterval); // Reset RoamTime for the next movement
-                    navMeshAgent.updateRotation = true;
+                        /// Set the agent's destination to the random point
+                        navMeshAgent.SetDestination(navHit.position);
+                        moveStateMachine.ToState(EnemyMoveStates.Walk);
+                        actionStateMachine.ToState(EnemyActionStates.Roam);
+                        _roamTime = UnityEngine.Random.Range(1.0f, _roamInterval); // Reset RoamTime for the next movement
+                        navMeshAgent.updateRotation = true;
+                    }
                 }
             }
         }

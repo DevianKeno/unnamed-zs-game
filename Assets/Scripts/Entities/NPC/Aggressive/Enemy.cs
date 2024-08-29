@@ -34,10 +34,13 @@ namespace UZSG.Entities
         [Header("Agent Information")]
         public LayerMask PlayerLayer; // Layers that the enemy chases
         [SerializeField] bool _hasAlreadyScreamed;
+        [SerializeField] bool attackOnCooldown;
+        [SerializeField] bool isAttacking;
         [SerializeField] bool isAlreadyRotating;
         [SerializeField] bool _isInHordeMode;
         [SerializeField] bool _hasTargetInSight; // checks if the player is in site, attack range or is a target
         [SerializeField] bool _hasTargetInAttackRange;
+        [SerializeField] float attackCooldown;
         [SerializeField] float _roamTime; // Time it takes for the agent to travel a point
         [SerializeField] float _roamRadius; // Radius of which the agent can travel
         [SerializeField] float _roamInterval; // Interval before the model moves again
@@ -116,6 +119,7 @@ namespace UZSG.Entities
             _roamRadius = Attributes.Get("zombie_roam_radius").Value;
             _roamInterval = Attributes.Get("zombie_roam_interval").Value;
             rotationThreshold = Attributes.Get("zombie_rotation_threshold").Value;
+            attackCooldown = Attributes.Get("zombie_attack_cooldown_time").Value;
         }
 
         void InitializeAgent()

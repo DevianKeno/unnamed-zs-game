@@ -27,7 +27,7 @@
     },
     {
       "Id": "zombie_attack_radius",
-      "Value": 2.1,
+      "Value": 2.5,
       "Minimum": 0.0,
       "BaseMaximum": 1000.0,
       "Multiplier": 1.0,
@@ -71,7 +71,18 @@
     },
     {
       "Id": "zombie_rotation_threshold",
-      "Value": 25.0,
+      "Value": 7.0,
+      "Minimum": 0.0,
+      "BaseMaximum": 1000.0,
+      "Multiplier": 1.0,
+      "FlatBonus": 0.0,
+      "LimitOverflow": true,
+      "LimitUnderflow": true,
+      "Type": "AttributeSaveData"
+    },
+    {
+      "Id": "zombie_attack_cooldown_time",
+      "Value": 1.5,
       "Minimum": 0.0,
       "BaseMaximum": 1000.0,
       "Multiplier": 1.0,

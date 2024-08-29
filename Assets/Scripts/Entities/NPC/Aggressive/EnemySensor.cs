@@ -24,7 +24,7 @@ namespace UZSG.Entities
         /// <param name="etty"></param>
         public void DetectPlayer(Entity etty)
         {
-            if (etty != null && etty is Player player && !_hasTargetInSight)
+            if (!_hasTargetInSight && etty != null && etty is Player player)
             {
                 _hasTargetInSight = true;
                 targetEntity = player; 
@@ -40,6 +40,10 @@ namespace UZSG.Entities
 
         public void AttackPlayer(Entity etty)
         {
+            if (isAttacking)
+            {
+                return;
+            }
             if (etty != null && etty is Player player)
             {
                 _hasTargetInAttackRange = true;

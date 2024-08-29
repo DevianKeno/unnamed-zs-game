@@ -24,8 +24,22 @@ namespace UZSG.Entities
             actionStateMachine[EnemyActionStates.Roam].OnFixedUpdate += OnRoamFixedUpdate;
 
             actionStateMachine[EnemyActionStates.Attack].OnTransition += OnAttackEnter;
-            actionStateMachine[EnemyActionStates.Die].OnTransition += OnDieEnter;
+
             actionStateMachine[EnemyActionStates.Idle].OnTransition += OnIdleEnter;
+            actionStateMachine[EnemyActionStates.Die].OnTransition += OnDieEnter;
+        }
+
+        void OnAttackEnter(StateMachine<EnemyActionStates>.TransitionContext e)
+        {
+            // if player in range prepare attack, else zombie is at idle state
+            if (_hasTargetInAttackRange && !attackOnCooldown)
+            {
+                Attack();
+            }
+            else
+            {
+                actionStateMachine.ToState(EnemyActionStates.Idle);
+            }
         }
 
         private void OnDieEnter(StateMachine<EnemyActionStates>.TransitionContext context)
@@ -35,15 +49,7 @@ namespace UZSG.Entities
 
         void OnIdleEnter(StateMachine<EnemyActionStates>.TransitionContext e)
         {
-            if (_hasTargetInAttackRange)
-            {
-                
-            }
-            // if enemy went from screaming to idling
-            else if (e.From == EnemyActionStates.Scream && e.To == EnemyActionStates.Idle)
-            {
-                /// roam, idle, scream
-            }
+            
         }
 
         void OnRoamFixedUpdate()
@@ -54,11 +60,6 @@ namespace UZSG.Entities
         void OnChaseFixedUpdate()
         {
             Chase();
-        }
-
-        void OnAttackEnter(StateMachine<EnemyActionStates>.TransitionContext e)
-        {
-            Attack();
         }
 
 
@@ -137,15 +138,40 @@ namespace UZSG.Entities
 
         void Attack()
         {
-            // Set the movement from running to idle
-            moveStateMachine.ToState(EnemyMoveStates.Idle);
+            // if attack not on cd, do animation and set physics to attacking
+            if (!attackOnCooldown)
+            {
+                Debug.Log("is attacking");
+                moveStateMachine.ToState(EnemyMoveStates.Idle);
+                    
+                StartCoroutine(AttackCounterDownTimer());
 
-            /// set the rigid body of the enemy to kinematic
-            rb.isKinematic = true;
+                /// set the rigid body of the enemy to kinematic
+                rb.isKinematic = true;
 
-            /// prevent the enemy from moving when in attack range
-            navMeshAgent.isStopped = true;
-            navMeshAgent.updateRotation = false;
+                /// prevent the enemy from moving when in attack range
+                navMeshAgent.isStopped = true;
+                navMeshAgent.updateRotation = false;
+            }
+        }
+
+        IEnumerator AttackCounterDownTimer()
+        {
+            attackOnCooldown = true;
+            isAttacking = true;
+            float cooldownHolder = attackCooldown;
+
+            while (attackCooldown > 0)
+            {
+                attackCooldown -= Time.deltaTime; // Reduce cooldown over time
+                yield return null;
+            }
+
+            // Reset values
+            attackOnCooldown = false;
+            attackCooldown = cooldownHolder;
+            isAttacking = false;
+            actionStateMachine.ToState(EnemyActionStates.Idle);
         }
 
         void Die()
@@ -157,8 +183,7 @@ namespace UZSG.Entities
 
         void Chase()
         {
-            Debug.Log("Is Chasing");
-            /// set rigid body to dynamic
+            /// set rigid body to dynamic   
             rb.isKinematic = false;
 
             /// allow enemy movement if not in attack range

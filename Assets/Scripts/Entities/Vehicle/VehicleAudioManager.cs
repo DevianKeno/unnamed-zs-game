@@ -10,6 +10,8 @@ namespace UZSG.Entities.Vehicles
 {
     public class VehicleAudioManager : MonoBehaviour
     {
+        VehicleEntity _vehicle;
+
         public AudioClip engineIdle;
         public AudioClip engineActive;          
         public AnimationCurve pitchCurve;       // x and y should min max of 1 to desired max pitch, could closely resemble power curve idf u want to
@@ -19,21 +21,18 @@ namespace UZSG.Entities.Vehicles
 
         [SerializeField] AudioSource _sourceIdle;
         [SerializeField] AudioSource _sourceActive;
-        VehicleController _controller;
-        VehicleSeatManager _seatManager;
+        
         float _carSpeed;
 
         // Start is called before the first frame update
         void Start()
         {
-            _controller = GetComponent<VehicleController>();
-            _seatManager = GetComponent<VehicleSeatManager>();
-            
+            _vehicle = GetComponent<VehicleEntity>();
         }
 
         void Update()
         {
-            _carSpeed = _controller.carSpeed;
+            _carSpeed = _vehicle.Controller.carSpeed;
 
             if (twoSoundSystem)
             {
@@ -82,7 +81,7 @@ namespace UZSG.Entities.Vehicles
             if (_sourceIdle.isPlaying)
             {
                 // Normalize car speed to 0-1
-                float normalizedSpeed = Mathf.Clamp01(_carSpeed / _controller.maxSpeed);
+                float normalizedSpeed = Mathf.Clamp01(_carSpeed / _vehicle.Controller.maxSpeed);
 
                 // Apply pitch factor to the audio source
                 // Apply pitch factor only if the car is moving
@@ -102,7 +101,7 @@ namespace UZSG.Entities.Vehicles
             if (_sourceIdle.isPlaying)
             {
                 // Normalize car speed to 0-1
-                float normalizedSpeed = Mathf.Clamp01(_carSpeed / _controller.maxSpeed);
+                float normalizedSpeed = Mathf.Clamp01(_carSpeed / _vehicle.Controller.maxSpeed);
 
                 // Apply pitch factor to the audio source
                 // Apply pitch factor only if the car is moving

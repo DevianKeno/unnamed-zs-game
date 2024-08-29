@@ -9,8 +9,6 @@ namespace UZSG.Entities.Vehicles
     public class VehicleSeatManager : MonoBehaviour
     {
         VehicleEntity _vehicle;
-        VehicleController _vehicleController;
-        VehicleAudioManager _audioManager;
 
         #region Vehicle Seats
         [Header("Vehicle Player Seats")]
@@ -25,14 +23,11 @@ namespace UZSG.Entities.Vehicles
         #region Other Important Values
         Transform _playerParent; // refers to the parent of the player in the game world
         Transform _mainCameraParent; // refers to the Main Camera Parent
-        FPPCameraInput _cameraInput;
         #endregion
 
         private void Awake()
         {
             _vehicle = gameObject.GetComponent<VehicleEntity>();
-            _vehicleController = gameObject.GetComponent<VehicleController>();
-            _audioManager = gameObject.GetComponent<VehicleAudioManager>();
             _playerParent = this.transform.parent;
         }
 
@@ -53,11 +48,7 @@ namespace UZSG.Entities.Vehicles
             // Toggle Camera for Vehicle View
             _mainCameraParent = player.MainCamera.transform.parent;
             player.MainCamera.transform.SetParent(TPPCameraView, false);
-
-            // Disable Player Camera Look
-            _cameraInput = player.transform.Find("FPP Camera Controller").GetComponent<FPPCameraInput>();
-            _cameraInput.EnableControls = false;
-
+            
             // Rotate PlayerCamera Accordingly to the Car
             player.transform.Find("FPP Camera Controller").transform.localRotation = Quaternion.Euler(0, 0, 0);
 
@@ -73,7 +64,8 @@ namespace UZSG.Entities.Vehicles
             }
 
             // Toggle Vehicle Controls
-            _vehicleController.EnableGeneralVehicleControls(player);
+            _vehicle.InputHandler.ToggleGeneralControls(player, true);
+            _vehicle.InputHandler.ToggleFPPCamera(player, false);
         }
 
         public bool[] SeatsOccupied()
@@ -90,7 +82,7 @@ namespace UZSG.Entities.Vehicles
             Driver = player;
             player.transform.SetParent(FPPCameraView[0], false);
             player.transform.localPosition = Vector3.zero;
-            _vehicleController.EnableVehicleControls();
+            _vehicle.InputHandler.ToggleVehicleControls(true);
         }
 
         public void EnterPassenger(Player player)
@@ -123,7 +115,7 @@ namespace UZSG.Entities.Vehicles
 
                 EnterPassenger(player);
                 Driver = null;
-                _vehicleController.DisableVehicleControls();
+                _vehicle.InputHandler.ToggleVehicleControls(false);
             }
             else
             {
@@ -159,17 +151,13 @@ namespace UZSG.Entities.Vehicles
             {
                 player.MainCamera.transform.SetParent(_mainCameraParent, false);
 
-                // Enable Player Camera Look
-                _cameraInput = player.transform.Find("FPP Camera Controller").GetComponent<FPPCameraInput>();
-                _cameraInput.EnableControls = true;
+                _vehicle.InputHandler.ToggleFPPCamera(player, true);
             }
             else
             {
                 player.MainCamera.transform.SetParent(TPPCameraView, false);
 
-                // Disable Player Camera Look
-                _cameraInput = player.transform.Find("FPP Camera Controller").GetComponent<FPPCameraInput>();
-                _cameraInput.EnableControls = false;
+                _vehicle.InputHandler.ToggleFPPCamera(player, false);
 
                 // Rotate PlayerCamera Accordingly to the Car
                 player.transform.Find("FPP Camera Controller").transform.localRotation = Quaternion.Euler(0, 0, 0);
@@ -192,8 +180,7 @@ namespace UZSG.Entities.Vehicles
             player.MainCamera.transform.SetParent(_mainCameraParent, false);
 
             // Enable Player Camera Look
-            _cameraInput = player.transform.Find("FPP Camera Controller").GetComponent<FPPCameraInput>();
-            _cameraInput.EnableControls = true;
+            _vehicle.InputHandler.ToggleFPPCamera(player, true);
 
             _mainCameraParent = null;
 
@@ -207,13 +194,13 @@ namespace UZSG.Entities.Vehicles
             if (player == Driver)
             {
                 Driver = null;
-                _vehicleController.DisableVehicleControls();
+                _vehicle.InputHandler.ToggleVehicleControls(false);
             }
             else if (Passengers.Contains(player))
             {
                 Passengers[Passengers.IndexOf(player)] = null;
             }
-            _vehicleController.DisableGeneralVehicleControls(player);
+            _vehicle.InputHandler.ToggleGeneralControls(player, false);
             CheckPassengers();
         }
 
@@ -223,13 +210,13 @@ namespace UZSG.Entities.Vehicles
             if ((_areSeatsOccupied[0] && _areSeatsOccupied[1]) == false)
             {
                 print("0");
-                _audioManager.NoPlayerInVehicle();
-                _audioManager.NoPlayerInVehicle();
+                _vehicle.AudioManager.NoPlayerInVehicle();
+                _vehicle.AudioManager.NoPlayerInVehicle();
             }
             else if ((_areSeatsOccupied[0] || _areSeatsOccupied[1]) == false)
             {
                 print("1");
-                _vehicleController.DisableVehicle();
+                _vehicle.Controller.DisableVehicle();
                 
             }
         }

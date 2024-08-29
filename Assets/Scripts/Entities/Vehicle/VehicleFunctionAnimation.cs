@@ -18,19 +18,17 @@ public class VehicleFunctionAnimation : MonoBehaviour
     [HideInInspector]
     public Transform steeringWheelTransform;
 
-    VehicleEntity vehicleEntity;
-    VehicleController vehicleController;
+    VehicleEntity _vehicle;
 
     List<GameObject> wheelMeshes; // Store all wheel meshes. idk it's better probably to have this private or hidden and just automatically set in script
 
     // Start is called before the first frame update
     void Start()
     {
-        vehicleEntity = GetComponent<VehicleEntity>();
-        vehicleController = GetComponent<VehicleController>();
+        _vehicle = GetComponent<VehicleEntity>();
         steeringWheelTransform = this.transform.Find("Steering Group/Steering Column");
-        wheelColliders = vehicleEntity.FrontWheelColliders.Concat(vehicleEntity.RearWheelColliders).ToList();
-        wheelMeshes = vehicleEntity.WheelMeshes;
+        wheelColliders = _vehicle.FrontWheelColliders.Concat(_vehicle.RearWheelColliders).ToList();
+        wheelMeshes = _vehicle.WheelMeshes;
     }
 
     // Update is called once per frame
@@ -51,7 +49,7 @@ public class VehicleFunctionAnimation : MonoBehaviour
 
     void AnimateSteerWheel()
     {
-        float wheelSteerAngle = Mathf.Lerp(wheelColliders[0].steerAngle, vehicleController.steeringAngle, vehicleController.steeringSpeed);
+        float wheelSteerAngle = Mathf.Lerp(wheelColliders[0].steerAngle, _vehicle.Controller.steeringAngle, _vehicle.Controller.steeringSpeed);
         steeringWheelTransform.transform.localRotation = Quaternion.Euler(0, 0, -wheelSteerAngle); // temporary fix since wheel rotation is in negative axis?
     }
 }

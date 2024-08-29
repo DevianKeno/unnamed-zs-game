@@ -579,6 +579,7 @@ GameObject:
   - component: {fileID: 8447790636662350608}
   - component: {fileID: 7550005517540970790}
   - component: {fileID: 3126381883732742662}
+  - component: {fileID: 1080237383075117647}
   - component: {fileID: 8205610463454806732}
   - component: {fileID: 477869150240042539}
   m_Layer: 0
@@ -646,10 +647,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d3ba97ed5701ae49a2b6b9cc64a3f20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  instanceId: 0
   entityData: {fileID: 11400000, guid: bdc11134a60ef4f4ab23e5c699dd5c07, type: 2}
   attributes:
     attributesReadOnly: []
-  vehicle: {fileID: 11400000, guid: 63f28035625936b48b2823dd6a5004ce, type: 2}
+  vehicleData: {fileID: 11400000, guid: 63f28035625936b48b2823dd6a5004ce, type: 2}
+  Controller: {fileID: 0}
+  InputHandler: {fileID: 0}
+  SeatManager: {fileID: 0}
+  FunctionAnimation: {fileID: 0}
+  AudioManager: {fileID: 0}
   Model: {fileID: 0}
   FrontWheelColliders:
   - {fileID: 5300921023871526831}
@@ -726,6 +733,20 @@ MonoBehaviour:
   defaultMaxSteerAngle: 0
   turnRadius: 0
   wheels: []
+  IsHandbraked: 0
+  DriverInput: {x: 0, y: 0}
+--- !u!114 &1080237383075117647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3142201848671526834}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f304d7ab716fc24fa0ada6369e87152, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &8205610463454806732
 MonoBehaviour:
   m_ObjectHideFlags: 0

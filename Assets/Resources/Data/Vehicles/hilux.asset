@@ -25,7 +25,7 @@ MonoBehaviour:
   fuelConsumptionPerPower: 0.0005
   fuelCapacityPerSpeed: 0.002
   fuelEfficiencyMultiplier: 1
-  maxSpeed: 70
+  maxSpeed: 190
   maxReverseSpeed: 20
   powerCurve:
     serializedVersion: 2
@@ -98,7 +98,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   frontPower: 1
   rearPower: 1
-  maxSteeringAngle: 27
+  turnRadius: 12
   steeringSpeed: 0.5
   brakeForce: 450
   decelerationMultiplier: 5

@@ -51,6 +51,7 @@ namespace UZSG.UnityEditor
             WeaponData weaponData = (WeaponData) target;
 
             EditorGUILayout.Space();
+            EditorGUILayout.LabelField("Weapon Data", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(hotbarIcon);
             EditorGUILayout.PropertyField(category);
             EditorGUILayout.PropertyField(attributes);

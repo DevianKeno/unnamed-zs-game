@@ -1,9 +1,5 @@
 using System;
-using UnityEditor.Animations;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-
-using UZSG.Items.Weapons;
 
 namespace UZSG.FPP
 {

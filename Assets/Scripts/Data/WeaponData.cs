@@ -23,7 +23,7 @@ namespace UZSG.Data
     [CreateAssetMenu(fileName = "New Weapon Data", menuName = "UZSG/Items/Weapon Data")]
     public class WeaponData : ItemData, IViewmodel
     {
-        [Header("Weapon Data")]
+        #region Weapon Data
         public Sprite HotbarIcon;
         public WeaponCategory Category;
         public List<Attributes.Attribute> Attributes;
@@ -32,15 +32,16 @@ namespace UZSG.Data
         public WeaponBluntType BluntType;
         public WeaponBladedType BladedType;
         public WeaponRangedType RangedType;
-
-        #region
         /// These attributes refer to the Weapon's specifications and whatnot,
         /// and are different from the Attributes above
         public WeaponMeleeAttributes MeleeAttributes;
         public WeaponRangedAttributes RangedAttributes;
+
         #endregion
 
-        [Header("Viewmodel Data")]
+        
+        #region Viewmodel Data
+
         [SerializeField] AnimatorController armsAnimations;
         public AnimatorController ArmsAnimations => armsAnimations;
         [SerializeField] AssetReference viewmodel;
@@ -50,5 +51,7 @@ namespace UZSG.Data
         [SerializeField] EquipmentAnimationData anims;
         public EquipmentAnimationData Animations => anims;
         public bool HasViewmodel => viewmodel.IsSet();
+
+        #endregion
     }
 }

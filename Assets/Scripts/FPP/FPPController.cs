@@ -9,7 +9,6 @@ using UZSG.Systems;
 using UZSG.Data;
 using UZSG.Entities;
 using UZSG.Players;
-using UZSG.Inventory;
 using UZSG.Items;
 using UZSG.Items.Weapons;
 using UZSG.Items.Tools;
@@ -24,11 +23,14 @@ namespace UZSG.FPP
     {
         public Player Player;
         [Space]
-        
-        bool _isEnabled;
-        bool _isBusy;
-        public bool IsBusy => _isBusy;
 
+        bool _isPlayingAnimation;
+        string currentlyEquippedId;
+        public string CurrentlyEquippedId => currentlyEquippedId;
+        string lastEquippedId = "arms";
+        Viewmodel currentViewmodel;
+        public Viewmodel CurrentViewmodel => currentViewmodel;
+        
         [SerializeField] HeldItemController heldItem;
         public HeldItemController HeldItem => heldItem;
         /// <summary>
@@ -40,24 +42,46 @@ namespace UZSG.FPP
         /// </summary>
         Dictionary<string, Viewmodel> _cachedViewmodels = new();
 
-        string currentlyEquippedId;
-        public string CurrentlyEquippedIndex => currentlyEquippedId;
-        string lastEquippedId;
-        bool _isPlayingAnimation;
-        Viewmodel currentViewmodel;
-        public Viewmodel CurrentViewmodel => currentViewmodel;
+
+        #region Properties
+
+        public bool IsBusy { get; private set; }
+        /// <summary>
+        /// Whether if the FPP is performing any actions.
+        /// </summary>
+        public bool IsPerforming { get; private set; }
+        public bool HasArmsAnimations { get; private set; }
+        public bool HasViewmodelAnimations { get; private set; }
+        public bool HasCameraAnimations { get; private set; }
+        public bool CanSwapEquipped
+        {
+            get => !_isPlayingAnimation && !IsPerforming;
+        }
+
+        #endregion
 
 
         #region Events
 
+        /// <summary>
+        /// HeldItemController is the newly Held Item.
+        /// </summary>
         public event Action<HeldItemController> OnChangeHeldItem;
+
+        //TODO: switch to state machine
+        /// <summary>
+        /// Called everytime the Player finishes an action (e.g., reload, fire, etc.)
+        /// </summary>
         public event Action OnPerformFinish;
 
         #endregion
 
 
         [Header("Controllers")]
+        public bool AppendArmaturePrefix = true;
+        public char Prefix;
         public bool AppendAnimationPrefixes = true;
+
         [SerializeField] FPPCameraInput cameraController;
         public FPPCameraInput Camera => cameraController;
         [SerializeField] FPPArmsController armsController;
@@ -77,20 +101,8 @@ namespace UZSG.FPP
         [SerializeField] GameObject gunWeaponControllerPrefab;
         [SerializeField] GameObject heldToolControllerPrefab;
 
-        bool _hasHeldItem;
-        bool _isPerforming;
-        /// <summary>
-        /// Whether if the FPP is performing any actions.
-        /// </summary>
-        public bool IsPerforming => _isPerforming;
-        bool _hasArmsAnimations;
-        bool _hasViewmodelAnimations;
-        bool _hasCameraAnimations;
 
-        public bool CanSwapEquipped
-        {
-            get => !_isPlayingAnimation && !_isPerforming;
-        }
+        #region Initializing methods
         
         void Awake()
         {
@@ -112,12 +124,8 @@ namespace UZSG.FPP
             Player.ActionStateMachine.OnTransition += OnPlayerActionStateChanged;
         }
 
-        IEnumerator StartPerform(float duration = 0.25f)
-        {
-            _isPerforming = true;
-            yield return new WaitForSeconds(duration);
-            _isPerforming = false;
-        }
+        #endregion
+
 
         void LoadAndEquipHands()
         {
@@ -125,46 +133,18 @@ namespace UZSG.FPP
             HoldItem(armsData);
         }
 
-
-        #region Public
-
-        public void ToggleControls(bool enabled)
+        IEnumerator StartTimedAction(float duration = 0.25f)
         {
-            cameraController.ToggleControls(enabled);
+            IsPerforming = true;
+            yield return new WaitForSeconds(duration);
+            IsPerforming = false;
         }
 
-        /// <summary>
-        /// Hold an item in FPP perspective. Does nothing if the item is not holdable.
-        /// </summary>
-        public void HoldItem(ItemData data)
-        {
-            if (data is not IViewmodel viewmodel) return;
-
-            StartCoroutine(StartPerform(1f));
-            LoadViewmodelAsset(data, equip: true);
-            LoadHeldItem(data, (heldItem) =>
-            {
-                SetupHeldItemController(heldItem);
-                EquipHeldItem(data.Id);
-            });
-        }
-
-        public void ReleaseItem(ItemData data)
-        {
-            if (!_cachedViewmodels.ContainsKey(data.Id)) return;
-            
-            // var viewmodel = _cachedViewmodels[data.Id];
-            UnloadViewmodelAsset(data);
-        }
-
-        #endregion
-
-        
         /// <summary>
         /// Load viewmodel from addressables.
         /// </summary>
         async void LoadViewmodelAsset(ItemData data, bool equip = true)
-        {            
+        {
             await LoadViewmodelAssetAsync(data as IViewmodel, equip);
         }
 
@@ -176,8 +156,6 @@ namespace UZSG.FPP
         async Task<Viewmodel> LoadViewmodelAssetAsync(IViewmodel item, bool equip)
         {
             var itemData = item as ItemData;
-            if (_cachedViewmodels.ContainsKey(itemData.Id)) return null;
-            
             var viewmodel = await viewmodelController.LoadViewmodelAssetAsync(item);
             if (viewmodel == null) return null;
             
@@ -185,8 +163,12 @@ namespace UZSG.FPP
             _cachedViewmodels[itemData.Id] = viewmodel;
             if (equip)
             {
-                if (heldItem.ItemData.Id != itemData.Id) return viewmodel; /// Check if for some reason had switched
-                EquipViewmodel(viewmodel); /// Equip on finish load :)
+                /// If the Player is still holding the same Item, equip,
+                /// but what reason or how would the currently equipped be changed—it should not be
+                if (heldItem.ItemData.Id == itemData.Id)
+                {
+                    EquipViewmodel(viewmodel); /// Equip on finish load :)
+                }
             }
             
             return viewmodel;
@@ -264,7 +246,43 @@ namespace UZSG.FPP
                 heldItem = null;
             }
         }
-                
+        
+
+
+        #region Public methods
+
+        /// <summary>
+        /// Hold an item in FPP perspective. Does nothing if the item is not holdable.
+        /// </summary>
+        public void HoldItem(ItemData data)
+        {
+            if (data is not IViewmodel viewmodel)
+            {
+                Game.Console.Log($"Item '{data.Id}' does not have a viewmodel asset");
+                return;
+            }
+            if (_cachedViewmodels.ContainsKey(data.Id)) return; /// Viewmodel is already loaded
+
+            StartCoroutine(StartTimedAction(1f));/// TODO: subject to change
+            LoadViewmodelAsset(data, equip: true);
+            LoadHeldItem(data, (heldItem) =>
+            {
+                SetupHeldItemController(heldItem);
+                EquipHeldItem(data.Id);
+            });
+        }
+
+        /// <summary>
+        /// Releases the viewmodel asset via Addressables.
+        /// </summary>
+        public void ReleaseItem(ItemData data)
+        {
+            if (!_cachedViewmodels.ContainsKey(data.Id)) return;
+            
+            // var viewmodel = _cachedViewmodels[data.Id];
+            UnloadViewmodelAsset(data);
+        }
+
         public void EquipHeldItem(string id)
         {
             if (string.IsNullOrEmpty(id)) return;
@@ -284,6 +302,10 @@ namespace UZSG.FPP
             }
         }
 
+        /// <summary>
+        /// Unholsters the current equipped.
+        /// If from arms, switch back to last equipped.
+        /// </summary>
         public void Unholster()
         {
             if (_isPlayingAnimation) return;
@@ -300,9 +322,28 @@ namespace UZSG.FPP
             }
         }
 
+        public void PerformReload()
+        {
+            if (_isPlayingAnimation) return;
+
+            if (heldItem is IReloadable reloadableWeapon)
+            {
+                var reloadDuration = GetAnimationClipLength(viewmodelAnimator, "reload");
+                reloadableWeapon.TryReload(reloadDuration);
+            }
+        }
+
+        public void ToggleControls(bool enabled)
+        {
+            cameraController.ToggleControls(enabled);
+        }
+
+        #endregion
+
+        
         void EquipViewmodel(Viewmodel viewmodel)
         {
-            SetupViewmodel(viewmodel);
+            SetupViewmodelComponents(viewmodel);
             PlayAnimations("equip");
         }
 
@@ -315,11 +356,11 @@ namespace UZSG.FPP
         }
 
         /// <summary>
-        /// Setup viewmodel for the different FPP controller components.
+        /// Setup the different controller components of the viewmodel for the FPP Controller.
         /// </summary>
-        void SetupViewmodel(Viewmodel viewmodel)
+        void SetupViewmodelComponents(Viewmodel viewmodel)
         {
-            /// Validate cached viewmodel
+            /// Validate viewmodel if is cached/loaded
             if (!_cachedViewmodels.ContainsKey(viewmodel.ItemData.Id))
             {
                 var msg = $"Tried to setup Held Item '{viewmodel.ItemData.Id}' but it's not loaded nor equipped?";
@@ -333,13 +374,12 @@ namespace UZSG.FPP
             armsController.SetAnimatorController(currentViewmodel.ArmsAnimations);
             if (viewmodel.ArmsAnimations != null)
             {
-                _hasArmsAnimations = true;
+                HasArmsAnimations = true;
             }
             else
             {
-                _hasArmsAnimations = false;
-                var msg = $"Item '{currentViewmodel.ItemData.Id}' has no arms animation.";
-                Game.Console.LogAndUnityLog(msg);
+                HasArmsAnimations = false;
+                Game.Console.LogAndUnityLog($"Item '{currentViewmodel.ItemData.Id}' has no arms animation.");
             }
             
             if (currentViewmodel.Model != null)
@@ -348,36 +388,33 @@ namespace UZSG.FPP
             }
             else
             {
-                var msg = $"Item '{currentViewmodel.ItemData.Id}' has no viewmodel.";
-                Game.Console.LogAndUnityLog(msg);
+                Game.Console.LogAndUnityLog($"Item '{currentViewmodel.ItemData.Id}' has no viewmodel.");
             }
 
             /// Setup model animations
             if (currentViewmodel.ModelAnimator != null)
             {
-                _hasViewmodelAnimations = true;
+                HasViewmodelAnimations = true;
                 viewmodelAnimator = currentViewmodel.ModelAnimator;
             }
             else
             {
-                _hasViewmodelAnimations = false;
+                HasViewmodelAnimations = false;
                 viewmodelAnimator = null;
-                var msg = $"Item '{currentViewmodel.ItemData.Id}' has no Model Animator. No animations would be shown.";
-                Game.Console.LogAndUnityLog(msg);
+                Game.Console.LogAndUnityLog($"Item '{currentViewmodel.ItemData.Id}' has no Model Animator. No animations would be shown.");
             }
 
             /// Setup camera animations
             if (currentViewmodel.CameraAnimator != null)
             {
-                _hasCameraAnimations = true;
+                HasCameraAnimations = true;
                 cameraAnimator = currentViewmodel.CameraAnimator;
             }
             else
             {
-                _hasCameraAnimations = false;
+                HasCameraAnimations = false;
                 cameraAnimator = null;
-                var msg = $"Item '{currentViewmodel.ItemData.Id}' has no Camera Animator. No animations would be shown.";
-                Game.Console.LogAndUnityLog(msg);
+                Game.Console.LogAndUnityLog($"Item '{currentViewmodel.ItemData.Id}' has no Camera Animator. No animations would be shown.");
             }
 
             if (currentViewmodel.CameraAnimationSource != null)
@@ -413,7 +450,7 @@ namespace UZSG.FPP
             }
 
             /// This should not be here
-            /// Attach Gun Muzzle Controller
+            /// Attach meleeWeaponCollider
             if (currentViewmodel.Model.TryGetComponent(out MeleeWeaponCollider meleeCollider))
             {
                 meleeWeaponCollider = meleeCollider;
@@ -422,6 +459,9 @@ namespace UZSG.FPP
             {
                 meleeWeaponCollider = null;
             }
+
+            armsController.SetTransformOffset(viewmodel.Offsets);
+            viewmodelController.SetTransformOffset(viewmodel.Offsets);
 
             return;
         }
@@ -461,17 +501,6 @@ namespace UZSG.FPP
             }
         }
 
-        public void PerformReload()
-        {
-            if (_isPlayingAnimation) return;
-
-            if (heldItem is IReloadable reloadableWeapon)
-            {
-                var reloadDuration = GetAnimationClipLength(viewmodelAnimator, "reload");
-                reloadableWeapon.TryReload(reloadDuration);
-            }
-        }
-
 
         #region Event callbacks
 
@@ -483,7 +512,7 @@ namespace UZSG.FPP
         void OnPlayerActionStateChanged(StateMachine<ActionStates>.TransitionContext e)
         {
             if (heldItem == null) return;
-            if (_isPerforming) return;
+            if (IsPerforming) return;
             if (_isPlayingAnimation) return;
 
             if (e.To == ActionStates.Secondary)
@@ -532,14 +561,16 @@ namespace UZSG.FPP
         void PlayAnimations(string animId)
         {
             if (string.IsNullOrEmpty(animId)) return;
+
+            animId = AppendArmaturePrefix ? $"{Prefix}{animId}" : animId;
             
             string armsAnim = AppendAnimationPrefixes ? $"a_{animId}" : animId;
             string viewmodelAnim = AppendAnimationPrefixes ? $"m_{animId}" : animId;
             string cameraAnim = AppendAnimationPrefixes ? $"c_{animId}" : animId;
 
-            if (_hasArmsAnimations) armsController.PlayAnimation(armsAnim);
-            if (_hasViewmodelAnimations) viewmodelAnimator.Play(viewmodelAnim, 0, 0f);
-            if (_hasCameraAnimations)
+            if (HasArmsAnimations) armsController.PlayAnimation(armsAnim);
+            if (HasViewmodelAnimations) viewmodelAnimator.Play(viewmodelAnim, 0, 0f);
+            if (HasCameraAnimations)
             {
                 cameraAnimator?.Play(cameraAnim, 0, 0f);
                 cameraAnimationTarget.PlayAnimation();
@@ -556,7 +587,6 @@ namespace UZSG.FPP
         {
             gunMuzzleController?.Fire();
             HandleWeaponRecoil();
-            UpdateHUD();
         }
 
         #endregion
@@ -571,14 +601,6 @@ namespace UZSG.FPP
                 cameraController.AddRecoilMotion(recoilInfo);
             }
         }
-
-        void UpdateHUD()
-        {
-            if (heldItem is GunWeaponController weapon)
-            {
-                int ammoCount = weapon.CurrentRounds;
-            }
-        }
         
         void LoadHeldItemControllerAsync<T>(GameObject prefab, Action<T> onLoadCompleted = null) where T : Component
         {
@@ -586,24 +608,23 @@ namespace UZSG.FPP
             if (go.TryGetComponent(out T controller))
             {
                 onLoadCompleted?.Invoke(controller);
+                onLoadCompleted = null;
                 return;
             }
 
             Destroy(go);
-            var msg = $"Loaded prefab does not contain a component of type {typeof(T)}.";
-            Game.Console.LogWarning(msg);
-            Debug.LogWarning(msg);
+            Game.Console.LogAndUnityLog($"Loaded prefab does not contain a component of type {typeof(T)}.");
         }
 
         IEnumerator FinishAnimation(float durationSeconds)
         {
             if (_isPlayingAnimation) yield return null;
             _isPlayingAnimation = true;
-            _isPerforming = true;
+            IsPerforming = true;
 
             yield return new WaitForSeconds(durationSeconds);
             _isPlayingAnimation = false;
-            _isPerforming = false;
+            IsPerforming = false;
             cameraAnimationTarget.StopAnimation();
             OnPerformFinish?.Invoke();
             yield return null;

@@ -49,16 +49,18 @@ namespace UZSG.FPP
                 {
                     return new Viewmodel
                     {
-                        ArmsAnimations = viewmodel.ArmsAnimations,
+                        ItemData = (ItemData) viewmodel,
                         Model = model,
-                        ItemData = viewmodel as ItemData,
+                        Offsets = viewmodel.Offsets,
+                        ArmsAnimations = viewmodel.ArmsAnimations,
+
                         ModelAnimator = component.ModelAnimator,
                         CameraAnimator = component.CameraAnimator,
                         CameraAnimationSource = component.CameraAnimationSource,
                     };
                 }
                 
-                // Destroy(model);
+                Destroy(model);
                 var msg = $"Item '{(viewmodel as ItemData).Id}' is a viewmodel but has no Viewmodel Component.";
                 Game.Console.LogAndUnityLog(msg);
             }
@@ -75,6 +77,14 @@ namespace UZSG.FPP
                 GameObject = op.Result,
                 Status = op.Status
             };
+        }
+
+        /// <summary>
+        /// Realigns the viewmodel model given its offset values.
+        /// </summary>
+        public void SetTransformOffset(ViewmodelOffsets offsets)
+        {
+            modelHolder.SetLocalPositionAndRotation(offsets.Position, Quaternion.Euler(offsets.Rotation));
         }
     }
 }

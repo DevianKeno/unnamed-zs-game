@@ -83,13 +83,13 @@ MonoBehaviour:
       RecoveryDuration: 0
   armsAnimations: {fileID: 9100000, guid: 57d7336a04175d34a89f51d4a249c9e5, type: 2}
   viewmodel:
-    m_AssetGUID: 53cd6ec30db0d304ab4ca87c9dd585fa
+    m_AssetGUID: dd94efc38c6a7424d95b38bbd4abbbeb
     m_SubObjectName: 
     m_SubObjectType: 
-    m_EditorAssetChanged: 1
+    m_EditorAssetChanged: 0
   viewmodelOffsets:
-    Position: {x: 0, y: 0, z: 0}
-    Rotation: {x: 0, y: 0, z: 0}
+    Position: {x: -0.04, y: 0.02, z: -0.03}
+    Rotation: {x: 0, y: 0.22, z: 0}
   anims:
     Idle: 
     Move: 

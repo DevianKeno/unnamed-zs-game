@@ -22,13 +22,34 @@ namespace UZSG.Entities.Vehicles
 
         #region Other Important Values
         Transform _playerParent; // refers to the parent of the player in the game world
-        Transform _mainCameraParent; // refers to the Main Camera Parent
         #endregion
 
         private void Awake()
         {
             _vehicle = gameObject.GetComponent<VehicleEntity>();
             _playerParent = this.transform.parent;
+        }
+
+        private void Start()
+        {
+            _vehicle.TPPCamera.gameObject.SetActive(false);
+        }
+
+        private void LateUpdate()
+        {
+            _vehicle.TPPCamera.transform.position = Vector3.Lerp(
+                _vehicle.TPPCamera.transform.position,
+                TPPCameraView.transform.position,
+                0.1f
+            );
+
+            _vehicle.TPPCamera.transform.rotation = Quaternion.Lerp(
+                _vehicle.TPPCamera.transform.rotation,
+                TPPCameraView.transform.rotation,
+                0.1f
+            );
+
+            _vehicle.TPPCamera.transform.LookAt(_vehicle.Model.transform);
         }
 
         public void EnterVehicle(Player player)
@@ -45,9 +66,8 @@ namespace UZSG.Entities.Vehicles
                 EnterPassenger(player);
             }
 
-            // Toggle Camera for Vehicle View
-            _mainCameraParent = player.MainCamera.transform.parent;
-            player.MainCamera.transform.SetParent(TPPCameraView, false);
+            player.MainCamera.gameObject.SetActive(false);
+            _vehicle.TPPCamera.gameObject.SetActive(true);
 
             // Toggle Third Person Model to Match Vehicle Transform
             player.Model.rotation = Quaternion.LookRotation(_vehicle.Model.transform.forward);
@@ -144,15 +164,17 @@ namespace UZSG.Entities.Vehicles
 
         public void ChangeVehicleView(Player player)
         {
-            if (_mainCameraParent.transform.Find("Main Camera") == null)
+            if (player.MainCamera.gameObject.activeSelf == false)
             {
-                player.MainCamera.transform.SetParent(_mainCameraParent, false);
+                player.MainCamera.gameObject.SetActive(true);
+                _vehicle.TPPCamera.gameObject.SetActive(false);
 
                 _vehicle.InputHandler.ToggleFPPCamera(player, true);
             }
             else
             {
-                player.MainCamera.transform.SetParent(TPPCameraView, false);
+                player.MainCamera.gameObject.SetActive(false);
+                _vehicle.TPPCamera.gameObject.SetActive(true);
 
                 _vehicle.InputHandler.ToggleFPPCamera(player, false);
             }
@@ -168,11 +190,11 @@ namespace UZSG.Entities.Vehicles
                 collider.enabled = true;
             }
 
+            player.MainCamera.gameObject.SetActive(true);
+            _vehicle.TPPCamera.gameObject.SetActive(false);
+
             // Enable Player Camera Look
             _vehicle.InputHandler.ToggleFPPCamera(player, true);
-
-            // Set the Main Camera Back to the Player
-            player.MainCamera.transform.SetParent(_mainCameraParent, false);
 
             player.transform.SetParent(_playerParent, false); // Set the player position to the environment
 
@@ -194,7 +216,6 @@ namespace UZSG.Entities.Vehicles
             }
             _vehicle.InputHandler.ToggleGeneralControls(player, false);
             CheckPassengers();
-            _mainCameraParent = null;
         }
 
         private void CheckPassengers()

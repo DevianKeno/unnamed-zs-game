@@ -29,11 +29,12 @@ namespace UZSG.Entities
         }
 
         public EnemyData EnemyData => entityData as EnemyData;
-        public float RotationDamping = 6f;
+        public float RotationDamping = 30f;
 
         [Header("Agent Information")]
         public LayerMask PlayerLayer; // Layers that the enemy chases
         [SerializeField] bool _hasAlreadyScreamed;
+        [SerializeField] bool isAlreadyRotating;
         [SerializeField] bool _isInHordeMode;
         [SerializeField] bool _hasTargetInSight; // checks if the player is in site, attack range or is a target
         [SerializeField] bool _hasTargetInAttackRange;
@@ -42,6 +43,7 @@ namespace UZSG.Entities
         [SerializeField] float _roamInterval; // Interval before the model moves again
         [SerializeField] float _distanceFromPlayer;
         [SerializeField] float _moveSpeed;
+        [SerializeField] float rotationThreshold;
         [SerializeField] float _siteRadius;
         [SerializeField] float _attackRadius; // Radius of which the enemy detects the player
         [SerializeField] Vector3 _randomDestination; // Destination of agent
@@ -61,7 +63,7 @@ namespace UZSG.Entities
         {
             get
             {
-                return attributes["player_detection_radius"].Value;
+                return _siteRadius;
             }
         }
 
@@ -69,7 +71,7 @@ namespace UZSG.Entities
         {
             get
             {
-                return attributes["player_detection_radius"].Value;
+                return _attackRadius;
             }
         }
 
@@ -97,6 +99,7 @@ namespace UZSG.Entities
             RetrieveAttributes();
             InitializeAnimator();
             InitializeActuators();
+            InitializeAgent();
 
             Game.Tick.OnSecond += OnSecond;
         }
@@ -112,6 +115,12 @@ namespace UZSG.Entities
             _attackRadius = Attributes.Get("zombie_attack_radius").Value;
             _roamRadius = Attributes.Get("zombie_roam_radius").Value;
             _roamInterval = Attributes.Get("zombie_roam_interval").Value;
+            rotationThreshold = Attributes.Get("zombie_rotation_threshold").Value;
+        }
+
+        void InitializeAgent()
+        {
+            navMeshAgent.speed = _moveSpeed;
         }
 
         #endregion

@@ -42,7 +42,25 @@ namespace UZSG.Entities
         {
             if (etty != null && etty is Player player)
             {
-                actionStateMachine.ToState(EnemyActionStates.Attack);
+                _hasTargetInAttackRange = true;
+                // Calculate the direction vector from your object to the target object
+                Vector3 directionToTarget = (player.Position - transform.position).normalized;
+
+                // Check if the forward direction of your object is aligned with the directionToTarget vector
+                float angle = Vector3.Angle(transform.forward, directionToTarget);
+
+                // if facing player attack, else rotate
+                if (angle < rotationThreshold) // Adjust the threshold (e.g., 1 degree) as needed
+                {   
+                    actionStateMachine.ToState(EnemyActionStates.Attack);
+                }
+                else
+                {
+                    if (!isAlreadyRotating)
+                    {
+                        StartCoroutine(Rotate());
+                    }
+                }
             }
         }
 
@@ -66,8 +84,11 @@ namespace UZSG.Entities
                     if (_hasTargetInAttackRange)
                     {
                         if (_attackRadius <= _distanceFromPlayer)
-                        {
+                        {   
+                            // reset target and rotation
+                            _hasTargetInAttackRange = false;
 
+                            actionStateMachine.ToState(EnemyActionStates.Chase);
                         }
                     }
                 }

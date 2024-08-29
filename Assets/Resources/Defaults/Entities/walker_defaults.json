@@ -1,4 +1,7 @@
 {
+  "InstanceId": 0,
+  "Id": null,
+  "Transform": null,
   "Attributes": [
     {
       "Id": "health",
@@ -8,7 +11,8 @@
       "Multiplier": 1.0,
       "FlatBonus": 0.0,
       "LimitOverflow": true,
-      "LimitUnderflow": true
+      "LimitUnderflow": true,
+      "Type": "AttributeSaveData"
     },
     {
       "Id": "move_speed",
@@ -18,29 +22,19 @@
       "Multiplier": 1.0,
       "FlatBonus": 0.0,
       "LimitOverflow": true,
-      "LimitUnderflow": true
-    },
-    {
-      "Comment":"This must be shorter than the zombie_site_radius for the code to work",
-      "Id": "player_detection_radius",
-      "Value": 20.0,
-      "Minimum": 0.0,
-      "BaseMaximum": 0.0,
-      "Multiplier": 0.0,
-      "FlatBonus": 0.0,
-      "LimitOverflow": false,
-      "LimitUnderflow": false,
+      "LimitUnderflow": true,
       "Type": "AttributeSaveData"
     },
     {
       "Id": "zombie_attack_radius",
-      "Value": 1.0,
+      "Value": 2.1,
       "Minimum": 0.0,
       "BaseMaximum": 1000.0,
       "Multiplier": 1.0,
       "FlatBonus": 0.0,
       "LimitOverflow": true,
-      "LimitUnderflow": true
+      "LimitUnderflow": true,
+      "Type": "AttributeSaveData"
     },
     {
       "Id": "zombie_roam_interval",
@@ -50,7 +44,8 @@
       "Multiplier": 1.0,
       "FlatBonus": 0.0,
       "LimitOverflow": true,
-      "LimitUnderflow": true
+      "LimitUnderflow": true,
+      "Type": "AttributeSaveData"
     },
     {
       "Id": "zombie_roam_radius",
@@ -60,7 +55,8 @@
       "Multiplier": 1.0,
       "FlatBonus": 0.0,
       "LimitOverflow": true,
-      "LimitUnderflow": true
+      "LimitUnderflow": true,
+      "Type": "AttributeSaveData"
     },
     {
       "Id": "zombie_site_radius",
@@ -70,7 +66,20 @@
       "Multiplier": 1.0,
       "FlatBonus": 0.0,
       "LimitOverflow": true,
-      "LimitUnderflow": true
+      "LimitUnderflow": true,
+      "Type": "AttributeSaveData"
+    },
+    {
+      "Id": "zombie_rotation_threshold",
+      "Value": 25.0,
+      "Minimum": 0.0,
+      "BaseMaximum": 1000.0,
+      "Multiplier": 1.0,
+      "FlatBonus": 0.0,
+      "LimitOverflow": true,
+      "LimitUnderflow": true,
+      "Type": "AttributeSaveData"
     }
-  ]
+  ],
+  "Type": "EntitySaveData"
 }

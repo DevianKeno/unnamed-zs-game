@@ -3,7 +3,7 @@ using System.Collections;
 
 using UnityEngine;
 using UnityEngine.AI;
-
+using UnityEngine.UIElements;
 using UZSG.Systems;
 
 namespace UZSG.Entities
@@ -35,8 +35,12 @@ namespace UZSG.Entities
 
         void OnIdleEnter(StateMachine<EnemyActionStates>.TransitionContext e)
         {
+            if (_hasTargetInAttackRange)
+            {
+                
+            }
             // if enemy went from screaming to idling
-            if (e.From == EnemyActionStates.Scream && e.To == EnemyActionStates.Idle)
+            else if (e.From == EnemyActionStates.Scream && e.To == EnemyActionStates.Idle)
             {
                 /// roam, idle, scream
             }
@@ -60,13 +64,8 @@ namespace UZSG.Entities
 
         IEnumerator FacePlayerAndScream()
         {
-            /// Rotate towards the player
-            Quaternion targetRotation = Quaternion.LookRotation(targetEntity.Position - transform.position);
-            while (Quaternion.Angle(transform.rotation, targetRotation) > 2f)
-            {
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * RotationDamping);
-                yield return null;
-            }
+            // Face player before screaming
+            StartCoroutine(Rotate());
 
             /// Once facing the player, scream
             actionStateMachine.ToState(EnemyActionStates.Scream, lockForSeconds: 2f);
@@ -76,13 +75,26 @@ namespace UZSG.Entities
             actionStateMachine.ToState(EnemyActionStates.Chase);
         }
 
+        IEnumerator Rotate()
+        {
+            isAlreadyRotating = true;
+            /// Rotate towards the player
+            Quaternion targetRotation = Quaternion.LookRotation(targetEntity.Position - transform.position);
+            while (Quaternion.Angle(transform.rotation, targetRotation) > rotationThreshold)
+            {
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * RotationDamping);
+                yield return null;
+            }
+
+            isAlreadyRotating = false;
+        }
+
         void Roam()
         {
             navMeshAgent.isStopped = false;
             /// Check if the enemy has reached its destination and is actively moving
             if (navMeshAgent.remainingDistance >= 1f && navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance)
             {
-                Debug.Log("Not Moving");
                 navMeshAgent.isStopped = true;
                 navMeshAgent.updateRotation = false;
                 moveStateMachine.ToState(EnemyMoveStates.Idle);
@@ -90,7 +102,6 @@ namespace UZSG.Entities
             }
             else
             {
-                Debug.Log("Still Moving");
                 // if there is a player found chase the player instead of roaming
                 if (_hasTargetInSight)
                 {
@@ -146,15 +157,16 @@ namespace UZSG.Entities
 
         void Chase()
         {
-            /// Set the states to chasing mode
-            moveStateMachine.ToState(EnemyMoveStates.Run);
-
+            Debug.Log("Is Chasing");
             /// set rigid body to dynamic
             rb.isKinematic = false;
 
-            /// allow enemy movement
-            navMeshAgent.isStopped = false;
+            /// allow enemy movement if not in attack range
             navMeshAgent.updateRotation = true;
+            navMeshAgent.isStopped = false;
+
+            /// Set the move states to running mode
+            moveStateMachine.ToState(EnemyMoveStates.Run);
 
             /// chase player position
             navMeshAgent.SetDestination(targetEntity.transform.position);

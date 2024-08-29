@@ -48,6 +48,10 @@ namespace UZSG.Entities
             {
                 animator.CrossFade("scream", 0.1f);
             }
+            else if (e.To == EnemyActionStates.Attack)
+            {
+                animator.CrossFade("attack", 0.1f);
+            }
         }
     }
 }

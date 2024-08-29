@@ -35,7 +35,7 @@ MonoBehaviour:
     LimitOverflow: 1
     LimitUnderflow: 1
   - data: {fileID: 11400000, guid: e4ab3b3473a8d02419d401c83e60f203, type: 2}
-    value: 1
+    value: 2.1
     baseMaximum: 1000
     multiplier: 1
     flatBonus: 0
@@ -56,7 +56,14 @@ MonoBehaviour:
     LimitOverflow: 1
     LimitUnderflow: 1
   - data: {fileID: 11400000, guid: daadff2edc464ee419de068690807275, type: 2}
-    value: 9
+    value: 22
+    baseMaximum: 1000
+    multiplier: 1
+    flatBonus: 0
+    LimitOverflow: 1
+    LimitUnderflow: 1
+  - data: {fileID: 11400000, guid: 445468e46b21cf3418fffbbbca19442f, type: 2}
+    value: 7
     baseMaximum: 1000
     multiplier: 1
     flatBonus: 0

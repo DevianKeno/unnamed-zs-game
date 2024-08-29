@@ -23,7 +23,7 @@ namespace UZSG.Players
             Gizmos.DrawWireSphere(transform.position, 20);
 
             Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(transform.position, 1);
+            Gizmos.DrawWireSphere(transform.position, 2);
         }
 
         public void CastDetectionSphere()

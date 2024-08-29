@@ -62,8 +62,13 @@ public class FuelCraftingGUI : CraftingGUI
 
             if (player.InventoryGUI.IsHoldingItem)
             {
+                if(!player.InventoryGUI.HeldItem.Data.IsFuel)
+                {
+                    print("You cannot put a non-fuel Item in the fuel slot");
+                    return;
+                }
+
                 var heldItem = player.InventoryGUI.HeldItem;
-                var FuelBasedCrafterInstance = (FuelBasedCrafting)workstation.Crafter;
 
                 if (slot.IsEmpty || slot.Item.CompareTo(heldItem))
                 {
@@ -105,6 +110,12 @@ public class FuelCraftingGUI : CraftingGUI
         {
             if (player.InventoryGUI.IsHoldingItem)
             {
+                if(!player.InventoryGUI.HeldItem.Data.IsFuel)
+                {
+                    print("You cannot put a non-fuel Item in the fuel slot");
+                    return;
+                }
+                
                 var heldItem = player.InventoryGUI.HeldItem;
 
                 if (slot.IsEmpty || slot.Item.CompareTo(heldItem))

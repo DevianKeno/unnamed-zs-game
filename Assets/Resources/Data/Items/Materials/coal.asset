@@ -10,17 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 873d4c4f155a35a46b4699d35b336ec7, type: 3}
-  m_Name: grass
+  m_Name: coal
   m_EditorClassIdentifier: 
-  Id: grass
-  Name: Grass
-  Description: Grass.
+  Id: coal
+  Name: Coal
+  Description: Used  for fueling fires and crafting essential tools. It burns longer
+    and hotter than wood, making it perfect for cooking food, forging weapons, and
+    staying warm during cold nights.
   Model:
-    m_AssetGUID: 
+    m_AssetGUID: b33b384996e8b0c45b8264b44ff028e7
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  Sprite: {fileID: 0}
+  Sprite: {fileID: 21300000, guid: 886b7be132aafc94dade9c885a20e0de, type: 3}
   Type: 0
   Subtype: 0
   Weight: 0
@@ -28,7 +30,8 @@ MonoBehaviour:
   IsFuel: 1
   FuelDuration: 0
   IsMaterial: 1
-  IsCraftable: 0
+  IsCraftable: 1
   Recipes: []
-  SourceDescription: 
+  SourceDescription: Coal can be acquired from storage locations such as chests found
+    in the world or mined from deposits in caves.
   AudioAssetsData: {fileID: 0}

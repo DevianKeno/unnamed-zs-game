@@ -73,6 +73,20 @@ namespace UZSG.Players
         {
             get => _frameVelocity.y < 0f && !IsGrounded;
         }
+<<<<<<< Updated upstream
+=======
+        /// <summary>
+        /// Whether if the Player can Camera bob in FPP.
+        /// </summary>
+        public bool CanBob
+        {
+            get => IsGrounded;
+        }
+        public bool CanCoyoteJump
+        {
+            get => groundChecker.CanCoyoteJump;
+        }
+>>>>>>> Stashed changes
         public Vector3 Velocity
         {
             get => rb.velocity;
@@ -125,6 +139,10 @@ namespace UZSG.Players
         public InputActionMap ActionMap => actionMap;
         Dictionary<string, InputAction> inputs = new();
         public Dictionary<string, InputAction> Inputs => inputs;
+<<<<<<< Updated upstream
+=======
+        #region Initializing methods
+>>>>>>> Stashed changes
 
         internal void Initialize()
         {
@@ -243,7 +261,14 @@ namespace UZSG.Players
             _isMovePressed = _frameInput.Move.x != 0 || _frameInput.Move.y != 0;
             _isMovingBackwards = _frameInput.Move.y < 0;
 
+<<<<<<< Updated upstream
             CancelRunIfRunningBackwards();
+=======
+            if (IsRunning && !CanRun())
+            {
+                ToggleRun(false);
+            }
+>>>>>>> Stashed changes
         }
 
         void CancelRunIfRunningBackwards()
@@ -259,6 +284,11 @@ namespace UZSG.Players
             if (!EnableMovementControls) return;
             if (!IsGrounded) return;
 
+<<<<<<< Updated upstream
+=======
+            if (!CanRun()) return;
+
+>>>>>>> Stashed changes
             if (context.started)
             {
                 CancelRunBecauseOfOtherThings();
@@ -267,6 +297,10 @@ namespace UZSG.Players
                 ToggleRun(true);
             }
             else if (context.canceled)
+            {
+                ToggleRun(false);
+            }
+            else if (!CanRun())
             {
                 ToggleRun(false);
             }
@@ -329,6 +363,7 @@ namespace UZSG.Players
 
         #endregion
 
+<<<<<<< Updated upstream
 
         Vector3 GetCameraForward()
         {
@@ -337,8 +372,12 @@ namespace UZSG.Players
             return camForward;
         }
 
+=======
+>>>>>>> Stashed changes
         void ToggleRun(bool run)
         {
+            if (!CanRun()) return;
+            
             if (run)
             {
                 if (_isCrouching)
@@ -356,6 +395,25 @@ namespace UZSG.Players
             }
             _isRunning = run;
         }
+<<<<<<< Updated upstream
+=======
+        
+
+        void ToggleWalk(bool walk)
+        {
+            if (walk)
+            {
+                _targetMoveSpeed = _cachedAttributeValues["walk_speed"];
+                _targetMoveState = MoveStates.Walk;
+            }
+            else
+            {        
+                _targetMoveSpeed = _cachedAttributeValues["move_speed"];
+                _targetMoveState = default; 
+            }
+            _isWalking = walk;
+        }
+>>>>>>> Stashed changes
 
         void HandleJump()
         {   
@@ -461,5 +519,20 @@ namespace UZSG.Players
                 }
             }
         }
+<<<<<<< Updated upstream
+=======
+
+        public bool CanRun()
+        {
+            /// sideways or backwards movement while running isn't allowed
+            if (_isMovingBackwards || _isMovingSideways) 
+            {
+                ToggleRun(false);
+                return false;
+            }
+            return true;
+        }
+        #endregion
+>>>>>>> Stashed changes
     }
 }

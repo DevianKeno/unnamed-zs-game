@@ -26,7 +26,7 @@ MonoBehaviour:
   Subtype: 0
   Weight: 0
   StackSize: 999
-  IsFuel: 0
+  IsFuel: 1
   FuelDuration: 0
   IsMaterial: 1
   IsCraftable: 1

@@ -16,10 +16,12 @@ namespace UZSG.Entities
         public bool AllowInteractions { get; set; } = true;
 
         [Header("Vehicle Information")]
-        [SerializeField] VehicleData vehicle; // vehicle data
-        VehicleSeatManager _vehicleSeatManager;
-        VehicleController _vehicleController;
-        VehicleAudioManager _vehicleAudioManager;
+        [SerializeField] VehicleData vehicleData; // vehicle data
+        public VehicleController Controller;
+        public VehicleInputHandler InputHandler;
+        public VehicleSeatManager SeatManager;
+        public VehicleFunctionAnimation FunctionAnimation;
+        public VehicleAudioManager AudioManager;
 
         [Header("Vehicle Parts")]
         public GameObject Model;
@@ -31,19 +33,19 @@ namespace UZSG.Entities
         [Header("Vehicle Wheel Meshes")]
         public List<GameObject> WheelMeshes;
 
-        public VehicleData Vehicle
+        public VehicleData VehicleData
         {
             get
             {
-                return vehicle;
+                return vehicleData;
             }
             set
             {
-                vehicle = value;
+                vehicleData = value;
             }
         }
 
-        public string Name => vehicle.Name;
+        public string Name => vehicleData.Name;
 
         public string Action => "Drive";
 
@@ -53,16 +55,18 @@ namespace UZSG.Entities
 
         protected virtual void Awake()
         {
-            _vehicleController = gameObject.GetComponent<VehicleController>();
-            _vehicleSeatManager = gameObject.GetComponent<VehicleSeatManager>();
-            _vehicleAudioManager = gameObject.GetComponent<VehicleAudioManager>();
+            Controller = gameObject.GetComponent<VehicleController>();
+            InputHandler = gameObject.GetComponent<VehicleInputHandler>();
+            SeatManager = gameObject.GetComponent<VehicleSeatManager>();
+            FunctionAnimation = gameObject.GetComponent<VehicleFunctionAnimation>();
+            AudioManager = gameObject.GetComponent<VehicleAudioManager>();
             Model = transform.Find("Vehicle Body").gameObject;
             _originalLayer = Model.layer;
         }
 
         public void OnLookEnter()
         {
-            if (Model != null && _vehicleSeatManager.Driver == null)
+            if (Model != null && SeatManager.Driver == null)
             {
                 Model.layer = LayerMask.NameToLayer("Outline");
             }
@@ -80,10 +84,9 @@ namespace UZSG.Entities
         {
             if (actor is not Player player) return;
 
-            _vehicleController.EnableVehicle();
-            _vehicleSeatManager.EnterVehicle(player);
-            _vehicleAudioManager.PlayerInVehicle();
-
+            Controller.EnableVehicle();
+            SeatManager.EnterVehicle(player);
+            AudioManager.PlayerInVehicle();
         }
     }
 }

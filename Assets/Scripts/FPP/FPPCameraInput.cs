@@ -18,6 +18,7 @@ namespace UZSG.FPP
         [Header("Camera Settings")]
         public float Sensitivity;
         public bool EnableControls = true;
+        public bool ResetCameraPosition = false;
 
         bool _hasRecoil;
         bool _isLooking;
@@ -84,6 +85,15 @@ namespace UZSG.FPP
         void HandleLook()
         {
             if (!EnableControls) return;
+
+            if (ResetCameraPosition) // Camera Reset (Temporary Only)
+            {
+                _verticalRotation = 0f;
+                _horizontalRotation = 0f;
+                transform.localEulerAngles = Vector3.zero;
+                ResetCameraPosition = false;
+                return; 
+            }
 
             var lookInput = look.ReadValue<Vector2>();
             _isLooking = lookInput.x != 0 || lookInput.y != 0;

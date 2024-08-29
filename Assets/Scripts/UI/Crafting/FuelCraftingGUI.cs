@@ -18,6 +18,7 @@ public class FuelCraftingGUI : CraftingGUI
     public ItemSlotUI fuelSlot;
     public FuelBar fuelBar;
 
+    FuelBasedCrafting FuelBasedCrafterInstance;
     protected void CreateFuelSlotUI()
     {
 
@@ -28,19 +29,20 @@ public class FuelCraftingGUI : CraftingGUI
     {
         this.workstation = workstation;
 
-        var fbc = (FuelBasedCrafting)workstation.Crafter;
-        fbc.FuelContainer = new(1);
+        FuelBasedCrafterInstance = (FuelBasedCrafting)workstation.Crafter;
+        FuelBasedCrafterInstance.FuelContainer = new(1);
+        
 
-        fbc.OnFuelUpdate += OnFuelUpdate;
-        fbc.OnFuelReload += OnFuelReload;
-        fuelBar.fuelBasedCraftingInstance = fbc;
+        FuelBasedCrafterInstance.OnFuelUpdate += OnFuelUpdate;
+        FuelBasedCrafterInstance.OnFuelReload += OnFuelReload;
+        fuelBar.fuelBasedCraftingInstance = FuelBasedCrafterInstance;
         fuelBar.Value = 0;
         
 
         CreateOutputSlotUIs(workstation.WorkstationData.OutputSize);
         CreateQueueSlotUIs(workstation.WorkstationData.QueueSize);
 
-        fuelSlot.Link(fbc.FuelContainer.Slots[0]);
+        fuelSlot.Link(FuelBasedCrafterInstance.FuelContainer.Slots[0]);
         fuelSlot.OnMouseDown += OnFuelSlotClick;
     }
 
@@ -61,7 +63,7 @@ public class FuelCraftingGUI : CraftingGUI
             if (player.InventoryGUI.IsHoldingItem)
             {
                 var heldItem = player.InventoryGUI.HeldItem;
-                var fbc = (FuelBasedCrafting)workstation.Crafter;
+                var FuelBasedCrafterInstance = (FuelBasedCrafting)workstation.Crafter;
 
                 if (slot.IsEmpty || slot.Item.CompareTo(heldItem))
                 {
@@ -74,13 +76,13 @@ public class FuelCraftingGUI : CraftingGUI
                     {
                         //if there is a routine still ongoing, ignite fuel
                         //how tho...
-                        if (fbc.Routines.Count > 0 && !fbc.IsFuelRemainingAvailable())
+                        if (FuelBasedCrafterInstance.Routines.Count > 0 && !FuelBasedCrafterInstance.IsFuelRemainingAvailable())
                         {
-                            if (fbc.TryConsumeFuel())
+                            if (FuelBasedCrafterInstance.TryConsumeFuel())
                             {
-                                fbc.StartBurn();
+                                FuelBasedCrafterInstance.StartBurn();
                             }
-                            fbc.ContinueRemainingCraft();
+                            FuelBasedCrafterInstance.ContinueRemainingCraft();
                         }
                     }
                 }
@@ -104,7 +106,6 @@ public class FuelCraftingGUI : CraftingGUI
             if (player.InventoryGUI.IsHoldingItem)
             {
                 var heldItem = player.InventoryGUI.HeldItem;
-                var fbc = (FuelBasedCrafting)workstation.Crafter;
 
                 if (slot.IsEmpty || slot.Item.CompareTo(heldItem))
                 {
@@ -117,13 +118,13 @@ public class FuelCraftingGUI : CraftingGUI
                     {
                         //if there is a routine still ongoing, ignite fuel
                         //how tho...
-                        if (fbc.Routines.Count > 0 && !fbc.IsFuelRemainingAvailable())
+                        if (FuelBasedCrafterInstance.Routines.Count > 0 && !FuelBasedCrafterInstance.IsFuelRemainingAvailable())
                         {
-                            if (fbc.TryConsumeFuel())
+                            if (FuelBasedCrafterInstance.TryConsumeFuel())
                             {
-                                fbc.StartBurn();
+                                FuelBasedCrafterInstance.StartBurn();
                             }
-                            fbc.ContinueRemainingCraft();
+                            FuelBasedCrafterInstance.ContinueRemainingCraft();
                         }
                     }
                 }

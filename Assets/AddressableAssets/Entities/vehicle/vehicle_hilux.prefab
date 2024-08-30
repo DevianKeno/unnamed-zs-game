@@ -126,8 +126,8 @@ MonoBehaviour:
   VehicleSeats:
   - {fileID: 4374637360555942041}
   - {fileID: 1676654125766968402}
-  - {fileID: 8901087158286173414}
   - {fileID: 4289403424474184838}
+  - {fileID: 8901087158286173414}
 --- !u!114 &6426182129777768640
 MonoBehaviour:
   m_ObjectHideFlags: 0

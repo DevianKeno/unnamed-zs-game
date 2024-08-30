@@ -3008,7 +3008,7 @@ MonoBehaviour:
     brushes:
     - name: Pine Tree Heart (Resource)
       settings:
-        brushRadius: 20
+        brushRadius: 6.9
         brushSpacing: 5
         brushOverlapCheckMode: 1
         brushOverlapDistance: 0.5

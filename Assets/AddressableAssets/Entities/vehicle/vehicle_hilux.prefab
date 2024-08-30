@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 2300238214529459752}
   - component: {fileID: 2404420148559167601}
   - component: {fileID: 3641670930814001141}
+  - component: {fileID: 5110692827391922327}
   m_Layer: 0
   m_Name: hilux_model
   m_TagString: Untagged
@@ -37,9 +38,9 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5837119434009584595}
+  - {fileID: 7074182875881442523}
   - {fileID: 2359614708755086998}
   - {fileID: 8893928897667143528}
-  - {fileID: 7074182875881442523}
   m_Father: {fileID: 6437010321556147637}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &2550855486536843804
@@ -91,6 +92,7 @@ MonoBehaviour:
   SeatManager: {fileID: 0}
   FunctionAnimation: {fileID: 0}
   AudioManager: {fileID: 0}
+  CameraManager: {fileID: 0}
   Model: {fileID: 0}
   FrontWheelColliders:
   - {fileID: 3231600916514506246}
@@ -121,12 +123,11 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  FPPCameraView:
+  VehicleSeats:
   - {fileID: 4374637360555942041}
   - {fileID: 1676654125766968402}
   - {fileID: 4289403424474184838}
   - {fileID: 8901087158286173414}
-  TPPCameraView: {fileID: 7450920292112359657}
 --- !u!114 &6426182129777768640
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -257,6 +258,19 @@ MonoBehaviour:
   minPitch: 1
   _sourceIdle: {fileID: 3603761396550479348}
   _sourceActive: {fileID: 715546018541328019}
+--- !u!114 &5110692827391922327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085612815343696100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8cb9273228e5926458fa69cf75a69779, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TPPCameraView: {fileID: 7450920292112359657}
 --- !u!1 &1516135541574354527
 GameObject:
   m_ObjectHideFlags: 0
@@ -405,7 +419,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 5161481529828608702}
   - {fileID: 8165361970103949257}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -443,7 +456,9 @@ Transform:
   - {fileID: 6883659574895699966}
   - {fileID: 4484186077852100436}
   - {fileID: 8832497754324707719}
+  - {fileID: 240390627906899787}
   - {fileID: 2931645799055528543}
+  - {fileID: 5161481529828608702}
   m_Father: {fileID: 8165361970103949257}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2070816012622656799
@@ -603,7 +618,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1676654125766968402}
   m_Layer: 0
-  m_Name: Passenger
+  m_Name: Passenger_FR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1065,7 +1080,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 6437010321556147637}
+  m_Father: {fileID: 5837119434009584595}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &4252051339112489540
 Camera:
@@ -1251,7 +1266,7 @@ GameObject:
   m_Component:
   - component: {fileID: 240390627906899787}
   m_Layer: 0
-  m_Name: FPPView
+  m_Name: Vehicle Seats
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1265,7 +1280,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5721442752396736875}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1274,7 +1289,7 @@ Transform:
   - {fileID: 1676654125766968402}
   - {fileID: 8901087158286173414}
   - {fileID: 4289403424474184838}
-  m_Father: {fileID: 7074182875881442523}
+  m_Father: {fileID: 5837119434009584595}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5863051998824902227
 GameObject:
@@ -2103,7 +2118,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 240390627906899787}
   - {fileID: 7450920292112359657}
   m_Father: {fileID: 8165361970103949257}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2117,7 +2131,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4289403424474184838}
   m_Layer: 0
-  m_Name: Passenger
+  m_Name: Passenger_RR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2181,7 +2195,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8901087158286173414}
   m_Layer: 0
-  m_Name: Passenger
+  m_Name: Passenger_RL
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

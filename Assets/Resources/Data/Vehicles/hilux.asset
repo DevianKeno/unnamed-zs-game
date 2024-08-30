@@ -100,7 +100,7 @@ MonoBehaviour:
   rearPower: 1
   turnRadius: 12
   steeringSpeed: 0.5
-  brakeForce: 450
+  brakeForce: 600
   decelerationMultiplier: 5
-  antiRoll: 0
+  antiRoll: 5000
   Attributes: []

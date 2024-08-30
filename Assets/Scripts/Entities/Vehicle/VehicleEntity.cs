@@ -22,6 +22,7 @@ namespace UZSG.Entities
         public VehicleSeatManager SeatManager;
         public VehicleFunctionAnimation FunctionAnimation;
         public VehicleAudioManager AudioManager;
+        public VehicleCameraManager CameraManager;
 
         [Header("Vehicle Parts")]
         public GameObject Model;
@@ -62,6 +63,7 @@ namespace UZSG.Entities
             SeatManager = gameObject.GetComponent<VehicleSeatManager>();
             FunctionAnimation = gameObject.GetComponent<VehicleFunctionAnimation>();
             AudioManager = gameObject.GetComponent<VehicleAudioManager>();
+            CameraManager = gameObject.GetComponent<VehicleCameraManager>();
             Model = transform.Find("Vehicle Body").gameObject;
             _originalLayer = Model.layer;
         }

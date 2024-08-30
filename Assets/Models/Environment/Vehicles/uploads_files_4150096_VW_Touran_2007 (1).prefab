@@ -605,6 +605,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6343901433762621816}
+  - component: {fileID: 1293483383835631531}
   m_Layer: 0
   m_Name: uploads_files_4150096_VW_Touran_2007 (1)
   m_TagString: Untagged
@@ -620,7 +621,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5999287364377342914}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.0049049677, y: 0.73449075, z: 0.030230062, w: -0.6779274}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 17.2, y: -1.17, z: 16.39}
   m_LocalScale: {x: 1.4000001, y: 1.3999999, z: 1.4000001}
   m_ConstrainProportionsScale: 1
@@ -638,7 +639,28 @@ Transform:
   - {fileID: 3260554300330852546}
   - {fileID: 1425985970123848092}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: -2.164, y: 265.466, z: -2.764}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1293483383835631531
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5999287364377342914}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.291604, y: 1.8753012, z: 4.874809}
+  m_Center: {x: 0.005337255, y: 0.8646264, z: -0.04803487}
 --- !u!1 &6346689667708067864
 GameObject:
   m_ObjectHideFlags: 0

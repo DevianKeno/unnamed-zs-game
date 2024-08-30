@@ -65,7 +65,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &886878057684570296
 Transform:
   m_ObjectHideFlags: 0
@@ -221,6 +221,15 @@ MonoBehaviour:
     TransformDamping: 0
     RunningPosition: {x: 0, y: 0, z: 0}
     RunningRotation: {x: 0, y: 0, z: 0}
+  JogBob:
+    Amplitude: 0
+    Frequency: 0
+    Recovery: 0
+    MaintainForwardLook: 0
+    LookDistance: 0
+    TransformDamping: 0
+    RunningPosition: {x: 0, y: 0, z: 0}
+    RunningRotation: {x: 0, y: 0, z: 0}
   RunBob:
     Amplitude: -0.15
     Frequency: 0.85
@@ -228,6 +237,24 @@ MonoBehaviour:
     MaintainForwardLook: 0
     LookDistance: 16
     TransformDamping: 1
+    RunningPosition: {x: 0, y: 0, z: 0}
+    RunningRotation: {x: 0, y: 0, z: 0}
+  CrouchBob:
+    Amplitude: 0
+    Frequency: 0
+    Recovery: 0
+    MaintainForwardLook: 0
+    LookDistance: 0
+    TransformDamping: 0
+    RunningPosition: {x: 0, y: 0, z: 0}
+    RunningRotation: {x: 0, y: 0, z: 0}
+  _bobToUse:
+    Amplitude: 0
+    Frequency: 0
+    Recovery: 0
+    MaintainForwardLook: 0
+    LookDistance: 0
+    TransformDamping: 0
     RunningPosition: {x: 0, y: 0, z: 0}
     RunningRotation: {x: 0, y: 0, z: 0}
 --- !u!114 &5902371368100368436
@@ -598,6 +625,15 @@ MonoBehaviour:
     Recovery: 6
     MaintainForwardLook: 1
     LookDistance: 10
+    TransformDamping: 0
+    RunningPosition: {x: 0, y: 0, z: 0}
+    RunningRotation: {x: 0, y: 0, z: 0}
+  JogBob:
+    Amplitude: 0
+    Frequency: 0
+    Recovery: 0
+    MaintainForwardLook: 0
+    LookDistance: 0
     TransformDamping: 0
     RunningPosition: {x: 0, y: 0, z: 0}
     RunningRotation: {x: 0, y: 0, z: 0}
@@ -1223,7 +1259,7 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 112

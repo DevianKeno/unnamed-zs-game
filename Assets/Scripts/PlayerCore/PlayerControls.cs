@@ -33,6 +33,7 @@ namespace UZSG.Players
             _isRunning,
             _hasJumped;
         float _targetMoveSpeed;
+        float _crouchTransitionSpeed = 0.66f;
 
         bool _isTransitioningCrouch;
         float _crouchingCameraPosition;
@@ -62,10 +63,10 @@ namespace UZSG.Players
         public bool IsCrouching => _isCrouching;
         public bool IsMoving
         {
-            /// For some reason, this does not equate to zero,
-            /// even when the player is not moving and standing still
-            /// Bug?
-            // get => rb.velocity != Vector3.zero;
+            get => rb.velocity.magnitude >= 0.01f;
+        }
+        public bool IsAnyMoveKeyPressed
+        {
             get => _frameInput.Move != Vector2.zero;
         }
         public bool IsGrounded
@@ -225,6 +226,7 @@ namespace UZSG.Players
             HandleDirection();
             HandleTurning();
             HandleRotation();
+            HandleGravity();
             ApplyMovement();
             UpdateStates();
         }
@@ -252,11 +254,11 @@ namespace UZSG.Players
 
         #region Player input callbacks
 
-        void OnInputMove(InputAction.CallbackContext context)
+        void OnInputMove(InputAction.CallbackContext input)
         {
             if (!AllowMovement) return;
 
-            _frameInput.Move = context.ReadValue<Vector2>();
+            _frameInput.Move = input.ReadValue<Vector2>();
             _isAnyMovePressed = _frameInput.Move.x != 0f || _frameInput.Move.y != 0f;
             _isMovingSideways = _frameInput.Move.x != 0f;
             _isMovingBackwards = _frameInput.Move.y < 0f;
@@ -264,24 +266,19 @@ namespace UZSG.Players
             CancelRunIfNotRunningForwards();
         }
 
-        void OnInputRun(InputAction.CallbackContext context)
+        void OnInputRun(InputAction.CallbackContext input)
         {
             if (!AllowMovement) return;
             if (!IsGrounded) return;
-            
-            CancelRunIfNotRunningForwards();
 
-            if (context.started || CanRun)
+            if (input.started && CanRun && !Player.FPP.IsPerforming)
             {
-                if (Player.FPP.IsPerforming) return;
-                if (IsWalking)
-                {
-                    ToggleWalk(false);
-                }
+                ToggleCrouch(false); /// in the future, the player should be able to crouch-run
+                ToggleWalk(false);
 
                 ToggleRun(true);
             }
-            else if (context.canceled)
+            else if (input.canceled)
             {
                 ToggleRun(false);
             }
@@ -289,53 +286,41 @@ namespace UZSG.Players
 
         void OnInputWalkToggle(InputAction.CallbackContext context)
         {
-            if (IsRunning)
-            {
-                ToggleRun(false);
-            }
+            ToggleRun(false);
 
             ToggleWalk(!IsWalking);
         }
 
-        void OnInputJump(InputAction.CallbackContext context)
+        void OnInputJump(InputAction.CallbackContext input)
         {
             if (!AllowMovement) return;
 
-            if (context.started)
+            if (input.started && Player.CanJump)
             {
-                if (!Player.CanJump) return;
-            
-                if (_isRunning)
-                {
-                    ToggleRun(false);
-                }
-                if (_isCrouching)
-                {
-                    ToggleCrouch(false);
-                }
+                ToggleCrouch(false);
                 
                 HandleJump();
             }
         }
 
-        void OnInputCrouch(InputAction.CallbackContext context)
+        void OnInputCrouch(InputAction.CallbackContext input)
         {
             if (!AllowMovement) return;
 
             if (CrouchIsToggle)
             {
-                if (context.started)
+                if (input.started)
                 {
-                    ToggleCrouch(!_isCrouching);
+                    ToggleCrouch(!IsCrouching);
                 }
             }
             else // is hold
             {
-                if (context.started)
+                if (input.started)
                 {
                     ToggleCrouch(true);
                 }
-                else if (context.canceled)
+                else if (input.canceled)
                 {
                     ToggleCrouch(false);
                 }
@@ -355,13 +340,10 @@ namespace UZSG.Players
 
         void ToggleRun(bool run)
         {
+            if (run == _isRunning) return;
+
             if (run)
             {
-                if (_isCrouching)
-                {
-                    ToggleCrouch(false);
-                }
-
                 _targetMoveSpeed = _cachedAttributeValues["run_speed"];
                 _targetMoveState = MoveStates.Run;
             }
@@ -377,6 +359,8 @@ namespace UZSG.Players
 
         void ToggleWalk(bool walk)
         {
+            if (walk == _isWalking) return;
+            
             if (walk)
             {
                 _targetMoveSpeed = _cachedAttributeValues["walk_speed"];
@@ -410,16 +394,6 @@ namespace UZSG.Players
             _frameVelocity.Normalize();
         }
 
-        void HandleRotation()
-        {
-            /// Handle the rotation of the Player model only when moving
-            if (IsMoving)
-            {
-                Quaternion targetRotation = Quaternion.LookRotation(CameraForward.normalized);
-                Model.rotation = Quaternion.Slerp(Model.rotation, targetRotation, RotationDamping * Time.deltaTime);
-            }
-        }
-
         Quaternion _desiredRotation;
 
         void HandleTurning()
@@ -447,6 +421,40 @@ namespace UZSG.Players
             }
         }
 
+        void HandleRotation()
+        {
+            /// Handle the rotation of the Player model only when moving
+            if (IsMoving)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(CameraForward.normalized);
+                Model.rotation = Quaternion.Slerp(Model.rotation, targetRotation, RotationDamping * Time.deltaTime);
+            }
+        }
+
+        void HandleGravity()
+        {
+            // Gravity = -2 * JumpHeight / Mathf.Pow(JumpTime / 2, 2); /// this should be cached
+            // var Gravity = Physics.gravity.y;
+            var Gravity = -9.8f;
+            var targetV = rb.velocity;
+
+            if (IsGrounded) /// grounding force only
+            {
+                targetV.y = -0.1f;
+
+            }
+            else if (IsFalling) /// increasing fall speed
+            {
+                targetV.y += Gravity * 2f * Time.fixedDeltaTime; /// gravity squared
+            }
+            else /// normal gravity
+            {
+                targetV.y += Gravity * Time.fixedDeltaTime; /// gravity squared
+            }
+
+            rb.velocity = targetV;
+        }
+
         void ApplyMovement()
         {
             var targetVelocity = _frameVelocity * (_targetMoveSpeed * Time.fixedDeltaTime);
@@ -459,10 +467,10 @@ namespace UZSG.Players
 
         void ToggleCrouch(bool crouch)
         {
+            if (crouch == _isCrouching) return;
             if (_isTransitioningCrouch) return;
             _isTransitioningCrouch = true;
 
-            float transitionSpeed = 0.66f;
             Player.MoveStateMachine.ToState(MoveStates.Crouch);
             
             if (crouch)
@@ -479,7 +487,7 @@ namespace UZSG.Players
             }
             _isCrouching = crouch;
 
-            LeanTween.value(gameObject, Player.FPP.Camera.transform.position.y, _crouchingCameraPosition, transitionSpeed)
+            LeanTween.value(gameObject, Player.FPP.Camera.transform.position.y, _crouchingCameraPosition, _crouchTransitionSpeed)
             .setOnUpdate((float i) =>
             {   
                 Player.FPP.Camera.transform.position = new Vector3(

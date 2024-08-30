@@ -21,6 +21,7 @@ namespace UZSG.Players
         void Init(object sender, EventArgs e)
         {
             UI = Instantiate(UIPrefab, Game.UI.Canvas.transform).GetComponent<PlayerDebugUI>();
+            UI.Hide();
 
             Player.MoveStateMachine.OnTransition += MovementStateChanged;
             Player.ActionStateMachine.OnTransition += ActionStateChanged;

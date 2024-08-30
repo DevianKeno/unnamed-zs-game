@@ -77,7 +77,6 @@ namespace UZSG.Items
         {
             itemData = data;
             count = 0;
-            OnChanged = null;
         }
 
         /// <summary>
@@ -86,8 +85,7 @@ namespace UZSG.Items
         public Item(ItemData data, int count = 1)
         {
             itemData = data;
-            this.count = Math.Clamp(count, 0, EnsureStackSizeNotZero(itemData.StackSize));
-            OnChanged = null;
+            this.count = count;
         }
         
         /// <summary>
@@ -96,8 +94,7 @@ namespace UZSG.Items
         public Item(string id, int count = 1)
         {
             itemData = Game.Items.GetData(id);
-            this.count = Math.Clamp(count, 0, EnsureStackSizeNotZero(itemData.StackSize));
-            OnChanged = null;
+            this.count = count;
         }
                         
         /// <summary>
@@ -106,9 +103,7 @@ namespace UZSG.Items
         public Item(Item other)
         {
             itemData = other.Data;
-            int stack = other.IsNone ? 0 : itemData.StackSize;
-            count = Math.Clamp(other.Count, 0, EnsureStackSizeNotZero(stack));
-            OnChanged = null;
+            count = other.Count;
         }
                         
         /// <summary>
@@ -117,9 +112,7 @@ namespace UZSG.Items
         public Item(Item other, int count = 1)
         {
             itemData = other.Data;
-            int stack = other.IsNone ? 0 : itemData.StackSize;
-            this.count = Math.Clamp(count, 0, EnsureStackSizeNotZero(stack));
-            OnChanged = null;
+            this.count = count;
         }
 
         #endregion
@@ -305,11 +298,5 @@ namespace UZSG.Items
         }
 
         #endregion
-
-        
-        static int EnsureStackSizeNotZero(int stackSize)
-        {
-            return stackSize <= 0 ? 1 : stackSize;
-        }
     }
 }

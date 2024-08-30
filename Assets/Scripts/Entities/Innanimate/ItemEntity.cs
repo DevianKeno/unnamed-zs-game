@@ -28,7 +28,7 @@ namespace UZSG.Entities
         {
             get
             {
-                return item;
+                return AsItem();
             }
             set
             {
@@ -89,7 +89,7 @@ namespace UZSG.Entities
             _originalLayer = model.layer;
         }
 
-        protected virtual void Start()
+        protected override void Start()
         {
             LoadModel();
         }
@@ -106,6 +106,7 @@ namespace UZSG.Entities
         void LoadModel()
         {
             if (_isModelLoaded) return;
+
             if (item.IsNone)
             {
                 Game.Console.LogWarning($"Item in {transform.position} is a None Item.");
@@ -123,10 +124,12 @@ namespace UZSG.Entities
                 {
                     Destroy(model);
                     model = Instantiate(a.Result, transform);
+                    /// Change the tag of the actual Item model
+                    /// so it becomes "interactable"
                     model.ChangeTag("Interactable");
                     _isModelLoaded = true;
                 }
-            };            
+            };
         }
 
         void Second(SecondInfo e)
@@ -134,7 +137,7 @@ namespace UZSG.Entities
             Age -= 1;
             if (Age < 0)
             {
-                Despawn();
+                Kill();
             }
         }
 
@@ -171,6 +174,13 @@ namespace UZSG.Entities
         #endregion
 
 
+        protected override void OnKill()
+        {
+            _isModelLoaded = false;
+            Game.Tick.OnSecond -= Second;
+        }
+
+
         #region Public methods
 
         public void Interact(IInteractActor actor, InteractArgs args)
@@ -189,37 +199,34 @@ namespace UZSG.Entities
             {
                 return Item.None;
             }
-            
-            return new(item, item.Count);
+            else
+            {
+                return new(item);
+            }
         }
 
         public void OnLookEnter()
         {
-            if (model != null)
+            if (_isModelLoaded && model != null)
             {
+                /// render screen space outlines
                 model.layer = LayerMask.NameToLayer("Outline");
             }
         }
 
         public void OnLookExit()
         {
-            if (model != null)
+            if (_isModelLoaded && model != null)
             {
                 model.layer = _originalLayer;
             }
-        }
-
-        public void Despawn()
-        {
-            Game.Tick.OnSecond -= Second;
-            Game.Entity.Kill(this);
         }
 
         public void Cleanup()
         {
             if (item.IsNone)
             {
-                Destroy(gameObject);
+                Kill();
             }
         }
 

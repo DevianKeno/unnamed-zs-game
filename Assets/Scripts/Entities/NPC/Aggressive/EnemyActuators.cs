@@ -162,12 +162,16 @@ namespace UZSG.Entities
             Debug.Log("SpecialAttack2"); 
         }
 
+        protected override void OnKill()
+        {
+            Game.Tick.OnSecond -= OnSecond;
+            Debug.Log("Die");
+        }
+
         void Die()
         {
             actionStateMachine.ToState(EnemyActionStates.Die);
-            Game.Tick.OnSecond -= OnSecond;
-            Game.Entity.Kill(this);
-            Debug.Log("Die");
+            Kill(this);
         }
 
         void Horde()

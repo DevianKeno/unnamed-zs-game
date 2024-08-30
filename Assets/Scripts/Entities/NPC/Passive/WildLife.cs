@@ -142,15 +142,19 @@ namespace UZSG.Entities
 
         #endregion
 
+        protected override void OnKill()
+        {
+            Game.Tick.OnSecond -= OnSecond;
+            Debug.Log("Die");
+        }
+
 
         #region Actuator
 
         void Die()
         {
             WildlifeStateMachine.ToState(WildlifeActionStates.Die);
-            Game.Tick.OnSecond -= OnSecond;
-            Game.Entity.Kill(this);
-            Debug.Log("Die");
+            Kill(this);
         }
 
         void Roam()

@@ -4,12 +4,11 @@ using UZSG.Systems;
 
 namespace UZSG.UI
 {
-    public class Selector : MonoBehaviour
+    public class Selector : Window
     {
         public float AnimationFactor = 0.1f;
         public LeanTweenType TweenType;
         
-        [SerializeField] RectTransform rect;
         [SerializeField] Image image;
 
         void Awake()
@@ -40,12 +39,12 @@ namespace UZSG.UI
             image.enabled = true;
         }
 
-        public void Show()
+        public override void OnShow()
         {
             image.enabled = true;
         }
 
-        public void Hide()
+        public override void OnHide()
         {
             image.enabled = false;
         }

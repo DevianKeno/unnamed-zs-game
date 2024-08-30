@@ -50,6 +50,14 @@ namespace UZSG.FPP
         /// Whether if the FPP is performing any actions.
         /// </summary>
         public bool IsPerforming { get; private set; }
+        public bool IsHoldingWeapon
+        {
+            get => heldItem != null && heldItem.ItemData.Type == ItemType.Weapon;
+        }
+        public bool IsHoldingTool
+        {
+            get => heldItem != null && heldItem.ItemData.Type == ItemType.Tool;
+        }
         public bool HasArmsAnimations { get; private set; }
         public bool HasViewmodelAnimations { get; private set; }
         public bool HasCameraAnimations { get; private set; }

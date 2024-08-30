@@ -7,9 +7,9 @@ namespace UZSG.UI
     {
         [SerializeField] protected Attribute attribute;
         public Attribute Attribute => attribute;
-        public bool BufferOnDecreaseValue;
+        public bool AnimateBufferOnValueDecrease;
         public float BufferDuration = 0.2f;
-        public LeanTweenType TweenType = LeanTweenType.linear;
+        public LeanTweenType BufferEase = LeanTweenType.linear;
 
         [SerializeField] protected RectTransform bufferRect;
 
@@ -19,34 +19,43 @@ namespace UZSG.UI
 
             attribute = attr;
             attribute.OnValueChanged += OnValueChanged;
-            Refresh();
+            Value = attribute.ValueMaxRatio * BarMax;
+            RefreshBuffer();
             Rebuild();
         }
 
-        protected virtual void OnValueChanged(object sender, AttributeValueChangedContext info)
+        protected virtual void OnValueChanged(object sender, AttributeValueChangedContext ctx)
         {
-            Value = attribute.ValueMaxRatio * 100f;
+            RefreshFromAttributeContext(ctx);
+        }
 
-            if (BufferOnDecreaseValue && info.ValueChangedType == Attribute.ValueChangeType.Decreased)
+        public void RefreshFromAttributeContext(AttributeValueChangedContext ctx)
+        {
+            Value = attribute.ValueMaxRatio * BarMax;
+
+            if (AnimateBufferOnValueDecrease && ctx.ValueChangedType == Attribute.ValueChangeType.Decreased)
             {
-                float start = Mathf.Lerp(barRect.rect.width, 0f, info.Previous / 100f);
-                float end = Mathf.Lerp(barRect.rect.width, 0f, info.New / 100f);
-
-                LeanTween.cancel(gameObject);
-                LeanTween.value(gameObject, start, end, BufferDuration)
-                .setEase(TweenType)
-                .setOnUpdate((float x) =>
-                {
-                    bufferRect.offsetMax = new Vector2(-x, bufferRect.offsetMax.y);
-                });
+                AnimateBuffer(ctx);
             }
         }
 
-        public override void Refresh()
+        void AnimateBuffer(AttributeValueChangedContext ctx)
         {
-            base.Refresh();
+            float start = Mathf.Lerp(barRect.rect.width, BarMin, ctx.Previous / BarMax);
+            float end = Mathf.Lerp(barRect.rect.width, BarMin, ctx.New / BarMax);
 
-            float x = Mathf.Lerp(barRect.rect.width, 0f, Value / 100f);
+            LeanTween.cancel(gameObject);
+            LeanTween.value(gameObject, start, end, BufferDuration)
+            .setEase(BufferEase)
+            .setOnUpdate((float x) =>
+            {
+                bufferRect.offsetMax = new Vector2(-x, bufferRect.offsetMax.y);
+            });
+        }
+
+        public void RefreshBuffer()
+        {
+            float x = Mathf.Lerp(barRect.rect.width, BarMin, Value / BarMax);
             bufferRect.offsetMax = new Vector2(-x, bufferRect.offsetMax.y);
         }
 

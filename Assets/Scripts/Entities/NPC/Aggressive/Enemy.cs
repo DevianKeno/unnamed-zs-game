@@ -14,8 +14,12 @@ using System.Collections;
 
 namespace UZSG.Entities
 {
-        
-    public partial class Enemy : NonPlayerCharacter, IPlayerDetectable
+    public interface IEnemy
+    {
+        public event Action<IEnemy> OnDeath;    
+    }
+
+    public partial class Enemy : NonPlayerCharacter, IPlayerDetectable, IEnemy
     {
         /// <summary>
         /// Clear console messages.
@@ -66,7 +70,9 @@ namespace UZSG.Entities
         }
 
         #endregion
+        
 
+        public event Action<IEnemy> OnDeath;
 
         [Header("Components")]
         [SerializeField] Animator animator;
@@ -117,6 +123,13 @@ namespace UZSG.Entities
         void OnSecond(SecondInfo s)
         {
             ResetTargetIfNotInRange();
+        }
+
+        public override void Kill(bool notify = true)
+        {
+            OnDeath?.Invoke(this);
+
+            base.Kill(notify);
         }
 
 

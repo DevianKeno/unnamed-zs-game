@@ -43,7 +43,7 @@ namespace UZSG.WorldEvents
             return _selectedEvents;
         }
 
-        WeatherEventInstance? SelectWeatherToOccur(WorldEventData eventData)
+        void SelectWeatherToOccur(WorldEventData eventData)
         {
             List<WeatherEventInstance> selectedEvents = new();
             
@@ -55,7 +55,7 @@ namespace UZSG.WorldEvents
             if (selectedEvents.Count == 0)
             {
                 Game.Console.Log($"<color=#e8eb34>No weather event selected.</color>");
-                return null;
+                return;
             }
             else if (selectedEvents.Count > 1 && !eventData.AllowMultipleEvents)
                 selectedEvents = KeepOnlyAtIndex(selectedEvents, UnityEngine.Random.Range(0, selectedEvents.Count));
@@ -63,10 +63,9 @@ namespace UZSG.WorldEvents
             Game.Console.Log($"<color=#e8eb34>Event occured: {selectedEvents[0].Name}</color>");  
 
             _selectedEvents.Add(selectedEvents[0]);
-            return selectedEvents[0];
         }
 
-        List<RaidEventInstance> SelectRaidToOccur(WorldEventData eventData)
+        void SelectRaidToOccur(WorldEventData eventData)
         {
             List<RaidEventInstance> selectedEvents = new();
 
@@ -78,7 +77,7 @@ namespace UZSG.WorldEvents
             if (selectedEvents.Count == 0)
             {
                 Game.Console.Log($"<color=#e8eb34>No raid event selected.</color>");
-                return null;
+                return;
             }
             else if (selectedEvents.Count > 1 && !eventData.AllowMultipleEvents)
                 selectedEvents = KeepOnlyAtIndex(selectedEvents, UnityEngine.Random.Range(0, selectedEvents.Count));
@@ -88,33 +87,7 @@ namespace UZSG.WorldEvents
                     Game.Console.Log($"<color=#e8eb34>Event occured: {raidInstance.Name}</color>");
                     _selectedEvents.Add(raidInstance);
                 }
-            
-            return selectedEvents;
         }
-
-        // void SelectEvent(WorldEventData eventData)
-        // {            
-        //     List<object> selectedEvents;
-
-        //     // int chance = UnityEngine.Random.Range(1, 100);
-        //     // foreach (EventPrefab eventPrefab in eventData.EventPrefab)
-        //     // {
-        //     //     if (eventPrefab.ChanceToOccur >= chance) selectedEvents.Add(eventPrefab);
-        //     // }
-            
-        //     if (selectedEvents.Count == 0)
-        //     {
-        //         Game.Console.Log($"<color=#e8eb34>No event prefab selected.</color>");
-        //         return null;
-        //     }
-        //     else if (selectedEvents.Count > 1 && !eventData.AllowMultipleEvents)
-        //         selectedEvents = KeepOnlyAtIndex(selectedEvents, UnityEngine.Random.Range(0, selectedEvents.Count));
-            
-        //     foreach (EventPrefab eventPrefab in selectedEvents)
-        //         Game.Console.Log($"<color=#e8eb34>Event occured: {eventPrefab.Name}</color>");
-            
-        //     _selectedEvents = selectedEvents;
-        // }
 
         List<T> KeepOnlyAtIndex<T>(List<T> originalList, int index)
         {

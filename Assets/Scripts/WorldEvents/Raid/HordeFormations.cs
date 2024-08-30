@@ -8,7 +8,8 @@ namespace UZSG.WorldEvents.Raid
     public class HordeFormations : MonoBehaviour
     {
         Player player;
-        List<Entity> _hordeZombies = new();
+        List<IEnemy> _hordeZombies = new();
+        public List<IEnemy> HordeZombies => _hordeZombies;
         RaidInstance _raidInstance;
         Quaternion? _facingDirection = null;
         Vector3? _selectedPoint = null;
@@ -16,7 +17,7 @@ namespace UZSG.WorldEvents.Raid
         /// Temporary values <summary>
         float minRadius = 30f;
         float maxRadius = 50f;
-        float spread = 1.25f;
+        float spread = 0.75f;
 
         public void HandlePrerequisites(RaidInstance raidInstance, Player selectedPlayer)
         {
@@ -62,6 +63,7 @@ namespace UZSG.WorldEvents.Raid
             //     spawnPosition += player.transform.forward * 10f;
             //     SpawnZombie(spawnPosition);
             // }
+            throw new System.NotImplementedException();
         }
 
         void SpawnInWaves()
@@ -88,20 +90,6 @@ namespace UZSG.WorldEvents.Raid
                 _hordeZombies.Add(info.Entity);
                 FaceTowardsPlayer(info.Entity);
             });
-
-            Game.Entity.OnEntityKilled += OnEntityKilled;
-        }
-
-        private void OnEntityKilled(EntityManager.EntityKilledInfo info)
-        {
-            if (_hordeZombies.Contains(info.Entity))
-            {
-                _hordeZombies.Remove(info.Entity);
-                if (_hordeZombies.Count == 0)
-                {
-                    Game.Entity.OnEntityKilled -= OnEntityKilled;
-                }
-            }
         }
 
         Vector3 GetRandomPositionAroundPlayer(float spreadRadius)
@@ -115,7 +103,6 @@ namespace UZSG.WorldEvents.Raid
             }
 
             Vector2 randomSpread = Random.insideUnitCircle * spreadRadius;
-            
             Vector3 position = _selectedPoint.Value + new Vector3(randomSpread.x, 0, randomSpread.y);
 
             return position;

@@ -82,7 +82,7 @@ namespace UZSG.Entities.Vehicles
             }
         }
 
-        public void ToggleFPPCamera(Player player, bool isEnabled)
+        public void ToggleFPPCameraInput(Player player, bool isEnabled)
         {
             // Enable Player Camera Look
             _cameraInput = player.transform.Find("FPP Camera Controller").GetComponent<FPPCameraInput>();
@@ -122,7 +122,7 @@ namespace UZSG.Entities.Vehicles
             GameObject playerUI = GetPlayerGameObjectFromContext(context);
             // Testing Only
             Player player = playerUI.GetComponent<PlayerReference>().PlayerEntity;
-            _vehicle.SeatManager.ChangeVehicleView(player);
+            _vehicle.CameraManager.ChangeVehicleView(player);
         }
 
         private GameObject GetPlayerGameObjectFromContext(InputAction.CallbackContext context)

@@ -50,9 +50,15 @@ namespace UZSG.Entities
         [SerializeField] PlayerAudioSourceController audioController;
         public PlayerAudioSourceController Audio => audioController;
 
+        /// <summary>
+        /// Player's forward direction relative to the FPP Camera.
+        /// </summary>
         public Vector3 Forward => MainCamera.transform.forward;
         public Vector3 Right => MainCamera.transform.right;
         public Vector3 Up => MainCamera.transform.up;
+        /// <summary>
+        /// World space position of the Player's eye level.
+        /// </summary>
         public Vector3 EyeLevel => MainCamera.transform.position;
         public Transform Model => Controls.Model;
 

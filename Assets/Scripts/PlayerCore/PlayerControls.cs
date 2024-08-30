@@ -268,6 +268,8 @@ namespace UZSG.Players
         {
             if (!AllowMovement) return;
             if (!IsGrounded) return;
+            
+            CancelRunIfNotRunningForwards();
 
             if (context.started || CanRun)
             {
@@ -345,7 +347,7 @@ namespace UZSG.Players
 
         void CancelRunIfNotRunningForwards()
         {
-            if (_isRunning && (_isMovingSideways || _isMovingBackwards))
+            if (_isMovingSideways || _isMovingBackwards)
             {
                 ToggleRun(false);
             }
@@ -521,7 +523,6 @@ namespace UZSG.Players
                 }
             }
         }
-
         #endregion
     }
 }

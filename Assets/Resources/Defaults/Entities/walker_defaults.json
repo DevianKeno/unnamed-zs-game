@@ -37,28 +37,6 @@
       "Type": "AttributeSaveData"
     },
     {
-      "Id": "zombie_roam_interval",
-      "Value": 12.0,
-      "Minimum": 0.0,
-      "BaseMaximum": 1000.0,
-      "Multiplier": 1.0,
-      "FlatBonus": 0.0,
-      "LimitOverflow": true,
-      "LimitUnderflow": true,
-      "Type": "AttributeSaveData"
-    },
-    {
-      "Id": "zombie_roam_radius",
-      "Value": 16.0,
-      "Minimum": 0.0,
-      "BaseMaximum": 1000.0,
-      "Multiplier": 1.0,
-      "FlatBonus": 0.0,
-      "LimitOverflow": true,
-      "LimitUnderflow": true,
-      "Type": "AttributeSaveData"
-    },
-    {
       "Id": "zombie_site_radius",
       "Value": 22.0,
       "Minimum": 0.0,
@@ -71,7 +49,7 @@
     },
     {
       "Id": "zombie_rotation_threshold",
-      "Value": 7.0,
+      "Value": 16.0,
       "Minimum": 0.0,
       "BaseMaximum": 1000.0,
       "Multiplier": 1.0,

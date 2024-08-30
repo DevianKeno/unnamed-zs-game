@@ -56,7 +56,8 @@ namespace UZSG.Entities
                 // if facing player attack, else rotate
                 if (angle < rotationThreshold) // Adjust the threshold (e.g., 1 degree) as needed
                 {   
-                    actionStateMachine.ToState(EnemyActionStates.Attack);
+                    moveStateMachine.ToState(EnemyMoveStates.Idle);
+                    actionStateMachine.ToState(Attack);
                 }
                 else
                 {

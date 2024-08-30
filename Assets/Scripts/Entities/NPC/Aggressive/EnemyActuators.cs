@@ -6,6 +6,8 @@ using UnityEngine.AI;
 using UnityEngine.UIElements;
 using UZSG.Systems;
 
+using static UZSG.Entities.EnemyActionStates;
+
 namespace UZSG.Entities
 {
     public partial class Enemy : NonPlayerCharacter
@@ -17,49 +19,78 @@ namespace UZSG.Entities
         /// </summary>
         void InitializeActuators()
         {
-            actionStateMachine[EnemyActionStates.Chase].EnableFixedUpdateCall = true;
-            actionStateMachine[EnemyActionStates.Chase].OnFixedUpdate += OnChaseFixedUpdate;
+            actionStateMachine[Chase].EnableFixedUpdateCall = true;
+            actionStateMachine[Chase].OnFixedUpdate += OnChaseFixedUpdate;
 
-            actionStateMachine[EnemyActionStates.Roam].EnableFixedUpdateCall = true;
-            actionStateMachine[EnemyActionStates.Roam].OnFixedUpdate += OnRoamFixedUpdate;
+            actionStateMachine[Roam].EnableFixedUpdateCall = true;
+            actionStateMachine[Roam].OnFixedUpdate += OnRoamFixedUpdate;
 
-            actionStateMachine[EnemyActionStates.Attack].OnTransition += OnAttackEnter;
-
-            actionStateMachine[EnemyActionStates.Idle].OnTransition += OnIdleEnter;
-            actionStateMachine[EnemyActionStates.Die].OnTransition += OnDieEnter;
+            actionStateMachine.OnTransition += OnActionTransition;
         }
 
-        void OnAttackEnter(StateMachine<EnemyActionStates>.TransitionContext e)
+        void OnActionTransition(StateMachine<EnemyActionStates>.TransitionContext transition)
         {
-            // if player in range prepare attack, else zombie is at idle state
-            if (_hasTargetInAttackRange && !attackOnCooldown)
+            switch (transition.From) // the current state 
             {
-                Attack();
+                case Idle:
+                {
+                    Debug.Log("dito");
+                    if (transition.To == Attack)
+                    {
+                        // if player in range prepare attack, else zombie is at idle state
+                        if (_hasTargetInAttackRange && !attackOnCooldown)
+                        {  
+                            ActionAttack();
+                        }
+                        else if (!_hasTargetInAttackRange)
+                        {
+                            ActionChase();
+                        }
+                    }
+                    break;
+                }
+                case Attack:
+                {
+                    if (transition.To == Idle)
+                    {
+                        ActionIdle();
+                    }
+                    break;
+                }
+                case Roam:
+                {
+                    if (transition.To == Idle)
+                    {
+                        ActionIdle();
+                    }
+                    break;
+                }
+                case Chase:
+                {
+                    if (transition.To == Attack)
+                    {
+                        ActionAttack();
+                    }
+                    break;
+                }
+                case Die:
+                {
+                    ActionDie();
+                    break;
+                }
+                default:
+                    break;
             }
-            else
-            {
-                actionStateMachine.ToState(EnemyActionStates.Idle);
-            }
-        }
-
-        private void OnDieEnter(StateMachine<EnemyActionStates>.TransitionContext context)
-        {
-            Die();
-        }
-
-        void OnIdleEnter(StateMachine<EnemyActionStates>.TransitionContext e)
-        {
-            
         }
 
         void OnRoamFixedUpdate()
         {
-            Roam();
+            ActionRoam();
         }
 
         void OnChaseFixedUpdate()
         {
-            Chase();
+            ActionChase();
         }
 
 
@@ -90,7 +121,12 @@ namespace UZSG.Entities
             isAlreadyRotating = false;
         }
 
-        void Roam()
+        void ActionIdle()
+        {
+
+        }
+
+        void ActionRoam()
         {
             navMeshAgent.isStopped = false;
             /// Check if the enemy has reached its destination and is actively moving
@@ -99,7 +135,7 @@ namespace UZSG.Entities
                 navMeshAgent.isStopped = true;
                 navMeshAgent.updateRotation = false;
                 moveStateMachine.ToState(EnemyMoveStates.Idle);
-                actionStateMachine.ToState(EnemyActionStates.Idle);
+                actionStateMachine.ToState(Idle);
             }
             else
             {
@@ -136,13 +172,12 @@ namespace UZSG.Entities
             }
         }
 
-        void Attack()
+        void ActionAttack()
         {
             // if attack not on cd, do animation and set physics to attacking
             if (!attackOnCooldown)
             {
                 Debug.Log("is attacking");
-                moveStateMachine.ToState(EnemyMoveStates.Idle);
                     
                 StartCoroutine(AttackCounterDownTimer());
 
@@ -171,17 +206,25 @@ namespace UZSG.Entities
             attackOnCooldown = false;
             attackCooldown = cooldownHolder;
             isAttacking = false;
-            actionStateMachine.ToState(EnemyActionStates.Idle);
+            // if there is a target in range idle, else if not in range chase
+            if (_hasTargetInAttackRange)
+            {
+                actionStateMachine.ToState(Idle);
+            }
+            else
+            {
+                actionStateMachine.ToState(Chase);
+            }
         }
 
-        void Die()
+        void ActionDie()
         {
             Game.Tick.OnSecond -= OnSecond;
             Game.Entity.Kill(this);
             Debug.Log("Die");
         }
 
-        void Chase()
+        void ActionChase()
         {
             /// set rigid body to dynamic   
             rb.isKinematic = false;

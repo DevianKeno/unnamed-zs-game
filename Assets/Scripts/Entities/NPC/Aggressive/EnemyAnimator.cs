@@ -26,11 +26,11 @@ namespace UZSG.Entities
         {
             if (e.To == EnemyMoveStates.Idle)
             {
-                animator.CrossFade("idle_drunk", 0.1f);
+                animator.CrossFade("idle", 0.1f);
             }
             else if (e.To == EnemyMoveStates.Run)
             {
-                animator.CrossFade("jog_forward", 0.1f);
+                animator.CrossFade("jog_drunk", 0.1f);
             }
             else if (e.To == EnemyMoveStates.Walk)
             {
@@ -42,7 +42,7 @@ namespace UZSG.Entities
         {
             if (e.To == EnemyActionStates.Idle)
             {
-                animator.CrossFade("idle_drunk", 0.1f);
+                animator.CrossFade("idle", 0.1f);
             }
             else if (e.To == EnemyActionStates.Scream)
             {

@@ -29,7 +29,10 @@ namespace UZSG.Entities
         }
 
         public EnemyData EnemyData => entityData as EnemyData;
-        public float RotationDamping = 30f;
+        public float RotationDamping = 9f;
+        public float _roamTime; // Time it takes for the agent to travel a point
+        public float _roamRadius = 16f; // Radius of which the agent can travel
+        public float _roamInterval = 12f; // Interval before the model moves again
 
         [Header("Agent Information")]
         public LayerMask PlayerLayer; // Layers that the enemy chases
@@ -41,12 +44,9 @@ namespace UZSG.Entities
         [SerializeField] bool _hasTargetInSight; // checks if the player is in site, attack range or is a target
         [SerializeField] bool _hasTargetInAttackRange;
         [SerializeField] float attackCooldown;
-        [SerializeField] float _roamTime; // Time it takes for the agent to travel a point
-        [SerializeField] float _roamRadius; // Radius of which the agent can travel
-        [SerializeField] float _roamInterval; // Interval before the model moves again
         [SerializeField] float _distanceFromPlayer;
+        [SerializeField] float rotationThreshold; // note that threshold must be greater than "_siteRadius"
         [SerializeField] float _moveSpeed;
-        [SerializeField] float rotationThreshold;
         [SerializeField] float _siteRadius;
         [SerializeField] float _attackRadius; // Radius of which the enemy detects the player
         [SerializeField] Vector3 _randomDestination; // Destination of agent
@@ -116,8 +116,6 @@ namespace UZSG.Entities
             _moveSpeed = Attributes.Get("move_speed").Value;
             _siteRadius = Attributes.Get("zombie_site_radius").Value;
             _attackRadius = Attributes.Get("zombie_attack_radius").Value;
-            _roamRadius = Attributes.Get("zombie_roam_radius").Value;
-            _roamInterval = Attributes.Get("zombie_roam_interval").Value;
             rotationThreshold = Attributes.Get("zombie_rotation_threshold").Value;
             attackCooldown = Attributes.Get("zombie_attack_cooldown_time").Value;
         }

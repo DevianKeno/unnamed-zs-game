@@ -223,7 +223,11 @@ namespace UZSG.UI.Players
             ReleaseHeldItem();
             return toReturn;
         }
-
+        public Item TakeHeldItemSingle()
+        {
+            Item toReturn = _heldItem.Take(1);
+            return toReturn;
+        }
         /// <summary>
         /// Swaps held items, holding the new given Item, and returning the previously held Item.
         /// </summary>

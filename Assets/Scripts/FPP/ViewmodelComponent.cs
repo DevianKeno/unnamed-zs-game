@@ -2,6 +2,9 @@ using UnityEngine;
 
 namespace UZSG.FPP
 {
+    /// <summary>
+    /// Reference holder for the various Components of a Viewmodel.
+    /// </summary>
     public class ViewmodelComponent : MonoBehaviour
     {
         [SerializeField] Animator modelAnimator;

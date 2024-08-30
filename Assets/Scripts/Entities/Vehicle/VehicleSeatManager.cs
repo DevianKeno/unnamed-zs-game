@@ -11,13 +11,12 @@ namespace UZSG.Entities.Vehicles
         VehicleEntity _vehicle;
 
         #region Vehicle Seats
-        [Header("Vehicle Player Seats")]
+        [Header("Vehicle Occupants")]
         public Player Driver; // driver of the vehicle
         public List<Player> Passengers; // passenger of the vehicle
 
-        [Header("Vehicle Camera Transforms")]
-        public List<Transform> FPPCameraView; // transform of the seats of the vehicle
-        public Transform TPPCameraView;
+        [Header("Vehicle Seat Transform")]
+        public List<Transform> VehicleSeats; // transform of the seats of the vehicle
         #endregion
 
         #region Other Important Values
@@ -30,74 +29,32 @@ namespace UZSG.Entities.Vehicles
             _playerParent = this.transform.parent;
         }
 
-        private void Start()
-        {
-            _vehicle.TPPCamera.gameObject.SetActive(false);
-        }
-
-        private void LateUpdate()
-        {
-            _vehicle.TPPCamera.transform.position = Vector3.Lerp(
-                _vehicle.TPPCamera.transform.position,
-                TPPCameraView.transform.position,
-                0.1f
-            );
-
-            _vehicle.TPPCamera.transform.rotation = Quaternion.Lerp(
-                _vehicle.TPPCamera.transform.rotation,
-                TPPCameraView.transform.rotation,
-                0.1f
-            );
-
-            _vehicle.TPPCamera.transform.LookAt(_vehicle.Model.transform);
-        }
-
-        public void EnterVehicle(Player player)
-        {
-            bool[] _areSeatsOccupied = SeatsOccupied();
-            if (_areSeatsOccupied[0] && _areSeatsOccupied[1]) return;
-
-            if (Driver == null)
-            {
-                EnterDriver(player);
-            }
-            else
-            {
-                EnterPassenger(player);
-            }
-
-            player.MainCamera.gameObject.SetActive(false);
-            _vehicle.TPPCamera.gameObject.SetActive(true);
-
-            // Toggle Third Person Model to Match Vehicle Transform
-            player.Model.rotation = Quaternion.LookRotation(_vehicle.Model.transform.forward);
-
-            // Toggle Player Variables
-            player.Controls.Rigidbody.isKinematic = true; // "Disable" the Rigidbody
-            player.Controls.Rigidbody.useGravity = false;
-            foreach (CapsuleCollider collider in player.GetComponents<CapsuleCollider>()) // Disable the colliders
-            {
-                collider.enabled = false;
-            }
-
-            // Toggle Vehicle Controls
-            _vehicle.InputHandler.ToggleGeneralControls(player, true);
-            _vehicle.InputHandler.ToggleFPPCamera(player, false);
-        }
-
         public bool[] SeatsOccupied()
         {
             // Check if driver seat has a player set to it
             bool driverOccupied = Driver != null;
-            //Check if passenger seat has a player set to it
+
+            // Check if passenger seat has a player set to it
             bool passengerOccupied = Passengers != null && Passengers.All(passenger => passenger != null);
             return new[] { driverOccupied, passengerOccupied };
         }
 
+        public void TogglePlayerPhysics(Player player, bool isEnabled)
+        {
+            // Toggle Player Variables
+            player.Controls.Rigidbody.isKinematic = !isEnabled; // "Disable" the Rigidbody
+            player.Controls.Rigidbody.useGravity = isEnabled;
+            foreach (CapsuleCollider collider in player.GetComponents<CapsuleCollider>()) // Disable the colliders
+            {
+                collider.enabled = isEnabled;
+            }
+        }
+
         public void EnterDriver(Player player)
         {
+            // Set Driver to Player
             Driver = player;
-            player.transform.SetParent(FPPCameraView[0], false);
+            player.transform.SetParent(VehicleSeats[0], false);
             player.transform.localPosition = Vector3.zero;
             _vehicle.InputHandler.ToggleVehicleControls(true);
         }
@@ -111,18 +68,32 @@ namespace UZSG.Entities.Vehicles
             }
         }
 
-        // Set the Seat of the Player to Next Seat Available
         public void SetPassengerSeat(Player player, int seatPosition)
         {
             if (Passengers[seatPosition] == null)
             {
                 Passengers[seatPosition] = player;
-                player.transform.SetParent(FPPCameraView[seatPosition + 1], false);
+                player.transform.SetParent(VehicleSeats[seatPosition + 1], false);
                 player.transform.localPosition = Vector3.zero;
             }
         }
 
-        // Change Seat for Seated Players
+        public void ChangePassengerSeat(Player player, int previousSeat = 0)
+        {
+            if (previousSeat == Passengers.Count - 1)
+            {
+                EnterDriver(player);
+            }
+            else
+            {
+                for (int i = previousSeat + 1; i < Passengers.Count + 1; i++)
+                {
+                    SetPassengerSeat(player, i);
+                    return;
+                }
+            }
+        }
+
         public void ChangeSeat(Player player)
         {
             if (Driver == player)
@@ -145,56 +116,38 @@ namespace UZSG.Entities.Vehicles
             }
         }
 
-        // Change Seat for Passenger Players
-        public void ChangePassengerSeat(Player player, int previousSeat = 0)
+        public void EnterVehicle(Player player)
         {
-            if (previousSeat == Passengers.Count - 1)
+            bool[] _areSeatsOccupied = SeatsOccupied();
+            if (_areSeatsOccupied[0] && _areSeatsOccupied[1]) return;
+
+            if (Driver == null)
             {
                 EnterDriver(player);
             }
             else
             {
-                for (int i = previousSeat + 1; i < Passengers.Count + 1; i++)
-                {
-                    SetPassengerSeat(player, i);
-                    return;
-                }
+                EnterPassenger(player);
             }
+
+            // Toggles Camera View to TPP
+            _vehicle.CameraManager.ToggleCamera(player, "TPP");
+
+            // Toggle Third Person Model to Match Vehicle Transform
+            player.Model.rotation = Quaternion.LookRotation(_vehicle.Model.transform.forward);
+
+            // Toggle Player Physics
+            TogglePlayerPhysics(player, false);
+
+            // Toggle Vehicle Controls
+            _vehicle.InputHandler.ToggleGeneralControls(player, true);
         }
 
-        public void ChangeVehicleView(Player player)
-        {
-            if (player.MainCamera.gameObject.activeSelf == false)
-            {
-                player.MainCamera.gameObject.SetActive(true);
-                _vehicle.TPPCamera.gameObject.SetActive(false);
-
-                _vehicle.InputHandler.ToggleFPPCamera(player, true);
-            }
-            else
-            {
-                player.MainCamera.gameObject.SetActive(false);
-                _vehicle.TPPCamera.gameObject.SetActive(true);
-
-                _vehicle.InputHandler.ToggleFPPCamera(player, false);
-            }
-        }
-
-        // Exit Vehicle
         public void ExitVehicle(Player player)
         {
-            player.Controls.Rigidbody.isKinematic = false; // "Disable" the Rigidbody
-            player.Controls.Rigidbody.useGravity = true;
-            foreach (CapsuleCollider collider in player.GetComponents<CapsuleCollider>()) // Disable the colliders
-            {
-                collider.enabled = true;
-            }
+            TogglePlayerPhysics(player, true);
 
-            player.MainCamera.gameObject.SetActive(true);
-            _vehicle.TPPCamera.gameObject.SetActive(false);
-
-            // Enable Player Camera Look
-            _vehicle.InputHandler.ToggleFPPCamera(player, true);
+            _vehicle.CameraManager.ToggleCamera(player, "FPP");
 
             player.transform.SetParent(_playerParent, false); // Set the player position to the environment
 
@@ -214,6 +167,8 @@ namespace UZSG.Entities.Vehicles
             {
                 Passengers[Passengers.IndexOf(player)] = null;
             }
+
+            // Disable Vehicle Controls
             _vehicle.InputHandler.ToggleGeneralControls(player, false);
             CheckPassengers();
         }
@@ -231,7 +186,6 @@ namespace UZSG.Entities.Vehicles
             {
                 print("1");
                 _vehicle.Controller.DisableVehicle();
-                
             }
         }
     }

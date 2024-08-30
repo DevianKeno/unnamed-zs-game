@@ -12,7 +12,7 @@ namespace UZSG.UI
 
         public void UpdateMaxFuel(float fuelCount)
         {
-            _maxFuel = fuelCount;
+            _maxFuel = fuelCount * 1000;
         }
         public void UpdateFuelRemaining()
         {

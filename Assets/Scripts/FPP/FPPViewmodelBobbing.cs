@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UZSG.Entities;
 
@@ -11,22 +12,36 @@ namespace UZSG.FPP
         [Header("Settings")]
         public bool Enabled = true;
         public float MinSpeed = 0.3f;
+
+        #region This can be done better
         public BobSettings WalkBob = new();
+        public BobSettings JogBob = new();
         public BobSettings RunBob = new();
+        public BobSettings CrouchBob = new();
+        #endregion
         
-        Vector3 _originalPosition;
-        BobSettings _bobToUse;
+        [SerializeField] BobSettings _bobToUse;
+        Vector3 _originalPosition; /// local
+        Quaternion _originalRotation; /// local
 
         void Start()
         {
             _originalPosition = transform.localPosition;
+            _originalRotation = transform.localRotation;
         }
 
         void Update()
         {
             if (!Enabled) return;
+
             Bob();
             RecoverPosition();
+        }
+
+        public void SetRunningBobSettings(ViewmodelSettings settings)
+        {
+            RunBob.RunningPosition = settings.RunBobPosition;
+            RunBob.RunningRotation = settings.RunBobRotation;
         }
 
         void Bob()
@@ -34,12 +49,33 @@ namespace UZSG.FPP
             if (!Player.Controls.IsGrounded) return;
             if (Player.Controls.Speed < MinSpeed) return;
 
-            _bobToUse = Player.Controls.IsRunning ? RunBob : WalkBob;
+            _bobToUse = GetBob();
+
             AddPosition(FootStepMotion());
+            AddRunningGunRotationAdditive();
             if (_bobToUse.MaintainForwardLook)
             {
                 transform.LookAt(FocusTarget());
             }
+        }
+
+        void AddRunningGunRotationAdditive()
+        {
+            Quaternion targetRotation = Quaternion.Inverse(transform.localRotation);
+            if (Player.Controls.IsRunning)
+            {
+                targetRotation *= Quaternion.Euler(_bobToUse.RunningRotation);
+            }
+            else
+            {
+                targetRotation *= _originalRotation;
+            }
+
+            transform.localRotation = Quaternion.Slerp(
+                transform.localRotation,
+                targetRotation,
+                _bobToUse.TransformDamping * Time.deltaTime
+            );
         }
 
         void AddPosition(Vector3 motion)
@@ -71,5 +107,26 @@ namespace UZSG.FPP
                 _bobToUse.Recovery * BobSettings.RecoveryFactor * Time.deltaTime) - transform.localPosition;
             AddPosition(motion);
         }
+
+        BobSettings GetBob()
+        {
+            if (Player.Controls.IsRunning)
+            {
+                return RunBob;
+            }
+            else if (Player.Controls.IsWalking)
+            {
+                return WalkBob;
+            }
+            else if (Player.Controls.IsCrouching)
+            {
+                return CrouchBob;
+            }
+            else
+            {
+                return JogBob;
+            }
+        }
+
     }
 }

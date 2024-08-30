@@ -82,15 +82,18 @@ MonoBehaviour:
       RecoverySpeed: 1
       RecoveryDuration: 0
   armsAnimations: {fileID: 9100000, guid: 57d7336a04175d34a89f51d4a249c9e5, type: 2}
-  viewmodel:
-    m_AssetGUID: 53cd6ec30db0d304ab4ca87c9dd585fa
+  viewmodelAsset:
+    m_AssetGUID: dd94efc38c6a7424d95b38bbd4abbbeb
     m_SubObjectName: 
     m_SubObjectType: 
-    m_EditorAssetChanged: 1
-  viewmodelOffsets:
-    Position: {x: 0, y: 0, z: 0}
-    Rotation: {x: 0, y: 0, z: 0}
-  anims:
+    m_EditorAssetChanged: 0
+  viewmodelSettings:
+    UseOffsets: 0
+    PositionOffset: {x: -0.04, y: 0.02, z: -0.03}
+    RotationOffset: {x: 0, y: 0.22, z: 0}
+    RunBobPosition: {x: 0.15, y: 0, z: -0.2}
+    RunBobRotation: {x: 16, y: -37, z: 0}
+  animationData:
     Idle: 
     Move: 
     Primary: fire

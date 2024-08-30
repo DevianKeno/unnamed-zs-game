@@ -27,8 +27,8 @@ MonoBehaviour:
   Subtype: 0
   Weight: 0
   StackSize: 999
-  IsFuel: 0
-  FuelDuration: 0
+  IsFuel: 1
+  FuelDuration: 60
   IsMaterial: 1
   IsCraftable: 1
   Recipes: []

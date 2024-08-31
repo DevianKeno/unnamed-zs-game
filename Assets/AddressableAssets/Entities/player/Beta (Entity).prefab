@@ -1052,7 +1052,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 81920
   PlayerDetectionRange: 24
-  PlayerAttackableRange: 0
+  PlayerAttackableRange: 2
 --- !u!1 &9031321928697203625
 GameObject:
   m_ObjectHideFlags: 0

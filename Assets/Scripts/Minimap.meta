@@ -1,8 +1,14 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Scripts/Minimap.meta
 guid: bcb4f6e08af53414d8fa60d47d407165
 folderAsset: yes
 DefaultImporter:
+========
+guid: 445468e46b21cf3418fffbbbca19442f
+NativeFormatImporter:
+>>>>>>>> origin/miguel_feat_enemy-animation-pt2:Assets/Resources/Data/Attributes/zombie_rotation_threshold.asset.meta
   externalObjects: {}
+  mainObjectFileID: 11400000
   userData: 
   assetBundleName: 
   assetBundleVariant: 

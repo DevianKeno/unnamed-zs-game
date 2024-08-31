@@ -15,19 +15,22 @@ namespace UZSG.Players
         void FixedUpdate()
         {
             CastDetectionSphere();
-            // FindEnemyInRange();
-            // FindCritterInRange();
         }
 
         void OnDrawGizmos()
         {
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(transform.position, 20);
+
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(transform.position, 2);
         }
 
         public void CastDetectionSphere()
         {
             Collider[] detectedColliders = Physics.OverlapSphere(transform.position, PlayerDetectionRange, Layers);
+            Collider[] attackableColliders = Physics.OverlapSphere(transform.position, PlayerAttackableRange, Layers);
+            
             foreach (var collider in detectedColliders)
             {
                 if (collider.TryGetComponent<IPlayerDetectable>(out var detectable))
@@ -35,6 +38,17 @@ namespace UZSG.Players
                     if (Vector3.Distance(detectable.Position, player.Position) <= detectable.PlayerDetectionRadius)
                     {
                         detectable.DetectPlayer(player);
+                    }
+                }
+            }
+
+            foreach (var collider in attackableColliders)
+            {
+                if (collider.TryGetComponent<IPlayerDetectable>(out var detectable))
+                {
+                    if (Vector3.Distance(detectable.Position, player.Position) <= detectable.PlayerAttackableRadius)
+                    {
+                        detectable.AttackPlayer(player);
                     }
                 }
             }

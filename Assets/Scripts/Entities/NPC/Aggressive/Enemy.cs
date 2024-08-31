@@ -29,18 +29,23 @@ namespace UZSG.Entities
         }
 
         public EnemyData EnemyData => entityData as EnemyData;
-        public float RotationDamping = 6f;
+        public float RotationDamping = 9f;
+        public float _roamTime; // Time it takes for the agent to travel a point
+        public float _roamRadius = 16f; // Radius of which the agent can travel
+        public float _roamInterval = 12f; // Interval before the model moves again
 
         [Header("Agent Information")]
         public LayerMask PlayerLayer; // Layers that the enemy chases
         [SerializeField] bool _hasAlreadyScreamed;
+        [SerializeField] bool attackOnCooldown;
+        [SerializeField] bool isAttacking;
+        [SerializeField] bool isAlreadyRotating;
         [SerializeField] bool _isInHordeMode;
         [SerializeField] bool _hasTargetInSight; // checks if the player is in site, attack range or is a target
         [SerializeField] bool _hasTargetInAttackRange;
-        [SerializeField] float _roamTime; // Time it takes for the agent to travel a point
-        [SerializeField] float _roamRadius; // Radius of which the agent can travel
-        [SerializeField] float _roamInterval; // Interval before the model moves again
+        [SerializeField] float attackCooldown;
         [SerializeField] float _distanceFromPlayer;
+        [SerializeField] float rotationThreshold; // note that threshold must be greater than "_siteRadius"
         [SerializeField] float _moveSpeed;
         [SerializeField] float _siteRadius;
         [SerializeField] float _attackRadius; // Radius of which the enemy detects the player
@@ -61,7 +66,15 @@ namespace UZSG.Entities
         {
             get
             {
-                return attributes["player_detection_radius"].Value;
+                return _siteRadius;
+            }
+        }
+
+        public float PlayerAttackableRadius
+        {
+            get
+            {
+                return _attackRadius;
             }
         }
 
@@ -89,6 +102,7 @@ namespace UZSG.Entities
             RetrieveAttributes();
             InitializeAnimator();
             InitializeActuators();
+            InitializeAgent();
 
             Game.Tick.OnSecond += OnSecond;
         }
@@ -102,8 +116,13 @@ namespace UZSG.Entities
             _moveSpeed = Attributes.Get("move_speed").Value;
             _siteRadius = Attributes.Get("zombie_site_radius").Value;
             _attackRadius = Attributes.Get("zombie_attack_radius").Value;
-            _roamRadius = Attributes.Get("zombie_roam_radius").Value;
-            _roamInterval = Attributes.Get("zombie_roam_interval").Value;
+            rotationThreshold = Attributes.Get("zombie_rotation_threshold").Value;
+            attackCooldown = Attributes.Get("zombie_attack_cooldown_time").Value;
+        }
+
+        void InitializeAgent()
+        {
+            navMeshAgent.speed = _moveSpeed;
         }
 
         #endregion
@@ -117,66 +136,8 @@ namespace UZSG.Entities
         void OnSecond(SecondInfo s)
         {
             ResetTargetIfNotInRange();
+            KillZombieIfDead();
         }
 
-
-        #region Agent Player Detection
-
-        /// <summary>
-        /// Set this Enemy's target to the detected player then show detection animation.
-        /// </summary>
-        /// <param name="etty"></param>
-        public void DetectPlayer(Entity etty)
-        {
-            if (etty != null && etty is Player player && !_hasTargetInSight)
-            {
-                _hasTargetInSight = true;
-                targetEntity = player; 
-
-                // Scream at player then chase
-                if (!_hasAlreadyScreamed)
-                {
-                    _hasAlreadyScreamed = true;
-                    StartCoroutine(FacePlayerAndScream());
-                }
-            }
-        }
-
-        /*public void AttackPlayer(Entity etty)
-        {
-            if (etty != null && etty is Player player)
-            {
-                actionStateMachine.ToState(EnemyActionStates.Attack);
-            }
-        }*/
-
-        public void ResetTargetIfNotInRange()
-        {
-            // Check if there is a target, then calculate the distance
-            if (_hasTargetInSight)
-            {
-                _distanceFromPlayer = Vector3.Distance(targetEntity.Position, transform.position); 
-        
-                if (_siteRadius <= _distanceFromPlayer) // if target no longer in site reset target
-                {
-                    targetEntity = null;
-                    _hasTargetInSight = false;
-                    _hasAlreadyScreamed = false;
-                }
-                else
-                {
-                    // Check if no player in attack range, reset to chase
-                    if (_hasTargetInAttackRange)
-                    {
-                        if (_attackRadius <= _distanceFromPlayer)
-                        {
-
-                        }
-                    }
-                }
-            }
-        }
-
-        #endregion
     }
 }

@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: 9mm
   m_EditorClassIdentifier: 
   SourceId: uzsg
-  Id: ammo_556
+  Id: ammo_9mm
   Tags: []
-  Name: 5.56mm Ammo
+  Name: 9mm Rounds
   Description: 
   Model:
     m_AssetGUID: 

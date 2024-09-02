@@ -268,10 +268,6 @@ namespace UZSG.Players
             {
                 Player.MoveStateMachine.ToState(_targetMoveState);
             }
-            else if (_hasJumped)
-            {
-                _hasJumped = !IsGrounded;
-            }
             else if (_isCrouching)
             {
                 Player.MoveStateMachine.ToState(MoveStates.Crouch);
@@ -328,6 +324,7 @@ namespace UZSG.Players
             if (input.started)
             {
                 ToggleCrouch(false); /// forces uncrouch when jumping (salt)
+
                 if (!IsGrounded || !CanCoyoteJump) return;
 
                 if (Player.HasStaminaForJump)

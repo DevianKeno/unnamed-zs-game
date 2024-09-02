@@ -214,8 +214,8 @@ MonoBehaviour:
   Enabled: 1
   MinSpeed: 0.3
   WalkBob:
-    Amplitude: -0.1
-    Frequency: 0.8
+    Amplitude: -0.09
+    Frequency: 0.5
     Recovery: 1
     MaintainForwardLook: 0
     LookDistance: 16
@@ -223,9 +223,9 @@ MonoBehaviour:
     RunningPosition: {x: 0, y: 0, z: 0}
     RunningRotation: {x: 0, y: 0, z: 0}
   JogBob:
-    Amplitude: 0
-    Frequency: 0
-    Recovery: 0
+    Amplitude: 0.1
+    Frequency: 0.8
+    Recovery: 1
     MaintainForwardLook: 0
     LookDistance: 0
     TransformDamping: 0
@@ -233,7 +233,7 @@ MonoBehaviour:
     RunningRotation: {x: 0, y: 0, z: 0}
   RunBob:
     Amplitude: -0.15
-    Frequency: 0.85
+    Frequency: 1
     Recovery: 1
     MaintainForwardLook: 0
     LookDistance: 16
@@ -1135,6 +1135,7 @@ MonoBehaviour:
   _targetY: 0
   animator: {fileID: 7075778538306087425}
   animatorFPP: {fileID: 5015365794703407780}
+  currentHealth: 0
 --- !u!114 &7617903866874250683
 MonoBehaviour:
   m_ObjectHideFlags: 0

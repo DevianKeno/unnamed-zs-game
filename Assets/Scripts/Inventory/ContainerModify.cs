@@ -123,6 +123,8 @@ namespace UZSG
         public virtual Item TakeItem(Item item)
         {
             Item toReturn = Item.None;
+            if (item == null || item.Count == 0) return toReturn;
+            
             var remaining = item.Count;
 
             if (IdSlots.TryGetValue(item.Id, out var hashset))

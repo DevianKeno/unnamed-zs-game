@@ -94,7 +94,7 @@ namespace UZSG.Systems
         #region Public methods
         
         /// <summary>
-        /// Transition to state. Pass lockForSeconds to prevent from transitioning to other states for a certain amount of seconds.
+        /// Transition to state. Pass lockForSeconds to lock this state, preventing transitions to other states for a certain amount of seconds.
         /// </summary>
         public void ToState(E state, float lockForSeconds = 0f)
         {

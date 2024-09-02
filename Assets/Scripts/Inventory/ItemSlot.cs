@@ -176,7 +176,7 @@ namespace UZSG.Inventory
         {
             return value > item.Count   /// Tried to take greater than current amount
                 || item.Count == 1      /// One item left
-                || value < 1;           /// Value is 0 or -1 (take entire stack)
+                || value < 0;           /// Value is -1 (take entire stack)
         }
 
         /// <summary>
@@ -185,7 +185,7 @@ namespace UZSG.Inventory
         /// </summary>
         public bool TryCombine(Item other, out Item excess, bool max = false)
         {
-            _previousItem = this.item;
+            _previousItem = new(this.item);
             
             if (item.TryCombine(other, out excess, max))
             {

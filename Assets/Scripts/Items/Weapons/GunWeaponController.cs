@@ -9,27 +9,13 @@ using UZSG.Systems;
 using UZSG.Data;
 using UZSG.Entities;
 using UZSG.Players;
-using Unity.Mathematics;
 
 namespace UZSG.Items.Weapons
 {
     public class GunWeaponController : HeldWeaponController, IReloadable
     {
         public Player Player => owner as Player;
-
-        /// <summary>
-        /// Current rounds in the magazine.
-        /// </summary>
-        public int CurrentRounds { get; private set; }
-        /// <summary>
-        /// Reserve bullets in the Player's bag.
-        /// </summary>
-        public int Reserve
-        {
-            get => Player.Inventory.Bag.CountId(AmmoData.Id);
-        }
-        public FiringMode CurrentFiringMode { get; private set; }
-        public AmmoData AmmoData => WeaponData.RangedAttributes.Ammo;
+        public WeaponRangedAttributes RangedAttributes => WeaponData.RangedAttributes;
 
         bool _inhibitActions;
         bool _isHoldingFire;
@@ -38,8 +24,9 @@ namespace UZSG.Items.Weapons
         bool _isFiring;
         bool _hasFired;
         bool _isAimingDownSights;
+        bool _hasValidAmmoData;
 
-        float _fireRateThreshold => 60f / WeaponData.RangedAttributes.RoundsPerMinute;
+        float SecondsPerRound => 60f / RangedAttributes.RoundsPerMinute;
 
         List<string> fireSoundIds = new();
 
@@ -54,14 +41,43 @@ namespace UZSG.Items.Weapons
 
         #region Properites
 
+        /// <summary>
+        /// Current rounds in the magazine.
+        /// </summary>
+        public int CurrentRounds { get; private set; }
+        /// <summary>
+        /// Reserve bullets in the Player's bag.
+        /// </summary>
+        public int Reserve
+        {
+            get
+            {
+                if (_hasValidAmmoData)
+                {
+                    return Player.Inventory.Bag.CountId(RangedAttributes.Ammo.Id);
+                }
+                else
+                {
+                    return -1;
+                }
+            }
+        }
+        public FiringMode CurrentFiringMode { get; private set; }
         public bool HasAmmo => CurrentRounds > 0;
         public bool IsAimingDownSights => _isAimingDownSights;
-        public bool CanFire
+        /// <summary>
+        /// Whether the player can pull the trigger.
+        /// </summary>
+        public bool CanShoot
         {
             get
             {
                 return !Player.Actions.IsBusy && !Player.Controls.IsRunning;
             }
+        }
+        public bool MagIsFull
+        {
+            get => CurrentRounds >= RangedAttributes.ClipSize;
         }
 
         #endregion
@@ -72,7 +88,6 @@ namespace UZSG.Items.Weapons
         public void InitializeFromGunItemEntity(GunItemEntityInfo info)
         {
             Initialize();
-
             CurrentRounds = info.Rounds;
             Player.VitalsHUD.AmmoCounter.SetClip(CurrentRounds);
         }
@@ -83,6 +98,7 @@ namespace UZSG.Items.Weapons
             InitializeBullets();
             InitializeEventsFromOwnerInput();
 
+            _hasValidAmmoData = RangedAttributes.Ammo != null;
             Player.Actions.OnPickupItem += OnPlayerPickupItem;
         }
 
@@ -94,8 +110,8 @@ namespace UZSG.Items.Weapons
             });
 
             int audioPoolSize;
-            if ((WeaponData.RangedAttributes.FiringModes & FiringModes.FullAuto) == FiringModes.FullAuto
-                || (WeaponData.RangedAttributes.FiringModes & FiringModes.Burst) == FiringModes.Burst)
+            if ((RangedAttributes.FiringModes & FiringModes.FullAuto) == FiringModes.FullAuto
+                || (RangedAttributes.FiringModes & FiringModes.Burst) == FiringModes.Burst)
             {
                 audioPoolSize = 24;
             }
@@ -108,7 +124,7 @@ namespace UZSG.Items.Weapons
 
         void InitializeBullets()
         {
-            var ammoData = WeaponData.RangedAttributes.Ammo;
+            var ammoData = RangedAttributes.Ammo;
             if (ammoData != null)
             {
                 Player.VitalsHUD.AmmoCounter.SetReserve(Reserve);
@@ -119,7 +135,7 @@ namespace UZSG.Items.Weapons
                 Game.Console.LogWarning($"Ammo data for '{WeaponData.Id}' is not set");
                 Player.VitalsHUD.AmmoCounter.SetCartridgeText("-");
             }
-            CurrentRounds = WeaponData.RangedAttributes.ClipSize; /// To be removed
+            CurrentRounds = RangedAttributes.ClipSize; /// To be removed
         }
 
         /// <summary>
@@ -165,8 +181,14 @@ namespace UZSG.Items.Weapons
         {
             if (!gameObject.activeSelf) return;
             
-            if (context.started && CanFire)
+            if (context.started && CanShoot)
             {
+                if (IsBroken)
+                {
+                    /// prompt broken weapon
+                    return;
+                }
+
                 _isHoldingFire = true;
                 StartCoroutine(FireCoroutine());
             }
@@ -215,7 +237,7 @@ namespace UZSG.Items.Weapons
 
         public bool TryReload(float durationSeconds)
         {
-            if (_inhibitActions || _isReloading) return false;
+            if (_inhibitActions || _isReloading || MagIsFull) return false;
             if (Reserve <= 0) return false;
 
             StartCoroutine(ReloadCoroutine(durationSeconds));
@@ -236,11 +258,11 @@ namespace UZSG.Items.Weapons
             {                
                 if (_isAimingDownSights)
                 {
-                    stateMachine.ToState(GunWeaponStates.ADS_Shoot, _fireRateThreshold);
+                    stateMachine.ToState(GunWeaponStates.ADS_Shoot, SecondsPerRound);
                 }
                 else
                 {
-                    stateMachine.ToState(GunWeaponStates.Fire, _fireRateThreshold);
+                    stateMachine.ToState(GunWeaponStates.Fire, SecondsPerRound);
                 }
             }
             else if (state == ActionStates.Secondary)
@@ -265,19 +287,19 @@ namespace UZSG.Items.Weapons
             if (CurrentFiringMode == FiringMode.Single)
             {
                 Shoot();
-                yield return new WaitForSeconds(_fireRateThreshold);
+                yield return new WaitForSeconds(SecondsPerRound);
                 _inhibitActions = false;
             }
             else if (CurrentFiringMode == FiringMode.Burst)
             {
-                for (int i = 0; i < WeaponData.RangedAttributes.BurstFireCount; i++)
+                for (int i = 0; i < RangedAttributes.BurstFireCount; i++)
                 {
                     if (!HasAmmo || _isReloading) break;
 
                     Shoot();
-                    yield return new WaitForSeconds(_fireRateThreshold);
+                    yield return new WaitForSeconds(SecondsPerRound);
                 }
-                yield return new WaitForSeconds(WeaponData.RangedAttributes.BurstFireInterval);
+                yield return new WaitForSeconds(RangedAttributes.BurstFireInterval);
                 _inhibitActions = false;
             }
             else if (CurrentFiringMode == FiringMode.FullAuto)
@@ -287,7 +309,7 @@ namespace UZSG.Items.Weapons
                     if (!HasAmmo || _isReloading) break;
 
                     Shoot();
-                    yield return new WaitForSeconds(_fireRateThreshold);
+                    yield return new WaitForSeconds(SecondsPerRound);
                 }
                 _inhibitActions = false;
             }
@@ -301,7 +323,7 @@ namespace UZSG.Items.Weapons
             }
 
             _inhibitActions = true;
-            var availableModes = WeaponData.RangedAttributes.FiringModes;
+            var availableModes = RangedAttributes.FiringModes;
             if (availableModes == FiringModes.None)
             {
                 Debug.LogWarning($"The weapon '{ItemData.Id}'s firing mode is set to none! It will not fire!");
@@ -354,8 +376,8 @@ namespace UZSG.Items.Weapons
         void SpawnBulletEntity()
         {
             var player = Owner as Player;
-            var bulletInfo = WeaponData.RangedAttributes.BulletAttributes;
-            var trajectory = ApplyBulletSpread(player.Forward, WeaponData.RangedAttributes.Spread);
+            var bulletInfo = RangedAttributes.BulletAttributes;
+            var trajectory = ApplyBulletSpread(player.Forward, RangedAttributes.Spread);
 
             Game.Entity.Spawn<Bullet>("bullet", callback: (info) =>
             {
@@ -373,20 +395,19 @@ namespace UZSG.Items.Weapons
             _isReloading = true;
             stateMachine.ToState(GunWeaponStates.Reload);
 
-            int clipSize = WeaponData.RangedAttributes.ClipSize;
-            int missingBullets = clipSize - CurrentRounds;
+            int missingBullets = RangedAttributes.ClipSize - CurrentRounds;
             Item ammoToTake;
             
             /// Check for enough reserve bullets
             if (missingBullets <= Reserve)
             {
                 CurrentRounds += missingBullets;
-                ammoToTake = new(AmmoData, missingBullets);
+                ammoToTake = new(RangedAttributes.Ammo, missingBullets);
             }
             else /// not enough reserve bullets, fill the clip with whatever is left
             {
                 CurrentRounds += Reserve;
-                ammoToTake = new(AmmoData, Reserve);
+                ammoToTake = new(RangedAttributes.Ammo, Reserve);
             }
 
             Player.Inventory.Bag.TakeItem(ammoToTake);

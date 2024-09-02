@@ -86,7 +86,7 @@ namespace UZSG.Systems
             return null;
         }
         
-        public bool TryGetItemData(string id, out ItemData itemData)
+        public bool TryGetData(string id, out ItemData itemData)
         {
             if (_itemsDict.ContainsKey(id))
             {

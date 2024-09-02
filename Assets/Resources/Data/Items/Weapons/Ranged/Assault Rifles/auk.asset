@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72e1d5853de97a54aa491bcf19eb9d39, type: 3}
   m_Name: auk
   m_EditorClassIdentifier: 
+  SourceId: uzsg
   Id: auk
+  Tags: []
   Name: AUK
   Description: 
   Model:
@@ -50,6 +52,7 @@ MonoBehaviour:
     RoundsPerMinute: 660
     ClipSize: 30
     ReloadSpeed: 1
+    Ammo: {fileID: 11400000, guid: 744aecc6a10addf48b8f6134e5dcba86, type: 2}
     Spread: 1.9
     BurstFireCount: 3
     BurstFireInterval: 0.1
@@ -82,15 +85,18 @@ MonoBehaviour:
       RecoverySpeed: 1
       RecoveryDuration: 0
   armsAnimations: {fileID: 0}
-  viewmodel:
+  viewmodelAsset:
     m_AssetGUID: 1c45a3394659816439f396c8e3dcf6f1
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 1
-  viewmodelOffsets:
-    Position: {x: 0, y: 0, z: 0}
-    Rotation: {x: 0, y: 0, z: 0}
-  anims:
+  viewmodelSettings:
+    UseOffsets: 0
+    PositionOffset: {x: 0, y: 0, z: 0}
+    RotationOffset: {x: 0, y: 0, z: 0}
+    RunBobPosition: {x: 0, y: 0, z: 0}
+    RunBobRotation: {x: 0, y: 0, z: 0}
+  animationData:
     Idle: 
     Move: 
     Primary: fire

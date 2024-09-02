@@ -47,6 +47,7 @@ namespace UZSG.Items
                 count = value;
             }
         }
+        public bool HasAttributes { get; private set; }
         [SerializeField] AttributeCollection attributes;
         public AttributeCollection Attributes
         {
@@ -57,6 +58,7 @@ namespace UZSG.Items
             set
             {
                 attributes = value;
+                HasAttributes = attributes != null;
             }
         }
 
@@ -71,12 +73,12 @@ namespace UZSG.Items
         #region Item constructors
 
         /// <summary>
-        /// Create 'None' item.
+        /// Create 'None' Item.
         /// </summary>
         public Item(ItemData data = null)
         {
-            itemData = data;
-            count = 0;
+            this.itemData = data;
+            this.count = 0;
         }
 
         /// <summary>
@@ -84,35 +86,49 @@ namespace UZSG.Items
         /// </summary>
         public Item(ItemData data, int count = 1)
         {
-            itemData = data;
+            this.itemData = data;
             this.count = count;
         }
         
         /// <summary>
-        /// Create an item by id.
+        /// Create an Item by Id.
         /// </summary>
         public Item(string id, int count = 1)
         {
-            itemData = Game.Items.GetData(id);
-            this.count = count;
+            if (Game.Items.TryGetData(id, out var itemData))
+            {
+                this.itemData = itemData;
+                this.count = count;
+            }
+            else
+            {
+                this.itemData = null;
+                this.count = 0;
+            }
         }
                         
         /// <summary>
-        /// Create a copy of the Item.
+        /// Create a copy of the Item, either with/without a new count.
         /// </summary>
-        public Item(Item other)
+        public Item(Item other, int count = -1)
         {
-            itemData = other.Data;
-            count = other.Count;
-        }
-                        
-        /// <summary>
-        /// Create a copy of the Item with a new count.
-        /// </summary>
-        public Item(Item other, int count = 1)
-        {
-            itemData = other.Data;
-            this.count = count;
+            if (other == null || other.IsNone || count == 0)
+            {
+                this.itemData = null;
+                this.count = 0;
+            }
+            else
+            {
+                this.itemData = other.Data;
+                this.count = count < 0 ? other.count : count;
+
+                if (other.HasAttributes)
+                {
+                    this.attributes = new();
+                    this.attributes.AddList(other.Attributes.List);
+                    this.HasAttributes = true;
+                }
+            }
         }
 
         #endregion
@@ -165,6 +181,11 @@ namespace UZSG.Items
             OnChanged?.Invoke();
             return new(itemData, amount);
         }
+
+        public Item Copy()
+        {
+            return new(this);
+        }
         
         /// <summary>
         /// Try to combine this Item with the other item.
@@ -188,7 +209,7 @@ namespace UZSG.Items
             excess = None;
             if (!CanCombineWith(other)) return false;
 
-            if (IsNone)
+            if (this.IsNone) /// this ItemSlot has no Item in it
             {
                 itemData = other.itemData;
             }

@@ -21,6 +21,10 @@ namespace UZSG.Attributes
         /// Just so can view in Inspector
         [SerializeField] List<Attribute> attributesReadOnly = new();
         Dictionary<string, Attribute> _attrsDict = new();
+        /// <summary>
+        /// Returns a COPY of the Attributes in this collection. [Read Only]
+        /// </summary>
+        public List<Attribute> List => new(_attrsDict.Values);
 
         public Attribute this[string id]
         {

@@ -396,10 +396,6 @@ namespace UZSG.Players
                     OnPickupItem?.Invoke(item);
                     return true;
                 }
-                else
-                {
-                    return false;
-                }
             }
             else if (item.Data.Type == ItemType.Tool) /// put in hotbar (if possible)
             {
@@ -408,10 +404,6 @@ namespace UZSG.Players
                     Player.FPP.HoldItem(item.Data);
                     OnPickupItem?.Invoke(item);
                     return true;
-                }
-                else
-                {
-                    return false;
                 }
             }
             

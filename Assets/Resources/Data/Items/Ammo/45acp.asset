@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: 45acp
   m_EditorClassIdentifier: 
   SourceId: uzsg
-  Id: ammo_556
+  Id: ammo_45acp
   Tags: []
-  Name: 5.56mm Ammo
+  Name: .45 ACP Rounds
   Description: 
   Model:
     m_AssetGUID: 

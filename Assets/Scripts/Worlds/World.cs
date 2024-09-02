@@ -217,13 +217,13 @@ namespace UZSG.Worlds
             // CacheObjectId(info.Object); /// idk if we need to cache objects thoughhhhhh, wireless workbench?? sheeeesh
         }
 
-        void OnEntitySpawned(EntityManager.EntitySpawnedInfo info)
+        void OnEntitySpawned(EntityManager.EntityInfo info)
         {
             info.Entity.transform.SetParent(entitiesContainer.transform, worldPositionStays: true);
             CacheEntity(info.Entity);
         }
 
-        void OnEntityKilled(EntityManager.EntityKilledInfo info)
+        void OnEntityKilled(EntityManager.EntityInfo info)
         {
             UncacheEntityId(info.Entity);
         }

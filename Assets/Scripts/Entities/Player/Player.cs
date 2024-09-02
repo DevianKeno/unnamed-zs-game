@@ -19,6 +19,8 @@ using UZSG.Saves;
 using UZSG.UI.Objects;
 using UZSG.UI;
 
+using static UZSG.Players.MoveStates;
+
 namespace UZSG.Entities
 {
     /// <summary>
@@ -50,9 +52,15 @@ namespace UZSG.Entities
         [SerializeField] PlayerAudioSourceController audioController;
         public PlayerAudioSourceController Audio => audioController;
 
+        /// <summary>
+        /// Player's forward direction relative to the FPP Camera.
+        /// </summary>
         public Vector3 Forward => MainCamera.transform.forward;
         public Vector3 Right => MainCamera.transform.right;
         public Vector3 Up => MainCamera.transform.up;
+        /// <summary>
+        /// World space position of the Player's eye level.
+        /// </summary>
         public Vector3 EyeLevel => MainCamera.transform.position;
         public Transform Model => Controls.Model;
 
@@ -149,13 +157,10 @@ namespace UZSG.Entities
 
         void InitializeStateMachines()
         {
-            MoveStateMachine.InitialState = MoveStateMachine.States[MoveStates.Idle];
+            MoveStateMachine.InitialState = MoveStateMachine.States[Idle];
 
-            MoveStateMachine.OnTransition += OnMoveStateChanged;
-
-            MoveStateMachine.States[MoveStates.Idle].OnTransition += OnIdleState;
-            MoveStateMachine.States[MoveStates.Run].OnTransition += OnRunState;
-            MoveStateMachine.States[MoveStates.Jump].OnTransition += OnJumpState;
+            MoveStateMachine.OnTransition += TransitionAnimator;
+            MoveStateMachine.OnTransition += MoveTransitionCallback;
             /// Moved to PlayerAnimator.cs
             // MoveStateMachine.States[MoveStates.Crouch].OnTransition += OnCrouchState;
         }
@@ -246,15 +251,23 @@ namespace UZSG.Entities
 
         #region Move state machine callbacks
 
-        void OnIdleState(StateMachine<MoveStates>.TransitionContext e)
+        void MoveTransitionCallback(StateMachine<MoveStates>.TransitionContext transition)
         {
+            switch (transition.To)
+            {
+                case Jump:
+                {
+                    JumpAction();
+                    break;
+                }
+                default:
+                {
+                    break;
+                }
+            }
         }
 
-        void OnRunState(StateMachine<MoveStates>.TransitionContext e)
-        {
-        }
-        
-        void OnJumpState(StateMachine<MoveStates>.TransitionContext e)
+        void JumpAction()
         {
             /// Consume Stamina on jump
             if (Attributes.TryGet("stamina", out var stamina))
@@ -337,7 +350,8 @@ namespace UZSG.Entities
         {
             if (_allowStaminaRegen)
             {
-                Attributes.Get("stamina").Add(Attributes.Get("stamina_regen_per_tick").Value);
+                var regenValue = Attributes.Get("stamina_regen_per_tick").Value;
+                Attributes.Get("stamina").Add(regenValue);
             }
         }
 
@@ -345,7 +359,6 @@ namespace UZSG.Entities
         {
             if (Controls.IsRunning && Controls.IsMoving)
             {
-                /// Cache attributes for better performance
                 var runStaminaCost = Attributes.Get("run_stamina_cost").Value;
                 Attributes.Get("stamina").Remove(runStaminaCost);
             }

@@ -26,6 +26,7 @@ namespace UZSG.Data
         public Item Yield;
         public float PickupDuration;
         public float MaxInteractDistance;
+        public bool UseInstances;
         public List<ResourceInstances> Instances;
     }
 }

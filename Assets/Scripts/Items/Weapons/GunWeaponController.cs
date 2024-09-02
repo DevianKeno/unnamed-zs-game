@@ -9,6 +9,7 @@ using UZSG.Systems;
 using UZSG.Data;
 using UZSG.Entities;
 using UZSG.Players;
+using Unity.Mathematics;
 
 namespace UZSG.Items.Weapons
 {
@@ -16,14 +17,16 @@ namespace UZSG.Items.Weapons
     {
         public Player Player => owner as Player;
 
-        int _currentRounds;
-        public int CurrentRounds
-        {
-            get { return _currentRounds; }
-            set { _currentRounds = value; }
-        }
+        /// <summary>
+        /// Current rounds in the magazine.
+        /// </summary>
+        public int CurrentRounds { get; private set; }
+        /// <summary>
+        /// Reserve bullets in the Player's bag.
+        /// </summary>
+        public int Reserve { get; private set; } 
+        public FiringMode CurrentFiringMode { get; private set; }
 
-        public bool HasAmmo => _currentRounds > 0;
         bool _inhibitActions;
         bool _isHoldingFire;
         bool _isReloading;
@@ -31,13 +34,8 @@ namespace UZSG.Items.Weapons
         bool _isFiring;
         bool _hasFired;
         bool _isAimingDownSights;
-        public bool IsAimingDownSights => _isAimingDownSights;
 
-        float _fireDelta;
         float _fireRateThreshold => 60f / WeaponData.RangedAttributes.RoundsPerMinute;
-        
-        FiringMode _currentFiringMode;
-        public FiringMode CurrentFiringMode => _currentFiringMode;
 
         List<string> fireSoundIds = new();
 
@@ -48,19 +46,40 @@ namespace UZSG.Items.Weapons
         [SerializeField] GunWeaponStateMachine stateMachine;
         public GunWeaponStateMachine StateMachine => stateMachine;
         public GunMuzzleController MuzzleController;
+        
 
-        public void Initialize(GunItemEntityInfo info)
+        #region Properites
+
+        public bool HasAmmo => CurrentRounds > 0;
+        public bool IsAimingDownSights => _isAimingDownSights;
+        public bool CanFire
+        {
+            get
+            {
+                return !Player.Actions.IsBusy && !Player.Controls.IsRunning;
+            }
+        }
+
+        #endregion
+
+
+        #region Initializing methods
+
+        public void InitializeFromGunItemEntity(GunItemEntityInfo info)
         {
             Initialize();
-            _currentRounds = info.Rounds;
-            Player.VitalsHUD.AmmoCounter.SetClip(_currentRounds);
+
+            CurrentRounds = info.Rounds;
+            Player.VitalsHUD.AmmoCounter.SetClip(CurrentRounds);
         }
 
         public override void Initialize()
         {
             InitializeAudioController();
+            InitializeBullets();
             InitializeEventsFromOwnerInput();
-            _currentRounds = WeaponData.RangedAttributes.ClipSize; /// To be removed
+
+            Player.Actions.OnPickupItem += OnPlayerPickupItem;
         }
 
         void InitializeAudioController()
@@ -83,165 +102,22 @@ namespace UZSG.Items.Weapons
             audioSourceController.CreateAudioPool(audioPoolSize); 
         }
 
-        void InitializeEventsFromOwnerInput()
+        void InitializeBullets()
         {
-            if (owner is not Player player) return;
-            var inputs = player.Actions.Inputs;
-
-            inputs["Primary Action"].started += OnPlayerPrimary;
-            inputs["Primary Action"].canceled += OnPlayerPrimary;
-
-            inputs["Secondary Action"].started += OnPlayerSecondary;
-            inputs["Secondary Action"].canceled += OnPlayerSecondary;
-
-            inputs["Reload"].performed += OnPlayerReload;
-            inputs["Select Fire"].performed += OnPlayerSelectFire;
-        }
-
-
-        #region Player input callbacks
-
-        void OnPlayerPrimary(InputAction.CallbackContext context)
-        {
-            if (!gameObject.activeSelf) return;
-            
-            if (context.started)
+            Reserve = 0;
+            var ammoData = WeaponData.RangedAttributes.Ammo;
+            if (ammoData != null)
             {
-                _isHoldingFire = true;
-                StartCoroutine(FireCoroutine());
+                Reserve += Player.Inventory.Bag.CountId(ammoData.Id);
+                Player.VitalsHUD.AmmoCounter.SetReserve(Reserve);
+                Player.VitalsHUD.AmmoCounter.SetCartridgeText(ammoData.Name);
             }
-            else if (context.canceled)
+            else
             {
-                _isHoldingFire = false;
-                StopCoroutine(FireCoroutine());
+                Game.Console.LogWarning($"Ammo data for '{WeaponData.Id}' is not set");
+                Player.VitalsHUD.AmmoCounter.SetCartridgeText("-");
             }
-        }
-
-        void OnPlayerSecondary(InputAction.CallbackContext context)
-        {
-            if (!gameObject.activeSelf) return;
-        }
-        
-        void OnPlayerReload(InputAction.CallbackContext context)
-        {
-            if (!gameObject.activeSelf) return;
-            
-            // TryReload();
-        }
-        
-        Array firingModes = Enum.GetValues(typeof(FiringMode));
-
-        void OnPlayerSelectFire(InputAction.CallbackContext context)
-        {
-            if (!gameObject.activeSelf) return;
-
-            StartCoroutine(SelectFireCoroutine());
-        }
-
-        IEnumerator SelectFireCoroutine()
-        {
-            if (_inhibitActions || _isHoldingFire)
-            {
-                yield break;
-            }
-
-            _inhibitActions = true;
-            var availableModes = WeaponData.RangedAttributes.FiringModes;
-            if (availableModes == FiringModes.None)
-            {
-                Debug.LogWarning($"The weapon '{ItemData.Id}'s firing mode is set to none! It will not fire!");
-                _inhibitActions = false;
-                yield break;
-            }
-    
-            do
-            {
-                _currentFiringMode = SwitchFiringMode(_currentFiringMode);
-            } while ((GetFiringModeFlag(_currentFiringMode) & availableModes) == 0);
-
-            Player.VitalsHUD.AmmoCounter.SetFiringMode(_currentFiringMode);
-            yield return new WaitForSeconds(0.33f);
-            _inhibitActions = false;
-        }
-
-        FiringMode SwitchFiringMode(FiringMode mode)
-        {
-            return (FiringMode) (((int) mode + 1) % firingModes.Length);
-        }
-
-        FiringModes GetFiringModeFlag(FiringMode mode)
-        {
-            return mode switch
-            {
-                FiringMode.Single => FiringModes.Single,
-                FiringMode.FullAuto => FiringModes.FullAuto,
-                FiringMode.Burst => FiringModes.Burst,
-            };
-        }
-
-        #endregion
-
-
-        void OnEnable()
-        {
-            ResetStates();
-        }
-
-        public void ResetStates()
-        {
-            _isFiring = false;
-            _inhibitActions = false;
-        }
-
-        IEnumerator FireCoroutine()
-        {
-            if (_inhibitActions || _isReloading || !HasAmmo)
-            {
-                yield break;
-            }
-
-            _inhibitActions = true;
-            
-            if (_currentFiringMode == FiringMode.Single)
-            {
-                Shoot();
-                yield return new WaitForSeconds(_fireRateThreshold);
-                _inhibitActions = false;
-            }
-            else if (_currentFiringMode == FiringMode.Burst)
-            {
-                for (int i = 0; i < WeaponData.RangedAttributes.BurstFireCount; i++)
-                {
-                    if (!HasAmmo || _isReloading) break;
-
-                    Shoot();
-                    yield return new WaitForSeconds(_fireRateThreshold);
-                }
-                yield return new WaitForSeconds(WeaponData.RangedAttributes.BurstFireInterval);
-                _inhibitActions = false;
-            }
-            else if (_currentFiringMode == FiringMode.FullAuto)
-            {
-                while (_isHoldingFire)
-                {
-                    if (!HasAmmo || _isReloading) break;
-
-                    Shoot();
-                    yield return new WaitForSeconds(_fireRateThreshold);
-                }
-                _inhibitActions = false;
-            }
-        }
-        
-        void Shoot()
-        {
-            PlayRandomFireSound();
-            SpawnBulletEntity();
-            _currentRounds--;
-            MuzzleController?.Fire();
-            stateMachine.ToState(GunWeaponStates.Fire);
-            OnFire?.Invoke();
-            Player.VitalsHUD.AmmoCounter.SetClip(_currentRounds);
+            CurrentRounds = WeaponData.RangedAttributes.ClipSize; /// To be removed
         }
 
         /// <summary>
@@ -259,51 +135,96 @@ namespace UZSG.Items.Weapons
             }
         }
 
-        void PlayRandomFireSound()
+        void InitializeEventsFromOwnerInput()
         {
-            int randIndex = UnityEngine.Random.Range(0, fireSoundIds.Count);
-            audioSourceController.PlaySound($"fire_{randIndex}");
+            if (owner is not Player player) return;
+            var inputs = player.Actions.Inputs;
+
+            inputs["Primary Action"].started += OnPlayerPrimary;
+            inputs["Primary Action"].canceled += OnPlayerPrimary;
+
+            inputs["Secondary Action"].started += OnPlayerSecondary;
+            inputs["Secondary Action"].canceled += OnPlayerSecondary;
+
+            inputs["Select Fire"].performed += OnPlayerSelectFire;
         }
 
-        void SpawnBulletEntity()
+        void OnEnable()
         {
-            var player = Owner as Player;
-            var bulletInfo = WeaponData.RangedAttributes.BulletAttributes;
-            Game.Entity.Spawn<Bullet>("bullet", callback: (info) =>
+            ResetStates();
+        }
+
+        #endregion
+
+
+        #region Player input callbacks
+
+        void OnPlayerPrimary(InputAction.CallbackContext context)
+        {
+            if (!gameObject.activeSelf) return;
+            
+            if (context.started && CanFire)
             {
-                var bullet = info.Entity;
-                bullet.SetBulletAttributes(bulletInfo);
-                var trajectory = ApplyBulletSpread(player.Forward, WeaponData.RangedAttributes.Spread);
-                bullet.SetTrajectory(trajectory);
-                bullet.SetPlayerAndShoot(player);
-            });
+                _isHoldingFire = true;
+                StartCoroutine(FireCoroutine());
+            }
+            else if (context.canceled)
+            {
+                _isHoldingFire = false;
+                StopCoroutine(FireCoroutine());
+            }
+        }
+
+        void OnPlayerSecondary(InputAction.CallbackContext context)
+        {
+            if (!gameObject.activeSelf) return;
+        }
+                
+        Array firingModes = Enum.GetValues(typeof(FiringMode));
+
+        void OnPlayerSelectFire(InputAction.CallbackContext context)
+        {
+            if (!gameObject.activeSelf) return;
+
+            StartCoroutine(SelectFireCoroutine());
+        }
+
+        #endregion
+
+
+        #region Player event callbacks
+        void OnPlayerPickupItem(Item item)
+        {
+            if (item.Data is AmmoData ammoData)
+            {
+                Reserve = Player.Inventory.Bag.CountId(ammoData.Id);
+                Player.VitalsHUD.AmmoCounter.SetReserve(Reserve);
+            }
+        }
+
+        #endregion
+
+        
+        #region Public methods
+
+        public void InitializeFromGunItemEntity(GunItemEntity gun)
+        {
+            
         }
 
         public bool TryReload(float durationSeconds)
         {
-            if (_inhibitActions || _currentRounds == WeaponData.RangedAttributes.ClipSize || _isReloading)
-            {
-                return false;
-            }
+            if (_inhibitActions || _isReloading) return false;
+            if (Reserve <= 0) return false;
 
             StartCoroutine(ReloadCoroutine(durationSeconds));
             return true;
         }
 
-        IEnumerator ReloadCoroutine(float durationSeconds)
+        public void ResetStates()
         {
-            Debug.Log("Reloading weapon...");
-            _inhibitActions = true;
-            _isReloading = true;
-            stateMachine.ToState(GunWeaponStates.Reload);
-
-            yield return new WaitForSeconds(durationSeconds);
-
-            _currentRounds = WeaponData.RangedAttributes.ClipSize;
-            _isReloading = false;
+            _isFiring = false;
             _inhibitActions = false;
-            Player.VitalsHUD.AmmoCounter.SetClip(_currentRounds);
-            Debug.Log("Completed reload");
         }
 
         public override void SetStateFromAction(ActionStates state)
@@ -326,6 +247,154 @@ namespace UZSG.Items.Weapons
                 /// ADS controls, assuming ADS is "toggle"
                 ToggleAimDownSights();
             }
+        }
+
+        #endregion
+
+
+        IEnumerator FireCoroutine()
+        {
+            if (_inhibitActions || _isReloading || !HasAmmo)
+            {
+                yield break;
+            }
+
+            _inhibitActions = true;
+            
+            if (CurrentFiringMode == FiringMode.Single)
+            {
+                Shoot();
+                yield return new WaitForSeconds(_fireRateThreshold);
+                _inhibitActions = false;
+            }
+            else if (CurrentFiringMode == FiringMode.Burst)
+            {
+                for (int i = 0; i < WeaponData.RangedAttributes.BurstFireCount; i++)
+                {
+                    if (!HasAmmo || _isReloading) break;
+
+                    Shoot();
+                    yield return new WaitForSeconds(_fireRateThreshold);
+                }
+                yield return new WaitForSeconds(WeaponData.RangedAttributes.BurstFireInterval);
+                _inhibitActions = false;
+            }
+            else if (CurrentFiringMode == FiringMode.FullAuto)
+            {
+                while (_isHoldingFire)
+                {
+                    if (!HasAmmo || _isReloading) break;
+
+                    Shoot();
+                    yield return new WaitForSeconds(_fireRateThreshold);
+                }
+                _inhibitActions = false;
+            }
+        }
+
+        IEnumerator SelectFireCoroutine()
+        {
+            if (_inhibitActions || _isHoldingFire)
+            {
+                yield break;
+            }
+
+            _inhibitActions = true;
+            var availableModes = WeaponData.RangedAttributes.FiringModes;
+            if (availableModes == FiringModes.None)
+            {
+                Debug.LogWarning($"The weapon '{ItemData.Id}'s firing mode is set to none! It will not fire!");
+                _inhibitActions = false;
+                yield break;
+            }
+    
+            do
+            {
+                CurrentFiringMode = SwitchFiringMode(CurrentFiringMode);
+            } while ((GetFiringModeFlag(CurrentFiringMode) & availableModes) == 0);
+
+            Player.VitalsHUD.AmmoCounter.SetFiringMode(CurrentFiringMode);
+            yield return new WaitForSeconds(0.33f);
+            _inhibitActions = false;
+        }
+
+        FiringMode SwitchFiringMode(FiringMode mode)
+        {
+            return (FiringMode) (((int) mode + 1) % firingModes.Length);
+        }
+
+        FiringModes GetFiringModeFlag(FiringMode mode)
+        {
+            return mode switch
+            {
+                FiringMode.Single => FiringModes.Single,
+                FiringMode.FullAuto => FiringModes.FullAuto,
+                FiringMode.Burst => FiringModes.Burst,
+            };
+        }
+        
+        void Shoot()
+        {
+            PlayRandomFireSound();
+            SpawnBulletEntity();
+            CurrentRounds--;
+            MuzzleController?.Fire();
+            stateMachine.ToState(GunWeaponStates.Fire);
+            OnFire?.Invoke();
+            Player.VitalsHUD.AmmoCounter.SetClip(CurrentRounds);
+        }
+
+        void PlayRandomFireSound()
+        {
+            int randIndex = UnityEngine.Random.Range(0, fireSoundIds.Count);
+            audioSourceController.PlaySound($"fire_{randIndex}");
+        }
+
+        void SpawnBulletEntity()
+        {
+            var player = Owner as Player;
+            var bulletInfo = WeaponData.RangedAttributes.BulletAttributes;
+            var trajectory = ApplyBulletSpread(player.Forward, WeaponData.RangedAttributes.Spread);
+
+            Game.Entity.Spawn<Bullet>("bullet", callback: (info) =>
+            {
+                var bullet = info.Entity;
+                bullet.SetBulletAttributes(bulletInfo);
+                bullet.SetTrajectory(trajectory);
+                bullet.SetPlayerAndShoot(player);
+            });
+        }
+
+        IEnumerator ReloadCoroutine(float durationSeconds)
+        {
+            Debug.Log("Reloading weapon...");
+            _inhibitActions = true;
+            _isReloading = true;
+            stateMachine.ToState(GunWeaponStates.Reload);
+
+            int clipSize = WeaponData.RangedAttributes.ClipSize;
+            int missingBullets = clipSize - CurrentRounds;
+
+            /// Check for enough reserve bullets
+            if (missingBullets <= Reserve)
+            {
+                CurrentRounds += missingBullets;
+                Reserve -= missingBullets;
+            }
+            else /// not enough reserve bullets, fill the clip with whatever is left
+            {
+                CurrentRounds += Reserve;
+                Reserve = 0;
+            }
+
+            Player.VitalsHUD.AmmoCounter.SetClip(CurrentRounds);
+            Player.VitalsHUD.AmmoCounter.SetReserve(Reserve);
+
+            yield return new WaitForSeconds(durationSeconds);
+            _isReloading = false;
+            _inhibitActions = false;
+
+            Debug.Log("Completed reload");
         }
 
         void ToggleAimDownSights()

@@ -124,6 +124,9 @@ namespace UZSG.Objects
             
         }
 
+        /// <summary>
+        /// Destroy this object.
+        /// </summary>
         protected virtual void Destroy()
         {
             

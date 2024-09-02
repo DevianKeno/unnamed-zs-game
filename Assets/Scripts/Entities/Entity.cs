@@ -1,3 +1,5 @@
+using System;
+
 using UnityEngine;
 
 using UZSG.Systems;
@@ -44,6 +46,8 @@ namespace UZSG.Entities
             get { return transform.rotation; }
             set { transform.rotation = value; }
         }
+
+        public event Action<Entity> OnKilled;
 
 
         #region Initializing methods
@@ -146,11 +150,20 @@ namespace UZSG.Entities
 
         #region Public methods
 
-        public virtual void Kill(bool notify = true)
+        /// <summary>
+        /// Kill this entity.
+        /// </summary>
+        public void Kill(bool notify = true)
         {
-            if (notify) Game.Entity.Kill(this);
+            OnKill();
+            Destroy(gameObject);
         }
 
         #endregion
+
+        protected virtual void OnKill()
+        {
+            OnKilled?.Invoke(this);
+        }
     }
 }

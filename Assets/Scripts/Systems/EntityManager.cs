@@ -25,11 +25,11 @@ namespace UZSG.Systems
         /// </summary>
         Dictionary<string, EntityData> _entitiesDict = new();
         
-        public event Action<EntitySpawnedInfo> OnEntitySpawned;
+        public event Action<EntityInfo> OnEntitySpawned;
         /// <summary>
         /// Subscribe to this event if you need to make last changes before the entity is removed from the universe.
         /// </summary>
-        public event Action<EntityKilledInfo> OnEntityKilled;
+        public event Action<EntityInfo> OnEntityKilled;
                 
         internal void Initialize()
         {
@@ -43,6 +43,14 @@ namespace UZSG.Systems
                 _entitiesDict[etty.Id] = etty;
             }
         }
+        
+        void OnEntityKilledInternal(Entity entity)
+        {
+            OnEntityKilled?.Invoke(new()
+            {
+                Entity = entity
+            });
+        }
 
         Transform GetTransformParent()
         {
@@ -52,8 +60,8 @@ namespace UZSG.Systems
 
         #region Public methods
     
-        public delegate void OnEntitySpawnComplete(EntitySpawnedInfo info);
-        public struct EntitySpawnedInfo
+        public delegate void OnEntitySpawnComplete(EntityInfo info);
+        public struct EntityInfo
         {
             public Entity Entity { get; set; }
         }
@@ -78,12 +86,13 @@ namespace UZSG.Systems
                     go.name = $"{ettyData.Name} (Entity)";
                     if (go.TryGetComponent(out Entity entity)) /// what do making entity without an entity component!!
                     {
-                        var info = new EntitySpawnedInfo()
+                        var info = new EntityInfo()
                         {
                             Entity = entity
                         };
                         callback?.Invoke(info);
                         entity.OnSpawnInternal();
+                        entity.OnKilled += OnEntityKilledInternal;
                         OnEntitySpawned?.Invoke(info);
 
                         if (EnableLogging)
@@ -128,6 +137,7 @@ namespace UZSG.Systems
                         };
                         callback?.Invoke(info);
                         entity.OnSpawnInternal();
+                        entity.OnKilled += OnEntityKilledInternal;
                         OnEntitySpawned?.Invoke(new()
                         {
                             Entity = entity
@@ -165,6 +175,7 @@ namespace UZSG.Systems
                     {
                         itemEntity.Item = new Item(id, count);
                         itemEntity.OnSpawnInternal();
+                        itemEntity.OnKilled += OnEntityKilledInternal;
                         
                         if (EnableLogging)
                         {
@@ -177,20 +188,11 @@ namespace UZSG.Systems
             };
         }
 
-        public struct EntityKilledInfo
-        {
-            public Entity Entity { get; set; }
-        }
-
-
         public void Kill(Entity entity)
         {
             if (entity == null) return;
-            OnEntityKilled?.Invoke(new()
-            {
-                Entity = entity
-            });
-            Destroy(entity.gameObject);
+
+            entity.Kill();
         }
 
         public bool IsValidId(string id)

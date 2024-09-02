@@ -12,6 +12,7 @@ using UZSG.Systems;
 using UZSG.Items;
 using UZSG.UI.HUD;
 using UZSG.Items.Weapons;
+using UZSG.Data;
 
 namespace UZSG.UI.HUD
 {
@@ -181,9 +182,7 @@ namespace UZSG.UI.HUD
             if (heldItem is GunWeaponController gun)
             {
                 weaponDetails.SetGunVariant();
-                AmmoCounter.SetClip(gun.CurrentRounds);
-                AmmoCounter.SetReserve(999);
-                AmmoCounter.SetFiringMode(gun.CurrentFiringMode);
+                AmmoCounter.DisplayWeaponStats(gun);
             }
             else
             {

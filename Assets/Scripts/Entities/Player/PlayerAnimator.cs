@@ -43,7 +43,7 @@ namespace UZSG.Entities
             }
         }
 
-        void OnMoveStateChanged(StateMachine<MoveStates>.TransitionContext e)
+        void TransitionAnimator(StateMachine<MoveStates>.TransitionContext e)
         {
             var animId = GetAnimationName(e.To);
             animator.CrossFade($"{animId}", CrossfadeTransitionDuration);

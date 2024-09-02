@@ -12,6 +12,7 @@ using UZSG.Inventory;
 using UZSG.Items;
 using UZSG.Items.Weapons;
 using UZSG.Interactions;
+using UZSG.Data;
 
 namespace UZSG.UI.HUD
 {
@@ -58,6 +59,7 @@ namespace UZSG.UI.HUD
         {
             Player.Actions.OnLookAtSomething += OnPlayerLookAtSomething;
             Player.Actions.OnPickupItem += OnPlayerPickupedItem;
+            Player.FPP.OnChangeHeldItem += OnChangeHeldItem;
         }
 
         void OnDestroy()
@@ -73,9 +75,14 @@ namespace UZSG.UI.HUD
             if (lookable == null)
             {
                 resourceHealthRingUI.Hide();
+                return;
             }
-            else if (lookable is UZSG.Objects.Resource resource && !resourceHealthRingUI.IsVisible)
+
+            if (lookable is UZSG.Objects.Resource resource && !resourceHealthRingUI.IsVisible)
             {
+                /// The player must be holding a Tool to display the resource's health
+                if (!Player.FPP.IsHoldingTool) return;
+
                 resourceHealthRingUI.DisplayResource(resource);
                 resourceHealthRingUI.Show();
             }
@@ -86,6 +93,15 @@ namespace UZSG.UI.HUD
             if (!item.IsNone)
             {
                 pickupsIndicator.AddEntry(item);
+            }
+        }
+
+        void OnChangeHeldItem(HeldItemController heldItem)
+        {
+            /// Hide the health ring if swapped to a non-tool Held Item
+            if (resourceHealthRingUI.IsVisible && heldItem.ItemData.Type != ItemType.Tool)
+            {
+                resourceHealthRingUI.Hide();
             }
         }
 

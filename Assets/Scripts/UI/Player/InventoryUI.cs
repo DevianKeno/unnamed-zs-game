@@ -88,11 +88,27 @@ namespace UZSG.UI.Players
             InitializeEvents();
             InitializeBagSlotUIs();
             InitializeCraftingGUI();
-            selector = Instantiate(selectorPrefab, transform).GetComponent<Selector>();
+            InitializeSelector();
             // itemDetailsUI = Game.UI.Create<ItemDetailsUI>("Item Details UI");
             frameController.SwitchToFrame("bag", force: true);
             InitializeInputs();
             closeButton.onClick.AddListener(Hide);
+            Hide();
+        }
+
+        void InitializeSelector()
+        {
+            selector = Game.UI.Create<Selector>("Selector", show: false);
+            selector.Rect.SetParent(transform);
+            
+            OnOpen += () =>
+            {
+                selector.Show();
+            };
+            OnClose += () =>
+            {
+                selector.Hide();
+            };
         }
 
         void InitializeElements()

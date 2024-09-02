@@ -92,7 +92,7 @@ namespace UZSG.WorldEvents.Raid
             Game.Entity.OnEntityKilled += OnEntityKilled;
         }
 
-        private void OnEntityKilled(EntityManager.EntityKilledInfo info)
+        private void OnEntityKilled(EntityManager.EntityInfo info)
         {
             if (_hordeZombies.Contains(info.Entity))
             {

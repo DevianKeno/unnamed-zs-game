@@ -10,8 +10,9 @@ namespace UZSG.Interactions
     {
         public Vector3 Position { get; }
         public float PlayerDetectionRadius { get; }
+        public float PlayerAttackableRadius { get; }
 
         public void DetectPlayer(Entity etty);
-        //public void AttackPlayer(Entity etty); /// paghiwalayin mo to pre detectable nga tapos may attack??
+        public void AttackPlayer(Entity etty);
     }
 }

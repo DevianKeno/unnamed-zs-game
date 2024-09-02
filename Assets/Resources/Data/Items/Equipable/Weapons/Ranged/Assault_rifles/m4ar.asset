@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72e1d5853de97a54aa491bcf19eb9d39, type: 3}
   m_Name: m4ar
   m_EditorClassIdentifier: 
+  SourceId: uzsg
   Id: m4ar
+  Tags: []
   Name: M4AR
   Description: Non-standard assault rifle.
   Model:
@@ -50,6 +52,7 @@ MonoBehaviour:
     RoundsPerMinute: 660
     ClipSize: 30
     ReloadSpeed: 1
+    Ammo: {fileID: 11400000, guid: 8c7ea392bd644a34b93ae104f201c7fd, type: 2}
     Spread: 1.9
     BurstFireCount: 3
     BurstFireInterval: 0.1

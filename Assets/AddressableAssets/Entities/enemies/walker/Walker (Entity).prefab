@@ -622,28 +622,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfabb457099849c4ea8fd6ea1e61960f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  instanceId: 0
   entityData: {fileID: 11400000, guid: 733a73e5d945f434eafdbde123704a59, type: 2}
   attributes:
     attributesReadOnly: []
   targetEntity: {fileID: 0}
-  IsAlive: 0
-  IsDead: 0
   HasHitboxes: 0
-  PlayerLayer:
-    serializedVersion: 2
-    m_Bits: 256
-  _isInHordeMode: 0
-  _hasTargetInSight: 0
-  _hasTargetInAttackRange: 0
+  RotationDamping: 9
   _roamTime: 0
   _roamRadius: 0
   _roamInterval: 0
+  PlayerLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  _hasAlreadyScreamed: 0
+  attackOnCooldown: 0
+  isAttacking: 0
+  isAlreadyRotating: 0
+  _isInHordeMode: 0
+  _hasTargetInSight: 0
+  _hasTargetInAttackRange: 0
+  attackCooldown: 0
   _distanceFromPlayer: 0
+  rotationThreshold: 25
   _moveSpeed: 0
   _siteRadius: 0
   _attackRadius: 0
   _randomDestination: {x: 0, y: 0, z: 0}
-  _currentActionState: 0
   animator: {fileID: 6509039278937967366}
   moveStateMachine: {fileID: 8327613411202617107}
   actionStateMachine: {fileID: 2224819950650519137}
@@ -731,7 +736,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!65 &7116651654386742079
 BoxCollider:

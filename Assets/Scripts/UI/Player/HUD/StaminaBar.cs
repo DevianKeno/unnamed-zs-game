@@ -39,7 +39,7 @@ namespace UZSG.UI
             stamina = attr;
             stamina.OnValueChanged += OnValueChanged;
             stamina.OnReachMaximum += OnReachMaximum;
-            Refresh();
+            RefreshBar();
         }
 
         protected override void OnValueChanged(object sender, AttributeValueChangedContext info)
@@ -51,7 +51,7 @@ namespace UZSG.UI
 
             Value = stamina.ValueMaxRatio * 100f;
 
-            if (BufferOnDecreaseValue && info.ValueChangedType == Attribute.ValueChangeType.Decreased)
+            if (AnimateBufferOnValueDecrease && info.ValueChangedType == Attribute.ValueChangeType.Decreased)
             {
                 float start = Mathf.Lerp(barRect.rect.width, 0f, info.Previous / 100f);
                 float end = Mathf.Lerp(barRect.rect.width, 0f, info.New / 100f);
@@ -62,7 +62,7 @@ namespace UZSG.UI
                 {
                     bufferRect.offsetMax = new Vector2(-x, bufferRect.offsetMax.y);
                 })
-                .setEase(TweenType);
+                .setEase(BufferEase);
             }
         }
 

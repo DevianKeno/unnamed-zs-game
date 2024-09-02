@@ -29,11 +29,11 @@ namespace UZSG.Players
         public float MaxInteractDistance;
         public float HoldThresholdMilliseconds = 200f;
         
+        public bool IsBusy { get; private set; }
         bool _hadLeftClicked;
         bool _hadRightClicked;
         bool _isHoldingLeftClick;
         bool _isHoldingRightClick;
-        bool _isBusy;
         bool _allowInteractions = true;
         float _holdTimer;
         /// <summary>
@@ -177,12 +177,14 @@ namespace UZSG.Players
 
         public void StartPickupRoutine(Objects.ResourcePickup resource, Action<PickupStatus> onTimerNotify = null)
         {
-            if (_isBusy) return;
+            if (IsBusy) return;
+
+            Player.InfoHUD.crosshair.gameObject.SetActive(false);
 
             var pickupTime = resource.ResourceData.PickupDuration;
             if (pickupTime > 0)
             {
-                _isBusy = true;
+                IsBusy = true;
                 DisableControlsOnPickupResource();
                 pickupRingUI = Game.UI.Create<RadialProgressUI>("Pickup Ring UI");
                 pickupRingUI.TotalTime = pickupTime;
@@ -203,6 +205,8 @@ namespace UZSG.Players
             {
                 FinishPickupRoutine(onTimerNotify);
             }
+            
+            Player.InfoHUD.crosshair.gameObject.SetActive(true);
         }
 
         IEnumerator<float> UpdatePickupRoutine(float duration, Action<PickupStatus> onTimerNotify)
@@ -229,7 +233,7 @@ namespace UZSG.Players
 
         void FinishPickupRoutine(Action<PickupStatus> onTimerNotify)
         {
-            _isBusy = false;
+            IsBusy = false;
             pickupRingUI.Destroy();
             pickupRingUI = null;
             EnableControlsOnPickupResource();
@@ -245,7 +249,7 @@ namespace UZSG.Players
                 pickupRingUI.Destroy();
             }
             
-            _isBusy = false;
+            IsBusy = false;
             pickupRingUI.Destroy();
             pickupRingUI = null;
             EnableControlsOnPickupResource();
@@ -365,6 +369,11 @@ namespace UZSG.Players
                 if (Player.Inventory.Equipment.TryEquipWeapon(item, out EquipmentIndex index))
                 {
                     Player.FPP.HoldItem(item.Data);
+                    // if (itemEntity is GunItemEntity gun)
+                    // {
+                    //     Player.FPP.HeldItem
+                    // }
+
                     OnPickupItem?.Invoke(item);
                     DestroyPickupedItem(itemEntity);
                     return;
@@ -438,7 +447,7 @@ namespace UZSG.Players
 
         void DestroyPickupedItem(Entity item)
         {
-            Game.Entity.Kill(item);
+            item.Kill();
         }
         
         /// <summary>

@@ -30,7 +30,7 @@ namespace UZSG.Entities
             }
             else if (e.To == EnemyMoveStates.Run)
             {
-                animator.CrossFade("jog_forward", 0.1f);
+                animator.CrossFade("jog_drunk", 0.1f);
             }
             else if (e.To == EnemyMoveStates.Walk)
             {
@@ -48,24 +48,10 @@ namespace UZSG.Entities
             {
                 animator.CrossFade("scream", 0.1f);
             }
-        }
-
-        void SwitchAndLoopAnimation(string animationName)
-        {
-            // CrossFade to transition to the desired animation
-            animator.CrossFade(animationName, 0.1f);
-
-            // Use a coroutine to wait until the crossfade transition is done
-            StartCoroutine(LockAnimation(animationName));
-        }
-
-        IEnumerator LockAnimation(string animationName)
-        {
-            // Wait until the crossfade is done
-            yield return new WaitForSeconds(0.1f);
-
-            // Lock the animation in a loop
-            animator.Play(animationName);
+            else if (e.To == EnemyActionStates.Attack)
+            {
+                animator.CrossFade("attack", 0.1f);
+            }
         }
     }
 }

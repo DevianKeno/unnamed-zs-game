@@ -78,9 +78,14 @@ namespace UZSG.Entities.Vehicles
             }
         }
 
+        /// <summary>
+        /// Set player to Driver seat or an unoccupied passenger seat
+        /// </summary>
+        /// <param name="player"></param>
+        /// <param name="previousSeat"></param>
         public void ChangePassengerSeat(Player player, int previousSeat = 0)
         {
-            if (previousSeat == Passengers.Count - 1)
+            if (previousSeat == Passengers.Count - 1 && Driver == null)
             {
                 EnterDriver(player);
             }

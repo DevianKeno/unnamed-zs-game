@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72e1d5853de97a54aa491bcf19eb9d39, type: 3}
   m_Name: falcon
   m_EditorClassIdentifier: 
+  SourceId: uzsg
   Id: falcon
+  Tags: []
   Name: WL Falcon
   Description: Big pistol.
   Model:
@@ -49,6 +51,7 @@ MonoBehaviour:
     RoundsPerMinute: 300
     ClipSize: 7
     ReloadSpeed: 1
+    Ammo: {fileID: 11400000, guid: f6587d7d90d922847899c7a85b3a7b47, type: 2}
     Spread: 0
     BurstFireCount: 0
     BurstFireInterval: 0
@@ -80,16 +83,19 @@ MonoBehaviour:
       Duration: 0
       RecoverySpeed: 1
       RecoveryDuration: 0
-  armsAnimations: {fileID: 9100000, guid: 90b9a7adc1ec7d441af891b9381f35bf, type: 2}
-  viewmodel:
+  armsAnimations: {fileID: 9100000, guid: b006c113715245a46925ce71254b9d2f, type: 2}
+  viewmodelAsset:
     m_AssetGUID: 13edfeffdf303464dac87a6a494cc5e3
     m_SubObjectName: 
     m_SubObjectType: 
-    m_EditorAssetChanged: 1
-  viewmodelOffsets:
-    Position: {x: 0, y: 0, z: 0}
-    Rotation: {x: 0, y: 0, z: 0}
-  anims:
+    m_EditorAssetChanged: 0
+  viewmodelSettings:
+    UseOffsets: 1
+    PositionOffset: {x: 0.01, y: 0, z: 0.09}
+    RotationOffset: {x: 0.32, y: -0.24, z: 0}
+    RunBobPosition: {x: 0, y: 0, z: 0}
+    RunBobRotation: {x: 0, y: 0, z: 0}
+  animationData:
     Idle: idle
     Move: 
     Primary: fire

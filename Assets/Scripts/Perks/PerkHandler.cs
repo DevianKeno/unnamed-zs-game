@@ -5,7 +5,10 @@ using UZSG.Entities;
 
 namespace UZSG.Perks
 {
-    public abstract class PerkHandler : MonoBehaviour
+    /// <summary>
+    /// Base class for all Perks.
+    /// </summary>
+    public abstract class PerkHandler
     {
         [SerializeField] protected PerkData perkData;
         public PerkData PerkData => perkData;

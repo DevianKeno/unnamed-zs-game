@@ -530,9 +530,8 @@ MonoBehaviour:
   Player: {fileID: 0}
   VignetteEase: 21
   VignetteFadeDuration: 0.44
-  crosshair: {fileID: 142077827921252402}
-  allCrosshair: {fileID: 4073046482514566878}
-  compass: {fileID: 7323213583556788009}
+  Crosshair: {fileID: 4073046482514566878}
+  Compass: {fileID: 7323213583556788009}
   vignette: {fileID: 8480167236494745018}
   pickupsIndicator: {fileID: 1978988548548734858}
   pickupTimer: {fileID: 0}
@@ -697,14 +696,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Crosshairs
       objectReference: {fileID: 0}
-    - target: {fileID: 4396087841993099887, guid: 3e985940ec5d25945917d3263eca474c, type: 3}
-      propertyPath: maxSize
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 4396087841993099887, guid: 3e985940ec5d25945917d3263eca474c, type: 3}
-      propertyPath: addedFiringFactor
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 7310548438961464390, guid: 3e985940ec5d25945917d3263eca474c, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -790,17 +781,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3e985940ec5d25945917d3263eca474c, type: 3}
---- !u!114 &142077827921252402 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4396087841993099887, guid: 3e985940ec5d25945917d3263eca474c, type: 3}
-  m_PrefabInstance: {fileID: 4394046014564932189}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eff17b7d69b34994b8356ab7231bb7c3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &4073046482514566878 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 323300003746563203, guid: 3e985940ec5d25945917d3263eca474c, type: 3}

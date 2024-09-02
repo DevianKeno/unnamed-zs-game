@@ -121,6 +121,10 @@ namespace UZSG.Items.Tools
                 {
                     StartCoroutine(AttackCoroutine());
                 }
+                if (IsBroken)
+                {
+                    /// prompt user broken Item
+                }
             }
             else if (context.canceled)
             {

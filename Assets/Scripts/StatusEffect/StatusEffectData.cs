@@ -1,12 +1,14 @@
+using System;
 using UnityEngine;
+using UZSG.Data;
 
-namespace UZSG.StatusEffects
+namespace UZSG.Data
 {
+    [Serializable]
     [CreateAssetMenu(fileName = "Status Effect", menuName = "UZSG/Status Effect")]
-    public class StatusEffectData : ScriptableObject
+    public class StatusEffectData : BaseData
     {
-        public string Id;
         public string Name;
-        public string Description;
+        [TextArea] public string Description;
     }
 }

@@ -47,7 +47,12 @@ namespace UZSG.Entities
             set { transform.rotation = value; }
         }
 
+
+        #region Entity events
+
         public event Action<Entity> OnKilled;
+
+        #endregion
 
 
         #region Initializing methods
@@ -156,14 +161,12 @@ namespace UZSG.Entities
         public void Kill(bool notify = true)
         {
             OnKill();
+            if (notify) OnKilled?.Invoke(this);
             Destroy(gameObject);
         }
 
         #endregion
 
-        protected virtual void OnKill()
-        {
-            OnKilled?.Invoke(this);
-        }
+        protected virtual void OnKill() { }
     }
 }

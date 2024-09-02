@@ -141,6 +141,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Player: {fileID: 8107631895800867322}
+  Enabled: 0
   Slerp: 1
   cameraFpp: {fileID: 4657274095525333481}
   source: {fileID: 0}
@@ -359,10 +360,17 @@ MonoBehaviour:
   Player: {fileID: 8107631895800867322}
   Sensitivity: 0.1
   EnableControls: 1
+  SmoothMouse: 0
+  Smoothness: 1
   ResetCameraPosition: 0
+  CrouchDuration: 0.3
+  CrouchOffset: {x: 0, y: -0.77, z: 0}
+  CrouchLookForward: 0
+  CrouchLookForwardDistance: 16
+  CrouchLookForwardDamping: 10
+  CrouchEase: 16
   Holder: {fileID: 1873134562759721657}
   FPPCamera: {fileID: 8061303154701812193}
-  animator: {fileID: 0}
 --- !u!114 &5105896103929999244
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -629,11 +637,11 @@ MonoBehaviour:
     RunningPosition: {x: 0, y: 0, z: 0}
     RunningRotation: {x: 0, y: 0, z: 0}
   JogBob:
-    Amplitude: 0
-    Frequency: 0
-    Recovery: 0
-    MaintainForwardLook: 0
-    LookDistance: 0
+    Amplitude: 1.2
+    Frequency: 1
+    Recovery: 6
+    MaintainForwardLook: 1
+    LookDistance: 10
     TransformDamping: 0
     RunningPosition: {x: 0, y: 0, z: 0}
     RunningRotation: {x: 0, y: 0, z: 0}
@@ -678,7 +686,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Player: {fileID: 8107631895800867322}
   Enabled: 1
-  RunningMultiplier: 0
+  RunningMultiplier: 4
   MinSpeed: 0.3
   ForwardAngle: 0.3
   SideAngle: 0.3
@@ -1139,26 +1147,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1006cdb9b8f29d448b12136491ad149b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Player: {fileID: 8107631895800867322}
   AllowMovement: 0
   MoveAcceleration: 10
   RotationDamping: 6
   TurningAngle: 120
   RunIsToggle: 0
   CrouchIsToggle: 1
+  usePhysicsJump: 1
+  jumpHeight: 1
+  jumpTime: 1
+  internalGravity: 0
   _isAnyMovePressed: 0
   _isMovingBackwards: 0
   _isMovingSideways: 0
   _isWalking: 0
   _isRunning: 0
+  _isCrouching: 0
   _hasJumped: 0
+  _inAir: 0
+  _canCoyote: 0
+  _fallSpeedAcceleration: 2
+  _targetMoveSpeed: 0
+  _frameVelocity: {x: 0, y: 0, z: 0}
   Model: {fileID: 94713427562349016}
   rb: {fileID: 8394152581638175708}
   groundChecker: {fileID: 6313547803532779528}
-  groundCheckerObject: {fileID: 1807161492040155152}
-  groundMask:
-    serializedVersion: 2
-    m_Bits: 512
 --- !u!114 &5659626291116057010
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1171,7 +1184,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83dcb9e909c595f4fbc9bf79ad9c9e20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Player: {fileID: 8107631895800867322}
   Radius: 0.2
   MaxInteractDistance: 3
   HoldThresholdMilliseconds: 200
@@ -1259,7 +1271,7 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 0
+  m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 112
@@ -1505,6 +1517,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: -4778171265066551223, guid: 78830366d1503514da36901df59a79a3, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 408cf76d97678a64187dc3ddf1fc3603, type: 2}
     - target: {fileID: -4501201811031430588, guid: 78830366d1503514da36901df59a79a3, type: 3}
       propertyPath: m_Layer
       value: 8
@@ -1529,6 +1545,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: -2887679669929615341, guid: 78830366d1503514da36901df59a79a3, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: aaaba4fa2b7f88d4bad5420ad954c45b, type: 2}
     - target: {fileID: -2656431786303760210, guid: 78830366d1503514da36901df59a79a3, type: 3}
       propertyPath: m_Layer
       value: 8
@@ -1693,6 +1713,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: 7191231875240164150, guid: 78830366d1503514da36901df59a79a3, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 408cf76d97678a64187dc3ddf1fc3603, type: 2}
     - target: {fileID: 7205873384925501923, guid: 78830366d1503514da36901df59a79a3, type: 3}
       propertyPath: m_Layer
       value: 8
@@ -1709,6 +1733,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: 7885100728120209435, guid: 78830366d1503514da36901df59a79a3, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: aaaba4fa2b7f88d4bad5420ad954c45b, type: 2}
     - target: {fileID: 7891850266450665243, guid: 78830366d1503514da36901df59a79a3, type: 3}
       propertyPath: m_Layer
       value: 8
@@ -1900,6 +1928,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: -4778171265066551223, guid: 78830366d1503514da36901df59a79a3, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 408cf76d97678a64187dc3ddf1fc3603, type: 2}
     - target: {fileID: -4501201811031430588, guid: 78830366d1503514da36901df59a79a3, type: 3}
       propertyPath: m_Layer
       value: 10
@@ -1924,6 +1956,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: -2887679669929615341, guid: 78830366d1503514da36901df59a79a3, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: aaaba4fa2b7f88d4bad5420ad954c45b, type: 2}
     - target: {fileID: -2656431786303760210, guid: 78830366d1503514da36901df59a79a3, type: 3}
       propertyPath: m_Layer
       value: 8
@@ -2088,6 +2124,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 7191231875240164150, guid: 78830366d1503514da36901df59a79a3, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 408cf76d97678a64187dc3ddf1fc3603, type: 2}
     - target: {fileID: 7205873384925501923, guid: 78830366d1503514da36901df59a79a3, type: 3}
       propertyPath: m_Layer
       value: 10
@@ -2104,6 +2144,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: 7885100728120209435, guid: 78830366d1503514da36901df59a79a3, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: aaaba4fa2b7f88d4bad5420ad954c45b, type: 2}
     - target: {fileID: 7891850266450665243, guid: 78830366d1503514da36901df59a79a3, type: 3}
       propertyPath: m_Layer
       value: 10

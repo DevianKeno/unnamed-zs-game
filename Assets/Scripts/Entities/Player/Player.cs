@@ -19,17 +19,10 @@ using UZSG.Saves;
 using UZSG.UI.Objects;
 using UZSG.UI;
 
-using static UZSG.Players.MoveStates;
+using static UZSG.Players.MoveStates;   
 
 namespace UZSG.Entities
 {
-    /// <summary>
-    /// Interface collection for Player Entity.
-    /// </summary>
-    public interface IPlayer : IAttributable, IInteractActor, ISaveDataReadWrite<PlayerSaveData>
-    {
-    }
-    
     /// <summary>
     /// Player entity.
     /// </summary>
@@ -51,29 +44,49 @@ namespace UZSG.Entities
 
         [SerializeField] PlayerAudioSourceController audioController;
         public PlayerAudioSourceController Audio => audioController;
+        
+        InventoryUI invUI;
+        public InventoryUI InventoryGUI => invUI;
+        PlayerHUDVitals _vitalsHUD;
+        public PlayerHUDVitals VitalsHUD => _vitalsHUD;
+        PlayerHUDInfo _infoHUD;
+        public PlayerHUDInfo InfoHUD => _infoHUD;        
+        InputActionMap actionMap;
+        readonly Dictionary<string, InputAction> inputs = new();
+
+
+        #region Properties
 
         /// <summary>
         /// Player's forward direction relative to the FPP Camera.
         /// </summary>
         public Vector3 Forward => MainCamera.transform.forward;
+        /// <summary>
+        /// Player's right direction relative to the FPP Camera.
+        /// </summary>
         public Vector3 Right => MainCamera.transform.right;
+        /// <summary>
+        /// Player's upward direction relative to the FPP Camera.
+        /// </summary>
         public Vector3 Up => MainCamera.transform.up;
         /// <summary>
         /// World space position of the Player's eye level.
         /// </summary>
         public Vector3 EyeLevel => MainCamera.transform.position;
         public Transform Model => Controls.Model;
-
-        InventoryUI invUI;
-        public InventoryUI InventoryGUI => invUI;
-        PlayerHUDVitals _vitalsHUD;
-        public PlayerHUDVitals VitalsHUD => _vitalsHUD;
-        PlayerHUDInfo _infoHUD;
-        public PlayerHUDInfo InfoHUD => _infoHUD;
-
         
-        InputActionMap actionMap;
-        readonly Dictionary<string, InputAction> inputs = new();
+        /// <summary>
+        /// A full jump requires complete stamina cost.
+        /// </summary>
+        public bool HasStaminaForJump
+        {
+            get
+            {
+                return Attributes["stamina"].Value >= Attributes["jump_stamina_cost"].Value;
+            }
+        }
+    
+        #endregion
 
 
         #region Events
@@ -93,15 +106,7 @@ namespace UZSG.Entities
         public MovementStateMachine MoveStateMachine { get; private set; }
         public ActionStateMachine ActionStateMachine { get; private set; }
         public FPPController FPP { get; private set; }
-
-        public bool CanJump
-        {
-            get
-            {
-                return Attributes["stamina"].Value >= Attributes["jump_stamina_cost"].Value
-                    && Controls.CanCoyoteJump;
-            }
-        }
+        public Rigidbody Rigidbody => Controls.Rigidbody;
 
 
         #region Initializing methods
@@ -218,21 +223,27 @@ namespace UZSG.Entities
 
         void ParentMainCameraToFPPController()
         {
-            Camera.main.transform.SetParent(FPP.Camera.Holder, false);
-            Camera.main.transform.localPosition = Vector3.zero;
+            MainCamera.transform.SetParent(FPP.Camera.Holder, worldPositionStays: false);
+            MainCamera.transform.localPosition = Vector3.zero;
         }
 
         #endregion
 
+
+        void OnDestroy()
+        {
+            Game.Tick.OnTick -= Tick;
+        }
         
         void Tick(TickInfo t)
         {
+            InnateConsumption();
             ConsumeStaminaWhileRunning();
             RegenerateStamina();
         }
 
 
-        #region Attribute event callbacks
+        #region Attribute events callbacks
 
         bool _allowStaminaRegen;
         CoroutineHandle _delayedStaminaTimer;
@@ -302,6 +313,8 @@ namespace UZSG.Entities
         #endregion
 
 
+        #region Public methods
+
         #region Saving/loading
 
         public void ReadSaveData(PlayerSaveData saveData)
@@ -315,6 +328,7 @@ namespace UZSG.Entities
             base.ReadSaveData(saveData);
 
             /// Load inventory, etc. and whatever the fuck not related to the Player
+            // Inventory.ReadSaveData(saveData.Inventory);
         }
         
         public new PlayerSaveData WriteSaveData()
@@ -330,11 +344,9 @@ namespace UZSG.Entities
 
             return psd;
         }
-        
+
         #endregion
 
-
-        #region Public methods
 
         public void UseObjectGUI(ObjectGUI gui)
         {
@@ -344,6 +356,15 @@ namespace UZSG.Entities
         public void RemoveObjectGUI(ObjectGUI gui)
         {
             invUI.RemoveObjectGUI(gui);
+        }
+        
+        #endregion
+
+
+        void InnateConsumption()
+        {
+            /// Innate hunger consumption
+            
         }
 
         void RegenerateStamina()
@@ -363,13 +384,11 @@ namespace UZSG.Entities
                 Attributes.Get("stamina").Remove(runStaminaCost);
             }
         }
-
+        
         IEnumerator<float> _DelayStaminaRegen()
         {
             yield return Timing.WaitForSeconds(Attributes["stamina_regen_delay"].Value);
             _allowStaminaRegen = true;
         }
-        
-        #endregion
     }
 }

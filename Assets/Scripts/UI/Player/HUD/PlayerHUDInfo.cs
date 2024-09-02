@@ -13,6 +13,7 @@ using UZSG.Items;
 using UZSG.Items.Weapons;
 using UZSG.Interactions;
 using UZSG.Data;
+using UZSG.Players;
 
 namespace UZSG.UI.HUD
 {
@@ -28,9 +29,8 @@ namespace UZSG.UI.HUD
         public float VignetteFadeDuration;
         
         [Header("Elements")]
-        public DynamicCrosshair crosshair;
-        public SwitchCrosshair allCrosshair;
-        public Compass compass;
+        public CrosshairHandler Crosshair;
+        public Compass Compass;
         public Image vignette;
         public PickupsIndicator pickupsIndicator;
         public RadialProgressUI pickupTimer;
@@ -46,9 +46,8 @@ namespace UZSG.UI.HUD
             }
 
             Player = player;
-            crosshair.Initialize(player);
-            allCrosshair.Initialize(player);
-            compass.Initialize(player);
+            Crosshair.Initialize(player);
+            Compass.Initialize(player);
             
             resourceHealthRingUI = Game.UI.Create<ResourceHealthRingUI>("Resource Health Ring UI", show: false);
 
@@ -57,9 +56,35 @@ namespace UZSG.UI.HUD
 
         void InitializeEvents()
         {
+            Player.Controls.OnCrouch += OnCrouch;
             Player.Actions.OnLookAtSomething += OnPlayerLookAtSomething;
             Player.Actions.OnPickupItem += OnPlayerPickupedItem;
+            Player.Actions.OnInteractVehicle += OnInteractVehicle;
             Player.FPP.OnChangeHeldItem += OnChangeHeldItem;
+        }
+
+        void OnInteractVehicle(VehicleInteractContext context)
+        {
+            if (context.Entered)
+            {
+                Crosshair.Hide();
+            }
+            else if (context.Exited)
+            {
+                Crosshair.Show();
+            }
+        }
+
+        void OnCrouch(bool crouched)
+        {
+            if (crouched)
+            {
+                FadeVignette(alpha: 1f);
+            }
+            else
+            {
+                FadeVignette(alpha: 0f);
+            }
         }
 
         void OnDestroy()

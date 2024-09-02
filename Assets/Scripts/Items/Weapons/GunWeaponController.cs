@@ -24,8 +24,12 @@ namespace UZSG.Items.Weapons
         /// <summary>
         /// Reserve bullets in the Player's bag.
         /// </summary>
-        public int Reserve { get; private set; } 
+        public int Reserve
+        {
+            get => Player.Inventory.Bag.CountId(AmmoData.Id);
+        }
         public FiringMode CurrentFiringMode { get; private set; }
+        public AmmoData AmmoData => WeaponData.RangedAttributes.Ammo;
 
         bool _inhibitActions;
         bool _isHoldingFire;
@@ -104,11 +108,9 @@ namespace UZSG.Items.Weapons
 
         void InitializeBullets()
         {
-            Reserve = 0;
             var ammoData = WeaponData.RangedAttributes.Ammo;
             if (ammoData != null)
             {
-                Reserve += Player.Inventory.Bag.CountId(ammoData.Id);
                 Player.VitalsHUD.AmmoCounter.SetReserve(Reserve);
                 Player.VitalsHUD.AmmoCounter.SetCartridgeText(ammoData.Name);
             }
@@ -197,7 +199,6 @@ namespace UZSG.Items.Weapons
         {
             if (item.Data is AmmoData ammoData)
             {
-                Reserve = Player.Inventory.Bag.CountId(ammoData.Id);
                 Player.VitalsHUD.AmmoCounter.SetReserve(Reserve);
             }
         }
@@ -374,19 +375,21 @@ namespace UZSG.Items.Weapons
 
             int clipSize = WeaponData.RangedAttributes.ClipSize;
             int missingBullets = clipSize - CurrentRounds;
-
+            Item ammoToTake;
+            
             /// Check for enough reserve bullets
             if (missingBullets <= Reserve)
             {
                 CurrentRounds += missingBullets;
-                Reserve -= missingBullets;
+                ammoToTake = new(AmmoData, missingBullets);
             }
             else /// not enough reserve bullets, fill the clip with whatever is left
             {
                 CurrentRounds += Reserve;
-                Reserve = 0;
+                ammoToTake = new(AmmoData, Reserve);
             }
 
+            Player.Inventory.Bag.TakeItem(ammoToTake);
             Player.VitalsHUD.AmmoCounter.SetClip(CurrentRounds);
             Player.VitalsHUD.AmmoCounter.SetReserve(Reserve);
 

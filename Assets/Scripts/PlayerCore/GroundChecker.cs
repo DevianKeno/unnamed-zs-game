@@ -62,7 +62,6 @@ namespace UZSG.Players
 
         public void GroundTextureDetection()
         {
-            
             if (Physics.Raycast(rayStart.position, -rayStart.up, out hit, rayCastRange, mask))
             {
                 if (drawRayCast)

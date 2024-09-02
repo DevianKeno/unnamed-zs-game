@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8cc029cec14b78e47bd523602bdd0778, type: 3}
   m_Name: grass
   m_EditorClassIdentifier: 
+  SourceId: uzsg
   Id: Grass
+  Tags: []
   Name: Grass
   Model:
     m_AssetGUID: ebf497d975a37754c94de9848b636eee
@@ -24,10 +26,11 @@ MonoBehaviour:
   AudioAssetsData: {fileID: 11400000, guid: 6cf4ae24c234f1f44a0eec1ea6f4b459, type: 2}
   ToolType: 0
   Yield:
-    itemData: {fileID: 0}
-    count: 0
+    itemData: {fileID: 11400000, guid: fe31e13f437bd6d429adfd67ab6ba40b, type: 2}
+    count: 1
     attributes:
       attributesReadOnly: []
   PickupDuration: 1
   MaxInteractDistance: 3
+  UseInstances: 0
   Instances: []

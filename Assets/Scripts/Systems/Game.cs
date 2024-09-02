@@ -236,8 +236,14 @@ namespace UZSG.Systems
             foreach (var action in map.actions)
             {
                 inputs[action.name] = action;
-                if (enable) action.Enable();
-                else action.Disable();
+                if (enable)
+                {
+                    action.Enable();
+                }
+                else
+                {
+                    action.Disable();
+                }
             }
             return inputs;
         }

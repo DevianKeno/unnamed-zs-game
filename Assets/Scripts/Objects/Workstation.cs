@@ -35,7 +35,7 @@ namespace UZSG.Objects
         CraftingGUI gui;
         public CraftingGUI GUI => gui;
 
-        public event EventHandler<InteractArgs> OnInteract;
+        public event EventHandler<IInteractArgs> OnInteract;
         public event Action<CraftingRoutine> OnCraft;
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace UZSG.Objects
 
         #region Public methods
 
-        public virtual void Interact(IInteractActor actor, InteractArgs args)
+        public virtual void Interact(IInteractActor actor, IInteractArgs args)
         {
             if (actor is not Player player) return;
 

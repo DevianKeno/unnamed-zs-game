@@ -65,7 +65,7 @@ namespace UZSG.Entities.Vehicles
         /// </summary>
         /// <param name="player"></param>
         /// <param name="viewPerspective"></param>
-        public void ToggleCamera(Player player, string viewPerspective)
+        public void ToggleCamera(Player player, string viewPerspective) /// use enums
         {
             if (viewPerspective == "FPP")
             {

@@ -20,32 +20,66 @@ namespace UZSG.Entities
         [SerializeField] float _targetY = 0f;
 
         [SerializeField] protected Animator animator;
+        /// <summary>
+        /// Animator for the complete player model.
+        /// </summary>
         public Animator Animator => animator;
+        /// <summary>
+        /// Animator for the culled (without upper body) player model.
+        /// </summary>
         [SerializeField] protected Animator animatorFPP;
         public Animator AnimatorFPP => animatorFPP;
         
         void InitializeAnimator()
         {
-            MoveStateMachine[MoveStates.Crouch].OnTransition += OnCrouchState;
+            Controls.OnCrouch += OnCrouch;
+            Controls.OnTurn += OnTurn;
+            Actions.OnInteractVehicle += OnInteractVehicle;
         }
 
-        void OnCrouchState(StateMachine<MoveStates>.TransitionContext e)
+
+        #region Event callbacks (all over)
+
+        void OnCrouch(bool crouched)
         {
-            if (e.From == MoveStates.Crouch)
+            if (crouched)
             {
-                print("exited crouch");
-                animator.CrossFade($"crouch_to_stand", CrossfadeTransitionDuration);
+                // print("entered crouch");
+                animator.CrossFade($"stand_to_crouch", 0f); /// no transition fade
             }
-            else if (e.To == MoveStates.Crouch)
+            else
             {
-                print("entered crouch");
-                animator.CrossFade($"stand_to_crouch", CrossfadeTransitionDuration);
+                // print("exited crouch");
+                animator.CrossFade($"crouch_to_stand", 0f); /// no transition fade
             }
         }
 
-        void TransitionAnimator(StateMachine<MoveStates>.TransitionContext e)
+        void OnTurn(float direction)
         {
-            var animId = GetAnimationName(e.To);
+            animator.CrossFade($"turn", 0f);
+            animator.SetFloat("turn", direction);
+        }
+
+        void OnInteractVehicle(VehicleInteractContext context)
+        {
+            /// this can handle entering/exiting vehicle animations but good luck with that lmao
+            if (context.Entered)
+            {
+                animator.CrossFade($"invehicle", 0f); /// no transition fade
+            }
+            else if (context.Exited)
+            {
+                animator.CrossFade($"idle", 0f); /// no transition fade
+            }
+        }
+
+        #endregion
+
+
+        void TransitionAnimator(StateMachine<MoveStates>.TransitionContext t)
+        {
+            var animId = GetAnimationName(t.To);
+
             animator.CrossFade($"{animId}", CrossfadeTransitionDuration);
             animatorFPP.CrossFade($"{animId}", CrossfadeTransitionDuration);
         }

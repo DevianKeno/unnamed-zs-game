@@ -69,8 +69,8 @@ namespace UZSG.Entities
         /// <summary>
         /// Despawn time in seconds.
         /// </summary>
-        public int Age = DespawnTimeSeconds;
-        public event EventHandler<InteractArgs> OnInteract;
+        public int Age;
+        public event EventHandler<IInteractArgs> OnInteract;
 
         int _originalLayer;
         bool _isModelLoaded;
@@ -92,6 +92,7 @@ namespace UZSG.Entities
         protected override void Start()
         {
             LoadModel();
+            Age = DespawnTimeSeconds;
         }
 
         public override void OnSpawn()
@@ -183,11 +184,14 @@ namespace UZSG.Entities
 
         #region Public methods
 
-        public void Interact(IInteractActor actor, InteractArgs args)
+        public void Interact(IInteractActor actor, IInteractArgs args)
         {
             if (actor is not Player player) return;
 
-            player.Actions.PickUpItem(this);
+            if (player.Actions.PickUpItem(this))
+            {
+                Kill();
+            }
         }
 
         /// <summary>
@@ -203,6 +207,14 @@ namespace UZSG.Entities
             {
                 return new(item);
             }
+        }
+
+        /// <summary>
+        /// Apply a throw force to this Item Entity.
+        /// </summary>
+        public void Throw(Vector3 direction, float power)
+        {
+            Rigidbody.AddForce(direction * power, ForceMode.Impulse);
         }
 
         public void OnLookEnter()
@@ -226,7 +238,7 @@ namespace UZSG.Entities
         {
             if (item.IsNone)
             {
-                Kill();
+                Kill(notify: false);
             }
         }
 

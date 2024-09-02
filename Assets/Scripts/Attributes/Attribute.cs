@@ -23,6 +23,8 @@ namespace UZSG.Attributes
         [SerializeField] protected AttributeData data;
         public AttributeData Data => data;
         public string Id => data.Id;
+        protected AttributeBroker broker;
+        public AttributeBroker Broker => broker;
         
         public Attribute(AttributeData data)
         {
@@ -58,7 +60,14 @@ namespace UZSG.Attributes
         {
             get
             {
-                return value;
+                // if (Broker.HasStatusEffects)
+                // {
+                //     return Broker.GetValue();
+                // }
+                // else
+                // {
+                    return value;
+                // }
             }
             set
             {

@@ -5,49 +5,55 @@ using UZSG.Data;
 using UZSG.Entities;
 using UZSG.Interactions;
 using UZSG.Items;
+using UZSG.Players;
 using UZSG.Systems;
+
+using static UZSG.Players.PlayerActions.PickupEventStatus;
 
 namespace UZSG.Objects
 {
     public class ResourcePickup : BaseObject, IInteractable
     {
         public ResourceData ResourceData => objectData as ResourceData;
-        public Item Item;
         public string Action => "Pick up";
         public string Name => ResourceData.Name;
         public bool AllowInteractions { get; set; } = true;
+        public event EventHandler<IInteractArgs> OnInteract;
 
-        public event EventHandler<InteractArgs> OnInteract;
+        Player _actor;
 
         protected override void Start()
         {
             base.Start();
         }
 
-        public void Interact(IInteractActor actor, InteractArgs args)
+        public void Interact(IInteractActor actor, IInteractArgs args)
         {
             if (actor is Player player)
             {
                 if (player.Inventory.Bag.IsFull) return;
                 
-                player.Actions.StartPickupRoutine(this, onTimerNotify: (status) =>
+                _actor = player;
+                player.Actions.StartPickupRoutine(this, OnPickupEvent);
+            }
+        }
+
+        void OnPickupEvent(PlayerActions.PickupEventStatus status)
+        {
+            if (status == Finished)
+            {
+                if (_actor.Actions.PickUpItem(new Item(ResourceData.Yield)))
                 {
-                    if (status == Players.PlayerActions.PickupStatus.Finished)
+                    Game.Audio.PlayInWorld("pick", Position);
+                    Destroy();
+                }
+                else
+                {
+                    Game.Entity.Spawn<ItemEntity>("item_entity", Position, callback: (info) =>
                     {
-                        if (player.Inventory.Bag.TryPutNearest(new Item(Item)))
-                        {
-                            Game.Audio.PlayInWorld("pick", Position);
-                            Destroy();
-                        }
-                        else
-                        {
-                            Game.Entity.Spawn<ItemEntity>("item_entity", Position, callback: (info) =>
-                            {
-                                info.Entity.Item = Item;
-                            });
-                        }
-                    }
-                });
+                        info.Entity.Item = ResourceData.Yield;
+                    });
+                }
             }
         }
     }

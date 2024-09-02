@@ -14,7 +14,7 @@ namespace UZSG.Items.Weapons
         /// TODO: change into a more robust system
         /// The Id of this gun's bullets.
         /// </summary>
-        public ItemData Ammo;
+        public AmmoData Ammo;
         public float Spread;
         public int BurstFireCount;
         public float BurstFireInterval;

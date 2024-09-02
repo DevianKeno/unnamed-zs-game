@@ -10,7 +10,7 @@ namespace UZSG.Entities.Vehicles
 {
     public class VehicleAudioManager : MonoBehaviour
     {
-        VehicleEntity _vehicle;
+        public VehicleEntity Vehicle { get; private set; }
 
         public AudioClip engineIdle;
         public AudioClip engineActive;          
@@ -24,15 +24,14 @@ namespace UZSG.Entities.Vehicles
         
         float _carSpeed;
 
-        // Start is called before the first frame update
-        void Start()
+        void Awake()
         {
-            _vehicle = GetComponent<VehicleEntity>();
+            Vehicle = GetComponent<VehicleEntity>();
         }
 
         void Update()
         {
-            _carSpeed = _vehicle.Controller.carSpeed;
+            _carSpeed = Vehicle.Controller.carSpeed;
 
             if (twoSoundSystem)
             {
@@ -81,7 +80,7 @@ namespace UZSG.Entities.Vehicles
             if (_sourceIdle.isPlaying)
             {
                 // Normalize car speed to 0-1
-                float normalizedSpeed = Mathf.Clamp01(_carSpeed / _vehicle.Controller.maxSpeed);
+                float normalizedSpeed = Mathf.Clamp01(_carSpeed / Vehicle.Controller.maxSpeed);
 
                 // Apply pitch factor to the audio source
                 // Apply pitch factor only if the car is moving
@@ -101,7 +100,7 @@ namespace UZSG.Entities.Vehicles
             if (_sourceIdle.isPlaying)
             {
                 // Normalize car speed to 0-1
-                float normalizedSpeed = Mathf.Clamp01(_carSpeed / _vehicle.Controller.maxSpeed);
+                float normalizedSpeed = Mathf.Clamp01(_carSpeed / Vehicle.Controller.maxSpeed);
 
                 // Apply pitch factor to the audio source
                 // Apply pitch factor only if the car is moving

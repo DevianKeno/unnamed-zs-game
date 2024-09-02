@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b7e2e119c8ab584aa3e9d5a795a27fa, type: 3}
   m_Name: player
   m_EditorClassIdentifier: 
+  SourceId: uzsg
   Id: player
+  Tags: []
   AssetReference:
     m_AssetGUID: 04707f4850871b74da1bee390c903cfe
     m_SubObjectName: 
@@ -83,6 +85,13 @@ MonoBehaviour:
     flatBonus: 0
     LimitOverflow: 1
     LimitUnderflow: 1
+  - data: {fileID: 11400000, guid: a67dc37c9476f744fbb91412ab531855, type: 2}
+    value: 10
+    baseMaximum: 0
+    multiplier: 1
+    flatBonus: 0
+    LimitOverflow: 1
+    LimitUnderflow: 1
   - data: {fileID: 11400000, guid: a27faf74b47c0664091a44ac647f437d, type: 2}
     value: 0.078125
     baseMaximum: 0
@@ -126,7 +135,7 @@ MonoBehaviour:
     LimitOverflow: 1
     LimitUnderflow: 1
   - data: {fileID: 11400000, guid: 297da97244e00d04d847300f0c687be4, type: 2}
-    value: 0.078125
+    value: 0.333
     baseMaximum: 100
     multiplier: 1
     flatBonus: 0

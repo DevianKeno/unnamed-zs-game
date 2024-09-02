@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48edb80b7076fa14a9c101363227240a, type: 3}
   m_Name: 762mm
   m_EditorClassIdentifier: 
+  SourceId: uzsg
   Id: ammo_762
+  Tags: []
   Name: 
   Description: 
   Model:
@@ -24,7 +26,7 @@ MonoBehaviour:
   Type: 0
   Subtype: 0
   Weight: 0
-  StackSize: 1
+  StackSize: 999
   IsFuel: 0
   FuelDuration: 0
   IsMaterial: 0

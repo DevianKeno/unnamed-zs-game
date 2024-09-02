@@ -168,7 +168,10 @@ namespace UZSG.Systems
         /// </summary>
         public void LogDebug(object message)
         {
-            Log($"[DEBUG]: {message}");
+            if (EnableDebugMode)
+            {
+                Log($"<color=\"white\">[DEBUG]: {message}</color>");
+            }
         }
         
         /// <summary>

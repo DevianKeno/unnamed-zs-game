@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+
 using UnityEngine;
 using UnityEngine.InputSystem;
+
 using UZSG.FPP;
 using UZSG.Systems;
 
@@ -10,7 +12,7 @@ namespace UZSG.Entities.Vehicles
 {
     public class VehicleInputHandler : MonoBehaviour
     {
-        VehicleEntity _vehicle;
+        public VehicleEntity Vehicle { get; set; }
 
         [Header("Vehicle Input")]
         InputAction _moveInput;
@@ -20,12 +22,12 @@ namespace UZSG.Entities.Vehicles
         InputAction _switchViewInput;
         FPPCameraInput _cameraInput;
 
-        private void Awake()
+        void Awake()
         {
-            _vehicle = gameObject.GetComponent<VehicleEntity>();
+            Vehicle = GetComponent<VehicleEntity>();
         }
 
-        private void Start()
+        void Start()
         {
             _moveInput = Game.Main.GetInputAction("Vehicle Move", "Player Move");
             _backInput = Game.Main.GetInputAction("Back", "Global");
@@ -54,10 +56,26 @@ namespace UZSG.Entities.Vehicles
 
         public void TogglePlayerMovement(Player player, bool isEnabled)
         {
-            player.Controls.SetControl("Move", isEnabled);
-            player.Controls.SetControl("Jump", isEnabled);
-            player.Controls.SetControl("Crouch", isEnabled);
-            player.Controls.SetControl("Toggle Walk", isEnabled);
+            // player.Controls.SetControl("Move", isEnabled);
+            // player.Controls.SetControl("Jump", isEnabled);
+            // player.Controls.SetControl("Crouch", isEnabled);
+            // player.Controls.SetControl("Toggle Walk", isEnabled);
+            
+            /// with love
+            string[] enabledControlsIds = new[]
+            {
+                "Move", "Jump", "Crouch", "Toggle Walk"
+            };
+
+            player.Controls.SetControls(enabledControlsIds, isEnabled);
+
+            /// or
+            // string[] disabledControlsIds = new[]
+            // {
+            //     "Move", "Jump", "Crouch", "Toggle Walk"
+            // };
+
+            // player.Controls.SetControls(disabledControlsIds, !isEnabled);
         }
 
         public void ToggleVehicleControls(bool isEnabled)
@@ -91,41 +109,41 @@ namespace UZSG.Entities.Vehicles
         }
 
         #region Input Action Callbacks
-        private void OnMoveInput(InputAction.CallbackContext context)
+        void OnMoveInput(InputAction.CallbackContext context)
         {
-            _vehicle.Controller.DriverInput = context.ReadValue<Vector2>();
+            Vehicle.Controller.DriverInput = context.ReadValue<Vector2>();
         }
 
-        private void OnHandbrakeInput(InputAction.CallbackContext context)
+        void OnHandbrakeInput(InputAction.CallbackContext context)
         {
-            _vehicle.Controller.IsHandbraked = context.started ? true : false;
+            Vehicle.Controller.IsHandbraked = context.started;
         }
 
-        private void OnBackInputPerform(InputAction.CallbackContext context)
-        {
-            GameObject playerUI = GetPlayerGameObjectFromContext(context);
-            // Testing Only
-            Player player = playerUI.GetComponent<PlayerReference>().PlayerEntity;
-            _vehicle.SeatManager.ExitVehicle(player);
-        }
-
-        private void OnSwitchSeatInputPerform(InputAction.CallbackContext context)
+        void OnBackInputPerform(InputAction.CallbackContext context)
         {
             GameObject playerUI = GetPlayerGameObjectFromContext(context);
             // Testing Only
             Player player = playerUI.GetComponent<PlayerReference>().PlayerEntity;
-            _vehicle.SeatManager.ChangeSeat(player);
+            Vehicle.SeatManager.ExitVehicle(player);
         }
 
-        private void OnSwitchViewInputPerform(InputAction.CallbackContext context)
+        void OnSwitchSeatInputPerform(InputAction.CallbackContext context)
         {
             GameObject playerUI = GetPlayerGameObjectFromContext(context);
             // Testing Only
             Player player = playerUI.GetComponent<PlayerReference>().PlayerEntity;
-            _vehicle.CameraManager.ChangeVehicleView(player);
+            Vehicle.SeatManager.ChangeSeat(player);
         }
 
-        private GameObject GetPlayerGameObjectFromContext(InputAction.CallbackContext context)
+        void OnSwitchViewInputPerform(InputAction.CallbackContext context)
+        {
+            GameObject playerUI = GetPlayerGameObjectFromContext(context);
+            // Testing Only
+            Player player = playerUI.GetComponent<PlayerReference>().PlayerEntity;
+            Vehicle.CameraManager.ChangeVehicleView(player);
+        }
+
+        GameObject GetPlayerGameObjectFromContext(InputAction.CallbackContext context)
         {
             // Retrieve the input device from the action context
             var control = context.action.controls.FirstOrDefault();

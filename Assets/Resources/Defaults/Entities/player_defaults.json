@@ -104,8 +104,8 @@
         "LimitUnderflow": true
       },
       {
-        "Id": "jump_height",
-        "Value": 6,
+        "Id": "jump_velocity",
+        "Value": 10,
         "Minimum": 0.0,
         "BaseMaximum": 0.0,
         "Multiplier": 1.0,

@@ -100,12 +100,11 @@ namespace UZSG.Inventory
         /// </summary>
         public void DropItem(Item item)
         {
-            var position = Player.EyeLevel + Player.Forward;
-            Game.Entity.Spawn<ItemEntity>("item", position, callback: (info) =>
+            Game.Entity.Spawn<ItemEntity>("item", Player.EyeLevel, callback: (info) =>
             {
                 info.Entity.Item = item;
-                var throwForce = (Player.Forward + Vector3.up) * ThrowForce;
-                info.Entity.Rigidbody.AddForce(throwForce, ForceMode.Impulse);
+                var throwDirection = Player.Forward + Vector3.up;
+                info.Entity.Throw(throwDirection, ThrowForce);
             });
         }
 
@@ -142,12 +141,21 @@ namespace UZSG.Inventory
 
         public void ReadSaveData(InventorySaveData data)
         {
-            throw new NotImplementedException();
+            Bag.ReadSaveData(data.Bag);
+            Hotbar.ReadSaveData(data.Hotbar);
+            Equipment.ReadSaveData(data.Equipment);
         }
 
         public InventorySaveData WriteSaveData()
         {
-            throw new NotImplementedException();
+            var saveData = new InventorySaveData()
+            {
+                Bag = Bag.WriteSaveData(),
+                Hotbar = Hotbar.WriteSaveData(),
+                Equipment = Equipment.WriteSaveData(),
+            };
+
+            return saveData;
         }
 
 

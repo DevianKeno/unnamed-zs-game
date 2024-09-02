@@ -235,7 +235,7 @@ namespace UZSG.UI.Players
         
         public Item TakeHeldItem()
         {
-            Item toReturn = _heldItem;
+            Item toReturn = new(_heldItem);
             ReleaseHeldItem();
             return toReturn;
         }
@@ -302,7 +302,8 @@ namespace UZSG.UI.Players
                 {
                     if (_selectedSlot.IsEmpty || _selectedSlot.Item.CompareTo(_heldItem))
                     {
-                        _selectedSlot.TryCombine(TakeHeldItem(), out var excess);
+                        var heldItem = TakeHeldItem();
+                        _selectedSlot.TryCombine(heldItem, out var excess);
                         if (!excess.IsNone)
                         {
                             HoldItem(excess);

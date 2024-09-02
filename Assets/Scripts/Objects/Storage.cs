@@ -23,7 +23,7 @@ namespace UZSG.Objects
         StorageGUI gui;
         public StorageGUI GUI => gui;
         
-        public event EventHandler<InteractArgs> OnInteract;
+        public event EventHandler<IInteractArgs> OnInteract;
 
         
         protected override void Start()
@@ -46,7 +46,7 @@ namespace UZSG.Objects
             });
         }
         
-        public virtual void Interact(IInteractActor actor, InteractArgs args)
+        public virtual void Interact(IInteractActor actor, IInteractArgs args)
         {
             if (actor is not Player player) return;
 

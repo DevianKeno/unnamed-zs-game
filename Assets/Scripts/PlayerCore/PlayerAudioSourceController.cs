@@ -21,11 +21,11 @@ namespace UZSG.Players
 
         void PlayFootsteps()
         {
-            if(IsMoving && Player.Controls.IsGrounded && Player.Controls.Magnitude != 0f)
+            if(IsMoving && Player.Controls.IsGrounded && Player.Controls.Velocity.magnitude != 0f)
             {
 
                 // 2f is arbitrary, a number kinda feels right based on player magnitude
-                _cooldown = 2f / Player.Controls.Magnitude;
+                _cooldown = 2f / Player.Controls.Velocity.magnitude;
 
                 // LMFAO IT'S FIXED NOW, INSANE
                 _texture = Player.Controls.groundChecker.texture;

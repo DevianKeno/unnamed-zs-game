@@ -24,7 +24,7 @@ namespace UZSG.FPP
         public Player Player;
         [Space]
 
-        bool _isPlayingAnimation;
+        bool _isAnimationPlaying;
         string currentlyEquippedId;
         public string CurrentlyEquippedId => currentlyEquippedId;
         string lastEquippedId = "arms";
@@ -63,7 +63,7 @@ namespace UZSG.FPP
         public bool HasCameraAnimations { get; private set; }
         public bool CanSwapEquipped
         {
-            get => !_isPlayingAnimation && !IsPerforming;
+            get => !_isAnimationPlaying && !IsPerforming;
         }
 
         #endregion
@@ -128,8 +128,8 @@ namespace UZSG.FPP
 
         void InitializeEvents()
         {
-            Player.MoveStateMachine.OnTransition += OnPlayerMoveStateChanged;
-            Player.ActionStateMachine.OnTransition += OnPlayerActionStateChanged;
+            Player.MoveStateMachine.OnTransition += OnMoveTransition;
+            Player.ActionStateMachine.OnTransition += OnActionTransition;
         }
 
         #endregion
@@ -294,7 +294,7 @@ namespace UZSG.FPP
         public void EquipHeldItem(string id)
         {
             if (string.IsNullOrEmpty(id)) return;
-            if (_isPlayingAnimation) return;
+            if (_isAnimationPlaying) return;
             if (currentlyEquippedId == id) return;
 
             if (_cachedHeldItems.ContainsKey(id))
@@ -316,7 +316,7 @@ namespace UZSG.FPP
         /// </summary>
         public void Unholster()
         {
-            if (_isPlayingAnimation) return;
+            if (_isAnimationPlaying) return;
 
             /// Swaps
             if (currentlyEquippedId == "arms")
@@ -332,7 +332,7 @@ namespace UZSG.FPP
 
         public void PerformReload()
         {
-            if (_isPlayingAnimation) return;
+            if (_isAnimationPlaying) return;
 
             if (heldItem is IReloadable reloadableWeapon)
             {
@@ -512,18 +512,18 @@ namespace UZSG.FPP
 
         #region Event callbacks
 
-        void OnPlayerMoveStateChanged(StateMachine<MoveStates>.TransitionContext e)
+        void OnMoveTransition(StateMachine<MoveStates>.TransitionContext t)
         {
 
         }
         
-        void OnPlayerActionStateChanged(StateMachine<ActionStates>.TransitionContext e)
+        void OnActionTransition(StateMachine<ActionStates>.TransitionContext t)
         {
             if (heldItem == null) return;
             if (IsPerforming) return;
-            if (_isPlayingAnimation) return;
+            if (_isAnimationPlaying) return;
 
-            if (e.To == ActionStates.Secondary)
+            if (t.To == ActionStates.Secondary)
             {
                 // adsController?.AimDownSights();
             }
@@ -626,12 +626,12 @@ namespace UZSG.FPP
 
         IEnumerator FinishAnimation(float durationSeconds)
         {
-            if (_isPlayingAnimation) yield return null;
-            _isPlayingAnimation = true;
+            if (_isAnimationPlaying) yield return null;
+            _isAnimationPlaying = true;
             IsPerforming = true;
 
             yield return new WaitForSeconds(durationSeconds);
-            _isPlayingAnimation = false;
+            _isAnimationPlaying = false;
             IsPerforming = false;
             cameraAnimationTarget.StopAnimation();
             OnPerformFinish?.Invoke();

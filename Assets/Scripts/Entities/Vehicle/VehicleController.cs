@@ -15,7 +15,6 @@ namespace UZSG.Entities.Vehicles
 
         [Header("Vehicle Variables")]
         [SerializeField] VehicleEntity _vehicle;
-        [SerializeField] protected VehicleStateMachine _vehicleStateMachine;
         List<WheelCollider> _frontWheelColliders;
         List<WheelCollider> _rearWheelColliders;
 
@@ -27,7 +26,7 @@ namespace UZSG.Entities.Vehicles
         [HideInInspector] public float fuelConsumptionPerPower;     // Fuel Consumption based on current produced power
         [HideInInspector] public float fuelCapacityPerSpeed;        // Fuel Consumption based on current speed
         [HideInInspector] public float fuelEfficiencyMultiplier;    // Fuel efficiency, closer to 0 the better
-        [HideInInspector] public float fuelLevel;                   // I know you can read
+        public float fuelLevel;                                     // I know you can read
         [HideInInspector] public int maxSpeed;                      // The maximum speed that the car can reach in km/h.
         [HideInInspector] public int maxReverseSpeed;               // The maximum speed that the car can reach while going on reverse in km/h.
         [HideInInspector] public AnimationCurve powerCurve;         // Experimental Power/Torque Curve for more customized acceleration

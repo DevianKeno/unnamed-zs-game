@@ -102,9 +102,9 @@ MonoBehaviour:
   rearPower: 1
   turnRadius: 6
   steeringSpeed: 0.5
-  brakeForce: 600
+  brakeForce: 1000
   decelerationMultiplier: 5
   antiRoll: 5000
-  steerLimitSpeedThreshold: 90
-  steerLimitAmount: 0.5
+  steerLimitSpeedThreshold: 59
+  steerLimitAmount: 0.7
   Attributes: []

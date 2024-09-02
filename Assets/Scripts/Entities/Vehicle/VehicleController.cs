@@ -556,6 +556,11 @@ namespace UZSG.Entities.Vehicles
             //print($"fuel consump: {_fuelConsumption}, fuel level: {fuelLevel}, has fuel: {_hasFuel}");
         }
 
+        public Rigidbody GetRigidbody()
+        {
+            return _carRigidbody;
+        }
+
         #region General Settings Function
 
         public void EnableVehicle()

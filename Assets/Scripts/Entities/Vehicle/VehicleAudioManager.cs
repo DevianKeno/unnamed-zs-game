@@ -21,7 +21,9 @@ namespace UZSG.Entities.Vehicles
 
         [SerializeField] AudioSource _sourceIdle;
         [SerializeField] AudioSource _sourceActive;
-        
+
+        Rigidbody _carRB;
+        float _carRBSpeed;
         float _carSpeed;
 
         // Start is called before the first frame update
@@ -32,7 +34,9 @@ namespace UZSG.Entities.Vehicles
 
         void Update()
         {
+            _carRB = _vehicle.Controller.GetRigidbody();
             _carSpeed = _vehicle.Controller.carSpeed;
+            _carRBSpeed = _carRB.velocity.magnitude;
 
             if (twoSoundSystem)
             {
@@ -87,7 +91,8 @@ namespace UZSG.Entities.Vehicles
                 // Apply pitch factor only if the car is moving
                 if (_carSpeed > 1)
                 {
-                    _sourceIdle.pitch = pitchCurve.Evaluate(normalizedSpeed);
+                    //_sourceIdle.pitch = pitchCurve.Evaluate(normalizedSpeed);
+                    _sourceIdle.pitch = minPitch + (_carRBSpeed / 25f);
                 }
                 else if (_carSpeed < 1)
                 {

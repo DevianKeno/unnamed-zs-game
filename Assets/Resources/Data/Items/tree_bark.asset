@@ -12,12 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 873d4c4f155a35a46b4699d35b336ec7, type: 3}
   m_Name: tree_bark
   m_EditorClassIdentifier: 
+  SourceId: uzsg
   Id: tree_bark
+  Tags: []
   Name: Tree Bark
   Description: Used as fuel, mulch for kindling, crafting basic items, or even as
     a makeshift container or material for insulation.
   Model:
-    m_AssetGUID: 94fed27db3ca85b44a07d38184b39231
+    m_AssetGUID: 8fe4d7e6808204249a4002bff5ac70dc
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0

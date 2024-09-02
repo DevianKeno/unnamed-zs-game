@@ -29,7 +29,8 @@ namespace UZSG.Players
 
         [SerializeField] BoxCollider boxCollider;
 
-        float coyoteTime = 0.2f;
+        float coyoteTime = 0.3f;
+        /// original coyoteTime duration = 0.2f
         [SerializeField] bool _canCoyoteJump;
 
         IEnumerator StartCoyoteTime()

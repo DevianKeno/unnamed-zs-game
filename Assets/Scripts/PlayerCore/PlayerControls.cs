@@ -31,7 +31,8 @@ namespace UZSG.Players
             _isMovingSideways,
             _isWalking,
             _isRunning,
-            _hasJumped;
+            _hasJumped,
+            _canCoyote;
         float _targetMoveSpeed;
         float _crouchTransitionSpeed = 0.66f;
 
@@ -377,7 +378,8 @@ namespace UZSG.Players
 
         void HandleJump()
         {
-            if (!IsGrounded) return;
+            if (!CanCoyoteJump) return;
+            if (_hasJumped == true) return;
 
             _hasJumped = true;
             Vector3 jumpVelocity = rb.velocity;
@@ -435,6 +437,7 @@ namespace UZSG.Players
         {
             // Gravity = -2 * JumpHeight / Mathf.Pow(JumpTime / 2, 2); /// this should be cached
             // var Gravity = Physics.gravity.y;
+            ///original Gravity value = -9.8f
             var Gravity = -9.8f;
             var targetV = rb.velocity;
 

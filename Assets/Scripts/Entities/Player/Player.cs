@@ -99,7 +99,7 @@ namespace UZSG.Entities
             get
             {
                 return Attributes["stamina"].Value >= Attributes["jump_stamina_cost"].Value
-                    && Controls.IsGrounded;
+                    && Controls.CanCoyoteJump;
             }
         }
 

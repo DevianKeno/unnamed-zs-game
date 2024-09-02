@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6379a2b7d91791945abf1dc8c29cd406, type: 3}
   m_Name: walker
   m_EditorClassIdentifier: 
+  SourceId: uzsg
   Id: walker
+  Tags: []
   AssetReference:
     m_AssetGUID: b974f07cddec4e04986cf4d7e3e83ab7
     m_SubObjectName: 
@@ -48,15 +50,8 @@ MonoBehaviour:
     flatBonus: 0
     LimitOverflow: 1
     LimitUnderflow: 1
-  - data: {fileID: 11400000, guid: 445468e46b21cf3418fffbbbca19442f, type: 2}
-    value: 16
-    baseMaximum: 1000
-    multiplier: 1
-    flatBonus: 0
-    LimitOverflow: 1
-    LimitUnderflow: 1
-  - data: {fileID: 11400000, guid: 5c7e00022be57d3408817d8556a9c1b5, type: 2}
-    value: 1.2
+  - data: {fileID: 11400000, guid: 5e71af7286d194c4c9bf489e08b9c33f, type: 2}
+    value: 10
     baseMaximum: 1000
     multiplier: 1
     flatBonus: 0

@@ -158,6 +158,7 @@ namespace UZSG.Entities
         void InitializeAttributes()
         {
             attributes["stamina"].OnValueModified += OnAttrStaminaModified;
+            currentHealth = Attributes.Get("health").Value;
         }
 
         void InitializeStateMachines()

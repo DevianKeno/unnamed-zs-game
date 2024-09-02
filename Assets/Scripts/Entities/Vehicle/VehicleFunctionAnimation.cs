@@ -15,7 +15,6 @@ public class VehicleFunctionAnimation : MonoBehaviour
     Vector3 WheelPosition;
     [HideInInspector]
     public List<WheelCollider> wheelColliders; // Store all wheel colliders.
-    [HideInInspector]
     public Transform steeringWheelTransform;
 
     VehicleEntity _vehicle;
@@ -26,7 +25,7 @@ public class VehicleFunctionAnimation : MonoBehaviour
     void Start()
     {
         _vehicle = GetComponent<VehicleEntity>();
-        steeringWheelTransform = this.transform.Find("Steering Group/Steering Column");
+        steeringWheelTransform = this.transform.Find("Vehicle Body/Vehicle Steering Wheel/Steering Column");
         wheelColliders = _vehicle.FrontWheelColliders.Concat(_vehicle.RearWheelColliders).ToList();
         wheelMeshes = _vehicle.WheelMeshes;
     }

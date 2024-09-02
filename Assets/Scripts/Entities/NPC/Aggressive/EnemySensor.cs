@@ -41,10 +41,6 @@ namespace UZSG.Entities
                     }
                 }
             }
-            else
-            {
-                actionStateMachine.ToState(Die);
-            }
         }
 
         public void AttackPlayer(Entity etty)

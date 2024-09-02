@@ -34,15 +34,14 @@ namespace UZSG.Entities
             {
                 case Idle:
                 {
-                    Debug.Log("dito");
                     if (transition.To == Attack)
                     {
                         // if player in range prepare attack, else zombie is at idle state
-                        if (_hasTargetInAttackRange && !attackOnCooldown)
+                        if (_hasTargetInAttackRange && !attackOnCooldown && !IsDead)
                         {  
                             ActionAttack();
                         }
-                        else if (!_hasTargetInAttackRange)
+                        else if (!_hasTargetInAttackRange && !IsDead)
                         {
                             ActionChase();
                         }
@@ -222,10 +221,18 @@ namespace UZSG.Entities
         void ActionDie()
         {
             // make the enemy ragdoll mode
-            Debug.Log("Die");
             IsRagdollOff = false;
             RagdollMode(IsRagdollOff);
-            Debug.Log("Die");
+
+            // unsubscribe all state
+            actionStateMachine.OnTransition -= OnActionTransition;
+
+            actionStateMachine[Chase].EnableFixedUpdateCall = false;
+            actionStateMachine[Chase].OnFixedUpdate -= OnChaseFixedUpdate;
+
+            actionStateMachine[Roam].EnableFixedUpdateCall = false;
+            actionStateMachine[Roam].OnFixedUpdate -= OnRoamFixedUpdate;
+
         }
 
         void ActionChase()

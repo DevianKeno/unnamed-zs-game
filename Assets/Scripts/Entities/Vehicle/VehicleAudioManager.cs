@@ -93,7 +93,6 @@ namespace UZSG.Entities.Vehicles
                 {
                     //_sourceIdle.pitch = pitchCurve.Evaluate(normalizedSpeed);
                     _sourceIdle.pitch = minPitch + (_carRBSpeed / 25f);
-                    print($"pitch: {_sourceIdle.pitch}");
                 }
                 else if (_carSpeed < 1)
                 {

@@ -3024,7 +3024,7 @@ MonoBehaviour:
         randomizeOrientationX: 0
         randomizeOrientationY: 0
         randomizeOrientationZ: 0
-        scaleTransformMode: 0
+        scaleTransformMode: 1
         scaleMode: 0
         scaleUniformMin: 0.75
         scaleUniformMax: 1.35

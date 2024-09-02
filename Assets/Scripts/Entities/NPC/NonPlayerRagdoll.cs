@@ -43,7 +43,17 @@ namespace UZSG.Entities
         /// <param name="IsTrue"></param>
         public void RagdollMode(bool IsTrue)
         {
+            if (IsTrue)
+            {
+
+            }
             NonPlayerAnimator.enabled = IsTrue;
+
+            // foreach (var hitbox in hitboxController.Hitboxes)
+            // {
+            //     hitbox.Collider.enabled = !IsTrue;
+            //     hitbox.Rigidbody.isKinematic = IsTrue;
+            // }
 
             foreach(Collider col in _ragdollColliders)
             {

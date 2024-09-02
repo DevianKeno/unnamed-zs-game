@@ -24,8 +24,9 @@ namespace UZSG.Entities
             {
                 if (child.TryGetComponent<Hitbox>(out var hitbox))
                 {
-                    hitbox.GetComponent<Collider>().isTrigger = true;
+                    hitbox.GetComponent<Collider>().isTrigger = false; /// true before
                     hitboxes.Add(hitbox);
+                    hitbox.gameObject.layer = LayerMask.NameToLayer("Hitbox");
                 }
                 GetHitboxFromChildrenRecursive(child);
             }

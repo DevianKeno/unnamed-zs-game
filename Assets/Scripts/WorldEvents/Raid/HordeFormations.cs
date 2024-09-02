@@ -23,7 +23,6 @@ namespace UZSG.WorldEvents.Raid
         {
             player = selectedPlayer;
             _raidInstance = raidInstance;
-            print(player.Position);
 
             switch(_raidInstance.raidFormation)
             {

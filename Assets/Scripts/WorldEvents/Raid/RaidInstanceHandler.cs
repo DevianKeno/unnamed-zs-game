@@ -59,8 +59,8 @@ namespace UZSG.WorldEvents.Raid
         {
             if (_hordeZombies.Contains(enemy))
             {
-                _hordeZombies.Remove(enemy);
                 enemy.OnDeath -= OnEntityKilled;
+                _hordeZombies.Remove(enemy);
             }
         }
         public void EndEvent(bool allDead)

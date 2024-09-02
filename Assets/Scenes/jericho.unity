@@ -6213,6 +6213,18 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5666756653608356092, guid: 045083471b927524cb2dc0f04bb61987, type: 3}
+      propertyPath: raidEventPrefab
+      value: 
+      objectReference: {fileID: 1433144291944121671, guid: 2c68af293eae1a7428fe7cd54c07db40, type: 3}
+    - target: {fileID: 5666756653608356092, guid: 045083471b927524cb2dc0f04bb61987, type: 3}
+      propertyPath: raidInstancePrefab
+      value: 
+      objectReference: {fileID: 1433144291944121671, guid: 2c68af293eae1a7428fe7cd54c07db40, type: 3}
+    - target: {fileID: 5666756653608356092, guid: 045083471b927524cb2dc0f04bb61987, type: 3}
+      propertyPath: setEnemiesPerPlayer
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5668126680943736175, guid: 045083471b927524cb2dc0f04bb61987, type: 3}
       propertyPath: WorldEvents.Array.size
       value: 2

@@ -43,6 +43,9 @@ namespace UZSG.WorldEvents.Raid
             {
                 _raidInstance.enemyId = raidEvent.EnemyData.Id;
                 RaidInstanceHandler raidInstance = SpawnHorde(SelectPlayerToSpawnHordeOn());
+                
+                if (raidInstance == null || raidInstance.HordeFormations == null || raidInstance.RemainingZombies == 0) continue;
+                
                 raidInstance.OnEndEvent += OnRaidEnd;
             }
         }
@@ -82,6 +85,8 @@ namespace UZSG.WorldEvents.Raid
 
         RaidInstanceHandler SpawnHorde(Player selectedPlayer)
         {
+            if (selectedPlayer == null) return null;
+
             RaidInstance newRaidInstance = DetermineRaid();
 
             HordeFormations hordeFormation = new();

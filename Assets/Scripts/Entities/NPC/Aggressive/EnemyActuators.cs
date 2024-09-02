@@ -67,6 +67,7 @@ namespace UZSG.Entities
                 }
                 case Chase:
                 {
+                    ActionDie();
                     if (transition.To == Attack)
                     {
                         ActionAttack();
@@ -75,6 +76,7 @@ namespace UZSG.Entities
                 }
                 case Die:
                 {
+                    Debug.Log("Will die");
                     ActionDie();
                     break;
                 }
@@ -219,8 +221,10 @@ namespace UZSG.Entities
 
         void ActionDie()
         {
-            Game.Tick.OnSecond -= OnSecond;
-            Game.Entity.Kill(this);
+            // make the enemy ragdoll mode
+            Debug.Log("Die");
+            IsRagdollOff = false;
+            RagdollMode(IsRagdollOff);
             Debug.Log("Die");
         }
 

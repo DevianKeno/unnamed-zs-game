@@ -40,6 +40,7 @@ namespace UZSG.Entities
             InitializeHitboxes();
             LoadDefaultSaveData<EntitySaveData>();
             ReadSaveData(saveData);
+            GetRagdollParts();
             IsAlive = true;
         }
 
@@ -51,6 +52,7 @@ namespace UZSG.Entities
                 HasHitboxes = true;
                 foreach (var hitbox in hitboxController.Hitboxes)
                 {
+                    Debug.Log("Is hitting body part: " + hitbox.name);
                     hitbox.OnHit += OnHitboxCollision;
                 }
             }
@@ -72,6 +74,7 @@ namespace UZSG.Entities
             if (Attributes.TryGet("health", out var health))
             {
                 health.Remove(value);
+                Debug.Log("Has Taken Damage. Current health: " + health.ToString());
                 if (health.Value <= 0)
                 {
                     IsDead = true;

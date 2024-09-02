@@ -24,17 +24,26 @@ namespace UZSG.Entities
         /// <param name="etty"></param>
         public void DetectPlayer(Entity etty)
         {
-            if (!_hasTargetInSight && etty != null && etty is Player player)
+            // if enemy is alive
+            if (!IsDead)
             {
-                _hasTargetInSight = true;
-                targetEntity = player; 
-
-                // Scream at player then chase
-                if (!_hasAlreadyScreamed)
+                // if enemy has target and is chasing a non null player
+                if (!_hasTargetInSight && etty != null && etty is Player player)
                 {
-                    _hasAlreadyScreamed = true;
-                    StartCoroutine(FacePlayerAndScream());
+                    _hasTargetInSight = true;
+                    targetEntity = player; 
+
+                    // Scream at player then chase
+                    if (!_hasAlreadyScreamed)
+                    {
+                        _hasAlreadyScreamed = true;
+                        StartCoroutine(FacePlayerAndScream());
+                    }
                 }
+            }
+            else
+            {
+                actionStateMachine.ToState(Die);
             }
         }
 
@@ -75,13 +84,14 @@ namespace UZSG.Entities
             if (_hasTargetInSight)
             {
                 _distanceFromPlayer = Vector3.Distance(targetEntity.Position, transform.position); 
-        
-                if (_siteRadius <= _distanceFromPlayer) // if target no longer in site reset target and roam (idle state)
+
+                // if target no longer in site reset target and roam (idle state)
+                if (_siteRadius <= _distanceFromPlayer)
                 {
                     targetEntity = null;
                     _hasTargetInSight = false;
                     _hasAlreadyScreamed = false;
-                    actionStateMachine.ToState(EnemyActionStates.Roam);
+                    actionStateMachine.ToState(Roam);
                 }
                 else
                 {
@@ -93,7 +103,7 @@ namespace UZSG.Entities
                             // reset target and rotation
                             _hasTargetInAttackRange = false;
 
-                            actionStateMachine.ToState(EnemyActionStates.Chase);
+                            actionStateMachine.ToState(Chase);
                         }
                     }
                 }
@@ -111,7 +121,8 @@ namespace UZSG.Entities
         {
             if (IsDead)
             {
-                actionStateMachine.ToState(EnemyActionStates.Die);
+                moveStateMachine.ToState(EnemyMoveStates.Idle);
+                actionStateMachine.ToState(Die);
             }
         }
 

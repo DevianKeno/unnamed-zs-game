@@ -28,13 +28,7 @@ namespace UZSG.Entities
             clearMethod.Invoke(null, null);
         }
 
-        public EnemyData EnemyData => entityData as EnemyData;
-        public float RotationDamping = 9f;
-        public float _roamTime; // Time it takes for the agent to travel a point
-        public float _roamRadius = 16f; // Radius of which the agent can travel
-        public float _roamInterval = 12f; // Interval before the model moves again
-
-        [Header("Agent Information")]
+        [Header("Enemy Agent Information")]
         public LayerMask PlayerLayer; // Layers that the enemy chases
         [SerializeField] bool _hasAlreadyScreamed;
         [SerializeField] bool attackOnCooldown;
@@ -80,6 +74,12 @@ namespace UZSG.Entities
 
         #endregion
 
+        public EnemyData EnemyData => entityData as EnemyData;
+        public float RotationDamping = 9f;
+        public float _roamTime; // Time it takes for the agent to travel a point
+        public float _roamRadius = 16f; // Radius of which the agent can travel
+        public float _roamInterval = 12f; // Interval before the model moves again
+
 
         [Header("Components")]
         [SerializeField] Animator animator;
@@ -99,10 +99,14 @@ namespace UZSG.Entities
             base.OnSpawn();
             Clear();
 
+            // initialize the enemy before spawning
             RetrieveAttributes();
             InitializeAnimator();
             InitializeActuators();
             InitializeAgent();
+
+            // set ragdoll to false when spawning
+            RagdollMode(IsRagdollOff);
 
             Game.Tick.OnSecond += OnSecond;
         }

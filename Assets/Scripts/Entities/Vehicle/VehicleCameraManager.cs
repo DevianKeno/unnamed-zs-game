@@ -24,11 +24,11 @@ namespace UZSG.Entities.Vehicles
             _vehicle.TPPCamera.gameObject.SetActive(false);
         }
 
-        private void LateUpdate()
+        private void FixedUpdate()
         {
             if (_vehicle.TPPCamera.gameObject.activeSelf == false) return;
 
-            _vehicle.TPPCamera.transform.position = Vector3.Lerp(
+            /**_vehicle.TPPCamera.transform.position = Vector3.Lerp(
                 _vehicle.TPPCamera.transform.position,
                 TPPCameraView.transform.position,
                 0.1f
@@ -38,8 +38,9 @@ namespace UZSG.Entities.Vehicles
                 _vehicle.TPPCamera.transform.rotation,
                 TPPCameraView.transform.rotation,
                 0.1f
-            );
+            );**/
 
+            _vehicle.TPPCamera.transform.position = TPPCameraView.transform.position;
             _vehicle.TPPCamera.transform.LookAt(_vehicle.Model.transform);
         }
 

@@ -165,8 +165,9 @@ MonoBehaviour:
   steeringAngle: 0
   carSpeed: 0
   powerToWheels: 0
-  defaultMaxSteerAngle: 0
   turnRadius: 0
+  steerLimitSpeedThreshold: 0
+  steerLimitAmount: 0
   wheels: []
   IsHandbraked: 0
   DriverInput: {x: 0, y: 0}
@@ -1242,7 +1243,7 @@ Transform:
   m_GameObject: {fileID: 5221051371499804120}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.097, y: -0.613, z: -1.751}
+  m_LocalPosition: {x: 1.097, y: -0.604, z: -1.751}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -16,7 +16,7 @@ namespace UZSG.Entities.Vehicles
         private void Awake()
         {
             _vehicle = GetComponent<VehicleEntity>();
-            _vehicleCameraParent = _vehicle.transform.parent.transform;
+            _vehicleCameraParent = TPPCameraView.transform;
         }
 
         private void Start()
@@ -26,7 +26,7 @@ namespace UZSG.Entities.Vehicles
 
         private void LateUpdate()
         {
-            if (_vehicle.TPPCamera.gameObject.activeSelf == false) return;
+            /*if (_vehicle.TPPCamera.gameObject.activeSelf == false) return;
 
             _vehicle.TPPCamera.transform.position = Vector3.Lerp(
                 _vehicle.TPPCamera.transform.position,
@@ -38,7 +38,7 @@ namespace UZSG.Entities.Vehicles
                 _vehicle.TPPCamera.transform.rotation,
                 TPPCameraView.transform.rotation,
                 0.1f
-            );
+            );*/
 
             _vehicle.TPPCamera.transform.LookAt(_vehicle.Model.transform);
         }
@@ -92,6 +92,7 @@ namespace UZSG.Entities.Vehicles
             if (inUse)
             {
                 _vehicle.TPPCamera.transform.SetParent(_vehicleCameraParent);
+                _vehicle.TPPCamera.transform.localPosition = Vector3.zero;
             }
             else
             {

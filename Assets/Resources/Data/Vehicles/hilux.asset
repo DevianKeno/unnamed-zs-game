@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4decc72d49b4d8d4aa72345b41c09303, type: 3}
   m_Name: hilux
   m_EditorClassIdentifier: 
+  SourceId: uzsg
   Id: vehicle_hilux
+  Tags: []
   Name: Hilux
   Description: indestructable  4x4
   Model:
@@ -98,9 +100,11 @@ MonoBehaviour:
     m_RotationOrder: 4
   frontPower: 1
   rearPower: 1
-  turnRadius: 12
+  turnRadius: 6
   steeringSpeed: 0.5
-  brakeForce: 600
+  brakeForce: 1000
   decelerationMultiplier: 5
   antiRoll: 5000
+  steerLimitSpeedThreshold: 59
+  steerLimitAmount: 0.7
   Attributes: []

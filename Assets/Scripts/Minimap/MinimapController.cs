@@ -41,6 +41,7 @@ namespace UZSG.Minimap
         // Update is called once per frame
         void Update()
         {
+            if (PlayerEntity == null) return;
             transform.position = new Vector3(PlayerEntity.transform.position.x, PlayerEntity.transform.position.y + 80, PlayerEntity.transform.position.z);
         }
     }

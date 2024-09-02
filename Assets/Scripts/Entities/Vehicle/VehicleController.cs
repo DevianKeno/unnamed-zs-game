@@ -28,7 +28,7 @@ namespace UZSG.Entities.Vehicles
         [HideInInspector] public float fuelConsumptionPerPower;     // Fuel Consumption based on current produced power
         [HideInInspector] public float fuelCapacityPerSpeed;        // Fuel Consumption based on current speed
         [HideInInspector] public float fuelEfficiencyMultiplier;    // Fuel efficiency, closer to 0 the better
-        [HideInInspector] public float fuelLevel;                   // I know you can read
+        public float fuelLevel;                                     // I know you can read
         [HideInInspector] public int maxSpeed;                      // The maximum speed that the car can reach in km/h.
         [HideInInspector] public int maxReverseSpeed;               // The maximum speed that the car can reach while going on reverse in km/h.
         [HideInInspector] public AnimationCurve powerCurve;         // Experimental Power/Torque Curve for more customized acceleration
@@ -42,8 +42,9 @@ namespace UZSG.Entities.Vehicles
         [HideInInspector] public float steeringAngle;               // current Steering angle
         [HideInInspector] public float carSpeed;                    // Used to store the current speed of the car.
         [HideInInspector] public float powerToWheels;               // Used to store final wheel torque
-        [HideInInspector] public float defaultMaxSteerAngle;        // Used to store the original max steering angle. (will be used if lock steer will be required in future)
         [HideInInspector] public float turnRadius;                  // To store turn radius of the vehicle
+        [HideInInspector] public float steerLimitSpeedThreshold;    // To store when steer limiting will start to act
+        [HideInInspector] public float steerLimitAmount;            // To store how much steering Axis will be reduced at high speed
         [HideInInspector] public List<WheelCollider> wheels;        // Store all wheel colliders.
 
         /*
@@ -113,6 +114,8 @@ namespace UZSG.Entities.Vehicles
             brakeForce = Vehicle.VehicleData.brakeForce;
             decelerationMultiplier = Vehicle.VehicleData.decelerationMultiplier;
             antiRoll = Vehicle.VehicleData.antiRoll;
+            steerLimitSpeedThreshold = Vehicle.VehicleData.steerLimitSpeedThreshold;
+            steerLimitAmount = Vehicle.VehicleData.steerLimitAmount;
 
             wheelL = _frontWheelColliders[0];
             wheelR = _frontWheelColliders[1];
@@ -149,6 +152,17 @@ namespace UZSG.Entities.Vehicles
 
             // Anti-roll's behavior is unkown if it's natural or some weird bug, anyways, you can set it to very low (<1000) or just 0 in vehicle data
             AntiRollBar();
+
+            // Reducing steer axis
+            if (carSpeed > steerLimitSpeedThreshold)
+            {
+                steerLimitAmount += 0.1f * Time.deltaTime;
+                steerLimitAmount = Mathf.Clamp(steerLimitAmount, 0, steerLimitAmount);
+            }
+            else
+            {
+                steerLimitAmount = 0;
+            }
 
             if (Vehicle.SeatManager.Driver != null)
             {
@@ -250,10 +264,10 @@ namespace UZSG.Entities.Vehicles
         public void HandleLeftSteer()
         {
             //The following method turns the front car wheels to the left. The speed of this movement will depend on the steeringSpeed variable.
-            _steeringAxis -= (Time.deltaTime * 10f * steeringSpeed);
-            if (_steeringAxis < -1f)
+            _steeringAxis = _steeringAxis - (Time.deltaTime * 10f * steeringSpeed);
+            if (_steeringAxis < -1f + steerLimitAmount)
             {
-                _steeringAxis = -1f;
+                _steeringAxis = -1f + steerLimitAmount;
             }
 
             steeringAngle = _steeringAxis * maxSteeringAngle;
@@ -269,9 +283,9 @@ namespace UZSG.Entities.Vehicles
         {
             //The following method turns the front car wheels to the right. The speed of this movement will depend on the steeringSpeed variable.
             _steeringAxis = _steeringAxis - (Time.deltaTime * 10f * steeringSpeed);
-            if (_steeringAxis < 1f)
+            if (_steeringAxis < 1f - steerLimitAmount)
             {
-                _steeringAxis = 1f;
+                _steeringAxis = 1f - steerLimitAmount;
             }
 
             steeringAngle = _steeringAxis * maxSteeringAngle;
@@ -553,6 +567,11 @@ namespace UZSG.Entities.Vehicles
             _hasFuel = fuelLevel > 0;
 
             //print($"fuel consump: {_fuelConsumption}, fuel level: {fuelLevel}, has fuel: {_hasFuel}");
+        }
+
+        public Rigidbody GetRigidbody()
+        {
+            return _carRigidbody;
         }
 
         #region General Settings Function

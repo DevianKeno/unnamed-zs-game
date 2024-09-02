@@ -41,8 +41,9 @@ namespace UZSG.Entities.Vehicles
         [HideInInspector] public float steeringAngle;               // current Steering angle
         [HideInInspector] public float carSpeed;                    // Used to store the current speed of the car.
         [HideInInspector] public float powerToWheels;               // Used to store final wheel torque
-        [HideInInspector] public float defaultMaxSteerAngle;        // Used to store the original max steering angle. (will be used if lock steer will be required in future)
         [HideInInspector] public float turnRadius;                  // To store turn radius of the vehicle
+        [HideInInspector] public float steerLimitSpeedThreshold;    // To store when steer limiting will start to act
+        [HideInInspector] public float steerLimitAmount;            // To store how much steering Axis will be reduced at high speed
         [HideInInspector] public List<WheelCollider> wheels;        // Store all wheel colliders.
 
         /*
@@ -108,6 +109,8 @@ namespace UZSG.Entities.Vehicles
             brakeForce = _vehicle.VehicleData.brakeForce;
             decelerationMultiplier = _vehicle.VehicleData.decelerationMultiplier;
             antiRoll = _vehicle.VehicleData.antiRoll;
+            steerLimitSpeedThreshold = _vehicle.VehicleData.steerLimitSpeedThreshold;
+            steerLimitAmount = _vehicle.VehicleData.steerLimitAmount;
 
             wheelL = _frontWheelColliders[0];
             wheelR = _frontWheelColliders[1];
@@ -141,6 +144,17 @@ namespace UZSG.Entities.Vehicles
 
             // Anti-roll's behavior is unkown if it's natural or some weird bug, anyways, you can set it to very low (<1000) or just 0 in vehicle data
             AntiRollBar();
+
+            // Reducing steer axis
+            if (carSpeed > steerLimitSpeedThreshold)
+            {
+                steerLimitAmount += 0.1f * Time.deltaTime;
+                steerLimitAmount = Mathf.Clamp(steerLimitAmount, 0, steerLimitAmount);
+            }
+            else
+            {
+                steerLimitAmount = 0;
+            }
 
             if (_vehicle.SeatManager.Driver != null)
             {
@@ -241,9 +255,9 @@ namespace UZSG.Entities.Vehicles
         {
             //The following method turns the front car wheels to the left. The speed of this movement will depend on the steeringSpeed variable.
             _steeringAxis = _steeringAxis - (Time.deltaTime * 10f * steeringSpeed);
-            if (_steeringAxis < -1f)
+            if (_steeringAxis < -1f + steerLimitAmount)
             {
-                _steeringAxis = -1f;
+                _steeringAxis = -1f + steerLimitAmount;
             }
 
             steeringAngle = _steeringAxis * maxSteeringAngle;
@@ -259,9 +273,9 @@ namespace UZSG.Entities.Vehicles
         {
             //The following method turns the front car wheels to the right. The speed of this movement will depend on the steeringSpeed variable.
             _steeringAxis = _steeringAxis - (Time.deltaTime * 10f * steeringSpeed);
-            if (_steeringAxis < 1f)
+            if (_steeringAxis < 1f - steerLimitAmount)
             {
-                _steeringAxis = 1f;
+                _steeringAxis = 1f - steerLimitAmount;
             }
 
             steeringAngle = _steeringAxis * maxSteeringAngle;

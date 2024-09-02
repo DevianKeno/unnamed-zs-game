@@ -38,6 +38,7 @@ namespace UZSG.Entities
         [SerializeField] bool _hasTargetInSight; // checks if the player is in site, attack range or is a target
         [SerializeField] bool _hasTargetInAttackRange;
         [SerializeField] float attackCooldown;
+        [SerializeField] float attackDamage;
         [SerializeField] float _distanceFromPlayer;
         [SerializeField] float rotationThreshold; // note that threshold must be greater than "_siteRadius"
         [SerializeField] float _moveSpeed;
@@ -120,8 +121,8 @@ namespace UZSG.Entities
             _moveSpeed = Attributes.Get("move_speed").Value;
             _siteRadius = Attributes.Get("zombie_site_radius").Value;
             _attackRadius = Attributes.Get("zombie_attack_radius").Value;
-            rotationThreshold = Attributes.Get("zombie_rotation_threshold").Value;
             attackCooldown = Attributes.Get("zombie_attack_cooldown_time").Value;
+            attackDamage = Attributes.Get("attack_damage").Value;
         }
 
         void InitializeAgent()

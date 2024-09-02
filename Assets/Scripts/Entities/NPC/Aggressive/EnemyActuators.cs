@@ -34,7 +34,6 @@ namespace UZSG.Entities
             {
                 case Idle:
                 {
-                    Debug.Log("dito");
                     if (transition.To == Attack)
                     {
                         // if player in range prepare attack, else zombie is at idle state
@@ -67,7 +66,6 @@ namespace UZSG.Entities
                 }
                 case Chase:
                 {
-                    ActionDie();
                     if (transition.To == Attack)
                     {
                         ActionAttack();
@@ -76,7 +74,6 @@ namespace UZSG.Entities
                 }
                 case Die:
                 {
-                    Debug.Log("Will die");
                     ActionDie();
                     break;
                 }
@@ -179,8 +176,10 @@ namespace UZSG.Entities
             // if attack not on cd, do animation and set physics to attacking
             if (!attackOnCooldown)
             {
-                Debug.Log("is attacking");
-                    
+                if (targetEntity.TryGetComponent<IPlayerBeingDamage>(out var damageToPlayer))
+                {
+                    damageToPlayer.DamagePlayer(attackDamage);
+                }
                 StartCoroutine(AttackCounterDownTimer());
 
                 /// set the rigid body of the enemy to kinematic
@@ -222,10 +221,8 @@ namespace UZSG.Entities
         void ActionDie()
         {
             // make the enemy ragdoll mode
-            Debug.Log("Die");
             IsRagdollOff = false;
             RagdollMode(IsRagdollOff);
-            Debug.Log("Die");
         }
 
         void ActionChase()

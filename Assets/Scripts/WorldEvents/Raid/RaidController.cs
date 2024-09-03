@@ -44,14 +44,16 @@ namespace UZSG.WorldEvents.Raid
                 _raidInstance.enemyId = raidEvent.EnemyData.Id;
                 RaidInstanceHandler raidInstance = SpawnHorde(SelectPlayerToSpawnHordeOn());
                 
-                if (raidInstance == null || raidInstance.HordeFormations == null || raidInstance.RemainingZombies == 0) continue;
+                // if (raidInstance == null || raidInstance.HordeFormations == null || raidInstance.RemainingZombies == 0) continue;
                 
                 raidInstance.OnEndEvent += OnRaidEnd;
             }
         }
 
-        private void OnRaidEnd(bool allDead)
+        private void OnRaidEnd(RaidInstanceHandler raidInstance)
         {
+            bool allDead = raidInstance.allDead;
+
             if (allDead)
             {
                 Game.Console.Log($"<color=#ad0909>Raid event ended. All enemies were slain</color>");
@@ -60,6 +62,9 @@ namespace UZSG.WorldEvents.Raid
             {
                 Game.Console.Log($"<color=#ad0909>Raid event ended. Not all enemies were slain</color>");
             }
+
+            raidInstance.OnEndEvent -= OnRaidEnd;
+            Destroy(raidInstance.transform.gameObject);
 
             EventOngoing = false;
         }

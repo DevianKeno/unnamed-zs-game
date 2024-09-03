@@ -1,11 +1,12 @@
 using System.Collections.Generic;
+using Epic.OnlineServices.Presence;
 using UnityEngine;
 using UZSG.Entities;
 using UZSG.Systems;
 
 namespace UZSG.WorldEvents.Raid
 {
-    public class HordeFormations : MonoBehaviour
+    public class HordeFormations
     {
         Player player;
         List<IEnemy> _hordeZombies = new();
@@ -14,10 +15,10 @@ namespace UZSG.WorldEvents.Raid
         Quaternion? _facingDirection = null;
         Vector3? _selectedPoint = null;
 
-        /// Temporary values <summary>
+        /// Temporary values
         float minRadius = 30f;
         float maxRadius = 50f;
-        float spread = 0.75f;
+        float spread = 0.25f;
 
         public void HandlePrerequisites(RaidInstance raidInstance, Player selectedPlayer)
         {
@@ -42,7 +43,6 @@ namespace UZSG.WorldEvents.Raid
         {
             for (int i = 0; i < _raidInstance.mobCount; i++)
             {
-                print("Spawning zombie");
                 SpawnZombie(GetRandomPositionAroundPlayer(_raidInstance.mobCount * spread));
             }
 
@@ -87,6 +87,7 @@ namespace UZSG.WorldEvents.Raid
         {
             Game.Entity.Spawn<Skinwalker>(_raidInstance.enemyId, position, callback: (info) => {
                 _hordeZombies.Add(info.Entity);
+
                 FaceTowardsPlayer(info.Entity);
             });
         }

@@ -11,7 +11,8 @@ namespace UZSG.WorldEvents.Raid
 {
     public class RaidInstanceHandler : MonoBehaviour
     {
-        public event Action<bool> OnEndEvent;
+        public event Action<RaidInstanceHandler> OnEndEvent;
+        public bool allDead;
         HordeFormations hordeFormations;
         public HordeFormations HordeFormations 
         {
@@ -33,7 +34,8 @@ namespace UZSG.WorldEvents.Raid
         public void Initialize()
         {
             Game.Tick.OnTick += OnTick;
-            remainingTime = Mathf.Clamp(remainingTime, 60f, _raidInstance.mobCount * 10f);
+            // remainingTime = _raidInstance.mobCount * 10f;
+            remainingTime = Mathf.Clamp(remainingTime, 20f, 600f);
             _hordeZombies = HordeFormations.HordeZombies;
             foreach (IEnemy enemy in _hordeZombies)
             {
@@ -48,11 +50,13 @@ namespace UZSG.WorldEvents.Raid
 
             if(remainingTime <= 0 && _hordeZombies.Count > 0)
             {
-                EndEvent(false);
+                allDead = false;
+                EndEvent();
             }
-            else if(_hordeZombies.Count == 0)
+            else if(remainingTime <= 0 && _hordeZombies.Count == 0)
             {
-                EndEvent(true);
+                allDead = true;
+                EndEvent();
             }
         }
         void OnEntityKilled(IEnemy enemy)
@@ -63,10 +67,10 @@ namespace UZSG.WorldEvents.Raid
                 _hordeZombies.Remove(enemy);
             }
         }
-        public void EndEvent(bool allDead)
+        public void EndEvent()
         {
-            OnEndEvent?.Invoke(allDead);
-            Destroy(this.transform.gameObject);
+            OnEndEvent?.Invoke(this);
+            Game.Tick.OnTick -= OnTick;
         }
     }
 }

@@ -34,7 +34,6 @@ namespace UZSG.Entities.Vehicles
         private void Awake()
         {
             Vehicle = GetComponent<VehicleEntity>();
-            _playerParent = this.transform.parent;
         }
 
         public bool[] SeatsOccupied()
@@ -155,6 +154,8 @@ namespace UZSG.Entities.Vehicles
         {
             bool[] _areSeatsOccupied = SeatsOccupied();
             if (_areSeatsOccupied[0] && _areSeatsOccupied[1]) return;
+
+            _playerParent = player.transform.parent;
 
             if (Driver == null) /// bool HasDriver
             {

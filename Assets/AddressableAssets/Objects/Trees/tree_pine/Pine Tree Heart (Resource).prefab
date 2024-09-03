@@ -16,7 +16,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &4734211055726018466
 Transform:
@@ -50,7 +50,6 @@ MonoBehaviour:
   attributes:
     attributesReadOnly: []
   animator: {fileID: 0}
-  ShowUI: 1
   ChopAngle: 1
   fallAnimationCurve:
     serializedVersion: 2
@@ -261,6 +260,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 432954c580e29844ab9946dca6783e86, type: 2}
+    - target: {fileID: -4198677495660808393, guid: 39b489a4227078342b88e98dd3635192, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -3627863988625200486, guid: 39b489a4227078342b88e98dd3635192, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -285,6 +288,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 13
       objectReference: {fileID: 0}
+    - target: {fileID: -164481825537149297, guid: 39b489a4227078342b88e98dd3635192, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 408653686846637540, guid: 39b489a4227078342b88e98dd3635192, type: 3}
       propertyPath: m_CastShadows
       value: 1
@@ -300,6 +307,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 39b489a4227078342b88e98dd3635192, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 39b489a4227078342b88e98dd3635192, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 1446317025356153247, guid: 39b489a4227078342b88e98dd3635192, type: 3}
       propertyPath: m_Materials.Array.size
@@ -326,6 +337,10 @@ PrefabInstance:
       value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 8096492540025668236, guid: 39b489a4227078342b88e98dd3635192, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8603806674150118374, guid: 39b489a4227078342b88e98dd3635192, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}

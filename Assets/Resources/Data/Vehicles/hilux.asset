@@ -23,7 +23,7 @@ MonoBehaviour:
     m_SubObjectType: 
     m_EditorAssetChanged: 0
   Type: 1
-  fuelCapacity: 50
+  fuelCapacity: 100
   fuelConsumptionPerPower: 0.0005
   fuelCapacityPerSpeed: 0.002
   fuelEfficiencyMultiplier: 1
@@ -104,7 +104,7 @@ MonoBehaviour:
   steeringSpeed: 0.5
   brakeForce: 1000
   decelerationMultiplier: 5
-  antiRoll: 5000
-  steerLimitSpeedThreshold: 59
+  antiRoll: 15000
+  steerLimitSpeedThreshold: 50
   steerLimitAmount: 0.7
   Attributes: []

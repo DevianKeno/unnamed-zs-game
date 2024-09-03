@@ -178,6 +178,7 @@ namespace UZSG.Entities.Vehicles
                     }
                     else
                     {
+                        print("NO FUEL!");
                         ThrottleOff();
                     }
                 }

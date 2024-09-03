@@ -85,10 +85,10 @@ namespace UZSG.WorldEvents.Raid
 
         void SpawnZombie(Vector3 position)
         {
-            Game.Entity.Spawn<Skinwalker>(_raidInstance.enemyId, position, callback: (info) => {
+            Game.Entity.Spawn<Walker>(_raidInstance.enemyId, position, callback: (info) => {
                 _hordeZombies.Add(info.Entity);
-
                 FaceTowardsPlayer(info.Entity);
+                info.Entity.isInHorde = true;
             });
         }
 

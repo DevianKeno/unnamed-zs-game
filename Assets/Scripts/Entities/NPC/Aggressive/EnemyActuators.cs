@@ -25,6 +25,9 @@ namespace UZSG.Entities
             actionStateMachine[Roam].EnableFixedUpdateCall = true;
             actionStateMachine[Roam].OnFixedUpdate += OnRoamFixedUpdate;
 
+            actionStateMachine[Horde].EnableFixedUpdateCall = true;
+            actionStateMachine[Horde].OnFixedUpdate += OnHordeFixedUpdate;
+
             actionStateMachine.OnTransition += OnActionTransition;
         }
 
@@ -45,6 +48,10 @@ namespace UZSG.Entities
                         {
                             ActionChase();
                         }
+                    }
+                    if (transition.To == Horde)
+                    {
+                        ActionHorde();
                     }
                     break;
                 }
@@ -92,6 +99,11 @@ namespace UZSG.Entities
             ActionChase();
         }
 
+        void OnHordeFixedUpdate()
+        {
+            ActionHorde();
+        }
+
 
         IEnumerator FacePlayerAndScream()
         {
@@ -132,6 +144,33 @@ namespace UZSG.Entities
             actionStateMachine.ToState(Roam);
         }
 
+        IEnumerator AttackCounterDownTimer()
+        {
+            attackOnCooldown = true;
+            isAttacking = true;
+            float cooldownHolder = attackCooldown;
+
+            while (attackCooldown > 0)
+            {
+                attackCooldown -= Time.deltaTime; // Reduce cooldown over time
+                yield return null;
+            }
+
+            // Reset values
+            attackOnCooldown = false;
+            attackCooldown = cooldownHolder;
+            isAttacking = false;
+            // if there is a target in range idle, else if not in range chase
+            if (_hasTargetInAttackRange)
+            {
+                actionStateMachine.ToState(Idle);
+            }
+            else
+            {
+                actionStateMachine.ToState(Chase);
+            }
+        }
+
         void ActionIdle()
         {
             StartCoroutine(IdleThenRoam());
@@ -146,7 +185,6 @@ namespace UZSG.Entities
             // check if in place and has a path
             if (_inPlace && navMeshAgent.hasPath)
             {
-                Debug.Log("is in stop mode");
                 navMeshAgent.isStopped = true;
                 navMeshAgent.updateRotation = false;
 
@@ -173,7 +211,6 @@ namespace UZSG.Entities
                 {
                     if (_roamTime <= 0)
                     {
-                        Debug.Log("is in else if statement");
                         /// Get a random position
                         _randomDestination = UnityEngine.Random.insideUnitSphere * _roamRadius;
                         _randomDestination += transform.position;
@@ -209,33 +246,6 @@ namespace UZSG.Entities
                 /// prevent the enemy from moving when in attack range
                 navMeshAgent.isStopped = true;
                 navMeshAgent.updateRotation = false;
-            }
-        }
-
-        IEnumerator AttackCounterDownTimer()
-        {
-            attackOnCooldown = true;
-            isAttacking = true;
-            float cooldownHolder = attackCooldown;
-
-            while (attackCooldown > 0)
-            {
-                attackCooldown -= Time.deltaTime; // Reduce cooldown over time
-                yield return null;
-            }
-
-            // Reset values
-            attackOnCooldown = false;
-            attackCooldown = cooldownHolder;
-            isAttacking = false;
-            // if there is a target in range idle, else if not in range chase
-            if (_hasTargetInAttackRange)
-            {
-                actionStateMachine.ToState(Idle);
-            }
-            else
-            {
-                actionStateMachine.ToState(Chase);
             }
         }
 
@@ -280,6 +290,23 @@ namespace UZSG.Entities
             }
         }
 
+        void ActionHorde()
+        {
+            float distance = 100f;
+            SetDestinationBasedOnRotation(distance);
+            moveStateMachine.ToState(EnemyMoveStates.Walk);
+        }
+
+        void SetDestinationBasedOnRotation(float distance)
+        {
+            // Calculate the destination by adding the forward direction scaled by the desired distance to the current position
+            Vector3 destination = transform.position + _hordeTransform.forward * distance;
+
+            // Set the agent's destination to this new point
+            navMeshAgent.SetDestination(destination);
+            Debug.Log("is moving forward");
+        }
+
         /*void Attack2() 
         {
             actionStateMachine.ToState(EnemyActionStates.Attack2);
@@ -308,17 +335,6 @@ namespace UZSG.Entities
         {
             actionStateMachine.ToState(EnemyActionStates.Die);
             Kill(this);
-        }
-
-        void Horde()
-        {
-            actionStateMachine.ToState(EnemyActionStates.Horde);
-
-            /// Set the starting position and rotation of the zombie
-            transform.SetPositionAndRotation(hordeTransform.position, hordeTransform.rotation);
-
-            /// Move forward according to speed
-            transform.Translate(Vector3.forward * (_moveSpeed * Time.deltaTime));
         }*/
 
         #endregion

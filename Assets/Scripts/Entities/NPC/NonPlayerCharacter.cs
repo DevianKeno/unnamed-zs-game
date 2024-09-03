@@ -50,9 +50,9 @@ namespace UZSG.Entities
             if (hitboxController != null)
             {
                 HasHitboxes = true;
+                hitboxController.ReinitializeHitboxes();
                 foreach (var hitbox in hitboxController.Hitboxes)
                 {
-                    Debug.Log("Is hitting body part: " + hitbox.name);
                     hitbox.OnCollision += OnHitboxCollision;
                 }
             }

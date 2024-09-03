@@ -15,7 +15,7 @@ namespace UZSG.UnityEditor
 
             if (GUILayout.Button("Reinitialize Hitboxes"))
             {
-                ehc.ReinitializeeHitboxes();
+                ehc.ReinitializeHitboxes();
             }
 
             serializedObject.ApplyModifiedProperties();

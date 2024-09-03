@@ -252,8 +252,7 @@ namespace UZSG.Entities
         void ActionDie()
         {
             // make the enemy ragdoll mode
-            IsRagdollOff = false;
-            RagdollMode(IsRagdollOff);
+            EnableRagdoll();
 
             // unsubscribe all state
             actionStateMachine.OnTransition -= OnActionTransition;

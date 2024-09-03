@@ -1,13 +1,13 @@
 using UnityEngine;
 
-namespace UZSG.Entities
+namespace UZSG.Particles
 {
-    public class BloodSplat : Entity
+    public class BloodSplat : MonoBehaviour
     {
         [SerializeField] ParticleSystem bloodSplat;
         [SerializeField] ParticleSystem bloodCloud;
 
-        public override void OnSpawn()
+        void Start()
         {
             bloodSplat.Play();
             bloodCloud.Play();

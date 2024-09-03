@@ -177,6 +177,7 @@ namespace UZSG.Entities
 
         void InitializeHitboxes()
         {
+            hitboxes.ReinitializeHitboxes();
             foreach (var hitbox in hitboxes.Hitboxes)
             {
                 Debug.Log("Is hitting body part: " + hitbox.name);

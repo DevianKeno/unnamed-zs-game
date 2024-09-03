@@ -17,7 +17,6 @@ namespace UZSG.Entities
         public GameObject NonPlayerBody;
         public Animator NonPlayerAnimator;
         public Rigidbody NonPlayerRigidbody;
-        public bool IsRagdollOff;
         Collider[] _ragdollColliders;
         Rigidbody[] _rigidBodyParts;
 
@@ -32,41 +31,38 @@ namespace UZSG.Entities
             NonPlayerCollider = GetComponent<BoxCollider>();
             NonPlayerAnimator = GetComponentInChildren<Animator>();
             NonPlayerRigidbody = GetComponent<Rigidbody>();
-
-            // set to false since NPC is initially alive
-            IsRagdollOff = true;
         }
 
         /// <summary>
-        /// Set the npc's components to ragdoll mode on or off.
+        /// Enable physics ragdoll for Entity.
         /// </summary>
-        /// <param name="enabled"></param>
-        public void RagdollMode(bool enabled)
+        public void EnableRagdoll()
         {
-            if (enabled)
+            NonPlayerAnimator.enabled = false;
+            NonPlayerCollider.enabled = false;
+            NonPlayerRigidbody.isKinematic = true;
+
+            foreach (var hitbox in hitboxController.Hitboxes)
             {
-
+                hitbox.Collider.isTrigger = false;
+                hitbox.Rigidbody.isKinematic = false;
             }
-            NonPlayerAnimator.enabled = enabled;
+        }
 
-            // foreach (var hitbox in hitboxController.Hitboxes)
-            // {
-            //     hitbox.Rigidbody.isKinematic = IsTrue;
-            // }
+        /// <summary>
+        /// Disable physics ragdoll for Entity.
+        /// </summary>
+        public void DisableRagdoll()
+        {
+            NonPlayerAnimator.enabled = true;
+            NonPlayerCollider.enabled = true;
+            NonPlayerRigidbody.isKinematic = false;
 
-            foreach(Collider col in _ragdollColliders)
+            foreach (var hitbox in hitboxController.Hitboxes)
             {
-                // col.enabled = !enabled;
-                col.isTrigger = !enabled;
+                hitbox.Collider.isTrigger = true;
+                hitbox.Rigidbody.isKinematic = true;
             }
-
-            foreach(Rigidbody rigid in _rigidBodyParts)
-            {
-                rigid.isKinematic = enabled;
-            }
-
-            NonPlayerCollider.enabled = enabled;
-            NonPlayerRigidbody.isKinematic = !enabled;
         }
     }
-}   
+}

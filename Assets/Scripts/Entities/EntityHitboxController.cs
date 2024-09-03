@@ -17,8 +17,7 @@ namespace UZSG.Entities
         public LayerMask IncludeLayers;
         public LayerMask ExcludeLayers;
 
-#if UNITY_EDITOR
-        public void ReinitializeeHitboxes()
+        public void ReinitializeHitboxes()
         {
             hitboxes = new();
             GetHitboxFromChildrenRecursive(transform);
@@ -50,6 +49,5 @@ namespace UZSG.Entities
                 GetHitboxFromChildrenRecursive(child);
             }
         }
-#endif
     }
 }

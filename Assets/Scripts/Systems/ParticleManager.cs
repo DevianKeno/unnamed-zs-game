@@ -13,7 +13,7 @@ namespace UZSG.Systems
     {
         bool _isInitialized;
         public bool IsInitialized => _isInitialized;
-        Dictionary<string, GameObject> _particlesDict = new();
+        Dictionary<string, ParticleData> _particlesDict = new();
 
         internal void Initialize()
         {
@@ -21,8 +21,8 @@ namespace UZSG.Systems
             _isInitialized = true;
             
             var startTime = Time.time;
-            Game.Console.Log("Loading Particles...");
-            foreach (var particle in Resources.LoadAll<GameObject>("Prefabs/Particles"))
+            Game.Console.Log("Reading data: Particles...");
+            foreach (var particle in Resources.LoadAll<ParticleData>("Data/Particles"))
             {
                 _particlesDict[particle.name] = particle;
             }
@@ -35,7 +35,13 @@ namespace UZSG.Systems
         {
             if (_particlesDict.TryGetValue(name, out var particle))
             {
-                var go = Instantiate(particle, position, Quaternion.identity, transform);
+                Addressables.LoadAssetAsync<GameObject>(particle.Asset).Completed += (a) =>
+                {
+                    if (a.Status == AsyncOperationStatus.Succeeded)
+                    {
+                        Instantiate(a.Result, position, Quaternion.identity, transform);
+                    }
+                };
             }
         }
 

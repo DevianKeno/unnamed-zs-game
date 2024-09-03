@@ -113,9 +113,7 @@ namespace UZSG.Entities
             InitializeAnimator();
             InitializeActuators();
             InitializeAgent();
-
-            // set ragdoll to false when spawning
-            RagdollMode(IsRagdollOff);
+            DisableRagdoll();
 
             Game.Tick.OnSecond += OnSecond;
         }

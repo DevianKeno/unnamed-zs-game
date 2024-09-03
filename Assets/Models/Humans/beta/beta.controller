@@ -11,16 +11,16 @@ AnimatorStateMachine:
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: 5633944942705769809}
-    m_Position: {x: 30, y: 260, z: 0}
+    m_Position: {x: 30, y: 250, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -2373455148027713671}
     m_Position: {x: 30, y: 200, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 2757044635240153735}
-    m_Position: {x: 30, y: 310, z: 0}
+    m_Position: {x: 30, y: 300, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -7638308440108873094}
-    m_Position: {x: 250, y: 260, z: 0}
+    m_Position: {x: 250, y: 250, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -1622071154540077587}
     m_Position: {x: 250, y: 200, z: 0}
@@ -29,16 +29,16 @@ AnimatorStateMachine:
     m_Position: {x: -190, y: 200, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -1075024756418937817}
-    m_Position: {x: 30, y: 360, z: 0}
+    m_Position: {x: 30, y: 350, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -898540534448250136}
-    m_Position: {x: -410, y: 360, z: 0}
+    m_Position: {x: -410, y: 350, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 5121616208028478939}
-    m_Position: {x: -190, y: 360, z: 0}
+    m_Position: {x: -190, y: 350, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -5525598874678982631}
-    m_Position: {x: 30, y: 410, z: 0}
+    m_Position: {x: 30, y: 400, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
   m_EntryTransitions: []
@@ -82,7 +82,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: invehicle
+  m_Name: car_idle
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []

@@ -34,36 +34,20 @@ namespace UZSG.UI
 
         public override void BindAttribute(Attribute attr)
         {
-            if (attr == null || !attr.IsValid) return;
-
             stamina = attr;
-            stamina.OnValueChanged += OnValueChanged;
             stamina.OnReachMaximum += OnReachMaximum;
-            RefreshBar();
+            
+            base.BindAttribute(attr);
         }
 
-        protected override void OnValueChanged(object sender, AttributeValueChangedContext info)
+        protected override void OnValueChanged(object sender, AttributeValueChangedContext ctx)
         {
             if (!_isFullyVisible && !_isFading)
             {
                 StartCoroutine(FadeIn(FadeSeconds));
             }
-
-            Value = stamina.ValueMaxRatio * 100f;
-
-            if (IsBuffered && info.ValueChangedType == Attribute.ValueChangeType.Decreased)
-            {
-                float start = Mathf.Lerp(barRect.rect.width, 0f, info.Previous / 100f);
-                float end = Mathf.Lerp(barRect.rect.width, 0f, info.New / 100f);
-
-                LeanTween.cancel(gameObject);
-                LeanTween.value(gameObject, start, end, BufferDuration)
-                .setOnUpdate((float x) =>
-                {
-                    bufferRect.offsetMax = new Vector2(-x, bufferRect.offsetMax.y);
-                })
-                .setEase(BufferEase);
-            }
+            
+            base.OnValueChanged(sender, ctx);
         }
 
         void OnReachMaximum(object sender, AttributeValueChangedContext e)
@@ -100,8 +84,7 @@ namespace UZSG.UI
 
         void FadeAlpha(Image image, float targetAlpha, float duration)
         {
-            LeanTween.cancel(image.gameObject);
-            LeanTween.alpha(image.rectTransform, targetAlpha, duration);
+            image.CrossFadeAlpha(targetAlpha, duration, false);
         }
     }
 }

@@ -168,8 +168,8 @@ namespace UZSG.Items.Weapons
 
             ConsumeStamina();
             PlaySound();
-            var atkParams = GetAttackParams();
-            CreateAttackRays(ref atkParams);
+            // var atkParams = GetAttackParams();
+            // CreateAttackRays(ref atkParams);
             stateMachine.ToState(MeleeWeaponStates.Attack);
             yield return new WaitForSeconds(0.5f); /// SOMETHING ATKSPD THOUGH NOT SO STRAIGHFROWARDS LOTS OF CALCS (short for calculations)
             

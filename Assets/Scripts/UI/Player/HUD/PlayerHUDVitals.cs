@@ -31,7 +31,7 @@ namespace UZSG.UI.HUD
         public TextMeshProUGUI equippedWeaponTMP;
         public WeaponDetailsUI weaponDetails;
         public AttributeBar HealthBar;
-        public AttributeBar StaminaBar;
+        public StaminaBar StaminaBar;
         public AttributeBar HungerBar;
         public AttributeBar HydrationBar;
         public AttributeBar XPBar;

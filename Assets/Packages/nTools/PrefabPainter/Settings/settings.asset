@@ -3973,7 +3973,7 @@ MonoBehaviour:
     m_Bits: 32
   placeUnder: 2
   overwritePrefabLayer: 1
-  prefabPlaceLayer: 0
+  prefabPlaceLayer: 13
   pinSnapRotationValue: 15
   pinSnapScaleValue: 0.1
   pinSnapRotation: 0

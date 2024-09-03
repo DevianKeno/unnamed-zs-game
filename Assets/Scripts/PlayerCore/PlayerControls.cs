@@ -91,7 +91,7 @@ namespace UZSG.Players
         }
         public bool CanRun
         {
-            get => !_isMovingBackwards && !_isMovingSideways;
+            get => !_isMovingBackwards && !_isMovingSideways && IsGrounded;
         }
         /// <summary>
         /// Whether if the Player can Camera bob in FPP.
@@ -296,7 +296,6 @@ namespace UZSG.Players
         void OnInputRun(InputAction.CallbackContext input)
         {
             if (!AllowMovement) return;
-            if (!IsGrounded) return;
 
             if (input.started && CanRun && !Player.FPP.IsPerforming)
             {

@@ -246,7 +246,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -6154800947698905804, guid: 39b489a4227078342b88e98dd3635192, type: 3}
       propertyPath: m_Layer
-      value: 13
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: -6154800947698905804, guid: 39b489a4227078342b88e98dd3635192, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -286,7 +286,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 59455a717acf41f42bbd449855681afe, type: 2}
     - target: {fileID: -164481825537149297, guid: 39b489a4227078342b88e98dd3635192, type: 3}
       propertyPath: m_Layer
-      value: 13
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: -164481825537149297, guid: 39b489a4227078342b88e98dd3635192, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -303,6 +303,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 39b489a4227078342b88e98dd3635192, type: 3}
       propertyPath: m_Name
       value: pine_tree_heart
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 39b489a4227078342b88e98dd3635192, type: 3}
+      propertyPath: m_Layer
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 39b489a4227078342b88e98dd3635192, type: 3}
       propertyPath: m_IsActive
@@ -326,7 +330,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 2b2204f91dae9e340ba57542090b35ff, type: 2}
     - target: {fileID: 3843391252007280236, guid: 39b489a4227078342b88e98dd3635192, type: 3}
       propertyPath: m_Layer
-      value: 13
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 3843391252007280236, guid: 39b489a4227078342b88e98dd3635192, type: 3}
       propertyPath: m_StaticEditorFlags

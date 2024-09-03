@@ -74,16 +74,18 @@ MonoBehaviour:
   _hasTargetInSight: 0
   _hasTargetInAttackRange: 0
   attackCooldown: 0
+  attackDamage: 0
   _distanceFromPlayer: 0
-  rotationThreshold: 25
+  rotationThreshold: 15
+  distanceThreshold: 0.9
   _moveSpeed: 0
   _siteRadius: 0
   _attackRadius: 0
   _randomDestination: {x: 0, y: 0, z: 0}
   RotationDamping: 9
-  _roamTime: 0
-  _roamRadius: 0
-  _roamInterval: 0
+  _roamTime: 12
+  _roamRadius: 15
+  _roamInterval: 12
   animator: {fileID: 6509039278937967366}
   moveStateMachine: {fileID: 8327613411202617107}
   actionStateMachine: {fileID: 2224819950650519137}

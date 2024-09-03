@@ -41,6 +41,7 @@ namespace UZSG.Entities
         [SerializeField] float attackDamage;
         [SerializeField] float _distanceFromPlayer;
         [SerializeField] float rotationThreshold; // note that threshold must be greater than "_siteRadius"
+        [SerializeField] float  distanceThreshold;
         [SerializeField] float _moveSpeed;
         [SerializeField] float _siteRadius;
         [SerializeField] float _attackRadius; // Radius of which the enemy detects the player

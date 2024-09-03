@@ -33,6 +33,9 @@ namespace UZSG.Entities
                     _hasTargetInSight = true;
                     targetEntity = player; 
 
+                    // Clear the path to stop all movement
+                    navMeshAgent.ResetPath();
+
                     // Scream at player then chase
                     if (!_hasAlreadyScreamed)
                     {

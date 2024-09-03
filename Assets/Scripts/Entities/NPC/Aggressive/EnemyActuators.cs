@@ -99,11 +99,17 @@ namespace UZSG.Entities
             StartCoroutine(Rotate());
 
             /// Once facing the player, scream
-            actionStateMachine.ToState(EnemyActionStates.Scream, lockForSeconds: 2f);
+            actionStateMachine.ToState(Scream, lockForSeconds: 2f);
+            // if no target found after screaming
+            if (!_hasTargetInSight)
+            {
+                actionStateMachine.ToState(Roam);
+                yield break;
+            }
             yield return new WaitForSeconds(2f);
 
             /// just chase player
-            actionStateMachine.ToState(EnemyActionStates.Chase);
+            actionStateMachine.ToState(Chase);
         }
 
         IEnumerator Rotate()
@@ -120,24 +126,39 @@ namespace UZSG.Entities
             isAlreadyRotating = false;
         }
 
+        IEnumerator IdleThenRoam()
+        {
+            yield return new WaitForSeconds(4f);
+            actionStateMachine.ToState(Roam);
+        }
+
         void ActionIdle()
         {
-
+            StartCoroutine(IdleThenRoam());
         }
 
         void ActionRoam()
         {
             navMeshAgent.isStopped = false;
-            /// Check if the enemy has reached its destination and is actively moving
-            if (navMeshAgent.remainingDistance >= 1f && navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance)
+            /// Check if the enemy has reached its destination and is actively moving, else continue roaming
+            bool _inPlace = Vector3.Distance(transform.position, _randomDestination) <= distanceThreshold && CurrentActionState != Idle;
+
+            // check if in place and has a path
+            if (_inPlace && navMeshAgent.hasPath)
             {
+                Debug.Log("is in stop mode");
                 navMeshAgent.isStopped = true;
                 navMeshAgent.updateRotation = false;
+
                 moveStateMachine.ToState(EnemyMoveStates.Idle);
                 actionStateMachine.ToState(Idle);
+
+                // Clear the path to stop all movement
+                navMeshAgent.ResetPath();
             }
             else
             {
+                _roamTime -= Time.deltaTime;
                 // if there is a player found chase the player instead of roaming
                 if (_hasTargetInSight)
                 {
@@ -150,10 +171,9 @@ namespace UZSG.Entities
                 }
                 else
                 {
-                    /// Continue moving toward the destination
-                    _roamTime -= Time.deltaTime;
                     if (_roamTime <= 0)
                     {
+                        Debug.Log("is in else if statement");
                         /// Get a random position
                         _randomDestination = UnityEngine.Random.insideUnitSphere * _roamRadius;
                         _randomDestination += transform.position;
@@ -161,9 +181,10 @@ namespace UZSG.Entities
                         NavMesh.SamplePosition(_randomDestination, out NavMeshHit navHit, _roamRadius, NavMesh.AllAreas);
 
                         /// Set the agent's destination to the random point
+                        _randomDestination = navHit.position;
                         navMeshAgent.SetDestination(navHit.position);
                         moveStateMachine.ToState(EnemyMoveStates.Walk);
-                        actionStateMachine.ToState(EnemyActionStates.Roam);
+                        actionStateMachine.ToState(Roam);
                         _roamTime = UnityEngine.Random.Range(1.0f, _roamInterval); // Reset RoamTime for the next movement
                         navMeshAgent.updateRotation = true;
                     }
@@ -248,7 +269,15 @@ namespace UZSG.Entities
             moveStateMachine.ToState(EnemyMoveStates.Run);
 
             /// chase player position
-            navMeshAgent.SetDestination(targetEntity.transform.position);
+            if (targetEntity != null)
+            {
+                navMeshAgent.SetDestination(targetEntity.transform.position);
+            }
+            else
+            {
+                moveStateMachine.ToState(EnemyMoveStates.Walk);
+                actionStateMachine.ToState(Roam);
+            }
         }
 
         /*void Attack2() 

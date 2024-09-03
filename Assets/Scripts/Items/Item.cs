@@ -109,6 +109,8 @@ namespace UZSG.Items
                         
         /// <summary>
         /// Create a copy of the Item, either with/without a new count.
+        /// A count of -1 retains the original count of the copied Item,
+        /// while passing a new count will create a copy of the Item with the new count.
         /// </summary>
         public Item(Item other, int count = -1)
         {

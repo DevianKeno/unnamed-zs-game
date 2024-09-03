@@ -51,7 +51,7 @@ namespace UZSG.UI
 
             Value = stamina.ValueMaxRatio * 100f;
 
-            if (AnimateBufferOnValueDecrease && info.ValueChangedType == Attribute.ValueChangeType.Decreased)
+            if (IsBuffered && info.ValueChangedType == Attribute.ValueChangeType.Decreased)
             {
                 float start = Mathf.Lerp(barRect.rect.width, 0f, info.Previous / 100f);
                 float end = Mathf.Lerp(barRect.rect.width, 0f, info.New / 100f);

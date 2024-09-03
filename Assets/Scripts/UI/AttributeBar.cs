@@ -7,9 +7,12 @@ namespace UZSG.UI
     {
         [SerializeField] protected Attribute attribute;
         public Attribute Attribute => attribute;
-        public bool AnimateBufferOnValueDecrease;
+        
+        public bool IsBuffered { get; set; } = true;
         public float BufferDuration = 0.2f;
         public LeanTweenType BufferEase = LeanTweenType.linear;
+
+        bool _isAlreadyBuffering;
 
         [SerializeField] protected RectTransform bufferRect;
 
@@ -33,23 +36,40 @@ namespace UZSG.UI
         {
             Value = attribute.ValueMaxRatio * BarMax;
 
-            if (AnimateBufferOnValueDecrease && ctx.ValueChangedType == Attribute.ValueChangeType.Decreased)
+            if (IsBuffered && ctx.ValueChangedType == Attribute.ValueChangeType.Decreased)
             {
                 AnimateBuffer(ctx);
+            }
+            else
+            {
+                RefreshBuffer();
             }
         }
 
         void AnimateBuffer(AttributeValueChangedContext ctx)
         {
-            float start = Mathf.Lerp(barRect.rect.width, BarMin, ctx.Previous / BarMax);
+            float start;
+            if (_isAlreadyBuffering) /// refresh buffer end point
+            {
+                start = Mathf.Abs(bufferRect.offsetMax.x);
+            }
+            else /// new buffer
+            {
+                start = Mathf.Lerp(barRect.rect.width, BarMin, ctx.Previous / BarMax);
+            }
             float end = Mathf.Lerp(barRect.rect.width, BarMin, ctx.New / BarMax);
 
+            _isAlreadyBuffering = true;
             LeanTween.cancel(gameObject);
             LeanTween.value(gameObject, start, end, BufferDuration)
             .setEase(BufferEase)
             .setOnUpdate((float x) =>
             {
                 bufferRect.offsetMax = new Vector2(-x, bufferRect.offsetMax.y);
+            })
+            .setOnComplete(() =>
+            {
+                _isAlreadyBuffering = false;
             });
         }
 

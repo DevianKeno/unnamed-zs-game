@@ -57,7 +57,7 @@ namespace UZSG.Entities
             foreach(Collider col in _ragdollColliders)
             {
                 // col.enabled = !enabled;
-                col.isTrigger = false;
+                col.isTrigger = !enabled;
             }
 
             foreach(Rigidbody rigid in _rigidBodyParts)

@@ -44,6 +44,9 @@ namespace UZSG.Entities
 
         [SerializeField] PlayerAudioSourceController audioController;
         public PlayerAudioSourceController Audio => audioController;
+
+        [SerializeField] EntityHitboxController hitboxes;
+        public EntityHitboxController Hitboxes => hitboxes;
         
         InventoryUI invUI;
         public InventoryUI InventoryGUI => invUI;
@@ -138,6 +141,7 @@ namespace UZSG.Entities
 
             InitializeAttributes();
             InitializeStateMachines();
+            InitializeHitboxes();
             InitializeAnimator();
             InitializeInventory();
             // InitializeCrafter();
@@ -169,6 +173,15 @@ namespace UZSG.Entities
             MoveStateMachine.OnTransition += MoveTransitionCallback;
             /// Moved to PlayerAnimator.cs
             // MoveStateMachine.States[MoveStates.Crouch].OnTransition += OnCrouchState;
+        }
+
+        void InitializeHitboxes()
+        {
+            foreach (var hitbox in hitboxes.Hitboxes)
+            {
+                Debug.Log("Is hitting body part: " + hitbox.name);
+                hitbox.OnCollision += OnHitboxCollision;
+            }
         }
 
         void InitializeHUD()
@@ -313,6 +326,28 @@ namespace UZSG.Entities
 
         #endregion
 
+
+        void OnHitboxCollision(object sender, HitboxCollisionInfo info)
+        {
+            if (info.Source is Bullet bullet)
+            {
+                // var hitbox = sender as Hitbox;
+
+                // TakeDamage(10f);
+
+                // SpawnBlood(info.ContactPoint);
+                // // SpawnDamageText(info.ContactPoint);
+                // Destroy(bullet.gameObject); /// Change on penetration
+            }
+            // else if (info.Source is MeleeWeaponController meleeWeapon)
+            {
+                // TakeDamage(10f);
+
+                // SpawnBlood(info.ContactPoint);
+                // // SpawnDamageText(info.ContactPoint);
+            }
+        }
+        
 
         #region Public methods
 

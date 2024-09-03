@@ -1,9 +1,5 @@
-using System;
-using System.Collections;
-
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.UIElements;
 using UZSG.Systems;
 
 using static UZSG.Entities.EnemyActionStates;
@@ -49,6 +45,11 @@ namespace UZSG.Entities
                             ActionChase();
                         }
                     }
+                    if (transition.To == Die)
+                    {
+                        Clear();
+                        ActionDie();
+                    }
                     if (transition.To == Horde)
                     {
                         ActionHorde();
@@ -57,6 +58,11 @@ namespace UZSG.Entities
                 }
                 case Attack:
                 {
+                    if (transition.To == Die)
+                    {
+                        Clear();
+                        ActionDie();
+                    }
                     if (transition.To == Idle)
                     {
                         ActionIdle();
@@ -65,6 +71,11 @@ namespace UZSG.Entities
                 }
                 case Roam:
                 {
+                    if (transition.To == Die)
+                    {
+                        Clear();
+                        ActionDie();
+                    }
                     if (transition.To == Idle)
                     {
                         ActionIdle();
@@ -73,15 +84,23 @@ namespace UZSG.Entities
                 }
                 case Chase:
                 {
+                    if (transition.To == Die)
+                    {
+                        Clear();
+                        ActionDie();
+                    }
                     if (transition.To == Attack)
                     {
                         ActionAttack();
                     }
                     break;
                 }
-                case Die:
+                case Horde:
                 {
-                    ActionDie();
+                    if (transition.To == Die)
+                    {
+                        ActionDie();
+                    }
                     break;
                 }
                 default:
@@ -104,76 +123,12 @@ namespace UZSG.Entities
             ActionHorde();
         }
 
-
-        IEnumerator FacePlayerAndScream()
-        {
-            // Face player before screaming
-            StartCoroutine(Rotate());
-
-            /// Once facing the player, scream
-            actionStateMachine.ToState(Scream, lockForSeconds: 2f);
-            // if no target found after screaming
-            if (!_hasTargetInSight)
-            {
-                actionStateMachine.ToState(Roam);
-                yield break;
-            }
-            yield return new WaitForSeconds(2f);
-
-            /// just chase player
-            actionStateMachine.ToState(Chase);
-        }
-
-        IEnumerator Rotate()
-        {
-            isAlreadyRotating = true;
-            /// Rotate towards the player
-            Quaternion targetRotation = Quaternion.LookRotation(targetEntity.Position - transform.position);
-            while (Quaternion.Angle(transform.rotation, targetRotation) > rotationThreshold)
-            {
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * RotationDamping);
-                yield return null;
-            }
-
-            isAlreadyRotating = false;
-        }
-
-        IEnumerator IdleThenRoam()
-        {
-            yield return new WaitForSeconds(4f);
-            actionStateMachine.ToState(Roam);
-        }
-
-        IEnumerator AttackCounterDownTimer()
-        {
-            attackOnCooldown = true;
-            isAttacking = true;
-            float cooldownHolder = attackCooldown;
-
-            while (attackCooldown > 0)
-            {
-                attackCooldown -= Time.deltaTime; // Reduce cooldown over time
-                yield return null;
-            }
-
-            // Reset values
-            attackOnCooldown = false;
-            attackCooldown = cooldownHolder;
-            isAttacking = false;
-            // if there is a target in range idle, else if not in range chase
-            if (_hasTargetInAttackRange)
-            {
-                actionStateMachine.ToState(Idle);
-            }
-            else
-            {
-                actionStateMachine.ToState(Chase);
-            }
-        }
-
         void ActionIdle()
         {
-            StartCoroutine(IdleThenRoam());
+            if (!_hasTargetInSight)
+            {
+                StartCoroutine(IdleThenRoam());
+            }
         }
 
         void ActionRoam()
@@ -251,6 +206,9 @@ namespace UZSG.Entities
 
         void ActionDie()
         {
+            // Clear the path to stop all movement
+            navMeshAgent.ResetPath();
+
             // make the enemy ragdoll mode
             EnableRagdoll();
 
@@ -274,9 +232,6 @@ namespace UZSG.Entities
             /// allow enemy movement if not in attack range
             navMeshAgent.updateRotation = true;
             navMeshAgent.isStopped = false;
-
-            /// Set the move states to running mode
-            moveStateMachine.ToState(EnemyMoveStates.Run);
 
             /// chase player position
             if (targetEntity != null)

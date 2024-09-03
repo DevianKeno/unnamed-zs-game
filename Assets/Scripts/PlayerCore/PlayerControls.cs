@@ -98,7 +98,7 @@ namespace UZSG.Players
         /// </summary>
         public bool CanBob
         {
-            get => IsGrounded;
+            get => IsGrounded && IsMoving;
         }
         public bool CanCoyoteJump
         {

@@ -213,51 +213,50 @@ MonoBehaviour:
   Player: {fileID: 8107631895800867322}
   Enabled: 1
   MinSpeed: 0.3
-  WalkBob:
+  BobSettings:
+  - Id: walk
     Amplitude: -0.09
     Frequency: 0.5
     Recovery: 1
     MaintainForwardLook: 0
     LookDistance: 16
-    TransformDamping: 0
-    RunningPosition: {x: 0, y: 0, z: 0}
-    RunningRotation: {x: 0, y: 0, z: 0}
-  JogBob:
+  - Id: jog
     Amplitude: 0.1
     Frequency: 0.8
     Recovery: 1
     MaintainForwardLook: 0
-    LookDistance: 0
-    TransformDamping: 0
-    RunningPosition: {x: 0, y: 0, z: 0}
-    RunningRotation: {x: 0, y: 0, z: 0}
-  RunBob:
-    Amplitude: -0.15
-    Frequency: 1
+    LookDistance: 16
+  - Id: run
+    Amplitude: -0.3
+    Frequency: 2
     Recovery: 1
     MaintainForwardLook: 0
     LookDistance: 16
-    TransformDamping: 1
-    RunningPosition: {x: 0, y: 0, z: 0}
-    RunningRotation: {x: 0, y: 0, z: 0}
-  CrouchBob:
+  - Id: crouch
+    Amplitude: -0.09
+    Frequency: 0.5
+    Recovery: 1
+    MaintainForwardLook: 0
+    LookDistance: 16
+  bobToUse:
+    Id: 
     Amplitude: 0
     Frequency: 0
     Recovery: 0
     MaintainForwardLook: 0
     LookDistance: 0
-    TransformDamping: 0
-    RunningPosition: {x: 0, y: 0, z: 0}
-    RunningRotation: {x: 0, y: 0, z: 0}
-  _bobToUse:
-    Amplitude: 0
-    Frequency: 0
-    Recovery: 0
-    MaintainForwardLook: 0
-    LookDistance: 0
-    TransformDamping: 0
-    RunningPosition: {x: 0, y: 0, z: 0}
-    RunningRotation: {x: 0, y: 0, z: 0}
+  viewmodelBobToUse:
+    Id: 
+    BobSettings:
+      Id: 
+      Amplitude: 0
+      Frequency: 0
+      Recovery: 0
+      MaintainForwardLook: 0
+      LookDistance: 0
+    Position: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Damping: 0
 --- !u!114 &5902371368100368436
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -628,50 +627,40 @@ MonoBehaviour:
   Enabled: 1
   MinSpeed: 0.3
   WalkBob:
+    Id: walk
     Amplitude: 1.05
     Frequency: 0.9
     Recovery: 6
     MaintainForwardLook: 1
     LookDistance: 10
-    TransformDamping: 0
-    RunningPosition: {x: 0, y: 0, z: 0}
-    RunningRotation: {x: 0, y: 0, z: 0}
   JogBob:
+    Id: jog
     Amplitude: 1.2
     Frequency: 1
     Recovery: 6
     MaintainForwardLook: 1
     LookDistance: 10
-    TransformDamping: 0
-    RunningPosition: {x: 0, y: 0, z: 0}
-    RunningRotation: {x: 0, y: 0, z: 0}
   RunBob:
+    Id: run
     Amplitude: 3
     Frequency: 1.1
     Recovery: 8
     MaintainForwardLook: 1
     LookDistance: 10
-    TransformDamping: 0
-    RunningPosition: {x: 0, y: 0, z: 0}
-    RunningRotation: {x: 0, y: 0, z: 0}
   CrouchBob:
+    Id: crouch
     Amplitude: 2
     Frequency: 0.5
     Recovery: 6
     MaintainForwardLook: 1
     LookDistance: 10
-    TransformDamping: 0
-    RunningPosition: {x: 0, y: 0, z: 0}
-    RunningRotation: {x: 0, y: 0, z: 0}
   _bobToUse:
+    Id: 
     Amplitude: 0
     Frequency: 0
     Recovery: 0
     MaintainForwardLook: 0
     LookDistance: 0
-    TransformDamping: 0
-    RunningPosition: {x: 0, y: 0, z: 0}
-    RunningRotation: {x: 0, y: 0, z: 0}
 --- !u!114 &1760353934298345573
 MonoBehaviour:
   m_ObjectHideFlags: 0

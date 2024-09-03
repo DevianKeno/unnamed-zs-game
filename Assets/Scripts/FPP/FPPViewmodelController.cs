@@ -48,7 +48,7 @@ namespace UZSG.FPP
                 sway.Enabled = false;
                 #endregion
             }
-            else if (transition.To == MoveStates.Idle)
+            else
             {
                 // bobbing.Enabled = true;
                 sway.Enabled = true;
@@ -60,7 +60,7 @@ namespace UZSG.FPP
         /// </summary>
         public void SetViewmodelSettings(ViewmodelSettings settings)
         {
-            bobbing.SetRunningBobSettings(settings);
+            bobbing.SetViewmodelSettings(settings);
             if (settings.UseOffsets)
             {
                 modelHolder.SetLocalPositionAndRotation(settings.PositionOffset, Quaternion.Euler(settings.RotationOffset));

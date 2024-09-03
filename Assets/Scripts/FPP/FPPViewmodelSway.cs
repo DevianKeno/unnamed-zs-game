@@ -28,13 +28,13 @@ namespace UZSG.FPP
         [Tooltip("Invert the horizontal sway.")]
         public Vector3 RotationOffset = Vector3.zero;
         
-        Quaternion _originalRotation;
+        Quaternion _originalLocalRotation;
         InputAction lookInput;
 
         void Start()
         {
             lookInput = Game.Main.GetInputAction("Look", "Player");
-            _originalRotation = transform.localRotation;
+            _originalLocalRotation = transform.localRotation;
         }
 
         void Update()

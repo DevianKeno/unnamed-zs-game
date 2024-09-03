@@ -94,8 +94,31 @@ MonoBehaviour:
     UseOffsets: 1
     PositionOffset: {x: -0.04, y: 0.02, z: -0.03}
     RotationOffset: {x: 0, y: 0.22, z: 0}
-    RunBobPosition: {x: 0.15, y: 0, z: -0.2}
-    RunBobRotation: {x: 16, y: -37, z: 0}
+    BobbingPresets:
+    - Id: jog
+      BobSettings:
+        Id: run
+        Threshold: 0.3
+        Amplitude: -0.1
+        Frequency: 0.8
+        Recovery: 4
+        MaintainForwardLook: 0
+        LookDistance: 16
+      Position: {x: 0, y: 0, z: 0}
+      Rotation: {x: 0, y: 0, z: 0}
+      Damping: 0
+    - Id: run
+      BobSettings:
+        Id: run
+        Threshold: 0.3
+        Amplitude: -0.3
+        Frequency: 1
+        Recovery: 4
+        MaintainForwardLook: 0
+        LookDistance: 16
+      Position: {x: 0.5, y: -1, z: 0}
+      Rotation: {x: 0, y: -105.5, z: 10}
+      Damping: 3
   animationData:
     Idle: 
     Move: 

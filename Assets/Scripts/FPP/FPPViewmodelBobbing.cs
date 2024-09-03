@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UZSG.Entities;
 
@@ -12,22 +13,19 @@ namespace UZSG.FPP
         [Header("Settings")]
         public bool Enabled = true;
         public float MinSpeed = 0.3f;
+        [SerializeField] ViewmodelBobPreset viewmodelBobToUse;
 
-        #region This can be done better
-        public BobSettings WalkBob = new();
-        public BobSettings JogBob = new();
-        public BobSettings RunBob = new();
-        public BobSettings CrouchBob = new();
-        #endregion
+        ViewmodelSettings _currentViewmodelSettings;
+        Dictionary<string, ViewmodelBobPreset> _cachedViewmodelBobPresets = new();
         
-        [SerializeField] BobSettings _bobToUse;
-        Vector3 _originalPosition; /// local
-        Quaternion _originalRotation; /// local
+        bool _hasValidPreset;
+        Vector3 _originalLocalPosition;
+        Quaternion _originalLocalRotation;
 
         void Start()
         {
-            _originalPosition = transform.localPosition;
-            _originalRotation = transform.localRotation;
+            _originalLocalPosition = transform.localPosition;
+            _originalLocalRotation = transform.localRotation;
         }
 
         void Update()
@@ -38,22 +36,36 @@ namespace UZSG.FPP
             RecoverPosition();
         }
 
-        public void SetRunningBobSettings(ViewmodelSettings settings)
+
+        #region Public methods
+
+        public void SetViewmodelSettings(ViewmodelSettings settings)
         {
-            RunBob.RunningPosition = settings.RunBobPosition;
-            RunBob.RunningRotation = settings.RunBobRotation;
+            _currentViewmodelSettings = settings;
+            
+            /// cache values
+            foreach (var preset in _currentViewmodelSettings.BobbingPresets)
+            {
+                _cachedViewmodelBobPresets[preset.Id] = preset;
+            }
         }
+
+        #endregion
+
 
         void Bob()
         {
-            if (!Player.Controls.IsGrounded) return;
-            if (Player.Controls.Speed < MinSpeed) return;
+            if (!Player.Controls.CanBob) return;
 
-            _bobToUse = GetBob();
+            viewmodelBobToUse = GetViewmodelBob();
+            
+            AddPosition(CalculateFootStepMotion()); /// inherent bobbing motion
 
-            AddPosition(FootStepMotion());
+            /// add running gun stance motion additive cumulative speculative superlative
+            AddRunningGunPositionAdditive();
             AddRunningGunRotationAdditive();
-            if (_bobToUse.MaintainForwardLook)
+
+            if (viewmodelBobToUse.BobSettings.MaintainForwardLook)
             {
                 transform.LookAt(FocusTarget());
             }
@@ -61,21 +73,50 @@ namespace UZSG.FPP
 
         void AddRunningGunRotationAdditive()
         {
-            Quaternion targetRotation = Quaternion.Inverse(transform.localRotation);
-            if (Player.Controls.IsRunning)
+            Quaternion targetRotation;
+            if (_hasValidPreset)
             {
-                targetRotation *= Quaternion.Euler(_bobToUse.RunningRotation);
+                targetRotation = Quaternion.Inverse(transform.localRotation);
+                if (Player.Controls.IsRunning)
+                {
+                    targetRotation *= Quaternion.Euler(viewmodelBobToUse.Rotation);
+                }
+                else
+                {
+                    targetRotation *= _originalLocalRotation;
+                }
             }
             else
             {
-                targetRotation *= _originalRotation;
+                targetRotation = _originalLocalRotation;
             }
 
             transform.localRotation = Quaternion.Slerp(
                 transform.localRotation,
                 targetRotation,
-                _bobToUse.TransformDamping * Time.deltaTime
+                viewmodelBobToUse.Damping * Time.deltaTime
             );
+        }
+
+        void AddRunningGunPositionAdditive()
+        {
+            Vector3 targetPosition;
+            if (_hasValidPreset)
+            {
+                targetPosition = viewmodelBobToUse.Position;
+            }
+            else
+            {
+                targetPosition = _originalLocalPosition;
+            }
+
+            Vector3 motion = Vector3.Lerp(
+                transform.localPosition,
+                targetPosition,
+                viewmodelBobToUse.Damping * Time.deltaTime
+            );
+
+            AddPosition(motion - transform.localPosition);
         }
 
         void AddPosition(Vector3 motion)
@@ -83,50 +124,65 @@ namespace UZSG.FPP
             transform.localPosition += motion;
         }
 
-        Vector3 FootStepMotion()
+        Vector3 CalculateFootStepMotion()
         {
-            var pos = Vector3.zero;
-            var amplitude = _bobToUse.Amplitude * BobSettings.AmplitudeFactor;
-            var frequency = _bobToUse.Frequency * BobSettings.FrequencyFactor;
+            var position = Vector2.zero;
+            var amplitude = viewmodelBobToUse.BobSettings.Amplitude * FPP.BobSettings.AmplitudeFactor;
+            var frequency = viewmodelBobToUse.BobSettings.Frequency * FPP.BobSettings.FrequencyFactor;
 
-            pos.x += Mathf.Cos(Time.time * frequency / 2) * amplitude * 2;
-            pos.y += Mathf.Sin(Time.time * frequency) * amplitude;
-            return pos;
+            position.x += Mathf.Cos(Time.time * frequency / 2) * amplitude * 2;
+            position.y += Mathf.Sin(Time.time * frequency) * amplitude;
+            return position;
         }
 
         Vector3 FocusTarget()
         {
-            return transform.position + Player.Forward * _bobToUse.LookDistance;
+            return transform.position + Player.Forward * viewmodelBobToUse.BobSettings.LookDistance;
         }
 
         void RecoverPosition()
         {
             Vector3 motion = Vector3.Lerp(
                 transform.localPosition,
-                _originalPosition,
-                _bobToUse.Recovery * BobSettings.RecoveryFactor * Time.deltaTime) - transform.localPosition;
-            AddPosition(motion);
+                _originalLocalPosition,
+                viewmodelBobToUse.BobSettings.Recovery * FPP.BobSettings.RecoveryFactor * Time.deltaTime
+            );
+
+            AddPosition(motion - transform.localPosition);
         }
 
-        BobSettings GetBob()
+        ViewmodelBobPreset GetViewmodelBob()
         {
-            if (Player.Controls.IsRunning)
+            if (_cachedViewmodelBobPresets.TryGetValue(GetIdFromPlayerState(), out ViewmodelBobPreset preset))
             {
-                return RunBob;
-            }
-            else if (Player.Controls.IsWalking)
-            {
-                return WalkBob;
-            }
-            else if (Player.Controls.IsCrouching)
-            {
-                return CrouchBob;
+                _hasValidPreset = true;
+                return preset;
             }
             else
             {
-                return JogBob;
+                _hasValidPreset = false;
+                return new(); /// zero values
             }
         }
 
+        string GetIdFromPlayerState()
+        {
+            if (Player.Controls.IsRunning)
+            {
+                return "run";
+            }
+            else if (Player.Controls.IsWalking)
+            {
+                return "walk";
+            }
+            else if (Player.Controls.IsCrouching)
+            {
+                return "crouch";
+            }
+            else
+            {
+                return "jog";
+            }
+        }
     }
 }

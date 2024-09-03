@@ -34,6 +34,8 @@ namespace UZSG.Entities
 
         [Header("Enemy Agent Information")]
         public LayerMask PlayerLayer; // Layers that the enemy chases
+        public bool isInHorde;
+        [SerializeField] Transform _hordeTransform;
         [SerializeField] bool _hasAlreadyScreamed;
         [SerializeField] bool attackOnCooldown;
         [SerializeField] bool isAttacking;
@@ -134,6 +136,15 @@ namespace UZSG.Entities
         void InitializeAgent()
         {
             navMeshAgent.speed = _moveSpeed;
+            actionStateMachine.ToState(Idle);
+
+            // if spawned in an event horde, change state to horde
+            if (isInHorde)
+            {
+                // store the current transform when spawned of the horde zombie
+                _hordeTransform = transform;
+                actionStateMachine.ToState(Horde);
+            }
         }
 
         #endregion

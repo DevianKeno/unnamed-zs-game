@@ -19,6 +19,6 @@ MonoBehaviour:
   OccurEverySecond: 5
   WeatherTypes: []
   RaidTypes:
-  - Name: Skinwalker
-    EnemyData: {fileID: 11400000, guid: 3bbb12e3042059d4abbf8d40af48316c, type: 2}
+  - Name: Walker
+    EnemyData: {fileID: 11400000, guid: 733a73e5d945f434eafdbde123704a59, type: 2}
     ChanceToOccur: 100

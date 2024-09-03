@@ -1,15 +1,6 @@
 using UnityEngine;
-using UnityEngine.AI;
-
-using UZSG.Data;
-using UZSG.Systems;
-using UZSG.Interactions;
-using UZSG.Attributes;
-using System.Collections.Generic;
-using System;
-using UZSG.Players;
-
 using static UZSG.Entities.EnemyActionStates;
+using System.Collections;
 
 namespace UZSG.Entities
 {
@@ -91,6 +82,7 @@ namespace UZSG.Entities
                     _hasTargetInSight = false;
                     _hasAlreadyScreamed = false;
                     actionStateMachine.ToState(Roam);
+                    moveStateMachine.ToState(EnemyMoveStates.Walk);
                 }
                 else
                 {
@@ -103,6 +95,7 @@ namespace UZSG.Entities
                             _hasTargetInAttackRange = false;
 
                             actionStateMachine.ToState(Chase);
+                            moveStateMachine.ToState(EnemyMoveStates.Run);
                         }
                     }
                 }
@@ -112,6 +105,74 @@ namespace UZSG.Entities
         #endregion
 
 
+        IEnumerator FacePlayerAndScream()
+        {
+            // Face player before screaming
+            StartCoroutine(Rotate());
+
+            /// Once facing the player, scream
+            actionStateMachine.ToState(Scream, lockForSeconds: 2f);
+            // if no target found after screaming
+            if (!_hasTargetInSight)
+            {
+                actionStateMachine.ToState(Roam);
+                yield break;
+            }
+            yield return new WaitForSeconds(2.2f);
+
+            /// just chase player
+            actionStateMachine.ToState(Chase);
+            moveStateMachine.ToState(EnemyMoveStates.Run);
+        }
+
+        IEnumerator Rotate()
+        {
+            isAlreadyRotating = true;
+            /// Rotate towards the player
+            Quaternion targetRotation = Quaternion.LookRotation(targetEntity.Position - transform.position);
+            while (Quaternion.Angle(transform.rotation, targetRotation) > rotationThreshold)
+            {
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * RotationDamping);
+                yield return null;
+            }
+
+            isAlreadyRotating = false;
+        }
+
+        IEnumerator IdleThenRoam()
+        {
+            yield return new WaitForSeconds(4f);
+            actionStateMachine.ToState(Roam);
+            moveStateMachine.ToState(EnemyMoveStates.Walk);
+        }
+
+        IEnumerator AttackCounterDownTimer()
+        {
+            attackOnCooldown = true;
+            isAttacking = true;
+            float cooldownHolder = attackCooldown;
+
+            while (attackCooldown > 0)
+            {
+                attackCooldown -= Time.deltaTime; // Reduce cooldown over time
+                yield return null;
+            }
+
+            // Reset values
+            attackOnCooldown = false;
+            attackCooldown = cooldownHolder;
+            isAttacking = false;
+            // if there is a target in range idle, else if not in range chase
+            if (_hasTargetInAttackRange)
+            {
+                actionStateMachine.ToState(Idle);
+            }
+            else
+            {
+                actionStateMachine.ToState(Chase);
+                moveStateMachine.ToState(EnemyMoveStates.Run);
+            }
+        }
 
 
         #region Zombie Dying

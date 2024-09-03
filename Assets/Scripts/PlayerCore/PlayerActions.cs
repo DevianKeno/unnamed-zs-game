@@ -12,7 +12,6 @@ using UZSG.Interactions;
 using UZSG.Entities;
 using UZSG.Inventory;
 using UZSG.Items;
-using UZSG.UI.HUD;
 
 namespace UZSG.Players
 {
@@ -60,7 +59,7 @@ namespace UZSG.Players
         public InputActionMap ActionMap => actionMap;
         Dictionary<string, InputAction> inputs = new();
         public Dictionary<string, InputAction> Inputs => inputs;
-        
+
 
         #region Initializing methods
 
@@ -449,22 +448,29 @@ namespace UZSG.Players
         public void EnterVehicle(VehicleEntity vehicle)
         {
             IsBusy = true;
-            Player.MoveStateMachine.ToState(MoveStates.InVehicle);
+            Player.MoveStateMachine.ToState(MoveStates.InVehicle, lockForSeconds: 9999999f);
             Player.Rigidbody.constraints = RigidbodyConstraints.None;
+            Vehicle = vehicle;
+            EnableVehicleControls(vehicle);
+
             OnInteractVehicle?.Invoke(new()
             {
                 Interactable = vehicle,
                 Actor = Player,
                 Entered = true
             });
-            
         }
 
         public void ExitVehicle(VehicleEntity vehicle)
         {
-            IsBusy = false;
+            DisableVehicleControls(vehicle);
+            vehicle.SeatManager.ExitVehicle(Player);
+            Vehicle = null;
+            Player.MoveStateMachine.Unlock();
             Player.MoveStateMachine.ToState(MoveStates.Idle);
             Player.Rigidbody.constraints = _savedRigidbodyConstraints;
+            IsBusy = false;
+
             OnInteractVehicle?.Invoke(new()
             {
                 Interactable = vehicle,
@@ -505,6 +511,45 @@ namespace UZSG.Players
                     inputs[name].Disable();
                 }
             }
+        }
+
+        #endregion
+
+
+        #region Vehicle input callbacks
+
+        /// <summary>
+        /// The vehicle this Player is currently on (if any).
+        /// </summary>
+        public VehicleEntity Vehicle { get; private set; }        
+
+        void EnableVehicleControls(VehicleEntity vehicle)
+        {
+            Inputs["Change Seat"].performed += OnInputChangeSeat;
+            Inputs["Change Vehicle View"].performed += OnInputChangeVehicleView;
+            backInput.performed += ExitVehicleOnGlobalBack;
+        }
+
+        void DisableVehicleControls(VehicleEntity vehicle)
+        {
+            Inputs["Change Seat"].performed -= OnInputChangeSeat;
+            Inputs["Change Vehicle View"].performed -= OnInputChangeVehicleView;
+            backInput.performed -= ExitVehicleOnGlobalBack;
+        }
+
+        void OnInputChangeSeat(InputAction.CallbackContext context)
+        {
+            Vehicle.SeatManager.ChangeSeat(Player);
+        }
+
+        void OnInputChangeVehicleView(InputAction.CallbackContext context)
+        {
+            Vehicle.CameraManager.ChangeVehicleView(Player);
+        }
+
+        void ExitVehicleOnGlobalBack(InputAction.CallbackContext context)
+        {
+            ExitVehicle(Vehicle);
         }
 
         #endregion

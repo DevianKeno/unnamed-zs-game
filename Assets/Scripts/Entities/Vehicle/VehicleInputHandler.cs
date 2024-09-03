@@ -30,27 +30,30 @@ namespace UZSG.Entities.Vehicles
         void Start()
         {
             _moveInput = Game.Main.GetInputAction("Vehicle Move", "Player Move");
-            _backInput = Game.Main.GetInputAction("Back", "Global");
             _handbrakeInput = Game.Main.GetInputAction("Handbrake", "Player Move");
+
             _switchSeatInput = Game.Main.GetInputAction("Change Seat", "Player Actions");
             _switchViewInput = Game.Main.GetInputAction("Change Vehicle View", "Player Actions");
+
+            _backInput = Game.Main.GetInputAction("Back", "Global");
         }
 
         public void ToggleGeneralControls(Player player, bool isEnabled)
         {
             TogglePlayerMovement(player, !isEnabled);
 
+            /// hello I moved this to the PlayerActions.cs because it's not working for the other scenes ;)
             if (isEnabled)
             {
-                _switchSeatInput.performed += OnSwitchSeatInputPerform;
-                _switchViewInput.performed += OnSwitchViewInputPerform;
-                _backInput.performed += OnBackInputPerform;
+                // _switchSeatInput.performed += OnSwitchSeatInputPerform;
+                // _switchViewInput.performed += OnSwitchViewInputPerform;
+                // _backInput.performed += OnBackInputPerform;
             }
             else
             {
-                _switchSeatInput.performed -= OnSwitchSeatInputPerform;
-                _switchViewInput.performed -= OnSwitchViewInputPerform;
-                _backInput.performed -= OnBackInputPerform;
+                // _switchSeatInput.performed -= OnSwitchSeatInputPerform;
+                // _switchViewInput.performed -= OnSwitchViewInputPerform;
+                // _backInput.performed -= OnBackInputPerform;
             }
         }
 

@@ -45,19 +45,21 @@ namespace UZSG.Entities
             if (crouched)
             {
                 // print("entered crouch");
-                animator.CrossFade($"stand_to_crouch", 0f); /// no transition fade
+                AnimateTogether($"stand_to_crouch", 0f); /// no transition fade
             }
             else
             {
                 // print("exited crouch");
-                animator.CrossFade($"crouch_to_stand", 0f); /// no transition fade
+                AnimateTogether($"crouch_to_stand", 0f); /// no transition fade
             }
         }
 
         void OnTurn(float direction)
         {
-            animator.CrossFade($"turn", 0f);
+            AnimateTogether($"turn", 0f);
+
             animator.SetFloat("turn", direction);
+            animatorFPP.SetFloat("turn", direction);
         }
 
         void OnInteractVehicle(VehicleInteractContext context)
@@ -65,23 +67,33 @@ namespace UZSG.Entities
             /// this can handle entering/exiting vehicle animations but good luck with that lmao
             if (context.Entered)
             {
-                animator.CrossFade($"invehicle", 0f); /// no transition fade
+                // print("Entered vehicle");
+                AnimateTogether($"car_idle", 0f); /// no transition fade
             }
             else if (context.Exited)
             {
-                animator.CrossFade($"idle", 0f); /// no transition fade
+                // print("Exited vehicle");
+                AnimateTogether($"idle", 0f); /// no transition fade
             }
         }
 
         #endregion
 
+        
+        /// <summary>
+        /// Animates both the TPP and FPP player models.
+        /// </summary>
+        void AnimateTogether(string anim, float crossfadeTransitionDuration)
+        {
+            animator.CrossFade(anim, crossfadeTransitionDuration);
+            animatorFPP.CrossFade(anim, crossfadeTransitionDuration);
+        }
 
         void TransitionAnimator(StateMachine<MoveStates>.TransitionContext t)
         {
             var animId = GetAnimationName(t.To);
 
-            animator.CrossFade($"{animId}", CrossfadeTransitionDuration);
-            animatorFPP.CrossFade($"{animId}", CrossfadeTransitionDuration);
+            AnimateTogether($"{animId}", CrossfadeTransitionDuration);
         }
 
         void Update()

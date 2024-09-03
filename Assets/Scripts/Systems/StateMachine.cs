@@ -106,9 +106,17 @@ namespace UZSG.Systems
         /// <summary>
         /// Lock the current state for a seconds.
         /// </summary>
-        public virtual void LockForSeconds(float seconds)
+        public void LockForSeconds(float seconds)
         {
             _lockedUntil = Time.realtimeSinceStartup + seconds;
+        }
+
+        /// <summary>
+        /// Lock the current state for a seconds.
+        /// </summary>
+        public void Unlock()
+        {
+            _lockedUntil = Time.realtimeSinceStartup - 1f;
         }
 
         #endregion

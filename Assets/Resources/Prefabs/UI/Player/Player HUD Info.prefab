@@ -661,10 +661,10 @@ MonoBehaviour:
   Player: {fileID: 0}
   VignetteEase: 21
   VignetteFadeDuration: 0.44
-  Crosshair: {fileID: 0}
-  Compass: {fileID: 0}
-  vignette: {fileID: 0}
-  pickupsIndicator: {fileID: 0}
+  Crosshair: {fileID: 6399702544681948731}
+  Compass: {fileID: 8730425494597798714}
+  vignette: {fileID: 8777650970317093140}
+  pickupsIndicator: {fileID: 1033781800108314528}
   pickupTimer: {fileID: 0}
 --- !u!1 &8821175274097488153
 GameObject:
@@ -824,6 +824,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 5892510881027729756, guid: bb21ce6e4780d3747942172142f349f4, type: 3}
   m_PrefabInstance: {fileID: 1622024836042677497}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &8730425494597798714 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8046284666269554627, guid: bb21ce6e4780d3747942172142f349f4, type: 3}
+  m_PrefabInstance: {fileID: 1622024836042677497}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 722bcce45e1fb944bb19369d7120ed9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &3630526241970152410
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1163,6 +1174,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 7310548438961464390, guid: 3e985940ec5d25945917d3263eca474c, type: 3}
   m_PrefabInstance: {fileID: 6677950036826657464}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &6399702544681948731 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 323300003746563203, guid: 3e985940ec5d25945917d3263eca474c, type: 3}
+  m_PrefabInstance: {fileID: 6677950036826657464}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98e8a1925372041479dc7ed0902f23bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &7713108284841993746
 PrefabInstance:
   m_ObjectHideFlags: 0

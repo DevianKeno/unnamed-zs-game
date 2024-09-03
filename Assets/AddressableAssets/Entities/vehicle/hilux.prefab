@@ -140,7 +140,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _vehicle: {fileID: 0}
-  _vehicleStateMachine: {fileID: 0}
   bodyMassCenter: {fileID: 7292847409730908410}
   fuelCap: 0
   fuelConsumptionPerPower: 0
@@ -1070,7 +1069,7 @@ WheelCollider:
     m_ExtremumValue: 1
     m_AsymptoteSlip: 0.5
     m_AsymptoteValue: 0.75
-    m_Stiffness: 1
+    m_Stiffness: 1.8
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -1278,7 +1277,7 @@ WheelCollider:
     m_ExtremumValue: 1
     m_AsymptoteSlip: 0.5
     m_AsymptoteValue: 0.75
-    m_Stiffness: 1
+    m_Stiffness: 1.8
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -1578,7 +1577,7 @@ WheelCollider:
     m_ExtremumValue: 1
     m_AsymptoteSlip: 0.5
     m_AsymptoteValue: 0.75
-    m_Stiffness: 1
+    m_Stiffness: 1.8
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -2080,7 +2079,7 @@ WheelCollider:
     m_ExtremumValue: 1
     m_AsymptoteSlip: 0.5
     m_AsymptoteValue: 0.75
-    m_Stiffness: 1
+    m_Stiffness: 1.8
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0

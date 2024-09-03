@@ -4270,7 +4270,7 @@ MonoBehaviour:
       - gameObject: {fileID: 0}
       - gameObject: {fileID: 0}
       selectedSlot: 0
-      selected: 0
+      selected: 1
       colorTag: 0
       customPreviewImage: {fileID: 0}
     levelsGamma: 1
@@ -4278,7 +4278,7 @@ MonoBehaviour:
     levelsInWhite: 255
     levelsOutBlack: 0
     levelsOutWhite: 255
-  activeTab: 5
+  activeTab: 6
   paintOnSelected: 0
   paintLayers:
     serializedVersion: 2
@@ -4288,7 +4288,7 @@ MonoBehaviour:
     m_Bits: 32768
   placeUnder: 2
   overwritePrefabLayer: 1
-  prefabPlaceLayer: 15
+  prefabPlaceLayer: 0
   pinSnapRotationValue: 15
   pinSnapScaleValue: 0.1
   pinSnapRotation: 0

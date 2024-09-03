@@ -3,7 +3,52 @@ guid: 9ea638961eb4e72419961f2781561159
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Body
+    second: {fileID: 2100000, guid: 3a7fe9cd7477578469011dfb6067b6ba, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Body.Bed
+    second: {fileID: 2100000, guid: 8bc5666eb2e491f4daebf50590345acb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Glass
+    second: {fileID: 2100000, guid: 57cfbd4467d8e7347a2bbcf1ed7c8404, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: InteriorAll
+    second: {fileID: 2100000, guid: 886130376d137134c92cf46fd08bf6cf, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Pipes
+    second: {fileID: 2100000, guid: 8e2eb220a129d6143b68c56a9954b4a5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Rims
+    second: {fileID: 2100000, guid: ba0bd7f4b9ccae944a6c39d21fc6e37d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Springs
+    second: {fileID: 2100000, guid: 58f3497bd3d0f4b488ede723f16519a6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Tires
+    second: {fileID: 2100000, guid: 2a5c2128a54a679408133905a0db5275, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Trims
+    second: {fileID: 2100000, guid: eae58471ea0bdc24a8db54ecbaead6d5, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

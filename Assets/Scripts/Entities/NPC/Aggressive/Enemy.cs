@@ -149,6 +149,5 @@ namespace UZSG.Entities
             ResetTargetIfNotInRange();
             KillZombieIfDead();
         }
-        #endregion
     }
 }

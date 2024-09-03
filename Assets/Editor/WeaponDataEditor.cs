@@ -18,9 +18,9 @@ namespace UZSG.UnityEditor
             meleeAttributes,
             rangedAttributes,
             armsAnimations,
-            viewmodel,
-            viewmodelOffsets,
-            anims;
+            viewmodelAsset,
+            viewmodelSettings,
+            animationData;
         
         protected override void OnEnable()
         {
@@ -38,9 +38,9 @@ namespace UZSG.UnityEditor
             rangedAttributes = serializedObject.FindProperty("RangedAttributes");
 
             armsAnimations = serializedObject.FindProperty("armsAnimations");
-            viewmodel = serializedObject.FindProperty("viewmodel");
-            viewmodelOffsets = serializedObject.FindProperty("viewmodelOffsets");
-            anims = serializedObject.FindProperty("anims");
+            viewmodelAsset = serializedObject.FindProperty("viewmodelAsset");
+            viewmodelSettings = serializedObject.FindProperty("viewmodelSettings");
+            animationData = serializedObject.FindProperty("animationData");
         }
 
         public override void OnInspectorGUI()
@@ -51,6 +51,7 @@ namespace UZSG.UnityEditor
             WeaponData weaponData = (WeaponData) target;
 
             EditorGUILayout.Space();
+            EditorGUILayout.LabelField("Weapon Data", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(hotbarIcon);
             EditorGUILayout.PropertyField(category);
             EditorGUILayout.PropertyField(attributes);
@@ -108,9 +109,9 @@ namespace UZSG.UnityEditor
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("Viewmodel Data", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(armsAnimations);
-            EditorGUILayout.PropertyField(viewmodel);
-            EditorGUILayout.PropertyField(viewmodelOffsets);
-            EditorGUILayout.PropertyField(anims);
+            EditorGUILayout.PropertyField(viewmodelAsset);
+            EditorGUILayout.PropertyField(viewmodelSettings);
+            EditorGUILayout.PropertyField(animationData);
 
             serializedObject.ApplyModifiedProperties();
         }

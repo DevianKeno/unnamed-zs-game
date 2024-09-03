@@ -1,4 +1,5 @@
 using System;
+using UZSG.Data;
 
 namespace UZSG.Items.Weapons
 {    
@@ -9,6 +10,11 @@ namespace UZSG.Items.Weapons
         public int RoundsPerMinute;
         public int ClipSize;
         public float ReloadSpeed;
+        /// <summary>
+        /// TODO: change into a more robust system
+        /// The Id of this gun's bullets.
+        /// </summary>
+        public AmmoData Ammo;
         public float Spread;
         public int BurstFireCount;
         public float BurstFireInterval;

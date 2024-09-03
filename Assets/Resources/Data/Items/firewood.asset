@@ -12,12 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 873d4c4f155a35a46b4699d35b336ec7, type: 3}
   m_Name: firewood
   m_EditorClassIdentifier: 
+  SourceId: uzsg
   Id: firewood
+  Tags: []
   Name: Fire Wood
   Description: Used as a primary source of fuel in a survival setting, especially
     in colder climates.
   Model:
-    m_AssetGUID: 03b7efc824e51ae4da701532a3544b6e
+    m_AssetGUID: a4b0afd2d3a777c4fa2108790842d5f4
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0

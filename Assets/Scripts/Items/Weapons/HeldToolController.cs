@@ -35,7 +35,14 @@ namespace UZSG.Items.Tools
         {
             get
             {
-                return attributes["durability"].Value <= 0;
+                if (attributes.TryGet("durability", out var durability))
+                {
+                    return durability.Value <= 0f;
+                }
+                else
+                {
+                    return false; /// makes items that have no durability unbreakable
+                }
             }
         }
 
@@ -120,6 +127,10 @@ namespace UZSG.Items.Tools
                 if (CanUse)
                 {
                     StartCoroutine(AttackCoroutine());
+                }
+                if (IsBroken)
+                {
+                    /// prompt user broken Item
                 }
             }
             else if (context.canceled)

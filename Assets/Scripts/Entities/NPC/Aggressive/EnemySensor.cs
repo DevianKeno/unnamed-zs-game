@@ -15,109 +15,117 @@ namespace UZSG.Entities
 {
     public partial class Enemy : NonPlayerCharacter
     {
-        #region Agent sensors
         
-        /*/// <summary>
-        /// determines if enemy can Chase Player or Roam map
-        /// </summary>
-        public bool HasTargetInSight 
-        {
-            get
-            {
-                return _hasTargetInSight;
-            }
-        }
-        /// <summary>
-        /// determines if enemy can Attack Player
-        /// </summary>
-        public bool HasTargetInAttackRange
-        {
-            get
-            {   
-                return _hasTargetInAttackRange;
-            }
-        }
-        /// <summary>
-        /// determines if the enemy is dead
-        /// </summary>
-        public bool HasNoHealth
-        {
-            get
-            {
-                return IsDead;
-            }
-        }
-        /// <summary>
-        /// determines if an event happened that triggered special Attack 1
-        /// </summary>
-        public bool IsSpecialAttackTriggered
-        {
-            get
-            {
-                return false;
-            }
-        }
-        /// <summary>
-        /// Whether if an event happened that triggered special Attack 2
-        /// </summary>
-        public bool IsSpecialAttack2Triggered
-        {
-            get
-            {
-                return false;
-            }
-        }
+        #region Agent Player Detection
 
-        public bool IsInHordeMode
+        /// <summary>
+        /// Set this Enemy's target to the detected player then show detection animation.
+        /// </summary>
+        /// <param name="etty"></param>
+        public void DetectPlayer(Entity etty)
         {
-            get
-            {   // TODO: palitan mo yung "jericho_method" sa method na nagrereturn ng bool; true if in hordemode (lalakad straight line), false if hindi horde mode zombie
-                if (_isInHordeMode)
+            // if enemy is alive
+            if (!IsDead)
+            {
+                // if enemy has target and is chasing a non null player
+                if (!_hasTargetInSight && etty != null && etty is Player player)
                 {
-                    if (HasTargetInSight)
+                    _hasTargetInSight = true;
+                    targetEntity = player; 
+
+                    // Clear the path to stop all movement
+                    navMeshAgent.ResetPath();
+
+                    // Scream at player then chase
+                    if (!_hasAlreadyScreamed)
                     {
-                        return false;
+                        _hasAlreadyScreamed = true;
+                        StartCoroutine(FacePlayerAndScream());
                     }
-                    hordeTransform.SetPositionAndRotation(new Vector3(1, 2, 1), Quaternion.Euler(0, 30, 0));
-                    return true;
                 }
-                return false;
             }
         }
 
-        /// <summary>
-        /// "sense" what's the state of the enemy 
-        /// </summary>
-        /// <returns></returns>
-        /*public EnemyActionStates HandleTransition()
+        public void AttackPlayer(Entity etty)
+        {
+            if (isAttacking)
+            {
+                return;
+            }
+            if (etty != null && etty is Player player)
+            {
+                _hasTargetInAttackRange = true;
+                // Calculate the direction vector from your object to the target object
+                Vector3 directionToTarget = (player.Position - transform.position).normalized;
+
+                // Check if the forward direction of your object is aligned with the directionToTarget vector
+                float angle = Vector3.Angle(transform.forward, directionToTarget);
+
+                // if facing player attack, else rotate
+                if (angle < rotationThreshold) // Adjust the threshold (e.g., 1 degree) as needed
+                {   
+                    moveStateMachine.ToState(EnemyMoveStates.Idle);
+                    actionStateMachine.ToState(Attack);
+                }
+                else
+                {
+                    if (!isAlreadyRotating)
+                    {
+                        StartCoroutine(Rotate());
+                    }
+                }
+            }
+        }
+
+        public void ResetTargetIfNotInRange()
+        {
+            // Check if there is a target, then calculate the distance
+            if (_hasTargetInSight)
+            {
+                _distanceFromPlayer = Vector3.Distance(targetEntity.Position, transform.position); 
+
+                // if target no longer in site reset target and roam (idle state)
+                if (_siteRadius <= _distanceFromPlayer)
+                {
+                    targetEntity = null;
+                    _hasTargetInSight = false;
+                    _hasAlreadyScreamed = false;
+                    actionStateMachine.ToState(Roam);
+                }
+                else
+                {
+                    // Check if no player in attack range, reset to chase
+                    if (_hasTargetInAttackRange)
+                    {
+                        if (_attackRadius <= _distanceFromPlayer)
+                        {   
+                            // reset target and rotation
+                            _hasTargetInAttackRange = false;
+
+                            actionStateMachine.ToState(Chase);
+                        }
+                    }
+                }
+            }
+        }
+
+        #endregion
+
+
+
+
+        #region Zombie Dying
+
+        public void KillZombieIfDead()
         {
             if (IsDead)
             {
-                return EnemyActionStates.Die;
+                moveStateMachine.ToState(EnemyMoveStates.Idle);
+                actionStateMachine.ToState(Die);
             }
-
-            // if (IsHordeMode)
-            // {
-            //     return EnemyActionStates.Horde;
-            // }
-
-            if (HasTargetInSight)
-            {
-                if (HasTargetInAttackRange) 
-                {
-                    return EnemyActionStates.Attack;
-                }
-                else /// keep chasing
-                {
-                    return EnemyActionStates.Chase;
-                }
-            }
-            else
-            {
-                return EnemyActionStates.Roam;
-            }
-        }*/
+        }
 
         #endregion
+
     }
 }

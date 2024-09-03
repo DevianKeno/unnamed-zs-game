@@ -12,6 +12,8 @@ using UZSG.Inventory;
 using UZSG.Items;
 using UZSG.Items.Weapons;
 using UZSG.Interactions;
+using UZSG.Data;
+using UZSG.Players;
 
 namespace UZSG.UI.HUD
 {
@@ -27,9 +29,8 @@ namespace UZSG.UI.HUD
         public float VignetteFadeDuration;
         
         [Header("Elements")]
-        public DynamicCrosshair crosshair;
-        public SwitchCrosshair allCrosshair;
-        public Compass compass;
+        public CrosshairHandler Crosshair;
+        public Compass Compass;
         public Image vignette;
         public PickupsIndicator pickupsIndicator;
         public RadialProgressUI pickupTimer;
@@ -45,9 +46,8 @@ namespace UZSG.UI.HUD
             }
 
             Player = player;
-            crosshair.Initialize(player);
-            allCrosshair.Initialize(player);
-            compass.Initialize(player);
+            Crosshair.Initialize(player);
+            Compass.Initialize(player);
             
             resourceHealthRingUI = Game.UI.Create<ResourceHealthRingUI>("Resource Health Ring UI", show: false);
 
@@ -56,8 +56,35 @@ namespace UZSG.UI.HUD
 
         void InitializeEvents()
         {
+            Player.Controls.OnCrouch += OnCrouch;
             Player.Actions.OnLookAtSomething += OnPlayerLookAtSomething;
             Player.Actions.OnPickupItem += OnPlayerPickupedItem;
+            Player.Actions.OnInteractVehicle += OnInteractVehicle;
+            Player.FPP.OnChangeHeldItem += OnChangeHeldItem;
+        }
+
+        void OnInteractVehicle(VehicleInteractContext context)
+        {
+            if (context.Entered)
+            {
+                Crosshair.Hide();
+            }
+            else if (context.Exited)
+            {
+                Crosshair.Show();
+            }
+        }
+
+        void OnCrouch(bool crouched)
+        {
+            if (crouched)
+            {
+                FadeVignette(alpha: 1f);
+            }
+            else
+            {
+                FadeVignette(alpha: 0f);
+            }
         }
 
         void OnDestroy()
@@ -73,9 +100,14 @@ namespace UZSG.UI.HUD
             if (lookable == null)
             {
                 resourceHealthRingUI.Hide();
+                return;
             }
-            else if (lookable is UZSG.Objects.Resource resource && !resourceHealthRingUI.IsVisible)
+
+            if (lookable is UZSG.Objects.Resource resource && !resourceHealthRingUI.IsVisible)
             {
+                /// The player must be holding a Tool to display the resource's health
+                if (!Player.FPP.IsHoldingTool) return;
+
                 resourceHealthRingUI.DisplayResource(resource);
                 resourceHealthRingUI.Show();
             }
@@ -86,6 +118,15 @@ namespace UZSG.UI.HUD
             if (!item.IsNone)
             {
                 pickupsIndicator.AddEntry(item);
+            }
+        }
+
+        void OnChangeHeldItem(HeldItemController heldItem)
+        {
+            /// Hide the health ring if swapped to a non-tool Held Item
+            if (resourceHealthRingUI.IsVisible && heldItem.ItemData.Type != ItemType.Tool)
+            {
+                resourceHealthRingUI.Hide();
             }
         }
 

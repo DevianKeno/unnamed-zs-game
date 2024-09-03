@@ -8,18 +8,24 @@ namespace UZSG.UnityEditor
     [CustomEditor(typeof(BaseData))]
     public class BaseDataEditor : Editor
     {
-        SerializedProperty id;
+        SerializedProperty sourceId,
+            id,
+            tags;
         
         protected virtual void OnEnable()
         {
+            sourceId = serializedObject.FindProperty("SourceId");
             id = serializedObject.FindProperty("Id");
+            tags = serializedObject.FindProperty("Tags");
         }
 
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
 
+            EditorGUILayout.PropertyField(sourceId);
             EditorGUILayout.PropertyField(id);
+            EditorGUILayout.PropertyField(tags);
 
             serializedObject.ApplyModifiedProperties();
         }

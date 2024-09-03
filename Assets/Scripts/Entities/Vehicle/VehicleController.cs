@@ -4,32 +4,21 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Controls;
-using UZSG.Entities;
-using UZSG.FPP;
 using UZSG.Systems;
 
 namespace UZSG.Entities.Vehicles
 {
     public class VehicleController : MonoBehaviour
     {
-        VehicleSeatManager _vehicleSeatManager;
-
         //[Header("General Settings")]
         bool _isEnabled = false;
-
-        [Header("Vehicle Variables")]
-        [SerializeField] VehicleEntity _vehicle;
-        [SerializeField] protected VehicleStateMachine _vehicleStateMachine;
+        public VehicleEntity Vehicle { get; private set; }
+        
         List<WheelCollider> _frontWheelColliders;
         List<WheelCollider> _rearWheelColliders;
 
-        [Header("Vehicle Input")]
-        InputAction _moveInput;
-        InputAction _backInput;
-        InputAction _handbrakeInput;
-        InputAction _switchSeatInput;
-        InputAction _switchViewInput;
+        [Header("Components")]
+        VehicleInputHandler Input;
 
         [Header("Vehicle Setup")]
         public GameObject bodyMassCenter;
@@ -39,7 +28,7 @@ namespace UZSG.Entities.Vehicles
         [HideInInspector] public float fuelConsumptionPerPower;     // Fuel Consumption based on current produced power
         [HideInInspector] public float fuelCapacityPerSpeed;        // Fuel Consumption based on current speed
         [HideInInspector] public float fuelEfficiencyMultiplier;    // Fuel efficiency, closer to 0 the better
-        [HideInInspector] public float fuelLevel;                   // I know you can read
+        public float fuelLevel;                                     // I know you can read
         [HideInInspector] public int maxSpeed;                      // The maximum speed that the car can reach in km/h.
         [HideInInspector] public int maxReverseSpeed;               // The maximum speed that the car can reach while going on reverse in km/h.
         [HideInInspector] public AnimationCurve powerCurve;         // Experimental Power/Torque Curve for more customized acceleration
@@ -53,8 +42,9 @@ namespace UZSG.Entities.Vehicles
         [HideInInspector] public float steeringAngle;               // current Steering angle
         [HideInInspector] public float carSpeed;                    // Used to store the current speed of the car.
         [HideInInspector] public float powerToWheels;               // Used to store final wheel torque
-        [HideInInspector] public float defaultMaxSteerAngle;        // Used to store the original max steering angle. (will be used if lock steer will be required in future)
         [HideInInspector] public float turnRadius;                  // To store turn radius of the vehicle
+        [HideInInspector] public float steerLimitSpeedThreshold;    // To store when steer limiting will start to act
+        [HideInInspector] public float steerLimitAmount;            // To store how much steering Axis will be reduced at high speed
         [HideInInspector] public List<WheelCollider> wheels;        // Store all wheel colliders.
 
         /*
@@ -68,8 +58,9 @@ namespace UZSG.Entities.Vehicles
         float _localVelocityZ;
         float _localVelocityX;
         float _fuelConsumption;
-        bool _deceleratingCar;
+        bool _isDecelerating;
         bool _hasFuel;
+        public bool HasFuel => fuelLevel > 0;
 
         // Experimental Ackermann Steering
         float _wheelBase;                                           // Length from the center of the front wheel to rear wheel
@@ -77,25 +68,25 @@ namespace UZSG.Entities.Vehicles
         float _ackermannLeftAngle;
         float _ackermannRightAngle;
 
-        bool _isHandbraked;
-        Vector2 _driverInput;
+        [HideInInspector]
+        public bool IsHandbraked;
+        [HideInInspector]
+        public Vector2 DriverInput;
 
-        private void Awake()
+
+        #region Initializing methods
+
+        void Awake()
         {
-            _vehicle = gameObject.GetComponent<VehicleEntity>();
-            _vehicleSeatManager = gameObject.GetComponent<VehicleSeatManager>();
-            _frontWheelColliders = _vehicle.FrontWheelColliders;
-            _rearWheelColliders = _vehicle.RearWheelColliders;
+            Vehicle = GetComponent<VehicleEntity>();
+
+            _frontWheelColliders = Vehicle.FrontWheelColliders;
+            _rearWheelColliders = Vehicle.RearWheelColliders;
             wheels = _frontWheelColliders.Concat(_rearWheelColliders).ToList();
         }
 
-        private void Start()
+        void Start()
         {
-            _moveInput = Game.Main.GetInputAction("Vehicle Move", "Player Move");
-            _backInput = Game.Main.GetInputAction("Back", "Global");
-            _handbrakeInput = Game.Main.GetInputAction("Handbrake", "Player Move");
-            _switchSeatInput = Game.Main.GetInputAction("Change Seat", "Player Actions");
-            _switchViewInput = Game.Main.GetInputAction("Change Vehicle View", "Player Actions");
             _carRigidbody = gameObject.GetComponent<Rigidbody>();
 
             if (_carRigidbody.automaticCenterOfMass)
@@ -107,23 +98,24 @@ namespace UZSG.Entities.Vehicles
                 _carRigidbody.centerOfMass = bodyMassCenter.transform.localPosition;
             }
 
-
             // Initialize vehicle setup
-            fuelCap = _vehicle.Vehicle.fuelCapacity;
-            fuelConsumptionPerPower = _vehicle.Vehicle.fuelConsumptionPerPower;
-            fuelCapacityPerSpeed = _vehicle.Vehicle.fuelCapacityPerSpeed;
-            fuelEfficiencyMultiplier = _vehicle.Vehicle.fuelEfficiencyMultiplier;
-            fuelLevel = _vehicle.Vehicle.fuelCapacity; // this will always start with max capacity, need a fuel manager script to save and retrieve values from
+            fuelCap = Vehicle.VehicleData.fuelCapacity;
+            fuelConsumptionPerPower = Vehicle.VehicleData.fuelConsumptionPerPower;
+            fuelCapacityPerSpeed = Vehicle.VehicleData.fuelCapacityPerSpeed;
+            fuelEfficiencyMultiplier = Vehicle.VehicleData.fuelEfficiencyMultiplier;
+            fuelLevel = Vehicle.VehicleData.fuelCapacity; // this will always start with max capacity, need a fuel manager script to save and retrieve values from
 
-            maxSpeed = _vehicle.Vehicle.maxSpeed;
-            maxReverseSpeed = _vehicle.Vehicle.maxReverseSpeed;
-            powerCurve = _vehicle.Vehicle.powerCurve;
-            frontPower = _vehicle.Vehicle.frontPower;
-            rearPower = _vehicle.Vehicle.rearPower;
-            steeringSpeed = _vehicle.Vehicle.steeringSpeed;
-            brakeForce = _vehicle.Vehicle.brakeForce;
-            decelerationMultiplier = _vehicle.Vehicle.decelerationMultiplier;
-            antiRoll = _vehicle.Vehicle.antiRoll;
+            maxSpeed = Vehicle.VehicleData.maxSpeed;
+            maxReverseSpeed = Vehicle.VehicleData.maxReverseSpeed;
+            powerCurve = Vehicle.VehicleData.powerCurve;
+            frontPower = Vehicle.VehicleData.frontPower;
+            rearPower = Vehicle.VehicleData.rearPower;
+            steeringSpeed = Vehicle.VehicleData.steeringSpeed;
+            brakeForce = Vehicle.VehicleData.brakeForce;
+            decelerationMultiplier = Vehicle.VehicleData.decelerationMultiplier;
+            antiRoll = Vehicle.VehicleData.antiRoll;
+            steerLimitSpeedThreshold = Vehicle.VehicleData.steerLimitSpeedThreshold;
+            steerLimitAmount = Vehicle.VehicleData.steerLimitAmount;
 
             wheelL = _frontWheelColliders[0];
             wheelR = _frontWheelColliders[1];
@@ -133,10 +125,13 @@ namespace UZSG.Entities.Vehicles
             // Initialize required measures for ackermann steering
             _wheelBase = Vector3.Distance(wheelL.transform.localPosition, _rearWheelColliders[0].transform.localPosition);
             _rearTrack = (Vector3.Distance(_rearWheelColliders[0].transform.localPosition, _rearWheelColliders[1].transform.localPosition)) / 2;  // get only the center
-            turnRadius = _vehicle.Vehicle.turnRadius;
+            turnRadius = Vehicle.VehicleData.turnRadius;
         }
 
-        private void FixedUpdate()
+        #endregion
+        
+
+        void FixedUpdate()
         {
             if (_isEnabled)
             {
@@ -144,7 +139,7 @@ namespace UZSG.Entities.Vehicles
             }
         }
 
-        private void HandleCarMovement()
+        void HandleCarMovement()
         {
             // Compute car speed using one of the wheels
             carSpeed = (2 * Mathf.PI * _frontWheelColliders[0].radius * _frontWheelColliders[0].rpm * 60) / 1000;
@@ -158,12 +153,25 @@ namespace UZSG.Entities.Vehicles
             // Anti-roll's behavior is unkown if it's natural or some weird bug, anyways, you can set it to very low (<1000) or just 0 in vehicle data
             AntiRollBar();
 
-            if (_vehicleSeatManager.Driver != null)
+            // Reducing steer axis
+            if (carSpeed > steerLimitSpeedThreshold)
             {
-                if (_driverInput.y > 0)
+                steerLimitAmount += 0.1f * Time.deltaTime;
+                steerLimitAmount = Mathf.Clamp(steerLimitAmount, 0, steerLimitAmount);
+            }
+            else
+            {
+                steerLimitAmount = 0;
+            }
+
+            if (Vehicle.SeatManager.Driver != null)
+            {
+                /// Inputs are handled per frame, not in FixedUpdate
+                /// Putting inputs in FixedUpdate will cause input lag/delay
+                if (DriverInput.y > 0)
                 {
                     CancelInvoke("DecelerateVehicle");
-                    _deceleratingCar = false;
+                    _isDecelerating = false;
                     if (_hasFuel)
                     {
                         HandleGas();
@@ -173,35 +181,35 @@ namespace UZSG.Entities.Vehicles
                         ThrottleOff();
                     }
                 }
-                if (_driverInput.y < 0)
+                if (DriverInput.y < 0)
                 {
                     CancelInvoke("DecelerateVehicle");
-                    _deceleratingCar = false;
+                    _isDecelerating = false;
                     HandleReverse();
                 }
-                if (_driverInput.x < 0)
+                if (DriverInput.x < 0)
                 {
                     HandleLeftSteer();
                 }
-                if (_driverInput.x > 0)
+                if (DriverInput.x > 0)
                 {
                     HandleRightSteer();
                 }
-                if (_isHandbraked)
+                if (IsHandbraked)
                 {
                     CancelInvoke("DecelerateVehicle");
-                    _deceleratingCar = false;
+                    _isDecelerating = false;
                     HandleHandbrake();
                 }
-                if (_driverInput.y == 0)
+                if (DriverInput.y == 0)
                 {
                     ThrottleOff();
                 }
-                if ((_driverInput.x == 0) && _steeringAxis != 0f)
+                if ((DriverInput.x == 0) && _steeringAxis != 0f)
                 {
                     ResetSteeringAngle();
                 }
-                if (Input.GetKey(KeyCode.Tilde))    // Reset pag tumaob, parang di nagana? idk kung tama ba yung tranform na tinatarget ko
+                if (UnityEngine.Input.GetKey(KeyCode.Tilde))    // Reset pag tumaob, parang di nagana? idk kung tama ba yung tranform na tinatarget ko
                 {
                     Quaternion targetRotation = Quaternion.identity;
                     transform.rotation = targetRotation;
@@ -212,7 +220,7 @@ namespace UZSG.Entities.Vehicles
         public void HandleGas()
         {
             // Sets throttle power to 1 smoothly
-            _throttleAxis = _throttleAxis + (Time.deltaTime * 3f);
+            _throttleAxis += Time.deltaTime * 3f;
             if (_throttleAxis > 1f)
             {
                 _throttleAxis = 1f;
@@ -257,9 +265,9 @@ namespace UZSG.Entities.Vehicles
         {
             //The following method turns the front car wheels to the left. The speed of this movement will depend on the steeringSpeed variable.
             _steeringAxis = _steeringAxis - (Time.deltaTime * 10f * steeringSpeed);
-            if (_steeringAxis < -1f)
+            if (_steeringAxis < -1f + steerLimitAmount)
             {
-                _steeringAxis = -1f;
+                _steeringAxis = -1f + steerLimitAmount;
             }
 
             steeringAngle = _steeringAxis * maxSteeringAngle;
@@ -275,9 +283,9 @@ namespace UZSG.Entities.Vehicles
         {
             //The following method turns the front car wheels to the right. The speed of this movement will depend on the steeringSpeed variable.
             _steeringAxis = _steeringAxis - (Time.deltaTime * 10f * steeringSpeed);
-            if (_steeringAxis < 1f)
+            if (_steeringAxis < 1f - steerLimitAmount)
             {
-                _steeringAxis = 1f;
+                _steeringAxis = 1f - steerLimitAmount;
             }
 
             steeringAngle = _steeringAxis * maxSteeringAngle;
@@ -385,18 +393,20 @@ namespace UZSG.Entities.Vehicles
             {
                 if (_throttleAxis > 0f)
                 {
-                    _throttleAxis = _throttleAxis - (Time.deltaTime * 10f);
+                    _throttleAxis -= Time.deltaTime * 10f; /// what's 10f?
                 }
                 else if (_throttleAxis < 0f)
                 {
-                    _throttleAxis = _throttleAxis + (Time.deltaTime * 10f);
+                    _throttleAxis += Time.deltaTime * 10f; /// what's 10f?
                 }
-                if (Mathf.Abs(_throttleAxis) < 0.15f)
+                if (Mathf.Abs(_throttleAxis) < 0.15f) /// what's 0.15f?
                 {
                     _throttleAxis = 0f;
                 }
             }
-            _carRigidbody.velocity = _carRigidbody.velocity * (1f / (1f + (0.025f * decelerationMultiplier)));
+
+            _carRigidbody.velocity *= 1f / (1f + (0.025f * decelerationMultiplier)); /// what's 0.025f?
+            
             // Since we want to decelerate the car, we are going to remove the torque from the wheels of the car.
             for (int i = 0; i < _frontWheelColliders.Count; i++)
             {
@@ -559,110 +569,10 @@ namespace UZSG.Entities.Vehicles
             //print($"fuel consump: {_fuelConsumption}, fuel level: {fuelLevel}, has fuel: {_hasFuel}");
         }
 
-        #region Vehicle Control Functions 
-        public void EnableGeneralVehicleControls(Player player)
+        public Rigidbody GetRigidbody()
         {
-            player.Controls.SetControl("Move", false);
-            player.Controls.SetControl("Jump", false);
-            player.Controls.SetControl("Crouch", false);
-            player.Controls.SetControl("Toggle Walk", false);
-
-            _switchSeatInput.performed += OnSwitchSeatInputPerform;
-            _switchViewInput.performed += OnSwitchViewInputPerform;
-            _backInput.performed += OnBackInputPerform;
+            return _carRigidbody;
         }
-
-        public void DisableGeneralVehicleControls(Player player)
-        {
-            player.Controls.SetControl("Move", true);
-            player.Controls.SetControl("Look", true);
-            player.Controls.SetControl("Jump", true);
-            player.Controls.SetControl("Crouch", true);
-            player.Controls.SetControl("Toggle Walk", true);
-
-            _switchSeatInput.performed -= OnSwitchSeatInputPerform;
-            _switchViewInput.performed -= OnSwitchViewInputPerform;
-            _backInput.performed -= OnBackInputPerform;
-        }
-
-        public void EnableVehicleControls()
-        {
-            _moveInput.performed += OnMoveInput;
-            _moveInput.started += OnMoveInput;
-            _moveInput.canceled += OnMoveInput;
-
-            _handbrakeInput.started += OnHandbrakeInput;
-            _handbrakeInput.canceled += OnHandbrakeInput;
-        }
-
-        public void DisableVehicleControls()
-        {
-            _moveInput.performed -= OnMoveInput;
-            _moveInput.started -= OnMoveInput;
-            _moveInput.canceled -= OnMoveInput;
-
-            _handbrakeInput.started -=  OnHandbrakeInput;
-            _handbrakeInput.canceled -= OnHandbrakeInput;
-
-        }
-
-        private void OnMoveInput(InputAction.CallbackContext context)
-        {
-            _driverInput = context.ReadValue<Vector2>();
-        }
-
-        private void OnHandbrakeInput(InputAction.CallbackContext context)
-        {
-            if (context.started)
-                _isHandbraked = true;
-            else
-                _isHandbraked = false;
-        }
-
-        private void OnBackInputPerform(InputAction.CallbackContext context)
-        {
-            GameObject playerUI = GetPlayerGameObjectFromContext(context);
-            // Testing Only
-            Player player = playerUI.GetComponent<PlayerReference>().PlayerEntity;
-            _vehicleSeatManager.ExitVehicle(player);
-        }
-
-        private void OnSwitchSeatInputPerform(InputAction.CallbackContext context)
-        {
-            GameObject playerUI = GetPlayerGameObjectFromContext(context);
-            // Testing Only
-            Player player = playerUI.GetComponent<PlayerReference>().PlayerEntity;
-            _vehicleSeatManager.ChangeSeat(player);
-        }
-
-        private void OnSwitchViewInputPerform(InputAction.CallbackContext context)
-        {
-            GameObject playerUI = GetPlayerGameObjectFromContext(context);
-            // Testing Only
-            Player player = playerUI.GetComponent<PlayerReference>().PlayerEntity;
-            _vehicleSeatManager.ChangeVehicleView(player);
-        }
-
-        private GameObject GetPlayerGameObjectFromContext(InputAction.CallbackContext context)
-        {
-            // Retrieve the input device from the action context
-            var control = context.action.controls.FirstOrDefault();
-            if (control != null)
-            {
-                var device = control.device;
-                // Find all PlayerInput components and look for the one associated with this device
-                var playerInputs = FindObjectsOfType<PlayerInput>();
-                foreach (var playerInput in playerInputs)
-                {
-                    if (playerInput.devices.Contains(device))
-                    {
-                        return playerInput.gameObject;
-                    }
-                }
-            }
-            return null;
-        }
-        #endregion
 
         #region General Settings Function
 

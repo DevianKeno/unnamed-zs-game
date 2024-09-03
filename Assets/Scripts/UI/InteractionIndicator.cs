@@ -30,7 +30,7 @@ namespace UZSG.UI
             actionText.text = obj.Action;
             objectText.text = obj.Name;
             Show();
-            LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
+            Rebuild();
         }
 
         public void SetKey(bool enabled)
@@ -52,7 +52,7 @@ namespace UZSG.UI
             actionText.text = options.ActionText;
             objectText.text = options.Interactable.Name;
             Show();
-            LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
+            Rebuild();
         }
     }
 }

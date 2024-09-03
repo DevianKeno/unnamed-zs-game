@@ -1,5 +1,8 @@
+using System;
 using UnityEngine;
 using UZSG.Entities;
+using UZSG.Players;
+using UZSG.Systems;
 
 namespace UZSG.FPP
 {
@@ -11,21 +14,28 @@ namespace UZSG.FPP
         [Header("Settings")]
         public bool Enabled = true;
         public float MinSpeed = 0.3f;
+
+        #region This can be done better
         public BobSettings WalkBob = new();
+        public BobSettings JogBob = new();
         public BobSettings RunBob = new();
         public BobSettings CrouchBob = new();
+        #endregion
         
-        Vector3 _originalPosition;
         [SerializeField] BobSettings _bobToUse;
+        Vector3 _originalPosition; /// local
+        Quaternion _originalRotation; /// local
         
         void Start()
         {
             _originalPosition = transform.localPosition;
+            _originalRotation = transform.localRotation;
         }
 
         void Update()
         {
             if (!Enabled) return;
+
             Bob();
             ResetPosition();
         }
@@ -35,28 +45,12 @@ namespace UZSG.FPP
             if (!Player.Controls.IsGrounded) return;
             if (Player.Controls.HorizontalSpeed < MinSpeed) return;
 
-            _bobToUse = SetBob();
+            _bobToUse = GetBob();
 
             AddPosition(FootStepMotion());
             if (_bobToUse.MaintainForwardLook)
             {
                 transform.LookAt(FocusTarget());
-            }
-        }
-
-        BobSettings SetBob()
-        {
-            if (Player.Controls.IsRunning)
-            {
-                return RunBob;
-            }
-            else if (Player.Controls.IsCrouching)
-            {
-                return CrouchBob;
-            }
-            else
-            {
-                return WalkBob;
             }
         }
 
@@ -90,6 +84,26 @@ namespace UZSG.FPP
                 _originalPosition,
                 _bobToUse.Recovery * BobSettings.RecoveryFactor * Time.deltaTime
             );
+        }
+
+        BobSettings GetBob()
+        {
+            if (Player.Controls.IsRunning)
+            {
+                return RunBob;
+            }
+            else if (Player.Controls.IsWalking)
+            {
+                return WalkBob;
+            }
+            else if (Player.Controls.IsCrouching)
+            {
+                return CrouchBob;
+            }
+            else
+            {
+                return JogBob;
+            }
         }
     }
 }

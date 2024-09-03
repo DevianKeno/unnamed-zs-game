@@ -44,8 +44,17 @@ namespace UZSG.Objects
             get { return transform.rotation; }
             set { transform.rotation = value; }
         }
+        /// <summary>
+        /// The local transform rotation of this Object. 
+        /// </summary>
+        public Quaternion LocalRotation
+        {
+            get { return transform.localRotation; }
+            set { transform.localRotation = value; }
+        }
         
         public event EventHandler<HitboxCollisionInfo> OnHit;
+        public event Action<BaseObject> OnDestroyed;
 
 
         #region Initializing methods
@@ -119,15 +128,23 @@ namespace UZSG.Objects
         #endregion
 
 
-        public virtual void HitBy(HitboxCollisionInfo info)
-        {
-            
-        }
+        #region Public methods
 
-        protected virtual void Destroy()
+        /// <summary>
+        /// Destroy this object.
+        /// </summary>
+        public virtual void Destroy(bool notify = true)
         {
-            
+            OnDestroy();
+            if (notify) OnDestroyed?.Invoke(this);
+            MonoBehaviour.Destroy(gameObject);
         }
+        public virtual void HitBy(HitboxCollisionInfo info) { }
+        protected virtual void OnPlace() { }
+        protected virtual void OnDestroy() { }
+
+        #endregion
+
 
         void InitializeTransform(TransformSaveData data)
         {

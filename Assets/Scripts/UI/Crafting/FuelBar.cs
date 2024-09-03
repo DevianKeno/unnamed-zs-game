@@ -18,7 +18,7 @@ namespace UZSG.UI
         {
             float _percent = (fuelBasedCraftingInstance.FuelRemaining / _maxFuel) * 100;
             Value = _percent;
-            Refresh();
+            RefreshBar();
         }
     }
 }

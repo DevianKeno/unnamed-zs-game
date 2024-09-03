@@ -24,7 +24,6 @@ namespace UZSG.UI
                 ui.OnExpire += RemoveEntry;
                 ui.Show();
                 entryUIs[item.Id] = ui;
-                ui.Show();
             }
         }
 

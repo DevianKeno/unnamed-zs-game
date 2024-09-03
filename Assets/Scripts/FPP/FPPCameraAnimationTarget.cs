@@ -7,13 +7,8 @@ namespace UZSG.FPP
     public class FPPCameraAnimationTarget : MonoBehaviour
     {
         public Player Player;
-
-        bool _enabled = false;
-        public bool Enabled 
-        {
-            get { return _enabled; }
-            set { _enabled = value; }
-        }
+        [Space]
+        public bool Enabled;
         public float Slerp = 1f;
         bool _playAnimation;
 
@@ -71,7 +66,7 @@ namespace UZSG.FPP
             if (_playAnimation)
             {
                 var targetRotation = Quaternion.Inverse(cameraFpp.transform.rotation) * _cameraBone.rotation;
-                Target.localRotation *= Quaternion.Slerp(Target.localRotation, targetRotation, Slerp / Time.deltaTime);
+                Target.localRotation = Quaternion.Slerp(Target.localRotation, targetRotation, Slerp * Time.deltaTime);
             }
             // else
             // {
@@ -86,31 +81,5 @@ namespace UZSG.FPP
             //     }
             // }
         }
-
-
-        // void ApplyRotation() /// additively
-        // {
-        //     if (_playAnimation)
-        //     {
-        //         var targetRotation = Quaternion.Inverse(cameraFpp.transform.rotation) * _cameraBone.rotation;
-        //         Target.localRotation *= Quaternion.Slerp(Target.localRotation, targetRotation, Slerp / Time.deltaTime);
-        //     }
-        //     else
-        //     {
-        //         print("RESETTING!");
-        //         /// idk about this somebnody pls help me
-        //         if (cameraFpp.IsLooking) /// reset immediately
-        //         {
-        //             print("LOOKING! QUICK RESET GO");
-        //             Target.localRotation = Quaternion.identity; /// might be abrupt
-        //             StopAnimation();
-        //         }
-        //         else /// slerp :)
-        //         {
-        //             print("NOT LOOKING! SLERP ka muna");
-        //             Target.localRotation = Quaternion.Slerp(Target.localRotation, Quaternion.identity, Slerp / Time.deltaTime);
-        //         }
-        //     }
-        // }
     }
 }

@@ -148,7 +148,7 @@ namespace UZSG.Systems
             var source = InstantiateAudioSource();
             source.transform.position = position;
             source.clip = clip;
-            source.spatialBlend = 1;
+            source.spatialBlend = 1f;
             source.Play();
             Destroy(source, source.clip.length);
         }

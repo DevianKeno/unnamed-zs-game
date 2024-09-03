@@ -38,19 +38,19 @@ namespace UZSG.Entities
     public class Bullet : Entity, IProjectile, ICollisionSource
     {
         public const float DefaultBulletScale = 0.08f;
+        public const float LifetimeSeconds = 3f;
         
         public string CollisionTag => "Projectile";
         public BulletDamageAttributes DamageAttributes;
-        public BulletAttributes Attributes;
+        public BulletAttributes BulletAttributes;
         public LayerMask LayerMask;
-        
+
+        bool _isMoving;
+        bool _hasGravity;
+        bool _checkDistance;
         Vector3 _velocity;
         Vector3 _origin;
         Vector3 _previousPosition;
-        bool _checkDistance;
-        bool _minRenderDistanceNormalized;
-        bool _isMoving;
-        bool _hasGravity;
 
         [SerializeField] Rigidbody rb;
         [SerializeField] BoxCollider coll;
@@ -61,7 +61,7 @@ namespace UZSG.Entities
         {
             base.OnSpawn();
 
-            Destroy(gameObject, 5f); /// Despawn after 5 seconds
+            Destroy(gameObject, LifetimeSeconds); /// Despawn after 5 seconds
         }
 
         void FixedUpdate()
@@ -89,7 +89,7 @@ namespace UZSG.Entities
         {
             if (!_isMoving) return;
             
-            Vector3 target = _previousPosition + _velocity * (Attributes.Speed * Time.deltaTime);
+            Vector3 target = _previousPosition + _velocity * (BulletAttributes.Speed * Time.deltaTime);
             
             if (_previousPosition != target)
             {
@@ -102,15 +102,18 @@ namespace UZSG.Entities
         {
             if (!_hasGravity) return;
 
-            rb.AddForce(Physics.gravity * Attributes.GravityScale);
+            rb.AddForce(Physics.gravity * BulletAttributes.GravityScale);
         }
 
+        /// <summary>
+        /// Check the distance of this bullet from where it spawned and render the mesh upon reaching the threshold.
+        /// </summary>
         void CheckDistanceFromOrigin()
         {
             if (!_checkDistance) return;
 
             /// TODO: Render bullet at the start pa lang if in bullet time
-            if (Vector3.Distance(_origin, transform.position) > Attributes.MinRenderDistance)
+            if (Vector3.Distance(_origin, transform.position) > BulletAttributes.MinRenderDistance)
             {
                 _checkDistance = false;
                 meshRenderer.enabled = true;
@@ -175,11 +178,15 @@ namespace UZSG.Entities
             _velocity = direction;
         }
 
+        /// <summary>
+        /// Make this bullet be owned by the given Player and make it fly.
+        /// </summary>
+        /// <param name="player"></param>
         public void SetPlayerAndShoot(Player player)
         {
-            _origin = player.Position;
+            _origin = player.EyeLevel;
             _previousPosition = _origin;
-            _checkDistance = Attributes.MinRenderDistance > 0;
+            _checkDistance = BulletAttributes.MinRenderDistance > 0;
             
             transform.SetPositionAndRotation(
                 player.EyeLevel,
@@ -191,19 +198,19 @@ namespace UZSG.Entities
  
         public void SetBulletAttributes(BulletAttributes options)
         {
-            Attributes = options;
+            BulletAttributes = options;
             meshRenderer.transform.localScale = new(
-                DefaultBulletScale * Attributes.Scale,
-                DefaultBulletScale * Attributes.Scale,
-                DefaultBulletScale * Attributes.Scale
+                DefaultBulletScale * BulletAttributes.Scale,
+                DefaultBulletScale * BulletAttributes.Scale,
+                DefaultBulletScale * BulletAttributes.Scale
             );
-            if (Attributes.GravityScale != 0)
+            if (BulletAttributes.GravityScale != 0)
             {
                 _hasGravity = true;
                 // rb.useGravity = true;
                 // rb.gravity = attributes.GravityScale;
             }
-            if (Attributes.MinRenderDistance > 0)
+            if (BulletAttributes.MinRenderDistance > 0)
             {
                 meshRenderer.enabled = false;
                 trailRenderer.enabled = false;

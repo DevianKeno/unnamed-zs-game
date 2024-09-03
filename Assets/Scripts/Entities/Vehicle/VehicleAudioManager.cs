@@ -10,6 +10,8 @@ namespace UZSG.Entities.Vehicles
 {
     public class VehicleAudioManager : MonoBehaviour
     {
+        public VehicleEntity Vehicle { get; private set; }
+
         public AudioClip engineIdle;
         public AudioClip engineActive;          
         public AnimationCurve pitchCurve;       // x and y should min max of 1 to desired max pitch, could closely resemble power curve idf u want to
@@ -19,21 +21,21 @@ namespace UZSG.Entities.Vehicles
 
         [SerializeField] AudioSource _sourceIdle;
         [SerializeField] AudioSource _sourceActive;
-        VehicleController _controller;
-        VehicleSeatManager _seatManager;
+
+        Rigidbody _carRB;
+        float _carRBSpeed;
         float _carSpeed;
 
-        // Start is called before the first frame update
-        void Start()
+        void Awake()
         {
-            _controller = GetComponent<VehicleController>();
-            _seatManager = GetComponent<VehicleSeatManager>();
-            
+            Vehicle = GetComponent<VehicleEntity>();
         }
 
         void Update()
         {
-            _carSpeed = _controller.carSpeed;
+            _carRB = Vehicle.Controller.GetRigidbody();
+            _carSpeed = Vehicle.Controller.carSpeed;
+            _carRBSpeed = _carRB.velocity.magnitude;
 
             if (twoSoundSystem)
             {
@@ -82,13 +84,14 @@ namespace UZSG.Entities.Vehicles
             if (_sourceIdle.isPlaying)
             {
                 // Normalize car speed to 0-1
-                float normalizedSpeed = Mathf.Clamp01(_carSpeed / _controller.maxSpeed);
+                float normalizedSpeed = Mathf.Clamp01(_carSpeed / Vehicle.Controller.maxSpeed);
 
                 // Apply pitch factor to the audio source
                 // Apply pitch factor only if the car is moving
                 if (_carSpeed > 1)
                 {
-                    _sourceIdle.pitch = pitchCurve.Evaluate(normalizedSpeed);
+                    //_sourceIdle.pitch = pitchCurve.Evaluate(normalizedSpeed);
+                    _sourceIdle.pitch = minPitch + (_carRBSpeed / 25f);
                 }
                 else if (_carSpeed < 1)
                 {
@@ -102,7 +105,7 @@ namespace UZSG.Entities.Vehicles
             if (_sourceIdle.isPlaying)
             {
                 // Normalize car speed to 0-1
-                float normalizedSpeed = Mathf.Clamp01(_carSpeed / _controller.maxSpeed);
+                float normalizedSpeed = Mathf.Clamp01(_carSpeed / Vehicle.Controller.maxSpeed);
 
                 // Apply pitch factor to the audio source
                 // Apply pitch factor only if the car is moving

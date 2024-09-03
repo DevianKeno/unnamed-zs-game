@@ -7,6 +7,7 @@ using UnityEngine.AddressableAssets;
 using UZSG.FPP;
 using UZSG.Items.Weapons;
 using System.Collections.Generic;
+using UnityEngine.Serialization;
 
 namespace UZSG.Data
 {
@@ -23,7 +24,7 @@ namespace UZSG.Data
     [CreateAssetMenu(fileName = "New Weapon Data", menuName = "UZSG/Items/Weapon Data")]
     public class WeaponData : ItemData, IViewmodel
     {
-        [Header("Weapon Data")]
+        #region Weapon Data
         public Sprite HotbarIcon;
         public WeaponCategory Category;
         public List<Attributes.Attribute> Attributes;
@@ -32,23 +33,27 @@ namespace UZSG.Data
         public WeaponBluntType BluntType;
         public WeaponBladedType BladedType;
         public WeaponRangedType RangedType;
-
-        #region
         /// These attributes refer to the Weapon's specifications and whatnot,
         /// and are different from the Attributes above
         public WeaponMeleeAttributes MeleeAttributes;
         public WeaponRangedAttributes RangedAttributes;
+
         #endregion
 
-        [Header("Viewmodel Data")]
+        
+        #region Viewmodel Data
+
         [SerializeField] AnimatorController armsAnimations;
         public AnimatorController ArmsAnimations => armsAnimations;
-        [SerializeField] AssetReference viewmodel;
-        public AssetReference Viewmodel => viewmodel;
-        [SerializeField] ViewmodelOffsets viewmodelOffsets;
-        public ViewmodelOffsets Offsets => viewmodelOffsets;
-        [SerializeField] EquipmentAnimationData anims;
-        public EquipmentAnimationData Animations => anims;
-        public bool HasViewmodel => viewmodel.IsSet();
+        
+        [FormerlySerializedAs("viewmodel"), SerializeField] AssetReference viewmodelAsset;
+        public AssetReference Viewmodel => viewmodelAsset;
+        [SerializeField] ViewmodelSettings viewmodelSettings;
+        public ViewmodelSettings Settings => viewmodelSettings;
+        [FormerlySerializedAs("anims"), SerializeField] EquipmentAnimationData animationData;
+        public EquipmentAnimationData Animations => animationData;
+        public bool HasViewmodel => viewmodelAsset.IsSet();
+
+        #endregion
     }
 }

@@ -29,7 +29,8 @@ namespace UZSG.Players
 
         [SerializeField] BoxCollider boxCollider;
 
-        float coyoteTime = 0.2f;
+        float coyoteTime = 0.3f;
+        /// original coyoteTime duration = 0.2f
         [SerializeField] bool _canCoyoteJump;
 
         IEnumerator StartCoyoteTime()
@@ -61,7 +62,6 @@ namespace UZSG.Players
 
         public void GroundTextureDetection()
         {
-            
             if (Physics.Raycast(rayStart.position, -rayStart.up, out hit, rayCastRange, mask))
             {
                 if (drawRayCast)

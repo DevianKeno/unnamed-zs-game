@@ -104,6 +104,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 817ff1558a8f94f46bed7a8aa689ff3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rect: {fileID: 0}
+  FadeDuration: 0.3
   _value: 50
   barRect: {fileID: 7053208025240884458}
   fillRect: {fileID: 4548412693725646072}
@@ -115,9 +117,9 @@ MonoBehaviour:
     flatBonus: 0
     LimitOverflow: 0
     LimitUnderflow: 0
-  BufferOnDecreaseValue: 0
+  AnimateBufferOnValueDecrease: 0
   BufferDuration: 0.2
-  TweenType: 1
+  BufferEase: 1
   bufferRect: {fileID: 3478351884691361915}
 --- !u!1 &1139797715073477865
 GameObject:
@@ -689,17 +691,17 @@ MonoBehaviour:
     serializedVersion: 2
     key0: {r: 1, g: 1, b: 1, a: 1}
     key1: {r: 1, g: 1, b: 1, a: 1}
-    key2: {r: 0, g: 0, b: 0, a: 0}
-    key3: {r: 0, g: 0, b: 0, a: 0}
-    key4: {r: 0, g: 0, b: 0, a: 0}
+    key2: {r: 0.9150943, g: 0.7922354, b: 0.09064613, a: 0}
+    key3: {r: 0.8962264, g: 0.44277853, b: 0, a: 0}
+    key4: {r: 0.7735849, g: 0.12771447, b: 0.12771447, a: 0}
     key5: {r: 0, g: 0, b: 0, a: 0}
     key6: {r: 0, g: 0, b: 0, a: 0}
     key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 0
-    ctime1: 65535
-    ctime2: 0
-    ctime3: 0
-    ctime4: 0
+    ctime1: 58982
+    ctime2: 61164
+    ctime3: 63346
+    ctime4: 65535
     ctime5: 0
     ctime6: 0
     ctime7: 0
@@ -713,11 +715,12 @@ MonoBehaviour:
     atime7: 0
     m_Mode: 0
     m_ColorSpace: -1
-    m_NumColorKeys: 2
+    m_NumColorKeys: 5
     m_NumAlphaKeys: 2
   clipAmmoText: {fileID: 2458407187332992254}
   reserveAmmoText: {fileID: 704391832334810147}
   firingModeText: {fileID: 6535311133016970189}
+  cartridgeText: {fileID: 5440703974939577762}
 --- !u!1 &4072796940662912405
 GameObject:
   m_ObjectHideFlags: 0
@@ -1806,12 +1809,20 @@ PrefabInstance:
       value: Stamina Bar
       objectReference: {fileID: 0}
     - target: {fileID: 7449110528680967072, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
+      propertyPath: BufferDuration
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7449110528680967072, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
       propertyPath: BufferOnDecreaseValue
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7449110528680967072, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
+      propertyPath: AnimateBufferOnValueDecrease
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7547211674368605139, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
       propertyPath: m_Color.a
-      value: 1
+      value: 0.2509804
       objectReference: {fileID: 0}
     - target: {fileID: 7547211674368605139, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
       propertyPath: m_Color.b
@@ -1969,6 +1980,14 @@ PrefabInstance:
     - target: {fileID: 7209979227544774230, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
       propertyPath: m_Name
       value: Hydration Bar
+      objectReference: {fileID: 0}
+    - target: {fileID: 7449110528680967072, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
+      propertyPath: BufferDuration
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7449110528680967072, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
+      propertyPath: AnimateBufferOnValueDecrease
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7547211674368605139, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
       propertyPath: m_Color.b
@@ -2490,6 +2509,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Hunger Bar
       objectReference: {fileID: 0}
+    - target: {fileID: 7449110528680967072, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
+      propertyPath: BufferDuration
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7449110528680967072, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
+      propertyPath: AnimateBufferOnValueDecrease
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8963817805981456813, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -2827,6 +2854,14 @@ PrefabInstance:
     - target: {fileID: 6792136191540523187, guid: 064a69cbd4536964b9a8be5101b7b770, type: 3}
       propertyPath: m_hasFontAssetChanged
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6849866800696593237, guid: 064a69cbd4536964b9a8be5101b7b770, type: 3}
+      propertyPath: BufferDuration
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6849866800696593237, guid: 064a69cbd4536964b9a8be5101b7b770, type: 3}
+      propertyPath: AnimateBufferOnValueDecrease
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6950953388547815406, guid: 064a69cbd4536964b9a8be5101b7b770, type: 3}
       propertyPath: m_ShowMaskGraphic

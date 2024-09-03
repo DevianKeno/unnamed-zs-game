@@ -12,6 +12,7 @@ using UZSG.Systems;
 using UZSG.Items;
 using UZSG.UI.HUD;
 using UZSG.Items.Weapons;
+using UZSG.Data;
 
 namespace UZSG.UI.HUD
 {
@@ -83,6 +84,7 @@ namespace UZSG.UI.HUD
         void InitializeEvents()
         {
             Player.FPP.OnChangeHeldItem += OnChangeHeldItem;
+            Player.Inventory.Bag.OnSlotItemChanged += OnBagSlotItemChanged;
             Player.InventoryGUI.frameController.OnSwitchFrame += OnInvSwitchFrame;
         }
 
@@ -174,6 +176,16 @@ namespace UZSG.UI.HUD
             options.Show();
         }
 
+        void OnBagSlotItemChanged(object sender, ItemSlot.ItemChangedContext e)
+        {
+            if (e.OldItem.Data is AmmoData || e.NewItem.Data is AmmoData)
+            if (Player.FPP.HeldItem is GunWeaponController gun)
+            {
+                AmmoCounter.SetReserve(gun.Reserve);
+            }
+            
+        }
+
         void OnChangeHeldItem(HeldItemController heldItem)
         {
             if (heldItem == null) return;
@@ -181,9 +193,7 @@ namespace UZSG.UI.HUD
             if (heldItem is GunWeaponController gun)
             {
                 weaponDetails.SetGunVariant();
-                AmmoCounter.SetClip(gun.CurrentRounds);
-                AmmoCounter.SetReserve(999);
-                AmmoCounter.SetFiringMode(gun.CurrentFiringMode);
+                AmmoCounter.DisplayWeaponStats(gun);
             }
             else
             {

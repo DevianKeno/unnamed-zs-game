@@ -12,12 +12,15 @@ namespace UZSG.UI.HUD
         [SerializeField] TextMeshProUGUI clipAmmoText;
         [SerializeField] TextMeshProUGUI reserveAmmoText;
         [SerializeField] TextMeshProUGUI firingModeText;
+        [SerializeField] TextMeshProUGUI cartridgeText;
 
         public void DisplayWeaponStats(GunWeaponController gun)
         {
             ClipSize = gun.WeaponData.RangedAttributes.ClipSize;
             SetClip(gun.CurrentRounds);
+            SetReserve(gun.Reserve);
             SetFiringMode(gun.CurrentFiringMode);
+            SetCartridgeText(gun.WeaponData.RangedAttributes.Ammo.Name);
         }
 
         public void SetClip(int value)
@@ -39,6 +42,11 @@ namespace UZSG.UI.HUD
                 return;
             }
             firingModeText.text = $"{mode}";
+        }
+
+        public void SetCartridgeText(string text)
+        {
+            cartridgeText.text = text;
         }
     }
 }

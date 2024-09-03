@@ -8,6 +8,9 @@ using UZSG.Systems;
 using UZSG.Entities;
 using UZSG.Items.Weapons;
 using System;
+using UZSG.Players;
+using System.Collections;
+using MEC;
 
 namespace UZSG.FPP
 {
@@ -18,20 +21,34 @@ namespace UZSG.FPP
         [Header("Camera Settings")]
         public float Sensitivity;
         public bool EnableControls = true;
+        public bool SmoothMouse;
+        public float Smoothness = 1f;
+        public bool ResetCameraPosition = false;
+        
+        [Header("Crouch Camera Settings")]
+        public float CrouchDuration = 0.666f;
+        public Vector3 CrouchOffset = new(0f, -0.6f, 0f);
+        /// <summary>
+        /// Maintain forward look even while crouching.
+        /// </summary>
+        public bool CrouchLookForward = true;
+        public float CrouchLookForwardDistance = 16f;
+        public float CrouchLookForwardDamping = 10f;
+        public LeanTweenType CrouchEase = LeanTweenType.linear;
 
         bool _hasRecoil;
-        bool _isLooking;
         /// <summary>
         /// True if the Player is looking around with the mouse.
         /// </summary>
-        public bool IsLooking => _isLooking;
+        public bool IsLooking { get; private set; }
 
         float _verticalRotation = 0f;
         float _horizontalRotation = 0f;
         float _addedVerticalRecoil;
         float _addedHorizontalRecoil;
         float _recoilRecoverySpeedCached = 0f;
-
+        Vector3 _originalLocalPosition;
+        
         Dictionary<string, InputAction> inputs;
         InputActionMap actionMap;
         InputAction look;
@@ -40,13 +57,13 @@ namespace UZSG.FPP
         public Transform Holder;
         [SerializeField] Camera FPPCamera;
         public Camera Camera => FPPCamera;
-        [SerializeField] Animator animator;
-        public Animator Animator => animator;
         
         internal void Initialize()
         {
             Camera.main.GetUniversalAdditionalCameraData().cameraStack.Add(FPPCamera);
             InitializeInputs();
+            Player.Controls.OnCrouch += OnCrouch;
+            _originalLocalPosition = transform.localPosition;
         }
 
         void InitializeInputs()
@@ -67,6 +84,48 @@ namespace UZSG.FPP
             HandleRecoilRecovery();
         }
 
+        CoroutineHandle crouchTransitionCoroutine;
+
+        void OnCrouch(bool crouched)
+        {
+            Vector3 targetPosition = _originalLocalPosition;
+            
+            if (crouched)
+            {
+                targetPosition += CrouchOffset;
+            }
+            else
+            {
+                targetPosition = _originalLocalPosition;
+            }
+
+            LeanTween.cancel(gameObject);
+            LeanTween.moveLocal(gameObject, targetPosition, CrouchDuration)
+            .setEase(CrouchEase);
+
+            if (CrouchLookForward)
+            {
+                Timing.KillCoroutines(crouchTransitionCoroutine);
+                crouchTransitionCoroutine = Timing.RunCoroutine(CrouchLookForwardCoroutine());
+            }
+        }
+
+        IEnumerator<float> CrouchLookForwardCoroutine()
+        {
+            const int MaxIter = 50;
+            for (int i = 0; i <= (CrouchDuration / 0.02f) || i <= MaxIter; i++) /// 0.02f is fixedUpdate interval in seconds
+            {
+                var targetRotation = Quaternion.Inverse(transform.localRotation) * Quaternion.LookRotation(Player.Forward * CrouchLookForwardDistance);
+                transform.localRotation = Quaternion.Slerp(
+                    transform.localRotation,
+                    targetRotation,
+                    CrouchLookForwardDamping * Time.fixedDeltaTime
+                );
+
+                yield return Timing.WaitForOneFrame;
+            }
+        }
+
         public void ToggleControls(bool enabled)
         {
             EnableControls = enabled;
@@ -85,22 +144,36 @@ namespace UZSG.FPP
         {
             if (!EnableControls) return;
 
-            var lookInput = look.ReadValue<Vector2>();
-            _isLooking = lookInput.x != 0 || lookInput.y != 0;
-            // print($"Look: {lookInput}");
-            // print(_isLooking);
-            float mouseX = lookInput.x * Sensitivity;// * Time.deltaTime;
-            float mouseY = lookInput.y * Sensitivity;// * Time.deltaTime;
+            if (ResetCameraPosition) // Camera Reset (Temporary Only)
+            {
+                _verticalRotation = 0f;
+                _horizontalRotation = 0f;
+                transform.localEulerAngles = Vector3.zero;
+                ResetCameraPosition = false;
+                return; 
+            }
 
+            var lookInput = look.ReadValue<Vector2>();
+            IsLooking = lookInput.x != 0 || lookInput.y != 0;
+            float mouseX = lookInput.x * Sensitivity;
+            float mouseY = lookInput.y * Sensitivity;
+            
             _verticalRotation -= mouseY;
             _verticalRotation = Mathf.Clamp(_verticalRotation, -80f, 80f);
             _horizontalRotation += mouseX;
 
-            transform.localEulerAngles = new(
+            var targetRotation = new Vector3(
                 _verticalRotation + _addedVerticalRecoil,
                 _horizontalRotation + _addedHorizontalRecoil,
                 0f
             );
+
+            if (SmoothMouse)
+            {
+                targetRotation = Vector3.Lerp(transform.localEulerAngles, targetRotation, Smoothness * Time.deltaTime);
+            }
+            
+            transform.localEulerAngles = targetRotation;
         }
 
         void HandleRecoilRecovery()

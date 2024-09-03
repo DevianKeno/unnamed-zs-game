@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6516684965563939207}
   - component: {fileID: 7413749286458974174}
   m_Layer: 5
-  m_Name: LReticle (2)
+  m_Name: Line
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -84,10 +84,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3301419594993564363}
-  - component: {fileID: 2378687695571655844}
-  - component: {fileID: 1898546730938776303}
   m_Layer: 5
-  m_Name: Default Crosshair
+  m_Name: Dot Crosshair
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -113,44 +111,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 75, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!222 &2378687695571655844
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 390843198618496940}
-  m_CullTransparentMesh: 1
---- !u!114 &1898546730938776303
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 390843198618496940}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &1068865853710982126
 GameObject:
   m_ObjectHideFlags: 0
@@ -202,8 +162,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Player: {fileID: 0}
-  defaultCrosshair: {fileID: 390843198618496940}
-  gunCrosshair: {fileID: 1069529530256166891}
+  ShowDot: 1
+  dotCrosshair: {fileID: 390843198618496940}
+  dynamicCrosshair: {fileID: 4396087841993099887}
 --- !u!1 &1069529530256166891
 GameObject:
   m_ObjectHideFlags: 0
@@ -215,7 +176,7 @@ GameObject:
   - component: {fileID: 705301196296037395}
   - component: {fileID: 4396087841993099887}
   m_Layer: 5
-  m_Name: Gun Crosshair
+  m_Name: Dynamic Crosshair
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -257,11 +218,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Player: {fileID: 0}
-  restingSize: 80
-  maxSize: 100
-  speed: 10
-  addedFiringFactor: 1
-  crosshair: {fileID: 0}
+  Enabled: 1
+  RestingSize: 80
+  MaxSize: 100
+  AddedFiringFactor: 1
+  Damping: 10
+  rect: {fileID: 705301196296037395}
 --- !u!1 &1109706837080900387
 GameObject:
   m_ObjectHideFlags: 0
@@ -274,7 +236,7 @@ GameObject:
   - component: {fileID: 5790619291466069539}
   - component: {fileID: 6654884787881692915}
   m_Layer: 5
-  m_Name: LReticle (1)
+  m_Name: Shadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -349,7 +311,7 @@ GameObject:
   - component: {fileID: 7283354115405791965}
   - component: {fileID: 4465009412931466434}
   m_Layer: 5
-  m_Name: DReticle (2)
+  m_Name: Line
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -422,7 +384,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8243548170665483258}
   m_Layer: 5
-  m_Name: LReticle
+  m_Name: Reticle Left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -459,7 +421,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8057015095626371907}
   m_Layer: 5
-  m_Name: TReticle
+  m_Name: Reticle Top
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -498,7 +460,7 @@ GameObject:
   - component: {fileID: 114640559728193168}
   - component: {fileID: 8583289806604747935}
   m_Layer: 5
-  m_Name: RReticle (1)
+  m_Name: Shadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -573,7 +535,7 @@ GameObject:
   - component: {fileID: 8690896952564930084}
   - component: {fileID: 6691873824495877680}
   m_Layer: 5
-  m_Name: TReticle (2)
+  m_Name: Line
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -648,7 +610,7 @@ GameObject:
   - component: {fileID: 8573671045206012484}
   - component: {fileID: 4151452555980290764}
   m_Layer: 5
-  m_Name: Image
+  m_Name: Dot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -723,7 +685,7 @@ GameObject:
   - component: {fileID: 8244966980843131102}
   - component: {fileID: 2339529335265401715}
   m_Layer: 5
-  m_Name: RReticle (2)
+  m_Name: Line
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -796,7 +758,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8283255432261802681}
   m_Layer: 5
-  m_Name: DReticle
+  m_Name: Reticle Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -833,7 +795,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7989455760212803043}
   m_Layer: 5
-  m_Name: RReticle
+  m_Name: Reticle Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -872,7 +834,7 @@ GameObject:
   - component: {fileID: 3145451554552237701}
   - component: {fileID: 5425644487545886385}
   m_Layer: 5
-  m_Name: DReticle (1)
+  m_Name: Shadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -945,7 +907,7 @@ GameObject:
   m_Component:
   - component: {fileID: 885245662168382109}
   m_Layer: 5
-  m_Name: GameObject
+  m_Name: Dot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -984,7 +946,7 @@ GameObject:
   - component: {fileID: 157504615097261312}
   - component: {fileID: 8000674069504028353}
   m_Layer: 5
-  m_Name: Image (1)
+  m_Name: Shadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1059,7 +1021,7 @@ GameObject:
   - component: {fileID: 3995553913595715989}
   - component: {fileID: 1998501818030435007}
   m_Layer: 5
-  m_Name: TReticle (1)
+  m_Name: Shadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

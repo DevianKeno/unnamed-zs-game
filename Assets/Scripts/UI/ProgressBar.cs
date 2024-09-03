@@ -4,7 +4,10 @@ namespace UZSG.UI
 {
     public class ProgressBar : Window
     {
-        [SerializeField, Range(0, 100)]
+        public const int BarMin = 0;
+        public const int BarMax = 100;
+
+        [SerializeField, Range(BarMin, BarMax)]
         protected float _value;
         public float Value
         {
@@ -16,8 +19,8 @@ namespace UZSG.UI
             {
                 if (_value != value)
                 {
-                    _value = Mathf.Clamp(value, 0, 100);
-                    Refresh();
+                    _value = Mathf.Clamp(value, BarMin, BarMax);
+                    RefreshBar();
                 }
             }
         }
@@ -28,12 +31,12 @@ namespace UZSG.UI
 
         void OnValidate()
         {
-            Refresh();
+            RefreshBar();
         }
 
-        public virtual void Refresh()
+        public void RefreshBar()
         {
-            float x = Mathf.Lerp(barRect.rect.width, 0f, Value / 100f);
+            float x = Mathf.Lerp(barRect.rect.width, BarMin, Value / BarMax);
             fillRect.offsetMax = new Vector2(-x, fillRect.offsetMax.y);
         }
     }

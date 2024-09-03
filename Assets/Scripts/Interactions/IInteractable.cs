@@ -3,28 +3,32 @@ using UZSG.Entities;
 
 namespace UZSG.Interactions
 {
-    public struct InteractArgs
-    {
-    }
-
     /// <summary>
     /// Represents objects that the Player can interact with by pressing the Interact button (F by default).
     /// </summary>
     public interface IInteractable
     {
         /// <summary>
-        /// The action text displayed when looking at the Interactable.
+        /// The action text that may be displayed when looking at the Interactable.
         /// </summary>
         public abstract string Action { get; }
         /// <summary>
-        /// The name of the object displayed when looking at the Interactable.
+        /// The name that may be displayed when looking at the Interactable.
         /// </summary>
         public abstract string Name { get; }
+        /// <summary>
+        /// Whether to allow interactions for the Interactable.
+        /// </summary>
         public bool AllowInteractions { get; set; }
+        /// <summary>
+        /// Fired everytime an Actor interacts with the Interactable.
+        /// </summary>
+        public event EventHandler<IInteractArgs> OnInteract;
 
-        public event EventHandler<InteractArgs> OnInteract;
-
-        public void Interact(IInteractActor actor, InteractArgs args);
+        /// <summary>
+        /// Called when an Actor interacts with the Interactable.
+        /// </summary>
+        public void Interact(IInteractActor actor, IInteractArgs args);
         public virtual void OnLookEnter() { }
         public virtual void OnLookExit() { }
     }

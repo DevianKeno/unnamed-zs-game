@@ -12,16 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 873d4c4f155a35a46b4699d35b336ec7, type: 3}
   m_Name: wooden_stick
   m_EditorClassIdentifier: 
+  SourceId: uzsg
   Id: wooden_stick
+  Tags: []
   Name: Wooden Stick
   Description: Used for building shelters, starting fires, and defending against
     the undead.
   Model:
-    m_AssetGUID: 6b60be52a5a9df44d9b9504579477a4b
+    m_AssetGUID: 4cb358330e9355847bddbab65cfa6859
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  Sprite: {fileID: 21300000, guid: bd8b99aa9ca14c3469a9248fd5acaa4a, type: 3}
+  Sprite: {fileID: 21300000, guid: 89ee579b03b553640a48ab04fa122022, type: 3}
   Type: 0
   Subtype: 0
   Weight: 0

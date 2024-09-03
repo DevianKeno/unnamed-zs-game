@@ -13,40 +13,35 @@ namespace UZSG.UI.HUD
     {
         public Player Player;
         [Space]
+        public bool Enabled;
+        public bool IsVisible { get; private set; }
         
-        [Header("Crosshair")]
-        public float restingSize;
-        public float maxSize;
-        public float speed;
+        [Header("Crosshair Settings")]
+        public float RestingSize;
+        public float MaxSize;
         [Range(0.00f, 1.0f)]
-        public float addedFiringFactor;
+        public float AddedFiringFactor;
+        public float Damping;
 
-        bool _enabled;
-        float _currentSize;
-        float _moveSize = 0.0f;
-        float _jumpMultiplier = 1.0f;
-        float _crouchMultiplier = 1.0f;
+        float _targetSize;
+        float _movingSize = 0.0f;
+        float _inAirMultiplier = 1.0f;
+        float _crouchingMultiplier = 1.0f;
         float _recoilMultiplier = 1.0f;
         float _baseRecoilValue = 1.0f;
         float _addedTotalFiringFactor = 0.0f;
 
-        [SerializeField] RectTransform crosshair;
-
-        void Awake()
-        {
-            crosshair = GetComponent<RectTransform>();
-        }
+        [Space, SerializeField] RectTransform rect;
 
         internal void Initialize(Player player)
         {
             Player = player;
             Player.FPP.OnChangeHeldItem += OnChangeHeldItem;
-            _enabled = true;
+            Enabled = true;
         }
 
-        void OnChangeHeldItem(HeldItemController controller)
+        internal void OnChangeHeldItem(HeldItemController controller)
         {
-            print("CHANGED!");
             // TODO: fix recoilMult not activating on first change of held weapon item
             // Set recoilMultiplier based on weapon spread data; experimental, scuffed, and subject to change
             if (Player.FPP.HeldItem is GunWeaponController gunWeapon)
@@ -64,89 +59,76 @@ namespace UZSG.UI.HUD
 
         void Update()
         {
-            if (!_enabled) return;
+            if (!Enabled) return;
             
-            CrosshairChange();
-            crosshair.sizeDelta = new Vector2(_currentSize, _currentSize);
+            ResizeCrosshair();
+        }
+        
+        public void Show()
+        {
+            Enabled = true;
+            rect.gameObject.SetActive(true);
+            IsVisible = true;
+        }
+        
+        public void Hide()
+        {
+            Enabled = false;
+            rect.gameObject.SetActive(false);
+            IsVisible = false;
         }
 
-        void CrosshairChange()
+        void ResizeCrosshair()
         {
-            // Set moveSize to maxSize if the player is moving, restingSize if otherwise
-            if (IsMoving)
+            /// Set moveSize to maxSize if the player is moving, restingSize if otherwise
+            if (Player.Controls.IsMoving)
             {
-                _moveSize = maxSize;
+                _movingSize = MaxSize;
             }
             else
             {
-                _moveSize = restingSize;
+                _movingSize = RestingSize;
             }
 
-            // Set jumpMultiplier to a fixed value if the player is jumping or in the air
-            if (!Player.Controls.IsGrounded || IsJumping)
+            /// Set jumpMultiplier to a fixed value if the player is jumping or in the air
+            if (!Player.Controls.IsGrounded)
             {
-                _jumpMultiplier = 1.3f;
+                _inAirMultiplier = 1.3f;
             }
             else
             {
-                _jumpMultiplier = 1.0f;
+                _inAirMultiplier = 1.0f;
             }
 
-            // Set crouchMultiplier to a fixed value if the player is crouching
+            /// Set crouchMultiplier to a fixed value if the player is crouching
             if (Player.Controls.IsCrouching)
             {
-                _crouchMultiplier = 0.85f;
+                _crouchingMultiplier = 0.85f;
             }
             else
             {
-                _crouchMultiplier = 1.0f;
+                _crouchingMultiplier = 1.0f;
             }
-
             
-            // Set effectiveMaxSize depending if the player is moving, standing still, jumping, crouched, and firing
-            float _effectiveMaxSize = _moveSize * _jumpMultiplier * _crouchMultiplier * _recoilMultiplier;
-
-            // print($"moveSize: {_moveSize}, jumpMult: {_jumpMultiplier}, crouchMult: {_crouchMultiplier}, recMult: {_recoilMultiplier}, effective: {_effectiveMaxSize}");
-
-            _currentSize = Mathf.Lerp(_currentSize, _effectiveMaxSize, Time.deltaTime * speed);
-
-            // Reset the addedFiringFactor and recoilMultiplier to reset crosshair after firing
+            /// Set effectiveMaxSize depending if the player is moving, standing still, jumping, crouched, and firing
+            float effectiveMaxSize = _movingSize * _inAirMultiplier * _crouchingMultiplier * _recoilMultiplier;
+            _targetSize = Mathf.Lerp(_targetSize, effectiveMaxSize, Time.deltaTime * Damping);
+            /// Reset the addedFiringFactor and recoilMultiplier to reset crosshair after firing
             _recoilMultiplier = 1.0f;
+            rect.sizeDelta = new Vector2(_targetSize, _targetSize);
         }
 
-        void OnGunWeaponStateChanged(StateMachine<GunWeaponStates>.TransitionContext e)
+        void OnGunWeaponStateChanged(StateMachine<GunWeaponStates>.TransitionContext transition)
         {
-            if (e.To == GunWeaponStates.Fire)
+            if (transition.To == GunWeaponStates.Fire)
             {
-                _recoilMultiplier = _baseRecoilValue + addedFiringFactor;
+                _recoilMultiplier = _baseRecoilValue + AddedFiringFactor;
             }
         }
 
-        float CalculateBaseRecoilMultiplier(float _baseGunSpread)
+        float CalculateBaseRecoilMultiplier(float bulletSpread)
         {
-            return 0.5f + Mathf.Lerp(1, maxSize / restingSize, (_baseGunSpread / 15));
-        }
-
-        bool IsMoving
-        {
-            get
-            {
-                if (Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0)
-                    return true;
-                else
-                    return false;
-            }
-        }
-
-        bool IsJumping
-        {
-            get
-            {
-                if (Input.GetAxis("Jump") != 0)
-                    return true;
-                else
-                    return false;
-            }
+            return 0.5f + Mathf.Lerp(1, MaxSize / RestingSize, bulletSpread / 15); /// what's 0.5f and 15?
         }
     }
 }

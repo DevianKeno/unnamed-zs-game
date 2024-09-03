@@ -1,12 +1,12 @@
 using System;
 using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
 
 using UZSG.Systems;
 using UZSG.Saves;
-using System.Collections;
 
 namespace UZSG.Attributes
 {
@@ -21,6 +21,10 @@ namespace UZSG.Attributes
         /// Just so can view in Inspector
         [SerializeField] List<Attribute> attributesReadOnly = new();
         Dictionary<string, Attribute> _attrsDict = new();
+        /// <summary>
+        /// Returns a COPY of the Attributes in this collection. [Read Only]
+        /// </summary>
+        public List<Attribute> List => new(_attrsDict.Values);
 
         public Attribute this[string id]
         {

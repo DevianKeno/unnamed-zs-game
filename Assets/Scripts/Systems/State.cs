@@ -8,6 +8,13 @@ namespace UZSG.Systems
     [Serializable]
     public class State<EState> where EState : Enum
     {
+        public struct TransitionContext
+        {
+            public bool Entered { get; set; }
+            public bool Exited { get; set; }
+            public EState PreviousState { get; set; }
+        }
+        
         /// <summary>
         /// The enum value of this State.
         /// </summary>
@@ -30,7 +37,7 @@ namespace UZSG.Systems
         /// Called once when transitioning to this State.
         /// Use this if you want to use individual State Events.
         /// </summary>
-        public event Action<StateMachine<EState>.TransitionContext> OnTransition;
+        public event Action<TransitionContext> OnTransition;
         /// <summary>
         /// Called every Unity's Update cycle.
         /// Use this if you want to use individual State Events.
@@ -54,7 +61,12 @@ namespace UZSG.Systems
 
         public virtual void Enter(StateMachine<EState>.TransitionContext context)
         {
-            OnTransition?.Invoke(context);
+            OnTransition?.Invoke(new()
+            {
+                Entered = true,
+                Exited = false,
+                PreviousState = context.From,
+            });
         }
 
         public virtual void Update()
@@ -74,7 +86,12 @@ namespace UZSG.Systems
 
         public virtual void Exit(StateMachine<EState>.TransitionContext context)
         {
-            OnTransition?.Invoke(context);
+            OnTransition?.Invoke(new()
+            {
+                Entered = false,
+                Exited = true,
+                PreviousState = context.From,
+            });
         }
     }
 }

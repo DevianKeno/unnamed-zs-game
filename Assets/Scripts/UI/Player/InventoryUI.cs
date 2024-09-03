@@ -88,11 +88,27 @@ namespace UZSG.UI.Players
             InitializeEvents();
             InitializeBagSlotUIs();
             InitializeCraftingGUI();
-            selector = Instantiate(selectorPrefab, transform).GetComponent<Selector>();
+            InitializeSelector();
             // itemDetailsUI = Game.UI.Create<ItemDetailsUI>("Item Details UI");
             frameController.SwitchToFrame("bag", force: true);
             InitializeInputs();
             closeButton.onClick.AddListener(Hide);
+            Hide();
+        }
+
+        void InitializeSelector()
+        {
+            selector = Game.UI.Create<Selector>("Selector", show: false);
+            selector.Rect.SetParent(transform);
+            
+            OnOpen += () =>
+            {
+                selector.Show();
+            };
+            OnClose += () =>
+            {
+                selector.Hide();
+            };
         }
 
         void InitializeElements()
@@ -219,7 +235,7 @@ namespace UZSG.UI.Players
         
         public Item TakeHeldItem()
         {
-            Item toReturn = _heldItem;
+            Item toReturn = new(_heldItem);
             ReleaseHeldItem();
             return toReturn;
         }
@@ -286,7 +302,8 @@ namespace UZSG.UI.Players
                 {
                     if (_selectedSlot.IsEmpty || _selectedSlot.Item.CompareTo(_heldItem))
                     {
-                        _selectedSlot.TryCombine(TakeHeldItem(), out var excess);
+                        var heldItem = TakeHeldItem();
+                        _selectedSlot.TryCombine(heldItem, out var excess);
                         if (!excess.IsNone)
                         {
                             HoldItem(excess);

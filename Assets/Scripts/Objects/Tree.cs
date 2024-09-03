@@ -56,19 +56,24 @@ namespace UZSG.Objects
                 if (tool.ToolData.ToolType == ResourceData.ToolType)
                 {
                     damage *= 1;
-                    if (tool.Owner is Player player)
+
+                    if (ResourceData.HarvestType == HarvestType.PerAction)
                     {
-                        var yield = new Item(ResourceData.Yield);
-                        if (player.Inventory.Bag.TryPutNearest(yield))
+                        if (tool.Owner is Player player)
                         {
-                            
-                        }
-                        else
-                        {
-                            Game.Entity.Spawn<ItemEntity>("item_entity", player.Position, callback: (info) =>
+                            var yield = new Item(ResourceData.Yield);
+
+                            if (player.Actions.PickUpItem(yield))
                             {
-                                info.Entity.Item = yield;
-                            });
+                                
+                            }
+                            else
+                            {
+                                Game.Entity.Spawn<ItemEntity>("item_entity", player.Position, callback: (info) =>
+                                {
+                                    info.Entity.Item = yield;
+                                });
+                            }
                         }
                     }
                     

@@ -86,12 +86,7 @@ MonoBehaviour:
   attributes:
     attributesReadOnly: []
   vehicleData: {fileID: 11400000, guid: 63f28035625936b48b2823dd6a5004ce, type: 2}
-  Controller: {fileID: 0}
-  InputHandler: {fileID: 0}
-  SeatManager: {fileID: 0}
-  FunctionAnimation: {fileID: 0}
-  AudioManager: {fileID: 0}
-  CameraManager: {fileID: 0}
+  TPPCamera: {fileID: 4252051339112489540}
   Model: {fileID: 0}
   FrontWheelColliders:
   - {fileID: 3231600916514506246}
@@ -104,7 +99,6 @@ MonoBehaviour:
   - {fileID: 1542572982011383115}
   - {fileID: 5863051998824902227}
   - {fileID: 7195086153468776989}
-  TPPCamera: {fileID: 4252051339112489540}
 --- !u!114 &3654058673562436904
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -139,7 +133,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d79fa35e83ba8d499cb95dde8bb503b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _vehicle: {fileID: 0}
   bodyMassCenter: {fileID: 7292847409730908410}
   fuelCap: 0
   fuelConsumptionPerPower: 0
@@ -1069,7 +1062,7 @@ WheelCollider:
     m_ExtremumValue: 1
     m_AsymptoteSlip: 0.5
     m_AsymptoteValue: 0.75
-    m_Stiffness: 1.8
+    m_Stiffness: 2
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -1277,7 +1270,7 @@ WheelCollider:
     m_ExtremumValue: 1
     m_AsymptoteSlip: 0.5
     m_AsymptoteValue: 0.75
-    m_Stiffness: 1.8
+    m_Stiffness: 2
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -1577,7 +1570,7 @@ WheelCollider:
     m_ExtremumValue: 1
     m_AsymptoteSlip: 0.5
     m_AsymptoteValue: 0.75
-    m_Stiffness: 1.8
+    m_Stiffness: 2
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -2079,7 +2072,7 @@ WheelCollider:
     m_ExtremumValue: 1
     m_AsymptoteSlip: 0.5
     m_AsymptoteValue: 0.75
-    m_Stiffness: 1.8
+    m_Stiffness: 2
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0

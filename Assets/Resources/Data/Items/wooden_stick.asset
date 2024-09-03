@@ -19,7 +19,7 @@ MonoBehaviour:
   Description: Used for building shelters, starting fires, and defending against
     the undead.
   Model:
-    m_AssetGUID: 4cb358330e9355847bddbab65cfa6859
+    m_AssetGUID: 13e98372ea966bf40887a13c45ddefdc
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
@@ -28,8 +28,8 @@ MonoBehaviour:
   Subtype: 0
   Weight: 0
   StackSize: 999
-  IsFuel: 0
-  FuelDuration: 0
+  IsFuel: 1
+  FuelDuration: 15
   IsMaterial: 1
   IsCraftable: 1
   Recipes: []

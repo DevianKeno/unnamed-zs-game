@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 873d4c4f155a35a46b4699d35b336ec7, type: 3}
+  m_Name: metal_scrap
+  m_EditorClassIdentifier: 
+  SourceId: uzsg
+  Id: metal_scrap
+  Tags: []
+  Name: Metal Scrap
+  Description: Used for crafting, repairs, and improvising tools and weapons.
+  Model:
+    m_AssetGUID: 4f8ecc6307f646f4d9db7abbb1f5e0ff
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  Sprite: {fileID: 21300000, guid: c6007a1fccc9ecd4d8a0e342c501c132, type: 3}
+  Type: 0
+  Subtype: 0
+  Weight: 0
+  StackSize: 999
+  IsFuel: 0
+  FuelDuration: 60
+  IsMaterial: 1
+  IsCraftable: 1
+  Recipes: []
+  SourceDescription: Metal scraps can be acquired from storage locations such as
+    chests found in the world.
+  AudioAssetsData: {fileID: 0}

@@ -12,13 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 873d4c4f155a35a46b4699d35b336ec7, type: 3}
   m_Name: coal
   m_EditorClassIdentifier: 
+  SourceId: uzsg
   Id: coal
+  Tags: []
   Name: Coal
   Description: Used  for fueling fires and crafting essential tools. It burns longer
     and hotter than wood, making it perfect for cooking food, forging weapons, and
     staying warm during cold nights.
   Model:
-    m_AssetGUID: b33b384996e8b0c45b8264b44ff028e7
+    m_AssetGUID: a55bfeaac3ebb124294bbfb2a60205cc
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0

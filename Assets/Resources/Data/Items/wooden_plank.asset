@@ -12,12 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 873d4c4f155a35a46b4699d35b336ec7, type: 3}
   m_Name: wooden_plank
   m_EditorClassIdentifier: 
+  SourceId: uzsg
   Id: wooden_plank
+  Tags: []
   Name: Wooden Plank
   Description: Used for crafting a variety of structures, from basic barricades to
     more complex buildings.
   Model:
-    m_AssetGUID: 51b487738cbcc74419a5bfb372e39f77
+    m_AssetGUID: ca73fde716562464d81a7383667a5685
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
@@ -26,11 +28,13 @@ MonoBehaviour:
   Subtype: 0
   Weight: 0
   StackSize: 999
-  IsFuel: 0
-  FuelDuration: 0
+  IsFuel: 1
+  FuelDuration: 30
   IsMaterial: 1
   IsCraftable: 1
-  Recipes: []
+  Recipes:
+  - {fileID: 0}
+  - {fileID: 0}
   SourceDescription: Wooden planks can be obtained by crafting or found in storage
     locations such as chests scattered throughout the world.
   AudioAssetsData: {fileID: 0}

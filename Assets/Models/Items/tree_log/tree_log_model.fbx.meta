@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 1c7b2da6d37adc647aca8aa45f74a11f
+guid: 528ab653c3a10dd4782caf00f1a5f18b
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -7,8 +7,8 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: log_m
-    second: {fileID: 2100000, guid: 84efb29a1c975d440a02dccd2016e89e, type: 2}
+      name: Log_Mat
+    second: {fileID: 2100000, guid: 2d134cf5cfc1caf4c935f1e130a1b164, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -40,7 +40,7 @@ ModelImporter:
     isReadable: 0
   meshes:
     lODScreenPercentages: []
-    globalScale: 1.2
+    globalScale: 0.008
     meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1
@@ -95,7 +95,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 1.2
+    globalScale: 0.008
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0

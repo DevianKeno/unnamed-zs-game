@@ -12,11 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 873d4c4f155a35a46b4699d35b336ec7, type: 3}
   m_Name: pebble
   m_EditorClassIdentifier: 
+  SourceId: uzsg
   Id: pebble
+  Tags: []
   Name: Pebble
   Description: Used for simple tools, as slingshot ammunition, or in decorative landscaping.
   Model:
-    m_AssetGUID: bea535f22281a7b4a8275e5cbabe2d59
+    m_AssetGUID: d36187a8a5c573643bfcb42a10de4ff0
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0

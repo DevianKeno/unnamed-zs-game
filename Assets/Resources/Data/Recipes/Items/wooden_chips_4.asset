@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3372a5b7bb26d3f488d62bf6042f3f86, type: 3}
+  m_Name: wooden_chips_4
+  m_EditorClassIdentifier: 
+  SourceId: uzsg
+  Id: wooden_chips
+  Tags: []
+  Name: Wooden Chips
+  Output:
+    itemData: {fileID: 11400000, guid: 1ccab8de1b215464bae670177eb589bf, type: 2}
+    count: 2
+    attributes:
+      attributesReadOnly: []
+  Materials:
+  - itemData: {fileID: 11400000, guid: a3f9589c2c6ec4442805d05f924e54f8, type: 2}
+    count: 1
+    attributes:
+      attributesReadOnly: []
+  RequiresFuel: 0
+  DurationSeconds: 0

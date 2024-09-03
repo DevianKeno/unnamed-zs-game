@@ -147,6 +147,17 @@ MonoBehaviour:
   - {fileID: 3919367862403686737}
   - {fileID: 5656712689697233835}
   - {fileID: 1850500001698439217}
+  - {fileID: 3778304615422296432}
+  - {fileID: 9080935051889084234}
+  IsTrigger: 1
+  CollisionDetection: 0
+  Layer: Hitbox
+  IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 2048
 --- !u!54 &6583129931448410585
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -262,51 +273,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   AudioAssetsData: {fileID: 0}
---- !u!1 &7795819402570208883
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 6214942496450879674}
-  - component: {fileID: 6034858137803703769}
-  m_Layer: 0
-  m_Name: Hitbox
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &6214942496450879674
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7795819402570208883}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 6985988655540100172}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6034858137803703769
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7795819402570208883}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cf11519c2e5959d4b899149a9c82ac77, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Part: 2
 --- !u!1001 &5156844125987940569
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -363,7 +329,15 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -8139853090755257685, guid: 98a5113de4d60b34c82352ab039a6e25, type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
     - target: {fileID: -7774620517717459388, guid: 98a5113de4d60b34c82352ab039a6e25, type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: -3638193520734090830, guid: 98a5113de4d60b34c82352ab039a6e25, type: 3}
       propertyPath: m_Layer
       value: 11
       objectReference: {fileID: 0}
@@ -382,6 +356,10 @@ PrefabInstance:
     - target: {fileID: 4108234674411243596, guid: 98a5113de4d60b34c82352ab039a6e25, type: 3}
       propertyPath: m_Layer
       value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 5353215201047255433, guid: 98a5113de4d60b34c82352ab039a6e25, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5353215201047255433, guid: 98a5113de4d60b34c82352ab039a6e25, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -403,12 +381,13 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 11
       objectReference: {fileID: 0}
+    - target: {fileID: 9140253385185518857, guid: 98a5113de4d60b34c82352ab039a6e25, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: 2838391200542782613, guid: 98a5113de4d60b34c82352ab039a6e25, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 6214942496450879674}
+    m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 98a5113de4d60b34c82352ab039a6e25, type: 3}
       insertIndex: -1
@@ -561,7 +540,7 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2048
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
@@ -588,7 +567,7 @@ Rigidbody:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2048
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
@@ -655,6 +634,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Part: 2
+  HasJoint: 1
 --- !u!1 &2136101619481141859 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6499889929296628410, guid: 98a5113de4d60b34c82352ab039a6e25, type: 3}
@@ -673,9 +653,9 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2048
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -700,7 +680,7 @@ Rigidbody:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2048
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
@@ -767,6 +747,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Part: 2
+  HasJoint: 1
 --- !u!1 &2247749535902983047 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6386480451222621022, guid: 98a5113de4d60b34c82352ab039a6e25, type: 3}
@@ -785,9 +766,9 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2048
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -812,7 +793,7 @@ Rigidbody:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2048
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
@@ -879,6 +860,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Part: 3
+  HasJoint: 1
 --- !u!1 &2753225580948477414 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7036213049465896255, guid: 98a5113de4d60b34c82352ab039a6e25, type: 3}
@@ -902,9 +884,9 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2048
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -929,7 +911,7 @@ Rigidbody:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2048
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
@@ -996,6 +978,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Part: 2
+  HasJoint: 1
 --- !u!4 &4619130899390222130 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 98a5113de4d60b34c82352ab039a6e25, type: 3}
@@ -1019,9 +1002,9 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2048
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -1046,7 +1029,7 @@ Rigidbody:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2048
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
@@ -1067,6 +1050,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Part: 1
+  HasJoint: 0
 --- !u!1 &4906373089340015384 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -8969417572210971711, guid: 98a5113de4d60b34c82352ab039a6e25, type: 3}
@@ -1085,9 +1069,9 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2048
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -1112,7 +1096,7 @@ Rigidbody:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2048
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
@@ -1179,6 +1163,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Part: 1
+  HasJoint: 1
 --- !u!1 &5231393675597640306 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -8139853090755257685, guid: 98a5113de4d60b34c82352ab039a6e25, type: 3}
@@ -1197,7 +1182,7 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2048
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
@@ -1224,7 +1209,7 @@ Rigidbody:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2048
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
@@ -1291,6 +1276,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Part: 2
+  HasJoint: 1
 --- !u!1 &5427299040781866376 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 98a5113de4d60b34c82352ab039a6e25, type: 3}
@@ -1335,9 +1321,9 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2048
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -1362,7 +1348,7 @@ Rigidbody:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2048
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
@@ -1429,6 +1415,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Part: 3
+  HasJoint: 1
 --- !u!1 &6019682940524336797 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -7774620517717459388, guid: 98a5113de4d60b34c82352ab039a6e25, type: 3}
@@ -1447,9 +1434,9 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2048
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -1474,7 +1461,7 @@ Rigidbody:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2048
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
@@ -1541,11 +1528,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Part: 3
---- !u!4 &6985988655540100172 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2838391200542782613, guid: 98a5113de4d60b34c82352ab039a6e25, type: 3}
-  m_PrefabInstance: {fileID: 5156844125987940569}
-  m_PrefabAsset: {fileID: 0}
+  HasJoint: 1
 --- !u!1 &8180326001806686370 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3897462237488877691, guid: 98a5113de4d60b34c82352ab039a6e25, type: 3}
@@ -1564,9 +1547,9 @@ SphereCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2048
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -1591,7 +1574,7 @@ Rigidbody:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2048
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
@@ -1658,6 +1641,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Part: 0
+  HasJoint: 1
 --- !u!1 &9120822522578444437 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4108234674411243596, guid: 98a5113de4d60b34c82352ab039a6e25, type: 3}
@@ -1676,9 +1660,9 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2048
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -1703,7 +1687,7 @@ Rigidbody:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2048
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
@@ -1770,3 +1754,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Part: 3
+  HasJoint: 1

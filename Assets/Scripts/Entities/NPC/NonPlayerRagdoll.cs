@@ -40,33 +40,33 @@ namespace UZSG.Entities
         /// <summary>
         /// Set the npc's components to ragdoll mode on or off.
         /// </summary>
-        /// <param name="IsTrue"></param>
-        public void RagdollMode(bool IsTrue)
+        /// <param name="enabled"></param>
+        public void RagdollMode(bool enabled)
         {
-            if (IsTrue)
+            if (enabled)
             {
 
             }
-            NonPlayerAnimator.enabled = IsTrue;
+            NonPlayerAnimator.enabled = enabled;
 
             // foreach (var hitbox in hitboxController.Hitboxes)
             // {
-            //     hitbox.Collider.enabled = !IsTrue;
             //     hitbox.Rigidbody.isKinematic = IsTrue;
             // }
 
             foreach(Collider col in _ragdollColliders)
             {
-                col.enabled = !IsTrue;
+                // col.enabled = !enabled;
+                col.isTrigger = false;
             }
 
             foreach(Rigidbody rigid in _rigidBodyParts)
             {
-                rigid.isKinematic = IsTrue;
+                rigid.isKinematic = enabled;
             }
 
-            NonPlayerCollider.enabled = IsTrue;
-            NonPlayerRigidbody.isKinematic = !IsTrue;
+            NonPlayerCollider.enabled = enabled;
+            NonPlayerRigidbody.isKinematic = !enabled;
         }
     }
 }   

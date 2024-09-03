@@ -7,28 +7,36 @@ using UZSG.Interactions;
 namespace UZSG.Entities
 {
     [Serializable]
+    [RequireComponent(typeof(Rigidbody))]
+    [RequireComponent(typeof(Collider))]
     public class Hitbox : MonoBehaviour, ICollisionTarget
     {
         public HitboxPart Part;
-        public event EventHandler<HitboxCollisionInfo> OnHit;
+        public event EventHandler<HitboxCollisionInfo> OnCollision;
 
-        BoxCollider boxCollider;
-        public BoxCollider Collider => boxCollider;
+        Collider coll;
+        public Collider Collider => coll;
         Rigidbody rb;
         public Rigidbody Rigidbody => rb;
+        public bool HasJoint;
         CharacterJoint joint;
         public CharacterJoint CharacterJoint => joint;
 
         void Awake()
         {
-            boxCollider = GetComponent<BoxCollider>();
+            InitializeComponents();
+        }
+
+        public void InitializeComponents()
+        {
+            coll = GetComponent<Collider>();
             rb = GetComponent<Rigidbody>();
-            joint = GetComponent<CharacterJoint>();
+            HasJoint = TryGetComponent(out joint);
         }
 
         public void HitBy(HitboxCollisionInfo other)
         {
-            OnHit?.Invoke(this, other);
+            OnCollision?.Invoke(this, other); 
         }
     }
 }

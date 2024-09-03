@@ -53,7 +53,7 @@ namespace UZSG.Entities
                 foreach (var hitbox in hitboxController.Hitboxes)
                 {
                     Debug.Log("Is hitting body part: " + hitbox.name);
-                    hitbox.OnHit += OnHitboxCollision;
+                    hitbox.OnCollision += OnHitboxCollision;
                 }
             }
         }

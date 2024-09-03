@@ -53,7 +53,7 @@ namespace UZSG.Objects
             set { transform.localRotation = value; }
         }
         
-        public event EventHandler<HitboxCollisionInfo> OnHit;
+        public event EventHandler<HitboxCollisionInfo> OnCollision;
         public event Action<BaseObject> OnDestroyed;
 
 

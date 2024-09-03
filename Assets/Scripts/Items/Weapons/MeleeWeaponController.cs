@@ -36,18 +36,6 @@ namespace UZSG.Items.Weapons
 
         #endregion
 
-        public bool IsBroken
-        {
-            get
-            {
-                if (attributes.TryGet("durability", out var durability))
-                {
-                    return durability.Value <= 0;
-                }
-
-                return false; /// no durability = unbreakabled
-            }
-        }
 
         /// <summary>
         /// Whether if the Owner (Player) can use (Attack) this tool.

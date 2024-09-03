@@ -10,6 +10,13 @@ namespace UZSG.Entities
         [SerializeField] List<Hitbox> hitboxes;
         public List<Hitbox> Hitboxes => hitboxes;
 
+        public bool IsTrigger;
+        public CollisionDetectionMode CollisionDetection = CollisionDetectionMode.Continuous;
+        /// supposed to be LayerMask but damn
+        public string Layer = "Hitbox";
+        public LayerMask IncludeLayers;
+        public LayerMask ExcludeLayers;
+
 #if UNITY_EDITOR
         public void ReinitializeeHitboxes()
         {
@@ -24,9 +31,21 @@ namespace UZSG.Entities
             {
                 if (child.TryGetComponent<Hitbox>(out var hitbox))
                 {
-                    hitbox.GetComponent<Collider>().isTrigger = false; /// true before
+                    hitbox.InitializeComponents();
+                    if (hitbox.Collider != null)
+                    {
+                        hitbox.Collider.isTrigger = IsTrigger; /// true before
+                        hitbox.Collider.includeLayers = IncludeLayers;
+                        hitbox.Collider.excludeLayers = ExcludeLayers;
+                    }
+                    if (hitbox.Rigidbody != null)
+                    {
+                        hitbox.Rigidbody.collisionDetectionMode = CollisionDetection;
+                        hitbox.Rigidbody.includeLayers = IncludeLayers;
+                        hitbox.Rigidbody.excludeLayers = ExcludeLayers;
+                    }
+                    hitbox.gameObject.layer = LayerMask.NameToLayer(Layer);
                     hitboxes.Add(hitbox);
-                    hitbox.gameObject.layer = LayerMask.NameToLayer("Hitbox");
                 }
                 GetHitboxFromChildrenRecursive(child);
             }

@@ -290,7 +290,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -164481825537149297, guid: 39b489a4227078342b88e98dd3635192, type: 3}
       propertyPath: m_StaticEditorFlags
-      value: 2147483647
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 408653686846637540, guid: 39b489a4227078342b88e98dd3635192, type: 3}
       propertyPath: m_CastShadows
@@ -342,7 +342,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8603806674150118374, guid: 39b489a4227078342b88e98dd3635192, type: 3}
       propertyPath: m_StaticEditorFlags
-      value: 2147483647
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9217887969830070155, guid: 39b489a4227078342b88e98dd3635192, type: 3}
       propertyPath: m_CastShadows

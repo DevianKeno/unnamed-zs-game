@@ -62,10 +62,11 @@ MonoBehaviour:
   NonPlayerBody: {fileID: 2753225580948477414}
   NonPlayerAnimator: {fileID: 0}
   NonPlayerRigidbody: {fileID: 0}
-  IsRagdollOff: 0
   PlayerLayer:
     serializedVersion: 2
     m_Bits: 256
+  isInHorde: 0
+  _hordeTransform: {fileID: 0}
   _hasAlreadyScreamed: 0
   attackOnCooldown: 0
   isAttacking: 0
@@ -150,7 +151,7 @@ MonoBehaviour:
   - {fileID: 3778304615422296432}
   - {fileID: 9080935051889084234}
   IsTrigger: 1
-  CollisionDetection: 0
+  CollisionDetection: 1
   Layer: Hitbox
   IncludeLayers:
     serializedVersion: 2
@@ -574,7 +575,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!144 &2725850358148482258
 CharacterJoint:
   m_ObjectHideFlags: 0
@@ -687,7 +688,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!144 &6578838550267910338
 CharacterJoint:
   m_ObjectHideFlags: 0
@@ -800,7 +801,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!144 &4545964528592633805
 CharacterJoint:
   m_ObjectHideFlags: 0
@@ -918,7 +919,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!144 &4321840893890543262
 CharacterJoint:
   m_ObjectHideFlags: 0
@@ -1036,7 +1037,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!114 &1018101854087503401
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1103,7 +1104,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!144 &3232018733074822477
 CharacterJoint:
   m_ObjectHideFlags: 0
@@ -1216,7 +1217,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!144 &6650318776532333977
 CharacterJoint:
   m_ObjectHideFlags: 0
@@ -1355,7 +1356,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!144 &4351099637533554214
 CharacterJoint:
   m_ObjectHideFlags: 0
@@ -1468,7 +1469,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!144 &6368844591788578615
 CharacterJoint:
   m_ObjectHideFlags: 0
@@ -1581,7 +1582,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!144 &6548700928387001601
 CharacterJoint:
   m_ObjectHideFlags: 0
@@ -1694,7 +1695,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!144 &3016252622423140569
 CharacterJoint:
   m_ObjectHideFlags: 0

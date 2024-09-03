@@ -263,6 +263,7 @@ namespace UZSG.Entities
             actionStateMachine[Roam].EnableFixedUpdateCall = false;
             actionStateMachine[Roam].OnFixedUpdate -= OnRoamFixedUpdate;
 
+            Invoke(nameof(Kill), 5f); /// ragdoll despawn
         }
 
         void ActionChase()

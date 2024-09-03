@@ -29,7 +29,7 @@ namespace UZSG.Systems
         }
 
         /// <summary>
-        /// Creates an Item object.
+        /// Spawn particle instance at position.
         /// </summary>
         public void Spawn(string name, Vector3 position)
         {
@@ -44,22 +44,5 @@ namespace UZSG.Systems
                 };
             }
         }
-
-        // /// <summary>
-        // /// Creates an Item object.
-        // /// </summary>
-        // public void Create(string id, Vector3 position)
-        // {
-        //     if (_particlesDict.TryGetValue(id, out var particleData))
-        //     {
-        //         Addressables.LoadAssetAsync<GameObject>(particleData.Asset).Completed += (a) =>
-        //         {
-        //             if (a.Status == AsyncOperationStatus.Succeeded)
-        //             {
-        //                 Instantiate(a.Result, position, Quaternion.identity, transform);
-        //             }
-        //         };
-        //     }
-        // }
     }
 }

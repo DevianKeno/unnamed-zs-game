@@ -55,5 +55,64 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c2cc53c3822964d4fa1845957d22fce6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -2038430607064288668}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c2cc53c3822964d4fa1845957d22fce6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -2992400438051817509}
   m_SourcePrefab: {fileID: 100100000, guid: c2cc53c3822964d4fa1845957d22fce6, type: 3}
+--- !u!1 &1559008781251631319 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: c2cc53c3822964d4fa1845957d22fce6, type: 3}
+  m_PrefabInstance: {fileID: 1829552077881927046}
+  m_PrefabAsset: {fileID: 0}
+--- !u!54 &-2038430607064288668
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1559008781251631319}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!65 &-2992400438051817509
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1559008781251631319}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 1
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.380289, y: 0.48303327, z: 0.7203567}
+  m_Center: {x: 0.006563604, y: 0.06770463, z: 0.041870758}

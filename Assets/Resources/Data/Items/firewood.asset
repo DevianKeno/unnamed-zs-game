@@ -28,11 +28,12 @@ MonoBehaviour:
   Subtype: 0
   Weight: 0
   StackSize: 999
-  IsFuel: 0
-  FuelDuration: 0
+  IsFuel: 1
+  FuelDuration: 140
   IsMaterial: 1
   IsCraftable: 1
-  Recipes: []
+  Recipes:
+  - {fileID: 11400000, guid: 5527385847a6728408c0db1670bc1d50, type: 2}
   SourceDescription: Firewood can be obtained by crafting or by being found in storage
     locations such as chests scattered throughout the world.
   AudioAssetsData: {fileID: 0}

@@ -12,12 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 873d4c4f155a35a46b4699d35b336ec7, type: 3}
   m_Name: sand_stone
   m_EditorClassIdentifier: 
+  SourceId: uzsg
   Id: sand_stone
+  Tags: []
   Name: Sand Stone
   Description: Used for building basic structures, crafting items, and creating strong
     barriers.
   Model:
-    m_AssetGUID: a1788151b93f1304c958ea2f3946175e
+    m_AssetGUID: 425c314f2106290449d230c2cf3270e1
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0

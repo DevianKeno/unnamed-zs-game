@@ -8,7 +8,7 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Firewood.001
-    second: {fileID: 2100000, guid: 3924265937a0a4348b1b08c314f6b0a2, type: 2}
+    second: {fileID: 2100000, guid: f5208bb4fa25ed24c967045bf5cf3a36, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -40,7 +40,7 @@ ModelImporter:
     isReadable: 0
   meshes:
     lODScreenPercentages: []
-    globalScale: 0.2
+    globalScale: 0.27
     meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1
@@ -95,7 +95,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 0.2
+    globalScale: 0.27
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0

@@ -12,11 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 873d4c4f155a35a46b4699d35b336ec7, type: 3}
   m_Name: tree_log
   m_EditorClassIdentifier: 
+  SourceId: uzsg
   Id: tree_log
+  Tags: []
   Name: Tree Log
   Description: 'Used in heavy construction and as fuel for fires. '
   Model:
-    m_AssetGUID: e97ecccea25b13d4db9b85d577fb6a07
+    m_AssetGUID: 16c79de405a7d4f4ead8bb8e76150890
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
@@ -25,8 +27,8 @@ MonoBehaviour:
   Subtype: 0
   Weight: 0
   StackSize: 999
-  IsFuel: 0
-  FuelDuration: 0
+  IsFuel: 1
+  FuelDuration: 120
   IsMaterial: 1
   IsCraftable: 0
   Recipes: []

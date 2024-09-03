@@ -28,11 +28,12 @@ MonoBehaviour:
   Subtype: 0
   Weight: 0
   StackSize: 999
-  IsFuel: 0
-  FuelDuration: 0
+  IsFuel: 1
+  FuelDuration: 60
   IsMaterial: 1
   IsCraftable: 1
-  Recipes: []
+  Recipes:
+  - {fileID: 0}
   SourceDescription: Tree barks can be obtained by crafting or as a byproduct from
     chopping down trees.
   AudioAssetsData: {fileID: 0}

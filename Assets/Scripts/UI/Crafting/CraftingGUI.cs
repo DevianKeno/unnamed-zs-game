@@ -222,7 +222,42 @@ namespace UZSG.UI.Objects
                 //
             }
         }
-        
+
+        public void FilterRecipe(String type)
+        {
+            ClearCraftableItems();
+            List<RecipeData> filteredList = new();
+            
+
+            Dictionary<string, ItemType> _type = new() {
+
+                ["armor"] = ItemType.Armor,
+                ["item"] = ItemType.Item,
+                ["equipment"] = ItemType.Equipment,
+                ["tool"] = ItemType.Tool,
+                ["accessory"] = ItemType.Accessory,
+                ["weapon"] = ItemType.Weapon
+            };
+
+            if (type == "all")
+            {
+                AddRecipes(workstation.WorkstationData.IncludedRecipes);
+                return;
+            }
+
+            foreach (var recipe in workstation.WorkstationData.IncludedRecipes)
+            {
+                if (recipe.Output.Data.Type != _type[type])
+                {
+                    continue;
+                }
+
+                filteredList.Add(recipe);
+            }
+            
+            AddRecipes(filteredList);
+        }
+
         void CreateRoutineProgressUI(CraftingRoutine routine)
         {
             var routineUI = Game.UI.Create<CraftingProgressUI>("Craft Progress UI");

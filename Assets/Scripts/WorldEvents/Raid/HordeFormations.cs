@@ -1,28 +1,29 @@
 using System.Collections.Generic;
+using Epic.OnlineServices.Presence;
 using UnityEngine;
 using UZSG.Entities;
 using UZSG.Systems;
 
 namespace UZSG.WorldEvents.Raid
 {
-    public class HordeFormations : MonoBehaviour
+    public class HordeFormations
     {
         Player player;
-        List<Entity> _hordeZombies = new();
+        List<IEnemy> _hordeZombies = new();
+        public List<IEnemy> HordeZombies => _hordeZombies;
         RaidInstance _raidInstance;
         Quaternion? _facingDirection = null;
         Vector3? _selectedPoint = null;
 
-        /// Temporary values <summary>
+        /// Temporary values
         float minRadius = 30f;
         float maxRadius = 50f;
-        float spread = 1.25f;
+        float spread = 0.25f;
 
         public void HandlePrerequisites(RaidInstance raidInstance, Player selectedPlayer)
         {
             player = selectedPlayer;
             _raidInstance = raidInstance;
-            print(player.Position);
 
             switch(_raidInstance.raidFormation)
             {
@@ -42,7 +43,6 @@ namespace UZSG.WorldEvents.Raid
         {
             for (int i = 0; i < _raidInstance.mobCount; i++)
             {
-                print("Spawning zombie");
                 SpawnZombie(GetRandomPositionAroundPlayer(_raidInstance.mobCount * spread));
             }
 
@@ -62,6 +62,7 @@ namespace UZSG.WorldEvents.Raid
             //     spawnPosition += player.transform.forward * 10f;
             //     SpawnZombie(spawnPosition);
             // }
+            throw new System.NotImplementedException();
         }
 
         void SpawnInWaves()
@@ -86,22 +87,9 @@ namespace UZSG.WorldEvents.Raid
         {
             Game.Entity.Spawn<Skinwalker>(_raidInstance.enemyId, position, callback: (info) => {
                 _hordeZombies.Add(info.Entity);
+
                 FaceTowardsPlayer(info.Entity);
             });
-
-            Game.Entity.OnEntityKilled += OnEntityKilled;
-        }
-
-        private void OnEntityKilled(EntityManager.EntityInfo info)
-        {
-            if (_hordeZombies.Contains(info.Entity))
-            {
-                _hordeZombies.Remove(info.Entity);
-                if (_hordeZombies.Count == 0)
-                {
-                    Game.Entity.OnEntityKilled -= OnEntityKilled;
-                }
-            }
         }
 
         Vector3 GetRandomPositionAroundPlayer(float spreadRadius)
@@ -115,7 +103,6 @@ namespace UZSG.WorldEvents.Raid
             }
 
             Vector2 randomSpread = Random.insideUnitCircle * spreadRadius;
-            
             Vector3 position = _selectedPoint.Value + new Vector3(randomSpread.x, 0, randomSpread.y);
 
             return position;

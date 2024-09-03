@@ -14,8 +14,12 @@ using System.Collections;
 
 namespace UZSG.Entities
 {
-        
-    public partial class Enemy : NonPlayerCharacter, IPlayerDetectable
+    public interface IEnemy
+    {
+        public event Action<IEnemy> OnDeath;    
+    }
+
+    public partial class Enemy : NonPlayerCharacter, IPlayerDetectable, IEnemy
     {
         /// <summary>
         /// Clear console messages.
@@ -75,13 +79,14 @@ namespace UZSG.Entities
         }
 
         #endregion
-
+        
+        
+        public event Action<IEnemy> OnDeath;
         public EnemyData EnemyData => entityData as EnemyData;
         public float RotationDamping = 9f;
         public float _roamTime; // Time it takes for the agent to travel a point
         public float _roamRadius = 16f; // Radius of which the agent can travel
         public float _roamInterval = 12f; // Interval before the model moves again
-
 
         [Header("Components")]
         [SerializeField] Animator animator;
@@ -144,6 +149,6 @@ namespace UZSG.Entities
             ResetTargetIfNotInRange();
             KillZombieIfDead();
         }
-
+        #endregion
     }
 }

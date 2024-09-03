@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: Raid Event
   m_EditorClassIdentifier: 
   Type: 2
-  Enabled: 0
+  Enabled: 1
   AllowMultipleEvents: 1
-  ChanceToOccur: 50
-  OccurEverySecond: 300
+  ChanceToOccur: 100
+  OccurEverySecond: 5
   WeatherTypes: []
   RaidTypes:
   - Name: Skinwalker

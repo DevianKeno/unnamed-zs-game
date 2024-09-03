@@ -9,6 +9,8 @@ using UZSG.Systems;
 using UZSG.Data;
 using UZSG.Worlds;
 using UZSG.Entities;
+using Unity.VisualScripting;
+using Microsoft.Win32;
 
 
 namespace UZSG.WorldEvents.Raid
@@ -25,24 +27,46 @@ namespace UZSG.WorldEvents.Raid
     {
         RaidEventType _raidType;
         RaidFormation _raidFormation;
-        [SerializeField] float _raidRemainingTime;
-        [SerializeField] float _remainingMobs;
-
         RaidInstance _raidInstance;
+        [SerializeField] GameObject raidEventPrefab;
 
 
         /// TEMPORARY VALUES THAT WILL BE REPLACED WHEN A MORE SOPHISTICATED SYSTEM IS IMPLEMENTED
         public int worldDifficulty = 1;
         public int numberOfPlayers = 1;
         public float difficultyMultiplier = 0.3f;
+        public int setEnemiesPerPlayer = 3;
 
         void PerformRaidEventProcessing(List<RaidEventInstance> selectedEvents)
         {
             foreach (RaidEventInstance raidEvent in selectedEvents)
             {
                 _raidInstance.enemyId = raidEvent.EnemyData.Id;
-                SpawnHorde(SelectPlayerToSpawnHordeOn());
+                RaidInstanceHandler raidInstance = SpawnHorde(SelectPlayerToSpawnHordeOn());
+                
+                // if (raidInstance == null || raidInstance.HordeFormations == null || raidInstance.RemainingZombies == 0) continue;
+                
+                raidInstance.OnEndEvent += OnRaidEnd;
             }
+        }
+
+        private void OnRaidEnd(RaidInstanceHandler raidInstance)
+        {
+            bool allDead = raidInstance.allDead;
+
+            if (allDead)
+            {
+                Game.Console.Log($"<color=#ad0909>Raid event ended. All enemies were slain</color>");
+            }
+            else
+            {
+                Game.Console.Log($"<color=#ad0909>Raid event ended. Not all enemies were slain</color>");
+            }
+
+            raidInstance.OnEndEvent -= OnRaidEnd;
+            Destroy(raidInstance.transform.gameObject);
+
+            EventOngoing = false;
         }
 
         Player SelectPlayerToSpawnHordeOn()
@@ -64,22 +88,31 @@ namespace UZSG.WorldEvents.Raid
             }
         }
 
-        void SpawnHorde(Player selectedPlayer)
+        RaidInstanceHandler SpawnHorde(Player selectedPlayer)
         {
+            if (selectedPlayer == null) return null;
+
+            RaidInstance newRaidInstance = DetermineRaid();
+
             HordeFormations hordeFormation = new();
             {
-                hordeFormation.HandlePrerequisites(DetermineRaid(), selectedPlayer);
+                hordeFormation.HandlePrerequisites(newRaidInstance, selectedPlayer);
             }
 
-            RaidInstanceHandler raidInstance = new()
-            {
-                HordeFormations = hordeFormation
-            };
+            var go = Instantiate(raidEventPrefab, transform);
+
+            var rih = go.GetComponent<RaidInstanceHandler>();
+            rih.HordeFormations = hordeFormation;
+            rih.RaidInstance = newRaidInstance;
+
+            rih.Initialize();
+
+            return rih;
         }
 
         RaidInstance DetermineRaid()
         {
-            float enemiesPerPlayer = numberOfPlayers * 3f;
+            float enemiesPerPlayer = numberOfPlayers * setEnemiesPerPlayer;
             float enemyMultiplier = enemiesPerPlayer * (worldDifficulty * difficultyMultiplier);
             int totalEnemies = Mathf.FloorToInt(enemiesPerPlayer + enemyMultiplier);
 
@@ -113,9 +146,15 @@ namespace UZSG.WorldEvents.Raid
                 Game.Console.Log($"<color=#ad0909>Event is null or ongoing.</color>");
                 return;
             }
+            
+            if(Game.World.CurrentWorld.GetEntitiesById("player").Count == 0)
+            {
+                Game.Console.Log($"<color=#ad0909>No player found.</color>");
+                return;
+            }
 
             Game.Console.Log($"<color=#ad0909>Raid event started.</color>");
-            // EventOngoing = true;
+            EventOngoing = true;
             List<RaidEventInstance> selectedEvents = new();
             foreach (object selectedEvent in worldEvent.SelectedEvents)
                 selectedEvents.Add((RaidEventInstance)selectedEvent);

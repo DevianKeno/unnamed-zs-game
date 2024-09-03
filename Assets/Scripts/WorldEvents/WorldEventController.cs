@@ -44,7 +44,6 @@ namespace UZSG.WorldEvents
         void InitializeControllers()
         {
             weatherController.Initialize();
-            // raidController.Initialize();
         }
 
         void OnTick(TickInfo info)
@@ -55,7 +54,6 @@ namespace UZSG.WorldEvents
 
             WorldTime.OnTick(secondsCalculation);
             Weather.OnTick(secondsCalculation);
-            // raidController.OnTick(secondsCalculation);
 
             if (Mathf.FloorToInt(_currentTime) > tempCount)
             {

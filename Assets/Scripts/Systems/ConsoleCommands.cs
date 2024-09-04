@@ -226,9 +226,9 @@ namespace UZSG.Systems
         /// </summary>
         void CCraft(object sender, string[] args)
         {
-            var newItem = new Item(Game.Items.GetData(args[0]));
-            var playerInventoryCrafter = (PlayerCrafting)_player.Crafter;
-            playerInventoryCrafter.PlayerCraftItem(newItem.Data.Recipes[0]);
+            // var newItem = new Item(Game.Items.GetData(args[0]));
+            // var playerInventoryCrafter = (PlayerCrafting)_player.Crafter;
+            // playerInventoryCrafter.PlayerCraftItem(newItem.Data.Recipes[0]);
         }
 
         void CDamage(object sender, string[] args)

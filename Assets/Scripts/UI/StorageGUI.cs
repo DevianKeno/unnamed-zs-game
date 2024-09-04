@@ -8,6 +8,7 @@ using UZSG.Inventory;
 
 using static UnityEngine.EventSystems.PointerEventData.InputButton;
 using static UZSG.UI.ItemSlotUI.ClickType;
+using System;
 
 namespace UZSG.UI.Objects
 {
@@ -64,13 +65,14 @@ namespace UZSG.UI.Objects
                 slotUI.Index = i;
 
                 slotUI.Link(storage.Container[i]);
-                slotUI.OnMouseDown += OnStorageSlotClick;
+                slotUI.OnMouseDown += OnSlotClick;
+                slotUI.OnHoverStart += OnSlotHoverStart;
 
                 slotUI.Show();
             }
         }
-        
-        void OnStorageSlotClick(object sender, ItemSlotUI.ClickedContext ctx)
+
+        void OnSlotClick(object sender, ItemSlotUI.ClickedContext ctx)
         {
             var slot = ((ItemSlotUI) sender).Slot;
 
@@ -137,6 +139,16 @@ namespace UZSG.UI.Objects
                     _isPutting = false;
                     _isGetting = true;
                 }
+            }
+        }
+
+        void OnSlotHoverStart(object sender, ItemSlotUI.ClickedContext e)
+        {
+            var slot = (ItemSlotUI) sender;
+
+            if (player.InventoryGUI.IsVisible)
+            {
+                player.InventoryGUI.Selector.Select(slot.Rect);
             }
         }
 

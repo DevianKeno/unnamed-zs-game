@@ -19,7 +19,9 @@ using UZSG.Saves;
 using UZSG.UI.Objects;
 using UZSG.UI;
 
-using static UZSG.Players.MoveStates;   
+using static UZSG.Players.MoveStates;
+using UZSG.Objects;
+using Unity.VisualScripting;
 
 namespace UZSG.Entities
 {
@@ -36,8 +38,10 @@ namespace UZSG.Entities
         [SerializeField] InventoryHandler inventory;
         public InventoryHandler Inventory => inventory;
 
-        [SerializeField] PlayerCrafting crafter;
-        public PlayerCrafting Crafter => crafter;
+        // [SerializeField] PlayerCrafting crafter;
+        // public PlayerCrafting Crafter => crafter;
+        [SerializeField] Players.PlayerCrafting crafting;
+        public Players.PlayerCrafting Crafting => crafting;
 
         [SerializeField] StatusEffectCollection statusEffects;
         public StatusEffectCollection StatusEffects => statusEffects;
@@ -144,7 +148,7 @@ namespace UZSG.Entities
             InitializeHitboxes();
             InitializeAnimator();
             InitializeInventory();
-            // InitializeCrafter();
+            InitializeCrafter();
             InitializeHUD();
             InitializeInputs();
             
@@ -219,9 +223,7 @@ namespace UZSG.Entities
 
         void InitializeCrafter()
         {
-            crafter.InitializePlayer(this);
-            // craftingAgent.AddContainer(inventory.Bag);
-            // craftingAgent.AddContainer(inventory.Hotbar);
+            crafting.Initialize(this);
         }
 
         void InitializeInputs()

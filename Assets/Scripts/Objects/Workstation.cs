@@ -24,15 +24,15 @@ namespace UZSG.Objects
         public string Name => objectData.Name;
         public bool AllowInteractions { get; set; } = true;
 
-        Player player;
-        Container inputContainer = new();
-        Container fuelSlots = new();
-        List<ItemSlot> queueSlots = new();
-        Container outputContainer = new();
+        protected Player player;
+        protected Container inputContainer = new();
+        protected Container fuelSlots = new();
+        protected List<ItemSlot> queueSlots = new();
+        protected Container outputContainer = new();
         public Container OutputContainer => outputContainer;
-        [SerializeField] Crafter crafter;
+        [SerializeField] protected Crafter crafter;
         public Crafter Crafter => crafter;
-        WorkstationGUI gui;
+        protected WorkstationGUI gui;
         public WorkstationGUI GUI => gui;
 
         public event EventHandler<IInteractArgs> OnInteract;
@@ -41,7 +41,7 @@ namespace UZSG.Objects
         /// <summary>
         /// Listens to all output slots when their Item is changed.
         /// </summary>
-        event Action<ItemSlot.ItemChangedContext> onOutputSlotItemChanged;
+        protected event Action<ItemSlot.ItemChangedContext> onOutputSlotItemChanged;
         public bool EnableDebugging = false;
         
         protected override void Start()
@@ -202,7 +202,7 @@ namespace UZSG.Objects
         #endregion
 
 
-        List<Item> CalculateTotalMaterials(CraftItemOptions options)
+        public List<Item> CalculateTotalMaterials(CraftItemOptions options)
         {
             var list = new List<Item>();
             var mats = options.Recipe.Materials;
@@ -220,7 +220,7 @@ namespace UZSG.Objects
         #region Event callbacks
 
         /// Crafting routines
-        void OnRoutineEventCall(CraftingRoutine routine)
+        protected void OnRoutineEventCall(CraftingRoutine routine)
         {
             if (routine.Status == Prepared)
             {
@@ -272,21 +272,21 @@ namespace UZSG.Objects
             }
         }
 
-        void OnRoutineSecond(CraftingRoutine routine, float timeElapsed)
+        protected void OnRoutineSecond(CraftingRoutine routine, float timeElapsed)
         {
             
         }
 
         /// Output slots
 
-        void OnOutputSlotItemChanged(object sender, ItemSlot.ItemChangedContext e)
+        protected void OnOutputSlotItemChanged(object sender, ItemSlot.ItemChangedContext e)
         {
             onOutputSlotItemChanged?.Invoke(e);
         }
         
         #endregion
 
-        void PlayCraftSound()
+        protected void PlayCraftSound()
         {
             if (gui.IsVisible)
             {
@@ -294,7 +294,7 @@ namespace UZSG.Objects
             }
         }
 
-        void PlayNoMaterialsSound()
+        protected void PlayNoMaterialsSound()
         {
             if (gui.IsVisible)
             {
@@ -302,7 +302,7 @@ namespace UZSG.Objects
             }
         }
 
-        void OnCloseInventory()
+        protected void OnCloseInventory()
         {
             player.InventoryGUI.OnClose -= OnCloseInventory;
             player.RemoveObjectGUI(gui);

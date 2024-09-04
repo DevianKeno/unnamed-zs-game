@@ -51,6 +51,7 @@ namespace UZSG.UI.Players
         bool _hasDisplayedItem;
         ItemDisplayUI displayedItem;
         Selector selector;
+        public Selector Selector => selector;
 
         [Header("Inventory Components")]
         [SerializeField] HotbarUI hotbarUI;
@@ -87,7 +88,8 @@ namespace UZSG.UI.Players
             InitializeElements();
             InitializeEvents();
             InitializeBagSlotUIs();
-            InitializeCraftingGUI();
+            InitializeEquipmentSlotUIs();
+            // InitializeCraftingGUI();
             InitializeSelector();
             // itemDetailsUI = Game.UI.Create<ItemDetailsUI>("Item Details UI");
             frameController.SwitchToFrame("bag", force: true);
@@ -147,6 +149,14 @@ namespace UZSG.UI.Players
             }
         }
 
+        void InitializeEquipmentSlotUIs()
+        {
+            foreach (var slot in Inventory.Equipment.Slots)
+            {
+                
+            }
+        }
+
         void InitializeCraftingGUI()
         {
             playerCraftingGUI.SetPlayer(Player);   
@@ -181,10 +191,7 @@ namespace UZSG.UI.Players
                 rect.localScale = Vector3.one;
             }
 
-            playerCraftingGUI.ResetDisplayed();
-            playerCraftingGUI.SetPlayer(Player);
-            playerCraftingGUI.AddRecipesById(Player.SaveData.KnownRecipes);
-
+            // playerCraftingGUI.OnShow();
             selector.Hide();
             actionMap.Enable();
             Game.UI.ToggleCursor(true);

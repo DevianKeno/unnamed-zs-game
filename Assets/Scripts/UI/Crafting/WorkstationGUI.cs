@@ -39,9 +39,9 @@ namespace UZSG.UI.Objects
                 baseObject = value;
             }
         }
-        RecipeData _selectedRecipe;
+        protected RecipeData _selectedRecipe;
         public RecipeData SelectedRecipe => _selectedRecipe;
-        int _amountToCraft = 1;
+        protected int _amountToCraft = 1;
         public int AmountToCraft
         {
             get
@@ -55,23 +55,23 @@ namespace UZSG.UI.Objects
             }
         }
 
-        Dictionary<string, CraftableItemUI> craftableItemUIs = new();
-        List<MaterialCountUI> materialSlotUIs = new();
+        protected Dictionary<string, CraftableItemUI> craftableItemUIs = new();
+        protected List<MaterialCountUI> materialSlotUIs = new();
         /// <summary>
         /// Key is the Crafting Routine; Value is the UI element.
         /// </summary>
-        Dictionary<CraftingRoutine, CraftingProgressUI> _routineUIs = new();
+        protected Dictionary<CraftingRoutine, CraftingProgressUI> _routineUIs = new();
 
-        [SerializeField] CraftedItemDisplayUI craftedItemDisplay;
-        [SerializeField] RectTransform craftablesHolder;
-        [SerializeField] RectTransform materialSlotsHolder;
-        [SerializeField] Transform queueSlotsHolder;
-        [SerializeField] Transform progressContainer;
-        [SerializeField] Transform outputSlotsHolder;
-        [SerializeField] TMP_InputField craftAmountInputField;
-        [SerializeField] Button craftButton;
+        [SerializeField] protected CraftedItemDisplayUI craftedItemDisplay;
+        [SerializeField] protected RectTransform craftablesHolder;
+        [SerializeField] protected RectTransform materialSlotsHolder;
+        [SerializeField] protected Transform queueSlotsHolder;
+        [SerializeField] protected Transform progressContainer;
+        [SerializeField] protected Transform outputSlotsHolder;
+        [SerializeField] protected TMP_InputField craftAmountInputField;
+        [SerializeField] protected Button craftButton;
 
-        void Awake()
+        protected virtual void Awake()
         {
             craftButton.onClick.AddListener(RequestCraftItem);
             craftAmountInputField.onEndEdit.AddListener(UpdateAmountToCraft);
@@ -80,7 +80,7 @@ namespace UZSG.UI.Objects
         /// <summary>
         /// Called when user clicks on a recipe, also referred here as a "Craftable Item".
         /// </summary>
-        void OnClickCraftable(CraftableItemUI craftable)
+        protected void OnClickCraftable(CraftableItemUI craftable)
         {
             _selectedRecipe = craftable.RecipeData;
             craftedItemDisplay.SetDisplayedRecipe(_selectedRecipe);
@@ -210,7 +210,7 @@ namespace UZSG.UI.Objects
 
         #region Workstation callbacks
 
-        void OnWorkstationCraft(CraftingRoutine routine)
+        protected void OnWorkstationCraft(CraftingRoutine routine)
         {
             if (routine.Status == Prepared)
             {

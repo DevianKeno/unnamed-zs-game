@@ -29,6 +29,16 @@ namespace UZSG.Inventory
         public ItemSlot Mainhand => _mainhand;
         ItemSlot _offhand;
         public ItemSlot Offhand => _offhand;
+        ItemSlot head;
+        public ItemSlot Head => head;
+        ItemSlot body;
+        public ItemSlot Body => body;
+        ItemSlot hands;
+        public ItemSlot Hands => hands;
+        ItemSlot legs;
+        public ItemSlot Legs => legs;
+        ItemSlot feet;
+        public ItemSlot Feet => feet;
 
         public void Initialize()
         {
@@ -41,12 +51,32 @@ namespace UZSG.Inventory
 
             _offhand = new(OffhandIndex, ItemSlotType.Weapon);
             _offhand.OnItemChangedInternal += SlotContentChangedInternal;
+            
+            head = new(OffhandIndex, ItemSlotType.Equipment);
+            head.OnItemChangedInternal += SlotContentChangedInternal;
+            
+            body = new(OffhandIndex, ItemSlotType.Equipment);
+            body.OnItemChangedInternal += SlotContentChangedInternal;
+            
+            hands = new(OffhandIndex, ItemSlotType.Equipment);
+            hands.OnItemChangedInternal += SlotContentChangedInternal;
+            
+            legs = new(OffhandIndex, ItemSlotType.Equipment);
+            legs.OnItemChangedInternal += SlotContentChangedInternal;
+            
+            feet = new(OffhandIndex, ItemSlotType.Equipment);
+            feet.OnItemChangedInternal += SlotContentChangedInternal;
 
             _slots = new()
             {
                 _hands,
                 _mainhand,
                 _offhand,
+                head,
+                body,
+                hands,
+                legs,
+                feet,
             };
         }
         

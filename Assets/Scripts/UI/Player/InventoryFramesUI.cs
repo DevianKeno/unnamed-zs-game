@@ -16,6 +16,10 @@ namespace UZSG.UI.Players
 
         [Header("Frames")]
         public FrameController frameController;
+        [SerializeField] PlayerCraftingGUI playerCraftingGUI;
+        public PlayerCraftingGUI PlayerCraftingGUI => playerCraftingGUI;
+
+        [Header("Elements")]
         /// <summary>
         /// The text displayed at the top right
         /// </summary>
@@ -24,7 +28,6 @@ namespace UZSG.UI.Players
         /// Reference to the Player's default crafting frame
         /// </summary>
         [SerializeField] Transform craftingFrame;
-        [SerializeField] WorkstationGUI playerCraftingGUI;
         [SerializeField] Button playerCraftingFrameButton;
         [SerializeField] Transform frameButtonsHolder;
         /// <summary>

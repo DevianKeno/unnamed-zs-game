@@ -3,7 +3,32 @@ guid: 16fd00e04f3477f45b4373e8c06011ee
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Hesco Mat
+    second: {fileID: 2100000, guid: 03777a721bd83444e81fdd9964929a74, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Hesco_Tex
+    second: {fileID: 2100000, guid: 51d5e69c9254ee143a5d000e95b675d3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Hesco_Wire
+    second: {fileID: 2100000, guid: 15d7c71e4de3a0d459b1497b5d01eb3a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Mat
+    second: {fileID: 2100000, guid: 200a5b63e46f6a0459548e02130b03a1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: T-Wall_Concrete
+    second: {fileID: 2100000, guid: dca6ee26995a4e248a1f7a0ccae742f0, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

@@ -51,7 +51,7 @@ MonoBehaviour:
     RoundsPerMinute: 310
     ClipSize: 999
     ReloadSpeed: 1
-    Ammo: {fileID: 0}
+    Ammo: {fileID: 11400000, guid: f6587d7d90d922847899c7a85b3a7b47, type: 2}
     Spread: 2.1
     BurstFireCount: 0
     BurstFireInterval: 0

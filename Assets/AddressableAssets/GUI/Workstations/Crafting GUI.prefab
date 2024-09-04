@@ -5707,7 +5707,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 75496786348238146, guid: 513f9b9052bfdab4ca8e314e3bf63d41, type: 3}
       propertyPath: m_Name
-      value: Equipment
+      value: Armor
       objectReference: {fileID: 0}
     - target: {fileID: 75496786348238149, guid: 513f9b9052bfdab4ca8e314e3bf63d41, type: 3}
       propertyPath: m_Pivot.x
@@ -6245,7 +6245,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 75496786348238146, guid: 513f9b9052bfdab4ca8e314e3bf63d41, type: 3}
       propertyPath: m_Name
-      value: Weapon
+      value: Equipment
       objectReference: {fileID: 0}
     - target: {fileID: 75496786348238149, guid: 513f9b9052bfdab4ca8e314e3bf63d41, type: 3}
       propertyPath: m_Pivot.x
@@ -6349,7 +6349,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1085767659022631473, guid: 513f9b9052bfdab4ca8e314e3bf63d41, type: 3}
       propertyPath: m_text
-      value: Weapon
+      value: Equipment
       objectReference: {fileID: 0}
     - target: {fileID: 2567294758916954282, guid: 513f9b9052bfdab4ca8e314e3bf63d41, type: 3}
       propertyPath: m_TargetGraphic
@@ -6381,7 +6381,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2567294758916954282, guid: 513f9b9052bfdab4ca8e314e3bf63d41, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
-      value: weapon
+      value: equipment
       objectReference: {fileID: 0}
     - target: {fileID: 2567294758916954282, guid: 513f9b9052bfdab4ca8e314e3bf63d41, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -7264,7 +7264,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 75496786348238146, guid: 513f9b9052bfdab4ca8e314e3bf63d41, type: 3}
       propertyPath: m_Name
-      value: Armor
+      value: Weapon
       objectReference: {fileID: 0}
     - target: {fileID: 75496786348238149, guid: 513f9b9052bfdab4ca8e314e3bf63d41, type: 3}
       propertyPath: m_Pivot.x
@@ -7400,7 +7400,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2567294758916954282, guid: 513f9b9052bfdab4ca8e314e3bf63d41, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
-      value: armor
+      value: weapon
       objectReference: {fileID: 0}
     - target: {fileID: 2567294758916954282, guid: 513f9b9052bfdab4ca8e314e3bf63d41, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName

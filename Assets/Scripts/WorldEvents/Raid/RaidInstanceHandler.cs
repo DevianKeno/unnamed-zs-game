@@ -34,8 +34,8 @@ namespace UZSG.Worlds.Events.Raid
         public void Initialize()
         {
             Game.Tick.OnTick += OnTick;
-            // remainingTime = _raidInstance.mobCount * 10f;
-            remainingTime = Mathf.Clamp(remainingTime, 20f, 600f);
+            remainingTime = _raidInstance.mobCount * 10f;
+            remainingTime = Mathf.Clamp(remainingTime, 60f, 600f);
             _hordeZombies = HordeFormations.HordeZombies;
             foreach (IEnemy enemy in _hordeZombies)
             {

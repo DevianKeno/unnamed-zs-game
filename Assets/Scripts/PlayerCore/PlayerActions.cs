@@ -88,13 +88,8 @@ namespace UZSG.Players
             inputs["Secondary Action"].started += OnStartSecondaryAction;       // RMB (default)
             inputs["Secondary Action"].canceled += OnCancelSecondaryAction;     // RMB (default)
             
-            inputs["Reload"].performed += OnPerformReload;       // R (default)
-
             inputs["Interact"].performed += OnPerformInteract;                  // F (default)
             inputs["Interact"].Enable();
-            inputs["Hotbar"].performed += OnNumberSlotSelect;               // Tab/E (default)
-
-            inputs["Unholster"].performed += OnUnholster;               // X (default)
             
             backInput = Game.Main.GetInputAction("Back", "Global");
         }
@@ -295,34 +290,6 @@ namespace UZSG.Players
 
 
         #region Input callbacks
-
-        void OnNumberSlotSelect(InputAction.CallbackContext context)
-        {
-            if (!int.TryParse(context.control.displayName, out int index)) return;
-
-            var slot = Player.Inventory.GetEquipmentOrHotbarSlot(index);
-            if (slot == null)
-            {
-                Game.Console.LogAndUnityLog($"Tried to access Hotbar Slot {index}, but it's not available yet (wear a toolbelt or smth.)");
-                return;
-            }
-            if (slot.HasItem)
-            {
-                Player.FPP.EquipHeldItem(slot.Item.Id);
-                // Player.Inventory.SelectHotbarSlot(index);
-            }
-        }
-
-        void OnUnholster(InputAction.CallbackContext context)
-        {
-            // Player.Inventory.SelectHotbarSlot(0);
-            Player.FPP.Unholster();
-        }
-
-        void OnPerformReload(InputAction.CallbackContext context)
-        {
-            Player.FPP.PerformReload();
-        }
         
         void OnPerformInteract(InputAction.CallbackContext context)
         {

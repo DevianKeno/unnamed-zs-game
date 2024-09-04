@@ -171,6 +171,4 @@ MonoBehaviour:
     LimitUnderflow: 1
   AudioAssetsData: {fileID: 11400000, guid: eed9c45f6757aae48b1990646f079589, type: 2}
   KnownRecipes:
-  - {fileID: 11400000, guid: 2e41551279bc6c844802b36a217ef687, type: 2}
-  - {fileID: 11400000, guid: d483b2fe74215824dbda5f2c35f2445a, type: 2}
-  - {fileID: 11400000, guid: 314eca0960e514f46b436d87ec9f13fc, type: 2}
+  - {fileID: 11400000, guid: 289a137900927a744869181510be1b5f, type: 2}

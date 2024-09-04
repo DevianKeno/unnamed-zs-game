@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81bc2aaa978c22b40abc135224c57da0, type: 3}
   m_Name: stone_axe
   m_EditorClassIdentifier: 
+  SourceId: uzsg
   Id: stone_axe
+  Tags: []
   Name: Stone Axe
   Description: Used to cut down small plants and trees. Can also be used as a weapon,
     however, degrades more quickly if utilized in this usecase.
@@ -30,7 +32,8 @@ MonoBehaviour:
   FuelDuration: 0
   IsMaterial: 0
   IsCraftable: 1
-  Recipes: []
+  Recipes:
+  - {fileID: 11400000, guid: cb32aeaee9a8ee84cbd5456637994761, type: 2}
   SourceDescription: 
   AudioAssetsData: {fileID: 0}
   ToolType: 0
@@ -73,8 +76,10 @@ MonoBehaviour:
     m_SubObjectType: 
     m_EditorAssetChanged: 0
   viewmodelOffsets:
-    Position: {x: 0, y: 0, z: 0}
-    Rotation: {x: 0, y: 0, z: 0}
+    UseOffsets: 0
+    PositionOffset: {x: 0, y: 0, z: 0}
+    RotationOffset: {x: 0, y: 0, z: 0}
+    BobbingPresets: []
   anims:
     Idle: 
     Move: 

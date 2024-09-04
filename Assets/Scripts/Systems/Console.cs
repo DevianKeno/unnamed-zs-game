@@ -190,6 +190,10 @@ namespace UZSG.Systems
             Log($"<color=\"red\">[ERR]: {message}</color>");
         }
 
+        /// <summary>
+        /// Logs a message both to the UZSG console and Unity console.
+        /// </summary>
+        /// <param name="message"></param>
         public void LogAndUnityLog(object message)
         {
             Game.Console.LogWarning(message);

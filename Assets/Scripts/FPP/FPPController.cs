@@ -13,6 +13,8 @@ using UZSG.Items;
 using UZSG.Items.Weapons;
 using UZSG.Items.Tools;
 using UZSG.Attacks;
+using UZSG.Inventory;
+using UnityEngine.InputSystem;
 
 namespace UZSG.FPP
 {
@@ -24,6 +26,7 @@ namespace UZSG.FPP
         public Player Player;
         [Space]
 
+        int _selectedHotbarSlot = 1;
         bool _isAnimationPlaying;
         string currentlyEquippedId;
         public string CurrentlyEquippedId => currentlyEquippedId;
@@ -109,6 +112,8 @@ namespace UZSG.FPP
         [SerializeField] GameObject gunWeaponControllerPrefab;
         [SerializeField] GameObject heldToolControllerPrefab;
 
+        Dictionary<string, InputAction> inputs = new();
+
 
         #region Initializing methods
         
@@ -120,6 +125,7 @@ namespace UZSG.FPP
         internal void Initialize()
         {
             InitializeEvents();
+            InitializeInputs();
             cameraController.Initialize();
             // viewmodelController.Initialize();
             LoadAndEquipHands();
@@ -130,6 +136,59 @@ namespace UZSG.FPP
         {
             Player.MoveStateMachine.OnTransition += OnMoveTransition;
             Player.ActionStateMachine.OnTransition += OnActionTransition;
+            Player.Inventory.Hotbar.OnSlotItemChanged += OnHotbarItemChanged;
+        }
+
+        void InitializeInputs()
+        {
+            inputs["Hotbar"] = Game.Main.GetInputAction("Hotbar", "Player Actions");
+            inputs["Hotbar"].performed += OnInputHotbar;
+            
+            inputs["Reload"] = Game.Main.GetInputAction("Reload", "Player Actions");
+            inputs["Reload"].performed += OnPerformReload;
+
+            inputs["Unholster"] = Game.Main.GetInputAction("Unholster", "Player Actions");
+            inputs["Unholster"].performed += OnUnholster;
+            
+            inputs["Back"] = Game.Main.GetInputAction("Back", "Global");
+        }
+
+        #endregion
+
+        
+        #region Player input callbacks
+
+        void OnInputHotbar(InputAction.CallbackContext context)
+        {
+            if (!int.TryParse(context.control.displayName, out int index)) return;
+
+            var slot = Player.Inventory.GetEquipmentOrHotbarSlot(index);
+            if (slot == null)
+            {
+                Game.Console.LogAndUnityLog($"Tried to access Hotbar Slot {index}, but it's not available yet (wear a toolbelt or smth.)");
+                return;
+            }
+
+            _selectedHotbarSlot = index;
+
+            if (slot.HasItem)
+            {
+                EquipHeldItem(slot.Item.Id);
+            }
+            else /// empty hotbar just equips arms
+            {
+                EquipHeldItem("arms");
+            }
+        }
+
+        void OnPerformReload(InputAction.CallbackContext context)
+        {
+            PerformReload();
+        }
+
+        void OnUnholster(InputAction.CallbackContext context)
+        {
+            Unholster();
         }
 
         #endregion
@@ -269,7 +328,12 @@ namespace UZSG.FPP
                 Game.Console.Log($"Item '{data.Id}' does not have a viewmodel asset");
                 return;
             }
-            if (_cachedViewmodels.ContainsKey(data.Id)) return; /// Viewmodel is already loaded
+
+            if (_cachedViewmodels.ContainsKey(data.Id)) /// viewmodel is already loaded
+            {
+                EquipHeldItem(data.Id);
+                return;
+            };
 
             StartCoroutine(StartTimedAction(1f));/// TODO: subject to change
             LoadViewmodelAsset(data, equip: true);
@@ -285,7 +349,10 @@ namespace UZSG.FPP
         /// </summary>
         public void ReleaseItem(ItemData data)
         {
-            if (!_cachedViewmodels.ContainsKey(data.Id)) return;
+            if (!_cachedViewmodels.TryGetValue(data.Id, out var viewmodel)) return;
+
+            Destroy(viewmodel.Model.gameObject); /// salt
+            _cachedViewmodels.Remove(data.Id);
             
             // var viewmodel = _cachedViewmodels[data.Id];
             UnloadViewmodelAsset(data);
@@ -534,13 +601,33 @@ namespace UZSG.FPP
             // }
         }
 
-        void OnWeaponStateChanged(StateMachine<Enum>.TransitionContext e)
+        void OnHotbarItemChanged(object sender, ItemSlot.ItemChangedContext e)
         {
-            if (heldItem == null) return;
-
-            var animId = GetAnimIdFromState(e.To);
-            PlayAnimations(animId);
+            if (e.NewItem == Item.None) /// removed Item from hotbar
+            {
+                /// check if other Hotbar slots still contains the old item
+                if (!Player.Inventory.Hotbar.Contains(e.OldItem))
+                {
+                    ReleaseItem(e.OldItem.Data);
+                }
+            }
+            else /// added Item to hotbar
+            {
+                if (e.ItemSlot.Index + 3 == _selectedHotbarSlot) /// + 3 cause the QUOTES HOTBAR QUOTES STARTS AT 3
+                {
+                    /// player has this slot equipped, immediately hold the new Item ig
+                    HoldItem(e.NewItem.Data);
+                }
+            }
         }
+
+        // void OnWeaponStateChanged(StateMachine<Enum>.TransitionContext e)
+        // {
+        //     if (heldItem == null) return;
+
+        //     var animId = GetAnimIdFromState(e.To);
+        //     PlayAnimations(animId);
+        // }
 
         void OnMeleeWeaponStateChanged(StateMachine<MeleeWeaponStates>.TransitionContext e)
         {

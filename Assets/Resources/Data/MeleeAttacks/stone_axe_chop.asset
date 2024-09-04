@@ -12,14 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b15b48c65734f5548975088a3200ffaf, type: 3}
   m_Name: stone_axe_chop
   m_EditorClassIdentifier: 
+  SourceId: uzsg
   Id: stone_axe_chop
+  Tags: []
   SwingType: 0
   Range: 1.4
   Duration: 1
   Delay: 0.5
   Layer:
     serializedVersion: 2
-    m_Bits: 26624
+    m_Bits: 59392
   RayCount: 0
-  Angle: 0
+  AngleWidth: 0
+  RotationOffset: {x: 0, y: 0, z: 0}
   Visualize: 1

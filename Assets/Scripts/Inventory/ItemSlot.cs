@@ -19,6 +19,11 @@ namespace UZSG.Inventory
             public ItemSlot ItemSlot { get; set; }
             public Item OldItem { get; set; }
             public Item NewItem { get; set; }
+
+            #region ??? idk
+            public readonly bool AddedItem => NewItem != Item.None;
+            public readonly bool RemovedItem => NewItem == Item.None;
+            #endregion
         }
         
         [SerializeField] int index;

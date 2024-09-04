@@ -12,11 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 873d4c4f155a35a46b4699d35b336ec7, type: 3}
   m_Name: stone_shard
   m_EditorClassIdentifier: 
+  SourceId: uzsg
   Id: stone_shard
+  Tags: []
   Name: Stone Shard
   Description: Used in traps, for crafting tools, or as makeshift weapons.
   Model:
-    m_AssetGUID: eb34f271994743c46a40238944ca6fc5
+    m_AssetGUID: 85a01e86477f0964583fefc6aad2a8af
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0

@@ -34,7 +34,8 @@ MonoBehaviour:
   IsCraftable: 1
   Recipes:
   - {fileID: 11400000, guid: cb32aeaee9a8ee84cbd5456637994761, type: 2}
-  SourceDescription: 
+  SourceDescription: Stone axes can be acquired through recipes or be found in storage
+    spaces present in houses.
   AudioAssetsData: {fileID: 0}
   ToolType: 0
   Attacks:

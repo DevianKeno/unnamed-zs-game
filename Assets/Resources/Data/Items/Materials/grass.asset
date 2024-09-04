@@ -12,9 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 873d4c4f155a35a46b4699d35b336ec7, type: 3}
   m_Name: grass
   m_EditorClassIdentifier: 
+  SourceId: uzsg
   Id: grass
+  Tags: []
   Name: Grass
-  Description: Grass.
+  Description: Useful for crafting basic ropes or binding materials, and it can be
+    fed to livestock if food sources are scarce.
   Model:
     m_AssetGUID: 
     m_SubObjectName: 
@@ -25,7 +28,11 @@ MonoBehaviour:
   Subtype: 0
   Weight: 0
   StackSize: 999
+  IsFuel: 0
+  FuelDuration: 0
   IsMaterial: 1
   IsCraftable: 0
   Recipes: []
-  SourceDescription: 
+  SourceDescription: Grass can be pickup in outdoor environments. Using a sickle
+    to obtain the item increases the yield of its collection.
+  AudioAssetsData: {fileID: 0}

@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1517ececb8b99cd40bf71fc1f502493b, type: 3}
   m_Name: workbench
   m_EditorClassIdentifier: 
+  SourceId: uzsg
   Id: workbench
+  Tags: []
   Name: Workbench
   Model:
     m_AssetGUID: 
@@ -38,7 +40,16 @@ MonoBehaviour:
   IncludePlayerRecipes: 1
   QueueSize: 6
   OutputSize: 6
+  RequiresFuel: 0
+  FuelSlotsSize: 0
   IncludedRecipes:
-  - {fileID: 11400000, guid: 2e41551279bc6c844802b36a217ef687, type: 2}
-  - {fileID: 11400000, guid: 314eca0960e514f46b436d87ec9f13fc, type: 2}
-  - {fileID: 11400000, guid: b5ca12c8083c14f47bbdf161ccdcdc18, type: 2}
+  - {fileID: 11400000, guid: a6ad1acf0659dc74a8cc15a9f0cfcec7, type: 2}
+  - {fileID: 11400000, guid: 8a2caab26e568b149a5031a4dac26bfb, type: 2}
+  - {fileID: 11400000, guid: 36c8cfb3fb08a354394438cc27496ea2, type: 2}
+  - {fileID: 11400000, guid: d013485b6df86054789f19efef085d57, type: 2}
+  - {fileID: 11400000, guid: bca28a7e6fed52141b45629516388bb2, type: 2}
+  - {fileID: 11400000, guid: 1837ee12f26a43e47b9069c6019545d1, type: 2}
+  - {fileID: 11400000, guid: 9fc9f5f2b6e0cfe49b82925177f49ea7, type: 2}
+  - {fileID: 11400000, guid: 12c2c69f2aeab84469a47afe10767961, type: 2}
+  - {fileID: 11400000, guid: 46100bc4a264b3346ad9d32685d13f31, type: 2}
+  - {fileID: 11400000, guid: 4d3e0643bcdaaf948b6ca8d3fc87f33e, type: 2}

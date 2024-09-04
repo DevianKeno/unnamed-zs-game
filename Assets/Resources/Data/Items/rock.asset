@@ -12,16 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 873d4c4f155a35a46b4699d35b336ec7, type: 3}
   m_Name: rock
   m_EditorClassIdentifier: 
+  SourceId: uzsg
   Id: rock
+  Tags: []
   Name: Rock
   Description: Used for constructing rudimentary shelters, creating defensive barriers,
     and as weapons in a pinch.
   Model:
-    m_AssetGUID: e9b5a8b9e1c9a4b409f8753cd20e93b5
+    m_AssetGUID: b5d8e2c0992dcf84c8f93427fdaf8114
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  Sprite: {fileID: 21300000, guid: 56ae4323a00397042a103785f883bd15, type: 3}
+  Sprite: {fileID: 21300000, guid: cc2e6b3b263ab484c8532c02f636c7af, type: 3}
   Type: 0
   Subtype: 0
   Weight: 0

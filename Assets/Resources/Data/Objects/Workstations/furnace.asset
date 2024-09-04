@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1517ececb8b99cd40bf71fc1f502493b, type: 3}
   m_Name: furnace
   m_EditorClassIdentifier: 
+  SourceId: uzsg
   Id: furnace
+  Tags: []
   Name: Furnace
   Model:
     m_AssetGUID: 
@@ -38,4 +40,8 @@ MonoBehaviour:
   IncludePlayerRecipes: 0
   QueueSize: 0
   OutputSize: 0
-  IncludedRecipes: []
+  RequiresFuel: 0
+  FuelSlotsSize: 0
+  IncludedRecipes:
+  - {fileID: 11400000, guid: 5527385847a6728408c0db1670bc1d50, type: 2}
+  - {fileID: 11400000, guid: 18d69b088ebf87d4b8fec53e07daf871, type: 2}

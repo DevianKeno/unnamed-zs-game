@@ -186,7 +186,7 @@ namespace UZSG.Entities.Vehicles
             Vehicle.CameraManager.ToggleCamera(player, "FPP");
 
             // player.Actions.ExitVehicle(Vehicle);
-            player.transform.SetParent(_playerParent, false); // Set the player position to the environment
+            player.transform.SetParent(_playerParent, true); // Set the player position to the environment
 
             player.Controls.Rigidbody.position = new(transform.position.x + 2,
                                                      transform.position.y,

@@ -11,7 +11,7 @@ namespace UZSG.Entities.Vehicles
     public class VehicleController : MonoBehaviour
     {
         //[Header("General Settings")]
-        bool _isEnabled = false;
+        public bool IsEnabled = false;
         public VehicleEntity Vehicle { get; private set; }
         
         List<WheelCollider> _frontWheelColliders;
@@ -133,7 +133,7 @@ namespace UZSG.Entities.Vehicles
 
         void FixedUpdate()
         {
-            if (_isEnabled)
+            if (IsEnabled)
             {
                 HandleCarMovement();
             }
@@ -579,17 +579,17 @@ namespace UZSG.Entities.Vehicles
 
         public void EnableVehicle()
         {
-            _isEnabled = true;
+            IsEnabled = true;
         }
 
         public void DisableVehicle()
         {
-            _isEnabled = false;
+            IsEnabled = false;
         }
 
         public bool VehicleIsUsableState()
         {
-            return _isEnabled; 
+            return IsEnabled; 
         }
 
         #endregion

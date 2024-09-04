@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 282465574161392655}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1, y: -0.65, z: 0.75}
+  m_LocalPosition: {x: -1, y: -0.55, z: 0.75}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -96,7 +96,7 @@ Transform:
   m_GameObject: {fileID: 546708123803673585}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1, y: -0.8, z: 0.75}
+  m_LocalPosition: {x: 1, y: -0.55, z: 0.75}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -128,7 +128,7 @@ Transform:
   m_GameObject: {fileID: 995260892806316518}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1, y: -0.8, z: 0.75}
+  m_LocalPosition: {x: -1, y: -0.55, z: 0.75}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -439,7 +439,7 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 0
 --- !u!114 &4607909025897089291
@@ -458,13 +458,8 @@ MonoBehaviour:
   entityData: {fileID: 11400000, guid: bdc11134a60ef4f4ab23e5c699dd5c07, type: 2}
   attributes:
     attributesReadOnly: []
-  vehicleData: {fileID: 0}
-  Controller: {fileID: 0}
-  InputHandler: {fileID: 0}
-  SeatManager: {fileID: 0}
-  FunctionAnimation: {fileID: 0}
-  AudioManager: {fileID: 0}
-  CameraManager: {fileID: 0}
+  vehicleData: {fileID: 11400000, guid: 6ea39bf6c05579b49b8dfbe7188bbbbf, type: 2}
+  TPPCamera: {fileID: 4764437369358848253}
   Model: {fileID: 0}
   FrontWheelColliders:
   - {fileID: 6357892284940617868}
@@ -477,7 +472,6 @@ MonoBehaviour:
   - {fileID: 546708123803673585}
   - {fileID: 3848638703566637595}
   - {fileID: 3046356590296448359}
-  TPPCamera: {fileID: 4764437369358848253}
 --- !u!114 &2774113619235372868
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -512,8 +506,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d79fa35e83ba8d499cb95dde8bb503b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _vehicle: {fileID: 0}
-  _vehicleStateMachine: {fileID: 0}
   bodyMassCenter: {fileID: 0}
   fuelCap: 0
   fuelConsumptionPerPower: 0
@@ -565,8 +557,9 @@ MonoBehaviour:
   steeringAngle: 0
   carSpeed: 0
   powerToWheels: 0
-  defaultMaxSteerAngle: 0
   turnRadius: 0
+  steerLimitSpeedThreshold: 0
+  steerLimitAmount: 0
   wheels: []
   IsHandbraked: 0
   DriverInput: {x: 0, y: 0}
@@ -659,7 +652,7 @@ Transform:
   m_GameObject: {fileID: 3046356590296448359}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1, y: -0.8, z: -1}
+  m_LocalPosition: {x: 1, y: -0.55, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -889,7 +882,7 @@ Transform:
   m_GameObject: {fileID: 3848638703566637595}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1, y: -0.8, z: -1}
+  m_LocalPosition: {x: -1, y: -0.55, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -922,7 +915,7 @@ Transform:
   m_GameObject: {fileID: 3850167479738869224}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1, y: -0.65, z: -1}
+  m_LocalPosition: {x: 1, y: -0.55, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1362,7 +1355,7 @@ Transform:
   m_GameObject: {fileID: 6384614701785927611}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1, y: -0.65, z: -1}
+  m_LocalPosition: {x: -1, y: -0.55, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1626,7 +1619,7 @@ Transform:
   m_GameObject: {fileID: 8979735965683414558}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1, y: -0.65, z: 0.75}
+  m_LocalPosition: {x: 1, y: -0.55, z: 0.75}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

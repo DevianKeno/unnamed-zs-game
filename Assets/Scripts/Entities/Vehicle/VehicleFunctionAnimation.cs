@@ -13,25 +13,26 @@ namespace UZSG.Entities.Vehicles
         Vector3 WheelPosition;
         [HideInInspector]
         public List<WheelCollider> wheelColliders; // Store all wheel colliders.
-        [HideInInspector]
         public Transform steeringWheelTransform;
 
         VehicleEntity _vehicle;
 
         List<GameObject> wheelMeshes; // Store all wheel meshes. idk it's better probably to have this private or hidden and just automatically set in script
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        _vehicle = GetComponent<VehicleEntity>();
-        steeringWheelTransform = this.transform.Find("Vehicle Body/Vehicle Steering Wheel/Steering Column");
-        wheelColliders = _vehicle.FrontWheelColliders.Concat(_vehicle.RearWheelColliders).ToList();
-        wheelMeshes = _vehicle.WheelMeshes;
-    }
+        // Start is called before the first frame update
+        void Start()
+        {
+            _vehicle = GetComponent<VehicleEntity>();
+            steeringWheelTransform = transform.Find("Steering Group/Steering Column");
+            wheelColliders = _vehicle.FrontWheelColliders.Concat(_vehicle.RearWheelColliders).ToList();
+            wheelMeshes = _vehicle.WheelMeshes;
+        }
 
         // Update is called once per frame
         void FixedUpdate()
         {
+            if (!_vehicle.Controller.IsEnabled) return;
+
             AnimateWheelMesh();
             AnimateSteerWheel();
         }

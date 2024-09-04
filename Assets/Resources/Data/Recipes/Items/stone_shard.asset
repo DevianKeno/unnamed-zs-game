@@ -27,4 +27,8 @@ MonoBehaviour:
     attributes:
       attributesReadOnly: []
   RequiresFuel: 0
+<<<<<<< HEAD
   DurationSeconds: 3
+=======
+  DurationSeconds: 0
+>>>>>>> fd075f8c8e07f87c412ac994964d545a3ca179d7

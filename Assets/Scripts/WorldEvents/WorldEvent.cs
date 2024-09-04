@@ -9,7 +9,7 @@ using UZSG.Data;
 using UZSG.Entities;
 using UZSG.Systems;
 
-namespace UZSG.WorldEvents
+namespace UZSG.Worlds.Events
 {
     public class WorldEvent
     {

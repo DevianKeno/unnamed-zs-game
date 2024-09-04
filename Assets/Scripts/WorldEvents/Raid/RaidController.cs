@@ -13,7 +13,7 @@ using Unity.VisualScripting;
 using Microsoft.Win32;
 
 
-namespace UZSG.WorldEvents.Raid
+namespace UZSG.Worlds.Events.Raid
 {
     public struct RaidInstance
     {

@@ -7,7 +7,7 @@ using UZSG.Entities;
 using UZSG.Interactions;
 using UZSG.Systems;
 
-namespace UZSG.WorldEvents.Raid
+namespace UZSG.Worlds.Events.Raid
 {
     public class RaidInstanceHandler : MonoBehaviour
     {

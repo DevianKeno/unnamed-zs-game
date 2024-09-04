@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UZSG.Data;
 
-namespace UZSG.WorldEvents
+namespace UZSG.Worlds.Events
 {    
     [Serializable]
     public class EventPrefab<T>

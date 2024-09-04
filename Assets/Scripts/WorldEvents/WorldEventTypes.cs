@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace UZSG.WorldEvents
+namespace UZSG.Worlds.Events
 {
     public enum WorldEventType {
         Weather,

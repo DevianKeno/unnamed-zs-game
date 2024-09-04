@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace UZSG.WorldEvents.Raid
+namespace UZSG.Worlds.Events.Raid
 {
     public enum RaidEventType
     {

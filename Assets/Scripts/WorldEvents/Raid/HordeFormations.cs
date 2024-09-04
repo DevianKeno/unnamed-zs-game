@@ -4,7 +4,7 @@ using UnityEngine;
 using UZSG.Entities;
 using UZSG.Systems;
 
-namespace UZSG.WorldEvents.Raid
+namespace UZSG.Worlds.Events.Raid
 {
     public class HordeFormations
     {

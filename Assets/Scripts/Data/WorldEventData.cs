@@ -1,11 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 using UnityEngine;
 
-using UZSG.WorldEvents;
+using UZSG.Worlds.Events;
 
 namespace UZSG.Data
 {

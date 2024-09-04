@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-namespace UZSG.WorldEvents
+namespace UZSG.Worlds.Events
 {
     public class EventBehaviour : MonoBehaviour
     {

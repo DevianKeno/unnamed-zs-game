@@ -9,7 +9,7 @@ using UZSG.Systems;
 using UZSG.Data;
 using UZSG.Worlds;
 
-namespace UZSG.WorldEvents.Weather
+namespace UZSG.Worlds.Events.Weather
 {
     public class WeatherController : EventBehaviour
     {

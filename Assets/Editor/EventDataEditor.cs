@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 using UZSG.Data;
-using UZSG.WorldEvents;
+using UZSG.Worlds.Events;
 
 namespace UZSG.UnityEditor
 {

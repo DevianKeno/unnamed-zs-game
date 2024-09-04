@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UZSG.Data;
 
-namespace UZSG.WorldEvents.Weather
+namespace UZSG.WorldsEvents.Weather
 {
     public class RainDataHolder : MonoBehaviour
     {

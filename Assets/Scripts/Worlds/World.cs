@@ -10,7 +10,7 @@ using UZSG.Systems;
 using UZSG.Entities;
 using UZSG.Saves;
 using UZSG.Objects;
-using UZSG.WorldEvents;
+using UZSG.Worlds.Events;
 
 namespace UZSG.Worlds
 {

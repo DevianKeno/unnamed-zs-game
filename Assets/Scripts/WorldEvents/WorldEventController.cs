@@ -8,11 +8,11 @@ using UnityEngine;
 using UZSG.Systems;
 using UZSG.Data;
 using UZSG.Worlds;
-using UZSG.WorldEvents.Weather;
-using UZSG.WorldEvents.Raid;
+using UZSG.Worlds.Events.Weather;
+using UZSG.Worlds.Events.Raid;
 using System.Reflection;
 
-namespace UZSG.WorldEvents
+namespace UZSG.Worlds.Events
 {
     public class WorldEventController : MonoBehaviour
     {

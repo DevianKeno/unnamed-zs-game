@@ -41,18 +41,21 @@ namespace UZSG.Worlds
 
         void OnValidate()
         {
-            if (Application.isPlaying) return;
-            if (_currentTime > _dayLength)
+            if (gameObject.activeInHierarchy)
             {
-                TwentyFourHourTime = 0;
-                CurrentDay++;
-            }
-            UpdateCelestialBodies();
+                if (Application.isPlaying) return;
+                if (_currentTime > _dayLength)
+                {
+                    TwentyFourHourTime = 0;
+                    CurrentDay++;
+                }
+                UpdateCelestialBodies();
 
-            SetTime(TwentyFourHourTime);
+                SetTime(TwentyFourHourTime);
+            }
         }
 
-        public void OnTick(float deltaTime)
+        internal void OnTick(float deltaTime)
         {
             _currentTime += deltaTime;
             TwentyFourHourTime = Mathf.FloorToInt(_currentTime / _dayLength * 2400f);

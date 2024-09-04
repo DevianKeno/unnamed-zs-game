@@ -12,12 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 873d4c4f155a35a46b4699d35b336ec7, type: 3}
   m_Name: string
   m_EditorClassIdentifier: 
+  SourceId: uzsg
   Id: string
+  Tags: []
   Name: String
   Description: Used for securing shelters, climbing, binding materials such as weapons,
     tools, and other materials or creating traps.
   Model:
-    m_AssetGUID: eecebd2413096f44ba4836c22fcec141
+    m_AssetGUID: fcfb31e640b0f5444ba9e0dc048cd9dd
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0

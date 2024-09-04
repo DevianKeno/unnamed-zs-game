@@ -16,6 +16,8 @@ using UZSG.Objects;
 using UZSG.UI.Objects;
 
 using static UZSG.Crafting.CraftingRoutineStatus;
+using System.Runtime.InteropServices;
+using System.Linq;
 
 namespace UZSG.UI.Objects
 {
@@ -254,7 +256,18 @@ namespace UZSG.UI.Objects
 
                 filteredList.Add(recipe);
             }
-            
+
+            foreach(var recipe in player.SaveData.KnownRecipes)
+            {
+                var _tempRecipe = Game.Recipes.GetRecipeData(recipe);
+
+                if (_tempRecipe.Output.Data.Type != _type[type])
+                {
+                    continue;
+                }
+                filteredList.Add(_tempRecipe);
+            }
+
             AddRecipes(filteredList);
         }
 

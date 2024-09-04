@@ -18,7 +18,7 @@ MonoBehaviour:
   Name: Pebble
   Description: Used for simple tools, as slingshot ammunition, or in decorative landscaping.
   Model:
-    m_AssetGUID: d36187a8a5c573643bfcb42a10de4ff0
+    m_AssetGUID: 73341595a948cfa40ab483d58b1d4a95
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0

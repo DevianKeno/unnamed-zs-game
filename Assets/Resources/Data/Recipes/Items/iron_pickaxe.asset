@@ -13,18 +13,26 @@ MonoBehaviour:
   m_Name: iron_pickaxe
   m_EditorClassIdentifier: 
   SourceId: uzsg
-  Id: iron_ingot
+  Id: iron_pickaxe
   Tags: []
-  Name: Iron Ingot
+  Name: Iron Pickaxe
   Output:
-    itemData: {fileID: 11400000, guid: c87cd22b95b92d544bc2d03aac4f6c18, type: 2}
+    itemData: {fileID: 11400000, guid: 7f4053e556c1a6d438f7b0de24712326, type: 2}
     count: 1
     attributes:
       attributesReadOnly: []
   Materials:
-  - itemData: {fileID: 11400000, guid: 692174c122280fe4bb40a0e3eac376bc, type: 2}
-    count: 2
+  - itemData: {fileID: 11400000, guid: c87cd22b95b92d544bc2d03aac4f6c18, type: 2}
+    count: 1
     attributes:
       attributesReadOnly: []
-  RequiresFuel: 1
-  DurationSeconds: 25
+  - itemData: {fileID: 11400000, guid: 559816becb8a6d447b50b55188bacb1d, type: 2}
+    count: 1
+    attributes:
+      attributesReadOnly: []
+  - itemData: {fileID: 11400000, guid: a3f9589c2c6ec4442805d05f924e54f8, type: 2}
+    count: 1
+    attributes:
+      attributesReadOnly: []
+  RequiresFuel: 0
+  DurationSeconds: 0

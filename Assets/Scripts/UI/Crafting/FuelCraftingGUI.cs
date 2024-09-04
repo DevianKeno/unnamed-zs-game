@@ -12,7 +12,7 @@ using UZSG.UI.Objects;
 using static UnityEngine.EventSystems.PointerEventData.InputButton;
 using static UZSG.UI.ItemSlotUI.ClickType;
 
-public class FuelCraftingGUI : CraftingGUI
+public class FuelCraftingGUI : WorkstationGUI
 {
 
     public ItemSlotUI fuelSlot;
@@ -27,18 +27,16 @@ public class FuelCraftingGUI : CraftingGUI
     //links specifically to FuelBasedCrafting type of crafter
     public override void LinkWorkstation(Workstation workstation)
     {
-        this.workstation = workstation;
+        Workstation = workstation;
 
         FuelBasedCrafterInstance = (FuelBasedCrafting)workstation.Crafter;
         FuelBasedCrafterInstance.FuelContainer = new(1);
         
-
         FuelBasedCrafterInstance.OnFuelUpdate += OnFuelUpdate;
         FuelBasedCrafterInstance.OnFuelReload += OnFuelReload;
         fuelBar.fuelBasedCraftingInstance = FuelBasedCrafterInstance;
         fuelBar.Value = 0;
         
-
         CreateOutputSlotUIs(workstation.WorkstationData.OutputSize);
         CreateQueueSlotUIs(workstation.WorkstationData.QueueSize);
 

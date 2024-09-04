@@ -14,7 +14,21 @@ namespace UZSG.UI.Objects
     public class StorageGUI : ObjectGUI
     {
         protected Storage storage;
-        public Storage Storage => storage;
+        /// <summary>
+        /// The Storage tied to this Storage GUI.
+        /// </summary>The 
+        public Storage Storage
+        {
+            get
+            {
+                return storage;
+            }
+            set
+            {
+                storage = value;
+                baseObject = value;
+            }
+        }
 
         ItemSlot _lastSelectedSlot;
         /// <summary>
@@ -35,7 +49,7 @@ namespace UZSG.UI.Objects
                 
         public void LinkStorage(Storage storage)
         {
-            this.storage = storage;
+            Storage = storage;
 
             CreateSlotUIs(storage.StorageData.Size);
         }

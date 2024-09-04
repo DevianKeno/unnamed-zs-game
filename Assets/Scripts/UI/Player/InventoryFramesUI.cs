@@ -24,7 +24,7 @@ namespace UZSG.UI.Players
         /// Reference to the Player's default crafting frame
         /// </summary>
         [SerializeField] Transform craftingFrame;
-        [SerializeField] CraftingGUI playerCraftingGUI;
+        [SerializeField] WorkstationGUI playerCraftingGUI;
         [SerializeField] Button playerCraftingFrameButton;
         [SerializeField] Transform frameButtonsHolder;
         /// <summary>
@@ -70,7 +70,7 @@ namespace UZSG.UI.Players
                 return;
             }
             
-            if (gui is CraftingGUI)
+            if (gui is WorkstationGUI)
             {
                 HidePlayerCraftingGUI();
             }
@@ -86,7 +86,7 @@ namespace UZSG.UI.Players
             go.name = $"Frame (Button)";
 
             var tmp = go.GetComponentInChildren<TextMeshProUGUI>();
-            tmp.text = $"{gui.name}";
+            tmp.text = $"{gui.BaseObject.ObjectData.Name}";
 
             var btn = go.GetComponent<Button>();
             btn.onClick.AddListener(() => 
@@ -96,12 +96,14 @@ namespace UZSG.UI.Players
             frameController.AppendFrame(gui.Frame);
             _appendedFrameButtons[gui] = btn;
             
+            /// Set the title text to the workstation's name
+            frameText.text = gui.BaseObject.ObjectData.Name;
             gui.Show();
         }
 
         public void RemoveObjectGUI(ObjectGUI gui)
         {
-            if (gui is CraftingGUI)
+            if (gui is WorkstationGUI)
             {
                 ShowPlayerCraftingGUI();
             }
@@ -121,27 +123,6 @@ namespace UZSG.UI.Players
             frameController.RemoveFrame(gui.Frame);
 
             gui.Hide();
-        }
-        
-        /// <summary>
-        /// Replace the Player Crafting GUI with the Workstation GUI.
-        /// </summary>
-        public void SetGUI(ObjectGUI gui)
-        {
-            if (gui is CraftingGUI craftingGui)
-            {
-                playerCraftingGUI.Hide();
-                craftingGui.transform.SetParent(craftingFrame, false);
-                frameController.SwitchToFrame("crafting", instant: true);
-                Show();
-            }
-            if (gui is StorageGUI storageGui)
-            {
-                _hasStorageGuiOpen = true;
-            }
-            
-            /// Set the title text to the workstation's name
-            // frameText.text = gui.;
         }
 
         public void ShowPlayerCraftingGUI()

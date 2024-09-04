@@ -19,10 +19,24 @@ using static UZSG.Crafting.CraftingRoutineStatus;
 
 namespace UZSG.UI.Objects
 {
-    public class CraftingGUI : ObjectGUI
+    public class WorkstationGUI : ObjectGUI
     {
         protected Workstation workstation;
-        public Workstation Workstation => workstation;
+        /// <summary>
+        /// The Workstation tied to this Workstation GUI.
+        /// </summary>The 
+        public Workstation Workstation
+        {
+            get
+            {
+                return workstation;
+            }
+            set
+            {
+                workstation = value;
+                baseObject = value;
+            }
+        }
         RecipeData _selectedRecipe;
         public RecipeData SelectedRecipe => _selectedRecipe;
         int _amountToCraft = 1;
@@ -84,10 +98,10 @@ namespace UZSG.UI.Objects
         
         public virtual void LinkWorkstation(Workstation workstation)
         {
-            this.workstation = workstation;
+            Workstation = workstation;
 
-            CreateOutputSlotUIs(workstation.WorkstationData.OutputSize);
-            CreateQueueSlotUIs(workstation.WorkstationData.QueueSize);
+            CreateOutputSlotUIs(Workstation.WorkstationData.OutputSize);
+            CreateQueueSlotUIs(Workstation.WorkstationData.QueueSize);
         }
 
         public void IncrementAmountToCraft()

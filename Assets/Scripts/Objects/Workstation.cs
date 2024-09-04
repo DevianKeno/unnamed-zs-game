@@ -32,8 +32,8 @@ namespace UZSG.Objects
         public Container OutputContainer => outputContainer;
         [SerializeField] Crafter crafter;
         public Crafter Crafter => crafter;
-        CraftingGUI gui;
-        public CraftingGUI GUI => gui;
+        WorkstationGUI gui;
+        public WorkstationGUI GUI => gui;
 
         public event EventHandler<IInteractArgs> OnInteract;
         public event Action<CraftingRoutine> OnCraft;
@@ -72,7 +72,7 @@ namespace UZSG.Objects
                 }
                 else
                 {
-                    this.gui = (CraftingGUI) gui;
+                    this.gui = (WorkstationGUI) gui;
                 }
 
                 this.gui.LinkWorkstation(this);

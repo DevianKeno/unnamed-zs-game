@@ -14,6 +14,9 @@ namespace UZSG.UI.Objects
     public abstract class ObjectGUI : Window, IInventoryAppendable
     {
         protected BaseObject baseObject;
+        /// <summary>
+        /// The object tied to this GUI.
+        /// </summary>
         public BaseObject BaseObject => baseObject;
         protected Player player;
         /// <summary>

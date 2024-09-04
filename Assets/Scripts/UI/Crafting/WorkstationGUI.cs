@@ -16,6 +16,8 @@ using UZSG.Objects;
 using UZSG.UI.Objects;
 
 using static UZSG.Crafting.CraftingRoutineStatus;
+using System.Runtime.InteropServices;
+using System.Linq;
 
 namespace UZSG.UI.Objects
 {
@@ -236,7 +238,53 @@ namespace UZSG.UI.Objects
                 //
             }
         }
-        
+
+        public void FilterRecipe(String type)
+        {
+            ClearCraftableItems();
+            List<RecipeData> filteredList = new();
+            
+
+            Dictionary<string, ItemType> _type = new() {
+
+                ["armor"] = ItemType.Armor,
+                ["item"] = ItemType.Item,
+                ["equipment"] = ItemType.Equipment,
+                ["tool"] = ItemType.Tool,
+                ["accessory"] = ItemType.Accessory,
+                ["weapon"] = ItemType.Weapon
+            };
+
+            if (type == "all")
+            {
+                AddRecipes(workstation.WorkstationData.IncludedRecipes);
+                return;
+            }
+
+            foreach (var recipe in workstation.WorkstationData.IncludedRecipes)
+            {
+                if (recipe.Output.Data.Type != _type[type])
+                {
+                    continue;
+                }
+
+                filteredList.Add(recipe);
+            }
+
+            foreach(var recipe in player.SaveData.KnownRecipes)
+            {
+                var _tempRecipe = Game.Recipes.GetRecipeData(recipe);
+
+                if (_tempRecipe.Output.Data.Type != _type[type])
+                {
+                    continue;
+                }
+                filteredList.Add(_tempRecipe);
+            }
+
+            AddRecipes(filteredList);
+        }
+
         void CreateRoutineProgressUI(CraftingRoutine routine)
         {
             var routineUI = Game.UI.Create<CraftingProgressUI>("Craft Progress UI");

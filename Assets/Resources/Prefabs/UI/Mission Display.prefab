@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 202994705328993855}
   - component: {fileID: 6792136191540523187}
   m_Layer: 5
-  m_Name: Mission Title
+  m_Name: Heading (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -146,7 +146,7 @@ GameObject:
   - component: {fileID: 5154566123262459225}
   - component: {fileID: 3687574599272111831}
   m_Layer: 5
-  m_Name: Mission Description
+  m_Name: Subheading (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -297,10 +297,10 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 4697712932967490087}
   - {fileID: 943118103467904756}
   - {fileID: 4505357689477270777}
   - {fileID: 8906782317726173332}
-  - {fileID: 4697712932967490087}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -320,8 +320,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff4693e53f8236c439961bf52bdc68b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  titleText: {fileID: 6792136191540523187}
-  descriptionText: {fileID: 3687574599272111831}
+  headingTmp: {fileID: 6792136191540523187}
+  subheadingTmp: {fileID: 3687574599272111831}
+  bodyTmp: {fileID: 0}
   distanceText: {fileID: 1208961087366538512}
   iconImage: {fileID: 8946391682615917164}
 --- !u!1 &7394084234080851830
@@ -336,7 +337,7 @@ GameObject:
   - component: {fileID: 7303963292845000464}
   - component: {fileID: 1208961087366538512}
   m_Layer: 5
-  m_Name: Mission Distance
+  m_Name: Distance (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -470,7 +471,7 @@ GameObject:
   - component: {fileID: 2869588127256826179}
   - component: {fileID: 8946391682615917164}
   m_Layer: 5
-  m_Name: Image
+  m_Name: Icon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

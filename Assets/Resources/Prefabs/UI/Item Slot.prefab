@@ -74,7 +74,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 5.64
 --- !u!1 &7226684566756821322
 GameObject:
   m_ObjectHideFlags: 0
@@ -153,7 +153,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 5
+  m_PixelsPerUnitMultiplier: 16
 --- !u!114 &8146761820488577120
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -182,8 +182,10 @@ MonoBehaviour:
   rect: {fileID: 7226684566756821325}
   FadeDuration: 0.3
   item:
-    _itemData: {fileID: 0}
-    _count: 0
+    itemData: {fileID: 0}
+    count: 0
+    attributes:
+      attributesReadOnly: []
   Index: 0
   image: {fileID: 7226684566756821324}
   indexTMP: {fileID: 0}
@@ -315,6 +317,10 @@ PrefabInstance:
       objectReference: {fileID: 7478795734260216624, guid: 960afe1775a30704d9fa63d5796f15b7, type: 2}
     - target: {fileID: 4397969410178795938, guid: 69f9d656166c5f343947161e86d926db, type: 3}
       propertyPath: m_hasFontAssetChanged
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4574587701464950729, guid: 69f9d656166c5f343947161e86d926db, type: 3}
+      propertyPath: item.count
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4574587701464950729, guid: 69f9d656166c5f343947161e86d926db, type: 3}

@@ -24,7 +24,7 @@ namespace UZSG.Systems
         /// Key is Entity Id, Value is EntityData.
         /// </summary>
         Dictionary<string, EntityData> _entitiesDict = new();
-        
+
         public event Action<EntityInfo> OnEntitySpawned;
         /// <summary>
         /// Subscribe to this event if you need to make last changes before the entity is removed from the universe.

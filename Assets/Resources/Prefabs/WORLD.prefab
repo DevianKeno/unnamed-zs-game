@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5357546713876505897}
   m_Layer: 0
   m_Name: WORLD
-  m_TagString: Untagged
+  m_TagString: World
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50,7 +50,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LoadOnEnterPlayMode: 0
   SaveOnExitPlayMode: 0
-  WorldName: testsavedworld
+  WorldName: 
   timeController: {fileID: 3392221486933040618}
   eventsController: {fileID: 5668126680943736175}
   objectsContainer: {fileID: 6914072609335877631}
@@ -642,6 +642,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8657365494440893185, guid: 90bd784ff7087a0419dd3ededf07039c, type: 3}
+      propertyPath: ParticleParent
+      value: 
+      objectReference: {fileID: 6074273936315685037}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -652,12 +656,17 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8657365494440893185, guid: 90bd784ff7087a0419dd3ededf07039c, type: 3}
   m_PrefabInstance: {fileID: 8234702196252119832}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 6074273936315685037}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 80761320998b60946a0940a2f9e29c26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &6074273936315685037 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2741476057176476597, guid: 90bd784ff7087a0419dd3ededf07039c, type: 3}
+  m_PrefabInstance: {fileID: 8234702196252119832}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6194034509867146637 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2860396632713252501, guid: 90bd784ff7087a0419dd3ededf07039c, type: 3}

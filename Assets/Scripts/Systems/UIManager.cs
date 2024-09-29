@@ -12,26 +12,23 @@ using UZSG.Systems;
 
 namespace UZSG.UI
 {
+    [Serializable]
+    public struct SceneTransitionOptions
+    {
+        public float Delay;
+        public float Duration;
+    }
+
     /// <summary>
     /// UI Manager for UZSG.
     /// </summary>
     public class UIManager : MonoBehaviour
     {
-        [Serializable]
-        public struct PrefabId
-        {
-            public string Id;
-            public GameObject Prefab;
-        }
-
-        [Serializable]
-        public struct IconId
-        {
-            public string Id;
-            public Sprite Sprite;
-        }
-
         public bool EnableScreenAnimations = true;
+
+        [SerializeField] SceneTransitionOptions sceneTransitionOptions;
+        public SceneTransitionOptions SceneTransitionOptions => sceneTransitionOptions;
+        
         [SerializeField] Color interactionColor;
         public Color InteractionColor
         {

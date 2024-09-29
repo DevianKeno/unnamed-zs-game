@@ -11,6 +11,7 @@ TagManager:
   - Melee
   - Projectile
   - Ground
+  - World
   layers:
   - Default
   - TransparentFX

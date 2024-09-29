@@ -398,7 +398,7 @@ namespace UZSG.EOS
             {
                 Application = presence?.ProductId,
                 Platform = presence?.Platform,
-                Status = (Status)(presence?.Status),
+                Status = (Epic.OnlineServices.Presence.Status)(presence?.Status),
                 RichText = presence?.RichText,
                 JoinInfo = joinInfo
             };

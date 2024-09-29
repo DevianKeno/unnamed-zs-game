@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36aabc6e137cedd43af34c97f1d03e8e, type: 3}
+  m_Name: demo
+  m_EditorClassIdentifier: 
+  SourceId: uzsg
+  Id: demo
+  Tags: []
+  Name: Demo
+  Description: Demo level.
+  Asset:
+    m_AssetGUID: f55daf94d203ae94b8c65229d6b9140e
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0

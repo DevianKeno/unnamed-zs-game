@@ -1,5 +1,8 @@
+using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.UI;
+
 using UZSG.Systems;
 
 namespace UZSG.UI
@@ -8,17 +11,20 @@ namespace UZSG.UI
     {
         public float AnimationFactor = 0.1f;
         public LeanTweenType TweenType;
-        
-        [SerializeField] Image image;
 
+        List<Image> images;
+        
         void Awake()
         {
             rect = GetComponent<RectTransform>();
-            image = GetComponent<Image>();
+            images = new(GetComponentsInChildren<Image>());
         }
 
         public void Select(RectTransform target)
-        {            
+        {
+            if (target == null) return;
+            
+            SetParent(target.transform);
             if (Game.UI.EnableScreenAnimations)
             {
                 LeanTween.cancel(gameObject);
@@ -36,17 +42,27 @@ namespace UZSG.UI
                 rect.position = target.position;
                 rect.sizeDelta = target.sizeDelta;
             }
-            image.enabled = true;
+
+            foreach (Image i in images)
+            {
+                i.enabled = true;
+            }
         }
 
         public override void OnShow()
         {
-            image.enabled = true;
+            foreach (Image i in images)
+            {
+                i.enabled = true;
+            }
         }
 
         public override void OnHide()
         {
-            image.enabled = false;
+            foreach (Image i in images)
+            {
+                i.enabled = false;
+            }
         }
     }
 }

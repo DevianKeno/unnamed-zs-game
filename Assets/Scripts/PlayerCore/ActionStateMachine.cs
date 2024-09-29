@@ -11,6 +11,6 @@ namespace UZSG.Players
 
     public class ActionStateMachine : StateMachine<ActionStates>
     {
-
+        
     }
 }

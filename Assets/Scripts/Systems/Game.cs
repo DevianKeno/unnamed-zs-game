@@ -130,9 +130,11 @@ namespace UZSG.Systems
 
         void OnValidate()
         {
-            Application.targetFrameRate = TargetFramerate;
+            if (gameObject.activeInHierarchy)
+            {
+                Application.targetFrameRate = TargetFramerate;
+            }
         }
-
 
         void InitializeManagers()
         {
@@ -153,10 +155,9 @@ namespace UZSG.Systems
             particleManager.Initialize();
             recipeManager.Initialize();
 
-            #endregion            
+            #endregion
 
             OnLateInit?.Invoke();
-            
             Console.Log("Press F1 to hide/show console");
         }
 
@@ -165,14 +166,22 @@ namespace UZSG.Systems
 
         #region Scene management
 
-        event Action OnLoadSceneCompleted;
+        public class LoadSceneOptions
+        {
+            public string Name { get; set; }
+            public LoadSceneMode Mode { get; set; }
+            public bool ActivateOnLoad { get; set; } = true;
+            public float DelaySeconds { get; set; }
+            public bool PlayTransition { get; set; }
+            public SceneTransitionOptions TransitionOptions { get; set; }
+        }
 
-        public void LoadScene(string sceneName, bool playTransition = true, float delayInSeconds = 0f, Action OnLoadSceneCompletedCallback = null)
+        event Action onLoadSceneCompleted;
+        public void LoadScene(LoadSceneOptions options, Action onLoadSceneCompleted = null)
         {
             try
             {
-                OnLoadSceneCompleted += OnLoadSceneCompletedCallback;
-                // StartCoroutine(Load(sceneName, playTransition, Game.UI.TransitionOptions.AnimationSpeed / 2f));
+                StartCoroutine(LoadSceneCoroutine(options, onLoadSceneCompleted));
             }
             catch (NullReferenceException e)
             {
@@ -180,28 +189,40 @@ namespace UZSG.Systems
             }
         }
 
-        IEnumerator Load(string scene, bool playTransition, float delayInSeconds)
+        public void UnloadScene(string name, Action onLoadSceneCompleted = null)
         {
-            var asyncOp = SceneManager.LoadSceneAsync(scene);
-            asyncOp.allowSceneActivation = false;
+            SceneManager.UnloadSceneAsync(name);
+        }
 
+        public void ActivateScene(string name)
+        {
+            SceneManager.SetActiveScene(SceneManager.GetSceneByName(name));
+        }
+
+        public class UnloadSceneOptions
+        {
+            public string Name { get; set; }
+            public float DelaySeconds { get; set; }
+            public bool PlayTransition { get; set; }
+            public SceneTransitionOptions TransitionOptions { get; set; }
+        }
+        public void UnloadScene(UnloadSceneOptions options, Action onLoadSceneCompleted = null)
+        {
+            SceneManager.UnloadSceneAsync(options.Name);
+        }
+
+        IEnumerator LoadSceneCoroutine(LoadSceneOptions options, Action onLoadSceneCompleted)
+        {
+            this.onLoadSceneCompleted += onLoadSceneCompleted;
+            var asyncOp = SceneManager.LoadSceneAsync(options.Name);
+            asyncOp.allowSceneActivation = false;
             while (asyncOp.progress < 0.9f)
             {
                 yield return null;
             }
-
-            if (playTransition)
-            {
-                // Game.UI.PlayTransitionHalf(() =>
-                // {
-                //     asyncOp.allowSceneActivation = true;
-                //     Game.UI.PlayTransitionEnd(() =>
-                //     {
-                //         OnLoadSceneCompleted?.Invoke();
-                //         OnLoadSceneCompleted = null;
-                //     });
-                // });
-            }
+            asyncOp.allowSceneActivation = options.ActivateOnLoad;
+            this.onLoadSceneCompleted?.Invoke();
+            this.onLoadSceneCompleted = null;
         }
 
         #endregion

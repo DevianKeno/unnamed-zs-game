@@ -30,11 +30,12 @@ namespace UZSG.Worlds
         
         /// testing
         public string WorldName = "testsavedworld";
+        public WorldEventCollection Events { get; private set; } = new();
 
         [SerializeField] WorldTimeController timeController;
         public WorldTimeController Time => timeController;
         [SerializeField] WorldEventController eventsController;
-        public WorldEventController Events => eventsController;
+        public WorldEventController WorldEvents => eventsController;
 
         bool _isActive;
         bool _hasValidSaveData;
@@ -45,33 +46,37 @@ namespace UZSG.Worlds
         /// </summary>
         Dictionary<string, List<Entity>> _cachedIdEntities = new();
         /// <summary>
-        /// All Objects by their Instance Id.
+        /// Key is Instance Id.
         /// </summary>
         Dictionary<int, BaseObject> _objectInstanceIds = new();
         /// <summary>
-        /// All Entities by their Instance Id.
+        /// Key is Instance Id.
         /// </summary>
         Dictionary<int, Entity> _entityInstanceIds = new();
 
-        public Transform objectsContainer;
-        public Transform entitiesContainer;
+        [SerializeField] internal Transform objectsContainer;
+        [SerializeField] internal Transform entitiesContainer;
         
 
         #region Initializing methods
 
-        internal void Initialize()
+        event Action onInitializeCompleted;
+        public void Initialize(Action onInitializeCompleted = null)
         {
             if (_isInitialized) return;
             _isInitialized = true;
+            this.onInitializeCompleted += onInitializeCompleted;
 
             Game.Console.Log($"[World]: Initializing world...");
-            Game.Main.OnLateInit += OnLateInit;
+            //Game.Main.OnLateInit += OnLateInit;
+            InitializeInternal();
+            this.onInitializeCompleted?.Invoke();
+            this.onInitializeCompleted = null;
         }
 
-        void OnLateInit()
+        void InitializeInternal()
         {
-            Game.Main.OnLateInit -= OnLateInit;
-
+            //Game.Main.OnLateInit -= InitializeInternal;
             timeController.Initialize();
             eventsController.Initialize();
 
@@ -80,6 +85,9 @@ namespace UZSG.Worlds
             {
                 LoadFromPath();
             }
+
+            Events.OnPlayerJoined += OnPlayerJoined;
+            Events.OnPlayerLeft += OnPlayerLeft;
 
             Game.Entity.OnEntitySpawned += OnEntitySpawned;
             Game.Entity.OnEntityKilled += OnEntityKilled;
@@ -160,6 +168,7 @@ namespace UZSG.Worlds
         {
             Game.Console.Log("[World]: Loading objects...");
 
+            if (_saveData.Objects == null) return;
             foreach (var sd in _saveData.Objects) /// sd is saveData ;)
             {
                 if (_objectInstanceIds.ContainsKey(sd.InstanceId)) continue;
@@ -194,6 +203,7 @@ namespace UZSG.Worlds
         {
             Game.Console.Log("[World]: Loading entities...");
 
+            if (_saveData.EntitySaves == null) return;
             foreach (var sd in _saveData.EntitySaves)
             {
                 if (_entityInstanceIds.ContainsKey(sd.InstanceId)) continue;
@@ -210,6 +220,28 @@ namespace UZSG.Worlds
 
 
         #region Event callbacks
+
+        void OnPlayerJoined()
+        {
+            Game.Entity.Spawn<Player>("player", callback: Spawned);
+
+            void Spawned(EntityManager.EntitySpawnedInfo<Player> info)
+            {
+                var name = "testname";
+                if (_saveData.PlayerIdSaves.TryGetValue(name, out var sd))
+                {
+                    info.Entity.ReadSaveData(sd);
+                }
+            }
+        }
+
+        void OnPlayerLeft(Player player)
+        {
+            _saveData.PlayerSaves.Add(player.WriteSaveData());
+
+            var name = "testname";
+            _saveData.PlayerIdSaves[name] = player.WriteSaveData();
+        }
 
         void OnObjectPlaced(ObjectsManager.ObjectPlacedInfo info)
         {

@@ -187,7 +187,7 @@ namespace UZSG.Systems
         /// </summary>
         public void LogError(object message)
         {
-            Log($"<color=\"red\">[ERR]: {message}</color>");
+            Log($"<color=\"red\">[ERROR]: {message}</color>");
         }
 
         /// <summary>

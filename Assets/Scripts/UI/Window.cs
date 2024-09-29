@@ -125,6 +125,11 @@ namespace UZSG.UI
             }
         }
 
+        public void SetParent(Transform p)
+        {
+            transform.SetParent(p);
+        }
+
         // public void FadeIn()
         // {
 

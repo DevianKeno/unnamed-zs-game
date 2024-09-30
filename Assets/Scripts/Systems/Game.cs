@@ -191,7 +191,13 @@ namespace UZSG.Systems
 
         public void UnloadScene(string name, Action onLoadSceneCompleted = null)
         {
-            SceneManager.UnloadSceneAsync(name);
+            try
+            {
+                SceneManager.UnloadSceneAsync(name);
+            } catch (Exception e)
+            {
+                Debug.LogError(e);
+            }
         }
 
         public void ActivateScene(string name)

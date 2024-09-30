@@ -66,7 +66,7 @@ namespace UZSG.Worlds.Events.Weather
         void InitiateRainOnPlayer(ParticleSystem particle)
         {
             print("Following player");
-            if (Camera.main.transform == null) return;
+            if (Camera.main == null) return;
 
             if (ParticleParent.transform.parent != Camera.main.transform)
             {

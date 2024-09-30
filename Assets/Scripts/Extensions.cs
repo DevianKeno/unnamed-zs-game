@@ -1,5 +1,3 @@
-using System.Numerics;
-
 namespace UZSG
 {
     public static class Vector3Ext
@@ -7,6 +5,11 @@ namespace UZSG
         public static UnityEngine.Vector3 FromValue(float value)
         {
             return new UnityEngine.Vector3(value, value, value);
+        }
+        
+        public static UnityEngine.Vector3 FromNumerics(System.Numerics.Vector3 value)
+        {
+            return new UnityEngine.Vector3(value.X, value.Y, value.Z);
         }
     }
 

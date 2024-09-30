@@ -11,6 +11,7 @@ namespace UZSG.Saves
         public DateTime CreatedDate;
         public DateTime LastModifiedDate;
         public DateTime LastPlayedDate;
+        public System.Numerics.Vector3 WorldSpawn = new(0, 64, 0);
         
         public List<ObjectSaveData> Objects = new();
         public List<EntitySaveData> EntitySaves = new();

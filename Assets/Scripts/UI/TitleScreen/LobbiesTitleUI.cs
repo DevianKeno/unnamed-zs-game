@@ -16,7 +16,7 @@ namespace UZSG.UI.Lobbies
 {
     public class LobbiesHandlerUI : MonoBehaviour
     {
-        EOSLobbyManager lobbyManager => Game.EOSManagers.Lobbies;
+        EOSLobbyManager lobbyManager => EOSSubManagers.Lobbies;
 
         Lobby _selectedLobby = null;
         LobbyDetails _selectedLobbyDetails = null;
@@ -69,7 +69,7 @@ namespace UZSG.UI.Lobbies
             {
                 return;
             }
-            Game.EOSManagers.Lobbies.JoinLobby(_selectedLobby.Id, _selectedLobbyDetails, false, OnJoinLobbyCompleted);
+            lobbyManager.JoinLobby(_selectedLobby.Id, _selectedLobbyDetails, false, OnJoinLobbyCompleted);
         }
 
         #endregion

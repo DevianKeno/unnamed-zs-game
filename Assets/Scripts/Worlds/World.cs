@@ -6,6 +6,8 @@ using System.IO;
 using UnityEngine;
 using Newtonsoft.Json;
 
+using Epic.OnlineServices.UserInfo;
+
 using UZSG.Systems;
 using UZSG.Entities;
 using UZSG.Saves;
@@ -16,14 +18,7 @@ namespace UZSG.Worlds
 {
     public class World : MonoBehaviour, ISaveDataReadWrite<WorldSaveData>
     {
-        #region Editor debugging only 
-        public bool LoadOnEnterPlayMode;
-        public bool SaveOnExitPlayMode;
-
-        #endregion
-        
-        bool _isInitialized; /// to prevent initializing twice
-        
+        bool _isInitialized; /// to prevent initializing the world twice :)
 
         WorldAttributes worldAttributes;
         public WorldAttributes WorldAttributes => worldAttributes;
@@ -40,6 +35,7 @@ namespace UZSG.Worlds
         bool _isActive;
         bool _hasValidSaveData;
         WorldSaveData _saveData;
+        System.Diagnostics.Stopwatch _initializeTimer;
 
         /// <summary>
         /// Key is EntityData Id; Value is list of Entity instances of that Id.
@@ -61,15 +57,23 @@ namespace UZSG.Worlds
         #region Initializing methods
 
         event Action onInitializeCompleted;
-        public void Initialize(Action onInitializeCompleted = null)
+        public void Initialize(WorldSaveData saveData, Action onInitializeCompleted = null)
         {
             if (_isInitialized) return;
             _isInitialized = true;
-            this.onInitializeCompleted += onInitializeCompleted;
 
+            this.onInitializeCompleted += onInitializeCompleted;
             Game.Console.Log($"[World]: Initializing world...");
-            //Game.Main.OnLateInit += OnLateInit;
+            _initializeTimer = new();
+            _initializeTimer.Start();
+
+            // Game.Main.OnLateInit += OnLateInit;
             InitializeInternal();
+            ReadSaveData(saveData);
+            InitializeEvents();
+            
+            _initializeTimer.Stop();
+            Game.Console.Log($"[World]: Done world loading took {_initializeTimer.ElapsedMilliseconds} ms");
             this.onInitializeCompleted?.Invoke();
             this.onInitializeCompleted = null;
         }
@@ -85,7 +89,10 @@ namespace UZSG.Worlds
             {
                 LoadFromPath();
             }
+        }
 
+        void InitializeEvents()
+        {
             Events.OnPlayerJoined += OnPlayerJoined;
             Events.OnPlayerLeft += OnPlayerLeft;
 
@@ -119,38 +126,7 @@ namespace UZSG.Worlds
                 }
             }
         }
-
-        public void ReadSaveData(WorldSaveData saveData)
-        {
-            if (saveData == null)
-            {
-                _hasValidSaveData = false;
-                return;
-            }
-            
-            this._saveData = saveData;
-            _hasValidSaveData = true;
-            LoadObjects();
-            LoadEntities();
-        }
-
-        public async Task<WorldSaveData> WriteSaveJsonAsync()
-        {
-            SaveObjects();
-
-            return _saveData;
-        }
         
-        public WorldSaveData WriteSaveData()
-        {
-            _saveData = new WorldSaveData();
-            SaveObjects();
-            SaveEntities();
-
-            return _saveData;
-        }
-        
-
         void SaveObjects()
         {
             Game.Console.Log("[World]: Saving objects...");
@@ -308,6 +284,25 @@ namespace UZSG.Worlds
         #region Public methods
 
         /// <summary>
+        /// Joins a player to the world.
+        /// </summary>
+        public void JoinPlayerId(UserInfoData id)
+        {
+            Vector3 spawnpoint = SaveData.IsNull(_saveData.WorldSpawn) ? new(0, 64, 0) : Vector3Ext.FromNumerics(_saveData.WorldSpawn);
+            Game.Entity.Spawn<Player>("player", spawnpoint, (info) =>
+            {
+                Player player = info.Entity;
+                if (_saveData.PlayerIdSaves.TryGetValue(id.UserId.ToString(), out var playerSave))
+                {
+                    player.ReadSaveData(playerSave);
+                }
+                player.DisplayName = id.DisplayName;
+            });
+
+            Game.Console.Log($"[World]: {id.DisplayName} joined the game");
+        }
+
+        /// <summary>
         /// Returns the list of Entities of Id present in the World.
         /// Returns an empty list if no Entity/s exists of Id.
         /// </summary>
@@ -357,15 +352,6 @@ namespace UZSG.Worlds
             Game.Console.Log("[World]: Loading world...");
         }
 
-        public void LoadFromPath()
-        {
-            var path = Application.persistentDataPath + $"/SavedWorlds/{WorldName}";
-            var filepath = path + "/data.json";
-            var dataJson = File.ReadAllText(filepath);
-            var wsd = JsonConvert.DeserializeObject<WorldSaveData>(dataJson);
-            ReadSaveData(wsd);
-        }
-
         public void ExitWorld(bool save = true)
         {
             Cleanup();
@@ -382,10 +368,52 @@ namespace UZSG.Worlds
             Game.Tick.OnTick -= Tick;
         }
 
+        public void ReadSaveData(WorldSaveData saveData)
+        {
+            if (saveData == null)
+            {
+                _hasValidSaveData = false;
+                return;
+            }
+            
+            this._saveData = saveData;
+            _hasValidSaveData = true;
+            LoadObjects();
+            LoadEntities();
+        }
+
+        public async Task<WorldSaveData> WriteSaveJsonAsync()
+        {
+            SaveObjects();
+
+            return _saveData;
+        }
+        
+        public WorldSaveData WriteSaveData()
+        {
+            _saveData = new WorldSaveData();
+            SaveObjects();
+            SaveEntities();
+
+            return _saveData;
+        }
+
         #endregion
+        
 
+        #region Debug
 
-        #region 
+        [SerializeField] bool LoadOnEnterPlayMode;
+        [SerializeField] bool SaveOnExitPlayMode;
+
+        public void LoadFromPath()
+        {
+            var path = Application.persistentDataPath + $"/SavedWorlds/{WorldName}";
+            var filepath = path + "/data.json";
+            var dataJson = File.ReadAllText(filepath);
+            var wsd = JsonConvert.DeserializeObject<WorldSaveData>(dataJson);
+            ReadSaveData(wsd);
+        }
         
         void OnApplicationQuit()
         {

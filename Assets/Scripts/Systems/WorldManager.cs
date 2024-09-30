@@ -11,6 +11,9 @@ using UZSG.Saves;
 using UZSG.Data;
 using UZSG.Worlds;
 using System.Threading.Tasks;
+using UZSG.Entities;
+using PlayEveryWare.EpicOnlineServices;
+using UZSG.EOS;
 
 namespace UZSG.Systems
 {
@@ -48,7 +51,7 @@ namespace UZSG.Systems
         {
             RetrieveSavedWorlds();
 
-            currentWorld?.Initialize();///testing
+            currentWorld?.Initialize(null);///testing
 
             OnDoneInit?.Invoke();
         }
@@ -106,13 +109,14 @@ namespace UZSG.Systems
                 
                 await LoadLevelAsync(saveData.LevelId);
 
-                currentWorld.Initialize();
-                currentWorld.ReadSaveData(saveData);
+                currentWorld.Initialize(saveData);
+
                 this.onLoadWorldCompleted?.Invoke(new()
                 {
                     Status = Status.Success
                 });
                 this.onLoadWorldCompleted = null;
+                JoinLocalPlayer(); /// this should not be here
             }
             else
             {
@@ -134,7 +138,7 @@ namespace UZSG.Systems
                 Debug.Log($"World in path '{filepath}' does not exist");
                 this.onLoadWorldCompleted?.Invoke(new()
                 {
-                    Status = Status.Success
+                    Status = Status.Failed
                 });
                 this.onLoadWorldCompleted = null;
                 return;
@@ -150,8 +154,8 @@ namespace UZSG.Systems
                 
                 await LoadLevelAsync(saveData.LevelId);
 
-                currentWorld.Initialize();
-                currentWorld.ReadSaveData(saveData);
+                currentWorld.Initialize(saveData);
+
                 this.onLoadWorldCompleted?.Invoke(new()
                 {
                     Status = Status.Success
@@ -194,6 +198,18 @@ namespace UZSG.Systems
             // }
                     
             return level;
+        }
+
+        void JoinLocalPlayer()
+        {
+            if (Game.Main.IsOnline)
+            {
+                Game.World.CurrentWorld.JoinPlayerId(EOSSubManagers.UserInfo.GetLocalUserInfo());
+            }
+            else
+            {
+                
+            }
         }
     }
 }

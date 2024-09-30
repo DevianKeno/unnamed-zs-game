@@ -30,6 +30,7 @@ namespace UZSG.Entities
     /// </summary>
     public partial class Player : Entity, IPlayer
     {
+        public string DisplayName = "Player";
         public bool CanPickUpItems = true;
 
         public PlayerEntityData PlayerEntityData => (PlayerEntityData) entityData;

@@ -64,7 +64,7 @@ namespace UZSG.Systems
                 }
                 else
                 {
-                    Game.Console.LogWarning($"There is no Addressable Asset assigned to item {itemId}.");
+                    Game.Console.Warn($"There is no Addressable Asset assigned to item {itemId}.");
                     return false;
                 }
             }

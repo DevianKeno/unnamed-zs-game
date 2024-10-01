@@ -22,7 +22,7 @@ namespace UZSG.UI
         }
 
         public Vector2 FrameSize;
-        public Vector2 InactiveFramePosition;
+        public Vector2 InactiveFramePosition = new(Screen.width, 0f); /// one screen right
         public float AnimationFactor = 0.5f;
         public LeanTweenType Ease = LeanTweenType.easeOutExpo;
         public bool IsTransitioning { get; private set; }
@@ -91,7 +91,7 @@ namespace UZSG.UI
                     .setEase(Ease)
                     .setOnComplete(() =>
                     {
-                        currentFrame.Rect.anchoredPosition = new Vector2(1920, 0f);
+                        currentFrame.Rect.anchoredPosition = InactiveFramePosition;
                     });
                 }
                 else if (!force)
@@ -187,10 +187,10 @@ namespace UZSG.UI
             }
             if (frame == null) return;
             
-            currentFrame.Rect.anchoredPosition = new Vector2(currentFrame.Rect.rect.width, 0f); /// Hide current frame
+            currentFrame.Rect.anchoredPosition = InactiveFramePosition; /// Hide current frame
             frame.Rect.anchoredPosition = Vector2.zero; /// Show new frame
+            frame.transform.SetAsLastSibling();
             currentFrame = frame;
-            currentFrame.transform.SetAsLastSibling();
             LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
         }
 

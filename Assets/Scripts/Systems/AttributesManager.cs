@@ -57,7 +57,7 @@ namespace UZSG.Systems
                 return true;
             }
 
-            Game.Console.LogWarning($"Invalid Attribute Id '{id}'");
+            Game.Console.Warn($"Invalid Attribute Id '{id}'");
             data = null;
             return false;
         }

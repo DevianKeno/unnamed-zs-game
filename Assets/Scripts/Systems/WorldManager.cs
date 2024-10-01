@@ -14,6 +14,10 @@ using System.Threading.Tasks;
 using UZSG.Entities;
 using PlayEveryWare.EpicOnlineServices;
 using UZSG.EOS;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using UZSG.SceneHandlers;
+using TMPro;
 
 namespace UZSG.Systems
 {
@@ -22,6 +26,7 @@ namespace UZSG.Systems
     public struct CreateWorldOptions
     {
         public string WorldName { get; set; }
+        public string MapId { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime LastModifiedDate { get; set; }
     }
@@ -41,6 +46,8 @@ namespace UZSG.Systems
         /// Called after the World has been successfully initialized.
         /// </summary>
         public event Action OnDoneInit;
+
+        TextMeshProUGUI loadingMessage;
 
         void Awake()
         {
@@ -79,7 +86,7 @@ namespace UZSG.Systems
                 Name = options.WorldName,
                 CreatedDate = options.CreatedDate,
                 LastModifiedDate = options.LastModifiedDate,
-                LevelId = "DEMO" /// replace with Level Id
+                LevelId = options.MapId
             };
             File.WriteAllText(savepath, JsonConvert.SerializeObject(saveData));
 
@@ -96,40 +103,52 @@ namespace UZSG.Systems
             public Status Status { get; set; }
         }
         event Action<LoadWorldResult> onLoadWorldCompleted;
-        public async void LoadWorldAsync(WorldSaveData saveData, Action<LoadWorldResult> onLoadWorldCompleted = null)
+        public async void LoadWorld(WorldSaveData saveData, Action<LoadWorldResult> onLoadWorldCompleted = null)
         {
             this.onLoadWorldCompleted += onLoadWorldCompleted;
 
-            if (saveData != null)
+            try
             {
-                var asset = Resources.Load<GameObject>($"Prefabs/WORLD");
-                var go = Instantiate(asset, transform);
-                go.name = saveData.Name + " (World)";
-                currentWorld = go.GetComponent<World>();
-                
-                await LoadLevelAsync(saveData.LevelId);
-
-                currentWorld.Initialize(saveData);
-
-                this.onLoadWorldCompleted?.Invoke(new()
+                if (saveData != null)
                 {
-                    Status = Status.Success
-                });
-                this.onLoadWorldCompleted = null;
-                JoinLocalPlayer(); /// this should not be here
+                    if (TryLoadLevelSceneAsync(saveData.LevelId, out var asyncOp))
+                    {
+                        // while (!asyncOp.IsDone)
+                        // {
+                        //     LoadingScreenHandler.Instance.Progress = asyncOp.PercentComplete;
+                        // }
+                        // LoadingScreenHandler.Instance.Message = "Loading map...";
+                        
+                        await asyncOp.Task;
+
+                        currentWorld = GameObject.FindWithTag("World").GetComponent<World>();
+                        currentWorld.Initialize(saveData);
+
+                        this.onLoadWorldCompleted?.Invoke(new()
+                        {
+                            Status = Status.Success
+                        });
+                        this.onLoadWorldCompleted = null;
+                        
+                        JoinLocalPlayer(); /// this should not be here
+                        return;
+                    }
+                }
             }
-            else
+            catch (Exception e)
             {
-                Debug.LogError($"WorldSaveData cannot be null");
-                this.onLoadWorldCompleted?.Invoke(new()
-                {
-                    Status = Status.Failed
-                });
-                this.onLoadWorldCompleted = null;
+                Debug.LogException(e);
             }
+
+            Debug.LogError($"Unexpected error occured when loading world");
+            this.onLoadWorldCompleted?.Invoke(new()
+            {
+                Status = Status.Failed
+            });
+            this.onLoadWorldCompleted = null;
         }
         
-        public async void LoadWorldAsync(string filepath, Action<LoadWorldResult> onLoadWorldCompleted = null)
+        public void LoadWorld(string filepath, Action<LoadWorldResult> onLoadWorldCompleted = null)
         {
             this.onLoadWorldCompleted += onLoadWorldCompleted;
 
@@ -144,60 +163,20 @@ namespace UZSG.Systems
                 return;
             }
             
-            var saveData = JsonConvert.DeserializeObject<WorldSaveData>(File.ReadAllText(filepath));
-            if (saveData != null)
-            {
-                var asset = Resources.Load<GameObject>($"Prefabs/WORLD");
-                var go = Instantiate(asset, transform);
-                go.name = saveData.Name + " (World)";
-                currentWorld = go.GetComponent<World>();
-                
-                await LoadLevelAsync(saveData.LevelId);
-
-                currentWorld.Initialize(saveData);
-
-                this.onLoadWorldCompleted?.Invoke(new()
-                {
-                    Status = Status.Success
-                });
-                this.onLoadWorldCompleted = null;
-            }
-            else
-            {
-                Debug.LogError($"Encountered an error when deserializing world save data at '{filepath}'");
-                this.onLoadWorldCompleted?.Invoke(new()
-                {
-                    Status = Status.Failed
-                });
-                this.onLoadWorldCompleted = null;
-            }
+            LoadWorld(JsonConvert.DeserializeObject<WorldSaveData>(File.ReadAllText(filepath)), onLoadWorldCompleted);
         }
         
-        public async Task<Level> LoadLevelAsync(string levelId)
+        public bool TryLoadLevelSceneAsync(string levelId, out AsyncOperationHandle handle)
         {
-            Level level = null;
-            // var data = Resources.Load<LevelData>($"Data/Levels/{levelId}");
-            // if (data != null)
-            // {
-                var asyncOp = Addressables.LoadAssetAsync<GameObject>("Assets/AddressableAssets/Levels/DEMO.prefab");
-                await asyncOp.Task;
-                if (asyncOp.Status == Succeeded)
-                {
-                    var go = Instantiate(asyncOp.Result, currentWorld.transform);
-                    level = go.GetComponent<Level>();
-                    go.name = levelId + " (Level)";
-                }
-                else if (asyncOp.Status == Failed)
-                {
-                    Debug.LogError($"Encountered an error when loading level id '{levelId}'");
-                }
-            // }
-            // else
-            // {
-            //     Debug.Log($"There is no data that exists for level id '{levelId}'");
-            // }
-                    
-            return level;
+            var data = Resources.Load<LevelData>($"Data/Levels/{levelId}");
+            if (data != null)
+            {
+                handle = Addressables.LoadSceneAsync(data.Scene, LoadSceneMode.Additive);
+                return true;
+            }
+            
+            handle = default;
+            return false;
         }
 
         void JoinLocalPlayer()
@@ -211,5 +190,32 @@ namespace UZSG.Systems
                 
             }
         }
+        
+        // public async Task<Level> LoadLevelSceneAsync(string levelId)
+        // {
+        //     Level level = null;
+        //     // var data = Resources.Load<LevelData>($"Data/Levels/{levelId}");
+        //     // if (data != null)
+        //     // {
+        //         var asyncOp = Addressables.LoadAssetAsync<GameObject>("Assets/AddressableAssets/Levels/DEMO.prefab");
+        //         await asyncOp.Task;
+        //         if (asyncOp.Status == Succeeded)
+        //         {
+        //             var go = Instantiate(asyncOp.Result, currentWorld.transform);
+        //             level = go.GetComponent<Level>();
+        //             go.name = levelId + " (Level)";
+        //         }
+        //         else if (asyncOp.Status == Failed)
+        //         {
+        //             Debug.LogError($"Encountered an error when loading level id '{levelId}'");
+        //         }
+        //     // }
+        //     // else
+        //     // {
+        //     //     Debug.Log($"There is no data that exists for level id '{levelId}'");
+        //     // }
+                    
+        //     return level;
+        // }
     }
 }

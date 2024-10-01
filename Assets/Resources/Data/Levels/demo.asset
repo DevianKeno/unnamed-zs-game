@@ -17,8 +17,17 @@ MonoBehaviour:
   Tags: []
   Name: Demo
   Description: Demo level.
+  Dimensions: 
+  Image: {fileID: 2800000, guid: ac5b2eabe5d6fa843a6cfe29f7bbec9e, type: 3}
   Asset:
     m_AssetGUID: f55daf94d203ae94b8c65229d6b9140e
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
+  Scene:
+    m_AssetGUID: 8a0d61125fae41b4595c6422cb6c67f7
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  Label:
+    m_LabelString: 

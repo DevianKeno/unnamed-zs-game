@@ -10,15 +10,24 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 36aabc6e137cedd43af34c97f1d03e8e, type: 3}
-  m_Name: demo 1
+  m_Name: giantest
   m_EditorClassIdentifier: 
   SourceId: uzsg
   Id: GIANTEST
   Tags: []
   Name: Gian Test
   Description: Gian test level.
+  Dimensions: 
+  Image: {fileID: 0}
   Asset:
     m_AssetGUID: acf3c8756ba98d645b556cfc23e80e8b
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
+  Scene:
+    m_AssetGUID: 3f875a22dd2173d488111961aa9c8648
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  Label:
+    m_LabelString: GIANTEST

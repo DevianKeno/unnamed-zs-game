@@ -550,12 +550,12 @@ namespace UZSG.Players
             if (enabled)
             {
                 input.Enable();
-                Game.Console.LogDebug($"Enabled control '{name}' for '{name} [{Player.InstanceId}]'");
+                Game.Console.Debug($"Enabled control '{name}' for '{name} [{Player.InstanceId}]'");
             }
             else
             {
                 input.Disable();
-                Game.Console.LogDebug($"Disabled control '{name}' for '{name} [{Player.InstanceId}]'");
+                Game.Console.Debug($"Disabled control '{name}' for '{name} [{Player.InstanceId}]'");
             }
         }
 

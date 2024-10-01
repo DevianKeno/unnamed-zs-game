@@ -19,11 +19,20 @@ namespace UZSG.UI
         public float Duration;
     }
 
+    public struct TransitionOptions
+    {
+
+    }
+
     /// <summary>
     /// UI Manager for UZSG.
     /// </summary>
     public class UIManager : MonoBehaviour
     {
+        public enum TransitionType {
+            FadeBlack
+        }
+
         public bool EnableScreenAnimations = true;
 
         [SerializeField] SceneTransitionOptions sceneTransitionOptions;
@@ -113,6 +122,23 @@ namespace UZSG.UI
         
         #region Public methods
 
+        #region Transition methods
+        // TransitionEffect transitionEffect;
+
+        // public void PlayTransitionHalf(Action callback = null)
+        // {
+        //     transitionEffect = Create<TransitionEffect>("transition");
+        //     transitionEffect.transform.SetParent(transitionCanvas.transform);
+        //     transitionEffect.SetOptions(TransitionOptions);
+        //     transitionEffect.PlayToHalf(callback);
+        // }
+
+        // public void PlayTransitionEnd(Action callback = null)
+        // {
+        //     transitionEffect.PlayToEnd(callback);
+        // }
+        #endregion
+
         public void ToggleCursor()
         {
             ToggleCursor(!_isCursorVisible);
@@ -136,7 +162,7 @@ namespace UZSG.UI
             {
                 return sprite;
             }
-            Game.Console.LogWarning($"There's no icon '{id}'");
+            Game.Console.Warn($"There's no icon '{id}'");
             return null;
         }
 

@@ -129,6 +129,7 @@ namespace UZSG.Players
         void FixedUpdate()
         {
             InteractionSphereCast();
+            DetectOutOfBounds();
         }
 
         void Tick(TickInfo e)
@@ -172,6 +173,18 @@ namespace UZSG.Players
             lookingAt?.OnLookExit();
             lookingAt = null;
             OnLookAtSomething?.Invoke(null);
+        }
+
+        void DetectOutOfBounds()
+        {
+            if (!Player.Controls.IsFalling) return;
+            
+            if (Player.Position.y < -32f)
+            if (Physics.Raycast(new Vector3(Player.Position.x, 300f, Player.Position.z), -Vector3.up, out var hit, 999f))
+            if (hit.collider.TryGetComponent<Terrain>(out var terrain))
+            {
+                Player.Position = new(Player.Position.x, hit.point.y + 1f, Player.Position.z);
+            }
         }
 
 

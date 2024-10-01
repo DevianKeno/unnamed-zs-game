@@ -22,6 +22,7 @@ using UZSG.UI;
 using static UZSG.Players.MoveStates;
 using UZSG.Objects;
 using Unity.VisualScripting;
+using Epic.OnlineServices.UserInfo;
 
 namespace UZSG.Entities
 {
@@ -30,6 +31,7 @@ namespace UZSG.Entities
     /// </summary>
     public partial class Player : Entity, IPlayer
     {
+        public UserInfoData UserInfo { get; set; }
         public string DisplayName = "Player";
         public bool CanPickUpItems = true;
 
@@ -361,7 +363,7 @@ namespace UZSG.Entities
         {
             if (saveData == null)
             {
-                Game.Console.LogError($"Invalid PlayerSaveData loaded for Player.");
+                Game.Console.Error($"Invalid PlayerSaveData loaded for Player.");
                 return;
             }
             

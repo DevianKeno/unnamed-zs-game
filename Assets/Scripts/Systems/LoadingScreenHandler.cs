@@ -1,65 +1,61 @@
 using System;
-using TMPro;
-using UnityEngine;
 
-namespace UZSG.Scenes
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+
+namespace UZSG.SceneHandlers
 {
     public class LoadingScreenHandler : MonoBehaviour
     {
+        public static LoadingScreenHandler Instance { get; private set; }
+
         public string Message
         {
-            get
-            {
-                return messageTmp.text;
-            }
-            set
-            {
-                messageTmp.text = value;
-            }
+            get { return messageTmp.text; }
+            set { messageTmp.text = value; }
         }
-        
         public string Tip
         {
-            get
-            {
-                return tipTmp.text;
-            }
-            set
-            {
-                tipTmp.text = value;
-            }
+            get { return tipTmp.text; }
+            set { tipTmp.text = value; }
         }
-        [Range(0, 1)]
-        [SerializeField] float progress;
+        [SerializeField, Range(0, 1)] float progress;
         public float Progress
         {
             get => progress;
             set
             {
-                progress = Mathf.Clamp(value, 0, 1);
-                UpdateProgress();
+                progress = Mathf.Clamp(value, 0f, 1f);
+                logoLoadingFill.fillAmount = progress;
             }
         }
 
         [SerializeField] TextMeshProUGUI messageTmp;
         [SerializeField] TextMeshProUGUI tipTmp;
-        [SerializeField] RectTransform logo;
+        [SerializeField] Image logoLoadingFill;
         [SerializeField] RectTransform progressRect;
+
+        void Awake()
+        {
+            DontDestroyOnLoad(this);
+
+            if (Instance != null && Instance != this)
+            {
+                Destroy(this);
+            }
+            else
+            {
+                Instance = this;
+            }
+        }
 
         void OnValidate()
         {
-
-        }
-
-        void Update()
-        {
-
-        }
-
-        void UpdateProgress()
-        {
-            var x = Mathf.Lerp(logo.rect.width, 0f, Progress);
-            progressRect.offsetMax = new(-x, progressRect.offsetMax.y);
+            if (gameObject.activeInHierarchy)
+            {
+                Progress = progress;
+            }
         }
     }
 }

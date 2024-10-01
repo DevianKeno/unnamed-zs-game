@@ -131,13 +131,14 @@ namespace UZSG.Worlds
         {
             Game.Console.Log("[World]: Saving objects...");
 
-            _saveData.Objects = new();
+            var objectSaves = new List<ObjectSaveData>();
             foreach (Transform c in objectsContainer) /// c is child
             {
                 if (!c.TryGetComponent<BaseObject>(out var obj)) continue;
                 
-                _saveData.Objects.Add(obj.WriteSaveData());
+                objectSaves.Add(obj.WriteSaveData());
             }
+            _saveData.Objects = objectSaves;
         }
         
         void LoadObjects()
@@ -164,6 +165,7 @@ namespace UZSG.Worlds
             Game.Console.Log("[World]: Saving entities...");
 
             _saveData.PlayerSaves = new();
+            _saveData.PlayerIdSaves = new();
             _saveData.EntitySaves = new();
             foreach (Transform c in entitiesContainer)
             {
@@ -292,7 +294,8 @@ namespace UZSG.Worlds
             Game.Entity.Spawn<Player>("player", spawnpoint, (info) =>
             {
                 Player player = info.Entity;
-                if (_saveData.PlayerIdSaves.TryGetValue(id.UserId.ToString(), out var playerSave))
+                var playerSaves = SaveData.IsNull(_saveData.PlayerIdSaves) ? new() : _saveData.PlayerIdSaves;
+                if (playerSaves.TryGetValue(id.UserId.ToString(), out var playerSave))
                 {
                     player.ReadSaveData(playerSave);
                 }
@@ -391,7 +394,9 @@ namespace UZSG.Worlds
         
         public WorldSaveData WriteSaveData()
         {
-            _saveData = new WorldSaveData();
+            _saveData.LastModifiedDate = DateTime.Now;
+            _saveData.LastPlayedDate = DateTime.Now;
+
             SaveObjects();
             SaveEntities();
 

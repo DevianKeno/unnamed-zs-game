@@ -43,7 +43,7 @@ namespace UZSG.Systems
         {
             if (!_objectsDict.ContainsKey(objectId))
             {
-                Game.Console.LogDebug($"Entity '{objectId}' does not exist!");
+                Game.Console.Debug($"Entity '{objectId}' does not exist!");
                 return;
             }
 
@@ -73,7 +73,7 @@ namespace UZSG.Systems
                     Destroy(go);
                 }
 
-                Game.Console.LogDebug($"Tried to place Object '{objectId}', but failed miserably");
+                Game.Console.Debug($"Tried to place Object '{objectId}', but failed miserably");
             };
         }
         
@@ -87,7 +87,7 @@ namespace UZSG.Systems
         {
             if (!_objectsDict.ContainsKey(objectId))
             {
-                Game.Console.LogDebug($"Entity '{objectId}' does not exist!");
+                Game.Console.Debug($"Entity '{objectId}' does not exist!");
                 return;
             }
 
@@ -117,7 +117,7 @@ namespace UZSG.Systems
                     Destroy(go);
                 }
 
-                Game.Console.LogDebug($"Tried to place Object '{objectId}', but failed miserably");
+                Game.Console.Debug($"Tried to place Object '{objectId}', but failed miserably");
             };
         }
         
@@ -129,7 +129,7 @@ namespace UZSG.Systems
             if (_cachedObjectModels.ContainsKey(id))
             {
                 /// lmao idk about this
-                Game.Console.LogWarning($"Object '{id}' is already loaded in memory.");
+                Game.Console.Warn($"Object '{id}' is already loaded in memory.");
                 return true;
             }
 
@@ -153,7 +153,7 @@ namespace UZSG.Systems
                 }
                 else
                 {
-                    Game.Console.LogWarning($"There is no Addressable Asset assigned to Object '{id}'.");
+                    Game.Console.Warn($"There is no Addressable Asset assigned to Object '{id}'.");
                     return false;
                 }
             }

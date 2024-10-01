@@ -61,6 +61,8 @@ namespace UZSG.Systems
 
         public async void LoadAudioAssets(AudioAssetsData data)
         {
+            if (data == null || data.AudioClips == null) return;
+            
             await LoadAudioAssetsAsync(data.AudioClips, (result) =>
             {
                 foreach (var item in result)

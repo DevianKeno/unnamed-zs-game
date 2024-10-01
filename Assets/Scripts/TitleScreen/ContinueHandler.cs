@@ -59,7 +59,7 @@ namespace UZSG.TitleScreen
                     saveDataList.Add(saveData);
                 } catch (Exception e)
                 {
-                    Game.Console.LogError($"Failed to deserialize level data for world '{Path.GetFileName(path)}'!");
+                    Game.Console.Error($"Failed to deserialize level data for world '{Path.GetFileName(path)}'!");
                     continue;
                 }
             }
@@ -100,13 +100,13 @@ namespace UZSG.TitleScreen
             playBtn.interactable = false;
             Game.Main.LoadScene(
                 new(){
-                    Name = "LoadingScreen",
+                    SceneToLoad = "LoadingScreen",
                     Mode = LoadSceneMode.Additive,
                     ActivateOnLoad = true,
                 },
                 onLoadSceneCompleted: () =>
                 {
-                    Game.World.LoadWorldAsync(selectedEntry.SaveData, OnLoadWorldCompleted);
+                    Game.World.LoadWorld(selectedEntry.SaveData, OnLoadWorldCompleted);
                 });
         }
 
@@ -114,21 +114,14 @@ namespace UZSG.TitleScreen
         {
             if (result.Status == Success)
             {
-                Game.Main.LoadScene(
-                    new(){
-                        Name = "World",
-                        Mode = LoadSceneMode.Single
-                    });
-                /// unload only on success lol
                 Game.Main.UnloadScene("TitleScreen");
                 Game.Main.UnloadScene("LoadingScreen");
             }
             else if (result.Status == Failed)
             {
-                Game.Main.UnloadScene("LoadingScreen");
                 Game.Main.LoadScene(
                     new(){
-                        Name = "TitleScreen",
+                        SceneToLoad = "TitleScreen",
                         Mode = LoadSceneMode.Single
                     });
                 playBtn.interactable = true;

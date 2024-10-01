@@ -110,12 +110,12 @@ namespace UZSG.Entities
 
             if (item.IsNone)
             {
-                Game.Console.LogWarning($"Item in {transform.position} is a None Item.");
+                Game.Console.Warn($"Item in {transform.position} is a None Item.");
                 return;
             }
             if (!item.Data.Model.IsSet())
             {
-                Game.Console.LogWarning($"The model asset of Item {item.Data.Id} is missing or not set.");
+                Game.Console.Warn($"The model asset of Item {item.Data.Id} is missing or not set.");
                 return;
             }
 

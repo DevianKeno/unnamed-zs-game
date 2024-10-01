@@ -159,14 +159,14 @@ namespace UZSG.Systems
             }
             catch
             {
-                Debug.Log(message);
+                UnityEngine.Debug.Log(message);
             }
         }
                 
         /// <summary>
         /// Log a debug message into the game's console.
         /// </summary>
-        public void LogDebug(object message)
+        public void Debug(object message)
         {
             if (EnableDebugMode)
             {
@@ -177,7 +177,7 @@ namespace UZSG.Systems
         /// <summary>
         /// Log a debug message into the game's console.
         /// </summary>
-        public void LogWarning(object message)
+        public void Warn(object message)
         {
             Log($"<color=\"orange\">[WARN]: {message}</color>");
         }
@@ -185,7 +185,7 @@ namespace UZSG.Systems
         /// <summary>
         /// Log a debug message into the game's console.
         /// </summary>
-        public void LogError(object message)
+        public void Error(object message)
         {
             Log($"<color=\"red\">[ERROR]: {message}</color>");
         }
@@ -196,8 +196,8 @@ namespace UZSG.Systems
         /// <param name="message"></param>
         public void LogAndUnityLog(object message)
         {
-            Game.Console.LogWarning(message);
-            Debug.LogWarning(message);
+            Game.Console.Warn(message);
+            UnityEngine.Debug.LogWarning(message);
         }
 
         #endregion

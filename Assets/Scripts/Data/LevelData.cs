@@ -1,4 +1,5 @@
 using System;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -10,6 +11,8 @@ namespace UZSG.Data
     {
         public string Name;
         [TextArea] public string Description;
-        public AssetReference Asset;
+        public string Dimensions;
+        public Texture Image;
+        public AssetReference Scene;
     }
 }

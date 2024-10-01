@@ -93,7 +93,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a564f78c58895641a40f701e678fb66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enabled: 0
+  Player: {fileID: 0}
+  Enabled: 0
+  Slerp: 1
+  cameraFpp: {fileID: 0}
   source: {fileID: 0}
   Target: {fileID: 7017140821926563795}
 --- !u!1 &1696359609177967074
@@ -163,18 +166,19 @@ MonoBehaviour:
   Player: {fileID: 8107631895800867322}
   Enabled: 1
   MinSpeed: 0.3
-  WalkBob:
-    Amplitude: -0.1
-    Frequency: 0.8
-    Recovery: 1
-    MaintainForwardLook: 0
-    LookDistance: 16
-  RunBob:
-    Amplitude: -0.15
-    Frequency: 0.85
-    Recovery: 1
-    MaintainForwardLook: 0
-    LookDistance: 16
+  viewmodelBobToUse:
+    Id: 
+    BobSettings:
+      Id: 
+      Threshold: 0
+      Amplitude: 0
+      Frequency: 0
+      Recovery: 0
+      MaintainForwardLook: 0
+      LookDistance: 0
+    Position: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Damping: 0
 --- !u!114 &6206635905438684906
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -277,8 +281,17 @@ MonoBehaviour:
   Player: {fileID: 8107631895800867322}
   Sensitivity: 0.1
   EnableControls: 1
+  SmoothMouse: 0
+  Smoothness: 1
+  ResetCameraPosition: 0
+  CrouchDuration: 0.666
+  CrouchOffset: {x: 0, y: -0.6, z: 0}
+  CrouchLookForward: 1
+  CrouchLookForwardDistance: 16
+  CrouchLookForwardDamping: 10
+  CrouchEase: 1
+  Holder: {fileID: 0}
   FPPCamera: {fileID: 8061303154701812193}
-  animator: {fileID: 1923179626101220164}
 --- !u!114 &5105896103929999244
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -292,7 +305,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   noAnimations: {fileID: 9100000, guid: 4ce682f0546f0cb44a74b9daab84bccb, type: 2}
-  animator: {fileID: 1923179626101220164}
+  animator: {fileID: 0}
+  armsHolder: {fileID: 0}
 --- !u!1 &3588054769931100981
 GameObject:
   m_ObjectHideFlags: 0
@@ -503,24 +517,40 @@ MonoBehaviour:
   Enabled: 1
   MinSpeed: 0.3
   WalkBob:
+    Id: 
+    Threshold: 0
     Amplitude: 1.05
     Frequency: 0.9
     Recovery: 6
     MaintainForwardLook: 1
     LookDistance: 10
+  JogBob:
+    Id: 
+    Threshold: 0
+    Amplitude: 0
+    Frequency: 0
+    Recovery: 0
+    MaintainForwardLook: 0
+    LookDistance: 0
   RunBob:
+    Id: 
+    Threshold: 0
     Amplitude: 3
     Frequency: 1.1
     Recovery: 8
     MaintainForwardLook: 1
     LookDistance: 10
   CrouchBob:
+    Id: 
+    Threshold: 0
     Amplitude: 2
     Frequency: 0.5
     Recovery: 6
     MaintainForwardLook: 1
     LookDistance: 10
   _bobToUse:
+    Id: 
+    Threshold: 0
     Amplitude: 0
     Frequency: 0
     Recovery: 0
@@ -691,6 +721,7 @@ MonoBehaviour:
   rayStart: {fileID: 3582013876043017136}
   rayCastRange: 1
   boxCollider: {fileID: 1504893056223954484}
+  _canCoyoteJump: 0
 --- !u!1 &6110845800208884272
 GameObject:
   m_ObjectHideFlags: 0
@@ -986,7 +1017,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 7670950353795725120}
+  - {fileID: 8076276169842739026}
   m_Father: {fileID: 2415535297879970657}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8334059616362085046
@@ -1081,18 +1112,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2daf140050a9d56449e80f50ff4d14b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  instanceId: 0
   entityData: {fileID: 11400000, guid: 49cc9582dd61df247ab5d3da96dd2cf1, type: 2}
-  audioSourceController: {fileID: 0}
-  CanPickUpItems: 1
-  playerEntityData: {fileID: 11400000, guid: 49cc9582dd61df247ab5d3da96dd2cf1, type: 2}
   attributes:
-    attributes: []
+    attributesReadOnly: []
+  DisplayName: Player
+  CanPickUpItems: 1
   inventory: {fileID: 6573940630714393000}
-  crafter: {fileID: 6457100291753886462}
+  crafting: {fileID: 0}
   audioController: {fileID: 5583044567273583744}
-  Blend: 1
+  hitboxes: {fileID: 0}
+  Damping: 1
+  CrossfadeTransitionDuration: 0.5
+  _targetX: 0
+  _targetY: 0
   animator: {fileID: 0}
   animatorFPP: {fileID: 0}
+  currentHealth: 0
 --- !u!114 &7617903866874250683
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1105,19 +1141,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1006cdb9b8f29d448b12136491ad149b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Player: {fileID: 8107631895800867322}
   AllowMovement: 0
-  TimeScale: 1
-  _runIsToggle: 0
-  _crouchIsToggle: 1
-  acceleration: 10
-  model: {fileID: 94713427562349016}
+  MoveAcceleration: 10
+  RotationDamping: 6
+  TurningAngle: 120
+  RunIsToggle: 0
+  CrouchIsToggle: 1
+  usePhysicsJump: 1
+  jumpHeight: 0
+  jumpTime: 0
+  internalGravity: 0
+  _isAnyMovePressed: 0
+  _isMovingBackwards: 0
+  _isMovingSideways: 0
+  _isWalking: 0
+  _isRunning: 0
+  _isCrouching: 0
+  _hasJumped: 0
+  _inAir: 0
+  _canCoyote: 0
+  _fallSpeedAcceleration: 2
+  _targetMoveSpeed: 0
+  _frameVelocity: {x: 0, y: 0, z: 0}
+  Model: {fileID: 0}
   rb: {fileID: 8394152581638175708}
   groundChecker: {fileID: 6313547803532779528}
-  groundCheckerObject: {fileID: 1807161492040155152}
-  groundMask:
-    serializedVersion: 2
-    m_Bits: 512
 --- !u!114 &7471560326920745413
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1144,7 +1192,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83dcb9e909c595f4fbc9bf79ad9c9e20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Player: {fileID: 8107631895800867322}
   Radius: 0.2
   MaxInteractDistance: 3
   HoldThresholdMilliseconds: 200
@@ -1162,12 +1209,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Player: {fileID: 8107631895800867322}
   heldItem: {fileID: 0}
+  AppendArmaturePrefix: 1
+  Prefix: 45
   AppendAnimationPrefixes: 1
   cameraController: {fileID: 4657274095525333481}
   armsController: {fileID: 5105896103929999244}
   viewmodelController: {fileID: 2004487973244473114}
+  recoilCamera: {fileID: 0}
   cameraAnimationTarget: {fileID: 9155779205102779035}
   gunMuzzleController: {fileID: 0}
+  meleeWeaponCollider: {fileID: 0}
   heldItemsContainer: {fileID: 8334059616362085046}
   meleeWeaponControllerPrefab: {fileID: 1441765491178271053, guid: e83ed1a86c94c5e43b675ea1a3e947c1, type: 3}
   gunWeaponControllerPrefab: {fileID: 1441765491178271053, guid: 7bf816374faf0a44f8a0520f423fd2a8, type: 3}
@@ -1186,6 +1237,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _lockedUntil: 0
   _isTransitioning: 0
+  AllowReentry: 0
   InState: 0
   DebugMode: 0
 --- !u!114 &2848331815560721266
@@ -1202,6 +1254,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _lockedUntil: 0
   _isTransitioning: 0
+  AllowReentry: 0
   InState: 0
   DebugMode: 0
 --- !u!114 &6219494926804465756
@@ -1231,15 +1284,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b363c6981a7273b429d2011edad97652, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SiteRange: 12
-  AttackRange: 1
-  CritterSiteRange: 20
-  EnemyLayer:
+  player: {fileID: 0}
+  Layers:
     serializedVersion: 2
-    m_Bits: 16384
-  WildlifeLayer:
-    serializedVersion: 2
-    m_Bits: 65536
+    m_Bits: 0
+  PlayerDetectionRange: 0
+  PlayerAttackableRange: 0
 --- !u!54 &8394152581638175708
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1555,13 +1605,8 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4494d796b17db674e826142a9b6262fa, type: 3}
---- !u!95 &1923179626101220164 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 1746032627318572230, guid: 4494d796b17db674e826142a9b6262fa, type: 3}
-  m_PrefabInstance: {fileID: 183423563076265858}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &7670950353795725120 stripped
+--- !u!4 &8076276169842739026 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 7565790595323416770, guid: 4494d796b17db674e826142a9b6262fa, type: 3}
+  m_CorrespondingSourceObject: {fileID: 8259342922067288272, guid: 4494d796b17db674e826142a9b6262fa, type: 3}
   m_PrefabInstance: {fileID: 183423563076265858}
   m_PrefabAsset: {fileID: 0}

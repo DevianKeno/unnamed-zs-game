@@ -5,14 +5,21 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UZSG.Data;
 using UZSG.Systems;
-
+using UZSG.UI;
 using static UZSG.Systems.Status;
 
 namespace UZSG.TitleScreen
 {
     public class NewWorldHandler : MonoBehaviour
     {
+        [SerializeField] MapSelectorHandler mapSelector;
+
+        [Header("Entries")]
+        [SerializeField] MapEntryUI mapEntry;
+
+        [Header("Components")]
         [SerializeField] TextMeshProUGUI messageTmp;
         [SerializeField] TMP_InputField worldnameInput;
         [SerializeField] Button createBtn;
@@ -26,6 +33,14 @@ namespace UZSG.TitleScreen
         {
             HideMessage();
             createBtn.interactable = true;
+            mapSelector.OnEntryClicked += OnMapSelect;
+        }
+
+        void OnMapSelect(MapEntryUI entry)
+        {
+            if (entry == null) return;
+
+            mapEntry.SetLevelData(entry.LevelData);
         }
 
         public void CreateWorld()
@@ -42,6 +57,7 @@ namespace UZSG.TitleScreen
             var options = new CreateWorldOptions()
             {
                 WorldName = worldnameInput.text,
+                MapId = mapEntry.LevelData.Id,
                 CreatedDate = DateTime.Now,
                 LastModifiedDate = DateTime.Now,
             };
@@ -53,21 +69,15 @@ namespace UZSG.TitleScreen
         {
             if (result.Status == Success)
             {
-                // Game.Main.LoadScene(
-                //     new(){
-                //         Name = "World",
-                //         Mode = LoadSceneMode.Additive,
-                //         ActivateOnLoad = true
-                //     });
                 Game.Main.LoadScene(
                     new(){
-                        Name = "LoadingScreen",
+                        SceneToLoad = "LoadingScreen",
                         Mode = LoadSceneMode.Additive,
                         ActivateOnLoad = true,
                     },
                     onLoadSceneCompleted: () =>
                     {
-                        Game.World.LoadWorldAsync(result.Savepath, OnLoadWorldCompleted);
+                        Game.World.LoadWorld(result.Savepath, OnLoadWorldCompleted);
                     });
             }
             else if (result.Status == Failed)
@@ -81,21 +91,14 @@ namespace UZSG.TitleScreen
         {
             if (result.Status == Success)
             {
-                Game.Main.LoadScene(
-                    new(){
-                        Name = "World",
-                        Mode = LoadSceneMode.Single
-                    });
-                /// unload only on success lol
                 Game.Main.UnloadScene("TitleScreen");
                 Game.Main.UnloadScene("LoadingScreen");
             }
             else if (result.Status == Failed)
             {
-                Game.Main.UnloadScene("LoadingScreen");
                 Game.Main.LoadScene(
                     new(){
-                        Name = "TitleScreen",
+                        SceneToLoad = "TitleScreen",
                         Mode = LoadSceneMode.Single
                     });
             }

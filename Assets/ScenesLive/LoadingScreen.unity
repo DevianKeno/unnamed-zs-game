@@ -211,7 +211,7 @@ GameObject:
   - component: {fileID: 133071328}
   - component: {fileID: 133071327}
   m_Layer: 5
-  m_Name: Image
+  m_Name: Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -261,7 +261,7 @@ MonoBehaviour:
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 0
-  m_FillAmount: 0.5
+  m_FillAmount: 0
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
@@ -456,10 +456,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -503,9 +503,9 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 19777603}
-  - {fileID: 967465285}
-  - {fileID: 1601247509}
   - {fileID: 1708257094}
+  - {fileID: 1601247509}
+  - {fileID: 967465285}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -526,7 +526,7 @@ GameObject:
   - component: {fileID: 967465287}
   - component: {fileID: 967465286}
   m_Layer: 5
-  m_Name: Logo
+  m_Name: Logo Loading Bar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -771,7 +771,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Creating world...
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 960afe1775a30704d9fa63d5796f15b7, type: 2}
   m_sharedMaterial: {fileID: 7478795734260216624, guid: 960afe1775a30704d9fa63d5796f15b7, type: 2}
@@ -860,7 +860,7 @@ GameObject:
   - component: {fileID: 1916686806}
   m_Layer: 0
   m_Name: LOADING SCREEN
-  m_TagString: Untagged
+  m_TagString: SceneHandler
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -892,10 +892,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 207143d0b0d0ab043ae8ec935193c281, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  progress: 0.593
+  progress: 0
   messageTmp: {fileID: 1708257095}
   tipTmp: {fileID: 483386891}
-  logo: {fileID: 967465285}
+  logoLoadingFill: {fileID: 133071327}
   progressRect: {fileID: 133071326}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

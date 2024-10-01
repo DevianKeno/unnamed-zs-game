@@ -73,7 +73,7 @@ namespace UZSG.Systems
         {
             if (!_entitiesDict.ContainsKey(entityId))
             {
-                Game.Console.LogDebug($"Tried to spawn entity '{entityId}' but Id does not exists.");
+                Game.Console.Debug($"Tried to spawn entity '{entityId}' but Id does not exists.");
                 return;
             }
 
@@ -104,7 +104,7 @@ namespace UZSG.Systems
                     Destroy(go);
                 }
 
-                Game.Console.LogDebug($"Tried to spawn entity {entityId}, but failed miserably");
+                Game.Console.Debug($"Tried to spawn entity {entityId}, but failed miserably");
             };
         }
 
@@ -118,7 +118,7 @@ namespace UZSG.Systems
         {
             if (!_entitiesDict.ContainsKey(entityId))
             {
-                Game.Console.LogDebug($"Entity '{entityId}' does not exist!");
+                Game.Console.Debug($"Entity '{entityId}' does not exist!");
                 return;
             }
 
@@ -152,7 +152,7 @@ namespace UZSG.Systems
                     Destroy(go);
                 }
 
-                Game.Console.LogDebug($"Tried to spawn entity {entityId}, but failed miserably");
+                Game.Console.Debug($"Tried to spawn entity {entityId}, but failed miserably");
             };
         }
         
@@ -160,7 +160,7 @@ namespace UZSG.Systems
         {            
             if (!_entitiesDict.ContainsKey("item")) /// this has a zero chance to fail >:(
             {
-                Game.Console.LogDebug($"Entity '{id}' does not exist!");
+                Game.Console.Debug($"Entity '{id}' does not exist!");
                 return;
             }
 
@@ -179,7 +179,7 @@ namespace UZSG.Systems
                         
                         if (EnableLogging)
                         {
-                            Game.Console.LogDebug($"Spawned item {id} at ({position.x}, {position.y}, {position.z})");
+                            Game.Console.Debug($"Spawned item {id} at ({position.x}, {position.y}, {position.z})");
                         }
                         return;
                     }

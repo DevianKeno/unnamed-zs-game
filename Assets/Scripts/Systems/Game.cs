@@ -168,7 +168,7 @@ namespace UZSG.Systems
 
         public class LoadSceneOptions
         {
-            public string Name { get; set; }
+            public string SceneToLoad { get; set; }
             public LoadSceneMode Mode { get; set; }
             public bool ActivateOnLoad { get; set; } = true;
             public float DelaySeconds { get; set; }
@@ -220,13 +220,14 @@ namespace UZSG.Systems
         IEnumerator LoadSceneCoroutine(LoadSceneOptions options, Action onLoadSceneCompleted)
         {
             this.onLoadSceneCompleted += onLoadSceneCompleted;
-            var asyncOp = SceneManager.LoadSceneAsync(options.Name);
-            asyncOp.allowSceneActivation = false;
+
+            var asyncOp = SceneManager.LoadSceneAsync(options.SceneToLoad, options.Mode);
             while (asyncOp.progress < 0.9f)
             {
                 yield return null;
             }
-            asyncOp.allowSceneActivation = options.ActivateOnLoad;
+            asyncOp.allowSceneActivation = true;
+
             this.onLoadSceneCompleted?.Invoke();
             this.onLoadSceneCompleted = null;
         }

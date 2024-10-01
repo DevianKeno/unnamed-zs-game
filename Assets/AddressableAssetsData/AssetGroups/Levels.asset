@@ -22,6 +22,17 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8a0d61125fae41b4595c6422cb6c67f7
+    m_Address: Assets/Scenes/DEMO.unity
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3f875a22dd2173d488111961aa9c8648
+    m_Address: Assets/Scenes/GIANTEST.unity
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - GIANTEST
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: d6b1e406a4a37f140ab8a82b4ab55278, type: 2}
   m_SchemaSet:

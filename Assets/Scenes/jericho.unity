@@ -6215,7 +6215,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5666756653608356092, guid: 045083471b927524cb2dc0f04bb61987, type: 3}
       propertyPath: numberOfPlayers
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5666756653608356092, guid: 045083471b927524cb2dc0f04bb61987, type: 3}
       propertyPath: raidEventPrefab

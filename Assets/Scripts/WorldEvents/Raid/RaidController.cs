@@ -116,7 +116,7 @@ namespace UZSG.Worlds.Events.Raid
             float enemyMultiplier = enemiesPerPlayer * (worldDifficulty * difficultyMultiplier);
             int totalEnemies = Mathf.FloorToInt(enemiesPerPlayer + enemyMultiplier);
 
-            switch (UnityEngine.Random.Range(0, 1))
+            switch (UnityEngine.Random.Range(1, 2))
             {
                 case 0:
                     Game.Console.Log($"<color=#ad0909>Spawning blob formation.</color>");

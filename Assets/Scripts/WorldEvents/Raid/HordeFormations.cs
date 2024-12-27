@@ -41,9 +41,14 @@ namespace UZSG.Worlds.Events.Raid
 
         void SpawnAsBlob()
         {
+            GetRandomPositionAroundPlayer();
+            float spreadRadius = _raidInstance.mobCount * spread;
+
             for (int i = 0; i < _raidInstance.mobCount; i++)
             {
-                SpawnZombie(GetRandomPositionAroundPlayer(_raidInstance.mobCount * spread));
+                Vector2 randomSpread = Random.insideUnitCircle * spreadRadius;
+                Vector3 position = _selectedPoint.Value + new Vector3(randomSpread.x, 0, randomSpread.y);
+                SpawnZombie(position);
             }
 
             _facingDirection = null;
@@ -52,17 +57,22 @@ namespace UZSG.Worlds.Events.Raid
 
         void SpawnAsLine()
         {
-            // Vector3 lineStart = player.transform.position + player.transform.right * -10f;
-            // Vector3 lineEnd = player.transform.position + player.transform.right * 10f;
+            GetRandomPositionAroundPlayer();
+            Vector3 lineStart = _selectedPoint.Value;
+            Vector3 lineEnd = lineStart - player.transform.position.normalized * _raidInstance.mobCount;
 
-            // for (int i = 0; i < raidInstance.mobCount; i++)
-            // {
-            //     float t = i / (float)(raidInstance.mobCount - 1);
-            //     Vector3 spawnPosition = Vector3.Lerp(lineStart, lineEnd, t);
-            //     spawnPosition += player.transform.forward * 10f;
-            //     SpawnZombie(spawnPosition);
-            // }
-            throw new System.NotImplementedException();
+            for (int i = 0; i < _raidInstance.mobCount; i++)
+            {
+                float x = Random.Range(lineStart.x, lineEnd.x);
+                float z = Random.Range(lineStart.z, lineEnd.z);
+
+                Vector3 spawnPosition = new Vector3(x, lineStart.y, z);
+
+                SpawnZombie(spawnPosition);
+            }
+
+            _facingDirection = null;
+            _selectedPoint = null;
         }
 
         void SpawnInWaves()
@@ -92,7 +102,7 @@ namespace UZSG.Worlds.Events.Raid
             });
         }
 
-        Vector3 GetRandomPositionAroundPlayer(float spreadRadius)
+        void GetRandomPositionAroundPlayer()
         {
             if (_selectedPoint == null)
             {
@@ -101,11 +111,6 @@ namespace UZSG.Worlds.Events.Raid
                 Vector2 randomPointAroundPlayer = new Vector2(Mathf.Cos(randomAngle), Mathf.Sin(randomAngle)) * randomRadius;
                 _selectedPoint = player.transform.position + new Vector3(randomPointAroundPlayer.x, 0, randomPointAroundPlayer.y);
             }
-
-            Vector2 randomSpread = Random.insideUnitCircle * spreadRadius;
-            Vector3 position = _selectedPoint.Value + new Vector3(randomSpread.x, 0, randomSpread.y);
-
-            return position;
         }
 
         void FaceTowardsPlayer(Entity entity)

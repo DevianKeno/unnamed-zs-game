@@ -59,14 +59,15 @@ namespace UZSG.Worlds.Events.Raid
         {
             GetRandomPositionAroundPlayer();
             Vector3 lineStart = _selectedPoint.Value;
-            Vector3 lineEnd = lineStart - player.transform.position.normalized * _raidInstance.mobCount;
+            Vector3 lineDirection = (player.transform.position - lineStart).normalized;
 
             for (int i = 0; i < _raidInstance.mobCount; i++)
             {
-                float x = Random.Range(lineStart.x, lineEnd.x);
-                float z = Random.Range(lineStart.z, lineEnd.z);
+                float distanceAlongLine = i * spread;
+                Vector3 linePosition = lineStart + lineDirection * distanceAlongLine;
 
-                Vector3 spawnPosition = new Vector3(x, lineStart.y, z);
+                Vector2 randomSpread = Random.insideUnitCircle * spread;
+                Vector3 spawnPosition = linePosition + new Vector3(randomSpread.x, 0, randomSpread.y);
 
                 SpawnZombie(spawnPosition);
             }

@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace UZSG
 {
     public static class Vector3Ext
@@ -46,7 +48,6 @@ namespace UZSG
             }
         }
 
-
         private static bool IsValidTag(string tag)
         {
             for (int i = 0; i < UnityEditorInternal.InternalEditorUtility.tags.Length; i++)
@@ -57,6 +58,11 @@ namespace UZSG
                 }
             }
             return false;
+        }
+
+        public static bool Includes(this LayerMask layerMask, int layer)
+        {
+            return (layerMask.value & (1 << layer)) != 0;
         }
     }
 }

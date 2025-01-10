@@ -11,7 +11,7 @@ using UZSG.Systems;
 
 namespace UZSG.UI
 {
-    public class ResourceHealthRingUI : Window
+    public class ResourceHealthRingUI : UIElement
     {
         public float MaxValue;
         public float CurrentValue;
@@ -19,10 +19,7 @@ namespace UZSG.UI
         [SerializeField] float progress;
         public float Progress
         {
-            get
-            {
-                return progress;
-            }
+            get => progress;
             set
             {
                 progress = value;
@@ -31,36 +28,26 @@ namespace UZSG.UI
         }
         public string Label
         {
-            get
-            {
-                return labelText.text;
-            }
-            set
-            {
-                labelText.text = value;
-            }
+            get => labelText.text;
+            set => labelText.text = value;
         }
         public Sprite Icon
         {
-            get
-            {
-                return icon.sprite;
-            }
-            set
-            {
-                icon.sprite = value;
-            }
+            get => icon.sprite;
+            set => icon.sprite = value;
         }
 
         Attributes.Attribute health;
 
+        [SerializeField] GameObject healthRing;
         [SerializeField] Image fill;
         [SerializeField] TextMeshProUGUI valueText;
         [SerializeField] TextMeshProUGUI labelText;
         [SerializeField] Image icon;
 
-        void OnValidate()
+        protected override void OnValidate()
         {
+            base.OnValidate();
             Refresh();
         }
 
@@ -95,6 +82,11 @@ namespace UZSG.UI
         {
             fill.fillAmount = progress;
             valueText.text = $"{Mathf.FloorToInt(MaxValue * progress)}";
+        }
+
+        public void SetHealthRingVisible(bool visible)
+        {
+            healthRing.gameObject.SetActive(visible);
         }
 
         public void DisplayResource(Resource resource)

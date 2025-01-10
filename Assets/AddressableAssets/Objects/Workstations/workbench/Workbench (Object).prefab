@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 3140816948497885021}
   - component: {fileID: 2760182430500396591}
   - component: {fileID: 1110507804325695722}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Workbench (Object)
   m_TagString: Interactable
   m_Icon: {fileID: 0}
@@ -52,8 +52,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectData: {fileID: 11400000, guid: 05f76cb0af4286140b3e6d534bd8b034, type: 2}
   attributes:
-    attributes: []
-  audioController: {fileID: 291380293262316487}
+    attributesReadOnly: []
   animator: {fileID: 0}
   crafter: {fileID: 1363332934072446927}
   EnableDebugging: 0
@@ -73,28 +72,38 @@ MonoBehaviour:
     _slots:
     - index: 0
       item:
-        _itemData: {fileID: 0}
-        _count: 0
+        itemData: {fileID: 0}
+        count: 0
+        attributes:
+          attributesReadOnly: []
       SlotType: 1
     - index: 1
       item:
-        _itemData: {fileID: 0}
-        _count: 0
+        itemData: {fileID: 0}
+        count: 0
+        attributes:
+          attributesReadOnly: []
       SlotType: 1
     - index: 2
       item:
-        _itemData: {fileID: 0}
-        _count: 0
+        itemData: {fileID: 0}
+        count: 0
+        attributes:
+          attributesReadOnly: []
       SlotType: 1
     - index: 3
       item:
-        _itemData: {fileID: 0}
-        _count: 0
+        itemData: {fileID: 0}
+        count: 0
+        attributes:
+          attributesReadOnly: []
       SlotType: 1
     - index: 4
       item:
-        _itemData: {fileID: 0}
-        _count: 0
+        itemData: {fileID: 0}
+        count: 0
+        attributes:
+          attributesReadOnly: []
       SlotType: 1
 --- !u!114 &291380293262316487
 MonoBehaviour:

@@ -1,0 +1,280 @@
+using System;
+using System.Collections.Generic;
+
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+using TMPro;
+
+using UZSG.Entities;
+using UZSG.Inventory;
+using UZSG.Systems;
+using UZSG.Items;
+using UZSG.UI.HUD;
+using UZSG.Items.Weapons;
+using UZSG.Data;
+using UnityEngine.Serialization;
+
+namespace UZSG.UI.HUD
+{
+    public class PlayerHUDVitalsUI : UIElement
+    {
+        public Player Player;
+        [Space]
+        
+        ItemSlot _lastSelectedSlot;
+        Dictionary<int, ItemSlotUI> _equipmentSlotUIs = new();
+        Dictionary<int, ItemSlotUI> _hotbarSlotUIs = new();
+        
+        [Header("Elements")]
+        public GameObject hotbar;
+        public AmmoCounterHUD AmmoCounter;
+        public GameObject equipment;
+        [FormerlySerializedAs("equippedWeaponTMP")]
+        public TextMeshProUGUI equippedItemTMP;
+        public WeaponDetailsUI weaponDetails;
+        public AttributeBar HealthBar;
+        public StaminaBar StaminaBar;
+        public AttributeBar HungerBar;
+        public AttributeBar HydrationBar;
+        public AttributeBar XPBar;
+        Selector selector;
+
+        internal void Initialize(Player player)
+        {
+            if (player == null)
+            {
+                Game.Console.LogAndUnityLog($"Invalid player.");
+                return;
+            }
+
+            Player = player;
+            BindPlayerAttributes();
+            InitializeEquipmentSlots();
+            InitializeHotbarSlots();
+            InitializeSelector();
+            InitializeEvents();
+        }
+
+        void InitializeHotbarSlots()
+        {
+            /// Hotbar slots are created in runtime
+            for (int i = 0; i < Player.Inventory.Hotbar.SlotCount; i++)
+            {
+                int index = 3 + i; /// 3 is hotbar starting index
+                var slotUI = Game.UI.Create<ItemSlotUI>("Item Slot");
+                slotUI.name = $"Hotbar Slot ({i})";
+                slotUI.transform.SetParent(hotbar.transform);
+                slotUI.Link(Player.Inventory.Hotbar[i]);
+                slotUI.OnMouseDown += OnHotbarSlotClicked;
+                _hotbarSlotUIs[index] = slotUI;
+            }
+        }
+
+        void InitializeSelector()
+        {
+            selector = Game.UI.Create<Selector>("Selector");
+            selector.EnableAnimations = false;
+            selector.Hide();
+        }
+
+        void InitializeEquipmentSlots()
+        {
+            /// Equipment slots are already set
+            int index = 1; /// Only 1 (mainhand) and 2 (offhand), as 0 (arms) is not displayed :)
+            foreach (Transform child in equipment.transform)
+            {
+                if (child.TryGetComponent<ItemSlotUI>(out var slotUI)) /// there might be other GameObjects
+                {
+                    slotUI.Link(Player.Inventory.Equipment[index]);
+                    slotUI.OnMouseDown += OnEquipmentSlotClick;
+                    _equipmentSlotUIs[index] = slotUI;
+                    index++;
+                }
+            }
+        }
+
+        void InitializeEvents()
+        {
+            Player.FPP.OnHeldItemChanged += OnHeldItemChanged;
+            Player.FPP.OnFPPControllerChanged += OnFPPControllerChanged;
+            Player.FPP.OnSelectedHotbarChanged += OnSelectedHotbarChanged;
+            Player.Inventory.Bag.OnSlotItemChanged += OnBagSlotItemChanged;
+
+            /// Gui events
+            Player.InventoryGUI.FrameController.OnSwitchFrame += OnInvSwitchFrame;
+            Player.InventoryGUI.OnOpened += () =>
+            {
+                bool showEquipment = Player.InventoryGUI.FrameController.CurrentFrame.Name == "equipment";
+                equipment.gameObject.SetActive(showEquipment);
+            };
+            Player.InventoryGUI.OnClosed += () =>
+            {
+                equipment.gameObject.SetActive(true);
+            };
+        }
+
+        void BindPlayerAttributes()
+        {
+            HealthBar.BindAttribute(Player.Attributes.Get("health"));
+            StaminaBar.BindAttribute(Player.Attributes.Get("stamina"));
+            HungerBar.BindAttribute(Player.Attributes.Get("hunger"));
+            HydrationBar.BindAttribute(Player.Attributes.Get("hydration"));
+            XPBar.BindAttribute(Player.Attributes.Get("experience"));
+        }
+
+
+        #region Event callbacks (from all over)
+
+        void OnHotbarSlotClicked(object sender, ItemSlotUI.ClickedContext e)
+        {
+            var slot = ((ItemSlotUI) sender).Slot;
+
+            if (!Player.InventoryGUI.IsVisible) return;
+
+            if (e.Button == PointerEventData.InputButton.Left)
+            {
+                if (Player.InventoryGUI.IsHoldingItem)
+                {
+                    var heldItem = Player.InventoryGUI.HeldItem;
+
+                    if (slot.IsEmpty || slot.Item.CompareTo(heldItem))
+                    {
+                        slot.TryCombine(Player.InventoryGUI.TakeHeldItem(), out var excess);
+                        if (!excess.IsNone)
+                        {
+                            Player.InventoryGUI.HoldItem(excess);
+                        }
+                    }
+                    else /// item diff, swap
+                    {
+                        var tookItem = slot.TakeAll();
+                        var prevHeld = Player.InventoryGUI.SwapHeldWith(tookItem);
+                        slot.Put(prevHeld);
+                    }
+                }
+                else
+                {
+                    if (slot.IsEmpty) return;
+
+                    Player.InventoryGUI.HoldItem(slot.TakeAll());
+                    _lastSelectedSlot = slot;
+                }
+            }
+            else if (e.Button == PointerEventData.InputButton.Right)
+            {
+
+            }
+        }
+
+        void OnEquipmentSlotClick(object sender, ItemSlotUI.ClickedContext e)
+        {
+            if (!Player.InventoryGUI.IsVisible) return;
+
+            var slotUI = (ItemSlotUI) sender; 
+            var slot = slotUI.Slot; 
+
+            if (slot.IsEmpty) return;
+
+            if (Player.InventoryGUI.ItemOptions.IsVisible)
+            {
+                Player.InventoryGUI.ItemOptions.Destroy();
+            }
+            
+            /// Create equipped Item options
+            var options = Game.UI.Create<ChoiceWindow>("Choice Window", show: false);
+            Game.UI.CreateBlocker(forElement: options, onClick: () =>
+            {
+                options.Destroy();
+            });
+
+            options.Pivot = UI.Pivot.BottomRight;
+            options.Position = Vector2.zero;
+            options.Label = slot.Item.Data.DisplayName;
+            
+            options.AddChoice("Unequip")
+            .AddCallback(() =>
+            {
+                if (Player.Inventory.Bag.IsFull) return;
+
+            });
+
+            options.Show();
+        }
+
+        void OnBagSlotItemChanged(object sender, ItemSlot.ItemChangedContext e)
+        {
+            if (e.OldItem.Data is AmmoData || e.NewItem.Data is AmmoData)
+            if (Player.FPP.FPPItemController is GunWeaponController gun)
+            {
+                AmmoCounter.SetReserve(gun.Reserve);
+            }
+        }
+
+        void OnHeldItemChanged(ItemData itemData)
+        {
+            if (itemData == null) return;
+
+            if (!string.IsNullOrEmpty(itemData.DisplayName))
+            {
+                equippedItemTMP.text = itemData.DisplayName;
+            }
+            else
+            {
+                equippedItemTMP.text = "";
+            }
+        }
+
+        void OnFPPControllerChanged(FPPItemController fppItemController)
+        {
+            if (fppItemController == null) return;
+
+            if (fppItemController is GunWeaponController gun)
+            {
+                weaponDetails.SetGunVariant();
+                AmmoCounter.DisplayWeaponStats(gun);
+            }
+            else
+            {
+                weaponDetails.SetMeleeVariant();
+            }
+
+            equippedItemTMP.text = fppItemController.ItemData.DisplayName;
+        }
+
+        void OnSelectedHotbarChanged(int index)
+        {
+            if (index < 3)
+            {
+                if (_equipmentSlotUIs.ContainsKey(index))
+                {
+                    selector.Select(_equipmentSlotUIs[index].transform as RectTransform);
+                    selector.Show();
+                }
+            }
+            else
+            {
+                if (_hotbarSlotUIs.ContainsKey(index))
+                {
+                    selector.Select(_hotbarSlotUIs[index].transform as RectTransform);
+                    selector.Show();
+                }
+            }
+
+        }
+
+        void OnInvSwitchFrame(FrameController.SwitchFrameContext context)
+        {
+            if (context.Next == "equipment")
+            {
+                equipment.gameObject.SetActive(true);
+            }
+            else
+            {
+                equipment.gameObject.SetActive(false);
+            }
+        }
+
+        #endregion
+    }
+}

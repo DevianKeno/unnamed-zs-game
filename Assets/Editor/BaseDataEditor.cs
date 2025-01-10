@@ -14,7 +14,7 @@ namespace UZSG.UnityEditor
         
         protected virtual void OnEnable()
         {
-            sourceId = serializedObject.FindProperty("SourceId");
+            sourceId = serializedObject.FindProperty("Namespace");
             id = serializedObject.FindProperty("Id");
             tags = serializedObject.FindProperty("Tags");
         }

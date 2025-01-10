@@ -4,14 +4,14 @@ using UZSG.Data;
 
 namespace UZSG.Attacks
 {
-    public enum MeleeSwingType {
+    public enum CastType {
         Raycast, Swingcast
     }
 
     [Serializable]
     public struct MeleeAttackParameters
     {
-        public MeleeSwingType SwingType { get; set; }
+        public CastType CastType { get; set; }
         public float Range { get; set; }
         public float Duration { get; set; }
         public float Delay { get; set; }
@@ -21,7 +21,13 @@ namespace UZSG.Attacks
         public LayerMask Layer { get; set; }
         public int RayCount { get; set; }
         public float AngleWidth { get; set; }
+        /// <summary>
+        /// Whether to flip the swing direction.
+        /// </summary>
+        public bool Flip { get; set; }
         public Vector3 RotationOffset { get; set; }
         public bool Visualize { get; set; }
+        public bool IncludeRotationOffset { get; set; }
+
     }
 }

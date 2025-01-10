@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-
+using UnityEngine.Serialization;
 using UZSG.Crafting;
 using UZSG.Data;
 
 namespace UZSG.Data
 {
-    public enum ItemType { Item, Weapon, Tool, Equipment, Armor, Accessory }
+    public enum ItemType { Item, Weapon, Tool, Equipment, Armor, Accessory, Tile }
     public enum ItemSubtype { None, Useable, Food, Consumable, Tool, Weapon, Equipable, Accessory }
 
     [Serializable]
@@ -18,7 +18,8 @@ namespace UZSG.Data
     public class ItemData : BaseData
     {
         [Header("Item Data")]
-        public string Name;
+        [FormerlySerializedAs("Name")]
+        public string DisplayName;
         [TextArea] public string Description;
         public AssetReference Model;
         public Sprite Sprite;
@@ -28,7 +29,13 @@ namespace UZSG.Data
         public bool IsStackable => StackSize > 1;
         public int StackSize = 1;
         public bool IsFuel;
-        public int FuelDuration;
+        [FormerlySerializedAs("FuelDuration")]
+        public int FuelDurationSeconds;
+        /// <summary>
+        /// If this Item is a placeable Object.
+        /// </summary>
+        public bool IsObject;
+        public ObjectData ObjectData;
 
         /// Crafting
         public bool IsMaterial;

@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72e1d5853de97a54aa491bcf19eb9d39, type: 3}
   m_Name: katana
   m_EditorClassIdentifier: 
+  Namespace: uzsg
   Id: katana
+  Tags: []
   Name: Katana
   Description: 
   Model:
@@ -26,13 +28,15 @@ MonoBehaviour:
   Weight: 1.6
   StackSize: 1
   IsFuel: 0
-  FuelDuration: 0
+  FuelDurationSeconds: 0
+  IsObject: 0
+  ObjectData: {fileID: 0}
   IsMaterial: 0
   IsCraftable: 1
   Recipes: []
   SourceDescription: 
   AudioAssetsData: {fileID: 11400000, guid: b148036c70abbf04ea8e6a34d2c1f0fd, type: 2}
-  HotbarIcon: {fileID: 0}
+  HotbarIcon: {fileID: 21300000, guid: e458454d59acac3498fea668968eae06, type: 3}
   Category: 0
   Attributes:
   - data: {fileID: 11400000, guid: 8065c7b302bdaf142aedd6761e5bbb15, type: 2}
@@ -52,11 +56,13 @@ MonoBehaviour:
     BaseDamage: 0
     BaseCritStrike: 0
     BaseCritDamage: 0
+    ComboCount: 3
   RangedAttributes:
     FiringModes: 0
     RoundsPerMinute: 0
     ClipSize: 0
     ReloadSpeed: 0
+    Ammo: {fileID: 0}
     Spread: 0
     BurstFireCount: 0
     BurstFireInterval: 0
@@ -88,16 +94,18 @@ MonoBehaviour:
       Duration: 0
       RecoverySpeed: 0
       RecoveryDuration: 0
-  armsAnimations: {fileID: 0}
-  viewmodel:
-    m_AssetGUID: 002eb34bcdb99af42851b5e064f55b72
+  armsAnimations: {fileID: 9100000, guid: 5fed95e4c06b23e4fb6d4dae1f812d5f, type: 2}
+  viewmodelAsset:
+    m_AssetGUID: d9cca734af0fddd4da51aae80de100a9
     m_SubObjectName: 
     m_SubObjectType: 
-    m_EditorAssetChanged: 1
-  viewmodelOffsets:
-    Position: {x: 0, y: 0, z: 0}
-    Rotation: {x: 0, y: 0, z: 0}
-  anims:
+    m_EditorAssetChanged: 0
+  viewmodelSettings:
+    UseOffsets: 0
+    PositionOffset: {x: 0, y: 0, z: 0}
+    RotationOffset: {x: 0, y: 0, z: 0}
+    BobbingPresets: []
+  animationData:
     Idle: 
     Move: 
     Primary: 

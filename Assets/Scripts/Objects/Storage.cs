@@ -24,19 +24,12 @@ namespace UZSG.Objects
         public StorageGUI GUI => gui;
         
         public event EventHandler<IInteractArgs> OnInteract;
-
         
-        protected override void Start()
+        public override void Place()
         {
-            base.Start();
-
-            /// TESTING ONLY
-            /// Place() should execute when the object is placed on the world :)
-            Place(); 
-        }
-
-        protected virtual void Place()
-        {
+            if (IsPlaced) return;
+            IsPlaced = true;
+            
             container = new(StorageData.Size);
             
             LoadGUIAsset(StorageData.GUI, onLoadCompleted: (gui) =>
@@ -61,21 +54,21 @@ namespace UZSG.Objects
             gui.SetPlayer(player);
 
             player.UseObjectGUI(gui);
-            player.InventoryGUI.OnClose += OnCloseInventory;
+            player.InventoryGUI.OnClosed += OnCloseInventory;
             player.InventoryGUI.Show();
 
             // gui.Show();
-            Game.UI.ToggleCursor(true);
+            Game.UI.SetCursorVisible(true);
         }
 
         void OnCloseInventory()
         {
-            player.InventoryGUI.OnClose -= OnCloseInventory;
+            player.InventoryGUI.OnClosed -= OnCloseInventory;
             player.RemoveObjectGUI(gui);
             player.InventoryGUI.Hide();
 
             animator.CrossFade("close", 0.5f);
-            Game.UI.ToggleCursor(false);
+            Game.UI.SetCursorVisible(false);
             /// encapsulate
             player.InfoHUD.Show();
             player.Actions.Enable();

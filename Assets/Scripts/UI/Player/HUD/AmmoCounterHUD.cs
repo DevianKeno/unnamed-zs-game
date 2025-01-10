@@ -20,7 +20,7 @@ namespace UZSG.UI.HUD
             SetClip(gun.CurrentRounds);
             SetReserve(gun.Reserve);
             SetFiringMode(gun.CurrentFiringMode);
-            SetCartridgeText(gun.WeaponData.RangedAttributes.Ammo.Name);
+            SetCartridgeText(gun.WeaponData.RangedAttributes.Ammo.DisplayName);
         }
 
         public void SetClip(int value)

@@ -52,7 +52,7 @@ namespace UZSG.Data
         public ViewmodelSettings Settings => viewmodelSettings;
         [FormerlySerializedAs("anims"), SerializeField] EquipmentAnimationData animationData;
         public EquipmentAnimationData Animations => animationData;
-        public bool HasViewmodel => viewmodelAsset.IsSet();
+        public bool HasViewmodel => viewmodelAsset != null && viewmodelAsset.IsSet();
 
         #endregion
     }

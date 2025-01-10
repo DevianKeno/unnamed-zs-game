@@ -228,7 +228,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 132.895, y: -33}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 113.79, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8250109018558998003
 CanvasRenderer:
@@ -526,7 +526,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 284.98502, y: -33}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 170.39, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8250109019658285427
 CanvasRenderer:
@@ -773,9 +773,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f81b7918781d1f418ce8880c14d85c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rect: {fileID: 0}
-  FadeDuration: 0.3
+  rect: {fileID: 8250109019733149549}
   indicator: {fileID: 8250109019733149546}
+  key: {fileID: 8401173355290518190}
+  buttonText: {fileID: 8250109019004543096}
   actionText: {fileID: 8250109018558998000}
   objectText: {fileID: 8250109019658285424}
 --- !u!1 &8401173355290518190

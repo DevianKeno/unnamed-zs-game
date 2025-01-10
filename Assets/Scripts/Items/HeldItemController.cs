@@ -14,7 +14,7 @@ namespace UZSG.Items
     /// <summary>
     /// Controller for "Held Items".
     /// </summary>
-    public abstract class HeldItemController : MonoBehaviour, IAttributable, ISaveDataReadWrite<ItemSaveData>
+    public abstract class FPPItemController : MonoBehaviour, IAttributable, ISaveDataReadWrite<ItemSaveData>
     {
         protected ItemData itemData;
         public ItemData ItemData
@@ -58,7 +58,7 @@ namespace UZSG.Items
 
         protected Item AsItem()
         {
-            var item = new Item(ItemData.Id) /// 1 count of course
+            var item = new Item(ItemData.Id, 1) /// 1 count of course
             {
                 Attributes = attributes
             };

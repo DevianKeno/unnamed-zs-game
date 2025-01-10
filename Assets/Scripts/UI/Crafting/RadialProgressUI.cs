@@ -7,7 +7,7 @@ using System;
 
 namespace UZSG.UI
 {
-    public class RadialProgressUI : Window
+    public class RadialProgressUI : UIElement
     {
         public float TotalTime;
         public float TimeElapsed;
@@ -31,8 +31,9 @@ namespace UZSG.UI
         [SerializeField] protected Image fillOuter;
         [SerializeField] protected TextMeshProUGUI timeText;
 
-        protected virtual void OnValidate()
+        protected override void OnValidate()
         {
+            base.OnValidate();
             Refresh();
         }
 

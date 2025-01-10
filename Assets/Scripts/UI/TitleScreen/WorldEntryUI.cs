@@ -9,7 +9,7 @@ using UZSG.Saves;
 
 namespace UZSG.UI.TitleScreen
 {
-    public class WorldEntryUI : Window, IPointerDownHandler
+    public class WorldEntryUI : UIElement, IPointerDownHandler
     {
         public WorldSaveData SaveData { get; set; }
         public event Action<WorldEntryUI> OnClick;

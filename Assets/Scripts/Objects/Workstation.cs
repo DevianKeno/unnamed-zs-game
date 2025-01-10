@@ -20,9 +20,10 @@ namespace UZSG.Objects
     public class Workstation : BaseObject, IInteractable, IPlaceable, ICrafter
     {
         public WorkstationData WorkstationData => objectData as WorkstationData;
+        
         public string Action => "Use";
         public string Name => objectData.Name;
-        public bool AllowInteractions { get; set; } = true;
+        public bool AllowInteractions { get; set; } = false;
 
         protected Player player;
         protected Container inputContainer = new();
@@ -44,17 +45,14 @@ namespace UZSG.Objects
         protected event Action<ItemSlot.ItemChangedContext> onOutputSlotItemChanged;
         public bool EnableDebugging = false;
         
-        protected override void Start()
+        public override void Place()
         {
-            base.Start();
+            if (IsPlaced) return;
+            IsPlaced = true;
 
-            /// TESTING ONLY
-            /// Place() should execute when the object is placed on the world :)
-            Place(); 
-        }
+            base.Place();
+            Initialize();
 
-        protected virtual void Place()
-        {
             queueSlots = new(WorkstationData.QueueSize);
             outputContainer = new(WorkstationData.OutputSize);
             outputContainer.OnSlotItemChanged += OnOutputSlotItemChanged;
@@ -77,6 +75,13 @@ namespace UZSG.Objects
 
                 this.gui.LinkWorkstation(this);
             });
+
+            AllowInteractions = true;
+        }
+
+        protected override void Initialize()
+        {
+            base.Initialize();
         }
 
         void InitializeCrafter()
@@ -109,10 +114,10 @@ namespace UZSG.Objects
             gui.SetPlayer(player);
 
             player.UseObjectGUI(gui);
-            player.InventoryGUI.OnClose += OnCloseInventory;
+            player.InventoryGUI.OnClosed += OnCloseInventory;
             player.InventoryGUI.Show();
             
-            Game.UI.ToggleCursor(true);
+            Game.UI.SetCursorVisible(true);
         }
 
         public void AddInputContainer(Container other)
@@ -304,12 +309,12 @@ namespace UZSG.Objects
 
         protected void OnCloseInventory()
         {
-            player.InventoryGUI.OnClose -= OnCloseInventory;
+            player.InventoryGUI.OnClosed -= OnCloseInventory;
             player.RemoveObjectGUI(gui);
             player.InventoryGUI.Hide();
             
             ClearInputContainers();
-            Game.UI.ToggleCursor(false);
+            Game.UI.SetCursorVisible(false);
             /// encapsulate
             player.InfoHUD.Show();
             player.Actions.Enable();

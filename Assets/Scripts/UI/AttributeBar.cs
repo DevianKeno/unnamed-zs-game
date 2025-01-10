@@ -3,7 +3,7 @@ using UZSG.Attributes;
 
 namespace UZSG.UI
 {
-    public class AttributeBar : ProgressBar
+    public class AttributeBar : ProgressBarUI
     {
         [SerializeField] protected Attribute attribute;
         public Attribute Attribute => attribute;

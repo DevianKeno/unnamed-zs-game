@@ -7,7 +7,7 @@ using UZSG.Entities;
 
 namespace UZSG.UI
 {
-    public class InteractionIndicator : Window
+    public class InteractionIndicator : UIElement
     {
         public struct Options
         {
@@ -15,7 +15,15 @@ namespace UZSG.UI
             public IInteractable Interactable { get; set; }
         }
 
+        public string Button
+        {
+            get => buttonText.text;
+            set => buttonText.text = value;
+        }
+
         [SerializeField] GameObject indicator;
+        [SerializeField] GameObject key;
+        [SerializeField] TextMeshProUGUI buttonText;
         [SerializeField] TextMeshProUGUI actionText;
         [SerializeField] TextMeshProUGUI objectText;
 
@@ -35,10 +43,7 @@ namespace UZSG.UI
 
         public void SetKey(bool enabled)
         {
-            if (enabled)
-            {
-
-            }
+            key.gameObject.SetActive(enabled);
         }
 
         public void Indicate(Options options)

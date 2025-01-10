@@ -23,7 +23,7 @@ namespace UZSG.Items
     public class Item : IAttributable, IComparable<Item>, ISaveDataReadWrite<ItemSaveData>
     {
         public const int MaxStackSize = 99999;
-        public static Item None => new(data: null);
+        public static Item None => new(null);
         
         [FormerlySerializedAs("_itemData")]
         [SerializeField] ItemData itemData;
@@ -73,18 +73,9 @@ namespace UZSG.Items
         #region Item constructors
 
         /// <summary>
-        /// Create 'None' Item.
-        /// </summary>
-        public Item(ItemData data = null)
-        {
-            this.itemData = data;
-            this.count = 0;
-        }
-
-        /// <summary>
         /// Create an Item object from ItemData with count.
         /// </summary>
-        public Item(ItemData data, int count = 1)
+        public Item(ItemData data, int count)
         {
             this.itemData = data;
             this.count = count;
@@ -93,7 +84,7 @@ namespace UZSG.Items
         /// <summary>
         /// Create an Item by Id.
         /// </summary>
-        public Item(string id, int count = 1)
+        public Item(string id, int count)
         {
             if (Game.Items.TryGetData(id, out var itemData))
             {
@@ -114,7 +105,7 @@ namespace UZSG.Items
         /// </summary>
         public Item(Item other, int count = -1)
         {
-            if (other == null || other.IsNone || count == 0)
+            if (other == null || other.IsNone)
             {
                 this.itemData = null;
                 this.count = 0;
@@ -285,7 +276,10 @@ namespace UZSG.Items
         /// </summary>
         public bool CompareTo(Item other)
         {
-            return itemData == other.Data;
+            return itemData != null
+                && other != null
+                && other.Data != null
+                && itemData.Id == other.Data.Id;
         }
 
         /// <summary>

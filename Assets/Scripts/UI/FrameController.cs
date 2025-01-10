@@ -17,6 +17,10 @@ namespace UZSG.UI
         public struct SwitchFrameContext
         {
             public SwitchStatus Status { get; set; }
+            /// <summary>
+            /// The frame to switch to.
+            /// </summary>
+            public Frame Frame { get; set; }
             public string Previous { get; set; }
             public string Next { get; set; }
         }
@@ -32,6 +36,9 @@ namespace UZSG.UI
         string _previousFrame;
         [SerializeField] List<Frame> frames = new();
 
+        /// <summary>
+        /// Called whenever frames are switched.
+        /// </summary>
         public event Action<SwitchFrameContext> OnSwitchFrame;
 
 
@@ -77,6 +84,7 @@ namespace UZSG.UI
             var context = new SwitchFrameContext()
             {
                 Status = SwitchStatus.Started,
+                Frame = frame,
                 Previous = _previousFrame,
                 Next = name,
             };

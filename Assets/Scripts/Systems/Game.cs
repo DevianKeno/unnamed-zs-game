@@ -98,7 +98,7 @@ namespace UZSG.Systems
 
             if (Main != null && Main != this)
             {
-                Destroy(this);
+                Destroy(gameObject);
             }
             else
             {

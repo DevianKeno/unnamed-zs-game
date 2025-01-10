@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b15b48c65734f5548975088a3200ffaf, type: 3}
   m_Name: stone_axe_chop
   m_EditorClassIdentifier: 
-  SourceId: uzsg
-  Id: stone_axe_chop
+  Namespace: uzsg
+  Id: axe_default
   Tags: []
   SwingType: 0
   Range: 1.4
@@ -22,7 +22,9 @@ MonoBehaviour:
   Layer:
     serializedVersion: 2
     m_Bits: 59392
-  RayCount: 0
+  RayCount: 1
   AngleWidth: 0
-  RotationOffset: {x: 0, y: 0, z: 0}
+  RotationOffset: {x: 0, y: 90, z: 0}
+  Flip: 0
   Visualize: 1
+  IncludeRotationOffset: 1

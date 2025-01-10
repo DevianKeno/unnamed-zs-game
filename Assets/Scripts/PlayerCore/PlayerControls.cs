@@ -187,6 +187,16 @@ namespace UZSG.Players
         internal void Initialize()
         {
             InitializeInputs();
+            
+            Game.Console.Gui.OnOpened += () =>
+            {
+                Disable();
+            };
+            Game.Console.Gui.OnClosed += () =>
+            {
+                Enable();
+            };
+            
             RetrieveAttributes();
         }
 
@@ -326,7 +336,7 @@ namespace UZSG.Players
 
                 if (!IsGrounded || !CanCoyoteJump) return;
 
-                if (Player.HasStaminaForJump)
+                if (Player.HasStaminaForFullJump)
                 {
                     _hasJumped = true;
                 }

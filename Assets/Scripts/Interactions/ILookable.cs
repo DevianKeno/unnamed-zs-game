@@ -8,7 +8,7 @@ namespace UZSG.Interactions
     }
 
     /// <summary>
-    /// Represents objects that the Player can look at. lmao
+    /// Represents objects that the Player can look at.
     /// </summary>
     public interface ILookable
     {

@@ -9,7 +9,7 @@ namespace UZSG.UnityEditor
     public class ItemDataEditor : BaseDataEditor
     {
         SerializedProperty assetReference,
-            nameProperty,
+            displayNameProperty,
             description,
             sprite,
             stackSize,
@@ -19,6 +19,8 @@ namespace UZSG.UnityEditor
             isCraftable,
             isFuel,
             fuelDuration,
+            isObject,
+            objectData,
             recipes,
             audioAssetsData,
             weight,
@@ -29,7 +31,7 @@ namespace UZSG.UnityEditor
             base.OnEnable();
 
             assetReference = serializedObject.FindProperty("Model");
-            nameProperty = serializedObject.FindProperty("Name");
+            displayNameProperty = serializedObject.FindProperty("DisplayName");
             description = serializedObject.FindProperty("Description");
             sprite = serializedObject.FindProperty("Sprite");
             stackSize = serializedObject.FindProperty("StackSize");
@@ -39,6 +41,8 @@ namespace UZSG.UnityEditor
             isCraftable = serializedObject.FindProperty("IsCraftable");
             isFuel = serializedObject.FindProperty("IsFuel");
             fuelDuration = serializedObject.FindProperty("FuelDuration");
+            isObject = serializedObject.FindProperty("IsObject");
+            objectData = serializedObject.FindProperty("ObjectData");
             recipes = serializedObject.FindProperty("Recipes");
             weight = serializedObject.FindProperty("Weight");
             sourceDesc = serializedObject.FindProperty("SourceDescription");
@@ -52,7 +56,7 @@ namespace UZSG.UnityEditor
             ItemData itemData = (ItemData) target;
             
             EditorGUILayout.Space();
-            EditorGUILayout.PropertyField(nameProperty);
+            EditorGUILayout.PropertyField(displayNameProperty);
             EditorGUILayout.PropertyField(description);
             EditorGUILayout.PropertyField(assetReference);
             EditorGUILayout.PropertyField(sprite);
@@ -74,10 +78,17 @@ namespace UZSG.UnityEditor
                 }
                 EditorGUILayout.PropertyField(recipes);
             }
+
             EditorGUILayout.PropertyField(isFuel);
             if (itemData.IsFuel)
             {
                 EditorGUILayout.PropertyField(fuelDuration);
+            }
+
+            EditorGUILayout.PropertyField(isObject);
+            if (itemData.IsObject)
+            {
+                EditorGUILayout.PropertyField(objectData);
             }
 
             EditorGUILayout.Space();

@@ -41,7 +41,7 @@ namespace UZSG.TitleScreen
 
         void Awake()
         {
-            button.onClick.AddListener(OnClick);
+            button?.onClick.AddListener(OnClick);
         }
 
         public void OnClick()

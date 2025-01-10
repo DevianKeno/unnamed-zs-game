@@ -46,7 +46,7 @@ namespace UZSG.Attributes
                 }
                 else
                 {
-                    Game.Console.LogAndUnityLog($"Tried to retrieve Attribute '{attrSaveData.Id}', but it does not exists.");
+                    // Game.Console.LogAndUnityLog($"Tried to retrieve Attribute '{attrSaveData.Id}', but it does not exists.");
                 }
             }
         }
@@ -77,7 +77,7 @@ namespace UZSG.Attributes
             }
             else
             {
-                Game.Console.LogAndUnityLog($"Attribute [{attribute.Data.Id}] already exists within the collection.");
+                // Game.Console.LogAndUnityLog($"Attribute [{attribute.Data.Id}] already exists within the collection.");
             }
         }
 
@@ -104,7 +104,7 @@ namespace UZSG.Attributes
             }
             else
             {
-                Game.Console.LogAndUnityLog($"Unable to remove Attribute [{id}] as it does not exist within the collection.");
+                // Game.Console.LogAndUnityLog($"Unable to remove Attribute [{id}] as it does not exist within the collection.");
             }
         }
 
@@ -118,7 +118,7 @@ namespace UZSG.Attributes
             }
 
             attribute = null;
-            Game.Console.LogAndUnityLog($"Unable to remove Attribute '{id}' as it does not exist within the collection.");
+            // Game.Console.LogAndUnityLog($"Unable to remove Attribute '{id}' as it does not exist within the collection.");
             return false;
         }
 
@@ -132,7 +132,7 @@ namespace UZSG.Attributes
                 return _attrsDict[id];
             }
 
-            Game.Console.LogAndUnityLog($"Unable to retrieve Attribute '{id}' as it's not in the collection.");
+            // Game.Console.LogAndUnityLog($"Unable to retrieve Attribute '{id}' as it's not in the collection.");
             return null;
         }
         
@@ -146,7 +146,7 @@ namespace UZSG.Attributes
                 return (T) _attrsDict[id];
             }
 
-            Game.Console.LogAndUnityLog($"Unable to retrieve Attribute '{id}' as it's not in the collection.");
+            // Game.Console.LogAndUnityLog($"Unable to retrieve Attribute '{id}' as it's not in the collection.");
             return null;
         }
 
@@ -158,7 +158,7 @@ namespace UZSG.Attributes
                 return true;
             } 
             
-            Game.Console.LogAndUnityLog($"Unable to retrieve Attribute '{id}' as it's not in the collection.");
+            // Game.Console.LogAndUnityLog($"Unable to retrieve Attribute '{id}' from '' as it's not in the collection.");
             attribute = Attribute.None;
             return false;
         }
@@ -171,7 +171,7 @@ namespace UZSG.Attributes
                 return true;
             } 
             
-            Game.Console.LogAndUnityLog($"Unable to retrieve Attribute '{id}' as it's not in the collection.");
+            // Game.Console.LogAndUnityLog($"Unable to retrieve Attribute '{id}' as it's not in the collection.");
             attribute = (T) Attribute.None;
             return false;
         }

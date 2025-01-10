@@ -13,6 +13,7 @@ using UZSG.Systems;
 using UZSG.UI;
 using UZSG.UI.TitleScreen;
 using static UZSG.Systems.Status;
+using UZSG.Worlds;
 
 namespace UZSG.TitleScreen
 {
@@ -31,13 +32,20 @@ namespace UZSG.TitleScreen
 
         void Awake()
         {
-            playBtn.onClick.AddListener(OnPlayBtnClick);
-            playBtn.onClick.AddListener(OnDeleteBtnClick);
+            InitializeEvents();
+        }
 
-            parentFrameController.OnSwitchFrame += (ctx) =>
+        void InitializeEvents()
+        {
+            playBtn.onClick.AddListener(OnPlayBtnClick);
+            deleteBtn.onClick.AddListener(OnDeleteBtnClick);
+            parentFrameController.OnSwitchFrame += (context) =>
             {
-                selectedEntry = null;
-                Destroy(selector);
+                if (context.Frame.Id != "worlds")
+                {
+                    selectedEntry = null;
+                    Destroy(selector.gameObject);
+                }
             };
         }
 
@@ -106,7 +114,13 @@ namespace UZSG.TitleScreen
                 },
                 onLoadSceneCompleted: () =>
                 {
-                    Game.World.LoadWorld(selectedEntry.SaveData, OnLoadWorldCompleted);
+                    var options = new WorldManager.LoadWorldOptions()
+                    {
+                        OwnerId = Game.World.GetLocalUserId(),
+                        WorldSaveData = selectedEntry.SaveData,
+                    };
+
+                    Game.World.LoadWorld(options, OnLoadWorldCompleted);
                 });
         }
 
@@ -114,6 +128,8 @@ namespace UZSG.TitleScreen
         {
             if (result.Status == Success)
             {
+                selector.Hide();
+                
                 Game.Main.UnloadScene("TitleScreen");
                 Game.Main.UnloadScene("LoadingScreen");
             }
@@ -130,9 +146,7 @@ namespace UZSG.TitleScreen
 
         void OnDeleteBtnClick()
         {
-            if (selectedEntry == null) return;
-
-
+            throw new NotImplementedException();
         }
 
         void CreateSelector()

@@ -7,6 +7,9 @@ namespace UZSG.UI
     public class Frame : MonoBehaviour
     {
         public string Id = "frame";
+        /// <summary>
+        /// The name of the frame.
+        /// </summary>
         public string Name = "Frame";
         
         [SerializeField] RectTransform rect;

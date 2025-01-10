@@ -7,25 +7,37 @@ using UZSG.Systems;
 
 namespace UZSG.UI
 {
-    public class Selector : Window
+    public class Selector : UIElement
     {
+        public bool EnableAnimations { get; set; } = true;
         public float AnimationFactor = 0.1f;
         public LeanTweenType TweenType;
 
+        RectTransform _target;
         List<Image> images;
         
-        void Awake()
+        protected override void Awake()
         {
             rect = GetComponent<RectTransform>();
             images = new(GetComponentsInChildren<Image>());
+        }
+
+        void Update()
+        {
+            if (IsVisible)
+            {
+                rect.position = _target.position;
+                rect.sizeDelta = _target.sizeDelta;
+            }
         }
 
         public void Select(RectTransform target)
         {
             if (target == null) return;
             
-            SetParent(target.transform);
-            if (Game.UI.EnableScreenAnimations)
+            this._target = target;
+            // SetParent(target.transform);
+            if (EnableAnimations && Game.UI.EnableScreenAnimations)
             {
                 LeanTween.cancel(gameObject);
                 LeanTween.value(gameObject, rect.position, target.position, AnimationFactor)
@@ -49,7 +61,7 @@ namespace UZSG.UI
             }
         }
 
-        public override void OnShow()
+        protected override void OnShow()
         {
             foreach (Image i in images)
             {
@@ -57,7 +69,7 @@ namespace UZSG.UI
             }
         }
 
-        public override void OnHide()
+        protected override void OnHide()
         {
             foreach (Image i in images)
             {

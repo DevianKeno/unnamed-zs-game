@@ -8,6 +8,7 @@ using UnityEngine.AddressableAssets;
 
 using UZSG.FPP;
 using UZSG.Attributes;
+using UZSG.Items.Weapons;
 
 namespace UZSG.Data
 {
@@ -31,7 +32,12 @@ namespace UZSG.Data
         public ToolType ToolType;
         public List<MeleeAttackParametersData> Attacks;
         public ToolSwingDirection SwingDirection;
-        public List<Attributes.Attribute> Attributes;
+        public List<UZSG.Attributes.Attribute> Attributes;
+
+        [Header("Tool as a Weapon")]
+        public WeaponCategory Category;
+        public WeaponMeleeAttributes MeleeAttributes;
+
 
         [Header("Viewmodel Data")]
         /// Viewmodel Settings
@@ -45,6 +51,6 @@ namespace UZSG.Data
         public EquipmentAnimationData Animations => anims;
         [SerializeField] EquipmentAudioData audioData;
         public EquipmentAudioData AudioData => audioData;
-        public bool HasViewmodel => viewmodel.IsSet();
+        public bool HasViewmodel => viewmodel != null && viewmodel.IsSet();
     }
 }

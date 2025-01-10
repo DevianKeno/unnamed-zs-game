@@ -1,6 +1,6 @@
 namespace UZSG.UI
 {
-    public class RuleEntryUI : Window
+    public class RuleEntryUI : UIElement
     {
         public string Id;
     }

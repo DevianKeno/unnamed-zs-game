@@ -159,7 +159,7 @@ namespace UZSG
         }
 
         /// <summary>
-        /// Take entire stack.
+        /// Take the entire stack from a specific slot index.
         /// </summary>
         public virtual Item TakeFrom(int slotIndex)
         {

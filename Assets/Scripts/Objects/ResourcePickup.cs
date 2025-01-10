@@ -31,28 +31,45 @@ namespace UZSG.Objects
         {
             if (actor is Player player)
             {
-                if (player.Inventory.Bag.IsFull) return;
-                
-                _actor = player;
-                player.Actions.StartPickupRoutine(this, OnPickupEvent);
+                if (player.Inventory.Bag.IsFull)
+                {
+                    /// Maybe can still pick up but immediately drops the item
+                    return;
+                }
+
+                player.Actions.StartPickupRoutine(this);
+                player.Actions.OnInteract -= OnPlayerInteract;
+                player.Actions.OnInteract += OnPlayerInteract;
             }
         }
 
-        void OnPickupEvent(PlayerActions.PickupEventStatus status)
+        void OnPlayerInteract(InteractContext context)
         {
-            if (status == Finished)
+            if (context.Phase == InteractPhase.Finished)
             {
-                if (_actor.Actions.PickUpItem(new Item(ResourceData.Yield)))
+                if (context.Actor is Player player)
                 {
-                    Game.Audio.PlayInWorld("pick", Position);
-                    Destroy();
-                }
-                else
-                {
-                    Game.Entity.Spawn<ItemEntity>("item_entity", Position, callback: (info) =>
+                    player.Actions.OnInteract -= OnPlayerInteract;
+
+                    if (player.Actions.PickUpItem(new Item(ResourceData.Yield)))
                     {
-                        info.Entity.Item = ResourceData.Yield;
-                    });
+                        Game.Audio.PlayInWorld("pick", Position);
+                        Destroy();
+                    }
+                    else /// incapable of picking up, drop on ground
+                    {
+                        Game.Entity.Spawn<ItemEntity>("item_entity", Position, callback: (info) =>
+                        {
+                            info.Entity.Item = ResourceData.Yield;
+                        });
+                    }
+                }
+            }
+            else if (context.Phase == InteractPhase.Canceled)
+            {
+                if (context.Actor is Player player)
+                {
+                    player.Actions.OnInteract -= OnPlayerInteract;
                 }
             }
         }

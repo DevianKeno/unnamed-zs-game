@@ -26,11 +26,11 @@ namespace UZSG.Crafting
         /// <summary>
         /// Seconds left for the entire Crafting Routine.
         /// </summary>
-        public float SecondsLeft => (int) Recipe.DurationSeconds * TotalYield - SecondsElapsed;
+        public float SecondsLeft => (int) Recipe.CraftingTimeSeconds * TotalYield - SecondsElapsed;
         /// <summary>
         /// Progress of the entire Crafting Routine. [0-1]
         /// </summary>
-        public float Progress =>  (float)SecondsElapsed / (recipe.DurationSeconds * TotalYield);
+        public float Progress =>  (float)SecondsElapsed / (recipe.CraftingTimeSeconds * TotalYield);
 
         /// <summary>
         /// Seconds elapsed for one single craft in this Crafting Routine.
@@ -39,11 +39,11 @@ namespace UZSG.Crafting
         /// <summary>
         /// Seconds left for one single craft in this Crafting Routine.
         /// </summary>
-        public float SecondsLeftSingle => (int) Recipe.DurationSeconds - SecondsElapsedSingle;
+        public float SecondsLeftSingle => (int) Recipe.CraftingTimeSeconds - SecondsElapsedSingle;
         /// <summary>
         /// Progress of a single crafted Item. [0-1]
         /// </summary>
-        public float ProgressSingle => (float)SecondsElapsedSingle / recipe.DurationSeconds;
+        public float ProgressSingle => (float)SecondsElapsedSingle / recipe.CraftingTimeSeconds;
         
         public int CurrentYield { get; protected set; } 
         public int RemainingYield { get; protected set; }
@@ -124,11 +124,11 @@ namespace UZSG.Crafting
                 OnCraftSecond?.Invoke(this, SecondsLeftSingle);
                 OnNotify?.Invoke(this);
 
-                if (SecondsElapsedSingle >= Recipe.DurationSeconds)
+                if (SecondsElapsedSingle >= Recipe.CraftingTimeSeconds)
                 {
                     Status = CraftingRoutineStatus.CraftSingle;
                     OnNotify?.Invoke(this);
-                    SecondsElapsedSingle -= Recipe.DurationSeconds;
+                    SecondsElapsedSingle -= Recipe.CraftingTimeSeconds;
                     CurrentYield++;
                     RemainingYield = TotalYield - CurrentYield;
                 }

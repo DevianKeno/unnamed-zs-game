@@ -8,5 +8,6 @@ namespace UZSG.Items.Weapons
         public float BaseDamage;
         public float BaseCritStrike;
         public float BaseCritDamage;
+        public int ComboCount;
     }
 }

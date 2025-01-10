@@ -55,8 +55,8 @@ namespace UZSG.Crafting
         {
             if (!IsFuelAvailable()) return false;
             var fuel = FuelContainer.TakeFrom(0, 1);
-            FuelRemaining = fuel.Data.FuelDuration * 1000;
-            OnFuelReload?.Invoke(fuel.Data.FuelDuration);
+            FuelRemaining = fuel.Data.FuelDurationSeconds * 1000;
+            OnFuelReload?.Invoke(fuel.Data.FuelDurationSeconds);
             OnFuelUpdate?.Invoke();
             return true;
         }

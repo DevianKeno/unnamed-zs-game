@@ -1,23 +1,20 @@
 using System;
-using System.Collections;
 using System.IO;
-using Newtonsoft.Json;
+
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
-using static UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationStatus;
-using UZSG.Levels;
+using UnityEngine.SceneManagement;
+using Newtonsoft.Json;
+using TMPro;
+
 using UZSG.Saves;
 using UZSG.Data;
 using UZSG.Worlds;
-using System.Threading.Tasks;
-using UZSG.Entities;
-using PlayEveryWare.EpicOnlineServices;
 using UZSG.EOS;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
-using UZSG.SceneHandlers;
-using TMPro;
+using UnityEngine.InputSystem;
+using UZSG.UI;
+using PlayEveryWare.EpicOnlineServices;
 
 namespace UZSG.Systems
 {
@@ -29,6 +26,7 @@ namespace UZSG.Systems
         public string MapId { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime LastModifiedDate { get; set; }
+        public string OwnerId { get; set; }
     }
 
     public class WorldManager : MonoBehaviour, IInitializeable
@@ -45,9 +43,10 @@ namespace UZSG.Systems
         /// <summary>
         /// Called after the World has been successfully initialized.
         /// </summary>
-        public event Action OnDoneInit;
+        public event Action OnDoneLoadWorld;
 
         TextMeshProUGUI loadingMessage;
+
 
         void Awake()
         {
@@ -60,7 +59,7 @@ namespace UZSG.Systems
 
             currentWorld?.Initialize(null);///testing
 
-            OnDoneInit?.Invoke();
+            OnDoneLoadWorld?.Invoke();
         }
 
         void RetrieveSavedWorlds()
@@ -86,7 +85,8 @@ namespace UZSG.Systems
                 Name = options.WorldName,
                 CreatedDate = options.CreatedDate,
                 LastModifiedDate = options.LastModifiedDate,
-                LevelId = options.MapId
+                LevelId = options.MapId,
+                OwnerId = options.OwnerId,
             };
             File.WriteAllText(savepath, JsonConvert.SerializeObject(saveData));
 
@@ -98,20 +98,26 @@ namespace UZSG.Systems
             this.onCreateWorldCompleted = null;
         }
 
+        public struct LoadWorldOptions
+        {
+            public string OwnerId { get; set; }
+            public WorldSaveData WorldSaveData { get; set; }
+        }
         public struct LoadWorldResult
         {
             public Status Status { get; set; }
         }
         event Action<LoadWorldResult> onLoadWorldCompleted;
-        public async void LoadWorld(WorldSaveData saveData, Action<LoadWorldResult> onLoadWorldCompleted = null)
+        public async void LoadWorld(LoadWorldOptions options, Action<LoadWorldResult> onLoadWorldCompleted = null)
         {
+            this.onLoadWorldCompleted = null;
             this.onLoadWorldCompleted += onLoadWorldCompleted;
 
             try
             {
-                if (saveData != null)
+                if (options.WorldSaveData != null)
                 {
-                    if (TryLoadLevelSceneAsync(saveData.LevelId, out var asyncOp))
+                    if (TryLoadLevelSceneAsync(options.WorldSaveData.LevelId, out var asyncOp))
                     {
                         // while (!asyncOp.IsDone)
                         // {
@@ -122,15 +128,17 @@ namespace UZSG.Systems
                         await asyncOp.Task;
 
                         currentWorld = GameObject.FindWithTag("World").GetComponent<World>();
-                        currentWorld.Initialize(saveData);
+                        currentWorld.Initialize(options.WorldSaveData);
+                        HasWorld = true;
+                        currentWorld.SetOwnerId(options.OwnerId);
 
                         this.onLoadWorldCompleted?.Invoke(new()
                         {
                             Status = Status.Success
                         });
                         this.onLoadWorldCompleted = null;
-                        
-                        JoinLocalPlayer(); /// this should not be here
+
+                        InitializeWorldLoaded();
                         return;
                     }
                 }
@@ -163,7 +171,32 @@ namespace UZSG.Systems
                 return;
             }
             
-            LoadWorld(JsonConvert.DeserializeObject<WorldSaveData>(File.ReadAllText(filepath)), onLoadWorldCompleted);
+            var options = new LoadWorldOptions()
+            {
+                OwnerId = GetLocalUserId(),
+                WorldSaveData = JsonConvert.DeserializeObject<WorldSaveData>(File.ReadAllText(filepath)),
+            };
+
+            LoadWorld(options, onLoadWorldCompleted);
+        }
+
+        public string GetLocalUserId()
+        {
+            try
+            {
+                if (Game.Main.IsOnline)
+                {
+                    return EOSSubManagers.UserInfo.GetLocalUserInfo().UserId.ToString();
+                }
+                else
+                {
+                    return "local";
+                }
+            }
+            catch
+            {
+                return "local";
+            }
         }
         
         public bool TryLoadLevelSceneAsync(string levelId, out AsyncOperationHandle handle)
@@ -179,6 +212,11 @@ namespace UZSG.Systems
             return false;
         }
 
+        void InitializeWorldLoaded()
+        {
+            JoinLocalPlayer(); /// this should not be here
+        }
+
         void JoinLocalPlayer()
         {
             if (Game.Main.IsOnline)
@@ -190,7 +228,54 @@ namespace UZSG.Systems
                 
             }
         }
+
+        public void ExitCurrentWorld()
+        {
+            if (!HasWorld) return;
+
+            Game.Console.Log("[World]: Exiting world...");
+            Game.Main.LoadScene(
+                new(){
+                    SceneToLoad = "LoadingScreen",
+                    Mode = LoadSceneMode.Additive,
+                },
+                onLoadSceneCompleted: () =>
+                {
+                    currentWorld.Deinitialize();
+                    currentWorld.SaveWorld();
+
+                    Game.Main.UnloadScene(currentWorld.gameObject.scene.name);
+                    currentWorld = null;
+                    HasWorld = false;
+                    
+                    Game.Main.LoadScene(
+                        new(){
+                            SceneToLoad = "TitleScreen",
+                            Mode = LoadSceneMode.Additive,
+                        },
+                        onLoadSceneCompleted: () =>
+                        {
+                            Game.Main.UnloadScene("LoadingScreen");
+                        });
+                });
+                
+
+        }
+
+        public void Pause()
+        {
+            if (!HasWorld) return;
+            currentWorld.Pause();
+        }
         
+        public void Unpause()
+        {
+            if (!HasWorld) return;
+            currentWorld.Pause();
+        }
+
+        public bool IsPaused => currentWorld.IsPaused;
+
         // public async Task<Level> LoadLevelSceneAsync(string levelId)
         // {
         //     Level level = null;
@@ -214,7 +299,7 @@ namespace UZSG.Systems
         //     // {
         //     //     Debug.Log($"There is no data that exists for level id '{levelId}'");
         //     // }
-                    
+
         //     return level;
         // }
     }

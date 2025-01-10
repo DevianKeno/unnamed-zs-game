@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UZSG.Data;
+using UZSG.EOS;
 using UZSG.Systems;
 using UZSG.UI;
 using static UZSG.Systems.Status;
@@ -47,9 +48,8 @@ namespace UZSG.TitleScreen
         {
             createBtn.interactable = false;
 
-            if (string.IsNullOrEmpty(worldnameInput.text))
+            if (!ValidateCreatingWorld())
             {
-                SetMessage("World name cannot be empty");
                 createBtn.interactable = true;
                 return;
             }
@@ -62,7 +62,27 @@ namespace UZSG.TitleScreen
                 LastModifiedDate = DateTime.Now,
             };
 
+            var localUser = EOSSubManagers.UserInfo.GetLocalUserInfo();
+            options.OwnerId = localUser.UserId.ToString();
+
             Game.World.CreateWorld(ref options, OnCreateWorldCompleted);
+        }
+
+        bool ValidateCreatingWorld()
+        {
+            if (string.IsNullOrEmpty(worldnameInput.text))
+            {
+                SetMessage("World name cannot be empty");
+                return false;
+            }
+
+            if (mapEntry.LevelData == null)
+            {
+                SetMessage("Select a map");
+                return false;
+            }
+
+            return true;
         }
 
         void OnCreateWorldCompleted(WorldManager.CreateWorldResult result)

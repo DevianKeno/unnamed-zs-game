@@ -67,18 +67,18 @@ namespace UZSG.UI
             }            
         }
 
-        public override void OnShow()
+        protected override void OnShow()
         {
             actionMap.Enable();
-            Game.UI.ToggleCursor(true);
+            Game.UI.SetCursorVisible(true);
         }
 
-        public override void OnHide()
+        protected override void OnHide()
         {
             // actionMap.Disable();
             _inputBuffer = "";
             _navigatingIndex = 0;
-            Game.UI.ToggleCursor(false);
+            Game.UI.SetCursorVisible(false);
         }
         
         void UpdateMessages(string message)

@@ -11,8 +11,6 @@ namespace UZSG.Objects
 {
     public class PracticeDummy : BaseObject, IAttributable, ICollisionTarget
     {
-        public event EventHandler<HitboxCollisionInfo> OnCollision;
-
         [SerializeField] GameObject model;
         
         /// OnPlace!

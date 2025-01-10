@@ -2,7 +2,7 @@ namespace UZSG.UI.Objects
 {
     public class PlayerCraftingGUI : WorkstationGUI
     {
-        public override void OnHide()
+        protected override void OnHide()
         {
             if (workstation != null)
             {

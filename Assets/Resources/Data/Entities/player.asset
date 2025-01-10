@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b7e2e119c8ab584aa3e9d5a795a27fa, type: 3}
   m_Name: player
   m_EditorClassIdentifier: 
-  SourceId: uzsg
+  Namespace: uzsg
   Id: player
   Tags: []
   AssetReference:
@@ -169,6 +169,15 @@ MonoBehaviour:
     flatBonus: 0
     LimitOverflow: 1
     LimitUnderflow: 1
+  - data: {fileID: 11400000, guid: 22610e8a6e76e9a4eb688de490f82390, type: 2}
+    value: 6
+    baseMaximum: 0
+    multiplier: 1
+    flatBonus: 0
+    LimitOverflow: 1
+    LimitUnderflow: 1
   AudioAssetsData: {fileID: 11400000, guid: eed9c45f6757aae48b1990646f079589, type: 2}
   KnownRecipes:
+  - {fileID: 11400000, guid: 18291d41df05d92458e10d7ed541b23d, type: 2}
+  - {fileID: 11400000, guid: ddcfcfa45af810b46a3243dfd28e9347, type: 2}
   - {fileID: 11400000, guid: 289a137900927a744869181510be1b5f, type: 2}

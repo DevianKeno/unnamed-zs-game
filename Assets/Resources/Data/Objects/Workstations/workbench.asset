@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1517ececb8b99cd40bf71fc1f502493b, type: 3}
   m_Name: workbench
   m_EditorClassIdentifier: 
-  SourceId: uzsg
+  Namespace: uzsg
   Id: workbench
   Tags: []
   Name: Workbench
-  Model:
-    m_AssetGUID: 
+  Object:
+    m_AssetGUID: e62ad66bf73460c459e7933267696b6f
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
@@ -29,7 +29,8 @@ MonoBehaviour:
     flatBonus: 0
     LimitOverflow: 0
     LimitUnderflow: 0
-  HasAudio: 0
+  Model: {fileID: 0}
+  HasAudio: 1
   AudioAssetsData: {fileID: 11400000, guid: 999945983bd1d22429c85c8adece7628, type: 2}
   WorkstationName: Workbench
   GUI:

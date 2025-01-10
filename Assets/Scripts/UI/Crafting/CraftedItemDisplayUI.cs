@@ -18,7 +18,7 @@ namespace UZSG.UI
             ResetDisplayed();
 
             itemDisplay.SetDisplayedItem(data.Output);
-            itemNameText.text = data.Output.Data.Name;
+            itemNameText.text = data.Output.Data.DisplayName;
             descriptionText.text = data.Output.Data.Description;
         }
 

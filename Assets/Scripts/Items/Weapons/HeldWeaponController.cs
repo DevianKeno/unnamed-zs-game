@@ -3,7 +3,7 @@ using UZSG.Saves;
 
 namespace UZSG.Items.Weapons
 {
-    public abstract class HeldWeaponController : HeldItemController
+    public abstract class HeldWeaponController : FPPItemController
     {
         public WeaponData WeaponData => ItemData as WeaponData;
 

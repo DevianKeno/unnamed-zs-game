@@ -10,7 +10,7 @@ namespace UZSG.Players
     public class PlayerDebug : MonoBehaviour
     {
         public Player Player;
-        public PlayerDebugUI UI;
+        public PlayerDebugWindow UI;
         [SerializeField] GameObject UIPrefab;
 
         void Awake()
@@ -20,7 +20,7 @@ namespace UZSG.Players
 
         void Init(object sender, EventArgs e)
         {
-            UI = Instantiate(UIPrefab, Game.UI.Canvas.transform).GetComponent<PlayerDebugUI>();
+            UI = Instantiate(UIPrefab, Game.UI.Canvas.transform).GetComponent<PlayerDebugWindow>();
             UI.Hide();
 
             Player.MoveStateMachine.OnTransition += MovementStateChanged;

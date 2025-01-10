@@ -16,7 +16,7 @@ namespace UZSG.Worlds.Events
 {
     public class WorldEventController : MonoBehaviour
     {
-        public WorldTimeController WorldTime => Game.World.CurrentWorld.Time;
+        public TimeController WorldTime => Game.World.CurrentWorld.Time;
 
         [SerializeField] WeatherController weatherController;
         public WeatherController Weather => weatherController;
@@ -39,6 +39,11 @@ namespace UZSG.Worlds.Events
             foreach (WorldEventData data in WorldEvents)
                 if (data.OccurEverySecond > _maxCountdown)
                     _maxCountdown = data.OccurEverySecond;
+        }
+        
+        public void Deinitialize()
+        {
+            Game.Tick.OnTick -= OnTick;
         }
 
         void InitializeControllers()

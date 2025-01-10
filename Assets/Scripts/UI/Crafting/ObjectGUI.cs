@@ -11,7 +11,7 @@ namespace UZSG.UI.Objects
     /// <summary>
     /// GUI class for Objects that have GUIs.
     /// </summary>
-    public abstract class ObjectGUI : Window, IInventoryAppendable
+    public abstract class ObjectGUI : UIElement, IInventoryAppendable
     {
         protected BaseObject baseObject;
         /// <summary>
@@ -35,17 +35,13 @@ namespace UZSG.UI.Objects
             backAction = Game.Main.GetInputAction("Back", "Global");
         }
 
-        public override void OnShow()
+        protected override void OnShow()
         {
-            base.OnShow();
-
             backAction.performed += OnInputGlobalBack;
         }
 
-        public override void OnHide()
+        protected override void OnHide()
         {
-            base.OnHide();
-
             backAction.performed -= OnInputGlobalBack;
         }
 

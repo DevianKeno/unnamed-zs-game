@@ -135,6 +135,11 @@ namespace UZSG.Systems
                 PlayClipAsNewSource3D(clip, position);
             }
         }
+
+        public void PlayInWorld(AudioClip audioClip, Vector3 position)
+        {
+            PlayClipAsNewSource3D(audioClip, position);
+        }
         
         public void PlayClipAsNewSource(AudioClip clip)
         {
@@ -142,7 +147,7 @@ namespace UZSG.Systems
             source.clip = clip;
             source.spatialBlend = 0f;
             source.Play();
-            Destroy(source, source.clip.length);
+            Destroy(source.gameObject, source.clip.length);
         }
 
         public void PlayClipAsNewSource3D(AudioClip clip, Vector3 position)
@@ -152,7 +157,7 @@ namespace UZSG.Systems
             source.clip = clip;
             source.spatialBlend = 1f;
             source.Play();
-            Destroy(source, source.clip.length);
+            Destroy(source.gameObject, source.clip.length);
         }
 
         #endregion

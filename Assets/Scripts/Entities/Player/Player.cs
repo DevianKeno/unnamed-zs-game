@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using MEC;
 
+using Epic.OnlineServices.UserInfo;
+
 using UZSG.Systems;
 using UZSG.Inventory;
 using UZSG.Interactions;
@@ -13,16 +15,15 @@ using UZSG.Players;
 using UZSG.FPP;
 using UZSG.UI.HUD;
 using UZSG.UI.Players;
-using UZSG.Crafting;
 using UZSG.StatusEffects;
 using UZSG.Saves;
 using UZSG.UI.Objects;
 using UZSG.UI;
+using UZSG.Building;
+using UZSG.Items;
+using UZSG.Data;
 
 using static UZSG.Players.MoveStates;
-using UZSG.Objects;
-using Unity.VisualScripting;
-using Epic.OnlineServices.UserInfo;
 
 namespace UZSG.Entities
 {
@@ -46,6 +47,9 @@ namespace UZSG.Entities
         [SerializeField] Players.PlayerCrafting crafting;
         public Players.PlayerCrafting Crafting => crafting;
 
+        [SerializeField] BuildingManager buildingManager;
+        public BuildingManager BuildManager => buildingManager;
+
         [SerializeField] StatusEffectCollection statusEffects;
         public StatusEffectCollection StatusEffects => statusEffects;
 
@@ -55,12 +59,16 @@ namespace UZSG.Entities
         [SerializeField] EntityHitboxController hitboxes;
         public EntityHitboxController Hitboxes => hitboxes;
         
-        InventoryUI invUI;
-        public InventoryUI InventoryGUI => invUI;
-        PlayerHUDVitals _vitalsHUD;
-        public PlayerHUDVitals VitalsHUD => _vitalsHUD;
-        PlayerHUDInfo _infoHUD;
-        public PlayerHUDInfo InfoHUD => _infoHUD;        
+        /// <summary>
+        /// List of UI elements that are attached to the Player.
+        /// </summary>
+        List<UIElement> uiElements = new();
+        InventoryWindow invUI;
+        public InventoryWindow InventoryGUI => invUI;
+        PlayerHUDVitalsUI vitalsHUD;
+        public PlayerHUDVitalsUI VitalsHUD => vitalsHUD;
+        PlayerHUDInfoUI infoHUD;
+        public PlayerHUDInfoUI InfoHUD => infoHUD;        
         InputActionMap actionMap;
         readonly Dictionary<string, InputAction> inputs = new();
 
@@ -84,15 +92,24 @@ namespace UZSG.Entities
         /// </summary>
         public Vector3 EyeLevel => MainCamera.transform.position;
         public Transform Model => Controls.Model;
-        
+        public bool HasHeldItem { get; protected set; } = false;
+        /// <summary>
+        /// Mutable! Make a copy if you plan on referencing.
+        /// </summary>
+        public ItemData HeldItem { get; protected set; } = null;
         /// <summary>
         /// A full jump requires complete stamina cost.
         /// </summary>
-        public bool HasStaminaForJump
+        public bool HasStaminaForFullJump
         {
             get
             {
-                return Attributes["stamina"].Value >= Attributes["jump_stamina_cost"].Value;
+                if (Attributes != null && Attributes.TryGet("stamina", out var stamina))
+                if (Attributes.TryGet("jump_stamina_cost", out var jumpStaminaCost))
+                {
+                    return stamina.Value >= jumpStaminaCost.Value;
+                }
+                return false;
             }
         }
     
@@ -152,14 +169,29 @@ namespace UZSG.Entities
             InitializeAnimator();
             InitializeInventory();
             InitializeCrafter();
+            InitializeBuilding();
             InitializeHUD();
             InitializeInputs();
+            
+            Game.Console.Gui.OnOpened += () =>
+            {
+                inputs["Look"].Disable();
+            };
+            Game.Console.Gui.OnClosed += () =>
+            {
+                inputs["Look"].Enable();
+            };
             
             Controls.Initialize();
             Controls.Enable();
             Actions.Initialize();
             Actions.Enable();
             FPP.Initialize();
+            FPP.OnHeldItemChanged += (heldItemData) =>
+            {
+                HasHeldItem = heldItemData != null;
+                HeldItem = heldItemData;
+            };
             ParentMainCameraToFPPController();
 
             Game.Tick.OnTick += Tick;
@@ -194,11 +226,13 @@ namespace UZSG.Entities
 
         void InitializeHUD()
         {
-            _infoHUD = Game.UI.Create<PlayerHUDInfo>("Player HUD Info");
-            _infoHUD.Initialize(this);
+            infoHUD = Game.UI.Create<PlayerHUDInfoUI>("Player HUD Info");
+            infoHUD.Initialize(this);
+            uiElements.Add(infoHUD);
 
-            _vitalsHUD = Game.UI.Create<PlayerHUDVitals>("Player HUD Vitals");
-            _vitalsHUD.Initialize(this);
+            vitalsHUD = Game.UI.Create<PlayerHUDVitalsUI>("Player HUD Vitals");
+            vitalsHUD.Initialize(this);
+            uiElements.Add(vitalsHUD);
         }
 
         void InitializeInventory()
@@ -207,26 +241,34 @@ namespace UZSG.Entities
             // inventory.ReadSaveJson(new());
             // inventory.ReadSaveJson(saveData.Inventory);
 
-            invUI = Game.UI.Create<InventoryUI>("Player Inventory", show: false);
+            invUI = Game.UI.Create<InventoryWindow>("Player Inventory");
             invUI.Initialize(this);
+            invUI.Hide();
+            
+            uiElements.Add(invUI);
 
-            invUI.OnOpen += () =>
+            invUI.OnOpened += () =>
             {
                 Actions.Disable();
                 inputs["Look"].Disable();
-                _infoHUD.Hide();
+                infoHUD.Hide();
             };
-            invUI.OnClose += () =>
+            invUI.OnClosed += () =>
             {
                 Actions.Enable();
                 inputs["Look"].Enable();
-                _infoHUD.Show();
+                infoHUD.Show();
             };
         }
 
         void InitializeCrafter()
         {
             crafting.Initialize(this);
+        }
+
+        void InitializeBuilding()
+        {
+            buildingManager.Initialize(this);
         }
 
         void InitializeInputs()
@@ -327,7 +369,10 @@ namespace UZSG.Entities
         
         void OnPerformInventory(InputAction.CallbackContext context)
         {
-            invUI.ToggleVisibility();
+            if (invUI.IsVisible)
+                invUI.Hide();
+            else
+                invUI.Show();
         }
 
         #endregion
@@ -398,6 +443,14 @@ namespace UZSG.Entities
         public void RemoveObjectGUI(ObjectGUI gui)
         {
             invUI.RemoveObjectGUI(gui);
+        }
+
+        public void DestroyAllUIElements() /// this should not be public lol
+        {
+            foreach (UIElement element in uiElements)
+            {
+                element.Destroy();
+            }
         }
         
         #endregion

@@ -14,5 +14,13 @@ namespace UZSG.EOS
         public static EOSFriendsManager Friends => Game.EOS.GetOrCreateManager<EOSFriendsManager>();
         public static EOSLobbyManager Lobbies => Game.EOS.GetOrCreateManager<EOSLobbyManager>();
         public static EOSPeer2PeerManager P2P => Game.EOS.GetOrCreateManager<EOSPeer2PeerManager>();
+
+        public static void Initialize()
+        {
+            Game.EOS.GetOrCreateManager<EOSUserInfoManager>();
+            Game.EOS.GetOrCreateManager<EOSFriendsManager>();
+            Game.EOS.GetOrCreateManager<EOSLobbyManager>();
+            Game.EOS.GetOrCreateManager<EOSPeer2PeerManager>();
+        }
     }
 }

@@ -128,7 +128,7 @@ namespace UZSG.Items.Weapons
             if (ammoData != null)
             {
                 Player.VitalsHUD.AmmoCounter.SetReserve(Reserve);
-                Player.VitalsHUD.AmmoCounter.SetCartridgeText(ammoData.Name);
+                Player.VitalsHUD.AmmoCounter.SetCartridgeText(ammoData.DisplayName);
             }
             else
             {
@@ -390,13 +390,14 @@ namespace UZSG.Items.Weapons
 
         IEnumerator ReloadCoroutine(float durationSeconds)
         {
-            Debug.Log("Reloading weapon...");
             _inhibitActions = true;
             _isReloading = true;
             stateMachine.ToState(GunWeaponStates.Reload);
 
             int missingBullets = RangedAttributes.ClipSize - CurrentRounds;
             Item ammoToTake;
+            
+            yield return new WaitForSeconds(durationSeconds);
             
             /// Check for enough reserve bullets
             if (missingBullets <= Reserve)
@@ -413,12 +414,8 @@ namespace UZSG.Items.Weapons
             Player.Inventory.Bag.TakeItem(ammoToTake);
             Player.VitalsHUD.AmmoCounter.SetClip(CurrentRounds);
             Player.VitalsHUD.AmmoCounter.SetReserve(Reserve);
-
-            yield return new WaitForSeconds(durationSeconds);
             _isReloading = false;
             _inhibitActions = false;
-
-            Debug.Log("Completed reload");
         }
 
         void ToggleAimDownSights()

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.Serialization;
 
 namespace UZSG.Data
 {
@@ -12,11 +13,17 @@ namespace UZSG.Data
     {
         [Header("Object Data")]
         public string Name;
-        public AssetReference Model;
+        [FormerlySerializedAs("Model")]
+        public AssetReference Object;
         public List<Attributes.Attribute> Attributes;
 
         [Header("Audio Data")]
         public bool HasAudio = false;
         public AudioAssetsData AudioAssetsData;
+
+        public bool IsValid()
+        {
+            return Object != null && Object.IsSet();
+        }
     }
 }

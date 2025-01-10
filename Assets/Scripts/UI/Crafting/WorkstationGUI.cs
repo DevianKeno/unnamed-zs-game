@@ -16,8 +16,6 @@ using UZSG.Objects;
 using UZSG.UI.Objects;
 
 using static UZSG.Crafting.CraftingRoutineStatus;
-using System.Runtime.InteropServices;
-using System.Linq;
 
 namespace UZSG.UI.Objects
 {
@@ -71,7 +69,7 @@ namespace UZSG.UI.Objects
         [SerializeField] protected TMP_InputField craftAmountInputField;
         [SerializeField] protected Button craftButton;
 
-        protected virtual void Awake()
+        protected override void Awake()
         {
             craftButton.onClick.AddListener(RequestCraftItem);
             craftAmountInputField.onEndEdit.AddListener(UpdateAmountToCraft);
@@ -133,8 +131,9 @@ namespace UZSG.UI.Objects
             ClearMaterialSlots();
         }
         
-        public override void OnShow()
+        protected override void OnShow()
         {
+            base.OnShow();
             ResetDisplayed();
 
             if (workstation != null)
@@ -147,6 +146,7 @@ namespace UZSG.UI.Objects
                 {
                     AddRecipesById(player.SaveData.KnownRecipes); /// by raw Recipe Id. ID!!!!!!
                 }
+                workstation.OnCraft -= OnWorkstationCraft;
                 workstation.OnCraft += OnWorkstationCraft;
 
                 /// Retrieve crafting routines
@@ -157,8 +157,10 @@ namespace UZSG.UI.Objects
             }
         }
 
-        public override void OnHide()
+        protected override void OnHide()
         {
+            base.OnHide();
+
             player.Inventory.Bag.OnSlotItemChanged -= OnPlayerBagItemChanged;
             this.player = null;
 
@@ -319,7 +321,7 @@ namespace UZSG.UI.Objects
         {
             if (_selectedRecipe == null)
             {
-                throw new Exception("selected none recipe");
+                return;
             }
             
             #region TODO: inhibit negative values in the ui

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8423147837577233067}
   - component: {fileID: 9172405830326156784}
   - component: {fileID: 6575479197564667539}
-  m_Layer: 6
+  m_Layer: 15
   m_Name: Wooden Crate (Object)
   m_TagString: Interactable
   m_Icon: {fileID: 0}

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UZSG.Items;
 
 namespace UZSG.Data
@@ -14,6 +15,7 @@ namespace UZSG.Data
         public int Yield => Output.Count;
         public List<Item> Materials;
         public bool RequiresFuel = false;
-        public float DurationSeconds;
+        [FormerlySerializedAs("DurationSeconds")]
+        public float CraftingTimeSeconds;
     }
 }

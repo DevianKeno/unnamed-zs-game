@@ -84,13 +84,13 @@ namespace UZSG.UI
             
         }
 
-        public override void OnShow()
+        protected override void OnShow()
         {
             SetUIForEntry();
             AnimateEntry();
         }
 
-        public override void OnHide()
+        protected override void OnHide()
         {
             AnimateExit();
         }
@@ -101,7 +101,7 @@ namespace UZSG.UI
             
             this.Item = new(item);
             itemImage.sprite = item.Data.Sprite;
-            itemNameTMP.text = item.Data.Name;
+            itemNameTMP.text = item.Data.DisplayName;
             countTMP.text = item.Count.ToString();
             Rebuild();
         }

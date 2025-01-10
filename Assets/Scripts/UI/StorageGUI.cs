@@ -43,7 +43,7 @@ namespace UZSG.UI.Objects
         
         [SerializeField] Transform slotsHolder;
 
-        public override void OnHide()
+        protected override void OnHide()
         {
             PutBackHeldItem();
         }
@@ -148,7 +148,7 @@ namespace UZSG.UI.Objects
 
             if (player.InventoryGUI.IsVisible)
             {
-                player.InventoryGUI.Selector.Select(slot.Rect);
+                // player.InventoryGUI.Selector.Select(slot.Rect);
             }
         }
 

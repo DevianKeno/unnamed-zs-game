@@ -43,8 +43,6 @@ namespace UZSG.Objects
 
         public override void HitBy(HitboxCollisionInfo info)
         {
-            base.HitBy(info);
-
             float damage = 0f;
             if (info.Source is HeldToolController tool)
             {
@@ -53,7 +51,7 @@ namespace UZSG.Objects
                     damage += efficiency.Value;
                 }
 
-                if (tool.ToolData.ToolType == ResourceData.ToolType)
+                if (IsHarvestableBy(tool.ToolData))
                 {
                     damage *= 1;
 
@@ -97,9 +95,17 @@ namespace UZSG.Objects
 
             if (IsChoppable && !IsFelled)
             {
-                /// Remove Tree health
-                Attributes["health"].Remove(damage);
-                if (Attributes["health"].Value <= 0)
+                Damage(damage);
+            }
+        }
+        
+        public void Damage(float amount)
+        {
+            if (Attributes.TryGet("health", out var health))
+            {
+                health.Remove(amount);
+                
+                if (health.Value <= 0)
                 {
                     Cutdown();
                 }
@@ -114,7 +120,7 @@ namespace UZSG.Objects
 
             Game.Audio.PlayInWorld("tree_fell", Position);
             
-            /// Tree falling animation
+            /// Tree falling animation GOOFY AS FK
             LeanTween.value(0, 1, FallDuration)
             .setOnUpdate((float i) =>
             {

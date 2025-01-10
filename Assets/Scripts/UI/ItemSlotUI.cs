@@ -12,7 +12,7 @@ using UZSG.Systems;
 
 namespace UZSG.UI
 {
-    public class ItemSlotUI : Window, ISelectable, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
+    public class ItemSlotUI : UIElement, ISelectable, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
     {
         public static Color Opaque => new(1f, 1f, 1f, 1f);
         public static Color Transparent => new(1f, 1f, 1f, 0f);
@@ -83,7 +83,7 @@ namespace UZSG.UI
 
         #region Public methods
 
-        public override void OnShow()
+        protected override void OnShow()
         {
             if (slot != null)
             {

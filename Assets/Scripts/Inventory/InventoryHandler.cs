@@ -25,10 +25,19 @@ namespace UZSG.Inventory
         public float ThrowForce;
 
         Container _bag;
+        /// <summary>
+        /// Container for all other item stuff.
+        /// </summary>
         public Container Bag => _bag;
         Container _hotbar;
+        /// <summary>
+        /// Container for tools and items.
+        /// </summary>
         public Container Hotbar => _hotbar;
         Equipment _equipment;
+        /// <summary>
+        /// Container for weapons and equipment.
+        /// </summary>
         public Equipment Equipment => _equipment;
 
         public bool IsFull

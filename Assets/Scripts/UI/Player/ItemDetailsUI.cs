@@ -8,7 +8,7 @@ using UZSG.Systems;
 
 namespace UZSG.UI
 {
-    public class ItemDetailsUI : Window
+    public class ItemDetailsUI : UIElement
     {
         [SerializeField] protected Item item;
         public Item Item
@@ -45,7 +45,7 @@ namespace UZSG.UI
             }
             else
             {
-                nameText.text = item.Data.Name;
+                nameText.text = item.Data.DisplayName;
                 descriptionText.text = item.Data.Description;
                 
                 if (item.Attributes != null)

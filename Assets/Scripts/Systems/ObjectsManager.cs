@@ -39,7 +39,7 @@ namespace UZSG.Systems
             public BaseObject Object { get; set; }
         }
 
-        public void Place(string objectId, Vector3 position = default, OnObjectPlaceCompleted callback = null)
+        public void PlaceNew(string objectId, Vector3 position = default, OnObjectPlaceCompleted callback = null)
         {
             if (!_objectsDict.ContainsKey(objectId))
             {
@@ -48,7 +48,7 @@ namespace UZSG.Systems
             }
 
             var objData = _objectsDict[objectId];
-            Addressables.LoadAssetAsync<GameObject>(objData.Model).Completed += (a) =>
+            Addressables.LoadAssetAsync<GameObject>(objData.Object).Completed += (a) =>
             {
                 if (a.Status == AsyncOperationStatus.Succeeded)
                 {
@@ -92,7 +92,7 @@ namespace UZSG.Systems
             }
 
             var objData = _objectsDict[objectId];
-            Addressables.LoadAssetAsync<GameObject>(objData.Model).Completed += (a) =>
+            Addressables.LoadAssetAsync<GameObject>(objData.Object).Completed += (a) =>
             {
                 if (a.Status == AsyncOperationStatus.Succeeded)
                 {
@@ -137,10 +137,10 @@ namespace UZSG.Systems
             {
                 var objData = _objectsDict[id];
 
-                if (objData.Model != null)
+                if (objData.Object != null)
                 {
                     /// Load model
-                    Addressables.LoadAssetAsync<GameObject>(objData.Model).Completed += (a) =>
+                    Addressables.LoadAssetAsync<GameObject>(objData.Object).Completed += (a) =>
                     {
                         if (a.Status == AsyncOperationStatus.Succeeded)
                         {
@@ -175,16 +175,16 @@ namespace UZSG.Systems
             return null;
         }
         
-        public bool TryGetData(string id, out ObjectData itemData)
+        public bool TryGetData(string id, out ObjectData objectData)
         {
             if (_objectsDict.ContainsKey(id))
             {
-                itemData = _objectsDict[id];
+                objectData = _objectsDict[id];
                 return true;
             }
             
             Game.Console.Log("Invalid Object Id");
-            itemData = null;
+            objectData = null;
             return false;
         }
     }

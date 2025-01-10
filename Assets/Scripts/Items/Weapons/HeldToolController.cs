@@ -12,24 +12,29 @@ using UZSG.Entities;
 using UZSG.Players;
 using UZSG.Attacks;
 using MEC;
+using System.Linq;
 
 namespace UZSG.Items.Tools
 {
     /// <summary>
     /// Controller for held Tools.
     /// </summary>
-    public class HeldToolController : HeldItemController, ICollisionSource
+    public class HeldToolController : FPPItemController, ICollisionSource
     {
+        public static float COMBO_RESET_SECONDS = 1f;
+
         public Player Player => owner as Player;
         public ToolData ToolData => ItemData as ToolData;
         
         bool _inhibitActions;
         bool _isAttacking;
         bool _onCooldown;
+        public int ComboCounter { get; protected set; }
 
         public string CollisionTag => "Tool";
         ToolItemStateMachine stateMachine;
         public ToolItemStateMachine StateMachine => stateMachine;
+        CoroutineHandle _comboResetTimerHandle;
 
         public bool IsBroken
         {
@@ -83,15 +88,17 @@ namespace UZSG.Items.Tools
         {
             LoadDefaultAttributes();
             InitializeAudioController();
-            InitializeEventsFromOwnerInput();
+            InitializeInputs();
+            InitializeEvents();
         }
 
         void InitializeAudioController()
         {
-            audioSourceController.CreateAudioPool(8); 
+            audioSourceController.LoadAudioAssetsData(ToolData.AudioAssetsData);
+            audioSourceController.CreateAudioPool(size: 8); 
         }
 
-        void InitializeEventsFromOwnerInput()
+        void InitializeInputs()
         {
             var inputs = Player.Actions.Inputs;
 
@@ -100,6 +107,20 @@ namespace UZSG.Items.Tools
 
             inputs["Secondary Action"].started += OnPlayerSecondary;
             inputs["Secondary Action"].canceled += OnPlayerSecondary;
+        }
+
+        void InitializeEvents()
+        {
+            stateMachine.OnTransition += OnStateChanged;
+        }
+
+        protected virtual void OnStateChanged(StateMachine<ToolItemStates>.TransitionContext context)
+        {
+            if (context.To == ToolItemStates.Idle)
+            {
+                _inhibitActions = false;
+                _isAttacking = false;
+            }
         }
 
         void LoadDefaultAttributes()
@@ -148,23 +169,40 @@ namespace UZSG.Items.Tools
 
         IEnumerator AttackCoroutine()
         {
-            if (_inhibitActions || _isAttacking)
-            {
-                yield break;
-            }
+            if (_inhibitActions || _isAttacking) yield break;
             
+            Timing.KillCoroutines(_comboResetTimerHandle);
             _inhibitActions = true;
             _isAttacking = true;
-
             ConsumeStamina();
-            // PlaySound();
+            PlaySound();
             var atkParams = GetAttackParams();
             CreateAttackRays(ref atkParams);
             stateMachine.ToState(ToolItemStates.Attack);
+            ComboCounter++;
+            TrackCombo();
             yield return new WaitForSeconds(0.5f); /// SOMETHING ATKSPD THOUGH NOT SO STRAIGHFROWARDS LOTS OF CALCS (short for calculations)
             
-            _inhibitActions = false;
-            _isAttacking = false;
+            stateMachine.ToState(ToolItemStates.Idle);
+        }
+
+        void TrackCombo()
+        {
+            if (ComboCounter >= 1)
+            {
+                ComboCounter = 0;
+            }
+            else /// reset to first attack after a certain period
+            {
+                _comboResetTimerHandle = Timing.RunCoroutine(_ComboResetTimerCoroutine());
+            }
+        }
+        
+        IEnumerator<float> _ComboResetTimerCoroutine()
+        {
+            yield return Timing.WaitForSeconds(COMBO_RESET_SECONDS);
+            ComboCounter = 0;
+            yield break;
         }
 
         void ConsumeStamina()
@@ -174,7 +212,7 @@ namespace UZSG.Items.Tools
 
         void PlaySound()
         {
-            audioSourceController.PlaySound("swing1");
+            audioSourceController.PlaySound("swing_heavy");
         }
 
         IEnumerator<float> CooldownAttack()
@@ -194,8 +232,17 @@ namespace UZSG.Items.Tools
         {
             #region TODO: Implement combos
             #endregion
-            var data = ToolData.Attacks[0];
-            return MeleeAttacks.Parameters(data);
+
+            MeleeAttackParametersData parametersData;
+            if (ToolData.Attacks.Count == 0) /// no attack combos set, fallback to raycast
+            {
+                return MeleeAttacks.DefaultRaycast;
+            }
+            else
+            {
+                parametersData = ToolData.Attacks[0];
+                return MeleeAttacks.FromParametersData(parametersData);
+            }
         }      
         
         void CreateAttackRays(ref MeleeAttackParameters atk)
@@ -206,13 +253,13 @@ namespace UZSG.Items.Tools
             atk.Up = Player.Up;
             atk.Direction = Player.Forward;
 
-            if (atk.SwingType == MeleeSwingType.Raycast)
+            if (atk.CastType == CastType.Raycast)
             {
-                MeleeAttacks.Raycast(ref atk, OnToolAttackHit);
+                MeleeAttacks.Raycast(owner as IMeleeWeaponActor, ref atk, OnToolAttackHit);
             }
-            else if (atk.SwingType == MeleeSwingType.Swingcast)
+            else if (atk.CastType == CastType.Swingcast)
             {
-                MeleeAttacks.Swingcast(ref atk, OnToolAttackHit);
+                MeleeAttacks.Swingcast(owner as IMeleeWeaponActor, ref atk, OnToolAttackHit);
             }
         }
 

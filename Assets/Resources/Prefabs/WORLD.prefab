@@ -48,13 +48,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 730284244e024ae46a32862e31c1cbfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LoadOnEnterPlayMode: 0
-  SaveOnExitPlayMode: 0
-  WorldName: 
   timeController: {fileID: 3392221486933040618}
   eventsController: {fileID: 5668126680943736175}
   objectsContainer: {fileID: 6914072609335877631}
   entitiesContainer: {fileID: 3943697356474365655}
+  WorldName: 
+  LoadOnEnterPlayMode: 0
+  SaveOnExitPlayMode: 0
 --- !u!1 &3294744197836459953
 GameObject:
   m_ObjectHideFlags: 0
@@ -139,7 +139,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 1
+  m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -250,8 +250,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adb9dbb2b2e352c4db86b797bdb728a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SunLight: {fileID: 3304269742938537319}
-  MoonLight: {fileID: 7563140517493066066}
+  sunLight: {fileID: 3304269742938537319}
+  SunlightIntensity: 3
+  moonLight: {fileID: 7563140517493066066}
+  MoonlightIntensity: 1
+  zeroTimeStartsAtDay: 1
+  rawTime: 0
+  currentHour: 0
+  currentMinute: 0
+  currentDay: 0
   DayColors:
     serializedVersion: 2
     key0: {r: 0.118147045, g: 0.309212, b: 0.5566038, a: 1}
@@ -282,6 +289,42 @@ MonoBehaviour:
     m_ColorSpace: -1
     m_NumColorKeys: 4
     m_NumAlphaKeys: 2
+  dayFogColor:
+    serializedVersion: 2
+    key0: {r: 0.5294118, g: 0.7019608, b: 0.25882354, a: 0.91764706}
+    key1: {r: 0.5294118, g: 0.7019608, b: 0.25882354, a: 0.91764706}
+    key2: {r: 0.5294118, g: 0.7019608, b: 0.25882354, a: 0.91764706}
+    key3: {r: 0.5294118, g: 0.7019608, b: 0.25882354, a: 0.91764706}
+    key4: {r: 0.5294118, g: 0.7019608, b: 0.25882354, a: 0.91764706}
+    key5: {r: 0.5294118, g: 0.7019608, b: 0.25882354, a: 0.91764706}
+    key6: {r: 0.5294118, g: 0.7019608, b: 0.25882354, a: 0.91764706}
+    key7: {r: 0.5294118, g: 0.7019608, b: 0.25882354, a: 0.91764706}
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2
+  DayFogDensity:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   NightColors:
     serializedVersion: 2
     key0: {r: 0.23923749, g: 0.4269469, b: 0.59257287, a: 1}
@@ -312,11 +355,43 @@ MonoBehaviour:
     m_ColorSpace: -1
     m_NumColorKeys: 6
     m_NumAlphaKeys: 2
-  _dayFogColor: {r: 0.4509804, g: 0.5411765, b: 0.6117647, a: 1}
-  _nightFogColor: {r: 0, g: 0, b: 0, a: 0}
-  TwentyFourHourTime: 1300
-  _currentTime: 1170
-  CurrentDay: 0
+  nightFogColor:
+    serializedVersion: 2
+    key0: {r: 0.5294118, g: 0.7019608, b: 0.25882354, a: 0.91764706}
+    key1: {r: 0.5294118, g: 0.7019608, b: 0.25882354, a: 0.91764706}
+    key2: {r: 0.5294118, g: 0.7019608, b: 0.25882354, a: 0.91764706}
+    key3: {r: 0.5294118, g: 0.7019608, b: 0.25882354, a: 0.91764706}
+    key4: {r: 0.5294118, g: 0.7019608, b: 0.25882354, a: 0.91764706}
+    key5: {r: 0.5294118, g: 0.7019608, b: 0.25882354, a: 0.91764706}
+    key6: {r: 0.5294118, g: 0.7019608, b: 0.25882354, a: 0.91764706}
+    key7: {r: 0.5294118, g: 0.7019608, b: 0.25882354, a: 0.91764706}
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2
+  NightFogDensity:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  currentSunAngle: 0
 --- !u!1 &5933016743309004554
 GameObject:
   m_ObjectHideFlags: 0
@@ -412,8 +487,8 @@ Light:
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
-  m_Color: {r: 0.99230033, g: 0.9199309, b: 0.6456446, a: 1}
-  m_Intensity: 4
+  m_Color: {r: 0.98590845, g: 0.87113506, b: 0.57467705, a: 1}
+  m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -452,7 +527,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 1
+  m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1

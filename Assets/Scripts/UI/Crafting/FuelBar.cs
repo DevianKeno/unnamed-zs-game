@@ -5,7 +5,7 @@ using UZSG.Crafting;
 
 namespace UZSG.UI
 {
-    public class FuelBar : ProgressBar
+    public class FuelBar : ProgressBarUI
     {
         public FuelBasedCrafting fuelBasedCraftingInstance;
         private float _maxFuel;

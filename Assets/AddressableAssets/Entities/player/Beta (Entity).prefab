@@ -701,6 +701,61 @@ Transform:
   - {fileID: 1873134562759721657}
   m_Father: {fileID: 2533865650662642097}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5326775135108937482
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1250119625730274266}
+  - component: {fileID: 3975213700561276740}
+  m_Layer: 8
+  m_Name: Wall Checker
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1250119625730274266
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5326775135108937482}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7699380848211720457}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &3975213700561276740
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5326775135108937482}
+  m_Material: {fileID: 13400000, guid: 40961d3c0edd95b42b1b67d83d198540, type: 2}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.3647632
+  m_Height: 1.7550335
+  m_Direction: 1
+  m_Center: {x: 0.02042675, y: 1.0163672, z: 0.02104348}
 --- !u!1 &5496084965249798624
 GameObject:
   m_ObjectHideFlags: 0
@@ -821,7 +876,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7011254150909436731}
   - component: {fileID: 6573940630714393000}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Inventory
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -868,7 +923,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1807161492040155152}
   - component: {fileID: 1504893056223954484}
-  - component: {fileID: 6442590103374968981}
   - component: {fileID: 6313547803532779528}
   m_Layer: 8
   m_Name: Ground Checker
@@ -911,27 +965,6 @@ BoxCollider:
   m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 0.25, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!65 &6442590103374968981
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5950259277001712762}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 0
   serializedVersion: 3
   m_Size: {x: 1, y: 0.25, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
@@ -1175,7 +1208,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6286389021700080808}
   - component: {fileID: 1883801858916294566}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Player Detection
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1232,8 +1265,7 @@ GameObject:
   - component: {fileID: 2848331815560721266}
   - component: {fileID: 8394152581638175708}
   - component: {fileID: 7388258057917320939}
-  - component: {fileID: 1668294420427726490}
-  m_Layer: 8
+  m_Layer: 20
   m_Name: Beta (Entity)
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -1255,9 +1287,11 @@ Transform:
   m_Children:
   - {fileID: 94713427562349016}
   - {fileID: 1807161492040155152}
+  - {fileID: 1250119625730274266}
   - {fileID: 2533865650662642097}
   - {fileID: 7011254150909436731}
   - {fileID: 7266182500231018910}
+  - {fileID: 5842080492303592754}
   - {fileID: 8075265776788495281}
   - {fileID: 6286389021700080808}
   - {fileID: 886878057684570296}
@@ -1283,6 +1317,7 @@ MonoBehaviour:
   CanPickUpItems: 1
   inventory: {fileID: 6573940630714393000}
   crafting: {fileID: 2880011488093977876}
+  buildingManager: {fileID: 950595445824118707}
   audioController: {fileID: 5583044567273583744}
   hitboxes: {fileID: 4176212794605248286}
   Damping: 16
@@ -1456,29 +1491,54 @@ CapsuleCollider:
   m_Height: 2.247846
   m_Direction: 1
   m_Center: {x: 0.015320063, y: 1.123923, z: 0.02104351}
---- !u!136 &1668294420427726490
-CapsuleCollider:
+--- !u!1 &9049846234336405809
+GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9031321928697203625}
-  m_Material: {fileID: 13400000, guid: 40961d3c0edd95b42b1b67d83d198540, type: 2}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5842080492303592754}
+  - component: {fileID: 950595445824118707}
+  m_Layer: 8
+  m_Name: Building
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5842080492303592754
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9049846234336405809}
   serializedVersion: 2
-  m_Radius: 0.3647632
-  m_Height: 1.7550335
-  m_Direction: 1
-  m_Center: {x: 0.02042675, y: 1.0163672, z: 0.02104348}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7699380848211720457}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &950595445824118707
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9049846234336405809}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40966ae1e04744a4d8c90d31d172cca4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 8107631895800867322}
+  BuildableLayers:
+    serializedVersion: 2
+    m_Bits: 512
 --- !u!1001 &5217698207631125028
 PrefabInstance:
   m_ObjectHideFlags: 0

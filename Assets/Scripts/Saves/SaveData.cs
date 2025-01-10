@@ -6,7 +6,7 @@ namespace UZSG.Saves
     {
         public string Type => GetType().Name;
 
-        public static bool IsNull(object obj)
+        public static bool FieldIsNull(object obj)
         {
             return obj == null;
         }

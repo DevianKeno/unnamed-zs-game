@@ -8,7 +8,7 @@ namespace UZSG.UI
     /// <summary>
     /// UI element for displaying Items (with count).
     /// </summary>
-    public class ItemDisplayUI : Window, IUIElement
+    public class ItemDisplayUI : UIElement
     {
         [SerializeField] Item item = Item.None;
         public Item Item
@@ -67,7 +67,7 @@ namespace UZSG.UI
                 {
                     image.color = ItemSlotUI.Transparent;
                     altText.enabled = true;
-                    altText.text = item.Data.Name;
+                    altText.text = item.Data.DisplayName;
                 }
 
                 if (item.Count <= 1)

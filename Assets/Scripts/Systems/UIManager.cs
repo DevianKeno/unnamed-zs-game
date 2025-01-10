@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 using UnityEngine;
@@ -52,6 +53,7 @@ namespace UZSG.UI
 
         bool _isInitialized;
         List<Window> _activeWindows = new();
+        public bool HasActiveWindow => _activeWindows.Count > 0;
         Window _currentWindow;
         Dictionary<string, Sprite> _icons = new();
 
@@ -64,7 +66,18 @@ namespace UZSG.UI
 
         #region UI Events
         
+        /// <summary>
+        /// Called whenever the cursor has its visibility toggled.
+        /// </summary>
         public event Action<bool> OnCursorToggled;
+        /// <summary>
+        /// Called when any window is opened.
+        /// </summary>
+        public event Action<Window> OnWindowOpened;
+        /// <summary>
+        /// Called when any window is closed.
+        /// </summary>
+        public event Action<Window> OnWindowClosed;
         
         #endregion
 
@@ -73,7 +86,7 @@ namespace UZSG.UI
 
         PlayerInput input;
         InputAction toggleCursorInput;
-        InputAction closeCurrentWindowInput;
+        InputAction closeWindowInput;
 
         #endregion
 
@@ -90,10 +103,15 @@ namespace UZSG.UI
 
             input = Game.Main.MainInput;
             toggleCursorInput = input.actions.FindAction("Toggle Cursor");
-            closeCurrentWindowInput = input.actions.FindAction("Close Current Window");
             toggleCursorInput.performed += ToggleCursor;
+            
+            var uiActionMap = Game.Main.GetActionMap("UI");
+            closeWindowInput = uiActionMap.FindAction("Close");
+            closeWindowInput.performed += OnInputCloseWindow;
+            
+            uiActionMap.Enable();
 
-            input.actions.FindActionMap("Global").Enable();
+            Game.Main.GetActionMap("Global").Enable();
         }
 
         void InitializeUIPrefabs()
@@ -116,11 +134,25 @@ namespace UZSG.UI
 
         void ToggleCursor(InputAction.CallbackContext context)
         {
-            ToggleCursor();
+            SetCursorVisible(!_isCursorVisible);
+        }
+        
+        void OnInputCloseWindow(InputAction.CallbackContext context)
+        {
+            CloseTopmostWindow();
         }
 
         
         #region Public methods
+        
+        public void CloseTopmostWindow()
+        {
+            if (_activeWindows.Count == 0) return;
+
+            var topmostWindow = _activeWindows.Last();
+            topmostWindow.Hide();
+        }
+
 
         #region Transition methods
         // TransitionEffect transitionEffect;
@@ -139,21 +171,21 @@ namespace UZSG.UI
         // }
         #endregion
 
-        public void ToggleCursor()
+        public void ToggleCursorVisibility()
         {
-            ToggleCursor(!_isCursorVisible);
+            SetCursorVisible(!_isCursorVisible);
         }
 
-        public void ToggleCursor(bool enabled)
+        public void SetCursorVisible(bool visible)
         {
-            if (enabled)            
+            if (visible)            
                 Cursor.lockState = CursorLockMode.None;
             else            
                 Cursor.lockState = CursorLockMode.Locked;            
             
-            _isCursorVisible = enabled;
-            Cursor.visible = enabled;
-            OnCursorToggled?.Invoke(enabled);
+            _isCursorVisible = visible;
+            Cursor.visible = visible;
+            OnCursorToggled?.Invoke(visible);
         }
 
         public Sprite GetIcon(string id)
@@ -162,7 +194,7 @@ namespace UZSG.UI
             {
                 return sprite;
             }
-            Game.Console.Warn($"There's no icon '{id}'");
+            Game.Console.Warn($"There's no icon with an id of '{id}'");
             return null;
         }
 
@@ -176,48 +208,20 @@ namespace UZSG.UI
 
         internal void RemoveFromActiveWindows(Window window)
         {
-            if (window != null && _activeWindows.Contains(window))
+            if (window != null)
             {
-                _activeWindows.Remove(window);
+                if (_activeWindows.Contains(window))
+                {
+                    _activeWindows.Remove(window);
+                }
             }
         }
 
-        internal void SetCurrentWindow(Window window)
-        {
-            if (window == null) return;
-            if (_currentWindow == window) return;
-
-            if (_currentWindow != null)
-            {
-                _currentWindow.Hide();
-            }
-            foreach (var w in _activeWindows)
-            {
-                w.Hide();
-            }
-            _currentWindow = window;
-        }
-
-        public GameObject Create(string prefabName, bool inSafeArea = true)
+        GameObject Create(string prefabName, bool inSafeArea = true)
         {
             if (prefabsDict.ContainsKey(prefabName))
             {
                 var go = Instantiate(prefabsDict[prefabName], Canvas.transform);
-                go.name = prefabName;
-                return go;
-            }
-
-            var msg = $"UI Prefab '{prefabName}' does not exist.";
-            Game.Console.Log(msg);
-            Debug.LogWarning(msg);
-            return null;
-        }
-
-        public GameObject Create(string prefabName, Transform parent, bool inSafeArea = true)
-        {
-            if (prefabsDict.ContainsKey(prefabName))
-            {
-                var go = Instantiate(prefabsDict[prefabName], parent);
                 go.name = prefabName;
                 return go;
             }
@@ -232,7 +236,7 @@ namespace UZSG.UI
         /// Create an instance of a UI prefab.
         /// </summary>
         /// <typeparam name="T">Window script attach to the root.</typeparam>
-        public T Create<T>(string prefabName, bool show = true) where T : Window
+        public T Create<T>(string prefabName, bool show = true) where T : UIElement
         {            
             if (prefabsDict.ContainsKey(prefabName))
             {
@@ -241,6 +245,11 @@ namespace UZSG.UI
 
                 if (go.TryGetComponent(out T element))
                 {
+                    if (element is Window window)
+                    {
+                        window.OnOpened += () => { OnWindowOpened?.Invoke(window); };
+                        window.OnClosed += () => { OnWindowClosed?.Invoke(window); };
+                    }
                     if (!show) element.Hide();
                     return element;
                 }
@@ -253,7 +262,7 @@ namespace UZSG.UI
             return default;
         }
 
-        public T Create<T>(string prefabName, Transform parent, bool show = true) where T : Window
+        public T Create<T>(string prefabName, Transform parent, bool show = true) where T : UIElement
         {            
             if (prefabsDict.ContainsKey(prefabName))
             {
@@ -262,6 +271,11 @@ namespace UZSG.UI
 
                 if (go.TryGetComponent(out T element))
                 {
+                    if (element is Window window)
+                    {
+                        window.OnOpened += () => { OnWindowOpened?.Invoke(window); };
+                        window.OnClosed += () => { OnWindowClosed?.Invoke(window); };
+                    }
                     if (!show) element.Hide();
                     return element;
                 }
@@ -279,7 +293,7 @@ namespace UZSG.UI
         /// Only spawns one blocker, and executes one action then destroys itself.
         /// </summary>
         /// <returns>The Blocker gameObject.</returns>
-        public GameObject CreateBlocker(IUIElement forElement = null, Action onClick = null)
+        public GameObject CreateBlocker(UIElement forElement = null, Action onClick = null)
         {
             var blocker = Create("Blocker");
             blocker.transform.SetParent(Canvas.transform);
@@ -289,7 +303,7 @@ namespace UZSG.UI
                 blocker.transform.SetSiblingIndex((forElement as MonoBehaviour).transform.GetSiblingIndex());
                 if (forElement is Window w)
                 {
-                    w.OnClose += () =>
+                    w.OnClosed += () =>
                     {
                         Destroy(blocker);
                     };
@@ -307,6 +321,14 @@ namespace UZSG.UI
             });
 
             return blocker;
+        }
+
+        public void DestroyElement(GameObject obj, float delay = 0f)
+        {
+            if (obj != null)
+            {
+                Destroy(obj, delay);
+            }
         }
 
         #endregion

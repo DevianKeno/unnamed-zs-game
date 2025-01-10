@@ -17,7 +17,7 @@ namespace UZSG.UI.HUD
         {
         }
 
-        public override void OnShow()
+        protected override void OnShow()
         {
             AnimateEntry();
         }
@@ -36,7 +36,7 @@ namespace UZSG.UI.HUD
             }
         }
 
-        public override void OnHide()
+        protected override void OnHide()
         {
             AnimateExit();
         }

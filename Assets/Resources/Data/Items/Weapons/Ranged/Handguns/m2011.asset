@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72e1d5853de97a54aa491bcf19eb9d39, type: 3}
   m_Name: m2011
   m_EditorClassIdentifier: 
-  SourceId: uzsg
+  Namespace: uzsg
   Id: m2011
   Tags: []
   Name: M2011
@@ -28,7 +28,9 @@ MonoBehaviour:
   Weight: 1.2
   StackSize: 1
   IsFuel: 0
-  FuelDuration: 0
+  FuelDurationSeconds: 0
+  IsObject: 0
+  ObjectData: {fileID: 0}
   IsMaterial: 0
   IsCraftable: 0
   Recipes: []
@@ -49,8 +51,8 @@ MonoBehaviour:
   RangedAttributes:
     FiringModes: 2
     RoundsPerMinute: 310
-    ClipSize: 999
-    ReloadSpeed: 1
+    ClipSize: 7
+    ReloadSpeed: 0
     Ammo: {fileID: 11400000, guid: f6587d7d90d922847899c7a85b3a7b47, type: 2}
     Spread: 2.1
     BurstFireCount: 0
@@ -83,9 +85,9 @@ MonoBehaviour:
       Duration: 0
       RecoverySpeed: 1
       RecoveryDuration: 0
-  armsAnimations: {fileID: 9100000, guid: ff930d11760494e408bef4972bc05fb1, type: 2}
+  armsAnimations: {fileID: 9100000, guid: caf350acf08d285429714a2a5b6e5623, type: 2}
   viewmodelAsset:
-    m_AssetGUID: 6b7321b27ac6b804f9534f3c6deebfa3
+    m_AssetGUID: 701afa08b69053b43a53a7e8187cfa85
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
@@ -93,7 +95,19 @@ MonoBehaviour:
     UseOffsets: 0
     PositionOffset: {x: 0, y: 0, z: 0}
     RotationOffset: {x: 0, y: 0, z: 0}
-    BobbingPresets: []
+    BobbingPresets:
+    - Id: run
+      BobSettings:
+        Id: run
+        Threshold: 1
+        Amplitude: 1
+        Frequency: 1
+        Recovery: 1
+        MaintainForwardLook: 0
+        LookDistance: 0
+      Position: {x: 0, y: 0, z: 0}
+      Rotation: {x: 0, y: 0, z: 0}
+      Damping: 0
   animationData:
     Idle: idle
     Move: 

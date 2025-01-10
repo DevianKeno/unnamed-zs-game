@@ -58,7 +58,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Alpha_Clipping_Threshold: 0.62
+    - _Alpha_Clipping_Threshold: 0.88
     - _QueueControl: 0
     - _QueueOffset: 0
     - _Smoothness: 0

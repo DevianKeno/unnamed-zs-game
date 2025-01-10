@@ -10,11 +10,13 @@ using UZSG.Systems;
 namespace UZSG.Objects
 {
     public class OreDeposit : Resource, ILookable
-    {        
-        /// On load on world
-        protected override void Start()
+    {
+        public void Damage(float amount)
         {
-            base.Start();
+            if (Attributes.TryGet("health", out var health))
+            {
+                health.Remove(amount);
+            }
         }
 
         public override void HitBy(HitboxCollisionInfo info)
@@ -30,7 +32,7 @@ namespace UZSG.Objects
                     damage += efficiency.Value;
                 }
 
-                if (tool.ToolData.ToolType == ResourceData.ToolType)
+                if (IsHarvestableBy(tool.ToolData))
                 {
                     damage *= 1;
                     if (tool.Owner is Player player)
@@ -61,7 +63,7 @@ namespace UZSG.Objects
                 damage *= 0.1f;
             }
 
-            Attributes["health"].Remove(damage);
+            this.Damage(damage);
         }
     }
 }

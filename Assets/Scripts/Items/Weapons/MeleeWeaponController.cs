@@ -12,23 +12,28 @@ using UZSG.Entities;
 using UZSG.Players;
 using UZSG.Attributes;
 using UZSG.Attacks;
+using MEC;
 
 namespace UZSG.Items.Weapons
 {
     public class MeleeWeaponController : HeldWeaponController, ICollisionSource
     {
+        public static float COMBO_RESET_SECONDS = 1f;
+
         public Player Player => owner as Player;
         public string CollisionTag => "Melee";
 
         bool _canAttack;
         bool _inhibitActions;
         bool _isAttacking;
-        bool _onCooldown;
+        bool _attackOnCooldown;
+        public int ComboCounter { get; protected set; }
         
-        float StaminaCost => attributes["stamina_cost"] != null ? attributes["stamina_cost"].Value : 0f;
+        float UseStaminaCost => attributes["stamina_cost"] != null ? attributes["stamina_cost"].Value : 0f;
 
         MeleeWeaponStateMachine stateMachine;
         public MeleeWeaponStateMachine StateMachine => stateMachine;
+        CoroutineHandle _comboResetTimerHandle;
 
         #region Melee weapon events
 
@@ -45,17 +50,17 @@ namespace UZSG.Items.Weapons
             get
             {
                 if (IsBroken) return false;
-                if (_onCooldown) return false;
+                if (_attackOnCooldown) return false;
 
                 if (owner.Attributes.TryGet("stamina", out var ownerStamina))
                 {
                     if (owner.Attributes.TryGet("melee_stamina_cost_multiplier", out var multiplier))
                     {
-                        return ownerStamina.Value >= (StaminaCost * multiplier.Value);
+                        return ownerStamina.Value >= (UseStaminaCost * multiplier.Value);
                     }
                     else
                     {
-                        return ownerStamina.Value >= StaminaCost;
+                        return ownerStamina.Value >= UseStaminaCost;
                     }
                 }
 
@@ -75,6 +80,9 @@ namespace UZSG.Items.Weapons
             LoadDefaultAttributes();
             InitializeAudioController();
             InitializeEventsFromOwnerInput();
+            InitializeEvents();
+
+            ComboCounter = 0;
         }
 
         void InitializeAudioController()
@@ -96,15 +104,26 @@ namespace UZSG.Items.Weapons
             inputs["Secondary Action"].canceled += OnPlayerSecondary;
         }
 
+        void InitializeEvents()
+        {
+            stateMachine.OnTransition += OnStateChanged;
+        }
+
+        protected virtual void OnStateChanged(StateMachine<MeleeWeaponStates>.TransitionContext context)
+        {
+            if (context.To == MeleeWeaponStates.Idle)
+            {
+                _inhibitActions = false;
+                _isAttacking = false;
+            }
+        }
 
         #endregion
 
 
         #region Public methods
         
-        public override void SetStateFromAction(ActionStates state)
-        {        
-        }
+        public override void SetStateFromAction(ActionStates state) { }
 
         #endregion
 
@@ -158,11 +177,9 @@ namespace UZSG.Items.Weapons
 
         IEnumerator AttackCoroutine()
         {
-            if (_inhibitActions || _isAttacking)
-            {
-                yield break;
-            }
+            if (_inhibitActions || _isAttacking) yield break;
             
+            Timing.KillCoroutines(_comboResetTimerHandle);
             _inhibitActions = true;
             _isAttacking = true;
 
@@ -171,23 +188,55 @@ namespace UZSG.Items.Weapons
             // var atkParams = GetAttackParams();
             // CreateAttackRays(ref atkParams);
             stateMachine.ToState(MeleeWeaponStates.Attack);
+            ComboCounter++;
+            TrackCombo();
             yield return new WaitForSeconds(0.5f); /// SOMETHING ATKSPD THOUGH NOT SO STRAIGHFROWARDS LOTS OF CALCS (short for calculations)
             
-            _inhibitActions = false;
-            _isAttacking = false;
+            stateMachine.ToState(MeleeWeaponStates.Idle);
+        }
+
+        void TrackCombo()
+        {
+            if (ComboCounter >= WeaponData.MeleeAttributes.ComboCount)
+            {
+                ComboCounter = 0;
+            }
+            else /// reset to first attack after a certain period
+            {
+                _comboResetTimerHandle = Timing.RunCoroutine(_ComboResetTimerCoroutine());
+            }
+        }
+
+        IEnumerator<float> _ComboResetTimerCoroutine()
+        {
+            yield return Timing.WaitForSeconds(COMBO_RESET_SECONDS);
+            ComboCounter = 0;
+            yield break;
         }
         
-        MeleeAttackParameters GetAttackParams()
-        {
-            #region TODO: Implement combos
-            #endregion
-            var data = WeaponData.MeleeAttacks[0];
-            return MeleeAttacks.Parameters(data);
-        }   
+        // MeleeAttackParameters GetAttackParams()
+        // {
+        //     #region TODO: Implement combos
+        //     #endregion
+
+        //     MeleeAttackParametersData parametersData;
+        //     if (WeaponData.MeleeAttacks.Count == 0) /// no attack combos set, fallback to raycast
+        //     {
+        //         return MeleeAttacks.DefaultRaycast;
+        //     }
+        //     else
+        //     {
+        //         parametersData = WeaponData.MeleeAttacks[0];
+        //         return MeleeAttacks.FromParametersData(parametersData);
+        //     }
+        // }   
 
         void ConsumeStamina()
         {
-            owner.Attributes["stamina"].Remove(StaminaCost);
+            if (owner.Attributes.TryGet("stamina", out var stamina))
+            {
+                stamina.Remove(UseStaminaCost);
+            }
         }
 
         void PlaySound()
@@ -195,21 +244,21 @@ namespace UZSG.Items.Weapons
             audioSourceController.PlaySound("swing1");
         }
 
-        void CreateAttackRays(ref MeleeAttackParameters atk)
-        {
-            atk.Origin = Player.EyeLevel;
-            atk.Up = Player.Up;
-            atk.Direction = Player.Forward;
+        // void CreateAttackRays(ref MeleeAttackParameters atk)
+        // {
+        //     atk.Origin = Player.EyeLevel;
+        //     atk.Up = Player.Up;
+        //     atk.Direction = Player.Forward;
 
-            if (atk.SwingType == MeleeSwingType.Raycast)
-            {
-                MeleeAttacks.Raycast(ref atk, OnMeleeAttackHit);
-            }
-            else if (atk.SwingType == MeleeSwingType.Swingcast)
-            {
-                MeleeAttacks.Swingcast(ref atk, OnMeleeAttackHit);
-            }
-        }
+        //     if (atk.CastType == CastType.Raycast)
+        //     {
+        //         MeleeAttacks.Raycast(owner as IMeleeWeaponActor, ref atk, OnMeleeAttackHit);
+        //     }
+        //     else if (atk.CastType == CastType.Swingcast)
+        //     {
+        //         MeleeAttacks.Swingcast(owner as IMeleeWeaponActor, ref atk, OnMeleeAttackHit);
+        //     }
+        // }
 
         void OnMeleeAttackHit(HitboxCollisionInfo info)
         {
@@ -225,10 +274,11 @@ namespace UZSG.Items.Weapons
             return reflectDirection;
         }
 
-        internal void SetMeleeCollider(MeleeWeaponCollider mwc)
+        internal void InitializeMeleeCollider(MeleeWeaponCollider mwc)
         {
             if (mwc != null)
             {
+                stateMachine.OnTransition += mwc.OnStateChanged;
                 mwc.OnCollide += OnMeleeAttackHit;
             }
         }

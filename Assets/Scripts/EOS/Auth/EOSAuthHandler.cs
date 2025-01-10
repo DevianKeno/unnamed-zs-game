@@ -17,6 +17,8 @@ namespace UZSG.EOS
 {
     public class EOSAuthHandler : MonoBehaviour
     {
+        public bool RememberLogin = true;
+
         [Header("UI Elements")]
         [SerializeField] Button signInBtn;
         [SerializeField] Button signOutBtn;
@@ -29,12 +31,18 @@ namespace UZSG.EOS
             signOutBtn.onClick.AddListener(StartSignOut);
         }
 
+        void Start()
+        {
+            if (RememberLogin)
+            {
+                StartSignIn();
+            }
+        }
+
         #region Login flow
         
         void StartSignIn()
         {
-            // devAuthWindow.OnSignInBtnClick -= OnStartLogin;
-
             if (Application.internetReachability == NetworkReachability.NotReachable)
             {
                 Debug.LogError("Internet not reachable.");
@@ -43,24 +51,30 @@ namespace UZSG.EOS
 
             SetAccountDisplayForLoading();
             usernameTMP.text = "Signing in...";
-
-            var authType = LoginCredentialType.AccountPortal;//devAuthWindow.GetLoginType();
-            if (authType == LoginCredentialType.AccountPortal)
+            
+            var authType = LoginCredentialType.PersistentAuth;
+            if (authType == LoginCredentialType.PersistentAuth)
             {
-                Game.EOS.StartLoginWithLoginTypeAndToken(LoginCredentialType.AccountPortal,
-                                                        null,
-                                                        null,
-                                                        OnAuthLoginCallback);
+                Game.EOS.StartPersistentLogin(OnAuthLoginCallback);
+            }
+            else if (authType == LoginCredentialType.AccountPortal)
+            {
+                Game.EOS.StartLoginWithLoginTypeAndToken(
+                    LoginCredentialType.AccountPortal,
+                    null,
+                    null,
+                    OnAuthLoginCallback);
             }
             else if (authType == LoginCredentialType.Developer)
             {
                 // var usernameAsString = devAuthWindow.GetUsername();
                 // var passwordAsString = devAuthWindow.GetPassword();
 
-                // Game.EOS.StartLoginWithLoginTypeAndToken(LoginCredentialType.Developer,
-                //                                         usernameAsString,
-                //                                         passwordAsString,
-                //                                         OnAuthLoginCallback);
+                // Game.EOS.StartLoginWithLoginTypeAndToken(
+                //     LoginCredentialType.Developer,
+                //     usernameAsString,
+                //     passwordAsString,
+                //     OnAuthLoginCallback);
             }
             else if (authType == LoginCredentialType.ExternalAuth)
             {
@@ -94,6 +108,7 @@ namespace UZSG.EOS
         {
             if (info.ResultCode == Result.Success)
             {
+                EOSSubManagers.Initialize();
                 // devAuthWindow.Destroy();
                 // SetAccountDisplayForLogout();
 

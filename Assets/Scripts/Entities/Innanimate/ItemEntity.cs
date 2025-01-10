@@ -26,14 +26,8 @@ namespace UZSG.Entities
         /// </summary>
         public Item Item
         {
-            get
-            {
-                return AsItem();
-            }
-            set
-            {
-                item = new(value);
-            }
+            get => AsItem();
+            set => item = new(value);
         }
         public string Name
         {
@@ -41,11 +35,11 @@ namespace UZSG.Entities
             {
                 if (item.Data.Type == ItemType.Item)
                 {
-                    return $"{item.Count} {item.Data.Name}";
+                    return $"{item.Count} {item.Data.DisplayName}";
                 }
                 else
                 {
-                    return $"{item.Data.Name}";
+                    return $"{item.Data.DisplayName}";
                 }
             }
         }
@@ -58,6 +52,7 @@ namespace UZSG.Entities
                     ItemType.Item or
                     ItemType.Tool or
                     ItemType.Equipment or
+                    ItemType.Tile or
                     ItemType.Accessory => "Pick Up",
                     ItemType.Weapon => "Equip",
                     _ => "Interact with",
@@ -217,9 +212,14 @@ namespace UZSG.Entities
             Rigidbody.AddForce(direction * power, ForceMode.Impulse);
         }
 
+        bool _isAlreadyBeingLookedAt = false;
+
         public void OnLookEnter()
         {
-            if (_isModelLoaded && model != null)
+            if (_isAlreadyBeingLookedAt) return;
+            _isAlreadyBeingLookedAt = true;
+
+            if (model != null)
             {
                 /// render screen space outlines
                 model.layer = LayerMask.NameToLayer("Outline");
@@ -228,7 +228,9 @@ namespace UZSG.Entities
 
         public void OnLookExit()
         {
-            if (_isModelLoaded && model != null)
+            _isAlreadyBeingLookedAt = false;
+            
+            if (model != null)
             {
                 model.layer = _originalLayer;
             }

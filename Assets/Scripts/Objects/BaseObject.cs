@@ -25,8 +25,8 @@ namespace UZSG.Objects
         [SerializeField] protected Animator animator;
         public Animator Animator => animator;
 
-        protected bool isDirty;
-        public bool IsDirty => isDirty;
+        public bool IsPlaced { get; protected set; } = false;
+        public bool IsDirty { get; protected set; } = false;
         
         /// <summary>
         /// The transform position of this Object. 
@@ -59,7 +59,18 @@ namespace UZSG.Objects
 
         #region Initializing methods
 
-        protected virtual void Start()
+        protected virtual void Start() { }
+
+        public virtual void Place()
+        {
+            if (IsPlaced) return;
+            
+            IsPlaced = true;
+            transform.SetParent(Game.World.CurrentWorld.objectsContainer, worldPositionStays: true);
+            Initialize();
+        }
+
+        protected virtual void Initialize()
         {
             if (objectData.HasAudio)
             {

@@ -36,15 +36,15 @@ namespace UZSG.UI.HUD
         internal void Initialize(Player player)
         {
             Player = player;
-            Player.FPP.OnChangeHeldItem += OnChangeHeldItem;
+            Player.FPP.OnFPPControllerChanged += OnChangeHeldItem;
             Enabled = true;
         }
 
-        internal void OnChangeHeldItem(HeldItemController controller)
+        internal void OnChangeHeldItem(FPPItemController controller)
         {
             // TODO: fix recoilMult not activating on first change of held weapon item
             // Set recoilMultiplier based on weapon spread data; experimental, scuffed, and subject to change
-            if (Player.FPP.HeldItem is GunWeaponController gunWeapon)
+            if (Player.FPP.FPPItemController is GunWeaponController gunWeapon)
             {
                 _baseRecoilValue = CalculateBaseRecoilMultiplier(gunWeapon.WeaponData.RangedAttributes.Spread);
 

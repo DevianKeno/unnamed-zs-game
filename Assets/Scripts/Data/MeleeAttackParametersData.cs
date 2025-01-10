@@ -9,7 +9,7 @@ namespace UZSG.Data
     [CreateAssetMenu(fileName = "New Melee Attack Parameters", menuName = "UZSG/Attacks/Melee Attack")]
     public class MeleeAttackParametersData : BaseData
     {
-        public MeleeSwingType SwingType;
+        public CastType SwingType;
         [Space]
         
         public float Range;
@@ -22,8 +22,10 @@ namespace UZSG.Data
         [Range(0, 360)]
         public float AngleWidth;
         public Vector3 RotationOffset;
+        public bool Flip;
 
         [Header("Debugging")]
         public bool Visualize;
+        public bool IncludeRotationOffset = true;
     }
 }

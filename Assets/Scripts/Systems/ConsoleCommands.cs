@@ -218,7 +218,7 @@ namespace UZSG.Systems
         /// </summary>
         void CClear(object sender, string[] args)
         {
-            Messages.Clear();
+            _messages.Clear();
         }        
         
         /// <summary>
@@ -409,7 +409,7 @@ namespace UZSG.Systems
             {
                 if (int.TryParse(args[1], out int value))
                 {
-                    Game.World.CurrentWorld.Time.SetTime(value);
+                    // Game.World.CurrentWorld.Time.SetTime(value);
                 }
                 else
                 {

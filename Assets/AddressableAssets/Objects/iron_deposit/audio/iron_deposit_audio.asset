@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3225a92847421ec41a13a5cd94ac5446, type: 3}
   m_Name: iron_deposit_audio
   m_EditorClassIdentifier: 
+  PoolSize: 2
   Path: Assets/AddressableAssets/Objects/iron_deposit/audio
   AudioClips:
   - m_AssetGUID: a87a848251336294aacad555581050c5

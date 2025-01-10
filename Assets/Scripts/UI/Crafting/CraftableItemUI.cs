@@ -8,7 +8,7 @@ using UZSG.Data;
 
 namespace UZSG.UI
 {
-    public class CraftableItemUI : Window, IPointerEnterHandler, IPointerExitHandler
+    public class CraftableItemUI : UIElement, IPointerEnterHandler, IPointerExitHandler
     {
         static Color CraftableTextColor = Color.white;
         static Color UncraftableTextColor = Color.gray;
@@ -46,7 +46,7 @@ namespace UZSG.UI
 
         public event Action<CraftableItemUI> OnClick;
 
-        void Start()
+        protected virtual void Start()
         {
             _originalBgColor = background.color;
             button.onClick.AddListener(() =>

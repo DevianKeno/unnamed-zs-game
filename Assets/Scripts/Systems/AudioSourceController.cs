@@ -81,7 +81,7 @@ namespace UZSG.Systems
             return null;
         }
 
-        public void PlaySound(string name)
+        public void PlaySound(string name, ulong delaySeconds = 0)
         {
             if (availableSources.Count > 0)
             {
@@ -89,7 +89,7 @@ namespace UZSG.Systems
                 {
                     var source = availableSources.Dequeue();
                     source.clip = clip;
-                    source.Play();
+                    source.Play(delaySeconds);
                     StartCoroutine(ReturnToFootstepPoolWhenFinished(source));
                 };
             }

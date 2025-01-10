@@ -142,6 +142,9 @@ namespace UZSG.Inventory
             return (SlotType & MapItemTypeToSlotType(item.Data.Type)) != 0;
         }
         
+        /// <summary>
+        /// Clear the item contents of this slot.
+        /// </summary>
         public void Clear()
         {
             _previousItem = this.item;

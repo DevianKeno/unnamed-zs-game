@@ -17,9 +17,11 @@ namespace UZSG.Systems
         /// Key is command name.
         /// </summary>
         Dictionary<string, Command> _commandsDict = new();
-        public List<string> Messages;
+        List<string> _messages = new();
+        public List<string> Messages => _messages;
 
-        ConsoleWindow UI;
+        ConsoleWindow gui;
+        public ConsoleWindow Gui => gui;
         
 
         #region Events
@@ -48,28 +50,28 @@ namespace UZSG.Systems
 
         void OnLateInit()
         {
-            UI = Game.UI.Create<ConsoleWindow>("Console Window");
+            gui = Game.UI.Create<ConsoleWindow>("Console Window");
             InitializeInputs();
 
-            Game.Entity.OnEntitySpawned += (info) =>
-            {
-                if (info.Entity is Player player)
-                {
-                    _player = player;
-                    UI.OnOpen += () =>
-                    {
-                        _player.Controls.Disable();
-                        _player.Actions.Disable();
-                        _player.FPP.ToggleControls(false);
-                    };
-                    UI.OnClose += () =>
-                    {
-                        _player.Controls.Enable();
-                        _player.Actions.Enable();
-                        _player.FPP.ToggleControls(true);
-                    };
-                }
-            };
+            // Game.Entity.OnEntitySpawned += (info) =>
+            // {
+            //     if (info.Entity is Player player)
+            //     {
+            //         _player = player;
+            //         UI.OnOpen += () =>
+            //         {
+            //             _player.Controls.Disable();
+            //             _player.Actions.Disable();
+            //             _player.FPP.ToggleControls(false);
+            //         };
+            //         UI.OnClose += () =>
+            //         {
+            //             _player.Controls.Enable();
+            //             _player.Actions.Enable();
+            //             _player.FPP.ToggleControls(true);
+            //         };
+            //     }
+            // };
         }
 
         void InitializeInputs()
@@ -81,7 +83,10 @@ namespace UZSG.Systems
 
         void OnInputToggleUI(InputAction.CallbackContext context)
         {
-            UI.ToggleVisibility();
+            if (gui.IsVisible)
+                gui.Hide();
+            else
+                gui.Show();
         }
 
         public void Run(string input)
@@ -98,6 +103,12 @@ namespace UZSG.Systems
             {
                 command = command.Replace("/", "");
             }
+
+            // if (Game.World.HasWorld)
+            // if (Game.World.CurrentWorld.Attributes.OwnerId != commandSenderId)
+            // {
+            //     return;
+            // }
 
             if (!_commandsDict.ContainsKey(command))
             {
@@ -141,13 +152,13 @@ namespace UZSG.Systems
 
         public void Write(string message)
         {
-            Messages.Add($"{message}");
+            _messages.Add($"{message}");
             OnLogMessage?.Invoke(message);
         }
 
         public void WriteLine(string message)
         {
-            Messages.Add($"\n{message}");
+            _messages.Add($"\n{message}");
             OnLogMessage?.Invoke($"\n{message}");
         }
 

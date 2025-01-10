@@ -48,7 +48,7 @@ namespace UZSG.UI
         public void SetCraftingRoutine(CraftingRoutine routine)
         {
             itemDisplayUI.SetDisplayedItem(routine.Recipe.Output);
-            TotalTime = routine.Recipe.DurationSeconds * routine.TotalYield;
+            TotalTime = routine.Recipe.CraftingTimeSeconds * routine.TotalYield;
             Progress = routine.Progress;
             ProgressSingle = routine.ProgressSingle;
         }

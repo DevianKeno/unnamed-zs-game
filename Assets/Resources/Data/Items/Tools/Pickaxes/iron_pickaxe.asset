@@ -12,12 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81bc2aaa978c22b40abc135224c57da0, type: 3}
   m_Name: iron_pickaxe
   m_EditorClassIdentifier: 
-  SourceId: uzsg
+  Namespace: uzsg
   Id: iron_pickaxe
   Tags: []
   Name: Iron Pickaxe
-  Description: Used to mine stone, iron, and gold deposits to acquire necessary materials
-    for acquiring other items.
+  Description: Used to mine resource deposits to acquire minerals.
   Model:
     m_AssetGUID: 695d97c0eaa4c714fa58af62d3bbb34b
     m_SubObjectName: 
@@ -29,15 +28,18 @@ MonoBehaviour:
   Weight: 0
   StackSize: 1
   IsFuel: 0
-  FuelDuration: 0
+  FuelDurationSeconds: 0
+  IsObject: 0
+  ObjectData: {fileID: 0}
   IsMaterial: 0
   IsCraftable: 1
   Recipes: []
   SourceDescription: Iron Pickaxes can be acquired either by crafting or from storages
     present in caves.
-  AudioAssetsData: {fileID: 0}
-  ToolType: 1
-  Attacks: []
+  AudioAssetsData: {fileID: 11400000, guid: 149a99722381bea4e88d4e0382c31cfe, type: 2}
+  ToolType: 2
+  Attacks:
+  - {fileID: 11400000, guid: 8066562d3f8c0b246a145823c7650656, type: 2}
   SwingDirection: 1
   Attributes:
   - data: {fileID: 11400000, guid: dfa56112f40946a428ee64518c941476, type: 2}
@@ -68,9 +70,15 @@ MonoBehaviour:
     flatBonus: 0
     LimitOverflow: 0
     LimitUnderflow: 0
-  armsAnimations: {fileID: 0}
+  Category: 0
+  MeleeAttributes:
+    BaseDamage: 0
+    BaseCritStrike: 0
+    BaseCritDamage: 0
+    ComboCount: 1
+  armsAnimations: {fileID: 9100000, guid: 5cfc4e636c916af439e6377ac83eb14e, type: 2}
   viewmodel:
-    m_AssetGUID: 
+    m_AssetGUID: adc67ffbd1a8f1940b6c612bfca8efc9
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
@@ -78,8 +86,7 @@ MonoBehaviour:
     UseOffsets: 0
     PositionOffset: {x: 0, y: 0, z: 0}
     RotationOffset: {x: 0, y: 0, z: 0}
-    RunBobPosition: {x: 0, y: 0, z: 0}
-    RunBobRotation: {x: 0, y: 0, z: 0}
+    BobbingPresets: []
   anims:
     Idle: 
     Move: 

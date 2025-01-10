@@ -2163,7 +2163,7 @@ GameObject:
   - component: {fileID: 7262610254354274686}
   - component: {fileID: 9027009024157459099}
   m_Layer: 5
-  m_Name: Image (1)
+  m_Name: Divider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

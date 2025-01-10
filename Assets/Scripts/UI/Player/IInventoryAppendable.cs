@@ -1,4 +1,4 @@
-namespace UZSG.UI.Players
+namespace UZSG.UI
 {
     /// <summary>
     /// GUIs that can be appended to the Player's Inventory GUI.

@@ -36,7 +36,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 167.2, y: -33}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 182.4, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8250109019658285427
 CanvasRenderer:
@@ -282,8 +282,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rect: {fileID: 0}
-  FadeDuration: 0.3
   indicator: {fileID: 8250109019733149546}
+  key: {fileID: 0}
+  buttonText: {fileID: 0}
   actionText: {fileID: 8250109019658285424}
   objectText: {fileID: 8250109019658285424}
 --- !u!1 &8401173355290518190

@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3372a5b7bb26d3f488d62bf6042f3f86, type: 3}
+  m_Name: campfire
+  m_EditorClassIdentifier: 
+  Namespace: uzsg
+  Id: campfire
+  Tags: []
+  Name: Campfire
+  Output:
+    itemData: {fileID: 11400000, guid: 32d344cc0e95e29419a9482fbb6657dd, type: 2}
+    count: 1
+    attributes:
+      attributesReadOnly: []
+  Materials:
+  - itemData: {fileID: 11400000, guid: 9a15ab273ce6ac4408d2a9e03329c10f, type: 2}
+    count: 5
+    attributes:
+      attributesReadOnly: []
+  - itemData: {fileID: 11400000, guid: 28840410f2d8d0444ae7781a4c648d85, type: 2}
+    count: 5
+    attributes:
+      attributesReadOnly: []
+  RequiresFuel: 0
+  CraftingTimeSeconds: 1

@@ -49,4 +49,8 @@ MonoBehaviour:
   RequiresFuel: 1
   FuelSlotsSize: 0
   IncludedRecipes:
+  - {fileID: 11400000, guid: 5527385847a6728408c0db1670bc1d50, type: 2}
+  - {fileID: 11400000, guid: 18d69b088ebf87d4b8fec53e07daf871, type: 2}
+  - {fileID: 11400000, guid: 8a2caab26e568b149a5031a4dac26bfb, type: 2}
+  - {fileID: 11400000, guid: 9794f64513471f14d8877c1c458f2c6d, type: 2}
   - {fileID: 11400000, guid: a01b8268b0cc5624c82cc5906abc7fc4, type: 2}

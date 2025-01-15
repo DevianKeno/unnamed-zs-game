@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3372a5b7bb26d3f488d62bf6042f3f86, type: 3}
+  m_Name: fabric
+  m_EditorClassIdentifier: 
+  SourceId: uzsg
+  Id: fabric
+  Tags: []
+  Name: Fabric
+  Output:
+    itemData: {fileID: 11400000, guid: f3936e874256f7d4fb606b814214cd11, type: 2}
+    count: 2
+    attributes:
+      attributesReadOnly: []
+  Materials:
+  - itemData: {fileID: 11400000, guid: 559816becb8a6d447b50b55188bacb1d, type: 2}
+    count: 8
+    attributes:
+      attributesReadOnly: []
+  RequiresFuel: 0
+<<<<<<< HEAD
+  DurationSeconds: 3
+=======
+  DurationSeconds: 0
+>>>>>>> fd075f8c8e07f87c412ac994964d545a3ca179d7

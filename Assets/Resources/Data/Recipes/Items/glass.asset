@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3372a5b7bb26d3f488d62bf6042f3f86, type: 3}
+  m_Name: glass
+  m_EditorClassIdentifier: 
+  SourceId: uzsg
+  Id: glass
+  Tags: []
+  Name: Glass
+  Output:
+    itemData: {fileID: 11400000, guid: 2c5825e0d892e2740a6f62e921fea06b, type: 2}
+    count: 1
+    attributes:
+      attributesReadOnly: []
+  Materials:
+  - itemData: {fileID: 11400000, guid: 029bcd827fd6f144a9bc609e07fd6dac, type: 2}
+    count: 2
+    attributes:
+      attributesReadOnly: []
+  RequiresFuel: 1
+  DurationSeconds: 10

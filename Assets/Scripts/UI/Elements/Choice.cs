@@ -7,7 +7,7 @@ using TMPro;
 
 namespace UZSG.UI
 {
-    public class Choice : MonoBehaviour
+    public class Choice : UIElement
     {
         public string Label
         {
@@ -41,8 +41,10 @@ namespace UZSG.UI
         [SerializeField] Image iconImage;
         [SerializeField] Button button;
         
-        void OnValidate()
+        protected override void OnValidate()
         {
+            base.OnValidate();
+            
             if (HasIcon)
             {
                 iconImage.gameObject.SetActive(true);

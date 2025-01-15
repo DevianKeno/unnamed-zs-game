@@ -8,17 +8,14 @@ using UZSG.Items;
 using UZSG.Players;
 using UZSG.Systems;
 
-using static UZSG.Players.PlayerActions.PickupEventStatus;
-
 namespace UZSG.Objects
 {
     public class ResourcePickup : BaseObject, IInteractable
     {
         public ResourceData ResourceData => objectData as ResourceData;
-        public string Action => "Pick up";
-        public string Name => ResourceData.Name;
+        public string ActionText => "Pick Up";
+        public string DisplayName => ResourceData.DisplayName;
         public bool AllowInteractions { get; set; } = true;
-        public event EventHandler<IInteractArgs> OnInteract;
 
         Player _actor;
 
@@ -27,9 +24,24 @@ namespace UZSG.Objects
             base.Start();
         }
 
-        public void Interact(IInteractActor actor, IInteractArgs args)
+        public List<InteractAction> GetInteractActions()
         {
-            if (actor is Player player)
+            var actions = new List<InteractAction>();
+
+            actions.Add(new()
+            {
+                Interactable = this,
+                ActionText = this.ActionText,
+                InteractableText = this.DisplayName,
+                InputAction = Game.Input.InteractPrimary,
+            });
+
+            return actions;
+        }
+
+        public void Interact(InteractionContext context)
+        {
+            if (context.Phase == InteractPhase.Started && context.Actor is Player player)
             {
                 if (player.Inventory.Bag.IsFull)
                 {
@@ -37,13 +49,13 @@ namespace UZSG.Objects
                     return;
                 }
 
-                player.Actions.StartPickupRoutine(this);
+                player.Actions.StartPickupRoutine(this, allowMovement: true);
                 player.Actions.OnInteract -= OnPlayerInteract;
                 player.Actions.OnInteract += OnPlayerInteract;
             }
         }
 
-        void OnPlayerInteract(InteractContext context)
+        void OnPlayerInteract(InteractionContext context)
         {
             if (context.Phase == InteractPhase.Finished)
             {

@@ -64,7 +64,7 @@ namespace UZSG.Entities
         /// </summary>
         List<UIElement> uiElements = new();
         InventoryWindow invUI;
-        public InventoryWindow InventoryGUI => invUI;
+        public InventoryWindow InventoryWindow => invUI;
         PlayerHUDVitalsUI vitalsHUD;
         public PlayerHUDVitalsUI VitalsHUD => vitalsHUD;
         PlayerHUDInfoUI infoHUD;
@@ -180,6 +180,14 @@ namespace UZSG.Entities
             Game.Console.Gui.OnClosed += () =>
             {
                 inputs["Look"].Enable();
+            };
+            Game.World.CurrentWorld.OnPause += () =>
+            {
+                Game.Main.GetActionMap("Player").Disable();
+            };
+            Game.World.CurrentWorld.OnUnpause += () =>
+            {
+                Game.Main.GetActionMap("Player").Enable();
             };
             
             Controls.Initialize();

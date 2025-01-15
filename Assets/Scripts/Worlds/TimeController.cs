@@ -101,6 +101,8 @@ namespace UZSG.Worlds
             get => currentDay;
             set => currentDay = value;
         }
+        int _lastHour;
+        int _lastMinute;
 
 
         [Header("Colors")]
@@ -202,6 +204,18 @@ namespace UZSG.Worlds
             {
                 rawTime = totalDayLength - 1;
                 CurrentDay--;
+            }
+            
+            if (currentHour != _lastHour)
+            {
+                _lastHour = currentHour;
+                OnHourPassed?.Invoke(currentHour);
+            }
+
+            if (currentMinute != _lastMinute)
+            {
+                _lastMinute = currentMinute;
+                OnMinutePassed?.Invoke(currentMinute);
             }
         }
 

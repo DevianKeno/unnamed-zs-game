@@ -12,9 +12,15 @@ using UZSG.Interactions;
 using UZSG.Entities;
 using UZSG.Inventory;
 using UZSG.Items;
+using UnityEngine.Serialization;
 
 namespace UZSG.Players
 {
+    public class Tags
+    {
+        public const string INTERACTABLE = "Interactable";
+    }
+
     /// <summary>
     /// Handles the different actions the Player can do.
     /// </summary>
@@ -23,38 +29,49 @@ namespace UZSG.Players
         public Player Player { get; private set; }
         [Space]
 
-        [Header("Interaction Size")]
-        public float Radius;
-        [Range(0.1f, 5f)]
-        public float MaxInteractDistance;
-        public float HoldThresholdMilliseconds = 200f;
+        [Header("Interaction Settings")]
+        [SerializeField, FormerlySerializedAs("Radius")] float InteractRadius;
+        [Range(0.1f, 5f), SerializeField] float MaxInteractDistance;
+        [SerializeField] LayerMask interactableLayers;
+        [SerializeField] float HoldThresholdMilliseconds = 200f;
         
-        public bool IsBusy { get; protected set; }
         bool _hadLeftClicked;
         bool _hadRightClicked;
         bool _isHoldingLeftClick;
         bool _isHoldingRightClick;
         bool _allowInteractions = true;
         float _holdTimer;
+        Ray _ray;
         /// <summary>
         /// The interactable object the Player is currently looking at.
         /// </summary>
-        IInteractable _lastLookedAt;
         IInteractable _lookingAt;
-        Ray _ray;
-        InteractionIndicator interactionIndicator;
+        List<InteractAction> _listeningToInteractActions = new();
         RigidbodyConstraints _savedRigidbodyConstraints;
         PauseMenuWindow pauseMenu;
 
+        /// <summary>
+        /// Whether if the player is currently interacting with <i>something</i>.
+        /// </summary>
+        public bool IsBusy { get; protected set; }
 
         #region Actions events
 
+        /// <summary>
+        /// Called everytime the Player equips something in Equipment
+        /// </summary>
+        public event Action<ItemData, EquipmentIndex> OnEquipEquipment;
+        /// <summary>
+        /// Called everytime the Player equips something in Hotbar.
+        /// <c>int</c> is the index of the item in the Hotbar.
+        /// </summary>
+        public event Action<ItemData, int> OnEquipHotbar;
         public event Action<Item> OnPickupItem;
-        public event Action<ILookable> OnLookAtSomething;
+        public event Action<IInteractable, List<InteractAction>> OnLookAtSomething;
         /// <summary>
         /// This should be passed with context.
         /// </summary>
-        public event Action<InteractContext> OnInteract;
+        public event Action<InteractionContext> OnInteract;
         public event Action<VehicleInteractContext> OnInteractVehicle;
 
         #endregion
@@ -77,7 +94,6 @@ namespace UZSG.Players
         {
             _savedRigidbodyConstraints = Player.Rigidbody.constraints;
             InitializeEvents();
-            InitializeUI();
             InitializeInputs();
 
             Game.Tick.OnTick += Tick;
@@ -85,6 +101,7 @@ namespace UZSG.Players
 
         void InitializeEvents()
         {
+            this.OnInteract += OnInteractNotifySelf;
             Game.UI.OnWindowOpened += (window) =>
             {
                 Disable();
@@ -93,11 +110,6 @@ namespace UZSG.Players
             {
                 Enable();
             };
-        }
-
-        void InitializeUI()
-        {
-            interactionIndicator = Game.UI.Create<InteractionIndicator>("Interaction Indicator", show: false);
         }
 
         void InitializeInputs()
@@ -111,8 +123,17 @@ namespace UZSG.Players
             inputs["Secondary Action"].started += OnStartSecondaryAction;       // RMB (default)
             inputs["Secondary Action"].canceled += OnCancelSecondaryAction;     // RMB (default)
             
-            inputs["Interact"].performed += OnPerformInteract;                  // F (default)
-            inputs["Interact"].Enable();
+            // var interactInput = inputs["Interact"];
+            // interactInput.started += OnInputInteractPrimary;             // F (default)
+            // interactInput.performed += OnInputInteractPrimary;             // F (default)
+            // interactInput.canceled += OnInputInteractPrimary;             // F (default)
+            // interactInput.Enable();
+            
+            // var interactInput2 = inputs["Interact Secondary"];
+            // interactInput2.started += OnInputInteractSecondary;             // G (default)
+            // interactInput2.performed += OnInputInteractSecondary;             // G (default)
+            // interactInput2.canceled += OnInputInteractSecondary;             // G (default)
+            // interactInput2.Enable();
 
             inputs["Pause"] = Game.Main.GetInputAction("Pause", "World");
             inputs["Pause"].performed += OnInputPause;
@@ -163,6 +184,9 @@ namespace UZSG.Players
         {
         }
 
+        const int MAX_INTERACT_RAYCAST_HITS = 10;
+        RaycastHit[] _interactRaycastResults = new RaycastHit[MAX_INTERACT_RAYCAST_HITS];
+
         void InteractionSphereCast()
         {
             if (!_allowInteractions) return;
@@ -170,36 +194,34 @@ namespace UZSG.Players
 
             var viewportCenter = new Vector2(Screen.width / 2, Screen.height / 2);
             _ray = Player.MainCamera.ScreenPointToRay(viewportCenter);
+            _ray.origin += Player.Forward.normalized * 0.5f;
+            int hitCount = Physics.SphereCastNonAlloc(_ray, InteractRadius, _interactRaycastResults, MaxInteractDistance, interactableLayers);
+            bool newInteractionFound = false;
             
-            foreach (var hit in Physics.SphereCastAll(_ray, Radius, MaxInteractDistance))
+            for (int i = 0; i < hitCount; i++)
             {
-                // if (hit.collider != null && hit.collider.CompareTag("Interactable"))
-                if (hit.collider.CompareTag("Interactable"))
+                var hit = _interactRaycastResults[i];
+                switch (hit.collider.tag)
                 {
-                    var interactable = hit.collider.GetComponentInParent<IInteractable>();
-                    if (interactable != null && interactable.AllowInteractions)
+                    case Tags.INTERACTABLE:
                     {
-                        _lookingAt?.OnLookExit();
-                        _lookingAt = interactable;
-                        _lookingAt.OnLookEnter();
-                        interactionIndicator.Indicate(_lookingAt);
-                        // OnLookAtSomething?.Invoke(interactable);
-                        return;
-                    }
-                }
+                        var interactable = hit.collider.GetComponentInParent<IInteractable>();
+                        if (interactable != null && interactable.AllowInteractions)
+                        {
+                            if (interactable == _lookingAt) return;
 
-                var lookable = hit.collider.GetComponentInParent<ILookable>();
-                if (lookable != null && lookable.AllowInteractions)
-                {
-                    OnLookAtSomething?.Invoke(lookable);
-                    return;
+                            LookAt(interactable);
+                            newInteractionFound = true;
+                        }
+                        break;
+                    }
                 }
             }
 
-            interactionIndicator.Hide();
-            _lookingAt?.OnLookExit();
-            _lookingAt = null;
-            OnLookAtSomething?.Invoke(null);
+            if (!newInteractionFound)
+            {
+                LookAt(null);
+            }
         }
 
         void DetectOutOfBounds()
@@ -217,10 +239,6 @@ namespace UZSG.Players
 
         #region Pickup action
         
-        public enum PickupEventStatus {
-            Started, Performed, Canceled 
-        }
-
         RadialProgressUI pickupRingUI;
         float _pickupTimer;
         MEC.CoroutineHandle pickupTimerHandle;
@@ -229,18 +247,19 @@ namespace UZSG.Players
         /// To compare distance and cancel when too far.
         /// </summary>
         Vector3 _actionPosition;
-        
         InputAction backInput;
 
         /// <summary>
         /// Routine for picking up 'Resource Pickups'.
         /// </summary>
-        public void StartPickupRoutine(Objects.ResourcePickup resource)
+        /// <param name="resource"></param>
+        /// <param name="allowMovement">Whether to allow movement during the pickup.</param>
+        public void StartPickupRoutine(Objects.ResourcePickup resource, bool allowMovement = false)
         {
             if (resource == null) return;
 
             IsBusy = true;
-            OnInteract?.Invoke(new InteractContext()
+            OnInteract?.Invoke(new InteractionContext()
             {
                 Actor = Player,
                 Interactable = resource,
@@ -263,10 +282,21 @@ namespace UZSG.Players
 
                 Timing.KillCoroutines(pickupTimerHandle);
                 pickupTimerHandle = Timing.RunCoroutine(UpdatePickupRoutine(resource, pickupTime));
+                
+                if (!allowMovement)
+                {
+                    inputs["Interact"].performed -= CancelPickupOnMove;   
+                    inputs["Interact"].performed += CancelPickupOnMove;   
+                }
             }
             else /// instant
             {
                 FinishPickupRoutine(resource);
+            }
+
+            void CancelPickupOnMove(InputAction.CallbackContext context)
+            {
+                CancelPickupResource(resource);
             }
         }
 
@@ -277,7 +307,7 @@ namespace UZSG.Players
                 _pickupTimer += Time.deltaTime;
                 pickupRingUI.Progress = _pickupTimer / duration;
                 
-                if (Vector3.Distance(_actionPosition, Player.Position) > MaxInteractDistance)
+                if (Vector3.Distance(_actionPosition, Player.Position) > MaxInteractDistance + (InteractRadius / 2))
                 {
                     /// player is now too far away from the object
                     CancelPickupResource(resource);
@@ -298,7 +328,7 @@ namespace UZSG.Players
             pickupRingUI?.Destroy();
             pickupRingUI = null;
             EnableControlsOnPickupResource();
-            OnInteract?.Invoke(new InteractContext()
+            OnInteract?.Invoke(new InteractionContext()
             {
                 Actor = Player,
                 Interactable = resource,
@@ -313,7 +343,7 @@ namespace UZSG.Players
             pickupRingUI?.Destroy();
             pickupRingUI = null;
             EnableControlsOnPickupResource();
-            OnInteract?.Invoke(new InteractContext()
+            OnInteract?.Invoke(new InteractionContext()
             {
                 Actor = Player,
                 Interactable = resource,
@@ -360,15 +390,49 @@ namespace UZSG.Players
         #endregion
 
 
+        #region Event callbacks
+
+        void OnInteractNotifySelf(InteractionContext context)
+        {
+            if (context.Phase == InteractPhase.Started)
+            {
+                IsBusy = true;
+            }
+            else if (context.Phase == InteractPhase.Finished || context.Phase == InteractPhase.Canceled)
+            {
+                IsBusy = false;
+            }
+        }
+
+        void OnPerformInteractAction(InteractionContext context)
+        {
+            context.Actor = this.Player;
+            context.Phase = InteractPhase.Started;
+            context.Interactable.Interact(context);
+            OnInteract?.Invoke(context);
+            LookAt(null);
+        }
+
+        #endregion
+
+
         #region Input callbacks
         
-        void OnPerformInteract(InputAction.CallbackContext context)
+        void OnInputInteractPrimary(InputAction.CallbackContext context)
         {
-            if (IsBusy) return;
-            if (_lookingAt == null) return;
+            if (IsBusy && _lookingAt == null) return;
 
-            interactionIndicator.Hide();
-            _lookingAt.Interact(Player, null); /// IInteractArgs is undefined as of now
+            if (context.performed)
+            {
+                // _lookingAt?.Interact(this.Player, null); /// IInteractArgs is undefined as of now
+            }
+        }
+
+        void OnInputInteractSecondary(InputAction.CallbackContext context)
+        {
+            if (IsBusy && _lookingAt == null) return;
+
+            //
         }
 
         void OnStartPrimaryAction(InputAction.CallbackContext c)
@@ -436,8 +500,43 @@ namespace UZSG.Players
             SetPlayerPaused(false);
         }
 
+
         #region Public methods
 
+        public void LookAt(IInteractable interactable)
+        {
+            if (interactable != null)
+            {
+                _lookingAt?.OnLookExit();
+                _lookingAt = interactable;
+                _lookingAt.OnLookEnter();
+
+                var actions = _lookingAt.GetInteractActions();
+                foreach (var interactAction in actions)
+                {
+                    _listeningToInteractActions.Add(interactAction);
+                    interactAction.OnPerformed -= OnPerformInteractAction;
+                    interactAction.OnPerformed += OnPerformInteractAction;
+                }
+                
+                OnLookAtSomething?.Invoke(_lookingAt, actions);
+            }
+            else // interactable == null
+            {
+                IsBusy = false;
+                _lookingAt?.OnLookExit();
+                _lookingAt = null;
+
+                foreach (var ia in _listeningToInteractActions)
+                {
+                    ia.OnPerformed -= OnPerformInteractAction;
+                }
+                _listeningToInteractActions.Clear();
+                
+                OnLookAtSomething?.Invoke(null, null);
+            }
+        }
+  
         /// <summary>
         /// Pick up an Item, or from an ItemEntity and put in the inventory.
         /// </summary>
@@ -452,6 +551,8 @@ namespace UZSG.Players
                 if (Player.Inventory.Equipment.TryEquipWeapon(item, out EquipmentIndex index))
                 {
                     Player.FPP.HoldItem(item.Data);
+                    OnEquipEquipment?.Invoke(item.Data, index);
+                    /// TODO: gun item entities store ammunition data, if is reloaded, etc.
                     // if (itemEntity is GunItemEntity gun)
                     // {
                     //     Player.FPP.HeldItem
@@ -462,9 +563,10 @@ namespace UZSG.Players
             }
             else if (item.Data.Type == ItemType.Tool) /// put in hotbar (if possible)
             {
-                if (Player.Inventory.Hotbar.TryPutNearest(item))
+                if (Player.Inventory.Hotbar.TryEquip(item, out int putOnIndex))
                 {
                     Player.FPP.HoldItem(item.Data);
+                    OnEquipHotbar?.Invoke(item.Data, putOnIndex);
                     OnPickupItem?.Invoke(item);
                     return true;
                 }
@@ -566,8 +668,6 @@ namespace UZSG.Players
         {
             actionMap.Disable();
             _allowInteractions = false;
-            
-            interactionIndicator.Hide();
             _lookingAt?.OnLookExit();
             _lookingAt = null;
         }
@@ -635,7 +735,7 @@ namespace UZSG.Players
         void OnDrawGizmos()
         {
             Gizmos.DrawLine(_ray.origin, _ray.origin + _ray.direction * (MaxInteractDistance));
-            Gizmos.DrawWireSphere(_ray.origin + _ray.direction * (MaxInteractDistance + Radius), Radius);
+            Gizmos.DrawWireSphere(_ray.origin + _ray.direction * (MaxInteractDistance + InteractRadius), InteractRadius);
         }
     }
 }

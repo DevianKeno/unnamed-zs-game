@@ -362,7 +362,7 @@ namespace UZSG.UI.Objects
             if (ctx.Pointer.button == PointerEventData.InputButton.Left)
             {
                 if (slot.IsEmpty) return;
-                if (player.InventoryGUI.IsHoldingItem) return;
+                if (player.InventoryWindow.IsHoldingItem) return;
 
                 if (ctx.ClickType == ItemSlotUI.ClickType.ShiftClick)
                 {
@@ -370,7 +370,7 @@ namespace UZSG.UI.Objects
                 }
                 else
                 {
-                    player.InventoryGUI.HoldItem(slot.TakeAll());
+                    player.InventoryWindow.HoldItem(slot.TakeAll());
                 }
             }
         }

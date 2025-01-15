@@ -1,63 +1,71 @@
+using System.Collections.Generic;
+
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
+using UnityEngine.InputSystem;
 
 using UZSG.Interactions;
-using UZSG.Entities;
 
 namespace UZSG.UI
 {
     public class InteractionIndicator : UIElement
     {
-        public struct Options
+        List<InteractActionUI> actions = new();
+
+        [Header("Prefabs")]
+        [SerializeField] GameObject actionPrefab;
+
+        protected virtual void Start()
         {
-            public string ActionText { get; set; }
-            public IInteractable Interactable { get; set; }
+            ClearActions();
         }
 
-        public string Button
+        protected override void OnHide()
         {
-            get => buttonText.text;
-            set => buttonText.text = value;
+            base.OnHide();
+            ClearActions();
         }
 
-        [SerializeField] GameObject indicator;
-        [SerializeField] GameObject key;
-        [SerializeField] TextMeshProUGUI buttonText;
-        [SerializeField] TextMeshProUGUI actionText;
-        [SerializeField] TextMeshProUGUI objectText;
-
-        public void Indicate(IInteractable obj)
+        public void Indicate(IInteractable interactable, List<InteractAction> actions)
         {
-            if (obj == null)
+            if (interactable == null)
             {
                 Hide();
                 return;
             }
-            
-            actionText.text = obj.Action;
-            objectText.text = obj.Name;
-            Show();
-            Rebuild();
-        }
 
-        public void SetKey(bool enabled)
-        {
-            key.gameObject.SetActive(enabled);
-        }
-
-        public void Indicate(Options options)
-        {
-            if (options.Interactable == null)
+            ClearActions();
+            if (actions != null)
+            foreach (InteractAction option in actions)
             {
-                Hide();
-                return;
+                AddAction(option);
+                option.InputAction.performed += OnInputPerformed;
+                
+                /// safety net
+                void OnInputPerformed(InputAction.CallbackContext context)
+                {
+                    option.InputAction.performed -= OnInputPerformed;
+                }
             }
-            
-            actionText.text = options.ActionText;
-            objectText.text = options.Interactable.Name;
             Show();
             Rebuild();
+        }
+
+        public void AddAction(InteractAction options)
+        {
+            var go = Instantiate(actionPrefab, parent: transform);
+            var action = go.GetComponent<InteractActionUI>();
+            action.InteractAction = options;
+            actions.Add(action);
+            action.Show();
+        }
+
+        public void ClearActions()
+        {
+            foreach (var element in actions)
+            {
+                element.Destroy();
+            }
+            actions.Clear();
         }
     }
 }

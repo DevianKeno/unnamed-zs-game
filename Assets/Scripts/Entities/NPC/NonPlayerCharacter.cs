@@ -94,7 +94,7 @@ namespace UZSG.Entities
 
         public void SpawnBlood(Vector3 position)
         {
-            Game.Particles.Spawn("blood_splat", position);
+            Game.Particles.Create("blood_splat", position);
         }
 
         #endregion

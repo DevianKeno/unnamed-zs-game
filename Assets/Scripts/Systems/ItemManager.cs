@@ -15,6 +15,10 @@ namespace UZSG.Systems
         bool _isInitialized;
         public bool IsInitialized => _isInitialized;
         Dictionary<string, ItemData> _itemsDict = new();
+        /// <summary>
+        /// <c>string</c> is Id
+        /// </summary>
+        public Dictionary<string, ItemData> ItemDataDict => _itemsDict;
         Dictionary<string, GameObject> _cachedItemModels = new();
 
         public event EventHandler<string> OnDoneLoadModel;
@@ -48,10 +52,10 @@ namespace UZSG.Systems
             {
                 var itemData = _itemsDict[itemId];
 
-                if (itemData.Model != null)
+                if (itemData.EntityModel != null)
                 {
                     /// Load model
-                    Addressables.LoadAssetAsync<GameObject>(itemData.Model).Completed += (a) =>
+                    Addressables.LoadAssetAsync<GameObject>(itemData.EntityModel).Completed += (a) =>
                     {
                         if (a.Status == AsyncOperationStatus.Succeeded)
                         {

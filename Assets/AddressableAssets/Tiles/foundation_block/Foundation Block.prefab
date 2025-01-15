@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8042014237697361065}
   - component: {fileID: 6462856316688678224}
   - component: {fileID: 3924374243882829694}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Block
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -115,7 +115,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5404434999703873798}
   - component: {fileID: 1131808684121191418}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Foundation Block
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -151,7 +151,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   instanceId: 0
-  structureData: {fileID: 11400000, guid: 37516c3701e1dae49aecbcb235b5a32d, type: 2}
+  tileData: {fileID: 0}
   attributes:
     attributesReadOnly: []
   model: {fileID: 5648544049095730273}

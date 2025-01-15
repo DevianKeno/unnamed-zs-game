@@ -30,7 +30,7 @@ namespace UZSG.UnityEditor
         {
             base.OnEnable();
 
-            assetReference = serializedObject.FindProperty("Model");
+            assetReference = serializedObject.FindProperty("EntityModel");
             displayNameProperty = serializedObject.FindProperty("DisplayName");
             description = serializedObject.FindProperty("Description");
             sprite = serializedObject.FindProperty("Sprite");

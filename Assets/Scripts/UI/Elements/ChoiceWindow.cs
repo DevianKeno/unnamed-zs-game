@@ -9,7 +9,7 @@ using UZSG.Systems;
 
 namespace UZSG.UI
 {
-    public class ChoiceWindow : Window
+    public class ChoiceWindow : Panel
     {
         string _label = "Label";
         public string Label
@@ -27,7 +27,6 @@ namespace UZSG.UI
         List<Choice> _choices;
         Choice _selected;
 
-        PlayerInput input;
         InputActionMap choiceWindowActionMap;
         InputAction navigateInput;
         InputAction submitInput;
@@ -41,9 +40,9 @@ namespace UZSG.UI
         [Header("Child UIs")]
         [SerializeField] GameObject choicePrefab;
         
-        void Awake()
+        protected override void Awake()
         {
-            input = GetComponent<PlayerInput>();
+            base.Awake();
         }
 
         public Choice AddChoice(string text)

@@ -35,7 +35,7 @@ namespace UZSG.Systems
 
 
         InputAction toggleUI;
-        Player _player;
+        Player localPlayer;
         
         internal void Initialize()
         {
@@ -52,26 +52,31 @@ namespace UZSG.Systems
         {
             gui = Game.UI.Create<ConsoleWindow>("Console Window");
             InitializeInputs();
+            
+            Game.World.OnDoneLoadWorld += InitializeWorldEvents;
+            // Game.World.OnExitWorld += DeinitializeWorldEvents;
+            Game.Entity.OnEntitySpawned += OnEntitySpawned;
+        }
 
-            // Game.Entity.OnEntitySpawned += (info) =>
-            // {
-            //     if (info.Entity is Player player)
-            //     {
-            //         _player = player;
-            //         UI.OnOpen += () =>
-            //         {
-            //             _player.Controls.Disable();
-            //             _player.Actions.Disable();
-            //             _player.FPP.ToggleControls(false);
-            //         };
-            //         UI.OnClose += () =>
-            //         {
-            //             _player.Controls.Enable();
-            //             _player.Actions.Enable();
-            //             _player.FPP.ToggleControls(true);
-            //         };
-            //     }
-            // };
+        void InitializeWorldEvents()
+        {
+            Game.World.CurrentWorld.OnPause += () =>
+            {
+                toggleUI.Disable();
+            };
+            Game.World.CurrentWorld.OnUnpause += () =>
+            {
+                toggleUI.Enable();
+            };
+        }
+
+        void OnEntitySpawned(EntityManager.EntityInfo info)
+        {
+            if (info.Entity is Player player)
+            {
+                Game.Entity.OnEntitySpawned -= OnEntitySpawned;
+                localPlayer = player;
+            }
         }
 
         void InitializeInputs()

@@ -1,5 +1,8 @@
 using System;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -16,38 +19,53 @@ namespace UZSG.Entities
     /// <summary>
     /// Items that appear in the world (e.g. Interactables, Pickupables, etc.)
     /// </summary>
-    public class ItemEntity : Entity, ILookable, IInteractable, IWorldCleanupable
+    [RequireComponent(typeof(MeshFilter))]
+    [RequireComponent(typeof(MeshRenderer))]
+    public class ItemEntity : Entity, IInteractable, IWorldCleanupable
     {
-        public const int DespawnTimeSeconds = 60;
+        public const int DESPAWN_TIME_SECONDS = 3600;
 
-        [SerializeField] Item item = Item.None;
+        [SerializeField] ItemData itemData;
+        public int Count = 0;
         /// <summary>
-        /// Get the actual 'Item' from the Item Entity.
+        /// Get the 'Item' from the Item Entity.
         /// </summary>
         public Item Item
         {
             get => AsItem();
-            set => item = new(value);
-        }
-        public string Name
-        {
-            get
+            set
             {
-                if (item.Data.Type == ItemType.Item)
+                if (value.Data == null)
                 {
-                    return $"{item.Count} {item.Data.DisplayName}";
+                    itemData = null;
                 }
                 else
                 {
-                    return $"{item.Data.DisplayName}";
+                    itemData = Game.Items.GetData(value.Id);
+                    Count = value.Count;
                 }
+                LoadModelAsset();
             }
         }
-        public string Action
+        public string DisplayName
         {
             get
             {
-                return item.Data.Type switch
+                if (this.itemData.IsStackable)
+                {
+                    return $"{Count} {this.itemData.DisplayName}";
+                }
+                else
+                {
+                    return $"{this.itemData.DisplayName}";
+                }
+            }
+        }
+        public string ActionText
+        {
+            get
+            {
+                return this.itemData.Type switch
                 {
                     ItemType.Item or
                     ItemType.Tool or
@@ -59,81 +77,145 @@ namespace UZSG.Entities
                 };
             }
         }
-        public LookableType LookableType => LookableType.Interactable; 
         public bool AllowInteractions { get; set; } = true;
         /// <summary>
         /// Despawn time in seconds.
         /// </summary>
         public int Age;
-        public event EventHandler<IInteractArgs> OnInteract;
 
         int _originalLayer;
-        bool _isModelLoaded;
+        int _outlineLayer;
+        bool _modelIsDirty;
 
-        GameObject model;
-        Rigidbody rb;
+        [Header("Components")]
+        [SerializeField] MeshFilter meshFilter;
+        [SerializeField] MeshRenderer meshRenderer;
+        [SerializeField] Rigidbody rb;
         public Rigidbody Rigidbody => rb;
+        [SerializeField] List<Collider> colliders = new();
+
+        [SerializeField] AssetReference cardboardBoxModel;
 
 
-        #region Initializing methods
+        #region Event callbacks
 
-        protected virtual void Awake()
+        void OnValidate()
         {
-            rb = GetComponentInChildren<Rigidbody>();
-            model = transform.Find("box").gameObject;
-            _originalLayer = model.layer;
-        }
-
-        protected override void Start()
-        {
-            LoadModel();
-            Age = DespawnTimeSeconds;
+            if (gameObject.activeInHierarchy)
+            {
+                this.entityData = Resources.Load<EntityData>("Data/Entities/item");
+                LoadModelAsset();
+            }
         }
 
         public override void OnSpawn()
         {
             base.OnSpawn();
-
-            LoadModel();
-            Age = DespawnTimeSeconds;
-            Game.Tick.OnSecond += Second;
+            
+            LoadModelAsset();
+            _originalLayer = LayerMask.NameToLayer("Entities");
+            _outlineLayer = LayerMask.NameToLayer("Outline");
+            Age = DESPAWN_TIME_SECONDS;
+            
+            Game.Tick.OnSecond -= OnSecond;
+            Game.Tick.OnSecond += OnSecond;
         }
 
-        void LoadModel()
+        protected override void OnKill()
         {
-            if (_isModelLoaded) return;
-
-            if (item.IsNone)
-            {
-                Game.Console.Warn($"Item in {transform.position} is a None Item.");
-                return;
-            }
-            if (!item.Data.Model.IsSet())
-            {
-                Game.Console.Warn($"The model asset of Item {item.Data.Id} is missing or not set.");
-                return;
-            }
-
-            Addressables.LoadAssetAsync<GameObject>(item.Data.Model).Completed += (a) =>
-            {
-                if (a.Status == AsyncOperationStatus.Succeeded)
-                {
-                    Destroy(model);
-                    model = Instantiate(a.Result, transform);
-                    /// Change the tag of the actual Item model
-                    /// so it becomes "interactable"
-                    model.ChangeTag("Interactable");
-                    _isModelLoaded = true;
-                }
-            };
+            Game.Tick.OnSecond -= OnSecond;
         }
 
-        void Second(SecondInfo e)
+        void OnSecond(SecondInfo e)
         {
             Age -= 1;
             if (Age < 0)
             {
                 Kill();
+            }
+        }
+
+        public void OnLookEnter()
+        {
+            /// render screen space outlines
+            gameObject.layer = _outlineLayer;
+        }
+
+        public void OnLookExit()
+        {
+            gameObject.layer = _originalLayer;
+        }
+
+        #endregion
+
+
+        void LoadModelAsset()
+        {
+            AssetReference toLoad;
+            if (itemData == null || !itemData.EntityModel.IsSet())
+            {
+                toLoad = cardboardBoxModel;
+            }
+            else
+            {
+                toLoad = this.itemData.EntityModel;
+            }
+            Addressables.LoadAssetAsync<GameObject>(toLoad).Completed += (a) =>
+            {
+                if (a.Status == AsyncOperationStatus.Succeeded)
+                {
+                    InitializeModel(a.Result);
+                }
+            };
+        }
+
+        async void InitializeModel(GameObject asset)
+        {
+            await Task.Yield();
+            if (asset.TryGetComponent(out MeshFilter otherMeshFilter))
+            {
+                meshFilter = gameObject.GetOrAddComponent<MeshFilter>();
+                meshFilter.sharedMesh = otherMeshFilter.sharedMesh;
+            }
+            if (asset.TryGetComponent(out MeshRenderer otherMeshRenderer))
+            {
+                meshRenderer = gameObject.GetOrAddComponent<MeshRenderer>();
+                meshRenderer.sharedMaterials = otherMeshRenderer.sharedMaterials;
+            }
+            if (asset.TryGetComponent(out Rigidbody otherRb))
+            {
+                rb = gameObject.GetOrAddComponent<Rigidbody>();
+                rb.mass = otherRb.mass;
+                rb.drag = otherRb.drag;
+                rb.angularDrag = otherRb.angularDrag;
+                rb.useGravity = otherRb.useGravity;
+                rb.isKinematic = otherRb.isKinematic;
+            }
+
+            foreach (var c in GetComponents<Collider>())
+            {
+#if UNITY_EDITOR
+                DestroyImmediate(c);
+#else
+                Destroy(c);
+#endif
+            }
+            colliders.Clear();
+            foreach (var otherCollider in asset.GetComponents<Collider>())
+            {
+                var newCollider = CopyCollider(otherCollider);
+                colliders.Add(newCollider);
+            }
+        }
+
+        void DestroyItemComponents()
+        {
+            Destroy(meshFilter);
+            Destroy(meshRenderer);
+            Destroy(rb);
+            foreach (var c in colliders)
+            {
+                Destroy(c);
             }
         }
 
@@ -144,10 +226,11 @@ namespace UZSG.Entities
             base.ReadSaveData(saveData);
             if (sd.Item.Id == "none") Destroy(gameObject);
 
-            item = new Item(sd.Item.Id, sd.Item.Count);
+            var item = new Item(sd.Item.Id, sd.Item.Count);
             if (sd.Item.HasAttributes)
             {
                 item.Attributes.ReadSaveData(sd.Item.Attributes);
+                /// TODO: unhandled
             }
         }
         
@@ -160,28 +243,34 @@ namespace UZSG.Entities
                 InstanceId = sd.InstanceId,
                 Id = entityData.Id,
                 Transform = sd.Transform,
-                Item = item.WriteSaveData(),
+                Item = AsItem().WriteSaveData(),
                 Age = Age
             };
 
             return saveData;
         }
 
-        #endregion
-
-
-        protected override void OnKill()
-        {
-            _isModelLoaded = false;
-            Game.Tick.OnSecond -= Second;
-        }
-
 
         #region Public methods
 
-        public void Interact(IInteractActor actor, IInteractArgs args)
+        public List<InteractAction> GetInteractActions()
         {
-            if (actor is not Player player) return;
+            var actions = new List<InteractAction>();
+        
+            actions.Add(new()
+            {
+                Interactable = this,
+                ActionText = this.ActionText,
+                InteractableText = this.DisplayName,
+                InputAction = Game.Input.InteractPrimary,
+            });
+
+            return actions;
+        }
+        
+        public void Interact(InteractionContext context)
+        {
+            if (context.Actor is not Player player) return;
 
             if (player.Actions.PickUpItem(this))
             {
@@ -190,18 +279,11 @@ namespace UZSG.Entities
         }
 
         /// <summary>
-        /// Gets an Item object from the entity.
+        /// Returns a copy of the Item.
         /// </summary>
         public Item AsItem()
         {
-            if (item.IsNone)
-            {
-                return Item.None;
-            }
-            else
-            {
-                return new(item);
-            }
+            return new(this.itemData, this.Count);
         }
 
         /// <summary>
@@ -212,38 +294,60 @@ namespace UZSG.Entities
             Rigidbody.AddForce(direction * power, ForceMode.Impulse);
         }
 
-        bool _isAlreadyBeingLookedAt = false;
-
-        public void OnLookEnter()
-        {
-            if (_isAlreadyBeingLookedAt) return;
-            _isAlreadyBeingLookedAt = true;
-
-            if (model != null)
-            {
-                /// render screen space outlines
-                model.layer = LayerMask.NameToLayer("Outline");
-            }
-        }
-
-        public void OnLookExit()
-        {
-            _isAlreadyBeingLookedAt = false;
-            
-            if (model != null)
-            {
-                model.layer = _originalLayer;
-            }
-        }
-
         public void Cleanup()
         {
-            if (item.IsNone)
+            if (AsItem().IsNone)
             {
                 Kill(notify: false);
             }
         }
 
         #endregion
+
+
+        /// <summary>
+        /// Copies a Collider component by matching its type.
+        /// </summary>
+        Collider CopyCollider(Collider original)
+        {
+            switch (original)
+            {
+                case BoxCollider box:
+                {
+                    var newBox = gameObject.AddComponent<BoxCollider>();
+                    newBox.center = box.center;
+                    newBox.size = box.size;
+                    return newBox;
+                }
+                case SphereCollider sphere:
+                {
+                    var newSphere = gameObject.AddComponent<SphereCollider>();
+                    newSphere.center = sphere.center;
+                    newSphere.radius = sphere.radius;
+                    return newSphere;
+                }
+                case CapsuleCollider capsule:
+                {
+                    var newCapsule = gameObject.AddComponent<CapsuleCollider>();
+                    newCapsule.center = capsule.center;
+                    newCapsule.radius = capsule.radius;
+                    newCapsule.height = capsule.height;
+                    newCapsule.direction = capsule.direction;
+                    return newCapsule;
+                }
+                case MeshCollider meshCollider:
+                {
+                    var newMeshCollider = gameObject.AddComponent<MeshCollider>();
+                    newMeshCollider.sharedMesh = meshCollider.sharedMesh;
+                    newMeshCollider.convex = meshCollider.convex;
+                    return newMeshCollider;
+                }
+                default:
+                {
+                    Debug.LogWarning($"Unsupported collider type: {original.GetType()}");
+                    return null;
+                }
+            }
+        }
     }
 }

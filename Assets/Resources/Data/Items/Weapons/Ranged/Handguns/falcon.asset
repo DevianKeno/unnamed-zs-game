@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72e1d5853de97a54aa491bcf19eb9d39, type: 3}
   m_Name: falcon
   m_EditorClassIdentifier: 
-  SourceId: uzsg
+  Namespace: uzsg
   Id: falcon
   Tags: []
-  Name: WL Falcon
+  DisplayName: WL Falcon
   Description: Big pistol.
-  Model:
+  EntityModel:
     m_AssetGUID: 2bfce7f0d0d144744a5184c040ecaf73
     m_SubObjectName: 
     m_SubObjectType: 
@@ -28,7 +28,9 @@ MonoBehaviour:
   Weight: 2
   StackSize: 1
   IsFuel: 0
-  FuelDuration: 0
+  FuelDurationSeconds: 0
+  IsObject: 0
+  ObjectData: {fileID: 0}
   IsMaterial: 0
   IsCraftable: 0
   Recipes: []
@@ -46,6 +48,7 @@ MonoBehaviour:
     BaseDamage: 0
     BaseCritStrike: 0
     BaseCritDamage: 0
+    ComboCount: 0
   RangedAttributes:
     FiringModes: 2
     RoundsPerMinute: 300
@@ -97,10 +100,10 @@ MonoBehaviour:
     - Id: run
       BobSettings:
         Id: run
-        Threshold: 0.3
+        Threshold: 1
         Amplitude: -0.6
         Frequency: 1
-        Recovery: 4
+        Recovery: 5
         MaintainForwardLook: 0
         LookDistance: 0
       Position: {x: 0.5, y: -0.7, z: 2}

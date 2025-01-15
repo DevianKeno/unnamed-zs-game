@@ -96,19 +96,21 @@ namespace UZSG.UI.HUD
 
         void InitializeEvents()
         {
+            Player.Actions.OnEquipEquipment += OnEquipEquipment;
+            Player.Actions.OnEquipHotbar += OnEquipHotbar;
             Player.FPP.OnHeldItemChanged += OnHeldItemChanged;
             Player.FPP.OnFPPControllerChanged += OnFPPControllerChanged;
             Player.FPP.OnSelectedHotbarChanged += OnSelectedHotbarChanged;
             Player.Inventory.Bag.OnSlotItemChanged += OnBagSlotItemChanged;
 
             /// Gui events
-            Player.InventoryGUI.FrameController.OnSwitchFrame += OnInvSwitchFrame;
-            Player.InventoryGUI.OnOpened += () =>
+            Player.InventoryWindow.FrameController.OnSwitchFrame += OnInvSwitchFrame;
+            Player.InventoryWindow.OnOpened += () =>
             {
-                bool showEquipment = Player.InventoryGUI.FrameController.CurrentFrame.Name == "equipment";
+                bool showEquipment = Player.InventoryWindow.FrameController.CurrentFrame.Name == "equipment";
                 equipment.gameObject.SetActive(showEquipment);
             };
-            Player.InventoryGUI.OnClosed += () =>
+            Player.InventoryWindow.OnClosed += () =>
             {
                 equipment.gameObject.SetActive(true);
             };
@@ -126,59 +128,81 @@ namespace UZSG.UI.HUD
 
         #region Event callbacks (from all over)
 
-        void OnHotbarSlotClicked(object sender, ItemSlotUI.ClickedContext e)
+        void OnHotbarSlotClicked(object sender, ItemSlotUI.ClickedContext click)
         {
             var slot = ((ItemSlotUI) sender).Slot;
 
-            if (!Player.InventoryGUI.IsVisible) return;
+            if (!Player.InventoryWindow.IsVisible) return;
 
-            if (e.Button == PointerEventData.InputButton.Left)
+            if (click.Button == PointerEventData.InputButton.Left)
             {
-                if (Player.InventoryGUI.IsHoldingItem)
+                if (Player.InventoryWindow.IsHoldingItem)
                 {
-                    var heldItem = Player.InventoryGUI.HeldItem;
-
-                    if (slot.IsEmpty || slot.Item.CompareTo(heldItem))
+                    if (slot.IsEmpty)
                     {
-                        slot.TryCombine(Player.InventoryGUI.TakeHeldItem(), out var excess);
-                        if (!excess.IsNone)
+                        slot.Put(Player.InventoryWindow.TakeHeldItem());
+                    }
+                    else if (slot.Item.Is(Player.InventoryWindow.HeldItem))
+                    {
+                        var heldItem = Player.InventoryWindow.TakeHeldItem();
+                        if (slot.TryStack(heldItem, out var excess))
                         {
-                            Player.InventoryGUI.HoldItem(excess);
+                            if (!excess.IsNone) Player.InventoryWindow.HoldItem(excess);
+                        } else /// swap items
+                        {
+                            Player.InventoryWindow.HoldItem(slot.TakeAll());
                         }
                     }
-                    else /// item diff, swap
+                    else /// swap items
                     {
-                        var tookItem = slot.TakeAll();
-                        var prevHeld = Player.InventoryGUI.SwapHeldWith(tookItem);
-                        slot.Put(prevHeld);
+                        Item taken = slot.TakeAll();
+                        var previousHeld = Player.InventoryWindow.SwapHeldWith(taken);
+                        slot.Put(previousHeld);
                     }
                 }
                 else
                 {
-                    if (slot.IsEmpty) return;
-
-                    Player.InventoryGUI.HoldItem(slot.TakeAll());
-                    _lastSelectedSlot = slot;
+                    if (!slot.IsEmpty)
+                    {
+                        Player.InventoryWindow.HoldItem(slot.TakeAll());
+                    }
                 }
             }
-            else if (e.Button == PointerEventData.InputButton.Right)
+            else if (click.Button == PointerEventData.InputButton.Right)
             {
-
+                if (Player.InventoryWindow.IsHoldingItem) /// put 1 to selected slot
+                {
+                    if (slot.IsEmpty)
+                    {
+                        slot.Put(Player.InventoryWindow.HeldItem.Take(1));
+                    }
+                    else if (slot.Item.Is(Player.InventoryWindow.HeldItem))
+                    {
+                        Item ofOne = Player.InventoryWindow.HeldItem.Take(1);
+                        if (slot.TryStack(ofOne, out var excess))
+                        {
+                            if (!excess.IsNone) Player.InventoryWindow.HoldItem(excess);
+                        } else
+                        {
+                            Player.InventoryWindow.HeldItem.Stack(ofOne);
+                        }
+                    }
+                }
             }
         }
 
         void OnEquipmentSlotClick(object sender, ItemSlotUI.ClickedContext e)
         {
-            if (!Player.InventoryGUI.IsVisible) return;
+            if (!Player.InventoryWindow.IsVisible) return;
 
             var slotUI = (ItemSlotUI) sender; 
             var slot = slotUI.Slot; 
 
             if (slot.IsEmpty) return;
 
-            if (Player.InventoryGUI.ItemOptions.IsVisible)
+            if (Player.InventoryWindow.ItemOptions.IsVisible)
             {
-                Player.InventoryGUI.ItemOptions.Destroy();
+                Player.InventoryWindow.ItemOptions.Destroy();
             }
             
             /// Create equipped Item options
@@ -208,6 +232,24 @@ namespace UZSG.UI.HUD
             if (Player.FPP.FPPItemController is GunWeaponController gun)
             {
                 AmmoCounter.SetReserve(gun.Reserve);
+            }
+        }
+
+        void OnEquipEquipment(ItemData data, EquipmentIndex index)
+        {
+            if (_equipmentSlotUIs.TryGetValue((int) index, out var slotUI))
+            {
+                selector.Select(slotUI.transform as RectTransform);
+                selector.Show();
+            }
+        }
+
+        void OnEquipHotbar(ItemData data, int index)
+        {
+            if (_hotbarSlotUIs.TryGetValue(index + 3, out var slotUI))
+            {
+                selector.Select(slotUI.transform as RectTransform);
+                selector.Show();
             }
         }
 

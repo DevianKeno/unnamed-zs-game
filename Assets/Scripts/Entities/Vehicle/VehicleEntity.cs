@@ -12,7 +12,7 @@ using UZSG.Systems;
 
 namespace UZSG.Entities
 {
-    public struct VehicleInteractContext : IInteractArgs
+    public struct VehicleInteractContext
     {
         public IInteractable Interactable { get; set; }
         public IInteractActor Actor { get; set; }
@@ -62,9 +62,9 @@ namespace UZSG.Entities
         [Header("Vehicle Wheel Meshes")]
         public List<GameObject> WheelMeshes;
 
-        public string Name => vehicleData.Name;
+        public string DisplayName => vehicleData.Name;
 
-        public string Action => "Drive";
+        public string ActionText => "Drive";
         // {
         //     get
         //     {
@@ -72,8 +72,6 @@ namespace UZSG.Entities
         //         return "Enter"
         //     }
         // }
-
-        public event EventHandler<IInteractArgs> OnInteract;
 
         int _originalLayer;
 
@@ -105,9 +103,33 @@ namespace UZSG.Entities
             }
         }
 
-        public void Interact(IInteractActor actor, IInteractArgs args)
+        public List<InteractAction> GetInteractActions()
         {
-            if (actor is not Player player) return;
+            var actions = new List<InteractAction>();
+            string actionText;
+            if (SeatManager.Driver == null)
+            {
+                actionText = "Drive";
+            }
+            else
+            {
+                actionText = "Enter";
+            }
+            actions.Add(new()
+            {
+                Interactable = this,
+                ActionText = actionText,
+                InteractableText = this.entityData.Name,
+                IsHold = true,
+                InputAction = Game.Input.InteractPrimary,
+            });
+
+            return actions;
+        }
+
+        public void Interact(InteractionContext context)
+        {
+            if (context.Actor is not Player player) return;
 
             Controller.EnableVehicle();
             SeatManager.EnterVehicle(player);

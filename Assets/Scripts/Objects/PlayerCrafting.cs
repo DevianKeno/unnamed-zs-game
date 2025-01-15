@@ -23,7 +23,7 @@ namespace UZSG.Players
             crafter.OnRoutineNotify += OnRoutineEventCall;
             crafter.OnRoutineSecond += OnRoutineSecond;
 
-            this.gui = player.InventoryGUI.PlayerCraftingGUI;
+            this.gui = player.InventoryWindow.PlayerCraftingGUI;
             this.gui.LinkWorkstation(this);
             this.gui.SetPlayer(player);
             this.gui.Show();

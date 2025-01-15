@@ -42,7 +42,7 @@ namespace UZSG.UI
 
         public void DisplayResource(Resource resource)
         {
-            Label = resource.ResourceData.Name;
+            Label = resource.ResourceData.DisplayName;
             Icon = GetToolTypeIcon(resource.ResourceData.ToolType);
             Rebuild();
         }

@@ -12,7 +12,7 @@ namespace UZSG.UI.Players
     public partial class InventoryWindow : Window, IInitializeable
     {
         Container externalContainer;
-        Dictionary<ObjectGUI, Button> _appendedFrameButtons = new();
+        Dictionary<IInventoryWindowAppendable, Button> _appendedFrameButtons = new();
 
         [Header("Frames")]
         [SerializeField] FrameController frameController;
@@ -42,12 +42,17 @@ namespace UZSG.UI.Players
         void OnSwitchFrame(FrameController.SwitchFrameContext context)
         {
             /// Idk about this, selector might be visible on other frames
+            /// or when using gamepad
             /// subject to change
             if (context.Status == FrameController.SwitchStatus.Started)
             {
                 if (EnableSelector)
                 {
                     selector?.Hide();
+                }
+                if (context.Frame != null)
+                {
+                    frameText.text = context.Frame.Name;
                 }
             }
             else if (context.Status == FrameController.SwitchStatus.Finished)
@@ -67,11 +72,41 @@ namespace UZSG.UI.Players
         
         #endregion
 
+        public void Append(IInventoryWindowAppendable window)
+        {
+            if (window.Frame == null)
+            {
+                Debug.LogWarning($"Failed to append Window '{window.gameObject.name}'. It does not have a Frame component.");
+                return;
+            }
+
+            if (window is CreativeWindow creativeWindow)
+            {
+                var btn = CreateFrameButton("Creative", 1);
+                btn.onClick.AddListener(() => 
+                {
+                    frameController.SwitchToFrame(creativeWindow.Frame.Name);
+                });
+                frameController.AppendFrame(creativeWindow.Frame);
+                _appendedFrameButtons[creativeWindow] = btn;
+            }
+            else
+            {
+                var btn = CreateFrameButton(window.gameObject.name, -1);
+                btn.onClick.AddListener(() => 
+                {
+                    frameController.SwitchToFrame(window.Frame.Name);
+                });
+                frameController.AppendFrame(window.Frame);
+                _appendedFrameButtons[window] = btn;
+            }
+            
+        }
 
         /// <summary>
         /// Append other frames to the main Frame Controller. 
         /// </summary>
-        /// /// <param name="order">The order of the button this gui is. -1 means at the last.</param>
+        /// /// <param name="order">The order on which to append the button of this gui. -1 means at the last.</param>
         public void AppendObjectGUI(ObjectGUI gui, int order = -1)
         {
             if (gui.Frame == null)
@@ -91,14 +126,7 @@ namespace UZSG.UI.Players
                 _hasExternalContainerOpen = true;
             }
 
-            var go = Instantiate(frameButtonPrefab, frameButtonsHolder);
-            go.transform.SetSiblingIndex(order < 0 ? 99 : order);
-            go.name = $"Frame (Button)";
-
-            var tmp = go.GetComponentInChildren<TextMeshProUGUI>();
-            tmp.text = $"{gui.BaseObject.ObjectData.Name}";
-
-            var btn = go.GetComponent<Button>();
+            var btn = CreateFrameButton(gui.BaseObject.ObjectData.DisplayName, order);
             btn.onClick.AddListener(() => 
             {
                 frameController.SwitchToFrame(gui.Frame.Name);
@@ -107,8 +135,21 @@ namespace UZSG.UI.Players
             _appendedFrameButtons[gui] = btn;
             
             /// Set the title text to the workstation's name
-            frameText.text = gui.BaseObject.ObjectData.Name;
+            frameText.text = gui.BaseObject.ObjectData.DisplayName;
             gui.Show();
+        }
+
+        Button CreateFrameButton(string label, int order)
+        {
+            var go = Instantiate(frameButtonPrefab, frameButtonsHolder);
+            go.transform.SetSiblingIndex(order < 0 ? 99 : order);
+            go.name = $"Frame (Button)";
+
+            var tmp = go.GetComponentInChildren<TextMeshProUGUI>();
+            tmp.text = label;
+
+            var btn = go.GetComponent<Button>();
+            return btn;
         }
 
         public void RemoveObjectGUI(ObjectGUI gui)

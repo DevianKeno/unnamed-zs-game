@@ -1,17 +1,18 @@
 using System;
 using System.Collections.Generic;
 
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Serialization;
-using UZSG.Crafting;
-using UZSG.Data;
 
 namespace UZSG.Data
 {
-    public enum ItemType { Item, Weapon, Tool, Equipment, Armor, Accessory, Tile }
-    public enum ItemSubtype { None, Useable, Food, Consumable, Tool, Weapon, Equipable, Accessory }
+    public enum ItemType { 
+        Item, Weapon, Tool, Equipment, Armor, Accessory, Tile
+    }
+    public enum ItemSubtype {
+        None, Useable, Food, Consumable, Tool, Weapon, Equipable, Accessory
+    }
 
     [Serializable]
     [CreateAssetMenu(fileName = "New Item Data", menuName = "UZSG/Items/Item Data")]
@@ -21,7 +22,7 @@ namespace UZSG.Data
         [FormerlySerializedAs("Name")]
         public string DisplayName;
         [TextArea] public string Description;
-        public AssetReference Model;
+        [FormerlySerializedAs("Model")] public AssetReference EntityModel;
         public Sprite Sprite;
         public ItemType Type;
         public ItemSubtype Subtype;

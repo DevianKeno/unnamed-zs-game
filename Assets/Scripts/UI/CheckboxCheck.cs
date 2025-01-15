@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace RL.UI
@@ -6,7 +7,7 @@ namespace RL.UI
     public class CheckboxCheck : MonoBehaviour
     {
         [SerializeField] Toggle toggle;
-        [SerializeField] Image checkImage;
+        [SerializeField, FormerlySerializedAs("checkImage")] GameObject checkGameObject;
 
         void OnValidate()
         {
@@ -23,7 +24,7 @@ namespace RL.UI
 
         public void ToggleCheckImage(bool isOn)
         {
-            checkImage.gameObject.SetActive(isOn);
+            checkGameObject.gameObject.SetActive(isOn);
         }
     }
 }

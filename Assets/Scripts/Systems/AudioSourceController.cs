@@ -16,23 +16,26 @@ namespace UZSG.Systems
     {
         public AudioAssetsData AudioAssetsData;
 
+        public bool AllowExceedPool { get; set; } = false;
         bool _hasAudioPool;
         Dictionary<string, AudioClip> audioClips = new();
         public List<AudioClip> AudioClips => audioClips.Values.ToList();
         Queue<AudioSource> availableSources = new();
+
+        GameObject audioSourcePool;
 
         public void CreateAudioPool(int size)
         {
             if (_hasAudioPool) return;
             _hasAudioPool = true;
             
-            var parent = new GameObject("Audio Source Pool");
-            parent.transform.SetParent(transform);
+            audioSourcePool = new GameObject("Audio Source Pool");
+            audioSourcePool.transform.SetParent(transform);
             for (int i = 0; i < size; i++)
             {
                 var go = new GameObject($"Audio Source ({i})");
                 var audioSource = go.AddComponent<AudioSource>();
-                go.transform.parent = parent.transform;
+                go.transform.SetParent(audioSourcePool.transform);
                 audioSource.playOnAwake = false;
                 availableSources.Enqueue(audioSource);
             }
@@ -83,30 +86,39 @@ namespace UZSG.Systems
 
         public void PlaySound(string name, ulong delaySeconds = 0)
         {
-            if (availableSources.Count > 0)
+            if (audioClips.TryGetValue(name, out var clip))
             {
-                if (audioClips.TryGetValue(name, out var clip))
+                AudioSource source;
+                if (availableSources.Count > 0)
                 {
-                    var source = availableSources.Dequeue();
-                    source.clip = clip;
-                    source.Play(delaySeconds);
-                    StartCoroutine(ReturnToFootstepPoolWhenFinished(source));
-                };
-            }
-            /// else maybe still try to play sound, exceeding the pool size
-            /// but delete the extra source after.
-            /// Can also add a flag whether to allow to exceed pool size
-        }
+                    source = availableSources.Dequeue();
+                }
+                else if (AllowExceedPool)
+                {
+                    var go = new GameObject($"Temp Audio Source");
+                    go.transform.SetParent(audioSourcePool.transform);
+                    source = go.AddComponent<AudioSource>();
+                    source.playOnAwake = false;
+                    Destroy(go, clip.length);
+                }
+                else
+                {
+                    return;
+                }
+                
+                source.clip = clip;
+                source.Play(delaySeconds);
 
+                if (!AllowExceedPool || availableSources.Contains(source))
+                {
+                    StartCoroutine(ReturnToPoolWhenFinished(source));
+                }
+            }
+        }
+        
         IEnumerator ReturnToPoolWhenFinished(AudioSource source)
         {
             yield return new WaitWhile(() => source.isPlaying);
-            availableSources.Enqueue(source);
-        }
-
-        IEnumerator ReturnToFootstepPoolWhenFinished(AudioSource source)
-        {
-            yield return new WaitForSeconds(source.clip.length);
             availableSources.Enqueue(source);
         }
 

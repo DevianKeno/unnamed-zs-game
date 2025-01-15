@@ -17,12 +17,12 @@ using static UZSG.Crafting.CraftingRoutineStatus;
 
 namespace UZSG.Objects
 {
-    public class Workstation : BaseObject, IInteractable, IPlaceable, ICrafter
+    public class Workstation : BaseObject, IInteractable, ICrafter
     {
         public WorkstationData WorkstationData => objectData as WorkstationData;
         
-        public string Action => "Use";
-        public string Name => objectData.Name;
+        public string ActionText => "Use";
+        public string DisplayName => objectData.DisplayName;
         public bool AllowInteractions { get; set; } = false;
 
         protected Player player;
@@ -36,7 +36,6 @@ namespace UZSG.Objects
         protected WorkstationGUI gui;
         public WorkstationGUI GUI => gui;
 
-        public event EventHandler<IInteractArgs> OnInteract;
         public event Action<CraftingRoutine> OnCraft;
 
         /// <summary>
@@ -48,7 +47,6 @@ namespace UZSG.Objects
         public override void Place()
         {
             if (IsPlaced) return;
-            IsPlaced = true;
 
             base.Place();
             Initialize();
@@ -77,6 +75,7 @@ namespace UZSG.Objects
             });
 
             AllowInteractions = true;
+            IsPlaced = true;
         }
 
         protected override void Initialize()
@@ -97,12 +96,8 @@ namespace UZSG.Objects
         }
 
 
-        #region Public methods
-
-        public virtual void Interact(IInteractActor actor, IInteractArgs args)
+        void Use(Player player)
         {
-            if (actor is not Player player) return;
-
             this.player = player;
             
             player.InfoHUD.Hide();
@@ -114,11 +109,65 @@ namespace UZSG.Objects
             gui.SetPlayer(player);
 
             player.UseObjectGUI(gui);
-            player.InventoryGUI.OnClosed += OnCloseInventory;
-            player.InventoryGUI.Show();
+            player.InventoryWindow.OnClosed += OnCloseInventory;
+            player.InventoryWindow.Show();
             
             Game.UI.SetCursorVisible(true);
         }
+
+        void Pickup(Player player)
+        {
+            Debug.Log("Pickuped wokbench lol");
+        }
+
+        #region Public methods
+
+        #region IInteractable
+
+        public virtual List<InteractAction> GetInteractActions()
+        {
+            var actions = new List<InteractAction>();
+
+            var use = new InteractAction()
+            {
+                Interactable = this,
+                ActionText = "Use",
+                InteractableText = this.DisplayName,
+                InputAction = Game.Input.InteractPrimary,
+            };
+            actions.Add(use);
+
+            if (this.ObjectData.CanBePickedUp)
+            {
+                actions.Add(new()
+                {
+                    Interactable = this,
+                    ActionText = "Pick Up",
+                    InteractableText = this.DisplayName,
+                    InputAction = Game.Input.InteractSecondary,
+                    IsHold = true,
+                    HoldDurationSeconds = this.ObjectData.PickupTimeSeconds,
+                });
+            }
+
+            return actions;
+        }
+
+        public virtual void Interact(InteractionContext context)
+        {
+            if (context.Actor is not Player player) return;
+
+            if (context.Action == "Use")
+            {
+                this.Use(player);
+            }
+            else if (context.Action == "Pick Up")
+            {
+                this.Pickup(player);
+            }
+        }
+
+        #endregion
 
         public void AddInputContainer(Container other)
         {
@@ -309,9 +358,9 @@ namespace UZSG.Objects
 
         protected void OnCloseInventory()
         {
-            player.InventoryGUI.OnClosed -= OnCloseInventory;
+            player.InventoryWindow.OnClosed -= OnCloseInventory;
             player.RemoveObjectGUI(gui);
-            player.InventoryGUI.Hide();
+            player.InventoryWindow.Hide();
             
             ClearInputContainers();
             Game.UI.SetCursorVisible(false);

@@ -109,6 +109,7 @@ namespace UZSG.EOS
             if (info.ResultCode == Result.Success)
             {
                 EOSSubManagers.Initialize();
+                Game.Main.IsOnline = true;
                 // devAuthWindow.Destroy();
                 // SetAccountDisplayForLogout();
 

@@ -23,22 +23,24 @@ namespace UZSG.UI.HUD
     /// </summary>
     public class PlayerHUDInfoUI : UIElement
     {
-        public Player Player;
+        public Player Player { get; private set; }
         [Space]
 
         public LeanTweenType VignetteEase;
         public float VignetteFadeDuration;
 
-        bool _enableTimeText;
-        
-        [Header("Elements")]
+        string _previousDateTimeText;
+        List<UIElement> _previouslyVisibleElements = new();
+
+        [Header("UI Elements")]
         [SerializeField] TextMeshProUGUI dateTmp;
         [SerializeField] TextMeshProUGUI timeTmp;
-        public CrosshairHandler Crosshair;
-        public Compass Compass;
-        public Image vignette;
-        public PickupsIndicator pickupsIndicator;
-        public RadialProgressUI pickupTimer;
+        [SerializeField] InteractionIndicator interactionIndicator;
+        [SerializeField] CrosshairHandler Crosshair;
+        [SerializeField] Compass Compass;
+        [SerializeField] Image vignette;
+        [SerializeField] PickupsIndicator pickupsIndicator;
+        [SerializeField] RadialProgressUI pickupTimer;
 
         ResourceHealthRingUI resourceHealthRingUI;
 
@@ -51,24 +53,20 @@ namespace UZSG.UI.HUD
             }
 
             Player = player;
+            
             Crosshair.Initialize(player);
             Compass.Initialize(player);
-            
+            interactionIndicator = Game.UI.Create<InteractionIndicator>("Interaction Indicator", show: false);
             resourceHealthRingUI = Game.UI.Create<ResourceHealthRingUI>("Resource Health Ring UI", show: false);
-
             InitializeEvents();
-            _enableTimeText = true;
-            dateTmp.text = $"Day {Game.World.CurrentWorld.Time.CurrentDay.ToString()} | Monday";
-
-            Game.Tick.OnSecond += OnSecond;
         }
 
-        void OnSecond(SecondInfo info)
+        void OnTick(TickInfo info)
         {
-            if (_enableTimeText)
+            var currentDateTimeText = $"Day {Game.World.CurrentWorld.Time.CurrentDay.ToString()} | Monday";
+            if (_previousDateTimeText != currentDateTimeText)
             {
-                var time = Game.World.CurrentWorld.Time;
-                timeTmp.text = $"{time.Hour}:{time.Minute:D2}";
+                dateTmp.text = currentDateTimeText;
             }
         }
 
@@ -77,19 +75,12 @@ namespace UZSG.UI.HUD
             Player.Controls.OnCrouch += OnCrouch;
             Player.Actions.OnLookAtSomething += OnPlayerLookAtSomething;
             Player.Actions.OnPickupItem += OnPlayerPickupedItem;
-            Player.Actions.OnInteractVehicle += OnInteractVehicle;
-        }
-
-        void OnInteractVehicle(VehicleInteractContext context)
-        {
-            if (context.Entered)
-            {
-                Crosshair.Hide();
-            }
-            else if (context.Exited)
-            {
-                Crosshair.Show();
-            }
+            
+            Game.World.CurrentWorld.Time.OnDayPassed += OnDayPassed;
+            Game.World.CurrentWorld.Time.OnHourPassed += OnHourPassed;
+            Game.World.CurrentWorld.Time.OnMinutePassed += OnMinutePassed;
+            Game.UI.OnWindowOpened += OnWindowOpened;
+            Game.UI.OnWindowClosed += OnWindowClosed;
         }
 
         void OnCrouch(bool crouched)
@@ -106,23 +97,32 @@ namespace UZSG.UI.HUD
 
         void OnDestroy()
         {
+            Player.Controls.OnCrouch -= OnCrouch;
             Player.Actions.OnLookAtSomething -= OnPlayerLookAtSomething;
             Player.Actions.OnPickupItem -= OnPlayerPickupedItem;
+            
+            Game.UI.OnWindowOpened -= OnWindowOpened;
+            Game.UI.OnWindowClosed -= OnWindowClosed;
+            Game.Tick.OnTick -= OnTick;
         }
+
 
         #region Event callbacks
 
         UZSG.Attributes.Attribute listeningToAttribute;
 
-        void OnPlayerLookAtSomething(ILookable lookable)
+        void OnPlayerLookAtSomething(IInteractable interactable, List<InteractAction> actions)
         {
-            if (lookable == null)
+            if (interactable == null)
             {
+                interactionIndicator.Hide();
                 resourceHealthRingUI.Hide();
                 return;
             }
 
-            if (lookable is UZSG.Objects.Resource resource && !resourceHealthRingUI.IsVisible)
+            interactionIndicator.Indicate(interactable, actions);
+
+            if (interactable is UZSG.Objects.Resource resource && !resourceHealthRingUI.IsVisible)
             {
                 resourceHealthRingUI.DisplayResource(resource);
                 resourceHealthRingUI.SetHealthRingVisible(resource.IsDamaged);
@@ -142,12 +142,47 @@ namespace UZSG.UI.HUD
             }
         }
 
+        void OnPlayerInteract(InteractionContext context)
+        {
+            if (context.Phase == InteractPhase.Started)
+            {
+                interactionIndicator.Hide();
+                resourceHealthRingUI.Hide();
+            }
+        }
+
         void OnPlayerPickupedItem(Item item)
         {
             if (!item.IsNone)
             {
                 pickupsIndicator.AddEntry(item);
             }
+        }
+
+        void OnDayPassed(int day)
+        {
+            dateTmp.text = $"Day {day}";
+        }
+
+        void OnHourPassed(int hour)
+        {
+            timeTmp.text = $"{hour}:{Game.World.CurrentWorld.Time.Minute:D2}";
+        }
+
+        void OnMinutePassed(int minute)
+        {
+            timeTmp.text = $"{Game.World.CurrentWorld.Time.Hour}:{minute:D2}";
+        }
+
+        void OnWindowOpened(Window window)
+        {
+            HideEverything();
+        }
+
+        void OnWindowClosed(Window window)
+        {
+            ShowEverythingThatWasOnceVisible();
+            _previouslyVisibleElements.Clear();
         }
 
         #endregion
@@ -160,6 +195,29 @@ namespace UZSG.UI.HUD
             LeanTween.cancel(vignette.rectTransform);
             LeanTween.alpha(vignette.rectTransform, alpha, VignetteFadeDuration)
             .setEase(VignetteEase);
+        }
+
+        void ShowEverythingThatWasOnceVisible()
+        {
+            foreach (var element in _previouslyVisibleElements)
+            {
+                element?.Show();
+            }
+        }
+
+        public void HideEverything()
+        {
+            StoreIfVisibleThenHide(interactionIndicator);
+            StoreIfVisibleThenHide(resourceHealthRingUI);
+            
+            void StoreIfVisibleThenHide(UIElement element)
+            {
+                if (element.IsVisible)
+                {
+                    _previouslyVisibleElements.Add(element);
+                }
+                element.Hide();
+            }
         }
 
         #endregion

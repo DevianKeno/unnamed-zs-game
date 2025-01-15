@@ -17,7 +17,7 @@ namespace UZSG
     [Serializable]
     public partial class Container : ISaveDataReadWrite<List<ItemSlotSaveData>>
     {
-        public const int MaxContainerSize = 999;
+        public const int MAX_CONTAINER_SIZE = 32767;
 
         protected int _slotCount;
         public int SlotCount
@@ -38,7 +38,10 @@ namespace UZSG
         /// Key is Item Id; Value is total count of that Item in this Container.
         /// </summary>
         public Dictionary<string, int> IdItemCount => _cachedIdItemCount;
-        public bool IsFull
+        /// <summary>
+        /// TODO: was planning to implement "caching" on this since this still just loops over all the slots
+        /// </summary>
+        public bool IsFull 
         {
             get
             {
@@ -76,7 +79,7 @@ namespace UZSG
 
         public Container(int slotsCount = 0)
         {
-            _slotCount = Math.Clamp(slotsCount, 0, MaxContainerSize);
+            _slotCount = Math.Clamp(slotsCount, 0, MAX_CONTAINER_SIZE);
             
             for (int i = 0; i < SlotCount; i++)
             {

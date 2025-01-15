@@ -27,7 +27,7 @@ namespace UZSG
                 var nextItem = item;
                 foreach (ItemSlot slot in slots)
                 {
-                    if (slot.TryCombine(nextItem, out Item excess))
+                    if (slot.TryStack(nextItem, out Item excess))
                     {
                         if (excess.IsNone) return true;
                         nextItem = excess;
@@ -74,7 +74,7 @@ namespace UZSG
                 var nextItem = item;
                 foreach (ItemSlot slot in slots)
                 {
-                    if (slot.TryCombine(nextItem, out excess))
+                    if (slot.TryStack(nextItem, out excess))
                     {
                         if (excess.IsNone) return true;
                         nextItem = excess;
@@ -101,7 +101,7 @@ namespace UZSG
             }
             else
             {
-                if (slot.TryCombine(item, out Item excess))
+                if (slot.TryStack(item, out Item excess))
                 {
                     if (!excess.IsNone)
                     {
@@ -132,7 +132,7 @@ namespace UZSG
                 foreach (var slot in hashset.ToList())
                 {
                     var tookItem = slot.TakeItems(remaining);
-                    toReturn.Combine(tookItem);
+                    toReturn.Stack(tookItem);
                     remaining -= tookItem.Count;
 
                     if (remaining <= 0) break;
@@ -191,18 +191,26 @@ namespace UZSG
             return itemsToTake;
         }
 
-        public virtual void ClearItem(ItemSlot slot)
+        public virtual void ClearAt(int slotIndex)
+        {
+            if (!Slots.IsValidIndex(slotIndex)) return;
+
+            ClearAt(Slots[slotIndex]);
+        }
+
+        public virtual void ClearAt(ItemSlot slot)
         {
             if (slot == null || slot.IsEmpty) return;
 
             slot.Clear();
         }
 
-        public virtual void ClearItem(int slotIndex)
+        public virtual void ClearAll()
         {
-            if (!Slots.IsValidIndex(slotIndex)) return;
-
-            ClearItem(Slots[slotIndex]);
+            foreach (ItemSlot slot in Slots)
+            {
+                slot.Clear();
+            }
         }
     }
 }

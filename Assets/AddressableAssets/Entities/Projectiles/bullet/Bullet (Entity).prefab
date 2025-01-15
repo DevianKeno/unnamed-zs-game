@@ -301,7 +301,7 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 10240
+    m_Bits: 43008
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -324,8 +324,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d731023c473ea2c4c95d0d8110bb9bfa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  instanceId: 0
   entityData: {fileID: 11400000, guid: 405cf52e16b571e489e63a0bc1f4aff7, type: 2}
-  audioSourceController: {fileID: 0}
+  attributes:
+    attributesReadOnly: []
   DamageAttributes:
     BaseDamage: 0
     IsPartDamage: 0
@@ -338,14 +340,14 @@ MonoBehaviour:
     ArmsDamageMultiplier: 0
     LegsDamage: 0
     LegsDamageMultiplier: 0
-  Attributes:
+  BulletAttributes:
     Scale: 0
     Speed: 0
     GravityScale: 0
     MinRenderDistance: 0
   LayerMask:
     serializedVersion: 2
-    m_Bits: 10240
+    m_Bits: 43008
   rb: {fileID: 5723560054871247184}
   coll: {fileID: 2886082513997833480}
   meshRenderer: {fileID: 3034706727560040334}

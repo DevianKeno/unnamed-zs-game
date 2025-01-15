@@ -26,6 +26,7 @@ namespace UZSG.Objects
         public Animator Animator => animator;
 
         public bool IsPlaced { get; protected set; } = false;
+        public bool IsDamageable { get; protected set; } = true;
         public bool IsDirty { get; protected set; } = false;
         
         /// <summary>
@@ -55,19 +56,31 @@ namespace UZSG.Objects
         
         public event EventHandler<HitboxCollisionInfo> OnCollision;
         public event Action<BaseObject> OnDestroyed;
-
+        
+        Material material;
 
         #region Initializing methods
 
         protected virtual void Start() { }
 
+        internal void PlaceInternal()
+        {
+            transform.SetParent(Game.World.CurrentWorld.objectsContainer, worldPositionStays: true);
+            var renderer = GetComponentInChildren<Renderer>();
+            if (renderer != null)
+            {
+                this.material = renderer.material;
+            }
+        }
+
         public virtual void Place()
         {
-            if (IsPlaced) return;
-            
-            IsPlaced = true;
-            transform.SetParent(Game.World.CurrentWorld.objectsContainer, worldPositionStays: true);
             Initialize();
+        }
+
+        public virtual void Deconstruct()
+        {
+            
         }
 
         protected virtual void Initialize()
@@ -150,7 +163,19 @@ namespace UZSG.Objects
             if (notify) OnDestroyed?.Invoke(this);
             MonoBehaviour.Destroy(gameObject);
         }
-        public virtual void HitBy(HitboxCollisionInfo info) { }
+        public virtual void HitBy(HitboxCollisionInfo info)
+        {
+            Game.Particles.Create<MaterialBreak>(Game.Particles.GetParticleData("material_break"), info.ContactPoint, onSpawn: (particle) =>
+            {
+                particle.SetMaterial(this.material);
+            });
+
+            if (IsDamageable)
+            {
+
+            }
+        }
+
         protected virtual void OnPlace() { }
         protected virtual void OnDestroy() { }
 

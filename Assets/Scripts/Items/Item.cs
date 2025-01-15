@@ -22,7 +22,8 @@ namespace UZSG.Items
     [Serializable]
     public class Item : IAttributable, IComparable<Item>, ISaveDataReadWrite<ItemSaveData>
     {
-        public const int MaxStackSize = 99999;
+        public const int MAX_STACK_SIZE = 99999;
+        public const int NONE_ITEM_HASH_CODE = -1;
         public static Item None => new(null);
         
         [FormerlySerializedAs("_itemData")]
@@ -33,41 +34,37 @@ namespace UZSG.Items
             {
                 return itemData;
             }
+            set
+            {
+                itemData = value;
+                this._hashCode = GetHashCode();
+            }
         }
         [FormerlySerializedAs("_count")]
         [SerializeField] int count;
         public int Count
         {
-            get
-            {
-                return count;
-            }
-            set
-            {
-                count = value;
-            }
+            get => count;
+            set => count = value;
         }
         public bool HasAttributes { get; private set; }
         [SerializeField] AttributeCollection attributes;
         public AttributeCollection Attributes
         {
-            get
-            {
-                return attributes;
-            }
+            get => attributes;
             set
             {
                 attributes = value;
                 HasAttributes = attributes != null;
             }
         }
-
-        public bool IsNone => itemData == null;
+        public bool IsNone => _hashCode == -1 || this.itemData == null;
         public string Id => itemData.Id;
         /// <summary>
         /// Called whenever this Item is changed/updated.
         /// </summary>
         public event Action OnChanged;
+        int _hashCode = -1;
 
 
         #region Item constructors
@@ -77,7 +74,7 @@ namespace UZSG.Items
         /// </summary>
         public Item(ItemData data, int count)
         {
-            this.itemData = data;
+            Data = data;
             this.count = count;
         }
         
@@ -88,12 +85,12 @@ namespace UZSG.Items
         {
             if (Game.Items.TryGetData(id, out var itemData))
             {
-                this.itemData = itemData;
+                this.Data = itemData;
                 this.count = count;
             }
             else
             {
-                this.itemData = null;
+                this.Data = null;
                 this.count = 0;
             }
         }
@@ -107,12 +104,12 @@ namespace UZSG.Items
         {
             if (other == null || other.IsNone)
             {
-                this.itemData = null;
+                this.Data = null;
                 this.count = 0;
             }
             else
             {
-                this.itemData = other.Data;
+                this.Data = other.Data;
                 this.count = count < 0 ? other.count : count;
 
                 if (other.HasAttributes)
@@ -157,20 +154,11 @@ namespace UZSG.Items
         #region Public methods
 
         /// <summary>
-        /// Clamp this Item's count to either its StackSize or MaxStack.
-        /// </summary>
-        public void ClampStack(bool max = false)
-        {
-            int maxStack = max ? MaxStackSize : itemData.StackSize;
-            count = Math.Clamp(count, 1, maxStack);
-        }
-
-        /// <summary>
         /// Take an amount from this item.
         /// </summary>
         public Item Take(int amount)
         {
-            count -= amount;
+            count -= Math.Clamp(amount, 0, count);
             OnChanged?.Invoke();
             return new(itemData, amount);
         }
@@ -179,81 +167,46 @@ namespace UZSG.Items
         {
             return new(this);
         }
-        
-        /// <summary>
-        /// Try to combine this Item with the other item.
-        /// Exceeding stack size.
-        /// </summary>
-        public void Combine(Item other)
+
+        public bool Stack(Item other)
         {
-            if (IsNone)
+            if (!this.IsNone)
             {
-                itemData = other.itemData;
+                if (!CompareTo(other)
+                || !itemData.IsStackable)
+                {
+                    return false; 
+                }
             }
-            count += other.Count;
-            OnChanged?.Invoke();
-        }
-
-        /// <summary>
-        /// Try to combine this Item with the other item.
-        /// </summary>
-        public bool TryCombine(Item other, out Item excess, bool max = false)
-        {
-            excess = None;
-            if (!CanCombineWith(other)) return false;
-
-            if (this.IsNone) /// this ItemSlot has no Item in it
-            {
-                itemData = other.itemData;
-            }
-            int maxStack = max ? MaxStackSize : itemData.StackSize;
-            count += other.Count;
-            if (count > maxStack)
-            {
-                excess = new(this, count - maxStack);
-            }
-            OnChanged?.Invoke();
-            return true;
-        }
-
-        /// <summary>
-        /// Try to stack this Item until max stack size.
-        /// </summary>
-        public bool TryCombineMax(Item other, out Item excess)
-        {
-            excess = None;
-            if (!CanCombineWith(other)) return false;
-
-            count += other.Count;
-            if (count > MaxStackSize)
-            {
-                excess = new(this, count - MaxStackSize);
-            }
+            
+            this.count += other.Count;
             OnChanged?.Invoke();
             return true;
         }
         
         /// <summary>
         /// Try to stack this Item with the other item.
+        /// Immediately stacks the Item if possible, does nothing otherwise.
+        /// If you just want to just check use <c>CanStackWith()</c> instead.
         /// </summary>
-        public bool TryStack(Item other)
+        public bool TryStack(Item other, out Item excess, bool useMaxStackSize = false)
         {
+            excess = Item.None;
             if (!CanStackWith(other)) return false;
+            if (this.IsNone)
+            {
+                if (other.IsNone) return true;
+                this.Data = this.IsNone ? other.Data : itemData;
+            }
 
-            count += other.Count;
+            this.count += other.Count;
+            if (count > this.Data.StackSize)
+            {
+                excess = new Item(this.itemData, count - this.Data.StackSize);
+                this.count -= excess.Count;
+            }
+
             OnChanged?.Invoke();
-            return true;
-        }
-
-        /// <summary>
-        /// Checks if this Item can be combined with the other Item.
-        /// </summary>
-        public bool CanCombineWith(Item other)
-        {
-            if (IsNone) return true;                    /// This is an empty Item (lol)
-            if (!itemData.IsStackable) return false;    /// Not stackable
-            if (!CompareTo(other)) return false;        /// Not the same
-
             return true;
         }
 
@@ -261,14 +214,22 @@ namespace UZSG.Items
         /// Checks if this Item can be stacked with the other Item.
         /// Returns false if the total of the combined Items exceeds the Item's stack size, unless maxed.
         /// </summary>
-        public bool CanStackWith(Item other, bool max = false)
+        public bool CanStackWith(Item other, bool useMaxStackSize = false)
         {
-            if (!CanCombineWith(other)) return false;
+            if (this.IsNone || other.IsNone) return true;
+            if (!CompareTo(other)
+            || !itemData.IsStackable
+            || this.HasAttributes || other.HasAttributes) return false; /// items with attributes cannot be stacked :P
+            
+            return (count + other.Count) <= (useMaxStackSize ? MAX_STACK_SIZE : this.itemData.StackSize);
+        }
 
-            int maxStack = IsNone ? other.Data.StackSize : Data.StackSize;
-            maxStack = max ? MaxStackSize : maxStack;
-
-            return count + other.Count <= maxStack;
+        /// <summary>
+        /// Returns true if the Items are of the same Id.
+        /// </summary>
+        public bool Is(Item other)
+        {
+            return CompareTo(other);
         }
 
         /// <summary>
@@ -276,10 +237,13 @@ namespace UZSG.Items
         /// </summary>
         public bool CompareTo(Item other)
         {
-            return itemData != null
-                && other != null
-                && other.Data != null
-                && itemData.Id == other.Data.Id;
+            /// compares the hash code of the Id string
+            return _hashCode == other._hashCode;
+        }
+
+        public void Refresh()
+        {
+            this._hashCode = GetHashCode();
         }
 
         /// <summary>
@@ -301,7 +265,7 @@ namespace UZSG.Items
 
         public override int GetHashCode()
         {
-            return itemData?.GetHashCode() ?? 0;
+            return itemData?.GetHashCode() ?? NONE_ITEM_HASH_CODE;
         }
 
         public static bool operator ==(Item left, Item right)

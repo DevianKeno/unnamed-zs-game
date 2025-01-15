@@ -28,7 +28,7 @@ namespace UZSG.UI.TitleScreen
             if (saveData == null) return;
             
             SaveData = saveData;
-            nameTmp.text = saveData.Name;
+            nameTmp.text = saveData.WorldName;
             levelTmp.text = saveData.LevelId;
             dateTmp.text = saveData.LastPlayedDate.ToShortDateString();
         }

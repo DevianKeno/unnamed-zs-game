@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a2b09bd5ceab7f4d89590884e5a5796, type: 3}
   m_Name: material_break
   m_EditorClassIdentifier: 
-  Id: 
+  Namespace: uzsg
+  Id: material_break
+  Tags: []
   Name: Material Break
   Asset:
     m_AssetGUID: 7de38f7e966b8d2489898f623a8459c6

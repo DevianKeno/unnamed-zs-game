@@ -303,15 +303,21 @@ namespace UZSG.UI
                 blocker.transform.SetSiblingIndex((forElement as MonoBehaviour).transform.GetSiblingIndex());
                 if (forElement is Window w)
                 {
-                    w.OnClosed += () =>
-                    {
-                        Destroy(blocker);
-                    };
+                    w.OnClosed += DestroyBlocker;
+                }
+                if (forElement is Panel p)
+                {
+                    p.OnClosed += DestroyBlocker;
                 }
             }
             else
             {
                 blocker.transform.SetAsLastSibling();
+            }
+
+            void DestroyBlocker()
+            {
+                Destroy(blocker);
             }
 
             blocker.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() =>

@@ -63,7 +63,9 @@ namespace UZSG.UI
         #endregion
 
 
-        protected virtual void OnValidate()
+        #region Event callbacks
+
+        protected override void OnValidate()
         {
             if (Application.isPlaying) return;
 
@@ -74,56 +76,6 @@ namespace UZSG.UI
 
             SetDisplayedItem(item);
         }
-
-        void OnDisable()
-        {
-            Reset();
-        }
-
-
-        #region Public methods
-
-        protected override void OnShow()
-        {
-            if (slot != null)
-            {
-                SetDisplayedItem(slot.Item);
-            }
-        }
-
-        /// <summary>
-        /// Connects this Item Slot UI to given ItemSlot.        
-        /// </summary>
-        public void Link(ItemSlot slot)
-        {
-            this.slot = slot;
-            slot.OnItemChanged += OnSlotItemChanged;
-        }
-
-        void OnSlotItemChanged(object sender, ItemSlot.ItemChangedContext e)
-        {
-            SetDisplayedItem(e.NewItem);
-        }
-
-        public void SetDisplayedItem(Item item)
-        {
-            this.item = item;
-            itemDisplayUI.SetDisplayedItem(item);
-        }
-
-        public void Reset()
-        {
-            image.color = Normal;
-        }
-
-        public void Refresh()
-        {
-            Reset();
-            SetDisplayedItem(Item);
-        }
-
-        #endregion
-
 
         public void OnPointerEnter(PointerEventData e)
         {
@@ -171,7 +123,72 @@ namespace UZSG.UI
             {
                 Pointer = e
             };
+
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
+                context.ClickType = ClickType.ShiftClick;
+            }
+            else
+            {
+                context.ClickType = ClickType.Pickup;
+            }
+            
             OnMouseUp?.Invoke(this, context);
         }
+
+        void OnSlotItemChanged(object sender, ItemSlot.ItemChangedContext e)
+        {
+            SetDisplayedItem(e.NewItem);
+        }
+
+        void OnDisable()
+        {
+            Reset();
+        }
+
+        void OnDestroy()
+        {
+            slot.OnItemChanged -= OnSlotItemChanged;
+        }
+
+        #endregion
+
+        #region Public methods
+
+        protected override void OnShow()
+        {
+            if (slot != null)
+            {
+                SetDisplayedItem(slot.Item);
+            }
+        }
+
+        /// <summary>
+        /// Connects this Item Slot UI to given ItemSlot.        
+        /// </summary>
+        public void Link(ItemSlot slot)
+        {
+            this.slot = slot;
+            slot.OnItemChanged += OnSlotItemChanged;
+        }
+
+        public void SetDisplayedItem(Item item)
+        {
+            this.item = item;
+            itemDisplayUI.SetDisplayedItem(item);
+        }
+
+        public void Reset()
+        {
+            image.color = Normal;
+        }
+
+        public void Refresh()
+        {
+            Reset();
+            SetDisplayedItem(Item);
+        }
+
+        #endregion
     }
 }

@@ -7,14 +7,15 @@ using UZSG.Interactions;
 using UZSG.Data;
 using UZSG.UI.Objects;
 using UZSG.Saves;
+using System.Collections.Generic;
 
 namespace UZSG.Objects
 {
     public class Storage : BaseObject, IInteractable, IPlaceable, IPickupable, ISaveDataReadWrite<ObjectSaveData>
     {
         public StorageData StorageData => objectData as StorageData;
-        public string Action => "Open";
-        public string Name => objectData.Name;
+        public string ActionText => "Open";
+        public string DisplayName => objectData.DisplayName;
         public bool AllowInteractions { get; set; } = true;
         
         Player player;
@@ -22,9 +23,7 @@ namespace UZSG.Objects
         public Container Container => container;
         StorageGUI gui;
         public StorageGUI GUI => gui;
-        
-        public event EventHandler<IInteractArgs> OnInteract;
-        
+                
         public override void Place()
         {
             if (IsPlaced) return;
@@ -39,9 +38,24 @@ namespace UZSG.Objects
             });
         }
         
-        public virtual void Interact(IInteractActor actor, IInteractArgs args)
+        public List<InteractAction> GetInteractActions()
         {
-            if (actor is not Player player) return;
+            var actions = new List<InteractAction>();
+
+            actions.Add(new()
+            {
+                Interactable = this,
+                ActionText = "Open",
+                InteractableText = this.objectData.DisplayName,
+                InputAction = Game.Input.InteractPrimary,
+            });
+
+            return actions;
+        }
+        
+        public virtual void Interact(InteractionContext context)
+        {
+            if (context.Actor is not Player player) return;
 
             this.player = player;
             
@@ -54,8 +68,8 @@ namespace UZSG.Objects
             gui.SetPlayer(player);
 
             player.UseObjectGUI(gui);
-            player.InventoryGUI.OnClosed += OnCloseInventory;
-            player.InventoryGUI.Show();
+            player.InventoryWindow.OnClosed += OnCloseInventory;
+            player.InventoryWindow.Show();
 
             // gui.Show();
             Game.UI.SetCursorVisible(true);
@@ -63,9 +77,9 @@ namespace UZSG.Objects
 
         void OnCloseInventory()
         {
-            player.InventoryGUI.OnClosed -= OnCloseInventory;
+            player.InventoryWindow.OnClosed -= OnCloseInventory;
             player.RemoveObjectGUI(gui);
-            player.InventoryGUI.Hide();
+            player.InventoryWindow.Hide();
 
             animator.CrossFade("close", 0.5f);
             Game.UI.SetCursorVisible(false);

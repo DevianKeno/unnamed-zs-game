@@ -33,9 +33,8 @@ namespace UZSG.UI
             int maxSlots = Hotbar.SlotCount;
             for (int i = 0; i < maxSlots; i++)
             {
-                var slot = Game.UI.Create<ItemSlotUI>("Item Slot");
+                var slot = Game.UI.Create<ItemSlotUI>("Item Slot", parent: slotsContainer);
                 slot.name = $"Hotbar Slot ({i})";
-                slot.transform.SetParent(slotsContainer);
                 slot.Index = i;
                 slot.Link(Hotbar[i]);
                 slot.OnMouseDown += OnHotbarSlotClick;
@@ -48,18 +47,18 @@ namespace UZSG.UI
             var slotUI = (ItemSlotUI) sender;
             var slot = slotUI.Slot;
 
-            if (Player.InventoryGUI.IsHoldingItem)
+            if (Player.InventoryWindow.IsHoldingItem)
             {
-                if (Player.InventoryGUI.HeldItem.Data.Type != Tool) return;
+                if (Player.InventoryWindow.HeldItem.Data.Type != Tool) return;
 
                 if (slot.IsEmpty)
                 {
-                    slot.Put(Player.InventoryGUI.TakeHeldItem());
+                    slot.Put(Player.InventoryWindow.TakeHeldItem());
                 }
                 else
                 {
                     var tookItem = slot.TakeAll();
-                    var prevHeld = Player.InventoryGUI.SwapHeldWith(tookItem);
+                    var prevHeld = Player.InventoryWindow.SwapHeldWith(tookItem);
                     slot.Put(prevHeld);
                 }
             }
@@ -68,7 +67,7 @@ namespace UZSG.UI
                 if (!slot.IsEmpty)
                 {
                     var tookItem = slot.TakeAll();
-                    Player.InventoryGUI.HoldItem(tookItem);
+                    Player.InventoryWindow.HoldItem(tookItem);
                 }
             }
         }

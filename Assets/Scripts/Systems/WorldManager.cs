@@ -44,6 +44,7 @@ namespace UZSG.Systems
         /// Called after the World has been successfully initialized.
         /// </summary>
         public event Action OnDoneLoadWorld;
+        public event Action OnExitWorld;
 
         TextMeshProUGUI loadingMessage;
 
@@ -82,7 +83,7 @@ namespace UZSG.Systems
             var savepath = Path.Join(worldpath, "level.dat");
             var saveData = new WorldSaveData
             {
-                Name = options.WorldName,
+                WorldName = options.WorldName,
                 CreatedDate = options.CreatedDate,
                 LastModifiedDate = options.LastModifiedDate,
                 LevelId = options.MapId,
@@ -247,6 +248,7 @@ namespace UZSG.Systems
                     Game.Main.UnloadScene(currentWorld.gameObject.scene.name);
                     currentWorld = null;
                     HasWorld = false;
+                    OnExitWorld?.Invoke();
                     
                     Game.Main.LoadScene(
                         new(){
@@ -272,6 +274,31 @@ namespace UZSG.Systems
         {
             if (!HasWorld) return;
             currentWorld.Pause();
+        }
+
+        public string ConstructWorld(WorldSaveData saveData)
+        {
+            var settings = new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
+            var save = JsonConvert.SerializeObject(saveData, Formatting.Indented, settings);
+            var path = Application.persistentDataPath + $"/SavedWorlds/{saveData.WorldName}";
+            var filepath = path + "/level.dat";
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            File.WriteAllText(filepath, save);
+
+            return filepath;
+        }
+        
+        public WorldSaveData DeserializeWorldData(string filepath)
+        {
+            try
+            {
+                return JsonConvert.DeserializeObject<WorldSaveData>(File.ReadAllText(filepath));
+            }
+            catch
+            {
+                Game.Console.Error($"Failed to deserialize level data for world '{Path.GetFileName(filepath)}'!");
+                return null;
+            }
         }
 
         public bool IsPaused => currentWorld.IsPaused;

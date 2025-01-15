@@ -11,14 +11,13 @@ using UZSG.Systems;
 
 namespace UZSG.Objects
 {
-    public class Resource : BaseObject, IInteractable, ILookable
+    public class Resource : BaseObject, IInteractable
     {
         public ResourceData ResourceData => objectData as ResourceData;
-        public LookableType LookableType => LookableType.Resource;
         public bool AllowInteractions { get; set; } = true;
 
-        public string Action => "";
-        public string Name => ResourceData.Name;
+        public string ActionText => "";
+        public string DisplayName => ResourceData.DisplayName;
 
         public bool IsDamaged
         {
@@ -30,8 +29,6 @@ namespace UZSG.Objects
         }
 
         protected SaveData saveData;
-
-        public event EventHandler<IInteractArgs> OnInteract;
 
         protected override void Initialize()
         {
@@ -50,7 +47,12 @@ namespace UZSG.Objects
             return ResourceData != null && toolData != null && toolData.ToolType == ResourceData.ToolType;
         }
 
-        public void Interact(IInteractActor actor, IInteractArgs args)
+        public List<InteractAction> GetInteractActions()
+        {
+            return new();
+        }
+
+        public void Interact(InteractionContext context)
         {
             
         }

@@ -185,7 +185,7 @@ namespace PlayEveryWare.EpicOnlineServices.Samples
                 }
 
                 // Update Cache
-                ChatEntry chatEntry = new ChatEntry()
+                ChatEntry chatEntry = new()
                 {
                     isOwnEntry = true,
                     Message = message

@@ -12,10 +12,11 @@ namespace UZSG.Data
     public class ObjectData : BaseData
     {
         [Header("Object Data")]
-        public string Name;
-        [FormerlySerializedAs("Model")]
-        public AssetReference Object;
+        [FormerlySerializedAs("Name")] public string DisplayName;
+        [FormerlySerializedAs("Model")] public AssetReference Object;
         public List<Attributes.Attribute> Attributes;
+        public bool CanBePickedUp;
+        public float PickupTimeSeconds;
 
         [Header("Audio Data")]
         public bool HasAudio = false;

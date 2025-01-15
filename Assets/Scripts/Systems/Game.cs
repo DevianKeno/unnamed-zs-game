@@ -17,7 +17,11 @@ namespace UZSG.Systems
     {
         public static Game Main { get; private set; }
 
-        public int TargetFramerate = -1;
+        [SerializeField] int targetFramerate = -1;
+
+        public const uint VERSION = 1;
+        public const uint BUILD_NUMBER = 0;
+        public const uint PATCH_NUMBER = 0;
 
 
         #region Core
@@ -26,6 +30,8 @@ namespace UZSG.Systems
         public static Console Console => console;
         static UIManager UIManager;
         public static UIManager UI => UIManager;
+        static InputManager inputManager;
+        public static InputManager Input => inputManager;
         static AudioManager audioManager;
         public static AudioManager Audio => audioManager;
         /// <summary>
@@ -74,13 +80,7 @@ namespace UZSG.Systems
 
         public bool IsAlive { get; private set; }
         public bool IsPaused { get; private set; }
-        public bool IsOnline
-        {
-            get
-            {
-                return EOSManager.Instance.GetEOSPlatformInterface() != null;
-            }
-        }
+        public bool IsOnline { get; internal set; } = false;
         public bool IsHosting { get; private set; }
         public Scene CurrentScene
         {
@@ -106,6 +106,7 @@ namespace UZSG.Systems
 
                 console = GetComponentInChildren<Console>();                
                 UIManager = GetComponentInChildren<UIManager>();
+                inputManager = GetComponentInChildren<InputManager>();
                 audioManager = GetComponentInChildren<AudioManager>();
                 timeManager = GetComponentInChildren<TimeManager>();
                 worldManager = GetComponentInChildren<WorldManager>();
@@ -132,7 +133,7 @@ namespace UZSG.Systems
         {
             if (gameObject.activeInHierarchy)
             {
-                Application.targetFrameRate = TargetFramerate;
+                Application.targetFrameRate = targetFramerate;
             }
         }
 
@@ -155,6 +156,16 @@ namespace UZSG.Systems
             particleManager.Initialize();
             recipeManager.Initialize();
 
+            IsOnline = EOSManager.Instance.GetEOSPlatformInterface() != null;
+            if (IsOnline)
+            {
+                Debug.Log("Currently online");
+            }
+            else
+            {
+                Debug.Log("Currently offline");
+            }
+        
             #endregion
 
             OnLateInit?.Invoke();
@@ -279,5 +290,10 @@ namespace UZSG.Systems
         #endregion
 
         #endregion
+
+        public string GetVersionString()
+        {
+            return $"{VERSION}.{BUILD_NUMBER}.{PATCH_NUMBER}";
+        }
     }
 }

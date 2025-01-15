@@ -9,6 +9,12 @@ using Epic.OnlineServices.P2P;
 using PlayEveryWare.EpicOnlineServices;
 
 using UZSG.EOS.P2P;
+using UZSG.Systems;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using Newtonsoft.Json;
+using System.Linq;
+using UZSG.Saves;
 
 namespace UZSG.EOS
 {
@@ -17,7 +23,9 @@ namespace UZSG.EOS
     /// </summary>
     public class EOSPeer2PeerManager : IEOSSubManager
     {
-        P2PInterface P2PHandle;
+        const int WORLD_DATA_CHUNK_SIZE_BYTES = 4096;
+        
+        P2PInterface P2PHandle => Game.EOS.GetEOSP2PInterface();
 
         ulong ConnectionNotificationId;
         Dictionary<ProductUserId, ChatWithFriendData> ChatDataCache;
@@ -26,13 +34,16 @@ namespace UZSG.EOS
         public UIPeer2PeerParticleController ParticleController;
         public Transform parent;
 
+        [Header("Debugging")]
+        [SerializeField] bool enableDebugging = false;
+
 #if UNITY_EDITOR
         void OnPlayModeChanged(UnityEditor.PlayModeStateChange modeChange)
         {
             if (modeChange == UnityEditor.PlayModeStateChange.ExitingPlayMode)
             {
                 //prevent attempts to call native EOS code while exiting play mode, which crashes the editor
-                P2PHandle = null;
+                // P2PHandle = null;
             }
         }
 #endif
@@ -44,7 +55,7 @@ namespace UZSG.EOS
             UnityEditor.EditorApplication.playModeStateChanged += OnPlayModeChanged;
 #endif
 
-            P2PHandle = EOSManager.Instance.GetEOSPlatformInterface().GetP2PInterface();
+            // P2PHandle = EOSManager.Instance.GetEOSPlatformInterface().GetP2PInterface();
 
             ChatDataCache = new Dictionary<ProductUserId, ChatWithFriendData>();
             ChatDataCacheDirty = true;
@@ -88,14 +99,24 @@ namespace UZSG.EOS
             return natType;
         }
 
-        public void OnLoggedIn()
+        internal void Update()
+        {
+            if (!Game.Main.IsOnline) return;
+            
+            HandleReceivedPackets();
+        }
+
+
+        #region Event callbacks
+
+        void OnLoggedIn()
         {
             RefreshNATType();
 
             SubscribeToConnectionRequest();
         }
 
-        public void OnLoggedOut()
+        void OnLoggedOut()
         {
             UnsubscribeFromConnectionRequests();
         }
@@ -117,6 +138,230 @@ namespace UZSG.EOS
             Debug.Log("P2p (OnRefreshNATTypeFinished): RefreshNATType Completed");
         }
 
+        #endregion
+
+
+        const int MAX_RECEIVE_PACKET_SIZE_BYTES = 8192;
+        public void HandleReceivedPackets()
+        {
+            if (!Game.Main.IsOnline) return;
+
+            var receivePacketOptions = new ReceivePacketOptions()
+            {
+                LocalUserId = Game.EOS.GetProductUserId(),
+                MaxDataSizeBytes = MAX_RECEIVE_PACKET_SIZE_BYTES,
+                RequestedChannel = null
+            };
+            var receivedPacketSizeOptions = new GetNextReceivedPacketSizeOptions
+            {
+                LocalUserId = Game.EOS.GetProductUserId(),
+                RequestedChannel = null
+            };
+
+            P2PHandle.GetNextReceivedPacketSize(ref receivedPacketSizeOptions, out uint nextPacketSizeBytes);
+            if (nextPacketSizeBytes == 0) return;
+
+            var dataBytes = new byte[nextPacketSizeBytes];
+            var dataSegment = new ArraySegment<byte>(dataBytes);
+            ProductUserId peerId = null;
+            SocketId socketId = default;
+            Result result = P2PHandle.ReceivePacket(ref receivePacketOptions, ref peerId, ref socketId, out byte outChannel, dataSegment, out uint bytesWritten);
+
+            if (result == Result.Success)
+            {
+                if (enableDebugging) Debug.Log($"Received packet from: peerId={peerId}, socketId={socketId}");
+
+                if (!peerId.IsValid())
+                {
+                    if (enableDebugging) Debug.LogErrorFormat("EOS P2PNAT HandleReceivedMessages: ProductUserId peerId is not valid!");
+                    return;
+                }
+
+                Packet deserializedPacket;
+                try
+                {
+                    deserializedPacket = JsonConvert.DeserializeObject<Packet>(Encoding.UTF8.GetString(dataBytes));
+                }
+                catch
+                {
+                    Debug.LogWarning($"Encountered an error when deserializing packet from: peerId={peerId}, socketId={socketId}");
+                    return;
+                }
+                
+                switch (deserializedPacket.Type)
+                {
+                    case PacketType.ChatMessage:
+                    {
+                        HandleChatPacket(peerId, deserializedPacket);
+                        break;
+                    }
+                    case PacketType.WorldDataRequest:
+                    {
+                        HandleWorldDataRequestPacket(peerId, deserializedPacket);
+                        break;
+                    }
+                    case PacketType.WorldDataHeading:
+                    {
+                        HandleWorldSendDataHeadingPacket(peerId, deserializedPacket);
+                        break;
+                    }
+                    case PacketType.WorldDataChunk:
+                    {
+                        HandleWorldDataChunkPacket(peerId, deserializedPacket);
+                        break;
+                    }
+                    case PacketType.WorldDataFooter:
+                    {
+                        break;
+                    }
+                }
+            }
+            else if (result == Result.NotFound)
+            {
+                return;
+            }
+        }
+
+        
+        #region World data transfer
+        
+        event Action<string> onRequestWorldDataCompleted;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fromUserId"></param>
+        /// <param name="onCompleted"><c>string</c> is filepath of received "level.dat"</param>
+        public void RequestWorldData(ProductUserId fromUserId, Action<string> onCompleted = null)
+        {
+            onRequestWorldDataCompleted += onCompleted;
+
+            var packet = new Packet()
+            {
+                Type = PacketType.WorldDataHeading,
+                Data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject("world please")),
+            };
+            var socketId = new SocketId() { SocketName = "WORLD_DATA" };
+            var sendPacketOptions = new SendPacketOptions()
+            {
+                LocalUserId = Game.EOS.GetProductUserId(),
+                RemoteUserId = fromUserId,
+                SocketId = socketId,
+                AllowDelayedDelivery = true,
+                Channel = 0,
+                Reliability = PacketReliability.ReliableOrdered,
+                Data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(packet))
+            };
+
+            Debug.Log("Requesting world data...");
+            Result result = P2PHandle.SendPacket(ref sendPacketOptions);
+            if (result != Result.Success) return;
+        }
+
+        void SendWorldData(string filepath, ProductUserId targetId)
+        {
+            string worldDataBytes = File.ReadAllText(filepath);
+            int packetCount = Mathf.CeilToInt(worldDataBytes.Length / (float) WORLD_DATA_CHUNK_SIZE_BYTES);
+            
+            /// Send heading first with metadata
+            var headingPacket = new Packet()
+            {
+                Type = PacketType.WorldDataHeading,
+                Data = Encoding.UTF8.GetBytes($"{packetCount}"),
+            };
+            var socketId = new SocketId() { SocketName = "WORLD_DATA" };
+            var headerPacketOptions = new SendPacketOptions()
+            {
+                LocalUserId = Game.EOS.GetProductUserId(),
+                RemoteUserId = targetId,
+                SocketId = socketId,
+                AllowDelayedDelivery = true,
+                Channel = 0,
+                Reliability = PacketReliability.ReliableOrdered,
+                Data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(headingPacket))
+            };
+
+            Result result = P2PHandle.SendPacket(ref headerPacketOptions);
+            if (result != Result.Success) return;
+
+            /// Send world data chunks
+            using var memoryStream = new MemoryStream();
+
+            for (int i = 0; i < packetCount /*&& i < MAX_PACKET_COUNT*/; i++)
+            {
+                int offset = i * WORLD_DATA_CHUNK_SIZE_BYTES;
+                int chunkSize = Mathf.Min(WORLD_DATA_CHUNK_SIZE_BYTES, worldDataBytes.Length - offset);
+                string data = worldDataBytes[offset..chunkSize];
+             
+                var packet = new Packet()
+                {
+                    Type = PacketType.WorldDataChunk,
+                    Data = Encoding.UTF8.GetBytes(data),
+                };
+                byte[] packetBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(packet));
+                
+                var worldDataPacketOptions = new SendPacketOptions()
+                {
+                    LocalUserId = Game.EOS.GetProductUserId(),
+                    RemoteUserId = targetId,
+                    SocketId = socketId,
+                    AllowDelayedDelivery = true,
+                    Channel = 0,
+                    Reliability = PacketReliability.ReliableOrdered,
+                    Data = packetBytes
+                };
+
+                result = P2PHandle.SendPacket(ref worldDataPacketOptions);
+
+                if (result == Result.Success)
+                {
+                    Debug.Log("EOS P2PNAT SendMessage: Message successfully sent to user.");
+                }
+                else
+                {
+                    Debug.LogError($"EOS P2PNAT SendMessage: error while sending data: {result}");
+                    return;
+                }
+            }
+            
+            /// Send world data footer
+            var footerPacket = new Packet()
+            {
+                Type = PacketType.WorldDataFooter,
+                Data = Encoding.UTF8.GetBytes($"TotalPackets:{packetCount}")
+            };
+            var footerPacketOptions = new SendPacketOptions()
+            {
+                LocalUserId = Game.EOS.GetProductUserId(),
+                RemoteUserId = targetId,
+                SocketId = socketId,
+                AllowDelayedDelivery = true,
+                Channel = 0,
+                Reliability = PacketReliability.ReliableOrdered,
+                Data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(footerPacket))
+            };
+            result = P2PHandle.SendPacket(ref footerPacketOptions);
+        }
+
+        byte[] AssembleWorldDataFromPackets(List<Packet> packets)
+        {
+            int totalSize = packets.Sum(p => p.Data.Length);
+            byte[] result = new byte[totalSize];
+            int offset = 0;
+
+            foreach (Packet packet in packets)
+            {
+                Buffer.BlockCopy(packet.Data, 0, result, offset, packet.Data.Length);
+                offset += packet.Data.Length;
+            }
+
+            return result;
+        }
+        
+        #endregion
+
+        #region Messages transfer
+
         public void SendMessage(ProductUserId friendId, MessageData message)
         {
             if (!friendId.IsValid())
@@ -133,7 +378,7 @@ namespace UZSG.EOS
                 }
 
                 // Update Cache
-                ChatEntry chatEntry = new ChatEntry()
+                ChatEntry chatEntry = new()
                 {
                     IsOwnEntry = true,
                     Message = message.TextData
@@ -220,105 +465,101 @@ namespace UZSG.EOS
             }
         }
 
-        public ProductUserId HandleReceivedMessages()
+        #endregion
+
+        ProductUserId HandleChatPacket(ProductUserId peerId, Packet packet)
         {
-            if (P2PHandle == null)
+            var message = Convert.ToBase64String(packet.Data);
+            if (message.StartsWith("t"))
             {
-                return null;
-            }
-
-            ReceivePacketOptions options = new ReceivePacketOptions()
-            {
-                LocalUserId = EOSManager.Instance.GetProductUserId(),
-                MaxDataSizeBytes = 4096,
-                RequestedChannel = null
-            };
-
-            var getNextReceivedPacketSizeOptions = new GetNextReceivedPacketSizeOptions
-            {
-                LocalUserId = EOSManager.Instance.GetProductUserId(),
-                RequestedChannel = null
-            };
-            P2PHandle.GetNextReceivedPacketSize(ref getNextReceivedPacketSizeOptions, out uint nextPacketSizeBytes);
-            
-            if (nextPacketSizeBytes == 0)
-            {
-                return null;
-            }
-
-            byte[] data = new byte[nextPacketSizeBytes];
-            var dataSegment = new ArraySegment<byte>(data);
-            ProductUserId peerId = null;
-            SocketId socketId = default;
-            Result result = P2PHandle.ReceivePacket(ref options, ref peerId, ref socketId, out byte outChannel, dataSegment, out uint bytesWritten);
-
-            if (result == Result.NotFound)
-            {
-                // no packets
-                return null;
-            }
-            else if (result == Result.Success)
-            {
-                //Do something with chat output
-                Debug.LogFormat("Message received: peerId={0}, socketId={1}, data={2}", peerId, socketId, Encoding.UTF8.GetString(data));
-
-                if (!peerId.IsValid())
+                ChatEntry newMessage = new()
                 {
-                    Debug.LogErrorFormat("EOS P2PNAT HandleReceivedMessages: ProductUserId peerId is not valid!");
-                    return null;
-                }
+                    IsOwnEntry = false,
+                    Message = message[1..]
+                };
 
-                string message = System.Text.Encoding.UTF8.GetString(data);
-
-                if (message.StartsWith("t"))
+                if (ChatDataCache.TryGetValue(peerId, out ChatWithFriendData chatData))
                 {
-                    ChatEntry newMessage = new ChatEntry()
-                    {
-                        IsOwnEntry = false,
-                        Message = message.Substring(1)
-                    };
+                    // Update existing chat
+                    chatData.ChatLines.Enqueue(newMessage);
 
-                    if (ChatDataCache.TryGetValue(peerId, out ChatWithFriendData chatData))
-                    {
-                        // Update existing chat
-                        chatData.ChatLines.Enqueue(newMessage);
-
-                        ChatDataCacheDirty = true;
-                        return peerId;
-                    }
-                    else
-                    {
-                        var newChat = new ChatWithFriendData()
-                        {
-                            FriendId = peerId
-                        };
-                        newChat.ChatLines.Enqueue(newMessage);
-                        // New Chat Request
-                        ChatDataCache.Add(peerId, newChat);
-                        return peerId;
-                    }
-                }
-                else if (message.StartsWith("m"))
-                {
-                    message = message.Substring(1);
-
-                    string[] coords = message.Split(',');
-                    int xPos = Int32.Parse(coords[0]);
-                    int yPos = Int32.Parse(coords[1]);
-                    Debug.Log("EOS P2PNAT HandleReceivedMessages:  Mouse position Recieved at " + xPos + ", " + yPos);
-
-                    ParticleController.SpawnParticles(xPos, yPos, parent);
-
+                    ChatDataCacheDirty = true;
                     return peerId;
                 }
                 else
                 {
-                    Debug.LogErrorFormat("EOS P2PNAT HandleReceivedMessages: error while reading data, code: {0}", result);
-                    return null;
+                    var newChat = new ChatWithFriendData()
+                    {
+                        FriendId = peerId
+                    };
+                    newChat.ChatLines.Enqueue(newMessage);
+                    /// New Chat Request
+                    ChatDataCache.Add(peerId, newChat);
+                    return peerId;
                 }
             }
+            else if (message.StartsWith("m"))
+            {
+                message = message[1..];
 
-            return null;
+                string[] coords = message.Split(',');
+                int xPos = int.Parse(coords[0]);
+                int yPos = int.Parse(coords[1]);
+                Debug.Log("EOS P2PNAT HandleReceivedMessages:  Mouse position Recieved at " + xPos + ", " + yPos);
+
+                ParticleController.SpawnParticles(xPos, yPos, parent);
+
+                return peerId;
+            }
+            else
+            {
+                // Debug.LogErrorFormat("EOS P2PNAT HandleReceivedMessages: error while reading data, code: {0}", result);
+                return null;
+            }
+        }
+
+        void HandleWorldDataRequestPacket(ProductUserId userId, Packet packet)
+        {
+            var filepath = Path.Combine(Application.persistentDataPath, "SavedWorlds", "helping", "level.dat"); 
+            SendWorldData(filepath, userId);
+        }
+
+        List<Packet> _receivedWorldDataChunkPackets = new();
+        void HandleWorldSendDataHeadingPacket(ProductUserId userId, Packet packet)
+        {
+            if (packet.Type != PacketType.WorldDataHeading) return;
+            Debug.Log($"Received WorldSendDataHeading from: {userId}, world size: {packet.Data.Length} bytes");
+            _receivedWorldDataChunkPackets = new();
+        }
+
+
+        void HandleWorldDataChunkPacket(ProductUserId userId, Packet packet)
+        {
+            if (packet.Type != PacketType.WorldDataChunk) return;
+            Debug.Log($"Received World Data Chunk from: {userId}, chunk size: {packet.Data.Length} bytes");
+        
+            switch (packet.Type)
+            {
+                case PacketType.WorldDataHeading:
+                {
+                    break;
+                }
+                case PacketType.WorldDataChunk:
+                {
+                    _receivedWorldDataChunkPackets.Add(packet);
+                    break;
+                }
+                case PacketType.WorldDataFooter:
+                {
+                    var dataBytes = AssembleWorldDataFromPackets(_receivedWorldDataChunkPackets);
+                    var worldSaveData = JsonConvert.DeserializeObject<WorldSaveData>(Encoding.UTF8.GetString(dataBytes));
+                    var filepath = Game.World.ConstructWorld(worldSaveData);
+                    _receivedWorldDataChunkPackets.Clear();
+                    onRequestWorldDataCompleted?.Invoke(filepath);
+                    onRequestWorldDataCompleted = null;
+                    break;
+                }
+            }
         }
 
         void SubscribeToConnectionRequest()

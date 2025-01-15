@@ -37,7 +37,7 @@ namespace UZSG.Worlds
         bool _isInitialized; /// to prevent initializing the world twice :)
         bool _isActive;
         bool _hasValidSaveData;
-        string ownerId;
+        string ownerId = "localhost";
         WorldSaveData _saveData;
         System.Diagnostics.Stopwatch _initializeTimer;
 
@@ -101,7 +101,7 @@ namespace UZSG.Worlds
             worldAttributes = new()
             {
                 LevelId = saveData.LevelId,
-                WorldName = saveData.Name,
+                WorldName = saveData.WorldName,
                 MaxPlayers = saveData.MaxPlayers,
                 DifficultyLevel = saveData.DifficultyLevel,
             };
@@ -232,15 +232,38 @@ namespace UZSG.Worlds
             Game.Console.Log("[World]: Loading entities...");
 
             if (_saveData.EntitySaves == null) return;
+                        
+            foreach (var etty in _entityInstanceIds.Values)
+            {
+                try
+                {
+                    /// Initializing method
+                    etty.OnSpawn();
+                }
+                catch
+                {
+                    if (etty.EntityData != null)
+                    {
+                        Game.Console.Warn($"An error occured when loading object '{etty.EntityData.Id}'!");
+                    }
+                    continue;
+                }
+            }
+            
             foreach (var sd in _saveData.EntitySaves)
             {
-                if (_entityInstanceIds.ContainsKey(sd.InstanceId)) continue;
-                if (sd.Id == "player") continue;
-
-                Game.Entity.Spawn(sd.Id, callback: (info) =>
+                if (sd.Id == "player") continue; /// salt
+                if (_entityInstanceIds.TryGetValue(sd.InstanceId, out Entity etty))
                 {
-                    info.Entity.ReadSaveData(sd);
-                });
+                    etty.OnSpawn();
+                }
+                else
+                {
+                    Game.Entity.Spawn(sd.Id, callback: (info) =>
+                    {
+                        info.Entity.ReadSaveData(sd);
+                    });
+                }
             }
         }
 
@@ -261,7 +284,8 @@ namespace UZSG.Worlds
 
         public bool IsOwner(Player player)
         {
-            if (player == null) return false;
+            /// TODO: throws an error
+            if (player == null && player.UserInfo.UserId == null) return false;
             return player.UserInfo.UserId.ToString() == this.ownerId;
         }
 
@@ -270,14 +294,14 @@ namespace UZSG.Worlds
 
         void OnPlayerJoined(Player player)
         {
-            if (IsOwner(player))
-            {
-                ownerPlayer = player;
-            }
-            else
-            {
+            // if (IsOwner(player))
+            // {
+            //     ownerPlayer = player;
+            // }
+            // else
+            // {
 
-            }
+            // }
         }
 
         void OnPlayerLeft(Player player)
@@ -400,7 +424,7 @@ namespace UZSG.Worlds
             var settings = new JsonSerializerSettings(){ ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
             var save = JsonConvert.SerializeObject(json, Formatting.Indented, settings);
             var path = Application.persistentDataPath + $"/SavedWorlds/{WorldName}";
-            var filepath = path + "/data.json";
+            var filepath = path + "/level.dat";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
             File.WriteAllText(filepath, save);
 

@@ -184,7 +184,6 @@ namespace UZSG.Attributes
         /// <summary>
         /// Fired everytime ONLY IF the value of this attribute is CHANGED.
         /// Meaning that if the value is modified, but is still the same, it is not called.
-        /// Also fired everytime the Add() or Remove() methods are called.
         /// </summary>
         public event EventHandler<AttributeValueChangedContext> OnValueChanged;
         /// <summary>

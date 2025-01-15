@@ -1290,6 +1290,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Interact Secondary",
+                    "type": "Button",
+                    "id": "d7ef4465-d186-48ef-93cb-8084715d5861",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Reload",
                     "type": "Button",
                     "id": "b11b855c-1e5b-4068-a7ff-cc3913be0021",
@@ -1659,6 +1668,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Change Vehicle View",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c113f69a-cd97-490d-9359-ce4936683022",
+                    "path": "<Keyboard>/g",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Interact Secondary",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f0762af7-f5c1-4abb-afb9-36d3cbc7d877",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Interact Secondary",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -2691,6 +2722,34 @@
                     "action": "Rotate Scroll",
                     "isComposite": false,
                     "isPartOfComposite": true
+                }
+            ]
+        },
+        {
+            "name": "Creative Window",
+            "id": "46b4e4c6-7e14-4e0a-90f8-27cafcb6b25a",
+            "actions": [
+                {
+                    "name": "Toggle",
+                    "type": "Button",
+                    "id": "cb36cfb0-75b8-4ef2-87e3-c409682a48e2",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "0bd0a264-73f6-4ddc-be0d-d774bdae254c",
+                    "path": "<Keyboard>/f1",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Toggle",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }

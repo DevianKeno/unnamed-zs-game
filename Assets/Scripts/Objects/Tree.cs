@@ -76,7 +76,7 @@ namespace UZSG.Objects
                     }
                     
                     Game.Audio.PlayInWorld("tree_chop_wood", info.ContactPoint);
-                    Game.Particles.Spawn("tree_bark_break", info.ContactPoint);
+                    Game.Particles.Create("tree_bark_break", info.ContactPoint);
                     
                     if (!IsFelled)
                     {

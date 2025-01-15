@@ -1,5 +1,5 @@
 using System;
-using UZSG.Entities;
+using System.Collections.Generic;
 
 namespace UZSG.Interactions
 {
@@ -11,24 +11,24 @@ namespace UZSG.Interactions
         /// <summary>
         /// The action text that may be displayed when looking at the Interactable.
         /// </summary>
-        public abstract string Action { get; }
+        public abstract string ActionText { get; }
         /// <summary>
         /// The name that may be displayed when looking at the Interactable.
         /// </summary>
-        public abstract string Name { get; }
+        public abstract string DisplayName { get; }
         /// <summary>
         /// Whether to allow interactions for the Interactable.
         /// </summary>
         public bool AllowInteractions { get; set; }
-        /// <summary>
-        /// Fired everytime an Actor interacts with the Interactable.
-        /// </summary>
-        public event EventHandler<IInteractArgs> OnInteract;
 
+        /// <summary>
+        /// Get all actions from this Interactable.
+        /// </summary>
+        public List<InteractAction> GetInteractActions();
         /// <summary>
         /// Called when an Actor interacts with the Interactable.
         /// </summary>
-        public void Interact(IInteractActor actor, IInteractArgs args);
+        public void Interact(InteractionContext context);
         public virtual void OnLookEnter() { }
         public virtual void OnLookExit() { }
     }

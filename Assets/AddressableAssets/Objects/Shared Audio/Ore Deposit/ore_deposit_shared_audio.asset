@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3225a92847421ec41a13a5cd94ac5446, type: 3}
-  m_Name: iron_deposit_audio
+  m_Name: ore_deposit_shared_audio
   m_EditorClassIdentifier: 
   PoolSize: 2
-  Path: Assets/AddressableAssets/Objects/iron_deposit/audio
+  Path: Assets/AddressableAssets/Objects/Shared Audio/Ore Deposit
   AudioClips:
   - m_AssetGUID: a87a848251336294aacad555581050c5
     m_SubObjectName: 

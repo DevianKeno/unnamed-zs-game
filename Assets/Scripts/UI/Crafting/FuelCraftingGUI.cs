@@ -58,22 +58,22 @@ public class FuelCraftingGUI : WorkstationGUI
                 return;
             }
 
-            if (player.InventoryGUI.IsHoldingItem)
+            if (player.InventoryWindow.IsHoldingItem)
             {
-                if(!player.InventoryGUI.HeldItem.Data.IsFuel)
+                if(!player.InventoryWindow.HeldItem.Data.IsFuel)
                 {
                     print("You cannot put a non-fuel Item in the fuel slot");
                     return;
                 }
 
-                var heldItem = player.InventoryGUI.HeldItem;
+                var heldItem = player.InventoryWindow.HeldItem;
 
                 if (slot.IsEmpty || slot.Item.CompareTo(heldItem))
                 {
-                    slot.TryCombine(player.InventoryGUI.TakeHeldItem(), out var excess);
+                    slot.TryStack(player.InventoryWindow.TakeHeldItem(), out var excess);
                     if (!excess.IsNone)
                     {
-                        player.InventoryGUI.HoldItem(excess);
+                        player.InventoryWindow.HoldItem(excess);
                     }
                     else
                     {
@@ -92,7 +92,7 @@ public class FuelCraftingGUI : WorkstationGUI
                 else /// item diff, swap
                 {
                     var tookItem = slot.TakeAll();
-                    var prevHeld = player.InventoryGUI.SwapHeldWith(tookItem);
+                    var prevHeld = player.InventoryWindow.SwapHeldWith(tookItem);
                     slot.Put(prevHeld);
                 }
             }
@@ -100,28 +100,28 @@ public class FuelCraftingGUI : WorkstationGUI
             {
                 if (slot.IsEmpty) return;
 
-                player.InventoryGUI.HoldItem(slot.TakeAll());
+                player.InventoryWindow.HoldItem(slot.TakeAll());
                 // _lastSelectedSlot = slot;
             }
         }
         else if (ctx.Button == Right)
         {
-            if (player.InventoryGUI.IsHoldingItem)
+            if (player.InventoryWindow.IsHoldingItem)
             {
-                if(!player.InventoryGUI.HeldItem.Data.IsFuel)
+                if(!player.InventoryWindow.HeldItem.Data.IsFuel)
                 {
                     print("You cannot put a non-fuel Item in the fuel slot");
                     return;
                 }
                 
-                var heldItem = player.InventoryGUI.HeldItem;
+                var heldItem = player.InventoryWindow.HeldItem;
 
                 if (slot.IsEmpty || slot.Item.CompareTo(heldItem))
                 {
-                    slot.TryCombine(player.InventoryGUI.TakeHeldItemSingle(), out var excess);
+                    slot.TryStack(player.InventoryWindow.TakeHeldItemSingle(), out var excess);
                     if (!excess.IsNone)
                     {
-                        player.InventoryGUI.HoldItem(excess);
+                        player.InventoryWindow.HoldItem(excess);
                     }
                     else
                     {
@@ -140,7 +140,7 @@ public class FuelCraftingGUI : WorkstationGUI
                 else /// item diff, swap
                 {
                     var tookItem = slot.TakeAll();
-                    var prevHeld = player.InventoryGUI.SwapHeldWith(tookItem);
+                    var prevHeld = player.InventoryWindow.SwapHeldWith(tookItem);
                     slot.Put(prevHeld);
                 }
             }
@@ -148,7 +148,7 @@ public class FuelCraftingGUI : WorkstationGUI
             {
                 if (slot.IsEmpty) return;
 
-                player.InventoryGUI.HoldItem(slot.TakeAll());
+                player.InventoryWindow.HoldItem(slot.TakeAll());
                 // _lastSelectedSlot = slot;
             }
         }

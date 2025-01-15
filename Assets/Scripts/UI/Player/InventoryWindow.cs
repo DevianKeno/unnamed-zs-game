@@ -55,7 +55,7 @@ namespace UZSG.UI.Players
         Selector selector;
         public Selector Selector => selector;
 
-        [Header("Inventory Components")]
+        [Header("UI Elements")]
         [SerializeField] HotbarUI hotbarUI;
         [SerializeField] ItemDetailsUI itemDetailsUI;
         [SerializeField] GameObject bag;
@@ -95,6 +95,10 @@ namespace UZSG.UI.Players
             // InitializeSelector();
             // itemDetailsUI = Game.UI.Create<ItemDetailsUI>("Item Details UI");
             frameController.SwitchToFrame("bag", force: true);
+            frameController.OnSwitchFrame += (context) =>
+            {
+                if (context.Next != "bag" && EnableSelector) selector?.Hide();
+            };
             InitializeInputs();
             closeButton.onClick.AddListener(Hide);
             Hide();
@@ -145,16 +149,14 @@ namespace UZSG.UI.Players
             int maxSlots = Inventory.Bag.SlotCount;
             for (int i = 0; i < maxSlots; i++)
             {
-                var slot = Game.UI.Create<ItemSlotUI>("Item Slot");
-                slot.name = $"Slot ({i})";
-                slot.transform.SetParent(bag.transform);
-                slot.Index = i;
-                slot.Link(Inventory.Bag[i]);
-                slot.OnHoverStart += OnBagSlotHoverStart;
-                slot.OnHoverEnd += OnBagSlotHoverEnd;
-                slot.OnMouseDown += OnBagSlotClick;
-                _bagSlotUIs.Add(i, slot);
-                slot.Show();
+                var slotUI = Game.UI.Create<ItemSlotUI>("Item Slot");
+                slotUI.name = $"Slot ({i})";
+                slotUI.transform.SetParent(bag.transform);
+                slotUI.Index = i;
+                slotUI.Link(Inventory.Bag[i]);
+                slotUI.OnMouseDown += OnBagSlotClick;
+                _bagSlotUIs.Add(i, slotUI);
+                slotUI.Show();
             }
         }
 
@@ -280,22 +282,12 @@ namespace UZSG.UI.Players
 
         #region Event callbacks
 
-        void OnBagSlotContentChanged(object sender, ItemSlot.ItemChangedContext e)
+        void OnHeldItemChanged(ItemData data)
         {
-            _bagSlotUIs[e.ItemSlot.Index].SetDisplayedItem(e.ItemSlot.Item);
+            
         }
 
-        void OnBagSlotHoverStart(object sender, ItemSlotUI.ClickedContext e)
-        {
-            var slot = sender as ItemSlotUI;
-            selector?.Select(slot.transform as RectTransform);
-        }
-
-        void OnBagSlotHoverEnd(object sender, ItemSlotUI.ClickedContext e)
-        {
-        }
-
-        void OnBagSlotClick(object sender, ItemSlotUI.ClickedContext e)
+        void OnBagSlotClick(object sender, ItemSlotUI.ClickedContext click)
         {
             _selectedSlotUI = (ItemSlotUI) sender;
             _selectedSlot = _selectedSlotUI.Slot;
@@ -306,11 +298,11 @@ namespace UZSG.UI.Players
                 itemDetailsUI.Show();
             }
 
-            if (e.Button == Left)
+            if (click.Button == Left)
             {
                 DestroyItemOptions();
                 
-                if (e.ClickType == ShiftClick && _hasExternalContainerOpen)
+                if (click.ClickType == ShiftClick && _hasExternalContainerOpen)
                 {
                     FastDepositToExternalContainer(_selectedSlot);
                     return;
@@ -318,17 +310,27 @@ namespace UZSG.UI.Players
 
                 if (_isHoldingItem)
                 {
-                    if (_selectedSlot.IsEmpty || _selectedSlot.Item.Data.IsStackable)
+                    if (_selectedSlot.IsEmpty)
                     {
-                        _selectedSlot.TryCombine(TakeHeldItem(), out var excess);
-                        if (!excess.IsNone) HoldItem(excess);
+                        _selectedSlot.Put(TakeHeldItem());
+                    }
+                    else if (_selectedSlot.Item.Is(HeldItem))
+                    {
+                        var heldItem = TakeHeldItem();
+                        if (_selectedSlot.TryStack(heldItem, out var excess))
+                        {
+                            if (!excess.IsNone) HoldItem(excess);
+                        } else /// swap items
+                        {
+                            HoldItem(_selectedSlot.TakeAll());
+                        }
                     }
                     else /// swap items
                     {
                         Item taken = _selectedSlot.TakeAll();
-                        var prevHeld = SwapHeldWith(taken);
-                        _selectedSlot.Put(prevHeld);
-                    } 
+                        var previousHeld = SwapHeldWith(taken);
+                        _selectedSlot.Put(previousHeld);
+                    }
                 }
                 else
                 {
@@ -339,42 +341,39 @@ namespace UZSG.UI.Players
                     }
                 }
             }
-            else if (e.Button == Right)
+            else if (click.Button == Right)
             {
                 if (_isHoldingItem) /// put 1 to selected slot
                 {
-                    if (_selectedSlot.IsEmpty || _selectedSlot.Item.CompareTo(_heldItem))
+                    _isPutting = true;
+                    if (_selectedSlot.IsEmpty)
                     {
-                        _isPutting = true;
-
-                        Item ofOne = _heldItem.Take(1);
-                        if (_selectedSlot.Item.CanStackWith(ofOne))
-                        {
-                            _selectedSlot.TryCombine(ofOne, out _);
-                        }
-                        else /// return item
-                        {
-                            _heldItem.Combine(ofOne);
-                        }
-
-                        return;
+                        _selectedSlot.Put(_heldItem.Take(1));
                     }
-                    else /// swap items
+                    else if (_selectedSlot.Item.Is(HeldItem))
                     {
-                        Item taken = _selectedSlot.TakeAll();
-                        var prevHeld = SwapHeldWith(taken);
-                        _selectedSlot.Put(prevHeld);
+                        Item ofOne = _heldItem.Take(1);
+                        if (_selectedSlot.TryStack(ofOne, out var excess))
+                        {
+                            if (!excess.IsNone) HoldItem(excess);
+                        } else
+                        {
+                            _heldItem.Stack(ofOne);
+                        }
                     }
                 }
                 else
                 {
-                    if (_selectedSlot.IsEmpty)
+                    if (!_selectedSlot.IsEmpty)
+                    {
+                        DestroyItemOptions();
+                        CreateItemOptions();
+                    }
+                    else
                     {
                         DestroyItemOptions();
                         return;
                     }
-
-                    CreateItemOptions();
                     
                     // _isGetting = true;
                     // HoldItem(inventory.Bag.TakeItems(_selectedSlot.Index, 1));
@@ -399,13 +398,13 @@ namespace UZSG.UI.Players
 
         void CreateItemOptions()
         {
-            if (itemOptions)
-            {
-                itemOptions.Destroy();
-            }
             itemOptions = Game.UI.Create<ChoiceWindow>("Choice Window");
             itemOptions.Position = _selectedSlotUI.Rect.position;
             itemOptions.Label = _selectedSlot.Item.Data.DisplayName;
+            Game.UI.CreateBlocker(itemOptions, onClick: () =>
+            {
+                DestroyItemOptions();
+            });
 
             var item = _selectedSlot.Item;
             if (item.Data.Subtype == ItemSubtype.Weapon)
@@ -521,9 +520,22 @@ namespace UZSG.UI.Players
         {
             if (_heldItem.IsNone) return;
             
-            Inventory.Bag.TryPutAt(_lastSelectedSlotIndex, _heldItem);
-            ReleaseHeldItem();
-            _lastSelectedSlotIndex = -1;
+            var heldItem = TakeHeldItem();
+            var lastSlot = Inventory.Bag[_lastSelectedSlotIndex];
+            if (lastSlot.IsEmpty)
+            {
+                Inventory.Bag.TryPutAt(_lastSelectedSlotIndex, heldItem);
+            } else
+            {
+                if (lastSlot.TryStack(heldItem, out Item excess))
+                {
+                    Player.Inventory.DropItem(excess);
+                }
+                else
+                {
+                    Player.Inventory.DropItem(heldItem);
+                }
+            }
         }
 
         /// <summary>

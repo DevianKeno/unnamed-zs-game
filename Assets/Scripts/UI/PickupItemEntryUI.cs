@@ -110,7 +110,7 @@ namespace UZSG.UI
         {
             if (!Item.CompareTo(item)) return;
 
-            Item.Combine(item);
+            Item.Count += item.Count;
             countTMP.text = Item.Count.ToString();
             _lifetime = 0f;
         }

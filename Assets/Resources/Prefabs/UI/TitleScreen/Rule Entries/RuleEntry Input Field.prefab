@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4043712583467518585}
   - component: {fileID: 9006563477039117992}
+  - component: {fileID: 4254879223599120983}
   m_Layer: 5
   m_Name: RuleEntry Input Field
   m_TagString: Untagged
@@ -65,6 +66,20 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &4254879223599120983
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 166109141539720746}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86fff5130651b0b4194fb44e2c0917b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rect: {fileID: 4043712583467518585}
+  Id: 
 --- !u!1 &231858615720532715
 GameObject:
   m_ObjectHideFlags: 0

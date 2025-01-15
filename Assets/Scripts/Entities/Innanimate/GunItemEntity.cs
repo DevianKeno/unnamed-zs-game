@@ -1,4 +1,5 @@
 using System;
+using UnityEngine.Serialization;
 using UZSG.Interactions;
 using UZSG.Items.Weapons;
 
@@ -18,6 +19,6 @@ namespace UZSG.Entities
 
     public class GunItemEntity : ItemEntity
     {
-        public GunItemEntityInfo Info;
+        [FormerlySerializedAs("Info")] public GunItemEntityInfo GunInfo;
     }
 }

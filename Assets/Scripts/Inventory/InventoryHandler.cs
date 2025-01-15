@@ -14,7 +14,7 @@ namespace UZSG.Inventory
     }
 
     public enum EquipmentIndex {
-        Hands, Mainhand, Offhand
+        UNDEFINED, Mainhand, Offhand
     }
 
     public class InventoryHandler : MonoBehaviour, ISaveDataReadWrite<InventorySaveData>
@@ -29,11 +29,11 @@ namespace UZSG.Inventory
         /// Container for all other item stuff.
         /// </summary>
         public Container Bag => _bag;
-        Container _hotbar;
+        Hotbar _hotbar;
         /// <summary>
         /// Container for tools and items.
         /// </summary>
-        public Container Hotbar => _hotbar;
+        public Hotbar Hotbar => _hotbar;
         Equipment _equipment;
         /// <summary>
         /// Container for weapons and equipment.
@@ -109,7 +109,10 @@ namespace UZSG.Inventory
         /// </summary>
         public void DropItem(Item item)
         {
-            Game.Entity.Spawn<ItemEntity>("item", Player.EyeLevel, callback: (info) =>
+            if (item.IsNone) return;
+            
+            var position = Player.EyeLevel + Player.Forward;
+            Game.Entity.Spawn<ItemEntity>("item", position, callback: (info) =>
             {
                 info.Entity.Item = item;
                 var throwDirection = Player.Forward + Vector3.up;
@@ -124,6 +127,8 @@ namespace UZSG.Inventory
         {
             if (Bag.TryGetSlot(slotIndex, out var slot))
             {
+                if (slot.IsEmpty) return;
+
                 var position = Player.EyeLevel + Player.Forward;
                 Game.Entity.Spawn<ItemEntity>("item", position, callback: (info) =>
                 {

@@ -133,7 +133,7 @@ namespace UZSG.Entities
         void CreateGhosts()
         {
             validGhost = Instantiate(_objectModel, Position, Quaternion.identity, transform);
-            validGhost.name = $"{objectData.Name} (Object Ghost)";
+            validGhost.name = $"{objectData.DisplayName} (Object Ghost)";
             ApplyMaterialAll(validGhost, validBuildMaterial);            
             var colliders = validGhost.GetComponentsInChildren<Collider>();
             foreach (var c in colliders)
@@ -147,7 +147,7 @@ namespace UZSG.Entities
             AddCollisionProxy(validGhost);
             
             invalidGhost = Instantiate(_objectModel, Position, Quaternion.identity, transform);
-            invalidGhost.name = $"{objectData.Name} (Object Ghost)";
+            invalidGhost.name = $"{objectData.DisplayName} (Object Ghost)";
             ApplyMaterialAll(invalidGhost, invalidBuildMaterial);
             colliders = invalidGhost.GetComponentsInChildren<Collider>();
             foreach (var c in colliders)
@@ -234,24 +234,19 @@ namespace UZSG.Entities
             _canPlace = false;
         }
 
-        public bool TryPlaceObject()
+        public bool TryPlaceObject(Vector3 position, Quaternion rotation)
         {
             if (!_canPlace)
             {
                 return false; /// TODO: add prompt
             }
             
-            var go = Instantiate(_objectModel, Position, Rotation);
-            if (go.TryGetComponent(out actualObject))
+            Game.Objects.PlaceNew(this.objectData.Id, callback: (info) =>
             {
-                actualObject.Place();
-                return true;
-            }
-            else
-            {
-                Destroy(go);
-                return false;
-            }
+                info.Object.Position = position;
+                info.Object.Rotation = rotation;
+            });
+            return true;
         }
         
         void ApplyMaterialAll(GameObject gameObject, Material material)

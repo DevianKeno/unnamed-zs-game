@@ -9,7 +9,6 @@ namespace UZSG.EOS.Lobbies
     public class LobbyAttribute
     {
         public LobbyAttributeVisibility Visibility = LobbyAttributeVisibility.Public;
-
         public AttributeType ValueType = AttributeType.String;
 
         /// <summary>

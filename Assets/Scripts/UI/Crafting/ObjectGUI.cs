@@ -11,7 +11,7 @@ namespace UZSG.UI.Objects
     /// <summary>
     /// GUI class for Objects that have GUIs.
     /// </summary>
-    public abstract class ObjectGUI : UIElement, IInventoryAppendable
+    public abstract class ObjectGUI : UIElement, IInventoryWindowAppendable
     {
         protected BaseObject baseObject;
         /// <summary>

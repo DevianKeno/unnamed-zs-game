@@ -130,7 +130,7 @@ namespace UZSG.Building
                 if (_isObjectGhostEntitySpawned)
                 {
                     targetEulerAngle.y += _isHoldingShift ? 90 : -90;
-                    targetEulerAngle.y = NormalizeAngle(targetEulerAngle.y);
+                    targetEulerAngle.y %= 360f;
                     objectGhost.Rotation = Quaternion.Euler(targetEulerAngle);
                 }
             }
@@ -156,7 +156,7 @@ namespace UZSG.Building
                 {
                     targetEulerAngle.y -= 10f;
                 }
-                targetEulerAngle.y = NormalizeAngle(targetEulerAngle.y);
+                targetEulerAngle.y %= 360f;
                 objectGhost.Rotation = Quaternion.Euler(targetEulerAngle);
             }
         }
@@ -169,7 +169,7 @@ namespace UZSG.Building
         {
             if (context.performed)
             {
-                if (_isObjectGhostEntitySpawned && objectGhost.TryPlaceObject())
+                if (_isObjectGhostEntitySpawned && objectGhost.TryPlaceObject(targetPosition, Quaternion.Euler(targetEulerAngle)))
                 {
                     var heldItem = new Item(_heldItem, 0);
 
@@ -198,7 +198,7 @@ namespace UZSG.Building
 
         #region Event callbacks    
 
-        void OnPlayerInteract(InteractContext context)
+        void OnPlayerInteract(InteractionContext context)
         {
             if (context.Phase == InteractPhase.Started)
             {
@@ -311,7 +311,8 @@ namespace UZSG.Building
                 Game.Entity.Spawn<ObjectGhost>("object_ghost", targetPosition, callback: (info) =>
                 {
                     objectGhost = info.Entity;
-                    objectGhost.transform.SetPositionAndRotation(targetPosition, Quaternion.Euler(targetEulerAngle));
+                    objectGhost.Position = targetPosition;
+                    objectGhost.Rotation = Quaternion.Euler(targetEulerAngle);
                     objectGhost.SetObject(_heldItem.ObjectData);
                     _isObjectGhostEntitySpawned = true;
                 });
@@ -335,6 +336,8 @@ namespace UZSG.Building
         {
             if (InBuildMode) return;
 
+            targetPosition = Vector3.zero;
+            targetEulerAngle = Vector3.zero;
             InBuildMode = true;
             OnEnteredBuildMode?.Invoke();
             actionMap.Enable();
@@ -347,13 +350,6 @@ namespace UZSG.Building
             actionMap.Disable();
             InBuildMode = false;
             OnExitedBuildMode?.Invoke();
-        }
-
-        float NormalizeAngle(float angle)
-        {
-            angle %= 360f;
-            if (angle < 0) angle += 360f;
-            return angle;
         }
 
         bool IsValidObject(ItemData itemData)

@@ -26,14 +26,23 @@ namespace UZSG.UI.HUD
             this.player = player;
             dynamicCrosshair.Initialize(player);
 
-            player.Actions.OnInteract += OnInteract;
-            player.FPP.OnFPPControllerChanged += OnChangeHeldItem;
+            InitializeEvents();
+
+        }
+
+        void InitializeEvents()
+        {
+            player.Actions.OnInteract += OnPlayerInteract;
+            player.Actions.OnInteractVehicle += OnPlayerInteractVehicle;
+            player.FPP.OnFPPControllerChanged += OnPlayerChangeHeldItem;
             player.BuildManager.OnEnteredBuildMode += OnEnteredBuildMode;
             player.BuildManager.OnExitedBuildMode += OnExitedBuildMode;
+            
             Game.World.CurrentWorld.OnPause += Hide;
             Game.World.CurrentWorld.OnUnpause += OnUnpause;
             Game.UI.OnWindowOpened += OnWindowOpened;
             Game.UI.OnWindowClosed += OnWindowClosed;
+            
         }
 
         void OnValidate()
@@ -47,7 +56,7 @@ namespace UZSG.UI.HUD
         
         #region Event callbacks
 
-        void OnInteract(InteractContext context)
+        void OnPlayerInteract(InteractionContext context)
         {
             if (context.Phase == InteractPhase.Started)
             {
@@ -59,7 +68,19 @@ namespace UZSG.UI.HUD
             }
         }
 
-        void OnChangeHeldItem(FPPItemController controller)
+        void OnPlayerInteractVehicle(VehicleInteractContext context)
+        {
+            if (context.Entered)
+            {
+                Hide();
+            }
+            else if (context.Exited)
+            {
+                Show();
+            }
+        }
+
+        void OnPlayerChangeHeldItem(FPPItemController controller)
         {
             /// Switch crosshairs
             if (player.FPP.FPPItemController is GunWeaponController gunWeapon)
@@ -101,7 +122,13 @@ namespace UZSG.UI.HUD
 
         #endregion
 
-
+        /// <summary>
+        /// Crosshair will not display if meets the ff. criteria:
+        ///  - there is a window open
+        ///  - player is busy (interacting with something)
+        ///  - player is in build mode (holding a placeable item)
+        /// However, <c>force</c> displays it regardless.
+        /// </summary>
         public void Show(bool force = false)
         {
             if (!force)

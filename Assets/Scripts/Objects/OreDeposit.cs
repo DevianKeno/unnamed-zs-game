@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UZSG.Attributes;
 using UZSG.Data;
 using UZSG.Entities;
@@ -9,7 +10,7 @@ using UZSG.Systems;
 
 namespace UZSG.Objects
 {
-    public class OreDeposit : Resource, ILookable
+    public class OreDeposit : Resource, IInteractable
     {
         public void Damage(float amount)
         {
@@ -64,6 +65,11 @@ namespace UZSG.Objects
             }
 
             this.Damage(damage);
+        }
+
+        public List<InteractAction> GetInteractActionOptions()
+        {
+            return new();
         }
     }
 }

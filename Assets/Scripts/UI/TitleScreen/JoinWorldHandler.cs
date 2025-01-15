@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using TMPro;
 
 using Epic.OnlineServices;
@@ -11,16 +12,21 @@ using Epic.OnlineServices.Lobby;
 using UZSG.Systems;
 using UZSG.EOS;
 using UZSG.EOS.Lobbies;
+using UZSG.UI.TitleScreen;
+
+using static UZSG.Systems.Status;
+using UZSG.Saves;
+using UZSG.EOS.P2P;
 
 namespace UZSG.UI.Lobbies
 {
-    public class LobbiesHandlerUI : MonoBehaviour
+    public class JoinWorldHandler : MonoBehaviour
     {
         EOSLobbyManager lobbyManager => EOSSubManagers.Lobbies;
 
-        Lobby _selectedLobby = null;
-        LobbyDetails _selectedLobbyDetails = null;
-        List<LobbyEntryUI> _lobbyEntriesUI = new();
+        Lobby selectedLobby = null;
+        LobbyDetails selectedLobbyDetails = null;
+        List<LobbyEntryUI> lobbyEntriesUI = new();
         
         [Header("Scripts")]
         // [SerializeField] LobbyInfoContainer lobbyInfo;
@@ -52,24 +58,22 @@ namespace UZSG.UI.Lobbies
 
         public void SearchLobbies()
         {
-            _selectedLobby = null;
-            _selectedLobbyDetails = null;
+            selectedLobby = null;
+            selectedLobbyDetails = null;
             ClearLobbyEntries();
-            // lobbyInfo.Clear();
             joinBtn.gameObject.SetActive(false);
             loadingIcon.gameObject.SetActive(true);
-            /// HMMMMMMMMMMMMMMMMMMMMMMMM
-            string searchString = searchField.text; 
-            lobbyManager.SearchByAttribute("RULESET", searchString, OnSearchCompleted);
+            lobbyManager.SearchByAttribute(AttributeKeys.GAME_VERSION, Game.Main.GetVersionString(), OnSearchCompleted);
         }
         
         public void JoinSelectedLobby()
         {
-            if (_selectedLobby == null)
+            joinBtn.gameObject.SetActive(false);
+            if (selectedLobby == null)
             {
                 return;
             }
-            lobbyManager.JoinLobby(_selectedLobby.Id, _selectedLobbyDetails, false, OnJoinLobbyCompleted);
+            lobbyManager.JoinLobby(selectedLobby.Id, selectedLobbyDetails, false, OnJoinLobbyCompleted);
         }
 
         #endregion
@@ -83,10 +87,9 @@ namespace UZSG.UI.Lobbies
 
             if (result == Result.Success)
             {
-                Dictionary<Lobby, LobbyDetails> searchResults = lobbyManager.GetSearchResults();
                 ClearLobbyEntries();
                 
-                foreach (var kv in searchResults)
+                foreach (var kv in lobbyManager.SearchResults)
                 {
                     var lobby = kv.Key;
                     var lobbyDetails = kv.Value;
@@ -98,7 +101,14 @@ namespace UZSG.UI.Lobbies
                     {
                         OnClickLobbyEntry(sender as LobbyEntryUI);
                     };
-                    _lobbyEntriesUI.Add(entry);
+
+                    entry.SetVersionMismatch(true);
+                    if (lobby.TryGetAttribute(AttributeKeys.GAME_VERSION, out var attr))
+                    {
+                        entry.SetVersionMismatch(!Utils.IsSameVersion(attr.AsString));
+                    }
+
+                    lobbyEntriesUI.Add(entry);
                 }
             } else
             {
@@ -111,20 +121,15 @@ namespace UZSG.UI.Lobbies
         {
             if (result == Result.Success)
             {
-                if (_selectedLobby.TryGetAttribute("RULESET", out var attr))
+                if (selectedLobby.TryGetAttribute(AttributeKeys.LEVEL_ID, out var attr))
                 {
-                    // Ruleset ruleset = attr.AsString switch
-                    // {
-                    //     "Standard" => Ruleset.CreateFromPreset(RulesetPreset.Classic),
-                    //     "Speed" => Ruleset.CreateFromPreset(RulesetPreset.Speed),
-                    //     "Custom" => Ruleset.CreateFromPreset(RulesetPreset.Custom),
-                    // };
-                    // Game.Main.CreateMatch(ruleset);
-                    // Game.Main.LoadScene("Match", playTransition: true);
+                    EOSSubManagers.P2P.RequestWorldData(selectedLobby.LobbyOwner, OnRequestWorldDataCompleted);
                 }
             }
             else
             {
+                joinBtn.gameObject.SetActive(true);
+
                 Game.Console.Log($"Error joining lobby. [" + result + "]");
                 Debug.LogError("Error joining lobby. [" + result + "]");
             }
@@ -132,20 +137,56 @@ namespace UZSG.UI.Lobbies
 
         #endregion
 
-
+        void OnRequestWorldDataCompleted(string filepath)
+        {
+            Game.Main.LoadScene(
+                new(){
+                    SceneToLoad = "LoadingScreen",
+                    Mode = LoadSceneMode.Additive,
+                    ActivateOnLoad = true,
+                },
+                onLoadSceneCompleted: () =>
+                {
+                    var options = new WorldManager.LoadWorldOptions()
+                    {
+                        OwnerId = Game.World.GetLocalUserId(),
+                        WorldSaveData = Game.World.DeserializeWorldData(filepath),
+                    };
+                    Game.World.LoadWorld(options, OnLoadWorldCompleted);
+                });
+        }
+        
+        void OnLoadWorldCompleted(WorldManager.LoadWorldResult result)
+        {
+            if (result.Status == Success)
+            {
+                Game.Main.UnloadScene("TitleScreen");
+                Game.Main.UnloadScene("LoadingScreen");
+            }
+            else if (result.Status == Failed)
+            {
+                Game.Main.LoadScene(
+                    new(){
+                        SceneToLoad = "TitleScreen",
+                        Mode = LoadSceneMode.Single
+                    });
+                joinBtn.interactable = true;
+            }
+        }
+    
         void ClearLobbyEntries()
         {
-            foreach (LobbyEntryUI entry in _lobbyEntriesUI)
+            foreach (LobbyEntryUI entry in lobbyEntriesUI)
             {
                 Destroy(entry.gameObject);
             }
-            _lobbyEntriesUI.Clear();
+            lobbyEntriesUI.Clear();
         }
 
         void OnClickLobbyEntry(LobbyEntryUI lobbyEntry)
         {
-            _selectedLobby = lobbyEntry.Lobby;
-            _selectedLobbyDetails = lobbyEntry.LobbyDetails;
+            selectedLobby = lobbyEntry.Lobby;
+            selectedLobbyDetails = lobbyEntry.LobbyDetails;
             // lobbyInfo.SetLobbyInfo(lobbyEntry.Lobby);
             joinBtn.gameObject.SetActive(true);
         }

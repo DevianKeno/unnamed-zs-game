@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -31,7 +31,7 @@ namespace UZSG.UI
             }
         }
 
-        public void Select(RectTransform target)
+        public void Select(RectTransform target, bool show = true)
         {
             if (target == null) return;
             
@@ -55,26 +55,23 @@ namespace UZSG.UI
                 rect.sizeDelta = target.sizeDelta;
             }
 
-            foreach (Image i in images)
-            {
-                i.enabled = true;
-            }
+            if (show) Show();
         }
 
         protected override void OnShow()
         {
-            foreach (Image i in images)
-            {
-                i.enabled = true;
-            }
+            // foreach (Image i in images)
+            // {
+            //     i.enabled = true;
+            // }
         }
 
         protected override void OnHide()
         {
-            foreach (Image i in images)
-            {
-                i.enabled = false;
-            }
+            // foreach (Image i in images)
+            // {
+            //     i.enabled = false;
+            // }
         }
     }
 }

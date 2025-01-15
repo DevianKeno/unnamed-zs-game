@@ -43,7 +43,7 @@ namespace UZSG.Systems
         {
             if (!_objectsDict.ContainsKey(objectId))
             {
-                Game.Console.Debug($"Entity '{objectId}' does not exist!");
+                Game.Console.Debug($"Object '{objectId}' does not exist!");
                 return;
             }
 
@@ -53,14 +53,16 @@ namespace UZSG.Systems
                 if (a.Status == AsyncOperationStatus.Succeeded)
                 {
                     var go = Instantiate(a.Result, position, Quaternion.identity, transform);
-                    go.name = $"{objData.Name} (Object)";
-                    if (go.TryGetComponent(out BaseObject entity))
+                    go.name = $"{objData.DisplayName} (Object)";
+                    if (go.TryGetComponent(out BaseObject baseObject))
                     {
                         var info = new ObjectPlacedInfo()
                         {
-                            Object = entity
+                            Object = baseObject
                         };
                         callback?.Invoke(info);
+                        baseObject.PlaceInternal();
+                        baseObject.Place();
                         // entity.OnSpawnInternal();
                         // OnEntitySpawned?.Invoke(new()
                         // {
@@ -87,7 +89,7 @@ namespace UZSG.Systems
         {
             if (!_objectsDict.ContainsKey(objectId))
             {
-                Game.Console.Debug($"Entity '{objectId}' does not exist!");
+                Game.Console.Debug($"Object '{objectId}' does not exist!");
                 return;
             }
 
@@ -97,12 +99,12 @@ namespace UZSG.Systems
                 if (a.Status == AsyncOperationStatus.Succeeded)
                 {
                     var go = Instantiate(a.Result, position, Quaternion.identity, transform);
-                    go.name = $"{objData.Name} (Object)";
-                    if (go.TryGetComponent(out BaseObject entity))
+                    go.name = $"{objData.DisplayName} (Object)";
+                    if (go.TryGetComponent(out BaseObject baseObject))
                     {
                         var info = new ObjectPlacedInfo<T>()
                         {
-                            Object = entity as T
+                            Object = baseObject as T
                         };
                         callback?.Invoke(info);
                         // entity.OnSpawnInternal();

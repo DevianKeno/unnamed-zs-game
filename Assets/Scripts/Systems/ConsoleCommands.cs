@@ -10,6 +10,7 @@ using UZSG.Items;
 
 using static UZSG.Systems.CommandPermissionLevel;
 using static UZSG.Systems.CommandLocationConstraint;
+using UZSG.UI.Players;
 
 namespace UZSG.Systems
 {
@@ -143,11 +144,16 @@ namespace UZSG.Systems
             CreateCommand("clear",
                           "Clears the console messages.")
                           .OnInvoke += CClear;
+                          
+            CreateCommand("creative",
+                          "Toggles creative menu ability.")
+                          .OnInvoke += CCreative;
 
             CreateCommand("freecam",
                           "Toggle Free Look Camera.")
                           .OnInvoke += CFreecam;
 
+            /// TODO: for debugging purposes only
             CreateCommand("craft <item_id>",
                           "Crafts item given the item_id")
                           .OnInvoke += CCraft;
@@ -157,7 +163,7 @@ namespace UZSG.Systems
                           .OnInvoke += CEntity;
             
             CreateCommand("give <player|me> <item_id> [amount]",
-                          "Gives the player the item.")
+                          "Gives the target player or self the item.")
                           .OnInvoke += CGive;
             
             CreateCommand("help",
@@ -184,6 +190,7 @@ namespace UZSG.Systems
                           "")
                           .OnInvoke += CTime;
             
+            /// TODO: for debugging purposes only
             CreateCommand("wbcraft <item_id>",
                         "Crafts item if player is interacting with workbench")
                         .OnInvoke += CWbcraft;
@@ -221,6 +228,38 @@ namespace UZSG.Systems
             _messages.Clear();
         }        
         
+        bool _creativeIsOn = false;
+        CreativeWindow creativeWindow = null;
+        /// <summary>
+        /// Toggles the ability to open creative window.
+        /// </summary>
+        void CCreative(object sender, string[] args)
+        {
+            // if (!Game.Main.IsOnline)
+            // {
+            if (_creativeIsOn)
+            {
+                _creativeIsOn = false;
+                creativeWindow.Destroy();
+                Log($"Disabled creative menu.");
+            }
+            else
+            {
+                _creativeIsOn = true;
+                /// TODO: Disable achievements for session
+                creativeWindow = Game.UI.Create<CreativeWindow>("Creative Window");
+                creativeWindow.Initialize(localPlayer);
+                localPlayer.InventoryWindow.Append(creativeWindow);
+                Log($"Enabled creative menu.");
+            }
+
+            // }
+            // else
+            // {
+
+            // }
+        }       
+
         /// <summary>
         /// Spawns an entity.
         /// </summary>
@@ -298,8 +337,8 @@ namespace UZSG.Systems
 
                 if (target == "me") /// target self
                 {
-                    _player.Inventory.Bag.TryPutNearest(newItem);
-                    Game.Console.Log($"Given {_player.name} {count} of '{id}'");
+                    localPlayer.Inventory.Bag.TryPutNearest(newItem);
+                    Game.Console.Log($"Given {localPlayer.name} {count} of '{id}'");
                 }
                 else /// target player Id
                 {

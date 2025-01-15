@@ -65,9 +65,9 @@ namespace UZSG.Entities
         internal void OnSpawnInternal()
         {
             if (_hasAlreadySpawned) return;
+
             _hasAlreadySpawned = true;
             instanceId = GetInstanceID();
-
             OnSpawn();
         }
 

@@ -34,5 +34,10 @@ namespace UZSG.UI.Lobbies
                 }
             }
         }
+
+        public void SetVersionMismatch(bool value)
+        {
+            
+        }
     }
 }

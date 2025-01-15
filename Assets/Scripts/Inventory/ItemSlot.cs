@@ -188,19 +188,20 @@ namespace UZSG.Inventory
         }
 
         /// <summary>
-        /// Tries to combine the Item in the Slot to given Item.
-        /// Returns false if not the same item.
+        /// <i>Tries to stack</i> the given Item with the Item in this slot.
+        /// If possible, it stacks the Items as much the stack size* allows, on which the excess is outed.
+        /// Returns false and does not stack if not possible.
         /// </summary>
-        public bool TryCombine(Item other, out Item excess, bool max = false)
+        public bool TryStack(Item other, out Item excess, bool useMaxStackSize = false)
         {
-            _previousItem = new(this.item);
-            
-            if (item.TryCombine(other, out excess, max))
+            var previousItem = new Item(this.item);
+            if (item.TryStack(other, out excess, useMaxStackSize))
             {
-                ItemChangedInternal();
+                _previousItem = previousItem;
+                ItemChangedInternal(); 
                 return true;
             }
-            
+            excess = Item.None;
             return false;
         }
 

@@ -15,7 +15,7 @@ MonoBehaviour:
   Namespace: uzsg
   Id: workbench
   Tags: []
-  Name: Workbench
+  DisplayName: Workbench
   Object:
     m_AssetGUID: e62ad66bf73460c459e7933267696b6f
     m_SubObjectName: 
@@ -29,7 +29,8 @@ MonoBehaviour:
     flatBonus: 0
     LimitOverflow: 0
     LimitUnderflow: 0
-  Model: {fileID: 0}
+  CanBePickedUp: 1
+  PickupTimeSeconds: 3
   HasAudio: 1
   AudioAssetsData: {fileID: 11400000, guid: 999945983bd1d22429c85c8adece7628, type: 2}
   WorkstationName: Workbench

@@ -6,7 +6,7 @@ namespace UZSG.Saves
     [Serializable]
     public class WorldSaveData : SaveData
     {
-        public string Name;
+        public string WorldName;
         public string LevelId;
         public DateTime CreatedDate;
         public DateTime LastModifiedDate;

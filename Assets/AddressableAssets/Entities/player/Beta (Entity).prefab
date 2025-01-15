@@ -477,7 +477,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 522999
+    m_Bits: 1571575
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -1376,8 +1376,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83dcb9e909c595f4fbc9bf79ad9c9e20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Radius: 0.2
+  InteractRadius: 0.2
   MaxInteractDistance: 3
+  interactableLayers:
+    serializedVersion: 2
+    m_Bits: 1478720
   HoldThresholdMilliseconds: 200
 --- !u!114 &8623776553954527420
 MonoBehaviour:
@@ -1391,10 +1394,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b3b220ac7de4514d89e9127e3b69c8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Player: {fileID: 8107631895800867322}
-  heldItem: {fileID: 0}
-  AppendArmaturePrefix: 0
-  Prefix: 97
+  fppItemController: {fileID: 0}
   AppendAnimationPrefixes: 0
   cameraController: {fileID: 4657274095525333481}
   armsController: {fileID: 5105896103929999244}
@@ -1539,6 +1539,7 @@ MonoBehaviour:
   BuildableLayers:
     serializedVersion: 2
     m_Bits: 512
+  HorizontalSurfaceThreshold: 0.75
 --- !u!1001 &5217698207631125028
 PrefabInstance:
   m_ObjectHideFlags: 0

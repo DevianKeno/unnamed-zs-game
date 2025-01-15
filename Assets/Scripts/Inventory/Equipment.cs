@@ -8,12 +8,6 @@ namespace UZSG.Inventory
 {
     public class Equipment : Container
     {
-        public struct ChangeEquippedArgs
-        {
-            public int Index { get; set; }
-            public ItemSlot ItemSlot { get; set; }
-        }
-
         public Equipment() : base(0)
         {
             Initialize();
@@ -83,9 +77,7 @@ namespace UZSG.Inventory
         /// <summary>
         /// Tries to put a Weapon item in either the Mainhand or Offhand.
         /// </summary>
-        /// <param name="item"></param>
         /// <param name="putOnIndex">Where the item has been put.</param>
-        /// <returns></returns>
         public bool TryEquipWeapon(Item item, out EquipmentIndex putOnIndex)
         {
             if (_mainhand.TryPut(item))

@@ -148,7 +148,10 @@ namespace UZSG.UI
 
         void OnDestroy()
         {
-            slot.OnItemChanged -= OnSlotItemChanged;
+            if (slot != null)
+            {
+                slot.OnItemChanged -= OnSlotItemChanged;
+            }
         }
 
         #endregion

@@ -58,12 +58,21 @@ namespace UZSG.TitleScreen
             {
                 WorldName = worldnameInput.text,
                 MapId = mapEntry.LevelData.Id,
+                OwnerId = "localplayer",
                 CreatedDate = DateTime.Now,
                 LastModifiedDate = DateTime.Now,
             };
 
-            var localUser = EOSSubManagers.UserInfo.GetLocalUserInfo();
-            options.OwnerId = localUser.UserId.ToString();
+            var userId = Game.EOS.GetProductUserId();
+            if (userId != null || userId.IsValid())
+            {
+                var loginStatus =  Game.EOS.GetEOSConnectInterface().GetLoginStatus(userId);
+                if (loginStatus == Epic.OnlineServices.LoginStatus.LoggedIn)
+                {
+                    var localUser = EOSSubManagers.UserInfo.GetLocalUserInfo();
+                    options.OwnerId = localUser.UserId.ToString();
+                }
+            }
 
             Game.World.CreateWorld(ref options, OnCreateWorldCompleted);
         }

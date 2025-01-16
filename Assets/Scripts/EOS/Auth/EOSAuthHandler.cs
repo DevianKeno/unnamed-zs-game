@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,7 +8,6 @@ using Epic.OnlineServices;
 using Epic.OnlineServices.Auth;
 using Epic.OnlineServices.Connect;
 using Epic.OnlineServices.UserInfo;
-using PlayEveryWare.EpicOnlineServices;
 
 using UZSG.Systems;
 
@@ -53,11 +51,21 @@ namespace UZSG.EOS
             usernameTMP.text = "Signing in...";
             
             var authType = LoginCredentialType.PersistentAuth;
-            if (authType == LoginCredentialType.PersistentAuth)
+            /// TODO: persistent token validation
+            try
             {
-                Game.EOS.StartPersistentLogin(OnAuthLoginCallback);
+                if (authType == LoginCredentialType.PersistentAuth)
+                {
+                    Game.EOS.StartPersistentLogin(OnAuthLoginCallback);
+                }
             }
-            else if (authType == LoginCredentialType.AccountPortal)
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
+
+            authType = LoginCredentialType.AccountPortal;
+            if (authType == LoginCredentialType.AccountPortal)
             {
                 Game.EOS.StartLoginWithLoginTypeAndToken(
                     LoginCredentialType.AccountPortal,

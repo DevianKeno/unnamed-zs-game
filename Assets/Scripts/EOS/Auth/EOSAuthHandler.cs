@@ -15,6 +15,7 @@ namespace UZSG.EOS
 {
     public class EOSAuthHandler : MonoBehaviour
     {
+        [SerializeField] LoginCredentialType loginCredentialType = LoginCredentialType.PersistentAuth;
         public bool RememberLogin = true;
 
         [Header("UI Elements")]
@@ -37,6 +38,7 @@ namespace UZSG.EOS
             }
         }
 
+
         #region Login flow
         
         void StartSignIn()
@@ -50,22 +52,11 @@ namespace UZSG.EOS
             SetAccountDisplayForLoading();
             usernameTMP.text = "Signing in...";
             
-            var authType = LoginCredentialType.PersistentAuth;
-            /// TODO: persistent token validation
-            try
+            if (loginCredentialType == LoginCredentialType.PersistentAuth)
             {
-                if (authType == LoginCredentialType.PersistentAuth)
-                {
-                    Game.EOS.StartPersistentLogin(OnAuthLoginCallback);
-                }
+                Game.EOS.StartPersistentLogin(OnAuthLoginCallback);
             }
-            catch (Exception e)
-            {
-                Debug.LogException(e);
-            }
-
-            authType = LoginCredentialType.AccountPortal;
-            if (authType == LoginCredentialType.AccountPortal)
+            else if (loginCredentialType == LoginCredentialType.AccountPortal)
             {
                 Game.EOS.StartLoginWithLoginTypeAndToken(
                     LoginCredentialType.AccountPortal,
@@ -73,7 +64,7 @@ namespace UZSG.EOS
                     null,
                     OnAuthLoginCallback);
             }
-            else if (authType == LoginCredentialType.Developer)
+            else if (loginCredentialType == LoginCredentialType.Developer)
             {
                 // var usernameAsString = devAuthWindow.GetUsername();
                 // var passwordAsString = devAuthWindow.GetPassword();
@@ -84,14 +75,14 @@ namespace UZSG.EOS
                 //     passwordAsString,
                 //     OnAuthLoginCallback);
             }
-            else if (authType == LoginCredentialType.ExternalAuth)
+            else if (loginCredentialType == LoginCredentialType.ExternalAuth)
             {
                 // ConnectWithDiscord();
             }
             else
             {
-                Game.Console.Log("Unhandled login type." + authType.ToString());
-                Debug.LogError("Unhandled login type." + authType.ToString());
+                Game.Console.Log("Unhandled login type." + loginCredentialType.ToString());
+                Debug.LogError("Unhandled login type." + loginCredentialType.ToString());
                 // devAuthWindow.SetUIForLogin();
                 SetUIForLogin();
             }
@@ -107,7 +98,8 @@ namespace UZSG.EOS
             {
                 Game.Console.Log($"Encountered an error logging in. [{info.ResultCode}]");
                 Debug.LogError($"Encountered an error logging in. [{info.ResultCode}]");
-                // devAuthWindow.SetUIForLogin();
+                
+                loginCredentialType = LoginCredentialType.AccountPortal;
                 SetUIForLogin();
             }
         }

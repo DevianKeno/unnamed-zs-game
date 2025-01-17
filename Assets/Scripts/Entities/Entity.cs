@@ -162,7 +162,7 @@ namespace UZSG.Entities
         {
             OnKill();
             if (notify) OnKilled?.Invoke(this);
-            Destroy(gameObject);
+            MonoBehaviour.Destroy(gameObject);
         }
 
         #endregion

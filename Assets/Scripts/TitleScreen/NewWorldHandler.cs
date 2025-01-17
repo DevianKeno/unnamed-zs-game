@@ -1,14 +1,13 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
+
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using UZSG.Data;
+using TMPro;
+
 using UZSG.EOS;
 using UZSG.Systems;
-using UZSG.UI;
+
 using static UZSG.Systems.Status;
 
 namespace UZSG.TitleScreen

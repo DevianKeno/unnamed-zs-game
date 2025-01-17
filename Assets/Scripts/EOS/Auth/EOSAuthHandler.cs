@@ -16,7 +16,7 @@ namespace UZSG.EOS
     public class EOSAuthHandler : MonoBehaviour
     {
         [SerializeField] LoginCredentialType loginCredentialType = LoginCredentialType.PersistentAuth;
-        public bool RememberLogin = true;
+        [SerializeField] bool rememberLogin = true;
 
         [Header("UI Elements")]
         [SerializeField] Button signInBtn;
@@ -32,9 +32,53 @@ namespace UZSG.EOS
 
         void Start()
         {
-            if (RememberLogin)
+            if (!Game.Main.IsOnline)
+            {
+                Game.Main.OnLateInit += OnLateInit;
+            }
+            else
+            {
+                StartAuthFlow();
+            }
+        }
+
+        void OnLateInit()
+        {
+            Game.Main.OnLateInit -= OnLateInit;
+            StartAuthFlow();
+        }
+
+        void StartAuthFlow()
+        {
+            try
+            {
+                if (Game.Main.IsOnline)
+                {
+                    var userId = Game.EOS.GetProductUserId();
+                    if (userId != null || userId.IsValid())
+                    {
+                        var loginStatus =  Game.EOS.GetEOSConnectInterface().GetLoginStatus(userId);
+                        if (loginStatus == LoginStatus.LoggedIn)
+                        {
+                            SetDisplayedAccount(EOSSubManagers.UserInfo.GetLocalUserInfo());
+                            SetUIForLogout();
+                            return;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning(ex);
+            }
+
+            if (rememberLogin)
             {
                 StartSignIn();
+            }
+            else
+            {
+                SetUIForLogin();
             }
         }
 
@@ -49,7 +93,7 @@ namespace UZSG.EOS
                 return;
             }
 
-            SetAccountDisplayForLoading();
+            SetUIForLoading();
             usernameTMP.text = "Signing in...";
             
             if (loginCredentialType == LoginCredentialType.PersistentAuth)
@@ -110,8 +154,6 @@ namespace UZSG.EOS
             {
                 EOSSubManagers.Initialize();
                 Game.Main.IsOnline = true;
-                // devAuthWindow.Destroy();
-                // SetAccountDisplayForLogout();
 
                 var options = new QueryProductUserIdMappingsOptions()
                 {
@@ -127,7 +169,7 @@ namespace UZSG.EOS
             {
                 Game.Console.LogInfo($"Encountered an error logging in. [{info.ResultCode}]");
                 Debug.LogError($"Encountered an error logging in. [{info.ResultCode}]");
-                // devAuthWindow.SetUIForLogin();
+                
                 SetUIForLogin();
             }
         }
@@ -160,7 +202,7 @@ namespace UZSG.EOS
         #region Logout flow
         public void StartSignOut()
         {
-            SetAccountDisplayForLoading();
+            SetUIForLoading();
             usernameTMP.text = "Logging out...";
 
             var options = new Epic.OnlineServices.Connect.LogoutOptions()
@@ -184,7 +226,7 @@ namespace UZSG.EOS
 
             Game.Console.LogInfo($"Encountered an error upon logging out. [{info.ResultCode}]");
             Debug.LogWarning($"Encountered an error upon logging out. [{info.ResultCode}]");
-            SetAccountDisplayForLogout();
+            SetUIForLogout();
         }
 
         void OnUnlinkAccountCompleted(ref UnlinkAccountCallbackInfo data)
@@ -202,7 +244,7 @@ namespace UZSG.EOS
 
         #endregion
 
-
+        #region UI display methods
         void SetUIForLogin()
         {
             usernameTMP.text = "Not logged in";
@@ -212,7 +254,7 @@ namespace UZSG.EOS
             // loadingIcon.gameObject.SetActive(false); 
         }
         
-        void SetAccountDisplayForLoading()
+        void SetUIForLoading()
         {
             // loadingIcon.gameObject.SetActive(true);
 
@@ -220,14 +262,29 @@ namespace UZSG.EOS
             signOutBtn.gameObject.SetActive(false);
         }
 
-        void SetAccountDisplayForLogout()
+        void SetUIForLogout()
         {
-            signOutBtn.gameObject.SetActive(true);
+            return; /// DISABLED: technically disallowed to log out lol
 
-            signInBtn.gameObject.SetActive(false);
+            // signOutBtn.gameObject.SetActive(true);
+            // signInBtn.gameObject.SetActive(false);
             // loadingIcon.gameObject.SetActive(false); 
         }
 
+        public void SetDisplayedAccount(ExternalAccountInfo info)
+        {
+            usernameTMP.text = info.DisplayName;
+        }
+
+        public void SetDisplayedAccount(UserInfoData info)
+        {
+            usernameTMP.text = info.DisplayName;
+        }
+
+        #endregion
+
+        #region Callbacks
+        
         void ConnectLoginTokenCallback(Epic.OnlineServices.Connect.LoginCallbackInfo connectLoginCallbackInfo)
         {
             if (connectLoginCallbackInfo.ResultCode == Result.Success)
@@ -280,18 +337,10 @@ namespace UZSG.EOS
                 {
                     SetDisplayedAccount(outExternalAccountInfo.Value);
                 }
-                SetAccountDisplayForLogout();
+                SetUIForLogout();
             }
         }
 
-        public void SetDisplayedAccount(ExternalAccountInfo info)
-        {
-            usernameTMP.text = info.DisplayName;
-        }
-
-        public void SetDisplayedAccount(UserInfoData info)
-        {
-            usernameTMP.text = info.DisplayName;
-        }
+        #endregion
     }
 }

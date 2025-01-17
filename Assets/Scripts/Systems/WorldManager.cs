@@ -15,6 +15,7 @@ using UZSG.EOS;
 using UnityEngine.InputSystem;
 using UZSG.UI;
 using PlayEveryWare.EpicOnlineServices;
+using System.Threading.Tasks;
 
 namespace UZSG.Systems
 {
@@ -38,34 +39,80 @@ namespace UZSG.Systems
         /// The currently loaded world.
         /// </summary>
         public World CurrentWorld => currentWorld;
-        public bool HasWorld { get; private set; } = false;
+        public bool IsInWorld { get; private set; } = false;
+        public bool IsPaused => IsInWorld && currentWorld.IsPaused;
 
+        #region WorldManager Events
         /// <summary>
         /// Called after the World has been successfully initialized.
         /// </summary>
         public event Action OnDoneLoadWorld;
         public event Action OnExitWorld;
 
-        TextMeshProUGUI loadingMessage;
+        #endregion
 
+        TextMeshProUGUI loadingMessage;
+        PauseMenuWindow pauseMenuWindow;
+        InputAction pauseInput;
+
+        #region Initialization
 
         void Awake()
         {
-            if (currentWorld != null) HasWorld = true;
+            if (currentWorld != null) IsInWorld = true;
         }
 
         internal void Initialize()
         {
             RetrieveSavedWorlds();
-
-            currentWorld?.Initialize(null);///testing
-
-            OnDoneLoadWorld?.Invoke();
+            SetupPauseMenu();
         }
+
+        void SetupPauseMenu()
+        {
+            pauseMenuWindow = Game.UI.Create<PauseMenuWindow>("Pause Menu Window", show: false);
+            pauseInput = Game.Main.GetInputAction("Pause", "World");
+            pauseInput.performed += OnInputPause;
+        }
+
+        #endregion
+
 
         void RetrieveSavedWorlds()
         {
             
+        }
+
+
+        #region Event callbacks
+
+        void OnInputPause(InputAction.CallbackContext context)
+        {
+            /// Pause only when no other windows are visible
+            if (!IsInWorld || Game.UI.HasActiveWindow) return;
+
+            if (CurrentWorld.IsPaused)
+            {
+                UnpauseCurrentWorld();
+            }
+            else
+            {
+                PauseCurrentWorld();
+            }
+        }
+
+        #endregion
+
+        public void PauseCurrentWorld()
+        {
+            currentWorld.Pause();
+            pauseMenuWindow.Show();
+        }
+
+        public void UnpauseCurrentWorld()
+        {
+            pauseMenuWindow.Hide();
+            currentWorld.Unpause();
         }
 
         public struct CreateWorldResult
@@ -84,8 +131,8 @@ namespace UZSG.Systems
             var saveData = new WorldSaveData
             {
                 WorldName = options.WorldName,
-                CreatedDate = options.CreatedDate,
-                LastModifiedDate = options.LastModifiedDate,
+                CreatedDate = options.CreatedDate.ToShortDateString(),
+                LastModifiedDate = options.LastModifiedDate.ToShortDateString(),
                 LevelId = options.MapId,
                 OwnerId = options.OwnerId,
             };
@@ -132,7 +179,7 @@ namespace UZSG.Systems
                         currentWorld = GameObject.FindWithTag("World").GetComponent<World>();
                         currentWorld.Initialize(options.WorldSaveData);
                         currentWorld.filepath = options.Filepath;
-                        HasWorld = true;
+                        IsInWorld = true;
                         currentWorld.SetOwnerId(options.OwnerId);
 
                         this.onLoadWorldCompleted?.Invoke(new()
@@ -218,6 +265,7 @@ namespace UZSG.Systems
         void InitializeWorldLoaded()
         {
             JoinPlayer();
+            pauseInput.Enable();
         }
 
         void JoinPlayer()
@@ -242,50 +290,43 @@ namespace UZSG.Systems
 
         public void ExitCurrentWorld()
         {
-            if (!HasWorld) return;
+            if (!IsInWorld) return;
+
+            pauseMenuWindow.Hide();
 
             Game.Console.LogInfo("[World]: Exiting world...");
-            Game.Main.LoadScene(
-                new(){
-                    SceneToLoad = "LoadingScreen",
-                    Mode = LoadSceneMode.Additive,
-                },
-                onLoadSceneCompleted: OnLoadingScreenLoad);
-        }
-
-        void OnLoadingScreenLoad()
-        {
-            currentWorld.Deinitialize();
-            currentWorld.SaveWorld();
-
-            Game.Main.UnloadScene(currentWorld.gameObject.scene.name);
-            currentWorld = null;
-            HasWorld = false;
-            OnExitWorld?.Invoke();
-            
-            Game.Main.LoadScene(
-                new(){
-                    SceneToLoad = "TitleScreen",
-                    Mode = LoadSceneMode.Additive,
-                },
-                onLoadSceneCompleted: () =>
-                {
-                    Game.Main.UnloadScene("LoadingScreen");
-                });
-        }
-
-        public void Pause()
-        {
-            if (!HasWorld) return;
-            currentWorld.Pause();
+            var loadOptions = new Game.LoadSceneOptions()
+            {
+                SceneToLoad = "LoadingScreen",
+                Mode = LoadSceneMode.Additive,
+                ActivateOnLoad = true,
+            };
+            Game.Main.LoadScene(loadOptions, onLoadSceneCompleted: OnLoadingScreenLoad);
         }
         
-        public void Unpause()
+        async void OnLoadingScreenLoad()
         {
-            if (!HasWorld) return;
-            currentWorld.Pause();
+            await Task.Yield();
+            
+            currentWorld.Deinitialize();
+            currentWorld.SaveWorld();
+            currentWorld = null;
+            IsInWorld = false;
+            pauseInput.Disable();
+            OnExitWorld?.Invoke();
+            
+            var loadOptions = new Game.LoadSceneOptions()
+            {
+                SceneToLoad = "TitleScreen",
+                Mode = LoadSceneMode.Single,
+                ActivateOnLoad = true,
+            };
+            Game.Main.LoadScene(loadOptions);
         }
 
+        /// <summary>
+        /// Constructs a world save file from saveData. Used primarily to construct worlds from received data in multiplayer.
+        /// </summary>
         public string ConstructWorld(WorldSaveData saveData)
         {
             var settings = new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
@@ -310,34 +351,5 @@ namespace UZSG.Systems
                 return null;
             }
         }
-
-        public bool IsPaused => currentWorld.IsPaused;
-
-        // public async Task<Level> LoadLevelSceneAsync(string levelId)
-        // {
-        //     Level level = null;
-        //     // var data = Resources.Load<LevelData>($"Data/Levels/{levelId}");
-        //     // if (data != null)
-        //     // {
-        //         var asyncOp = Addressables.LoadAssetAsync<GameObject>("Assets/AddressableAssets/Levels/DEMO.prefab");
-        //         await asyncOp.Task;
-        //         if (asyncOp.Status == Succeeded)
-        //         {
-        //             var go = Instantiate(asyncOp.Result, currentWorld.transform);
-        //             level = go.GetComponent<Level>();
-        //             go.name = levelId + " (Level)";
-        //         }
-        //         else if (asyncOp.Status == Failed)
-        //         {
-        //             Debug.LogError($"Encountered an error when loading level id '{levelId}'");
-        //         }
-        //     // }
-        //     // else
-        //     // {
-        //     //     Debug.Log($"There is no data that exists for level id '{levelId}'");
-        //     // }
-
-        //     return level;
-        // }
     }
 }

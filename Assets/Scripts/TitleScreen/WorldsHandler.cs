@@ -62,6 +62,7 @@ namespace UZSG.TitleScreen
 
         public void ReadWorlds()
         {
+            /// TODO: make a manifest file, read that instead of the entire save data
             loadingTmp.gameObject.SetActive(true);
             List<WorldSaveData> loadedSaveDatas = new();
             var savedWorldsPath = Path.Join(Application.persistentDataPath, "SavedWorlds");
@@ -138,7 +139,7 @@ namespace UZSG.TitleScreen
                         var options = new WorldManager.LoadWorldOptions()
                         {
                             OwnerId = Game.World.GetLocalUserId(),
-                        Filepath = selectedEntry.Filepath,
+                            Filepath = selectedEntry.Filepath,
                             WorldSaveData = selectedEntry.SaveData,
                         };
 

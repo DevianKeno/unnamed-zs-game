@@ -38,10 +38,6 @@ namespace UZSG.UI.HUD
             player.BuildManager.OnEnteredBuildMode += OnEnteredBuildMode;
             player.BuildManager.OnExitedBuildMode += OnExitedBuildMode;
             
-            Game.World.CurrentWorld.OnPause += Hide;
-            Game.World.CurrentWorld.OnUnpause += OnUnpause;
-            Game.UI.OnWindowOpened += OnWindowOpened;
-            Game.UI.OnWindowClosed += OnWindowClosed;
             
         }
 
@@ -51,6 +47,12 @@ namespace UZSG.UI.HUD
             {
                 dotCrosshair.SetActive(ShowDot);
             }
+        }
+
+        void OnDestroy()
+        {
+            Game.UI.OnWindowOpened -= OnWindowOpened;
+            Game.UI.OnWindowClosed -= OnWindowClosed;
         }
 
         

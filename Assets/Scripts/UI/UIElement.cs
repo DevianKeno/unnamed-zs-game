@@ -55,7 +55,7 @@ namespace UZSG.UI
         /// </summary>
         public virtual void Show()
         {
-            gameObject.SetActive(true);
+            gameObject?.SetActive(true);
             OnShow();
         }
 
@@ -67,7 +67,7 @@ namespace UZSG.UI
         public virtual void Hide()
         {
             OnHide();
-            gameObject.SetActive(false);
+            gameObject?.SetActive(false);
         }
 
         public void SetActive(bool enabled)
@@ -101,7 +101,11 @@ namespace UZSG.UI
 
         // }
 
-        public void Destroy(float delay = 0f, bool invokeOnHideEvent = true)
+        /// <summary>
+        /// <i>Destroys</i> this object in accordance with UZSG laws.
+        /// <c>Destruct</c> because <c>Destroy</c> is reserved for UnityEngine's method.
+        /// </summary>
+        public void Destruct(float delay = 0f, bool invokeOnHideEvent = true)
         {
             if (invokeOnHideEvent) Hide();
             Game.UI.DestroyElement(gameObject, delay);

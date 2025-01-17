@@ -200,7 +200,7 @@ namespace UZSG.Systems
             }
         }
 
-        public void UnloadScene(string name, Action onLoadSceneCompleted = null)
+        public void UnloadScene(string name, Action onUnlLoadSceneCompleted = null)
         {
             try
             {

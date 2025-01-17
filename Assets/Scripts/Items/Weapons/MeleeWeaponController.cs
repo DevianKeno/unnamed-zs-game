@@ -94,6 +94,7 @@ namespace UZSG.Items.Weapons
         void InitializeEventsFromOwnerInput()
         {
             if (owner is not Player player) return;
+
             actionMap = player.Actions.ActionMap; /// DISBALE ALL ACTIONS ON DISABLE HELD ITEM
             var inputs = player.Actions.Inputs;
 
@@ -102,6 +103,19 @@ namespace UZSG.Items.Weapons
 
             inputs["Secondary Action"].started += OnPlayerSecondary;
             inputs["Secondary Action"].canceled += OnPlayerSecondary;
+        }
+
+        void OnDestroy()
+        {
+            if (owner is Player player)
+            {
+                var inputs = player.Actions.Inputs;
+                inputs["Primary Action"].started -= OnPlayerPrimary;
+                inputs["Primary Action"].canceled -= OnPlayerPrimary;
+
+                inputs["Secondary Action"].started -= OnPlayerSecondary;
+                inputs["Secondary Action"].canceled -= OnPlayerSecondary;
+            }
         }
 
         void InitializeEvents()

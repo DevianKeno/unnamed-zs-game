@@ -46,8 +46,11 @@ namespace UZSG.UI
                     option.InputAction.performed -= OnInputPerformed;
                 }
             }
-            Show();
-            Rebuild();
+            if (actions.Count > 0)
+            {
+                Show();
+                Rebuild();
+            }
         }
 
         public void AddAction(InteractAction options)
@@ -63,7 +66,7 @@ namespace UZSG.UI
         {
             foreach (var element in actions)
             {
-                element.Destroy();
+                element.Destruct();
             }
             actions.Clear();
         }

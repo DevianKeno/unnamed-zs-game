@@ -19,26 +19,24 @@ namespace UZSG.UI.HUD
 {
     public class PlayerHUDVitalsUI : UIElement
     {
-        public Player Player;
+        public Player Player { get; internal set; }
         [Space]
         
-        ItemSlot _lastSelectedSlot;
         Dictionary<int, ItemSlotUI> _equipmentSlotUIs = new();
         Dictionary<int, ItemSlotUI> _hotbarSlotUIs = new();
+        Selector selector;
         
         [Header("Elements")]
-        public GameObject hotbar;
+        [SerializeField] GameObject hotbar;
         public AmmoCounterHUD AmmoCounter;
-        public GameObject equipment;
-        [FormerlySerializedAs("equippedWeaponTMP")]
-        public TextMeshProUGUI equippedItemTMP;
-        public WeaponDetailsUI weaponDetails;
-        public AttributeBar HealthBar;
-        public StaminaBar StaminaBar;
-        public AttributeBar HungerBar;
-        public AttributeBar HydrationBar;
-        public AttributeBar XPBar;
-        Selector selector;
+        [SerializeField] GameObject equipment;
+        [SerializeField, FormerlySerializedAs("equippedWeaponTMP")] TextMeshProUGUI equippedItemTMP;
+        [SerializeField] WeaponDetailsUI weaponDetails;
+        [SerializeField] AttributeBar HealthBar;
+        [SerializeField] StaminaBar StaminaBar;
+        [SerializeField] AttributeBar HungerBar;
+        [SerializeField] AttributeBar HydrationBar;
+        [SerializeField] AttributeBar XPBar;
 
         internal void Initialize(Player player)
         {
@@ -107,13 +105,18 @@ namespace UZSG.UI.HUD
             Player.InventoryWindow.FrameController.OnSwitchFrame += OnInvSwitchFrame;
             Player.InventoryWindow.OnOpened += () =>
             {
-                bool showEquipment = Player.InventoryWindow.FrameController.CurrentFrame.DisplayName == "equipment";
-                equipment.gameObject.SetActive(showEquipment);
+                ToggleEquipmentHudVisibility(Player.InventoryWindow.FrameController.CurrentFrame.Id == "equipment");
             };
             Player.InventoryWindow.OnClosed += () =>
             {
                 equipment.gameObject.SetActive(true);
+                selector.Show();
             };
+        }
+
+        void OnDestroy()
+        {
+            selector.Destruct();
         }
 
         void BindPlayerAttributes()
@@ -202,14 +205,14 @@ namespace UZSG.UI.HUD
 
             if (Player.InventoryWindow.ItemOptions.IsVisible)
             {
-                Player.InventoryWindow.ItemOptions.Destroy();
+                Player.InventoryWindow.ItemOptions.Destruct();
             }
             
             /// Create equipped Item options
             var options = Game.UI.Create<ChoiceWindow>("Choice Window", show: false);
             Game.UI.CreateBlocker(forElement: options, onClick: () =>
             {
-                options.Destroy();
+                options.Destruct();
             });
 
             options.Pivot = UI.Pivot.BottomRight;
@@ -263,8 +266,8 @@ namespace UZSG.UI.HUD
             }
             else
             {
-                equippedItemTMP.text = "";
-            }
+                equippedItemTMP.text = string.Empty;
+            }   
         }
 
         void OnFPPControllerChanged(FPPItemController fppItemController)
@@ -307,16 +310,30 @@ namespace UZSG.UI.HUD
 
         void OnInvSwitchFrame(FrameController.SwitchFrameContext context)
         {
-            if (context.Next == "equipment")
+            if (context.Status == FrameController.SwitchStatus.Started)
             {
-                equipment.gameObject.SetActive(true);
-            }
-            else
-            {
-                equipment.gameObject.SetActive(false);
+                ToggleEquipmentHudVisibility(context.Next == "equipment");
             }
         }
 
         #endregion
+        
+        
+        void ToggleEquipmentHudVisibility(bool visible)
+        {
+            if (visible)
+            {
+                equipment.gameObject.SetActive(true);
+                selector.Show();
+            }
+            else
+            {
+                equipment.gameObject.SetActive(false);
+                if (Player.FPP.SelectedHotbarIndex < 3)
+                {
+                    selector.Hide();
+                }
+            }
+        }
     }
 }

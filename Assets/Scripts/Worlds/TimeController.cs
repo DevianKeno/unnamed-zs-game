@@ -63,6 +63,7 @@ namespace UZSG.Worlds
         int nightStartRawTime => WorldAttributes.NIGHT_START_HOUR * rawTimePerHour;
         int rawTimePerHour => totalDayLength / 24;
         int rawTimePerMinute => rawTimePerHour / 60;
+        int rawTimePerSecond => rawTimePerMinute / 60;
         /// <summary>
         /// Raw time elapsed from 6:00 (by default) onwards.
         /// </summary>
@@ -94,6 +95,12 @@ namespace UZSG.Worlds
         {
             get => currentMinute;
             set => currentMinute = Math.Clamp(value, 0, 59);
+        }
+        [SerializeField] int currentSecond;
+        public int Second
+        {
+            get => currentSecond;
+            set => currentSecond = Math.Clamp(value, 0, 59);
         }
         [SerializeField] int currentDay = 0;
         public int CurrentDay
@@ -144,19 +151,25 @@ namespace UZSG.Worlds
         /// <c>int</c> is the current minute.
         /// </summary>
         public event Action<int> OnMinutePassed;
+        /// <summary>
+        /// Called everytime a new second passes.
+        /// <c>int</c> is the current second.
+        /// </summary>
+        public event Action<int> OnSecondPassed;
 
         #endregion
 
 
         #region Initializing methods
 
-        public void ReadSaveData(WorldSaveData saveData)
+        public void InitializeFromSave(WorldSaveData saveData)
         {
             if (saveData == null) return;
             
-            this._dayLength = Math.Clamp(saveData.DayLengthSeconds, WorldAttributes.MIN_DAY_LENGTH, WorldAttributes.MAX_DAY_LENGTH);
-            this._nightLength = Math.Clamp(saveData.NightLengthSeconds, WorldAttributes.MIN_NIGHT_LENGTH, WorldAttributes.MAX_NIGHT_LENGTH);
+            // this._dayLength = Math.Clamp(saveData.DayLengthSeconds, WorldAttributes.MIN_DAY_LENGTH, WorldAttributes.MAX_DAY_LENGTH);
+            // this._nightLength = Math.Clamp(saveData.NightLengthSeconds, WorldAttributes.MIN_NIGHT_LENGTH, WorldAttributes.MAX_NIGHT_LENGTH);
             this.currentDay = Math.Clamp(saveData.Day, 0, int.MaxValue); /// how about eons
+            SetTime(saveData.Hour, saveData.Minute, saveData.Second);
         }
 
         internal void Initialize()
@@ -193,6 +206,8 @@ namespace UZSG.Worlds
             currentHour = Mathf.FloorToInt(RawTime / rawTimePerHour) % 24;
             float hourProgress = (RawTime % rawTimePerHour) / rawTimePerHour;
             currentMinute = Mathf.FloorToInt(hourProgress * 60); /// Minutes within the current hour
+            float minuteProgress = (hourProgress * 60) % 1;
+            currentSecond =  Mathf.FloorToInt(minuteProgress * 60);
 
             if (rawTime >= totalDayLength)
             {
@@ -366,6 +381,8 @@ namespace UZSG.Worlds
             RenderSettings.fogDensity = fogDensity;
         }
 
+        #region Public methods
+
         public void SetTimeRaw(float value)
         {
             RawTime = value;
@@ -375,9 +392,21 @@ namespace UZSG.Worlds
 
         public void SetTime(int hour, int minute)
         {
-            Hour = hour;
-            Minute = minute;
+            Hour = hour % 24;
+            Minute = minute % 60;
             rawTime = (hour * rawTimePerHour) + (minute * rawTimePerMinute);
+            if (zeroTimeStartsAtDay) rawTime -= dayStartRawTime;
+
+            UpdateCelestialBodies();
+        }
+
+        public void SetTime(int hour, int minute, int second)
+        {
+            Hour = hour % 24;
+            Minute = minute % 60;
+            Second = second % 60;
+            rawTime = (Hour * rawTimePerHour) + (Minute * rawTimePerMinute) + (Second * rawTimePerSecond);
+            if (zeroTimeStartsAtDay) rawTime -= dayStartRawTime;
 
             UpdateCelestialBodies();
         }
@@ -386,5 +415,7 @@ namespace UZSG.Worlds
         {
             Debug.Log("Current Time: " + RawTime);
         }
+        
+        #endregion
     }
 }

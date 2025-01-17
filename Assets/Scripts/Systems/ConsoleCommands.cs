@@ -240,10 +240,12 @@ namespace UZSG.Systems
         {
             // if (!Game.Main.IsOnline)
             // {
+            if (!Game.World.IsInWorld) return;
+            
             if (_creativeIsOn)
             {
                 _creativeIsOn = false;
-                creativeWindow.Destroy();
+                creativeWindow.Destruct();
                 LogInfo($"Disabled creative menu.");
             }
             else

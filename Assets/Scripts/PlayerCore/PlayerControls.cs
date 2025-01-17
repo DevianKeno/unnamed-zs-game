@@ -188,6 +188,7 @@ namespace UZSG.Players
         {
             InitializeInputs();
             
+            Game.World.OnExitWorld += Deinitialize;
             Game.Console.Gui.OnOpened += () =>
             {
                 Disable();
@@ -537,6 +538,37 @@ namespace UZSG.Players
             }
             _isCrouching = crouch;
         }
+
+        void Deinitialize()
+        {
+            Game.World.OnExitWorld -= Deinitialize;
+            DeinitializeInputs();
+        }
+
+
+        #region Deinitialization
+
+        void DeinitializeInputs()
+        {
+            inputs["Move"].performed -= OnInputMove;
+            inputs["Move"].started += OnInputMove;
+            inputs["Move"].canceled -= OnInputMove;
+
+            inputs["Jump"].started -= OnInputJump;
+            inputs["Jump"].canceled -= OnInputJump;        
+
+            inputs["Run"].started -= OnInputRun;
+            inputs["Run"].canceled -= OnInputRun;           
+
+            inputs["Toggle Walk"].performed -= OnInputWalkToggle;
+
+            inputs["Crouch"].started -= OnInputCrouch;
+            inputs["Crouch"].canceled -= OnInputCrouch;
+
+            Disable();
+        }
+
+        #endregion
 
 
         #region Public methods

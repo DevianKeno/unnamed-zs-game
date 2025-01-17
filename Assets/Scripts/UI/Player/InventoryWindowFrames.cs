@@ -85,7 +85,7 @@ namespace UZSG.UI.Players
                 var btn = CreateFrameButton("Creative", 1);
                 btn.onClick.AddListener(() => 
                 {
-                    frameController.SwitchToFrame(creativeWindow.Frame.DisplayName);
+                    frameController.SwitchToFrame(creativeWindow.Frame.Id);
                 });
                 frameController.AppendFrame(creativeWindow.Frame);
                 _appendedFrameButtons[creativeWindow] = btn;
@@ -95,7 +95,7 @@ namespace UZSG.UI.Players
                 var btn = CreateFrameButton(window.gameObject.name, -1);
                 btn.onClick.AddListener(() => 
                 {
-                    frameController.SwitchToFrame(window.Frame.DisplayName);
+                    frameController.SwitchToFrame(window.Frame.Id);
                 });
                 frameController.AppendFrame(window.Frame);
                 _appendedFrameButtons[window] = btn;

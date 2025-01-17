@@ -26,8 +26,9 @@ namespace UZSG.UI.HUD
         public Player Player { get; private set; }
         [Space]
 
-        public LeanTweenType VignetteEase;
-        public float VignetteFadeDuration;
+        [SerializeField] LeanTweenType VignetteEase;
+        [SerializeField] float VignetteFadeDuration;
+        [SerializeField] bool displayClockSeconds;
 
         string _previousDateTimeText;
         List<UIElement> _previouslyVisibleElements = new();
@@ -61,15 +62,6 @@ namespace UZSG.UI.HUD
             InitializeEvents();
         }
 
-        void OnTick(TickInfo info)
-        {
-            var currentDateTimeText = $"Day {Game.World.CurrentWorld.Time.CurrentDay.ToString()} | Monday";
-            if (_previousDateTimeText != currentDateTimeText)
-            {
-                dateTmp.text = currentDateTimeText;
-            }
-        }
-
         void InitializeEvents()
         {
             Player.Controls.OnCrouch += OnCrouch;
@@ -79,6 +71,7 @@ namespace UZSG.UI.HUD
             Game.World.CurrentWorld.Time.OnDayPassed += OnDayPassed;
             Game.World.CurrentWorld.Time.OnHourPassed += OnHourPassed;
             Game.World.CurrentWorld.Time.OnMinutePassed += OnMinutePassed;
+            Game.World.CurrentWorld.Time.OnSecondPassed += OnSecondPassed;
             Game.UI.OnWindowOpened += OnWindowOpened;
             Game.UI.OnWindowClosed += OnWindowClosed;
         }
@@ -103,7 +96,9 @@ namespace UZSG.UI.HUD
             
             Game.UI.OnWindowOpened -= OnWindowOpened;
             Game.UI.OnWindowClosed -= OnWindowClosed;
-            Game.Tick.OnTick -= OnTick;
+
+            interactionIndicator.Destruct();
+            resourceHealthRingUI.Destruct();
         }
 
 
@@ -166,12 +161,34 @@ namespace UZSG.UI.HUD
 
         void OnHourPassed(int hour)
         {
-            timeTmp.text = $"{hour}:{Game.World.CurrentWorld.Time.Minute:D2}";
+            if (displayClockSeconds)
+            {
+                timeTmp.text = $"{hour}:{Game.World.CurrentWorld.Time.Minute:D2}:{Game.World.CurrentWorld.Time.Second:D2}";
+            }
+            else
+            {
+                timeTmp.text = $"{hour}:{Game.World.CurrentWorld.Time.Minute:D2}";
+            }
         }
 
         void OnMinutePassed(int minute)
         {
-            timeTmp.text = $"{Game.World.CurrentWorld.Time.Hour}:{minute:D2}";
+            if (displayClockSeconds)
+            {
+                timeTmp.text = $"{Game.World.CurrentWorld.Time.Hour}:{minute:D2}:{Game.World.CurrentWorld.Time.Second:D2}";
+            }
+            else
+            {
+                timeTmp.text = $"{Game.World.CurrentWorld.Time.Hour}:{minute:D2}";
+            }
+        }
+
+        void OnSecondPassed(int second)
+        {
+            if (displayClockSeconds)
+            {
+                timeTmp.text = $"{Game.World.CurrentWorld.Time.Hour}:{Game.World.CurrentWorld.Time.Minute:D2}:{second:D2}";
+            }
         }
 
         void OnWindowOpened(Window window)

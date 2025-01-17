@@ -180,7 +180,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rect: {fileID: 7226684566756821325}
-  FadeDuration: 0.3
   item:
     itemData: {fileID: 0}
     count: 0
@@ -355,6 +354,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Item Display
       objectReference: {fileID: 0}
+    - target: {fileID: 7741221035952824289, guid: 69f9d656166c5f343947161e86d926db, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7741221035952824289, guid: 69f9d656166c5f343947161e86d926db, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8173816700436132832, guid: 69f9d656166c5f343947161e86d926db, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

@@ -1,5 +1,5 @@
 using System;
-using UnityEditor;
+
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -11,7 +11,8 @@ namespace UZSG.Data
     {
         public string Name;
         [TextArea] public string Description;
-        public string Dimensions;
+        public Vector2 DimensionsKilometers;
+        public bool Enable = true;
         public Texture Image;
         public AssetReference Scene;
     }

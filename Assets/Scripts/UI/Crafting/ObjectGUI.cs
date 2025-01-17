@@ -26,28 +26,10 @@ namespace UZSG.UI.Objects
 
         [SerializeField] Frame frame;
         public Frame Frame => frame;
-        
-        InputAction backAction;
-        
+                
         public virtual void SetPlayer(Player player)
         {
             this.player = player;
-            backAction = Game.Main.GetInputAction("Back", "Global");
-        }
-
-        protected override void OnShow()
-        {
-            backAction.performed += OnInputGlobalBack;
-        }
-
-        protected override void OnHide()
-        {
-            backAction.performed -= OnInputGlobalBack;
-        }
-
-        protected virtual void OnInputGlobalBack(InputAction.CallbackContext context)
-        {
-            Hide();
         }
     }
 }

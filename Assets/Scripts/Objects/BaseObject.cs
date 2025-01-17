@@ -12,6 +12,7 @@ using UZSG.Interactions;
 using UZSG.Saves;
 using UZSG.Entities;
 using UZSG.Items;
+using UZSG.Players;
 
 namespace UZSG.Objects
 {
@@ -78,6 +79,14 @@ namespace UZSG.Objects
         internal void PlaceInternal()
         {
             transform.SetParent(Game.World.CurrentWorld.objectsContainer, worldPositionStays: true);
+            if (this is IInteractable)
+            {
+                var c = this.GetComponentInChildren<Collider>();
+                if (c != null)
+                {
+                    c.gameObject.tag = Tags.INTERACTABLE;
+                }
+            }
             var renderer = GetComponentInChildren<Renderer>();
             if (renderer != null)
             {
@@ -88,6 +97,7 @@ namespace UZSG.Objects
         public virtual void Place()
         {
             Initialize();
+            this.IsPlaced = true;
         }
 
         public virtual void Pickup(IInteractActor actor)

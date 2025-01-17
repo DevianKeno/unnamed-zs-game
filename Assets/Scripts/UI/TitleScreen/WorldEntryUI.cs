@@ -31,7 +31,7 @@ namespace UZSG.UI.TitleScreen
             SaveData = saveData;
             nameTmp.text = saveData.WorldName;
             levelTmp.text = saveData.LevelId;
-            dateTmp.text = saveData.LastPlayedDate.ToShortDateString();
+            dateTmp.text = saveData.LastPlayedDate;
         }
     }
 }

@@ -165,7 +165,20 @@ namespace UZSG.FPP
             inputs["Back"] = Game.Main.GetInputAction("Back", "Global");
         }
 
+        void DeinitializeInputs()
+        {
+            inputs["Hotbar"].performed -= OnInputHotbar;
+            inputs["Reload"].performed -= OnPerformReload;
+            inputs["Unholster"].performed -= OnUnholster;
+        }
+
         #endregion
+
+
+        void OnDestroy()
+        {
+            DeinitializeInputs();
+        }
 
         
         #region Player input callbacks
@@ -194,13 +207,6 @@ namespace UZSG.FPP
         {
             var armsData = Game.Items.GetData("arms");
             HoldItem(armsData);
-        }
-
-        IEnumerator StartTimedAction(float duration = 0.25f)
-        {
-            IsPerforming = true;
-            yield return new WaitForSeconds(duration);
-            IsPerforming = false;
         }
 
         /// <summary>
@@ -334,6 +340,8 @@ namespace UZSG.FPP
         
         public void SelectHotbarIndex(int index)
         {
+            if (IsPerforming) return;
+            
             /// Reason being Equipment slots index involves 1 and 2
             /// and Hotbar slots involve 3 and above
             var slot = Player.Inventory.GetEquipmentOrHotbarSlot(index);
@@ -362,6 +370,8 @@ namespace UZSG.FPP
         /// </summary>
         public void HoldItem(ItemData itemData)
         {
+            if (IsPerforming) return;
+
             this.heldItemData = itemData;
 
             if (itemData == null)
@@ -759,7 +769,7 @@ namespace UZSG.FPP
             /// usually has animations first :P idk tho
             var animLengthSeconds = GetAnimationClipLength(viewmodelAnimator, animId);
             Timing.KillCoroutines(_fppAnimationCoroutineHandle);
-            _fppAnimationCoroutineHandle = Timing.RunCoroutine(FinishAnimation(animLengthSeconds));
+            _fppAnimationCoroutineHandle = Timing.RunCoroutine(PerformAnimationCoroutine(animLengthSeconds));
         }
         
         void OnWeaponFired()
@@ -795,17 +805,19 @@ namespace UZSG.FPP
             Game.Console.LogWithUnity($"Loaded prefab does not contain a component of type {typeof(T)}.");
         }
 
-        IEnumerator<float> FinishAnimation(float durationSeconds)
+        IEnumerator<float> PerformAnimationCoroutine(float durationSeconds)
         {
-            if (_isAnimationPlaying) yield break;
-
             _isAnimationPlaying = true;
             IsPerforming = true;
+
             yield return Timing.WaitForSeconds(durationSeconds);
+
             _isAnimationPlaying = false;
             IsPerforming = false;
+
             cameraAnimationTarget.StopAnimation();
             OnPerformFinished?.Invoke();
+            
             yield break;
         }
 

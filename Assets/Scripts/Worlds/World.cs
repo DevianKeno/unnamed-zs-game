@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.IO;
 
@@ -15,6 +16,7 @@ using UZSG.Worlds.Events;
 using UnityEngine.InputSystem;
 using UZSG.UI;
 using UZSG.Data;
+using Unity.VisualScripting;
 
 namespace UZSG.Worlds
 {
@@ -113,7 +115,7 @@ namespace UZSG.Worlds
             // Game.Main.OnLateInit -= InitializeInternal;
             timeController.Initialize();
             eventsController.Initialize();
-            RegisterExistingInstances();
+            // RegisterExistingInstances();
 
             if (LoadOnEnterPlayMode)
             {
@@ -174,39 +176,42 @@ namespace UZSG.Worlds
             Game.Console.LogInfo("[World]: Loading objects...");
             if (_saveData.Objects == null) return;
             
-            foreach (var baseObject in _objectInstanceIds.Values)
-            {
-                try
-                {
-                    /// Initializing method
-                    baseObject.Place();
-                }
-                catch
-                {
-                    if (baseObject.ObjectData != null)
-                    {
-                        Game.Console.LogWarn($"An error occured when loading object '{baseObject.ObjectData.Id}'!");
-                    }
-                    continue;
-                }
-            }
+            // foreach (var baseObject in _objectInstanceIds.Values)
+            // {
+            //     PlaceExistingAsNew(baseObject);
+            // }
 
             foreach (var objectSaveData in _saveData.Objects)
             {
                 if (_objectInstanceIds.TryGetValue(objectSaveData.InstanceId, out BaseObject baseObject))
                 {
-                    /// object already exists in world, just initialize it with the Place() method
-                    baseObject.Place();
+                    PlaceExistingAsNew(baseObject);
                 }
                 else
                 {
                     /// construct the object and initialize
                     Game.Objects.PlaceNew(objectSaveData.Id, callback: (info) =>
                     {
-                        baseObject = info.Object;
-                        baseObject.ReadSaveData(objectSaveData);
-                        baseObject.Place();
+                        info.Object.ReadSaveData(objectSaveData);
                     });
+                }
+            }
+
+            static void PlaceExistingAsNew(BaseObject baseObject)
+            {
+                if (baseObject.IsPlaced) return;
+
+                try
+                {
+                    baseObject.PlaceInternal();
+                    baseObject.Place();
+                }
+                catch
+                {
+                    if (baseObject.ObjectData != null)
+                    {
+                        Game.Console.LogWarn($"An error occured when loading object '{baseObject.ObjectData.Id}'! Skipping.");
+                    }
                 }
             }
         }
@@ -234,22 +239,22 @@ namespace UZSG.Worlds
 
             if (_saveData.EntitySaves == null) return;
                         
-            foreach (var etty in _entityInstanceIds.Values)
-            {
-                try
-                {
-                    /// Initializing method
-                    etty.OnSpawn();
-                }
-                catch
-                {
-                    if (etty.EntityData != null)
-                    {
-                        Game.Console.LogWarn($"An error occured when loading object '{etty.EntityData.Id}'!");
-                    }
-                    continue;
-                }
-            }
+            // foreach (var etty in _entityInstanceIds.Values)
+            // {
+            //     try
+            //     {
+            //         /// Initializing method
+            //         etty.OnSpawn();
+            //     }
+            //     catch
+            //     {
+            //         if (etty.EntityData != null)
+            //         {
+            //             Game.Console.LogWarn($"An error occured when loading object '{etty.EntityData.Id}'!");
+            //         }
+            //         continue;
+            //     }
+            // }
             
             foreach (var sd in _saveData.EntitySaves)
             {
@@ -316,13 +321,11 @@ namespace UZSG.Worlds
 
         void OnObjectPlaced(ObjectsManager.ObjectPlacedInfo info)
         {
-            info.Object.transform.SetParent(objectsContainer.transform, worldPositionStays: true);
             // CacheObjectId(info.Object); /// idk if we need to cache objects thoughhhhhh, wireless workbench?? sheeeesh
         }
 
         void OnEntitySpawned(EntityManager.EntityInfo info)
         {
-            info.Entity.transform.SetParent(entitiesContainer.transform, worldPositionStays: true);
             CacheEntity(info.Entity);
         }
 
@@ -442,10 +445,11 @@ namespace UZSG.Worlds
             Game.Console.LogInfo("[World]: Saving world...");
 
             var time = UnityEngine.Time.time;
-            var json = WriteSaveData();
+            WorldSaveData saveData = WriteSaveData();
+
             var settings = new JsonSerializerSettings(){ ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
-            var save = JsonConvert.SerializeObject(json, Formatting.Indented, settings);
-            var path = Application.persistentDataPath + $"/SavedWorlds/{WorldName}";
+            var save = JsonConvert.SerializeObject(saveData, Formatting.Indented, settings);
+            var path = Application.persistentDataPath + $"/SavedWorlds/{saveData.WorldName}";
             var filepath = path + "/level.dat";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
             File.WriteAllText(filepath, save);
@@ -455,9 +459,11 @@ namespace UZSG.Worlds
             Debug.Log($"[World]: World saved to '{filepath}'");
         }
 
-        public void SaveWorldAsync()
+        public async void SaveWorldAsync()
         {
-                  
+            await Task.Yield();
+            
+            SaveWorld();
         }
 
         public void LoadWorld()
@@ -491,16 +497,14 @@ namespace UZSG.Worlds
 
         public void Pause()
         {
-            if (IsPaused)
-            {
-                IsPaused = false;
-                OnUnpause?.Invoke();
-            }
-            else
-            {
-                IsPaused = true;
-                OnPause?.Invoke();
-            }
+            IsPaused = true;
+            OnPause?.Invoke();
+        }
+
+        public void Unpause()
+        {
+            IsPaused = false;
+            OnUnpause?.Invoke();
         }
 
         public void ReadSaveData(WorldSaveData saveData)
@@ -513,15 +517,21 @@ namespace UZSG.Worlds
             
             this._saveData = saveData;
             _hasValidSaveData = true;
+            timeController.InitializeFromSave(saveData);
             LoadObjects();
             LoadEntities();
-            timeController.ReadSaveData(saveData);
         }
 
         public WorldSaveData WriteSaveData()
         {
-            _saveData.LastModifiedDate = DateTime.Now;
-            _saveData.LastPlayedDate = DateTime.Now;
+            _saveData.LastModifiedDate = DateTime.Now.ToShortDateString();
+            _saveData.LastPlayedDate = DateTime.Now.ToShortDateString();
+
+            /// Save time state
+            _saveData.Day = Time.CurrentDay;
+            _saveData.Hour = Time.Hour;
+            _saveData.Minute = Time.Minute;
+            _saveData.Second = Time.Second;
 
             SaveObjects();
             SaveEntities();

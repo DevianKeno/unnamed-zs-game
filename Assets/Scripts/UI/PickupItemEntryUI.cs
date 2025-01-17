@@ -35,7 +35,7 @@ namespace UZSG.UI
             if (_lifetime > LifetimeDuration)
             {
                 OnExpire?.Invoke(this);
-                Destroy();
+                Destruct();
             }
         }
 

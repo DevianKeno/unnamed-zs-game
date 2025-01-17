@@ -8,9 +8,9 @@ namespace UZSG.Saves
     {
         public string WorldName;
         public string LevelId;
-        public DateTime CreatedDate;
-        public DateTime LastModifiedDate;
-        public DateTime LastPlayedDate;
+        public string CreatedDate;
+        public string LastModifiedDate;
+        public string LastPlayedDate;
         public string OwnerId;
         public int MaxPlayers;
         public int DifficultyLevel;
@@ -19,6 +19,7 @@ namespace UZSG.Saves
         public int Day;
         public int Hour;
         public int Minute;
+        public int Second;
         public System.Numerics.Vector3 WorldSpawn = new(0, 64, 0);
         
         public List<ObjectSaveData> Objects = new();

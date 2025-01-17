@@ -45,7 +45,7 @@ namespace UZSG.UI
 
         void Start()
         {
-            itemDisplayUI.DisplayCount(false);
+            itemDisplayUI.SetCountDisplayed(false);
         }
 
         protected override void OnValidate()

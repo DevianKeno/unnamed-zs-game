@@ -55,14 +55,21 @@ namespace UZSG.Systems
 
         void InitializeWorldEvents()
         {
-            Game.World.CurrentWorld.OnPause += () =>
-            {
-                toggleUI.Disable();
-            };
-            Game.World.CurrentWorld.OnUnpause += () =>
-            {
-                toggleUI.Enable();
-            };
+            Game.World.CurrentWorld.OnPause -= OnWorldPaused;
+            Game.World.CurrentWorld.OnPause += OnWorldPaused;
+
+            Game.World.CurrentWorld.OnUnpause -= OnWorldUnpaused;
+            Game.World.CurrentWorld.OnUnpause += OnWorldUnpaused;
+        }
+
+        void OnWorldPaused()
+        {
+            toggleUI.Disable();
+        }
+
+        void OnWorldUnpaused()
+        {
+            toggleUI.Enable();
         }
 
 
@@ -71,13 +78,13 @@ namespace UZSG.Systems
         void OnLateInit()
         {
             gui = Game.UI.Create<ConsoleWindow>("Console Window");
+            gui.Hide();
             InitializeInputs();
             
             Game.World.OnDoneLoadWorld += InitializeWorldEvents;
-            // Game.World.OnExitWorld += DeinitializeWorldEvents;
             Game.Entity.OnEntitySpawned += OnEntitySpawned;
         }
-        
+
         void OnEntitySpawned(EntityManager.EntityInfo info)
         {
             if (info.Entity is Player player)

@@ -17,7 +17,6 @@ namespace UZSG.TitleScreen
         public event Action<MapEntryUI> OnEntryClicked;
 
         [SerializeField] FrameController parentFrameController;
-
         [SerializeField] Transform entriesContainer;
         [SerializeField] GameObject mapEntryPrefab;
 
@@ -30,6 +29,11 @@ namespace UZSG.TitleScreen
                 if (!data.Scene.IsSet())
                 {
                     Game.Console.LogWarn($"There is no Scene set for LevelData '{data.Id}'");
+                    continue;
+                }
+                if (!data.Enable)
+                {
+                    Debug.Log($"Map '{data.Id}' is available and disabled ");
                     continue;
                 }
 

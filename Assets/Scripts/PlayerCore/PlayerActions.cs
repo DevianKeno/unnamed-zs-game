@@ -48,7 +48,6 @@ namespace UZSG.Players
         IInteractable _lookingAt;
         List<InteractAction> _listeningToInteractActions = new();
         RigidbodyConstraints _savedRigidbodyConstraints;
-        PauseMenuWindow pauseMenu;
 
         /// <summary>
         /// Whether if the player is currently interacting with <i>something</i>.
@@ -95,21 +94,16 @@ namespace UZSG.Players
             _savedRigidbodyConstraints = Player.Rigidbody.constraints;
             InitializeEvents();
             InitializeInputs();
-
+            
             Game.Tick.OnTick += Tick;
         }
 
         void InitializeEvents()
         {
+            Game.World.OnExitWorld += Deinitialize;
+            Game.UI.OnWindowOpened += OnWindowOpened;
+            Game.UI.OnWindowClosed += OnWindowClosed;
             this.OnInteract += OnInteractNotifySelf;
-            Game.UI.OnWindowOpened += (window) =>
-            {
-                Disable();
-            };
-            Game.UI.OnWindowClosed += (window) =>
-            {
-                Enable();
-            };
         }
 
         void InitializeInputs()
@@ -122,33 +116,12 @@ namespace UZSG.Players
 
             inputs["Secondary Action"].started += OnStartSecondaryAction;       // RMB (default)
             inputs["Secondary Action"].canceled += OnCancelSecondaryAction;     // RMB (default)
-            
-            // var interactInput = inputs["Interact"];
-            // interactInput.started += OnInputInteractPrimary;             // F (default)
-            // interactInput.performed += OnInputInteractPrimary;             // F (default)
-            // interactInput.canceled += OnInputInteractPrimary;             // F (default)
-            // interactInput.Enable();
-            
-            // var interactInput2 = inputs["Interact Secondary"];
-            // interactInput2.started += OnInputInteractSecondary;             // G (default)
-            // interactInput2.performed += OnInputInteractSecondary;             // G (default)
-            // interactInput2.canceled += OnInputInteractSecondary;             // G (default)
-            // interactInput2.Enable();
-
-            inputs["Pause"] = Game.Main.GetInputAction("Pause", "World");
-            inputs["Pause"].performed += OnInputPause;
-            inputs["Pause"].Enable();
-            
+                        
             backInput = Game.Main.GetInputAction("Back", "Global");
         }
 
         #endregion
 
-
-        void OnDestroy()
-        {
-            Game.Tick.OnTick -= Tick;
-        }
 
         void Update()
         {
@@ -325,7 +298,7 @@ namespace UZSG.Players
 
         void FinishPickupRoutine(Objects.ResourcePickup resource)
         {
-            pickupRingUI?.Destroy();
+            pickupRingUI?.Destruct();
             pickupRingUI = null;
             EnableControlsOnPickupResource();
             OnInteract?.Invoke(new InteractionContext()
@@ -340,7 +313,7 @@ namespace UZSG.Players
         void CancelPickupResource(Objects.ResourcePickup resource)
         {
             Timing.KillCoroutines(pickupTimerHandle);
-            pickupRingUI?.Destroy();
+            pickupRingUI?.Destruct();
             pickupRingUI = null;
             EnableControlsOnPickupResource();
             OnInteract?.Invoke(new InteractionContext()
@@ -370,10 +343,6 @@ namespace UZSG.Players
                 Player.Controls.Disable();
                 Player.FPP.Camera.ToggleControls(false);
                 this.Disable();
-                
-                pauseMenu?.Destroy(invokeOnHideEvent: false);
-                pauseMenu = Game.UI.Create<PauseMenuWindow>("Pause Menu UI");
-                pauseMenu.OnClosed += UnpauseWorld;
             }
             else /// unpause player
             {
@@ -381,9 +350,6 @@ namespace UZSG.Players
                 Player.Controls.Enable();
                 Player.FPP.Camera.ToggleControls(true);
                 this.Enable();
-                
-                pauseMenu?.Destroy(invokeOnHideEvent: false);
-                pauseMenu = null;
             }
         }
 
@@ -391,6 +357,16 @@ namespace UZSG.Players
 
 
         #region Event callbacks
+        
+        void OnWindowOpened(Window window)
+        {
+            Disable();
+        }
+
+        void OnWindowClosed(Window window)
+        {
+            Enable();
+        }
 
         void OnInteractNotifySelf(InteractionContext context)
         {
@@ -475,30 +451,35 @@ namespace UZSG.Players
             }
         }
 
-        void OnInputPause(InputAction.CallbackContext context)
-        {
-            /// Pause only when no other windows are visible
-            if (Game.UI.HasActiveWindow) return;
+        #endregion
 
-            if (Game.World.IsPaused)
-                UnpauseWorld();
-            else
-                PauseWorld();
+
+        #region Deinitialization
+        
+        void Deinitialize()
+        {
+            Game.World.OnExitWorld -= Deinitialize;
+            
+            Game.Tick.OnTick -= Tick;
+            Game.UI.OnWindowOpened -= OnWindowOpened;
+            Game.UI.OnWindowClosed -= OnWindowClosed;
+            this.OnInteract -= OnInteractNotifySelf;
+            DeinitializeInputs();
+        }
+
+        void DeinitializeInputs()
+        {        
+            inputs["Primary Action"].started -= OnStartPrimaryAction;
+            inputs["Primary Action"].canceled -= OnCancelPrimaryAction;
+
+            inputs["Secondary Action"].started -= OnStartSecondaryAction;
+            inputs["Secondary Action"].canceled -= OnCancelSecondaryAction;
+            
+            // inputs["Pause"].performed -= OnInputPause;
+            Disable();
         }
 
         #endregion
-
-        void PauseWorld()
-        {
-            Game.World.Pause();
-            SetPlayerPaused(true);
-        }
-
-        void UnpauseWorld()
-        {
-            Game.World.Unpause();
-            SetPlayerPaused(false);
-        }
 
 
         #region Public methods

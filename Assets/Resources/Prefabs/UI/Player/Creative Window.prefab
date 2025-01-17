@@ -565,7 +565,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rect: {fileID: 226868355165448386}
-  FadeDuration: 0.3
   delaySearchSeconds: 1
   frame: {fileID: 5900848883458979343}
   searchField: {fileID: 2637379744550313935}
@@ -586,8 +585,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 035203bfb8dab6240951a6ede70b12f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Id: creative_window
-  Name: creative_window
+  id: creative_window
+  displayName: Creative Menu
   rect: {fileID: 226868355165448386}
 --- !u!1 &8043309109826957308
 GameObject:

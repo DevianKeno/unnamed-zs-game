@@ -26,22 +26,25 @@ namespace UZSG.Entities
         public const int DESPAWN_TIME_SECONDS = 3600;
 
         [SerializeField] ItemData itemData;
+        Item item;
         public int Count = 0;
         /// <summary>
         /// Get the 'Item' from the Item Entity.
         /// </summary>
         public Item Item
         {
-            get => AsItem();
+            get => item;
             set
             {
                 if (value.Data == null)
                 {
                     itemData = null;
+                    item = Item.None;
                 }
                 else
                 {
                     itemData = Game.Items.GetData(value.Id);
+                    item = value;
                     Count = value.Count;
                 }
                 LoadModelAsset();
@@ -101,7 +104,7 @@ namespace UZSG.Entities
 
         void OnValidate()
         {
-            if (gameObject.activeInHierarchy)
+            if (gameObject.activeInHierarchy && !Application.isPlaying)
             {
                 this.entityData = Resources.Load<EntityData>("Data/Entities/item");
                 LoadModelAsset();
@@ -221,16 +224,18 @@ namespace UZSG.Entities
 
         public override void ReadSaveData(EntitySaveData saveData)
         {
-            if (saveData is not ItemEntitySaveData sd) return;
+            if (saveData is not ItemEntitySaveData isd) return;
 
             base.ReadSaveData(saveData);
-            if (sd.Item.Id == "none") Destroy(gameObject);
+            if (isd.Item.Id == "none") Kill();
 
-            var item = new Item(sd.Item.Id, sd.Item.Count);
-            if (sd.Item.HasAttributes)
+            var item = new Item(isd.Item.Id, isd.Item.Count);
+            this.Item = item;
+            // this.Item.ReadSaveData();
+            if (isd.Item.HasAttributes)
             {
-                item.Attributes.ReadSaveData(sd.Item.Attributes);
                 /// TODO: unhandled
+                this.Item.Attributes.ReadSaveData(isd.Item.Attributes);
             }
         }
         
@@ -243,7 +248,7 @@ namespace UZSG.Entities
                 InstanceId = sd.InstanceId,
                 Id = entityData.Id,
                 Transform = sd.Transform,
-                Item = AsItem().WriteSaveData(),
+                Item = this.item.WriteSaveData(),
                 Age = Age
             };
 
@@ -279,14 +284,6 @@ namespace UZSG.Entities
         }
 
         /// <summary>
-        /// Returns a copy of the Item.
-        /// </summary>
-        public Item AsItem()
-        {
-            return new(this.itemData, this.Count);
-        }
-
-        /// <summary>
         /// Apply a throw force to this Item Entity.
         /// </summary>
         public void Throw(Vector3 direction, float power)
@@ -296,7 +293,7 @@ namespace UZSG.Entities
 
         public void Cleanup()
         {
-            if (AsItem().IsNone)
+            if (this.item.IsNone)
             {
                 Kill(notify: false);
             }

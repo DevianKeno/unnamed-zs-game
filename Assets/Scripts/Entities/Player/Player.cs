@@ -163,6 +163,7 @@ namespace UZSG.Entities
             audioController.CreateAudioPool(8);
             audioController.LoadAudioAssetsData(PlayerEntityData.AudioAssetsData);
 
+            InitializeEvents();
             InitializeAttributes();
             InitializeStateMachines();
             InitializeHitboxes();
@@ -172,23 +173,6 @@ namespace UZSG.Entities
             InitializeBuilding();
             InitializeHUD();
             InitializeInputs();
-            
-            Game.Console.Gui.OnOpened += () =>
-            {
-                inputs["Look"].Disable();
-            };
-            Game.Console.Gui.OnClosed += () =>
-            {
-                inputs["Look"].Enable();
-            };
-            Game.World.CurrentWorld.OnPause += () =>
-            {
-                Game.Main.GetActionMap("Player").Disable();
-            };
-            Game.World.CurrentWorld.OnUnpause += () =>
-            {
-                Game.Main.GetActionMap("Player").Enable();
-            };
             
             Controls.Initialize();
             Controls.Enable();
@@ -205,7 +189,27 @@ namespace UZSG.Entities
             Game.Tick.OnTick += Tick;
             OnDoneInit?.Invoke(this, new());
         }
-        
+
+        void InitializeEvents()
+        {
+            Game.Console.Gui.OnOpened += OnConsoleGuiOpened;
+            Game.Console.Gui.OnClosed += OnConsoleGuiClosed;
+
+            Game.World.OnExitWorld += OnExitWorld;
+            Game.World.CurrentWorld.OnPause += OnPause;
+            Game.World.CurrentWorld.OnUnpause += OnUnpause;
+        }
+
+        void OnConsoleGuiOpened()
+        {
+            inputs["Look"].Disable();
+        }
+
+        void OnConsoleGuiClosed()
+        {
+            inputs["Look"].Enable();
+        }
+
         void InitializeAttributes()
         {
             attributes["stamina"].OnValueModified += OnAttrStaminaModified;
@@ -299,6 +303,28 @@ namespace UZSG.Entities
 
         #endregion
 
+
+        void OnExitWorld()
+        {
+            /// TODO: player itself shoule be first on notifying itself that it had exited the world
+            Game.World.OnExitWorld -= OnExitWorld;
+
+            Game.Console.Gui.OnOpened -= OnConsoleGuiOpened;
+            Game.Console.Gui.OnClosed -= OnConsoleGuiClosed;
+            inputs["Inventory"].performed -= OnPerformInventory;
+            DestroyAllUIElements();
+            Kill(notify: false);
+        }
+
+        void OnPause()
+        {
+            Game.Main.GetActionMap("Player").Disable();
+        }
+
+        void OnUnpause()
+        {
+            Game.Main.GetActionMap("Player").Enable();
+        }
 
         void OnDestroy()
         {
@@ -453,11 +479,11 @@ namespace UZSG.Entities
             invUI.RemoveObjectGUI(gui);
         }
 
-        public void DestroyAllUIElements() /// this should not be public lol
+        void DestroyAllUIElements()
         {
             foreach (UIElement element in uiElements)
             {
-                element.Destroy();
+                element.Destruct();
             }
         }
         

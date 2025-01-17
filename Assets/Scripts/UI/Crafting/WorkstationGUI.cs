@@ -61,6 +61,7 @@ namespace UZSG.UI.Objects
         /// </summary>
         protected Dictionary<CraftingRoutine, CraftingProgressUI> _routineUIs = new();
 
+        [Header("Elements")]
         [SerializeField] protected CraftedItemDisplayUI craftedItemDisplay;
         [SerializeField] protected RectTransform craftablesHolder;
         [SerializeField] protected RectTransform materialSlotsHolder;
@@ -75,7 +76,7 @@ namespace UZSG.UI.Objects
         {
             craftButton.onClick.AddListener(RequestCraftItem);
             craftAmountInputField.onEndEdit.AddListener(UpdateAmountToCraft);
-            searchField.onValueChanged.AddListener(SearchRecipe);
+            searchField?.onValueChanged.AddListener(SearchRecipe);
         }
 
         /// <summary>
@@ -510,7 +511,7 @@ namespace UZSG.UI.Objects
         {
             foreach (var craftable in craftableItemUIs.Values)
             {
-                craftable.Destroy();
+                craftable.Destruct();
             }
             craftableItemUIs.Clear();
         }

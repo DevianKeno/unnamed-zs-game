@@ -54,7 +54,7 @@ namespace UZSG.Systems
 
         Transform GetTransformParent()
         {
-            return Game.World.HasWorld ? Game.World.CurrentWorld.entitiesContainer : transform;
+            return Game.World.IsInWorld ? Game.World.CurrentWorld.entitiesContainer : transform;
         }
         
 

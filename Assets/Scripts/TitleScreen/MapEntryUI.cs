@@ -39,9 +39,10 @@ namespace UZSG.TitleScreen
         [SerializeField] Button button;
         public Button Button => button;
 
-        void Awake()
+        protected override void Awake()
         {
-            button?.onClick.AddListener(OnClick);
+            base.Awake();
+            button.onClick.AddListener(OnClick);
         }
 
         public void OnClick()
@@ -55,7 +56,7 @@ namespace UZSG.TitleScreen
 
             LevelData = data;
             Label = data.Name;
-            Subheading = data.Dimensions;
+            Subheading = $"{data.DimensionsKilometers.x} x {data.DimensionsKilometers.y}";
 
             if (data.Image != null)
             {

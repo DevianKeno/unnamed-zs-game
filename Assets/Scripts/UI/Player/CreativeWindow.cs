@@ -258,7 +258,7 @@ namespace UZSG.UI.Players
         {
             for (int i = _minItemSlotUICount; i < containerGameObject.transform.childCount ; i++)
             {
-                _itemSlotUIs[i].Destroy();
+                _itemSlotUIs[i].Destruct();
             }
             _itemSlotUIs.RemoveRange(_minItemSlotUICount, _itemSlotUIs.Count - _minItemSlotUICount);
 

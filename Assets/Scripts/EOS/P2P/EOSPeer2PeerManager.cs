@@ -285,7 +285,7 @@ namespace UZSG.EOS
             /// Send world data chunks
             using var memoryStream = new MemoryStream();
 
-            for (int i = 0; i < packetCount /*&& i < MAX_PACKET_COUNT*/; i++)
+            for (int i = 0; i < packetCount && i < 65536; i++)
             {
                 int offset = i * WORLD_DATA_CHUNK_SIZE_BYTES;
                 int chunkSize = Mathf.Min(WORLD_DATA_CHUNK_SIZE_BYTES, worldDataBytes.Length - offset);
@@ -518,7 +518,7 @@ namespace UZSG.EOS
 
         void HandleWorldDataRequestPacket(ProductUserId userId, Packet packet)
         {
-            if (!Game.World.HasWorld) return;
+            if (!Game.World.IsInWorld) return;
             
             var savepath = Game.World.CurrentWorld.GetPath();
             SendWorldData(savepath, userId);

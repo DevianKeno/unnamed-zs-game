@@ -501,7 +501,7 @@ namespace UZSG.UI.Players
 
         void DestroyItemOptions()
         {
-            if (itemOptions != null) itemOptions.Destroy();
+            if (itemOptions != null) itemOptions.Destruct();
         }
 
         #endregion

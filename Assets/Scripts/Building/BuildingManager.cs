@@ -119,6 +119,12 @@ namespace UZSG.Building
             invalidMaterial = Resources.Load<Material>("Materials/Building Invalid");
         }
 
+        void OnDestroy()
+        {
+            Game.UI.OnWindowOpened -= OnWindowOpened;
+            Game.UI.OnWindowClosed -= OnWindowClosed;
+        }
+
         #endregion
 
         #region Input callbacks
@@ -187,6 +193,7 @@ namespace UZSG.Building
                         }
                         else
                         {
+                            KillObjectGhost();
                             ExitBuildMode();
                         }
                     }

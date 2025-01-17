@@ -114,6 +114,21 @@ namespace UZSG.Items.Tools
             stateMachine.OnTransition += OnStateChanged;
         }
 
+        void OnDestroy()
+        {
+            if (owner is Player player)
+            {
+                var inputs = player.Actions.Inputs;
+                inputs["Primary Action"].started -= OnPlayerPrimary;
+                inputs["Primary Action"].canceled -= OnPlayerPrimary;
+
+                inputs["Secondary Action"].started -= OnPlayerSecondary;
+                inputs["Secondary Action"].canceled -= OnPlayerSecondary;
+            }
+
+            stateMachine.OnTransition -= OnStateChanged;
+        }
+
         protected virtual void OnStateChanged(StateMachine<ToolItemStates>.TransitionContext context)
         {
             if (context.To == ToolItemStates.Idle)

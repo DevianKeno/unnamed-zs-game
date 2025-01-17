@@ -24,11 +24,16 @@ namespace UZSG.UI.Players
     public class CreativeWindow : UIElement, IInventoryWindowAppendable
     {
         Player player;
-        [SerializeField] float delaySearchSeconds = 0.25f;
+        [SerializeReference] float delaySearchSeconds = 0.15f;
 
         bool _isInitialized = false;
-        int _index = 0;
+        bool _enableSearchTimer;
+        bool _allowSearch;
+        bool _useIdMatching;
+        int _currentSlotIndex = 0;
         int _minItemSlotUICount;
+        float _delayedSearchTime;
+
         Container container;
 
         [Header("UI Elements")]
@@ -82,7 +87,7 @@ namespace UZSG.UI.Players
             });
             useExactMatchToggle.onValueChanged.AddListener((value) =>
             {
-                useExactMatch = value;
+                _useIdMatching = value;
             });
 
             player.InventoryWindow.OnOpened += () =>
@@ -101,17 +106,29 @@ namespace UZSG.UI.Players
                 return;
             }
 
-            _index = 0;
+            _currentSlotIndex = 0;
             foreach (ItemData itemData in assets)
             {
                 _loadedItemsOfType[itemData.Type].Add(itemData);
-                AddItem(itemData, _index);
-                _index++;
+                AddItem(itemData, _currentSlotIndex);
+                _currentSlotIndex++;
             }
         }
 
-        bool _allowSearch;
-        bool useExactMatch;
+        void Update()
+        {
+            if (_enableSearchTimer)
+            {
+                _delayedSearchTime -= Time.deltaTime;
+                if (_delayedSearchTime <= 0f)
+                {
+                    _enableSearchTimer = false;
+                    _delayedSearchTime = 0f;
+                    _allowSearch = true;
+                    Query(searchField.text);
+                }
+            }
+        }
 
         IEnumerator<float> DelayedSearchTimer()
         {
@@ -127,38 +144,43 @@ namespace UZSG.UI.Players
 
         void OnSearchFieldInput(string text)
         {
-            ClearAllSlots();
-            _index = 0;
+            _allowSearch = false;
+            _delayedSearchTime = delaySearchSeconds;
+            _enableSearchTimer = true;
+        }
+
+        void Query(string text)
+        {
+            if (!_allowSearch) return;
+
+            _allowSearch = false;
+
             if (string.IsNullOrEmpty(text) || string.IsNullOrWhiteSpace(text))
             {
+                ClearAllSlots();
+                DestroyExcessItemSlotUIs();
                 ResetToAllItems();
                 return;
             }
 
-            if (!_allowSearch) return;
-
-            // if (!useExactMatch)
-            // {
-            //     Timing.KillCoroutines(delayedSearchCoroutineHandle);
-            //     delayedSearchCoroutineHandle = Timing.RunCoroutine(DelayedSearchTimer());
-            // }
-
-            text = text.Replace(' ', '_');
-            if (useExactMatch)
+            if (_useIdMatching)
             {
+                text = text.Replace(' ', '_');
                 if (Game.Items.ItemDataDict.ContainsKey(text.ToLower()))
                 {
                     ClearAllSlots();
                     DestroyExcessItemSlotUIs();
 
-                    AddItem(Game.Items.GetData(text.ToLower()), _index);
-                    _index++;
+                    AddItem(Game.Items.GetData(text.ToLower()), _currentSlotIndex);
+                    _currentSlotIndex++;
                 }
             }
-            else
+            else /// kmp search
             {
-                List<ItemData> queriedItems = new();
+                ClearAllSlots();
+                DestroyExcessItemSlotUIs();
 
+                List<ItemData> queriedItems = new();
                 foreach (ItemType type in Enum.GetValues(typeof(ItemType)))
                 {
                     if (!_loadedItemsOfType.TryGetValue(type, out var itemDataList)) return;
@@ -166,22 +188,21 @@ namespace UZSG.UI.Players
                     foreach (ItemData itemData in itemDataList)
                     {
                         int queryItr = 0;
-                        foreach(char a in itemData.name)
+                        foreach (char a in itemData.DisplayName)
                         {
-                            
-                            if (Char.ToLower(a) != Char.ToLower(text[queryItr]))
+                            if (char.ToLower(a) != char.ToLower(text[queryItr]))
                             {
                                 queryItr = -1;
                             }
                             if (queryItr == text.Length - 1)
                             {
-                                AddItem(itemData, _index);
+                                AddItem(itemData, _currentSlotIndex);
+                                _currentSlotIndex++;
                                 break;
                             }
                             queryItr++;
                         }
                         
-                        _index++;
                     }
                 }
             }
@@ -269,8 +290,8 @@ namespace UZSG.UI.Players
             await Task.Yield();
             foreach (ItemData itemData in itemDataList)
             {
-                AddItem(itemData, _index);
-                _index++;
+                AddItem(itemData, _currentSlotIndex);
+                _currentSlotIndex++;
             }
         }
 
@@ -294,11 +315,11 @@ namespace UZSG.UI.Players
 
         void ClearAllSlots()
         {
-            for (int i = 0; i < _index; i++)
+            for (int i = 0; i < _currentSlotIndex; i++)
             {
                 container.ClearAt(i);
             }
-            _index = 0;
+            _currentSlotIndex = 0;
         }
 
         public void SetFilter(int value)

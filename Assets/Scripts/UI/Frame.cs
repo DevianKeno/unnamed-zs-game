@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace UZSG.UI
@@ -6,19 +7,16 @@ namespace UZSG.UI
     [RequireComponent(typeof(RectTransform))]
     public class Frame : MonoBehaviour
     {
-        public string Id = "frame";
+        [SerializeField, FormerlySerializedAs("Id")] string id = "frame";
+        public string Id => id;
         /// <summary>
         /// The name of the frame.
         /// </summary>
-        public string Name = "Frame";
+        [SerializeField, FormerlySerializedAs("Name")] string displayName = "Frame";
+        public string DisplayName => displayName;
         
         [SerializeField] RectTransform rect;
         public RectTransform Rect => rect;
-
-        public Frame(string name)
-        {
-            Name = name;
-        }
 
         void Awake()
         {

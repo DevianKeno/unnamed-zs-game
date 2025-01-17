@@ -305,8 +305,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 035203bfb8dab6240951a6ede70b12f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Id: workstation
-  Name: workstation
+  id: workstation
+  displayName: Crafting
   rect: {fileID: 2396010862542012106}
 --- !u!1 &803841983931506193
 GameObject:

@@ -132,7 +132,7 @@ namespace UZSG.Items.Weapons
             }
             else
             {
-                Game.Console.Warn($"Ammo data for '{WeaponData.Id}' is not set");
+                Game.Console.LogWarn($"Ammo data for '{WeaponData.Id}' is not set");
                 Player.VitalsHUD.AmmoCounter.SetCartridgeText("-");
             }
             CurrentRounds = RangedAttributes.ClipSize; /// To be removed

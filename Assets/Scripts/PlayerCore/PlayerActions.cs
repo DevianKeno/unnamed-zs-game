@@ -575,7 +575,7 @@ namespace UZSG.Players
             /// Store to Bag generic items or items can't hold
             if (Player.Inventory.IsFull)
             {
-                Game.Console.Log($"Can't pick up '{item.Id}'. Inventory is full");
+                Game.Console.LogInfo($"Can't pick up '{item.Id}'. Inventory is full");
                 return false;
             }
             if (Player.Inventory.Bag.TryPutNearest(item))

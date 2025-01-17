@@ -57,7 +57,7 @@ namespace UZSG.Systems
         {
             if (data == null)
             {
-                Game.Console.LogAndUnityLog($"AudioAssetsData reference not set. No audio will play.");
+                Game.Console.LogWithUnity($"AudioAssetsData reference not set. No audio will play.");
                 return;
             }
 

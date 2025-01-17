@@ -66,7 +66,7 @@ namespace UZSG.Objects
                     if (player.Actions.PickUpItem(new Item(ResourceData.Yield)))
                     {
                         Game.Audio.PlayInWorld("pick", Position);
-                        Destroy();
+                        Destruct();
                     }
                     else /// incapable of picking up, drop on ground
                     {

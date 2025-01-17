@@ -1,4 +1,4 @@
-using UZSG.Crafting;
+using UZSG.Interactions;
 
 namespace UZSG.Objects
 {
@@ -7,6 +7,6 @@ namespace UZSG.Objects
     /// </summary>
     public interface IPickupable
     {
-        public virtual void Pickup() { }
+        public void Pickup(IInteractActor actor);
     }
 }

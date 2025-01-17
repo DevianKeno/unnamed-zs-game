@@ -21,7 +21,7 @@ namespace UZSG.EOS
     /// <summary>
     /// Simplified wrapper for EOS [P2P Interface](https://dev.epicgames.com/docs/services/en-US/Interfaces/P2P/index.html).
     /// </summary>
-    public class EOSPeer2PeerManager : IEOSSubManager
+    public partial class EOSPeer2PeerManager : IEOSSubManager
     {
         const int WORLD_DATA_CHUNK_SIZE_BYTES = 4096;
         
@@ -101,8 +101,6 @@ namespace UZSG.EOS
 
         internal void Update()
         {
-            if (!Game.Main.IsOnline) return;
-            
             HandleReceivedPackets();
         }
 
@@ -184,7 +182,7 @@ namespace UZSG.EOS
                 }
                 catch
                 {
-                    Debug.LogWarning($"Encountered an error when deserializing packet from: peerId={peerId}, socketId={socketId}");
+                    Debug.LogError($"Encountered an error when deserializing packet from: peerId={peerId}, socketId={socketId}");
                     return;
                 }
                 
@@ -267,7 +265,7 @@ namespace UZSG.EOS
             var headingPacket = new Packet()
             {
                 Type = PacketType.WorldDataHeading,
-                Data = Encoding.UTF8.GetBytes($"{packetCount}"),
+                Data = Encoding.UTF8.GetBytes($"world_{packetCount}"),
             };
             var socketId = new SocketId() { SocketName = "WORLD_DATA" };
             var headerPacketOptions = new SendPacketOptions()
@@ -520,8 +518,10 @@ namespace UZSG.EOS
 
         void HandleWorldDataRequestPacket(ProductUserId userId, Packet packet)
         {
-            var filepath = Path.Combine(Application.persistentDataPath, "SavedWorlds", "helping", "level.dat"); 
-            SendWorldData(filepath, userId);
+            if (!Game.World.HasWorld) return;
+            
+            var savepath = Game.World.CurrentWorld.GetPath();
+            SendWorldData(savepath, userId);
         }
 
         List<Packet> _receivedWorldDataChunkPackets = new();

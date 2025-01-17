@@ -102,6 +102,7 @@ namespace UZSG.Systems
         public struct LoadWorldOptions
         {
             public string OwnerId { get; set; }
+            public string Filepath { get; set; }
             public WorldSaveData WorldSaveData { get; set; }
         }
         public struct LoadWorldResult
@@ -130,6 +131,7 @@ namespace UZSG.Systems
 
                         currentWorld = GameObject.FindWithTag("World").GetComponent<World>();
                         currentWorld.Initialize(options.WorldSaveData);
+                        currentWorld.filepath = options.Filepath;
                         HasWorld = true;
                         currentWorld.SetOwnerId(options.OwnerId);
 
@@ -215,53 +217,61 @@ namespace UZSG.Systems
 
         void InitializeWorldLoaded()
         {
-            JoinLocalPlayer(); /// this should not be here
+            JoinPlayer();
         }
 
-        void JoinLocalPlayer()
+        void JoinPlayer()
         {
             if (Game.Main.IsOnline)
             {
-                Game.World.CurrentWorld.JoinPlayerId(EOSSubManagers.UserInfo.GetLocalUserInfo());
+                var userId = Game.EOS.GetProductUserId();
+                if (userId != null || userId.IsValid())
+                {
+                    var loginStatus =  Game.EOS.GetEOSConnectInterface().GetLoginStatus(userId);
+                    if (loginStatus == Epic.OnlineServices.LoginStatus.LoggedIn)
+                    {
+                        Game.World.CurrentWorld.JoinPlayerId(EOSSubManagers.UserInfo.GetLocalUserInfo());
+                        return;
+                    }
+                }
             }
-            else
-            {
-                
-            }
+
+            /// Fallback to local player
+            Game.World.CurrentWorld.JoinLocalPlayer();
         }
 
         public void ExitCurrentWorld()
         {
             if (!HasWorld) return;
 
-            Game.Console.Log("[World]: Exiting world...");
+            Game.Console.LogInfo("[World]: Exiting world...");
             Game.Main.LoadScene(
                 new(){
                     SceneToLoad = "LoadingScreen",
                     Mode = LoadSceneMode.Additive,
                 },
+                onLoadSceneCompleted: OnLoadingScreenLoad);
+        }
+
+        void OnLoadingScreenLoad()
+        {
+            currentWorld.Deinitialize();
+            currentWorld.SaveWorld();
+
+            Game.Main.UnloadScene(currentWorld.gameObject.scene.name);
+            currentWorld = null;
+            HasWorld = false;
+            OnExitWorld?.Invoke();
+            
+            Game.Main.LoadScene(
+                new(){
+                    SceneToLoad = "TitleScreen",
+                    Mode = LoadSceneMode.Additive,
+                },
                 onLoadSceneCompleted: () =>
                 {
-                    currentWorld.Deinitialize();
-                    currentWorld.SaveWorld();
-
-                    Game.Main.UnloadScene(currentWorld.gameObject.scene.name);
-                    currentWorld = null;
-                    HasWorld = false;
-                    OnExitWorld?.Invoke();
-                    
-                    Game.Main.LoadScene(
-                        new(){
-                            SceneToLoad = "TitleScreen",
-                            Mode = LoadSceneMode.Additive,
-                        },
-                        onLoadSceneCompleted: () =>
-                        {
-                            Game.Main.UnloadScene("LoadingScreen");
-                        });
+                    Game.Main.UnloadScene("LoadingScreen");
                 });
-                
-
         }
 
         public void Pause()
@@ -296,7 +306,7 @@ namespace UZSG.Systems
             }
             catch
             {
-                Game.Console.Error($"Failed to deserialize level data for world '{Path.GetFileName(filepath)}'!");
+                Game.Console.LogError($"Failed to deserialize level data for world '{Path.GetFileName(filepath)}'!");
                 return null;
             }
         }

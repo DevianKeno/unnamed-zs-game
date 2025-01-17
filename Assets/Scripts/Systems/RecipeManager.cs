@@ -27,7 +27,7 @@ namespace UZSG.Systems
             _isInitialized = true;
 
             var startTime = Time.time;
-            Game.Console.Log("Reading data: Recipes...");
+            Game.Console.LogInfo("Reading data: Recipes...");
 
             var recipes = Resources.LoadAll<RecipeData>("Data/Recipes");
 
@@ -44,7 +44,7 @@ namespace UZSG.Systems
                 return _recipeDict[id];
             }
 
-            Game.Console?.Log("Invalid recipe id");
+            Game.Console?.LogInfo("Invalid recipe id");
             return null;
         }
 
@@ -56,7 +56,7 @@ namespace UZSG.Systems
                 return true;
             }
 
-            Game.Console?.Log("Invalid recipe id");
+            Game.Console?.LogInfo("Invalid recipe id");
             recipeData = null;
             return false;
         }

@@ -89,7 +89,7 @@ namespace UZSG.FPP
             if (!viewmodel.HasViewmodel)
             {
                 var msg = $"Item '{(viewmodel as ItemData).Id}' has no viewmodel set.";
-                Game.Console.LogAndUnityLog(msg);
+                Game.Console.LogWithUnity(msg);
                 return null;
             }
 
@@ -115,7 +115,7 @@ namespace UZSG.FPP
                 
                 Destroy(model);
                 var msg = $"Item '{(viewmodel as ItemData).Id}' is a viewmodel but has no Viewmodel Component.";
-                Game.Console.LogAndUnityLog(msg);
+                Game.Console.LogWithUnity(msg);
             }
 
             return null;

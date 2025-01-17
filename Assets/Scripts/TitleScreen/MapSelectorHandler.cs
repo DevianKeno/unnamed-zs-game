@@ -29,7 +29,7 @@ namespace UZSG.TitleScreen
             {
                 if (!data.Scene.IsSet())
                 {
-                    Game.Console.Warn($"There is no Scene set for LevelData '{data.Id}'");
+                    Game.Console.LogWarn($"There is no Scene set for LevelData '{data.Id}'");
                     continue;
                 }
 

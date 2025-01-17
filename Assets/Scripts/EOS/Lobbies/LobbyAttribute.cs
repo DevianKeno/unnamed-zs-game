@@ -20,7 +20,7 @@ namespace UZSG.EOS.Lobbies
         public long? AsInt64 = 0;
         public double? AsDouble = 0.0;
         public bool? AsBool = false;
-        public string AsString;
+        public string AsString = string.Empty;
 
         public AttributeData AsAttribute
         {
@@ -33,16 +33,16 @@ namespace UZSG.EOS.Lobbies
                 switch (ValueType)
                 {
                     case AttributeType.String:
-                        attrData.Value = AsString;
+                        attrData.Value = (AttributeDataValue) AsString;
                         break;
                     case AttributeType.Int64:
-                        attrData.Value = (AttributeDataValue)AsInt64;
+                        attrData.Value = (AttributeDataValue) AsInt64;
                         break;
                     case AttributeType.Double:
-                        attrData.Value = (AttributeDataValue)AsDouble;
+                        attrData.Value = (AttributeDataValue) AsDouble;
                         break;
                     case AttributeType.Boolean:
-                        attrData.Value = (AttributeDataValue)AsBool;
+                        attrData.Value = (AttributeDataValue) AsBool;
                         break;
                 }
 

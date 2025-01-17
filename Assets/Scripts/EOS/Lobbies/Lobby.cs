@@ -18,30 +18,30 @@ namespace UZSG.EOS.Lobbies
     /// </summary>
     public class Lobby
     {
-        public string Id { get; internal set; }
+        public string Id;
         /// <summary>
         /// The top-level, game-specific filtering information for session searches.
-        /// This criteria should be set with mostly static, coarse settings,
-        /// often formatted like <c>GameMode:Region:MapName</c>.
+        /// This criteria should be set with mostly static, coarse settings.
+        /// Format <c>Region:MapName</c>.
         /// </summary>
-        public string BucketId { get; internal set; }
-        public ProductUserId LobbyOwner { get; internal set; }
-        public EpicAccountId LobbyOwnerAccountId { get; internal set; }
-        public LobbyPermissionLevel LobbyPermissionLevel { get; internal set; } = LobbyPermissionLevel.Publicadvertised;
-        public ushort MaxNumLobbyMembers { get; internal set; } = 0;
-        public ushort AvailableSlots { get; internal set; } = 0;
-        public bool AllowInvites { get; internal set; } = true;
-        public bool? DisableHostMigration{ get; internal set; }
-        public string LobbyOwnerDisplayName { get; internal set; }
+        public string BucketId;
+        public ProductUserId LobbyOwner;
+        public EpicAccountId LobbyOwnerAccountId;
+        public LobbyPermissionLevel LobbyPermissionLevel = LobbyPermissionLevel.Publicadvertised;
+        public ushort MaxNumLobbyMembers = 0;
+        public ushort AvailableSlots = 0;
+        public bool AllowInvites = true;
+        public bool? DisableHostMigration;
+        public string LobbyOwnerDisplayName;
 
         /// <summary>
         /// Cached copy of the RoomName of the RTC room that our lobby has, if any
         /// </summary>
-        public string RTCRoomName { get; internal set; } = string.Empty;
+        public string RTCRoomName = string.Empty;
         /// <summary>
         /// Are we currently connected to an RTC room?
         /// </summary>
-        public bool RTCRoomConnected { get; internal set; } = false;
+        public bool RTCRoomConnected = false;
         /// <summary>
         /// Notification for RTC connection status changes
         /// </summary>

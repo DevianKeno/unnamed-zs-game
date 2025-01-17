@@ -26,7 +26,7 @@ namespace UZSG.Systems
             _isInitialized = true;
             
             var startTime = Time.time;
-            Game.Console.Log("Reading data: Objects...");
+            Game.Console.LogInfo("Reading data: Objects...");
             foreach (var obj in Resources.LoadAll<ObjectData>("Data/Objects"))
             {
                 _objectsDict[obj.Id] = obj;
@@ -43,7 +43,7 @@ namespace UZSG.Systems
         {
             if (!_objectsDict.ContainsKey(objectId))
             {
-                Game.Console.Debug($"Object '{objectId}' does not exist!");
+                Game.Console.LogDebug($"Object '{objectId}' does not exist!");
                 return;
             }
 
@@ -69,13 +69,13 @@ namespace UZSG.Systems
                         //     Entity = entity
                         // });
                         
-                        Game.Console.Log($"Placed object '{objectId}' at ({position.x}, {position.y}, {position.z})");
+                        Game.Console.LogInfo($"Placed object '{objectId}' at ({position.x}, {position.y}, {position.z})");
                         return;
                     }
                     Destroy(go);
                 }
 
-                Game.Console.Debug($"Tried to place Object '{objectId}', but failed miserably");
+                Game.Console.LogDebug($"Tried to place Object '{objectId}', but failed miserably");
             };
         }
         
@@ -89,7 +89,7 @@ namespace UZSG.Systems
         {
             if (!_objectsDict.ContainsKey(objectId))
             {
-                Game.Console.Debug($"Object '{objectId}' does not exist!");
+                Game.Console.LogDebug($"Object '{objectId}' does not exist!");
                 return;
             }
 
@@ -113,13 +113,13 @@ namespace UZSG.Systems
                         //     Entity = entity
                         // });
                         
-                        Game.Console.Log($"Placed object '{objectId}' at ({position.x}, {position.y}, {position.z})");
+                        Game.Console.LogInfo($"Placed object '{objectId}' at ({position.x}, {position.y}, {position.z})");
                         return;
                     }
                     Destroy(go);
                 }
 
-                Game.Console.Debug($"Tried to place Object '{objectId}', but failed miserably");
+                Game.Console.LogDebug($"Tried to place Object '{objectId}', but failed miserably");
             };
         }
         
@@ -131,7 +131,7 @@ namespace UZSG.Systems
             if (_cachedObjectModels.ContainsKey(id))
             {
                 /// lmao idk about this
-                Game.Console.Warn($"Object '{id}' is already loaded in memory.");
+                Game.Console.LogWarn($"Object '{id}' is already loaded in memory.");
                 return true;
             }
 
@@ -155,13 +155,13 @@ namespace UZSG.Systems
                 }
                 else
                 {
-                    Game.Console.Warn($"There is no Addressable Asset assigned to Object '{id}'.");
+                    Game.Console.LogWarn($"There is no Addressable Asset assigned to Object '{id}'.");
                     return false;
                 }
             }
             else
             {
-                Game.Console.Log($"Failed to load Object '{id}' as it does not exists.");
+                Game.Console.LogInfo($"Failed to load Object '{id}' as it does not exists.");
                 return false;
             }            
         }
@@ -173,7 +173,7 @@ namespace UZSG.Systems
                 return _objectsDict[id];
             }
 
-            Game.Console.Log("Invalid Object Id");
+            Game.Console.LogInfo("Invalid Object Id");
             return null;
         }
         
@@ -185,7 +185,7 @@ namespace UZSG.Systems
                 return true;
             }
             
-            Game.Console.Log("Invalid Object Id");
+            Game.Console.LogInfo("Invalid Object Id");
             objectData = null;
             return false;
         }

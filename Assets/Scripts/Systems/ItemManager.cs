@@ -29,7 +29,7 @@ namespace UZSG.Systems
             _isInitialized = true;
             
             var startTime = Time.time;
-            Game.Console.Log("Reading data: Items...");
+            Game.Console.LogInfo("Reading data: Items...");
             var items = Resources.LoadAll<ItemData>("Data/Items");
             foreach (var item in items)
             {
@@ -68,13 +68,13 @@ namespace UZSG.Systems
                 }
                 else
                 {
-                    Game.Console.Warn($"There is no Addressable Asset assigned to item {itemId}.");
+                    Game.Console.LogWarn($"There is no Addressable Asset assigned to item {itemId}.");
                     return false;
                 }
             }
             else
             {
-                Game.Console.Log($"Failed to load item id {itemId} as it does not exist.");
+                Game.Console.LogInfo($"Failed to load item id {itemId} as it does not exist.");
                 return false;
             }            
         }
@@ -86,7 +86,7 @@ namespace UZSG.Systems
                 return _itemsDict[id];
             }
 
-            Game.Console.Log("Invalid item id");
+            Game.Console.LogInfo("Invalid item id");
             return null;
         }
         
@@ -98,7 +98,7 @@ namespace UZSG.Systems
                 return true;
             }
             
-            Game.Console.Log("Invalid item id");
+            Game.Console.LogInfo("Invalid item id");
             itemData = null;
             return false;
         }

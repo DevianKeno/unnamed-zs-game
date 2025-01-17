@@ -54,13 +54,13 @@ namespace UZSG.Worlds.Events
             }
             if (selectedEvents.Count == 0)
             {
-                Game.Console.Log($"<color=#e8eb34>No weather event selected.</color>");
+                Game.Console.LogInfo($"<color=#e8eb34>No weather event selected.</color>");
                 return;
             }
             else if (selectedEvents.Count > 1 && !eventData.AllowMultipleEvents)
                 selectedEvents = KeepOnlyAtIndex(selectedEvents, UnityEngine.Random.Range(0, selectedEvents.Count));
             
-            Game.Console.Log($"<color=#e8eb34>Event occured: {selectedEvents[0].Name}</color>");  
+            Game.Console.LogInfo($"<color=#e8eb34>Event occured: {selectedEvents[0].Name}</color>");  
 
             _selectedEvents.Add(selectedEvents[0]);
         }
@@ -76,7 +76,7 @@ namespace UZSG.Worlds.Events
             }
             if (selectedEvents.Count == 0)
             {
-                Game.Console.Log($"<color=#e8eb34>No raid event selected.</color>");
+                Game.Console.LogInfo($"<color=#e8eb34>No raid event selected.</color>");
                 return;
             }
             else if (selectedEvents.Count > 1 && !eventData.AllowMultipleEvents)
@@ -84,7 +84,7 @@ namespace UZSG.Worlds.Events
 
             foreach (RaidEventInstance raidInstance in selectedEvents)
                 {
-                    Game.Console.Log($"<color=#e8eb34>Event occured: {raidInstance.Name}</color>");
+                    Game.Console.LogInfo($"<color=#e8eb34>Event occured: {raidInstance.Name}</color>");
                     _selectedEvents.Add(raidInstance);
                 }
         }

@@ -158,7 +158,7 @@ namespace UZSG.Entities
 
         void Initialize()
         {
-            Game.Console.Log("I, player, has been spawned!");
+            Game.Console.LogInfo("I, player, has been spawned!");
 
             audioController.CreateAudioPool(8);
             audioController.LoadAudioAssetsData(PlayerEntityData.AudioAssetsData);
@@ -416,7 +416,7 @@ namespace UZSG.Entities
         {
             if (saveData == null)
             {
-                Game.Console.Error($"Invalid PlayerSaveData loaded for Player.");
+                Game.Console.LogError($"Invalid PlayerSaveData loaded for Player.");
                 return;
             }
             

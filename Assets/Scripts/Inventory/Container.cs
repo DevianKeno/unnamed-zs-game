@@ -48,7 +48,13 @@ namespace UZSG
                 return FreeSlotsCount == 0;
             }
         }
-    
+        public bool HasAny
+        {
+            get
+            {
+                return _cachedIdSlots.Any();
+            }
+        }
         public int FreeSlotsCount
         {
             get
@@ -210,7 +216,7 @@ namespace UZSG
         {
             if (saveData.Count > SlotCount)
             {
-                Game.Console.Warn("[WARN]: ContainerSaveData has Items greater than the Container's capacity. You might lose some items.");
+                Game.Console.LogWarn("[WARN]: ContainerSaveData has Items greater than the Container's capacity. You might lose some items.");
             }
             
             foreach (var sd in saveData)

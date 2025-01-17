@@ -81,7 +81,7 @@ namespace UZSG.EOS
             }
             else
             {
-                Game.Console.Log("Unhandled login type." + loginCredentialType.ToString());
+                Game.Console.LogInfo("Unhandled login type." + loginCredentialType.ToString());
                 Debug.LogError("Unhandled login type." + loginCredentialType.ToString());
                 // devAuthWindow.SetUIForLogin();
                 SetUIForLogin();
@@ -96,7 +96,7 @@ namespace UZSG.EOS
             }
             else
             {
-                Game.Console.Log($"Encountered an error logging in. [{info.ResultCode}]");
+                Game.Console.LogInfo($"Encountered an error logging in. [{info.ResultCode}]");
                 Debug.LogError($"Encountered an error logging in. [{info.ResultCode}]");
                 
                 loginCredentialType = LoginCredentialType.AccountPortal;
@@ -125,7 +125,7 @@ namespace UZSG.EOS
             }
             else
             {
-                Game.Console.Log($"Encountered an error logging in. [{info.ResultCode}]");
+                Game.Console.LogInfo($"Encountered an error logging in. [{info.ResultCode}]");
                 Debug.LogError($"Encountered an error logging in. [{info.ResultCode}]");
                 // devAuthWindow.SetUIForLogin();
                 SetUIForLogin();
@@ -151,7 +151,7 @@ namespace UZSG.EOS
                 info.ResultCode = result;
             }
 
-            Game.Console.Log($"Failed to retrieve user information. [{info.ResultCode}]");
+            Game.Console.LogInfo($"Failed to retrieve user information. [{info.ResultCode}]");
             Debug.LogError($"Failed to retrieve user information. [{info.ResultCode}]");
         }
         #endregion
@@ -182,7 +182,7 @@ namespace UZSG.EOS
                 return;
             }
 
-            Game.Console.Log($"Encountered an error upon logging out. [{info.ResultCode}]");
+            Game.Console.LogInfo($"Encountered an error upon logging out. [{info.ResultCode}]");
             Debug.LogWarning($"Encountered an error upon logging out. [{info.ResultCode}]");
             SetAccountDisplayForLogout();
         }
@@ -195,7 +195,7 @@ namespace UZSG.EOS
                 return;
             }
             
-            Game.Console.Log($"Unlink error. [{data.ResultCode}]");
+            Game.Console.LogInfo($"Unlink error. [{data.ResultCode}]");
             Debug.LogWarning($"Unlink error. [{data.ResultCode}]");
             SetUIForLogin();
         }
@@ -248,7 +248,7 @@ namespace UZSG.EOS
                 });
             }
             
-            Game.Console.Log($"Encountered an error upon logging in. [{connectLoginCallbackInfo.ResultCode}]");
+            Game.Console.LogInfo($"Encountered an error upon logging in. [{connectLoginCallbackInfo.ResultCode}]");
             Debug.LogWarning($"Encountered an error upon logging in. [{connectLoginCallbackInfo.ResultCode}]");
             /// Reset to login UI
             SetUIForLogin();

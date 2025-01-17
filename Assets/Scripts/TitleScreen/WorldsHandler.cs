@@ -26,6 +26,7 @@ namespace UZSG.TitleScreen
 
         [Header("UI Elements")]
         [SerializeField] FrameController parentFrameController;
+        [SerializeField] Frame frame;
         [SerializeField] Button playBtn;
         [SerializeField] Button deleteBtn;
         [SerializeField] Transform entryContainer;
@@ -46,9 +47,9 @@ namespace UZSG.TitleScreen
             deleteBtn.onClick.AddListener(OnDeleteBtnClick);
             parentFrameController.OnSwitchFrame += (context) =>
             {
-                if (context.Frame.Id != "worlds")
+                if (context.Frame.Id != this.frame.Id)
                 {
-                    selector?.Hide();
+                    this.selector?.Hide();
                 }
             };
         }
@@ -67,32 +68,34 @@ namespace UZSG.TitleScreen
             if (!Directory.Exists(savedWorldsPath)) Directory.CreateDirectory(savedWorldsPath);
             var worldPaths = Directory.GetDirectories(savedWorldsPath, "*", SearchOption.TopDirectoryOnly);
             
+            ClearEntries();
+
             foreach (var path in worldPaths)
             {
                 var datFile = Path.Join(path, "level.dat");
                 if (!File.Exists(datFile)) continue;
                 var json = File.ReadAllText(datFile);
                 var saveData = Game.World.DeserializeWorldData(datFile);
-                if (saveData != null)
-                {
-                    loadedSaveDatas.Add(saveData);
-                }
-            }
 
-            ClearEntries();
-            foreach (var saveData in loadedSaveDatas)
-            {
+                if (saveData == null) continue;
+                        
                 var entry = Game.UI.Create<WorldEntryUI>("World Entry UI");
                 entry.SetParent(entryContainer);
                 entry.SetData(saveData);
+                entry.Filepath = datFile;
                 entry.OnClick += OnEntryClicked;
                 entries.Add(entry);
             }
+
             loadingTmp.gameObject.SetActive(false);
         }
 
         void ClearEntries()
         {
+            if (selector != null)
+            {
+                selector.Hide();
+            }
             foreach (WorldEntryUI entry in entries)
             {
                 Destroy(entry.gameObject);
@@ -135,6 +138,7 @@ namespace UZSG.TitleScreen
                         var options = new WorldManager.LoadWorldOptions()
                         {
                             OwnerId = Game.World.GetLocalUserId(),
+                        Filepath = selectedEntry.Filepath,
                             WorldSaveData = selectedEntry.SaveData,
                         };
 

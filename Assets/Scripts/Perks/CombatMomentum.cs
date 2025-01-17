@@ -42,7 +42,7 @@ namespace UZSG.Perks
             }
             else
             {
-                Game.Console.Log($"Failed to activate '{perkData.Id}' as actor {entity.EntityData.Id} does not have the '{perkData.Id}' Attribute.");
+                Game.Console.LogInfo($"Failed to activate '{perkData.Id}' as actor {entity.EntityData.Id} does not have the '{perkData.Id}' Attribute.");
             }
         }
     }

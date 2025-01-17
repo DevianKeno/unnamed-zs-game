@@ -22,7 +22,7 @@ namespace UZSG.Systems
         
         internal void Initialize()
         {
-            Game.Console.Log("Reading data: Audio...");
+            Game.Console.LogInfo("Reading data: Audio...");
             var clips = Resources.LoadAll<AudioClip>("Audio");
             foreach (AudioClip clip in clips)
             {

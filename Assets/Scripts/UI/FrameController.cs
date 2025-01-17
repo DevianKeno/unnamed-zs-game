@@ -59,19 +59,22 @@ namespace UZSG.UI
         {
             if (!frames.IsValidIndex(index)) return;
 
-            SwitchToFrame(frames[index].Name, instant: false, force: false);
+            SwitchToFrame(frames[index].DisplayName, instant: false, force: false);
         }
 
+        /// <param name="name">Actually the Id of the frame.</param>
         public void SwitchToFrame(string name)
         {
             SwitchToFrame(name, instant: false, force: false);
         }
+        /// <param name="name">Actually the Id of the frame.</param>
 
         public void SwitchToFrame(string name, bool instant = false)
         {
             SwitchToFrame(name, instant, force: false);
         }
 
+        /// <param name="name">Actually the Id of the frame.</param>
         public void SwitchToFrame(string name, bool instant = false, bool force = false)
         {
             Frame frame = GetFrame(name);
@@ -80,7 +83,7 @@ namespace UZSG.UI
             if (IsTransitioning) return;
             IsTransitioning = true;
 
-            _previousFrame = currentFrame.Name;
+            _previousFrame = currentFrame.DisplayName;
             var context = new SwitchFrameContext()
             {
                 Status = SwitchStatus.Started,
@@ -92,7 +95,7 @@ namespace UZSG.UI
 
             if (Game.UI.EnableScreenAnimations && !instant)
             {
-                if (currentFrame != null && currentFrame.Name != frame.Name)
+                if (currentFrame != null && currentFrame.DisplayName != frame.DisplayName)
                 {
                     /// Move current frame out of the way
                     LeanTween.move(currentFrame.Rect, new Vector2(-1920, 0f), AnimationFactor)
@@ -143,7 +146,7 @@ namespace UZSG.UI
             frames.Add(frame);
             if (display)
             {
-                SwitchToFrame(frame.Name, instant: true);
+                SwitchToFrame(frame.DisplayName, instant: true);
             }
             else
             {
@@ -160,12 +163,11 @@ namespace UZSG.UI
             SwitchToFrame(_previousFrame, instant: true);
         }
 
-        public Frame GetFrame(string name)
+        public Frame GetFrame(string id)
         {
             foreach (Frame f in frames)
             {
-                if (f.Name != name) continue;
-                return f;
+                if (f.Id.ToLower() == id.ToLower()) return f;
             }
             return null;
         }

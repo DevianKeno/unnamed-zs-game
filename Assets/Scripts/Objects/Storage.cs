@@ -1,13 +1,13 @@
 using System;
+using System.Collections.Generic;
 
 using UZSG.Systems;
 using UZSG.Entities;
 using UZSG.Interactions;
-
 using UZSG.Data;
 using UZSG.UI.Objects;
 using UZSG.Saves;
-using System.Collections.Generic;
+using UZSG.Items;
 
 namespace UZSG.Objects
 {
@@ -17,7 +17,14 @@ namespace UZSG.Objects
         public string ActionText => "Open";
         public string DisplayName => objectData.DisplayName;
         public bool AllowInteractions { get; set; } = true;
-        
+        public override bool CanBePickedUp
+        {
+            get
+            {
+                return container.HasAny && objectData.CanBePickedUp;
+            }
+        }
+
         Player player;
         Container container = new();
         public Container Container => container;
@@ -38,6 +45,17 @@ namespace UZSG.Objects
             });
         }
         
+        public override void Pickup(IInteractActor actor)
+        {
+            if (actor is Player player)
+            {
+                if (this.CanBePickedUp && player.Actions.PickUpItem(this.AsItem()))
+                {
+                    Destruct();
+                }
+            }
+        }
+
         public List<InteractAction> GetInteractActions()
         {
             var actions = new List<InteractAction>();

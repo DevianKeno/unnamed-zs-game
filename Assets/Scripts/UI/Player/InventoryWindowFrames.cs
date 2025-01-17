@@ -52,7 +52,7 @@ namespace UZSG.UI.Players
                 }
                 if (context.Frame != null)
                 {
-                    frameText.text = context.Frame.Name;
+                    frameText.text = context.Frame.DisplayName;
                 }
             }
             else if (context.Status == FrameController.SwitchStatus.Finished)
@@ -85,7 +85,7 @@ namespace UZSG.UI.Players
                 var btn = CreateFrameButton("Creative", 1);
                 btn.onClick.AddListener(() => 
                 {
-                    frameController.SwitchToFrame(creativeWindow.Frame.Name);
+                    frameController.SwitchToFrame(creativeWindow.Frame.DisplayName);
                 });
                 frameController.AppendFrame(creativeWindow.Frame);
                 _appendedFrameButtons[creativeWindow] = btn;
@@ -95,7 +95,7 @@ namespace UZSG.UI.Players
                 var btn = CreateFrameButton(window.gameObject.name, -1);
                 btn.onClick.AddListener(() => 
                 {
-                    frameController.SwitchToFrame(window.Frame.Name);
+                    frameController.SwitchToFrame(window.Frame.DisplayName);
                 });
                 frameController.AppendFrame(window.Frame);
                 _appendedFrameButtons[window] = btn;
@@ -129,7 +129,7 @@ namespace UZSG.UI.Players
             var btn = CreateFrameButton(gui.BaseObject.ObjectData.DisplayName, order);
             btn.onClick.AddListener(() => 
             {
-                frameController.SwitchToFrame(gui.Frame.Name);
+                frameController.SwitchToFrame(gui.Frame.DisplayName);
             });
             frameController.AppendFrame(gui.Frame);
             _appendedFrameButtons[gui] = btn;

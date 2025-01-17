@@ -169,7 +169,7 @@ namespace UZSG.Systems
             #endregion
 
             OnLateInit?.Invoke();
-            Console.Log("Press F1 to hide/show console");
+            Console.LogInfo("Press F1 to hide/show console");
         }
 
         

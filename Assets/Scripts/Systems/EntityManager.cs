@@ -37,7 +37,7 @@ namespace UZSG.Systems
             _isInitialized = true;
 
             var startTime = Time.time;
-            Game.Console.Log("Reading data: Entities...");
+            Game.Console.LogInfo("Reading data: Entities...");
             foreach (var etty in Resources.LoadAll<EntityData>("Data/Entities"))
             {
                 _entitiesDict[etty.Id] = etty;
@@ -73,7 +73,7 @@ namespace UZSG.Systems
         {
             if (!_entitiesDict.ContainsKey(entityId))
             {
-                Game.Console.Debug($"Tried to spawn entity '{entityId}' but Id does not exists.");
+                Game.Console.LogDebug($"Tried to spawn entity '{entityId}' but Id does not exists.");
                 return;
             }
 
@@ -97,14 +97,14 @@ namespace UZSG.Systems
 
                         if (EnableLogging)
                         {
-                            Game.Console.Log($"Spawned entity {entityId} at ({position.x}, {position.y}, {position.z})");
+                            Game.Console.LogInfo($"Spawned entity {entityId} at ({position.x}, {position.y}, {position.z})");
                         }
                         return;
                     }
                     Destroy(go);
                 }
 
-                Game.Console.Debug($"Tried to spawn entity {entityId}, but failed miserably");
+                Game.Console.LogDebug($"Tried to spawn entity {entityId}, but failed miserably");
             };
         }
 
@@ -118,7 +118,7 @@ namespace UZSG.Systems
         {
             if (!_entitiesDict.ContainsKey(entityId))
             {
-                Game.Console.Debug($"Entity '{entityId}' does not exist!");
+                Game.Console.LogDebug($"Entity '{entityId}' does not exist!");
                 return;
             }
 
@@ -145,14 +145,14 @@ namespace UZSG.Systems
                         
                         if (EnableLogging)
                         {
-                            Game.Console.Log($"Spawned entity {entityId} at ({position.x}, {position.y}, {position.z})");
+                            Game.Console.LogInfo($"Spawned entity {entityId} at ({position.x}, {position.y}, {position.z})");
                         }
                         return;
                     }
                     Destroy(go);
                 }
 
-                Game.Console.Debug($"Tried to spawn entity {entityId}, but failed miserably");
+                Game.Console.LogDebug($"Tried to spawn entity {entityId}, but failed miserably");
             };
         }
         
@@ -160,7 +160,7 @@ namespace UZSG.Systems
         {            
             if (!_entitiesDict.ContainsKey("item")) /// this has a zero chance to fail >:(
             {
-                Game.Console.Debug($"Entity '{id}' does not exist!");
+                Game.Console.LogDebug($"Entity '{id}' does not exist!");
                 return;
             }
 
@@ -179,7 +179,7 @@ namespace UZSG.Systems
                         
                         if (EnableLogging)
                         {
-                            Game.Console.Debug($"Spawned item {id} at ({position.x}, {position.y}, {position.z})");
+                            Game.Console.LogDebug($"Spawned item {id} at ({position.x}, {position.y}, {position.z})");
                         }
                         return;
                     }

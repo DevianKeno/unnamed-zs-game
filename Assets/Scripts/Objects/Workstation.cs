@@ -115,10 +115,6 @@ namespace UZSG.Objects
             Game.UI.SetCursorVisible(true);
         }
 
-        void Pickup(Player player)
-        {
-            Debug.Log("Pickuped wokbench lol");
-        }
 
         #region Public methods
 
@@ -195,7 +191,7 @@ namespace UZSG.Objects
             if (!player.Inventory.Bag.ContainsAll(totalMaterials))
             {
                 PlayNoMaterialsSound();
-                if (EnableDebugging) Game.Console.Log($"Tried to craft '{options.Recipe.Output.Id}' but had insufficient materials.");
+                if (EnableDebugging) Game.Console.LogInfo($"Tried to craft '{options.Recipe.Output.Id}' but had insufficient materials.");
                 return false;
             }
 
@@ -231,7 +227,7 @@ namespace UZSG.Objects
             if (!player.Inventory.Bag.ContainsAll(totalMaterials))
             {
                 PlayNoMaterialsSound();
-                if (EnableDebugging) Game.Console.Log($"Tried to craft '{options.Recipe.Output.Id}' but had insufficient materials.");
+                if (EnableDebugging) Game.Console.LogInfo($"Tried to craft '{options.Recipe.Output.Id}' but had insufficient materials.");
                 return false;
             }
 

@@ -45,6 +45,7 @@ namespace UZSG.Systems
         /// </summary>
         public string Description { get; set; }
         public List<string> Aliases { get; set; }
+        public bool IsDebugCommand { get; internal set; } = false;
         /// <summary>
         /// The messages that follows the input.
         /// </summary>

@@ -35,7 +35,7 @@ namespace UZSG.Data
 
             if (!File.Exists(filepath))
             {
-                Game.Console.Warn($"'{Id}_defaults' not found, creating new one...");
+                Game.Console.LogWarn($"'{Id}_defaults' not found, creating new one...");
                 WriteDefaultsJson();
             }
 

@@ -48,7 +48,7 @@ namespace UZSG.UI.HUD
         {
             if (player == null)
             {
-                Game.Console.LogAndUnityLog($"Invalid player.");
+                Game.Console.LogWithUnity($"Invalid player.");
                 return;
             }
 

@@ -15,6 +15,7 @@ using UZSG.Items.Tools;
 using UZSG.Attacks;
 using UZSG.Inventory;
 using UnityEngine.InputSystem;
+using MEC;
 
 namespace UZSG.FPP
 {
@@ -338,7 +339,7 @@ namespace UZSG.FPP
             var slot = Player.Inventory.GetEquipmentOrHotbarSlot(index);
             if (slot == null)
             {
-                Game.Console.LogAndUnityLog($"Tried to access Hotbar Slot {index}, but it's not available yet (wear a toolbelt or smth.)");
+                Game.Console.LogWithUnity($"Tried to access Hotbar Slot {index}, but it's not available yet (wear a toolbelt or smth.)");
                 return;
             }
             SelectedHotbarIndex = index;
@@ -496,7 +497,7 @@ namespace UZSG.FPP
             if (!_cachedViewmodels.ContainsKey(viewmodel.ItemData.Id))
             {
                 var msg = $"Tried to setup Held Item '{viewmodel.ItemData.Id}' but it's not loaded nor equipped?";
-                Game.Console.LogAndUnityLog(msg);
+                Game.Console.LogWithUnity(msg);
                 return;
             }
 
@@ -511,7 +512,7 @@ namespace UZSG.FPP
             else
             {
                 _hasArmsAnimations = false;
-                Game.Console.LogAndUnityLog($"Item '{currentViewmodel.ItemData.Id}' has no arms animation.");
+                Game.Console.LogWithUnity($"Item '{currentViewmodel.ItemData.Id}' has no arms animation.");
             }
             
             if (currentViewmodel.Model != null)
@@ -520,7 +521,7 @@ namespace UZSG.FPP
             }
             else
             {
-                Game.Console.LogAndUnityLog($"Item '{currentViewmodel.ItemData.Id}' has no viewmodel.");
+                Game.Console.LogWithUnity($"Item '{currentViewmodel.ItemData.Id}' has no viewmodel.");
             }
 
             /// Setup model animations
@@ -533,7 +534,7 @@ namespace UZSG.FPP
             {
                 _hasViewmodelAnimations = false;
                 viewmodelAnimator = null;
-                Game.Console.LogAndUnityLog($"Item '{currentViewmodel.ItemData.Id}' has no Model Animator. No animations would be shown.");
+                Game.Console.LogWithUnity($"Item '{currentViewmodel.ItemData.Id}' has no Model Animator. No animations would be shown.");
             }
 
             /// Setup camera animations
@@ -546,7 +547,7 @@ namespace UZSG.FPP
             {
                 _hasCameraAnimations = false;
                 cameraAnimator = null;
-                Game.Console.LogAndUnityLog($"Item '{currentViewmodel.ItemData.Id}' has no Camera Animator. No animations would be shown.");
+                Game.Console.LogWithUnity($"Item '{currentViewmodel.ItemData.Id}' has no Camera Animator. No animations would be shown.");
             }
 
             if (currentViewmodel.CameraAnimationSource != null)
@@ -734,6 +735,8 @@ namespace UZSG.FPP
             }
         }
 
+        CoroutineHandle _fppAnimationCoroutineHandle;
+
         void PlayAnimations(string animId)
         {
             if (string.IsNullOrEmpty(animId)) return;
@@ -755,8 +758,8 @@ namespace UZSG.FPP
             /// viewmodelAnimator is used here because it's the one that
             /// usually has animations first :P idk tho
             var animLengthSeconds = GetAnimationClipLength(viewmodelAnimator, animId);
-            StopAllCoroutines();
-            StartCoroutine(FinishAnimation(animLengthSeconds));
+            Timing.KillCoroutines(_fppAnimationCoroutineHandle);
+            _fppAnimationCoroutineHandle = Timing.RunCoroutine(FinishAnimation(animLengthSeconds));
         }
         
         void OnWeaponFired()
@@ -789,21 +792,21 @@ namespace UZSG.FPP
             }
 
             Destroy(go);
-            Game.Console.LogAndUnityLog($"Loaded prefab does not contain a component of type {typeof(T)}.");
+            Game.Console.LogWithUnity($"Loaded prefab does not contain a component of type {typeof(T)}.");
         }
 
-        IEnumerator FinishAnimation(float durationSeconds)
+        IEnumerator<float> FinishAnimation(float durationSeconds)
         {
-            if (_isAnimationPlaying) yield return null;
+            if (_isAnimationPlaying) yield break;
+
             _isAnimationPlaying = true;
             IsPerforming = true;
-
-            yield return new WaitForSeconds(durationSeconds);
+            yield return Timing.WaitForSeconds(durationSeconds);
             _isAnimationPlaying = false;
             IsPerforming = false;
             cameraAnimationTarget.StopAnimation();
             OnPerformFinished?.Invoke();
-            yield return null;
+            yield break;
         }
 
 

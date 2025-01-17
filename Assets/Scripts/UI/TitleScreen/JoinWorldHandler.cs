@@ -17,6 +17,7 @@ using UZSG.UI.TitleScreen;
 using static UZSG.Systems.Status;
 using UZSG.Saves;
 using UZSG.EOS.P2P;
+using Unity.VisualScripting;
 
 namespace UZSG.UI.Lobbies
 {
@@ -30,8 +31,11 @@ namespace UZSG.UI.Lobbies
         
         [Header("Scripts")]
         // [SerializeField] LobbyInfoContainer lobbyInfo;
+        Selector selector = null;
 
         [Header("UI Elements")]
+        [SerializeField] FrameController parentFrameController;
+        [SerializeField] Frame frame;
         [SerializeField] GameObject lobbyContainer;
         [SerializeField] TMP_InputField searchField;
         [SerializeField] Button refreshBtn;
@@ -40,6 +44,18 @@ namespace UZSG.UI.Lobbies
 
         [Header("Prefabs")]
         [SerializeField] GameObject lobbyEntryPrefab;
+
+        void Awake()
+        {
+
+            parentFrameController.OnSwitchFrame += (context) =>
+            {
+                if (context.Frame.Id != this.frame.Id)
+                {
+                    this.selector?.Hide();
+                }
+            };
+        }
 
         void OnEnable()
         {
@@ -112,7 +128,7 @@ namespace UZSG.UI.Lobbies
                 }
             } else
             {
-                Game.Console.Log($"Error searching lobbies. [" + result + "]");
+                Game.Console.LogInfo($"Error searching lobbies. [" + result + "]");
                 Debug.LogError("Error searching lobbies. [" + result + "]");
             }
         }
@@ -130,12 +146,13 @@ namespace UZSG.UI.Lobbies
             {
                 joinBtn.gameObject.SetActive(true);
 
-                Game.Console.Log($"Error joining lobby. [" + result + "]");
+                Game.Console.LogInfo($"Error joining lobby. [" + result + "]");
                 Debug.LogError("Error joining lobby. [" + result + "]");
             }
         }
 
         #endregion
+
 
         void OnRequestWorldDataCompleted(string filepath)
         {
@@ -150,6 +167,7 @@ namespace UZSG.UI.Lobbies
                     var options = new WorldManager.LoadWorldOptions()
                     {
                         OwnerId = Game.World.GetLocalUserId(),
+                        Filepath = filepath,
                         WorldSaveData = Game.World.DeserializeWorldData(filepath),
                     };
                     Game.World.LoadWorld(options, OnLoadWorldCompleted);
@@ -176,6 +194,10 @@ namespace UZSG.UI.Lobbies
     
         void ClearLobbyEntries()
         {
+            if (selector != null)
+            {
+                selector.Hide();
+            }
             foreach (LobbyEntryUI entry in lobbyEntriesUI)
             {
                 Destroy(entry.gameObject);
@@ -183,11 +205,17 @@ namespace UZSG.UI.Lobbies
             lobbyEntriesUI.Clear();
         }
 
-        void OnClickLobbyEntry(LobbyEntryUI lobbyEntry)
+        void OnClickLobbyEntry(LobbyEntryUI entry)
         {
-            selectedLobby = lobbyEntry.Lobby;
-            selectedLobbyDetails = lobbyEntry.LobbyDetails;
-            // lobbyInfo.SetLobbyInfo(lobbyEntry.Lobby);
+            selectedLobby = entry.Lobby;
+            selectedLobbyDetails = entry.LobbyDetails;
+            if (selector == null)
+            {
+                selector ??= Game.UI.Create<Selector>("Selector", parent: lobbyContainer.transform);
+                var le = selector.AddComponent<LayoutElement>();
+                le.ignoreLayout = true;
+            }
+            selector.Select(entry.transform as RectTransform);
             joinBtn.gameObject.SetActive(true);
         }
     }

@@ -17,6 +17,8 @@ using UZSG.EOS;
 using UZSG.EOS.Lobbies;
 
 using static UZSG.Systems.Status;
+using System.Text;
+using Unity.VisualScripting;
 
 namespace UZSG.TitleScreen
 {
@@ -116,7 +118,7 @@ namespace UZSG.TitleScreen
                 {
                     startBtn.interactable = true;
 
-                    Game.Console.Log($"Unhandled login status." + loginStatus);
+                    Game.Console.LogInfo($"Unhandled login status." + loginStatus);
                     Debug.LogError($"Unhandled login status." + loginStatus);
                     return;
                 }
@@ -131,18 +133,15 @@ namespace UZSG.TitleScreen
         /// </summary>
         public Lobby CreateLobbyFromProperties()
         {
-            /// The top-level, game-specific filtering information for session searches.
-            /// This criteria should be set with mostly static, coarse settings,
-            /// often formatted like "GameMode:Region:MapName".
-            var rulesetType = "SAMPLE";
             var region = "ASIA";
-            var bucketId = $"{rulesetType}:{region}";
+            var world = selectedWorldEntry.SaveData;
+            var bucketId = $"{region}:{world.LevelId}";
 
             var newLobby = new Lobby()
             {
                 BucketId = bucketId,
                 AllowInvites = true,
-                PresenceEnabled = true,
+                PresenceEnabled = false,
                 RTCRoomEnabled = false,
                 LobbyPermissionLevel = LobbyPermissionLevel.Publicadvertised,
             };
@@ -157,10 +156,11 @@ namespace UZSG.TitleScreen
                 Visibility = LobbyAttributeVisibility.Public
             });
 
+            string levelId = currentWorldAttributes.LevelId.ToSafeString();
             newLobby.AddAttribute(new()
             {
                 Key = AttributeKeys.LEVEL_ID,
-                AsString = currentWorldAttributes.LevelId,
+                AsString = levelId,
                 ValueType = AttributeType.String,
                 Visibility = LobbyAttributeVisibility.Public
             });
@@ -180,14 +180,25 @@ namespace UZSG.TitleScreen
         {
             if (result == Result.Success)
             {
+                if (enableDebugging)
+                {
+                    Debug.Log($"Created lobby with id: {EOSSubManagers.Lobbies.CurrentLobby.Id}");
+                }
+                
                 EOSSubManagers.Lobbies.PromoteMember(localProductUserId, OnPromoteMemberCompleted);
+                EOSSubManagers.Lobbies.AddNotifyMemberUpdateReceived(OnMemberUpdate);
             }
             else
             {
                 startBtn.interactable = true;
-                Game.Console.Log($"Error creating lobby. [" + result + "]");
+                Game.Console.LogInfo($"Error creating lobby. [" + result + "]");
                 Debug.LogError("Error creating lobby. [" + result + "]");
             }
+        }
+
+        void OnMemberUpdate(string LobbyId, ProductUserId MemberId)
+        {   
+            Debug.Log($"NotifyMemberUpdateReceived, Id: {MemberId}");
         }
 
         void OnPromoteMemberCompleted(Result result)
@@ -200,7 +211,7 @@ namespace UZSG.TitleScreen
             {
                 startBtn.interactable = true;
 
-                Game.Console.Log($"Error promoting owner. [" + result + "]");
+                Game.Console.LogInfo($"Error promoting owner. [" + result + "]");
                 Debug.LogError("Error promoting owner. [" + result + "]");
             }
         }
@@ -220,6 +231,7 @@ namespace UZSG.TitleScreen
                     var options = new WorldManager.LoadWorldOptions()
                     {
                         OwnerId = Game.World.GetLocalUserId(),
+                        Filepath = selectedWorldEntry.Filepath,
                         WorldSaveData = selectedWorldEntry.SaveData,
                     };
 

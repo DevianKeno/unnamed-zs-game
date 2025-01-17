@@ -97,7 +97,7 @@ namespace UZSG.UI
             if (_isInitialized) return;
             _isInitialized = true;
             
-            Game.Console.Log("Initializing UI...");
+            Game.Console.LogInfo("Initializing UI...");
             InitializeUIPrefabs();
             InitializeIcons();
 
@@ -116,7 +116,7 @@ namespace UZSG.UI
 
         void InitializeUIPrefabs()
         {
-            Game.Console.Log("Loading UI Prefabs...");
+            Game.Console.LogInfo("Loading UI Prefabs...");
             foreach (GameObject element in Resources.LoadAll<GameObject>("Prefabs/UI"))
             {
                 prefabsDict[element.name] = element;
@@ -125,7 +125,7 @@ namespace UZSG.UI
 
         void InitializeIcons()
         {
-            Game.Console.Log("Loading Icons...");
+            Game.Console.LogInfo("Loading Icons...");
             foreach (var sprite in Resources.LoadAll<Sprite>("Textures/Icons"))
             {
                 _icons[sprite.name] = sprite;
@@ -194,7 +194,7 @@ namespace UZSG.UI
             {
                 return sprite;
             }
-            Game.Console.Warn($"There's no icon with an id of '{id}'");
+            Game.Console.LogWarn($"There's no icon with an id of '{id}'");
             return null;
         }
 
@@ -227,7 +227,7 @@ namespace UZSG.UI
             }
 
             var msg = $"UI Prefab '{prefabName}' does not exist.";
-            Game.Console.Log(msg);
+            Game.Console.LogInfo(msg);
             Debug.LogWarning(msg);
             return null;
         }
@@ -257,7 +257,7 @@ namespace UZSG.UI
             }
 
             var msg = $"Unable to create UI element, it does not exist";
-            Game.Console.Log(msg);
+            Game.Console.LogInfo(msg);
             Debug.LogWarning(msg);
             return default;
         }
@@ -283,7 +283,7 @@ namespace UZSG.UI
             }
 
             var msg = $"Unable to create UI element, it does not exist";
-            Game.Console.Log(msg);
+            Game.Console.LogInfo(msg);
             Debug.LogWarning(msg);
             return default;
         }

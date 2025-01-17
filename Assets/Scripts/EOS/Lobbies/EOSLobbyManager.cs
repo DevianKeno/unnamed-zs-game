@@ -813,12 +813,7 @@ namespace UZSG.EOS
             //    return;
             //}
 
-            if (createLobbyCallbackInfo.ResultCode != Result.Success)
-            {
-                Debug.LogFormat("Lobbies (OnCreateLobbyCompleted): error code: {0}", createLobbyCallbackInfo.ResultCode);
-                LobbyCreatedCallback?.Invoke(createLobbyCallbackInfo.ResultCode);
-            }
-            else
+            if (createLobbyCallbackInfo.ResultCode == Result.Success)
             {
                 Debug.Log("Lobbies (OnCreateLobbyCompleted): Lobby created.");
 
@@ -839,6 +834,11 @@ namespace UZSG.EOS
                 LobbyCreatedCallback?.Invoke(Result.Success);
 
                 OnCurrentLobbyChanged();
+            }
+            else
+            {
+                Debug.LogFormat("Lobbies (OnCreateLobbyCompleted): error code: {0}", createLobbyCallbackInfo.ResultCode);
+                LobbyCreatedCallback?.Invoke(createLobbyCallbackInfo.ResultCode);
             }
         }
 

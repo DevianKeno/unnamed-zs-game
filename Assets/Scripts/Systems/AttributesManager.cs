@@ -29,7 +29,7 @@ namespace UZSG.Systems
 
         void LoadResources()
         {
-            Game.Console.Log("Reading data: Attributes...");
+            Game.Console.LogInfo("Reading data: Attributes...");
             var attrs = Resources.LoadAll<AttributeData>("Data/Attributes");
             foreach (var attr in attrs)
             {
@@ -44,7 +44,7 @@ namespace UZSG.Systems
                 return _attrDict[id];
             }
 
-            Game.Console.Log($"Invalid Attribute Id '{id}'");
+            Game.Console.LogInfo($"Invalid Attribute Id '{id}'");
             return null;
         }
         
@@ -57,7 +57,7 @@ namespace UZSG.Systems
                 return true;
             }
 
-            Game.Console.Warn($"Invalid Attribute Id '{id}'");
+            Game.Console.LogWarn($"Invalid Attribute Id '{id}'");
             data = null;
             return false;
         }

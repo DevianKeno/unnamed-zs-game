@@ -10,7 +10,8 @@ using UZSG.Attributes;
 using UZSG.UI.Objects;
 using UZSG.Interactions;
 using UZSG.Saves;
-using UZSG.Worlds;
+using UZSG.Entities;
+using UZSG.Items;
 
 namespace UZSG.Objects
 {
@@ -25,14 +26,25 @@ namespace UZSG.Objects
         [SerializeField] protected Animator animator;
         public Animator Animator => animator;
 
-        public bool IsPlaced { get; protected set; } = false;
-        public bool IsDamageable { get; protected set; } = true;
-        public bool IsDirty { get; protected set; } = false;
+        public virtual bool IsPlaced { get; protected set; } = false;
+        public virtual bool IsDamageable { get; protected set; } = true;
+        public virtual bool IsDirty { get; protected set; } = false;
+        public virtual bool CanBePickedUp
+        {
+            get
+            {
+                if (this.attributes.TryGet("health", out var health))
+                {
+                    return health.IsFull && objectData.CanBePickedUp;
+                }
+                return objectData.CanBePickedUp;
+            }
+        }
         
         /// <summary>
         /// The transform position of this Object. 
         /// </summary>
-        public Vector3 Position
+        public virtual Vector3 Position
         {
             get { return transform.position; }
             set { transform.position = value; }
@@ -40,7 +52,7 @@ namespace UZSG.Objects
         /// <summary>
         /// The transform rotation of this Object. 
         /// </summary>
-        public Quaternion Rotation
+        public virtual Quaternion Rotation
         {
             get { return transform.rotation; }
             set { transform.rotation = value; }
@@ -48,7 +60,7 @@ namespace UZSG.Objects
         /// <summary>
         /// The local transform rotation of this Object. 
         /// </summary>
-        public Quaternion LocalRotation
+        public virtual Quaternion LocalRotation
         {
             get { return transform.localRotation; }
             set { transform.localRotation = value; }
@@ -78,9 +90,15 @@ namespace UZSG.Objects
             Initialize();
         }
 
-        public virtual void Deconstruct()
+        public virtual void Pickup(IInteractActor actor)
         {
-            
+            if (actor is Player player)
+            {
+                if (this.CanBePickedUp && player.Actions.PickUpItem(this.AsItem()))
+                {
+                    Destruct();
+                }
+            }
         }
 
         protected virtual void Initialize()
@@ -95,7 +113,7 @@ namespace UZSG.Objects
         {
             if (!guiAsset.IsSet())
             {
-                Game.Console.LogAndUnityLog($"There's no GUI set for Workstation '{objectData.Id}'. This won't be usable unless otherwise you set its GUI.");
+                Game.Console.LogWithUnity($"There's no GUI set for Workstation '{objectData.Id}'. This won't be usable unless otherwise you set its GUI.");
                 return;
             }
 
@@ -154,10 +172,24 @@ namespace UZSG.Objects
 
         #region Public methods
 
+        public virtual Item AsItem()
+        {
+            if (Game.Items.TryGetData(objectData.Id, out var itemData))
+            {
+                return new Item(itemData, 1);
+            }
+            else
+            {
+                Game.Console.LogWarn($"BaseObject/AsItem() Object '{objectData.Id}' does not have an Item counterpart.");
+                return Item.None;
+            }
+        }
+
         /// <summary>
-        /// Destroy this object.
+        /// <i>Destroys</i> this object in accordance with UZSG laws.
+        /// <c>Destruct</c> because <c>Destroy</c> is reserved for UnityEngine's method.
         /// </summary>
-        public virtual void Destroy(bool notify = true)
+        public virtual void Destruct(bool notify = true)
         {
             OnDestroy();
             if (notify) OnDestroyed?.Invoke(this);

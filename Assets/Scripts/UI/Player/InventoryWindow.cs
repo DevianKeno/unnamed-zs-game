@@ -77,7 +77,7 @@ namespace UZSG.UI.Players
         {
             if (player == null)
             {
-                Game.Console.LogAndUnityLog($"Invalid player.");
+                Game.Console.LogWithUnity($"Invalid player.");
                 return;
             }
             if (_isInitialized) return;
@@ -320,9 +320,12 @@ namespace UZSG.UI.Players
                         if (_selectedSlot.TryStack(heldItem, out var excess))
                         {
                             if (!excess.IsNone) HoldItem(excess);
-                        } else /// swap items
+                        }
+                        else /// swap items
                         {
-                            HoldItem(_selectedSlot.TakeAll());
+                            Item taken = _selectedSlot.TakeAll();
+                            var previousHeld = SwapHeldWith(taken);
+                            _selectedSlot.Put(previousHeld);
                         }
                     }
                     else /// swap items
@@ -356,9 +359,12 @@ namespace UZSG.UI.Players
                         if (_selectedSlot.TryStack(ofOne, out var excess))
                         {
                             if (!excess.IsNone) HoldItem(excess);
-                        } else
+                        } 
+                        else /// swap items
                         {
-                            _heldItem.Stack(ofOne);
+                            Item taken = _selectedSlot.TakeAll();
+                            var previousHeld = SwapHeldWith(taken);
+                            _selectedSlot.Put(previousHeld);
                         }
                     }
                 }

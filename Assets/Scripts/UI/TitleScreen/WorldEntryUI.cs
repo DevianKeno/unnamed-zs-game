@@ -12,6 +12,7 @@ namespace UZSG.UI.TitleScreen
     public class WorldEntryUI : UIElement, IPointerDownHandler
     {
         public WorldSaveData SaveData { get; set; }
+        public string Filepath { get; set; }
         public event Action<WorldEntryUI> OnClick;
         [SerializeField] TextMeshProUGUI nameTmp;
         [SerializeField] TextMeshProUGUI levelTmp;

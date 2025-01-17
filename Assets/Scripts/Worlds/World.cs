@@ -38,6 +38,7 @@ namespace UZSG.Worlds
         bool _isActive;
         bool _hasValidSaveData;
         string ownerId = "localhost";
+        internal string filepath;
         WorldSaveData _saveData;
         System.Diagnostics.Stopwatch _initializeTimer;
 
@@ -80,7 +81,7 @@ namespace UZSG.Worlds
 
             this.onInitializeCompleted += onInitializeCompleted;
 
-            Game.Console.Log($"[World]: Initializing world...");
+            Game.Console.LogInfo($"[World]: Initializing world...");
             _initializeTimer = new();
             _initializeTimer.Start();
 
@@ -90,7 +91,7 @@ namespace UZSG.Worlds
             ReadSaveData(saveData);
 
             _initializeTimer.Stop();
-            Game.Console.Log($"[World]: Done world loading took {_initializeTimer.ElapsedMilliseconds} ms");
+            Game.Console.LogInfo($"[World]: Done world loading took {_initializeTimer.ElapsedMilliseconds} ms");
             
             this.onInitializeCompleted?.Invoke();
             this.onInitializeCompleted = null;
@@ -155,7 +156,7 @@ namespace UZSG.Worlds
         
         void SaveObjects()
         {
-            Game.Console.Log("[World]: Saving objects...");
+            Game.Console.LogInfo("[World]: Saving objects...");
 
             var objectSaves = new List<ObjectSaveData>();
             foreach (Transform child in objectsContainer)
@@ -170,7 +171,7 @@ namespace UZSG.Worlds
         
         void LoadObjects()
         {
-            Game.Console.Log("[World]: Loading objects...");
+            Game.Console.LogInfo("[World]: Loading objects...");
             if (_saveData.Objects == null) return;
             
             foreach (var baseObject in _objectInstanceIds.Values)
@@ -184,7 +185,7 @@ namespace UZSG.Worlds
                 {
                     if (baseObject.ObjectData != null)
                     {
-                        Game.Console.Warn($"An error occured when loading object '{baseObject.ObjectData.Id}'!");
+                        Game.Console.LogWarn($"An error occured when loading object '{baseObject.ObjectData.Id}'!");
                     }
                     continue;
                 }
@@ -212,7 +213,7 @@ namespace UZSG.Worlds
 
         void SaveEntities()
         {
-            Game.Console.Log("[World]: Saving entities...");
+            Game.Console.LogInfo("[World]: Saving entities...");
 
             _saveData.PlayerSaves = new();
             _saveData.PlayerIdSaves = new();
@@ -229,7 +230,7 @@ namespace UZSG.Worlds
 
         void LoadEntities()
         {
-            Game.Console.Log("[World]: Loading entities...");
+            Game.Console.LogInfo("[World]: Loading entities...");
 
             if (_saveData.EntitySaves == null) return;
                         
@@ -244,7 +245,7 @@ namespace UZSG.Worlds
                 {
                     if (etty.EntityData != null)
                     {
-                        Game.Console.Warn($"An error occured when loading object '{etty.EntityData.Id}'!");
+                        Game.Console.LogWarn($"An error occured when loading object '{etty.EntityData.Id}'!");
                     }
                     continue;
                 }
@@ -363,7 +364,7 @@ namespace UZSG.Worlds
 
         void Cleanup()
         {
-            Game.Console.Log("[World]: Cleaning up...");
+            Game.Console.LogInfo("[World]: Cleaning up...");
 
             foreach (var c in _entityInstanceIds.Values)
             {
@@ -380,16 +381,37 @@ namespace UZSG.Worlds
         {
             eventsController.Deinitialize();     
         }
+        
+        /// <summary>
+        /// Joins a player to the world.
+        /// </summary>
+        public void JoinLocalPlayer()
+        {
+            Game.Entity.Spawn<Player>("player", ValidateWorldSpawn(_saveData.WorldSpawn), (info) =>
+            {
+                Player player = info.Entity;
+                var playerSaves = SaveData.FieldIsNull(_saveData.PlayerIdSaves) ? new() : _saveData.PlayerIdSaves;
+                if (playerSaves.TryGetValue("localplayer", out var playerSave))
+                {
+                    player.ReadSaveData(playerSave);
+                }
+                player.DisplayName = $"Player";
+                _playerEntities["localplayer"] = player;
+                OnPlayerJoined(player);
+            });
+
+            Game.Console.LogInfo($"[World]: Player has entered the world");
+        }
 
         /// <summary>
         /// Joins a player to the world.
         /// </summary>
         public void JoinPlayerId(UserInfoData id)
         {
-            Game.Entity.Spawn<Player>("player", ValidateWorldSpawn(_saveData.WorldSpawn), (info) =>
+            Game.Entity.Spawn<Player>("player", position: ValidateWorldSpawn(_saveData.WorldSpawn), (info) =>
             {
                 Player player = info.Entity;
-                var playerSaves = SaveData.FieldIsNull(_saveData.PlayerIdSaves) ? new() : _saveData.PlayerIdSaves;
+                var playerSaves = _saveData.PlayerIdSaves ?? new();
                 if (playerSaves.TryGetValue(id.UserId.ToString(), out var playerSave))
                 {
                     player.ReadSaveData(playerSave);
@@ -399,7 +421,7 @@ namespace UZSG.Worlds
                 OnPlayerJoined(player);
             });
 
-            Game.Console.Log($"[World]: {id.DisplayName} has entered the world");
+            Game.Console.LogInfo($"[World]: {id.DisplayName} has entered the world");
         }
 
         /// <summary>
@@ -417,7 +439,7 @@ namespace UZSG.Worlds
 
         public void SaveWorld()
         {
-            Game.Console.Log("[World]: Saving world...");
+            Game.Console.LogInfo("[World]: Saving world...");
 
             var time = UnityEngine.Time.time;
             var json = WriteSaveData();
@@ -429,7 +451,7 @@ namespace UZSG.Worlds
             File.WriteAllText(filepath, save);
 
             var elapsedTime = UnityEngine.Time.time - time; 
-            Game.Console.Log($"[World]: World saved. Took {elapsedTime:0.##} ms");
+            Game.Console.LogInfo($"[World]: World saved. Took {elapsedTime:0.##} ms");
             Debug.Log($"[World]: World saved to '{filepath}'");
         }
 
@@ -442,11 +464,11 @@ namespace UZSG.Worlds
         {
             if (_isActive)
             {
-                Game.Console.Log("[World]: Cannot load a World on top of an existing one.");
+                Game.Console.LogInfo("[World]: Cannot load a World on top of an existing one.");
                 return;
             }
             
-            Game.Console.Log("[World]: Loading world...");
+            Game.Console.LogInfo("[World]: Loading world...");
         }
 
         public void ExitWorld(bool save = true)
@@ -505,6 +527,11 @@ namespace UZSG.Worlds
             SaveEntities();
 
             return _saveData;
+        }
+
+        public string GetPath()
+        {
+            return filepath;
         }
 
         #endregion

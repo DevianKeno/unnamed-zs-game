@@ -56,11 +56,11 @@ namespace UZSG.Worlds.Events.Raid
 
             if (allDead)
             {
-                Game.Console.Log($"<color=#ad0909>Raid event ended. All enemies were slain</color>");
+                Game.Console.LogInfo($"<color=#ad0909>Raid event ended. All enemies were slain</color>");
             }
             else
             {
-                Game.Console.Log($"<color=#ad0909>Raid event ended. Not all enemies were slain</color>");
+                Game.Console.LogInfo($"<color=#ad0909>Raid event ended. Not all enemies were slain</color>");
             }
 
             raidInstance.OnEndEvent -= OnRaidEnd;
@@ -83,7 +83,7 @@ namespace UZSG.Worlds.Events.Raid
             }
             else
             {
-                Game.Console.Log($"<color=#ad0909>No player found.</color>");
+                Game.Console.LogInfo($"<color=#ad0909>No player found.</color>");
                 return null;
             }
         }
@@ -119,11 +119,11 @@ namespace UZSG.Worlds.Events.Raid
             switch (UnityEngine.Random.Range(0, 2))
             {
                 case 0:
-                    Game.Console.Log($"<color=#ad0909>Spawning blob formation.</color>");
+                    Game.Console.LogInfo($"<color=#ad0909>Spawning blob formation.</color>");
                     _raidFormation = RaidFormation.Blob;
                     break;
                 case 1:
-                    Game.Console.Log($"<color=#ad0909>Spawning line formation.</color>");
+                    Game.Console.LogInfo($"<color=#ad0909>Spawning line formation.</color>");
                     _raidFormation = RaidFormation.Line;
                     break;
             }
@@ -143,17 +143,17 @@ namespace UZSG.Worlds.Events.Raid
         {
             if (worldEvent == null || EventOngoing)
             {
-                Game.Console.Log($"<color=#ad0909>Event is null or ongoing.</color>");
+                Game.Console.LogInfo($"<color=#ad0909>Event is null or ongoing.</color>");
                 return;
             }
             
             if(Game.World.CurrentWorld.GetEntitiesById("player").Count == 0)
             {
-                Game.Console.Log($"<color=#ad0909>No player found.</color>");
+                Game.Console.LogInfo($"<color=#ad0909>No player found.</color>");
                 return;
             }
 
-            Game.Console.Log($"<color=#ad0909>Raid event started.</color>");
+            Game.Console.LogInfo($"<color=#ad0909>Raid event started.</color>");
             EventOngoing = true;
             List<RaidEventInstance> selectedEvents = new();
             foreach (object selectedEvent in worldEvent.SelectedEvents)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using TMPro;
 
@@ -13,7 +14,6 @@ using UZSG.Items;
 using UZSG.UI.HUD;
 using UZSG.Items.Weapons;
 using UZSG.Data;
-using UnityEngine.Serialization;
 
 namespace UZSG.UI.HUD
 {
@@ -44,7 +44,7 @@ namespace UZSG.UI.HUD
         {
             if (player == null)
             {
-                Game.Console.LogAndUnityLog($"Invalid player.");
+                Game.Console.LogWithUnity($"Invalid player.");
                 return;
             }
 
@@ -107,7 +107,7 @@ namespace UZSG.UI.HUD
             Player.InventoryWindow.FrameController.OnSwitchFrame += OnInvSwitchFrame;
             Player.InventoryWindow.OnOpened += () =>
             {
-                bool showEquipment = Player.InventoryWindow.FrameController.CurrentFrame.Name == "equipment";
+                bool showEquipment = Player.InventoryWindow.FrameController.CurrentFrame.DisplayName == "equipment";
                 equipment.gameObject.SetActive(showEquipment);
             };
             Player.InventoryWindow.OnClosed += () =>

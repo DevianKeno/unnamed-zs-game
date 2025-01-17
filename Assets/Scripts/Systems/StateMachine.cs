@@ -71,7 +71,7 @@ namespace UZSG.Systems
             }
             else
             {
-                Game.Console.LogAndUnityLog("InitialState is not set, StateMachine will not start with a valid state.");
+                Game.Console.LogWithUnity("InitialState is not set, StateMachine will not start with a valid state.");
             }
         }
 

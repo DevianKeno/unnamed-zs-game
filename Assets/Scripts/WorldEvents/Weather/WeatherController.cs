@@ -112,11 +112,11 @@ namespace UZSG.Worlds.Events.Weather
         {
             if (worldEvent == null || EventOngoing)
             {
-                Game.Console.Log($"<color=#ad0909>Event is null or ongoing.</color>");
+                Game.Console.LogInfo($"<color=#ad0909>Event is null or ongoing.</color>");
                 return;
             }
             
-            Game.Console.Log($"<color=#ad0909>Weather event started.</color>");
+            Game.Console.LogInfo($"<color=#ad0909>Weather event started.</color>");
             WeatherEventInstance selectedEvent = (WeatherEventInstance)worldEvent.SelectedEvents[0];
             print(selectedEvent.Name);
             EventOngoing = true;

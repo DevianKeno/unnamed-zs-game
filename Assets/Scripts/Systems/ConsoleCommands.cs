@@ -11,6 +11,7 @@ using UZSG.Items;
 using static UZSG.Systems.CommandPermissionLevel;
 using static UZSG.Systems.CommandLocationConstraint;
 using UZSG.UI.Players;
+using UZSG.TitleScreen;
 
 namespace UZSG.Systems
 {
@@ -72,7 +73,7 @@ namespace UZSG.Systems
         /// <summary>
         /// Create a new Console command.
         /// </summary>
-        Command CreateCommand(string command, string description = "")
+        Command CreateCommand(string command, string description = "", bool isDebugCommand = false)
         {
             string[] args = command.Split(" ");
 
@@ -80,7 +81,8 @@ namespace UZSG.Systems
             {
                 Name = args[0],
                 Syntax = command,
-                Description = description
+                Description = description,
+                IsDebugCommand = isDebugCommand,
             };
 
             string substr;
@@ -89,7 +91,7 @@ namespace UZSG.Systems
                 if (arg.Contains("|"))
                 {
                     /// Represents AND arguments
-                    /// Currently unhandled logic
+                    /// TODO: Currently unhandled logic
                     string[] split = arg.Split("|");
                 }
 
@@ -117,7 +119,7 @@ namespace UZSG.Systems
 
         void InitializeCommands()
         {
-            Log("Initializing console command registry...");
+            LogInfo("Initializing console command registry...");
 
             /// Arguments enclosed in <> are required, [] are optional
             
@@ -150,12 +152,13 @@ namespace UZSG.Systems
                           .OnInvoke += CCreative;
 
             CreateCommand("freecam",
-                          "Toggle Free Look Camera.")
+                          "Toggle Free Look Camera.",
+                          isDebugCommand: true)
                           .OnInvoke += CFreecam;
 
-            /// TODO: for debugging purposes only
             CreateCommand("craft <item_id>",
-                          "Crafts item given the item_id")
+                          "Crafts item given the item_id",
+                          isDebugCommand: true)
                           .OnInvoke += CCraft;
 
             CreateCommand("entity <query> <id>",
@@ -169,6 +172,11 @@ namespace UZSG.Systems
             CreateCommand("help",
                           "Prints help message.")
                           .OnInvoke += CHelp;
+
+            CreateCommand("host",
+                          "Host a lobby.",
+                          isDebugCommand: true)
+                          .OnInvoke += CHost;
 
             CreateCommand("say <message>",
                           "Send a message.")
@@ -187,22 +195,17 @@ namespace UZSG.Systems
                           .OnInvoke += CTick;
                           
             CreateCommand("time <set> <value>",
-                          "")
+                          "Set the in-game time.")
                           .OnInvoke += CTime;
             
-            /// TODO: for debugging purposes only
             CreateCommand("wbcraft <item_id>",
-                        "Crafts item if player is interacting with workbench")
-                        .OnInvoke += CWbcraft;
+                          "Crafts item if player is interacting with workbench",
+                          isDebugCommand: true)
+                          .OnInvoke += CWbcraft;
 
             CreateCommand("world <create|load|save> <world_name>",
-                          "")
+                          "World commmands.")
                           .OnInvoke += CWorld;
-
-            // /spawn item "bandage" 1
-
-            // CreateCommand("tick <freeze|set> <value>",
-            //               "Control the game's tick rate.").AddCallback(Command_Tick);
         }
 
 
@@ -241,7 +244,7 @@ namespace UZSG.Systems
             {
                 _creativeIsOn = false;
                 creativeWindow.Destroy();
-                Log($"Disabled creative menu.");
+                LogInfo($"Disabled creative menu.");
             }
             else
             {
@@ -250,7 +253,7 @@ namespace UZSG.Systems
                 creativeWindow = Game.UI.Create<CreativeWindow>("Creative Window");
                 creativeWindow.Initialize(localPlayer);
                 localPlayer.InventoryWindow.Append(creativeWindow);
-                Log($"Enabled creative menu.");
+                LogInfo($"Enabled creative menu.");
             }
 
             // }
@@ -290,11 +293,11 @@ namespace UZSG.Systems
                         msg += $"'{etty.Id}':[{etty.GetInstanceID()}], ";
                     }
 
-                    Game.Console.Log(msg);
+                    Game.Console.LogInfo(msg);
                 }
                 else
                 {
-                    Game.Console.Log($"'{id}' is not a valid entity Id");
+                    Game.Console.LogInfo($"'{id}' is not a valid entity Id");
                 }
             }
             else if (args[0] == "select" || args[0] == "s")
@@ -338,7 +341,7 @@ namespace UZSG.Systems
                 if (target == "me") /// target self
                 {
                     localPlayer.Inventory.Bag.TryPutNearest(newItem);
-                    Game.Console.Log($"Given {localPlayer.name} {count} of '{id}'");
+                    Game.Console.LogInfo($"Given {localPlayer.name} {count} of '{id}'");
                 }
                 else /// target player Id
                 {
@@ -366,16 +369,27 @@ namespace UZSG.Systems
             {
                 if (int.TryParse(args[1], out int page))
                 {
-                    Log($"Showing page {page}");
+                    LogInfo($"Showing page {page}");
                 }
                 else
                 {
-                    Log($"Usage: " + _commandsDict[args[1]].Syntax);
-                    Log(_commandsDict[args[1]].Description);
+                    LogInfo($"Usage: " + _commandsDict[args[1]].Syntax);
+                    LogInfo(_commandsDict[args[1]].Description);
                 }
             }
         }
         
+        /// <summary>
+        /// Prints a message to the console.
+        /// </summary>
+        void CHost(object sender, string[] args)
+        {
+            if (Game.Main.CurrentScene.name != "TitleScreen") return;
+
+            var handler = FindAnyObjectByType<HostWorldHandler>();
+            handler.CreateLobby();
+        }
+
         /// <summary>
         /// Prints a message to the console.
         /// </summary>
@@ -437,7 +451,7 @@ namespace UZSG.Systems
                 }
                 else
                 {
-                    Game.Console.Log("TPS must be a positive integer value.");
+                    Game.Console.LogInfo("TPS must be a positive integer value.");
                 }
             }
         }
@@ -452,7 +466,7 @@ namespace UZSG.Systems
                 }
                 else
                 {
-                    Game.Console.Log("Time must be a positive integer value.");
+                    Game.Console.LogInfo("Time must be a positive integer value.");
                 }
             }
         }

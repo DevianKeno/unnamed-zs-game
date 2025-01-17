@@ -91,11 +91,11 @@ namespace UZSG.Worlds.Events
         {
             if(eventData.ChanceToOccur < UnityEngine.Random.Range(1, 100))
             {
-                Game.Console.Log($"<color=#34d5eb>Event did not occur.</color>");
+                Game.Console.LogInfo($"<color=#34d5eb>Event did not occur.</color>");
                 return null;
             }
 
-            Game.Console.Log($"<color=#34d5eb>Event of type {eventData.Type} occured.</color>");
+            Game.Console.LogInfo($"<color=#34d5eb>Event of type {eventData.Type} occured.</color>");
             
             WorldEvent worldEvent = new()
             {

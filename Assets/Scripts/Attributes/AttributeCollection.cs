@@ -87,7 +87,7 @@ namespace UZSG.Attributes
             {
                 if (_attrsDict.TryGetValue(attr.Id, out var xattr))
                 {
-                    Game.Console.Warn($"Duplicate attribute found '{attr.Id}', disregarding...?");
+                    Game.Console.LogWarn($"Duplicate attribute found '{attr.Id}', disregarding...?");
                     continue;
                 }
 

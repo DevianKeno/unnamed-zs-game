@@ -250,8 +250,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 035203bfb8dab6240951a6ede70b12f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Id: maps
-  Name: maps
+  id: maps
+  displayName: maps
   rect: {fileID: 12521209}
 --- !u!114 &12521212
 MonoBehaviour:
@@ -1302,16 +1302,16 @@ MonoBehaviour:
   m_Vertical: 1
   m_MovementType: 2
   m_Elasticity: 0.1
-  m_Inertia: 1
+  m_Inertia: 0
   m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 1
+  m_ScrollSensitivity: 4
   m_Viewport: {fileID: 975182787}
   m_HorizontalScrollbar: {fileID: 0}
   m_VerticalScrollbar: {fileID: 1289024480}
   m_HorizontalScrollbarVisibility: 2
   m_VerticalScrollbarVisibility: 2
   m_HorizontalScrollbarSpacing: -3
-  m_VerticalScrollbarSpacing: -3
+  m_VerticalScrollbarSpacing: 0
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -1328,7 +1328,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.08627451, g: 0.5176471, b: 0.8117647, a: 0.007843138}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.007843138}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -5307,8 +5307,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 035203bfb8dab6240951a6ede70b12f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Id: gameplay
-  Name: gameplay
+  id: gameplay
+  displayName: gameplay
   rect: {fileID: 594053531}
 --- !u!1 &595047206
 GameObject:
@@ -5606,8 +5606,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 035203bfb8dab6240951a6ede70b12f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Id: world
-  Name: world
+  id: world
+  displayName: world
   rect: {fileID: 623982203}
 --- !u!1001 &637167453
 PrefabInstance:
@@ -5985,8 +5985,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 035203bfb8dab6240951a6ede70b12f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Id: mp
-  Name: mp
+  id: mp
+  displayName: Multiplayer
   rect: {fileID: 685390645}
 --- !u!1 &691278185
 GameObject:
@@ -8574,8 +8574,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10917, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 0}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -9459,8 +9459,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 035203bfb8dab6240951a6ede70b12f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Id: mp
-  Name: mp
+  id: mp
+  displayName: mp
   rect: {fileID: 1030248343}
 --- !u!114 &1030248342
 MonoBehaviour:
@@ -9739,8 +9739,8 @@ RectTransform:
   - {fileID: 2062219343}
   - {fileID: 685390645}
   - {fileID: 1374812743}
-  - {fileID: 1210157486}
   - {fileID: 1289829250}
+  - {fileID: 1210157486}
   - {fileID: 1949702180}
   m_Father: {fileID: 530178307}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -10607,8 +10607,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 035203bfb8dab6240951a6ede70b12f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Id: join
-  Name: join
+  id: join
+  displayName: Join world
   rect: {fileID: 1210157486}
 --- !u!114 &1210157488
 MonoBehaviour:
@@ -10622,6 +10622,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9f2111f872e2e94ab952cf6f5d967e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  parentFrameController: {fileID: 1055205694}
+  frame: {fileID: 1210157487}
   lobbyContainer: {fileID: 1709525326}
   searchField: {fileID: 1015109600}
   refreshBtn: {fileID: 1977166818}
@@ -10757,8 +10759,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 035203bfb8dab6240951a6ede70b12f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Id: world
-  Name: world
+  id: world
+  displayName: world
   rect: {fileID: 1237856916}
 --- !u!114 &1237856918
 MonoBehaviour:
@@ -11343,8 +11345,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -6, y: -5.9999847}
-  m_SizeDelta: {x: 20, y: -12}
+  m_AnchoredPosition: {x: -4, y: -6}
+  m_SizeDelta: {x: 16, y: -12}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &1289024480
 MonoBehaviour:
@@ -11490,8 +11492,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 035203bfb8dab6240951a6ede70b12f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Id: worlds
-  Name: worlds
+  id: worlds
+  displayName: Worlds
   rect: {fileID: 1289829250}
 --- !u!114 &1289829253
 MonoBehaviour:
@@ -11506,6 +11508,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parentFrameController: {fileID: 1055205694}
+  frame: {fileID: 1289829252}
   playBtn: {fileID: 820267513}
   deleteBtn: {fileID: 56915085}
   entryContainer: {fileID: 970086906}
@@ -12103,8 +12106,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 035203bfb8dab6240951a6ede70b12f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Id: host_world
-  Name: host_world
+  id: host_world
+  displayName: Host world
   rect: {fileID: 1374812743}
 --- !u!114 &1374812745
 MonoBehaviour:
@@ -13868,8 +13871,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 035203bfb8dab6240951a6ede70b12f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Id: gameplay
-  Name: gameplay
+  id: gameplay
+  displayName: gameplay
   rect: {fileID: 1604420980}
 --- !u!114 &1604420979
 MonoBehaviour:
@@ -14379,8 +14382,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 035203bfb8dab6240951a6ede70b12f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Id: mp
-  Name: mp
+  id: mp
+  displayName: mp
   rect: {fileID: 1643147166}
 --- !u!1001 &1657484333
 PrefabInstance:
@@ -14651,8 +14654,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1709525327}
-  - component: {fileID: 1709525329}
-  - component: {fileID: 1709525328}
   - component: {fileID: 1709525331}
   - component: {fileID: 1709525330}
   m_Layer: 5
@@ -14681,44 +14682,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 1}
---- !u!114 &1709525328
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1709525326}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 0.08627451, g: 0.5176471, b: 0.8117647, a: 0.007843138}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: ad884f76612ab06498722afe7c21f2cf, type: 3}
-  m_Type: 1
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 8
---- !u!222 &1709525329
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1709525326}
-  m_CullTransparentMesh: 1
 --- !u!114 &1709525330
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16434,8 +16397,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 035203bfb8dab6240951a6ede70b12f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Id: home
-  Name: home
+  id: home
+  displayName: Home
   rect: {fileID: 1949702180}
 --- !u!1 &1952443960
 GameObject:
@@ -17386,7 +17349,7 @@ GameObject:
   - component: {fileID: 2062219344}
   - component: {fileID: 2062219345}
   m_Layer: 5
-  m_Name: New World (Frame)
+  m_Name: Create world (Frame)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -17429,8 +17392,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 035203bfb8dab6240951a6ede70b12f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Id: new_world
-  Name: new_world
+  id: new_world
+  displayName: Create world
   rect: {fileID: 2062219343}
 --- !u!114 &2062219345
 MonoBehaviour:

@@ -21,7 +21,7 @@ namespace UZSG.Perks
         {
             if (_perksDict.ContainsKey(perk.PerkData.Id))
             {
-                Game.Console.Log($"Perk {perk.PerkData.Id} already exists within the Perk Collection.");
+                Game.Console.LogInfo($"Perk {perk.PerkData.Id} already exists within the Perk Collection.");
                 return;
             }
 

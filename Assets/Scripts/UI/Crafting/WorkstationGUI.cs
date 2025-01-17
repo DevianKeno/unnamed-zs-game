@@ -16,6 +16,7 @@ using UZSG.Objects;
 using UZSG.UI.Objects;
 
 using static UZSG.Crafting.CraftingRoutineStatus;
+using UZSG.TitleScreen;
 
 namespace UZSG.UI.Objects
 {
@@ -67,12 +68,14 @@ namespace UZSG.UI.Objects
         [SerializeField] protected Transform progressContainer;
         [SerializeField] protected Transform outputSlotsHolder;
         [SerializeField] protected TMP_InputField craftAmountInputField;
+        [SerializeField] protected TMP_InputField searchField;
         [SerializeField] protected Button craftButton;
 
         protected override void Awake()
         {
             craftButton.onClick.AddListener(RequestCraftItem);
             craftAmountInputField.onEndEdit.AddListener(UpdateAmountToCraft);
+            searchField.onValueChanged.AddListener(SearchRecipe);
         }
 
         /// <summary>
@@ -239,6 +242,47 @@ namespace UZSG.UI.Objects
             {
                 //
             }
+        }
+
+
+        public void SearchRecipe(String query)
+        {
+            ClearCraftableItems();
+
+            if (query == "")
+            {
+                AddRecipes(workstation.WorkstationData.IncludedRecipes);
+                return;
+            }
+            List<RecipeData> queriedRecipes = new();
+
+            foreach (var recipe in workstation.WorkstationData.IncludedRecipes)
+            {
+                //KMP Algorithm
+                int queryItr = 0;
+                foreach(char a in recipe.Name)
+                {
+                    
+                    if (Char.ToLower(a) != Char.ToLower(query[queryItr]))
+                    {
+                        queryItr = -1;
+                    }
+                    if (queryItr == query.Length - 1)
+                    {
+                        queriedRecipes.Add(recipe);
+                        break;
+                    }
+                    queryItr++;
+                }
+            }
+
+            if (queriedRecipes.Count < 1)
+            {
+                return;
+            }
+
+            AddRecipes(queriedRecipes);
+            return;
         }
 
         public void FilterRecipe(String type)

@@ -17,6 +17,7 @@ using UZSG.Entities;
 
 using static UnityEngine.EventSystems.PointerEventData.InputButton;
 using Unity.VisualScripting;
+using System.Linq;
 
 namespace UZSG.UI.Players
 {
@@ -126,20 +127,21 @@ namespace UZSG.UI.Players
 
         void OnSearchFieldInput(string text)
         {
+            ClearAllSlots();
+            _index = 0;
             if (string.IsNullOrEmpty(text) || string.IsNullOrWhiteSpace(text))
             {
-                ClearAllSlots();
                 ResetToAllItems();
                 return;
             }
 
             if (!_allowSearch) return;
 
-            if (!useExactMatch)
-            {
-                Timing.KillCoroutines(delayedSearchCoroutineHandle);
-                delayedSearchCoroutineHandle = Timing.RunCoroutine(DelayedSearchTimer());
-            }
+            // if (!useExactMatch)
+            // {
+            //     Timing.KillCoroutines(delayedSearchCoroutineHandle);
+            //     delayedSearchCoroutineHandle = Timing.RunCoroutine(DelayedSearchTimer());
+            // }
 
             text = text.Replace(' ', '_');
             if (useExactMatch)
@@ -155,7 +157,33 @@ namespace UZSG.UI.Players
             }
             else
             {
-                // var results = _loadedItemsOfType
+                List<ItemData> queriedItems = new();
+
+                foreach (ItemType type in Enum.GetValues(typeof(ItemType)))
+                {
+                    if (!_loadedItemsOfType.TryGetValue(type, out var itemDataList)) return;
+
+                    foreach (ItemData itemData in itemDataList)
+                    {
+                        int queryItr = 0;
+                        foreach(char a in itemData.name)
+                        {
+                            
+                            if (Char.ToLower(a) != Char.ToLower(text[queryItr]))
+                            {
+                                queryItr = -1;
+                            }
+                            if (queryItr == text.Length - 1)
+                            {
+                                AddItem(itemData, _index);
+                                break;
+                            }
+                            queryItr++;
+                        }
+                        
+                        _index++;
+                    }
+                }
             }
         }
 

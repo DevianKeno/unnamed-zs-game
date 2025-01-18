@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace UZSG
 {
     public static class Vector3Ext
@@ -60,7 +58,7 @@ namespace UZSG
             return false;
         }
 
-        public static bool Includes(this LayerMask layerMask, int layer)
+        public static bool Includes(this UnityEngine.LayerMask layerMask, int layer)
         {
             return (layerMask.value & (1 << layer)) != 0;
         }

@@ -33,7 +33,7 @@ namespace UZSG.Entities
         /// <summary>
         /// The transform position of this Entity. 
         /// </summary>
-        public Vector3 Position
+        public virtual Vector3 Position
         {
             get { return transform.position; }
             set { transform.position = value; }
@@ -41,7 +41,7 @@ namespace UZSG.Entities
         /// <summary>
         /// The transform rotation of this Entity. 
         /// </summary>
-        public Quaternion Rotation
+        public virtual Quaternion Rotation
         {
             get { return transform.rotation; }
             set { transform.rotation = value; }
@@ -73,7 +73,7 @@ namespace UZSG.Entities
 
         protected virtual void LoadDefaultSaveData<T>() where T : EntitySaveData
         {
-            saveData = entityData.GetDefaultSaveData<T>();
+            this.saveData = entityData.GetDefaultSaveData<T>();
         }
 
         /// <summary>
@@ -108,48 +108,22 @@ namespace UZSG.Entities
                 Id = entityData.Id,
                 Transform = new()
                 {
-                    Position = new System.Numerics.Vector3(
-                        transform.position.x,
-                        transform.position.y,
-                        transform.position.z
-                    ),
-                    Rotation = new System.Numerics.Quaternion(
-                        transform.rotation.x,
-                        transform.rotation.y,
-                        transform.rotation.z,
-                        transform.rotation.w
-                    ),
-                    LocalScale = new System.Numerics.Vector3(
-                        transform.localScale.x,
-                        transform.localScale.y,
-                        transform.localScale.z
-                    )
+                    Position = Utils.FromUnityVec3(transform.position),
+                    Rotation = Utils.FromUnityVec3(transform.rotation.eulerAngles),
+                    LocalScale = Utils.FromUnityVec3(transform.localScale),
                 }
             };
 
             return saveData;
         }
         
-        void ReadTransformSaveData(TransformSaveData data)
+        protected virtual void ReadTransformSaveData(TransformSaveData data)
         {
-            var position = new Vector3(
-                data.Position.X,
-                data.Position.Y,
-                data.Position.Z
-            );
-            var rotation = new Quaternion(
-                data.Rotation.X,
-                data.Rotation.Y,
-                data.Rotation.Z,
-                data.Rotation.W
-            );
-            var scale = new Vector3(
-                data.LocalScale.X,
-                data.LocalScale.Y,
-                data.LocalScale.Z
-            );
-            transform.SetPositionAndRotation(position, rotation);
-            transform.localScale = scale;
+            var position = Utils.FromNumericVec3(data.Position);
+            var rotation = Utils.FromNumericVec3(data.Rotation);
+            // var scale = Utils.FromNumericVec3(data.LocalScale);
+            transform.SetPositionAndRotation(position, Quaternion.Euler(rotation));
+            // transform.localScale = scale;
         }
 
 

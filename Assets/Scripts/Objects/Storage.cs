@@ -111,7 +111,8 @@ namespace UZSG.Objects
 
         public void ReadSaveData(StorageObjectSaveData saveData)
         {
-            
+            this.container = new(StorageData.Size);
+            this.container.ReadSaveData(saveData.Slots);
         }
 
         public override ObjectSaveData WriteSaveData()

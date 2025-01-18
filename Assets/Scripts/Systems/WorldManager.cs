@@ -270,18 +270,24 @@ namespace UZSG.Systems
 
         void JoinPlayer()
         {
-            if (Game.Main.IsOnline)
+            try
             {
-                var userId = Game.EOS.GetProductUserId();
-                if (userId != null || userId.IsValid())
+                if (Game.Main.IsOnline)
                 {
-                    var loginStatus =  Game.EOS.GetEOSConnectInterface().GetLoginStatus(userId);
-                    if (loginStatus == Epic.OnlineServices.LoginStatus.LoggedIn)
+                    var userId = Game.EOS.GetProductUserId();
+                    if (userId != null || userId.IsValid())
                     {
-                        Game.World.CurrentWorld.JoinPlayerId(EOSSubManagers.UserInfo.GetLocalUserInfo());
-                        return;
+                        var loginStatus =  Game.EOS.GetEOSConnectInterface().GetLoginStatus(userId);
+                        if (loginStatus == Epic.OnlineServices.LoginStatus.LoggedIn)
+                        {
+                            Game.World.CurrentWorld.JoinPlayerId(EOSSubManagers.UserInfo.GetLocalUserInfo());
+                            return;
+                        }
                     }
                 }
+            }
+            catch (Exception)
+            {
             }
 
             /// Fallback to local player
@@ -292,9 +298,13 @@ namespace UZSG.Systems
         {
             if (!IsInWorld) return;
 
-            pauseMenuWindow.Hide();
-
             Game.Console.LogInfo("[World]: Exiting world...");
+            pauseMenuWindow.Hide();
+            
+            /// TODO: file size too big
+            // var screenshotPath = Path.Join(CurrentWorld.worldpath, "world.png");
+            // ScreenCapture.CaptureScreenshot(screenshotPath, );
+
             var loadOptions = new Game.LoadSceneOptions()
             {
                 SceneToLoad = "LoadingScreen",

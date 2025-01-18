@@ -49,6 +49,8 @@ namespace UZSG.Players
         [SerializeField] bool _canCoyote;
         [SerializeField] float _fallSpeedAcceleration = 2f;
         [SerializeField] float _targetMoveSpeed;
+        
+        bool _enable = false;
         /// <summary>
         /// The velocity to be applied for the current frame.
         /// </summary>
@@ -182,21 +184,20 @@ namespace UZSG.Players
         void Awake()
         {
             Player = GetComponent<Player>();
+            Player.OnDoneInit += OnDoneInit;
         }
-        
+
+        void OnDoneInit(Player player)
+        {
+            Player.OnDoneInit -= OnDoneInit;
+            _enable = true;
+        }
+
         internal void Initialize()
         {
             InitializeInputs();
             
             Game.World.OnExitWorld += Deinitialize;
-            Game.Console.Gui.OnOpened += () =>
-            {
-                Disable();
-            };
-            Game.Console.Gui.OnClosed += () =>
-            {
-                Enable();
-            };
             
             RetrieveAttributes();
         }
@@ -264,6 +265,8 @@ namespace UZSG.Players
 
         void FixedUpdate()
         {
+            if (!_enable) return;
+
             HandleDirection();
             HandleTurning();
             HandleRotation();

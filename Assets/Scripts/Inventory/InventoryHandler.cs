@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UZSG.Data;
 using UZSG.Entities;
 using UZSG.Items;
@@ -19,10 +20,9 @@ namespace UZSG.Inventory
 
     public class InventoryHandler : MonoBehaviour, ISaveDataReadWrite<InventorySaveData>
     {
-        public Player Player;
+        public Player Player { get; private set; }
         [Space]
-
-        public float ThrowForce;
+        [SerializeField, FormerlySerializedAs("ThrowForce")] float throwForce;
 
         Container _bag;
         /// <summary>
@@ -39,7 +39,6 @@ namespace UZSG.Inventory
         /// Container for weapons and equipment.
         /// </summary>
         public Equipment Equipment => _equipment;
-
         public bool IsFull
         {
             get
@@ -60,49 +59,40 @@ namespace UZSG.Inventory
             }
         }
 
-        public void Initialize()
+        internal void Initialize(Player player)
+        {
+            this.Player = player;
+        }
+
+        public void ReadSaveData(InventorySaveData saveData)
         {
             var bagSlotCount = Mathf.FloorToInt(Player.Attributes.Get("bag_slots_count").Value);
             _bag = new(bagSlotCount);
-            // _bag.OnExcessItem += OnBagExcessItem;
+            _bag.ReadSaveData(saveData.Bag);
 
             var hotbarSlotCount = Mathf.FloorToInt(Player.Attributes.Get("hotbar_slots_count").Value);
             _hotbar = new(hotbarSlotCount);
+            _hotbar.ReadSaveData(saveData.Hotbar);
             
             /// special treatment
             _equipment = new();
+            _equipment.ReadSaveData(saveData.Equipment);
         }
 
-        void OnBagExcessItem(Item excess)
+        public InventorySaveData WriteSaveData()
         {
-            if (excess.IsNone) return;
+            var saveData = new InventorySaveData()
+            {
+                Bag = Bag.WriteSaveData(),
+                Hotbar = Hotbar.WriteSaveData(),
+                Equipment = Equipment.WriteSaveData(),
+            };
 
-            DropItem(excess);
+            return saveData;
         }
 
-        void InitializeGUI()
-        {
 
-        }
-
-        public void SelectHotbarSlot(int index)
-        {            
-            if (index < 0 || index > Hotbar.SlotCount) return;
-            
-            /// update ui if any 
-        }
-
-        public bool TryPutHotbar(Item item, out HotbarIndex putOnIndex)
-        {
-            // if (Hotbar.TryPutNearest(item, out var slot))
-            // {
-            //     putOnIndex = (HotbarIndex) slot.Index;
-            //     return true;
-            // }
-
-            putOnIndex = default;
-            return false;
-        }
+        #region Public methods
 
         /// <summary>
         /// Drops item on the ground.
@@ -116,7 +106,7 @@ namespace UZSG.Inventory
             {
                 info.Entity.Item = item;
                 var throwDirection = Player.Forward + Vector3.up;
-                info.Entity.Throw(throwDirection, ThrowForce);
+                info.Entity.Throw(throwDirection, throwForce);
             });
         }
 
@@ -133,7 +123,7 @@ namespace UZSG.Inventory
                 Game.Entity.Spawn<ItemEntity>("item", position, callback: (info) =>
                 {
                     info.Entity.Item = slot.TakeAll();
-                    var throwForce = (Player.Forward + Vector3.up) * ThrowForce;
+                    var throwForce = (Player.Forward + Vector3.up) * this.throwForce;
                     info.Entity.Rigidbody.AddForce(throwForce, ForceMode.Impulse);
                 });
             }
@@ -152,26 +142,9 @@ namespace UZSG.Inventory
             
             return null;
         }
-
-        public void ReadSaveData(InventorySaveData data)
-        {
-            Bag.ReadSaveData(data.Bag);
-            Hotbar.ReadSaveData(data.Hotbar);
-            Equipment.ReadSaveData(data.Equipment);
-        }
-
-        public InventorySaveData WriteSaveData()
-        {
-            var saveData = new InventorySaveData()
-            {
-                Bag = Bag.WriteSaveData(),
-                Hotbar = Hotbar.WriteSaveData(),
-                Equipment = Equipment.WriteSaveData(),
-            };
-
-            return saveData;
-        }
-
+        
+        #endregion
+        
 
         #region Debugging
 

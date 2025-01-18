@@ -107,8 +107,8 @@ namespace UZSG.Building
         {
             player.Actions.OnInteract += OnPlayerInteract;
             player.FPP.OnHeldItemChanged += OnHeldItemChanged;
-            Game.UI.OnWindowOpened += OnWindowOpened;
-            Game.UI.OnWindowClosed += OnWindowClosed;
+            Game.UI.OnAnyWindowOpened += OnWindowOpened;
+            Game.UI.OnAnyWindowClosed += OnWindowClosed;
             Game.World.CurrentWorld.OnPause += OnPause;
             Game.World.CurrentWorld.OnUnpause += OnUnpause;
         }
@@ -121,8 +121,8 @@ namespace UZSG.Building
 
         void OnDestroy()
         {
-            Game.UI.OnWindowOpened -= OnWindowOpened;
-            Game.UI.OnWindowClosed -= OnWindowClosed;
+            Game.UI.OnAnyWindowOpened -= OnWindowOpened;
+            Game.UI.OnAnyWindowClosed -= OnWindowClosed;
         }
 
         #endregion

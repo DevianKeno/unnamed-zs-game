@@ -62,8 +62,7 @@ namespace UZSG.UI.Objects
                 var slotUI = Game.UI.Create<ItemSlotUI>("Item Slot");
                 slotUI.name = $"Output Slot ({i})";
                 slotUI.transform.SetParent(slotsHolder);
-                slotUI.Index = i;
-
+                // slotUI.Index = i;
                 slotUI.Link(storage.Container[i]);
                 slotUI.OnMouseDown += OnSlotClick;
                 slotUI.OnHoverStart += OnSlotHoverStart;

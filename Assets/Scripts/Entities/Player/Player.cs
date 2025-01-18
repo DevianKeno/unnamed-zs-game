@@ -20,7 +20,6 @@ using UZSG.Saves;
 using UZSG.UI.Objects;
 using UZSG.UI;
 using UZSG.Building;
-using UZSG.Items;
 using UZSG.Data;
 
 using static UZSG.Players.MoveStates;
@@ -28,12 +27,12 @@ using static UZSG.Players.MoveStates;
 namespace UZSG.Entities
 {
     /// <summary>
-    /// Player entity.
+    /// Player entity. (client)
     /// </summary>
     public partial class Player : Entity, IPlayer
     {
         public UserInfoData UserInfo { get; set; }
-        public string DisplayName = "Player";
+        public string DisplayName => this.UserInfo.DisplayName ?? "Player";
         public bool CanPickUpItems = true;
 
         public PlayerEntityData PlayerEntityData => (PlayerEntityData) entityData;
@@ -59,6 +58,7 @@ namespace UZSG.Entities
         [SerializeField] EntityHitboxController hitboxes;
         public EntityHitboxController Hitboxes => hitboxes;
         
+        bool _isInitialized = false;
         /// <summary>
         /// List of UI elements that are attached to the Player.
         /// </summary>
@@ -118,7 +118,7 @@ namespace UZSG.Entities
 
         #region Events
 
-        public event EventHandler<EventArgs> OnDoneInit;
+        public event Action<Player> OnDoneInit;
 
         #endregion
 
@@ -150,30 +150,38 @@ namespace UZSG.Entities
 
         public override void OnSpawn()
         {
-            LoadDefaultSaveData<PlayerSaveData>();
-            ReadSaveData((PlayerSaveData) saveData);
-
-            Initialize();
+            // Game.Console.LogInfo("I, player, has been spawned!");
+            audioController.CreateAudioPool(8);
+            audioController.LoadAudioAssetsData(PlayerEntityData.AudioAssetsData); /// TODO: should be global player sounds only
         }
 
-        void Initialize()
+        public void Initialize(PlayerSaveData saveData = null)
         {
-            Game.Console.LogInfo("I, player, has been spawned!");
-
-            audioController.CreateAudioPool(8);
-            audioController.LoadAudioAssetsData(PlayerEntityData.AudioAssetsData);
-
-            InitializeEvents();
-            InitializeAttributes();
+            if (_isInitialized) return;
+            
+            /// Data handle
+            if (saveData == null)
+            {
+                LoadDefaultSaveData<PlayerSaveData>();
+            }
+            else
+            {
+                this.saveData = saveData;
+            }
+            this.ReadSaveData(this.saveData as PlayerSaveData);
+            
+            /// Components handle (order important)
+            InitializeAttributeEvents();
             InitializeStateMachines();
             InitializeHitboxes();
             InitializeAnimator();
-            InitializeInventory();
-            InitializeCrafter();
+            InitializeInventoryUIs();
+            InitializeCrafter();     /// TODO: SAVEABLE
             InitializeBuilding();
-            InitializeHUD();
+            InitializeHUDs();
+            InitializeEvents();
             InitializeInputs();
-            
+
             Controls.Initialize();
             Controls.Enable();
             Actions.Initialize();
@@ -186,31 +194,31 @@ namespace UZSG.Entities
             };
             ParentMainCameraToFPPController();
 
-            Game.Tick.OnTick += Tick;
-            OnDoneInit?.Invoke(this, new());
+            this.Rigidbody.isKinematic = false;
+            Game.Tick.OnTick += OnTick;
+            _isInitialized = true;
+            OnDoneInit?.Invoke(this);
+        }
+
+        void InitializeInventory()
+        {
+            inventory.Initialize(this);
         }
 
         void InitializeEvents()
         {
-            Game.Console.Gui.OnOpened += OnConsoleGuiOpened;
-            Game.Console.Gui.OnClosed += OnConsoleGuiClosed;
-
             Game.World.OnExitWorld += OnExitWorld;
             Game.World.CurrentWorld.OnPause += OnPause;
             Game.World.CurrentWorld.OnUnpause += OnUnpause;
+
+            Game.Console.Gui.OnOpened += OnConsoleGuiOpened;
+            Game.Console.Gui.OnClosed += OnConsoleGuiClosed;
+
+            Game.UI.OnAnyWindowOpened += OnAnyWindowOpened;
+            Game.UI.OnAnyWindowClosed += OnAnyWindowClosed;
         }
 
-        void OnConsoleGuiOpened()
-        {
-            inputs["Look"].Disable();
-        }
-
-        void OnConsoleGuiClosed()
-        {
-            inputs["Look"].Enable();
-        }
-
-        void InitializeAttributes()
+        void InitializeAttributeEvents()
         {
             attributes["stamina"].OnValueModified += OnAttrStaminaModified;
             currentHealth = Attributes.Get("health").Value;
@@ -222,8 +230,6 @@ namespace UZSG.Entities
 
             MoveStateMachine.OnTransition += TransitionAnimator;
             MoveStateMachine.OnTransition += MoveTransitionCallback;
-            /// Moved to PlayerAnimator.cs
-            // MoveStateMachine.States[MoveStates.Crouch].OnTransition += OnCrouchState;
         }
 
         void InitializeHitboxes()
@@ -231,12 +237,12 @@ namespace UZSG.Entities
             hitboxes.ReinitializeHitboxes();
             foreach (var hitbox in hitboxes.Hitboxes)
             {
-                Debug.Log("Is hitting body part: " + hitbox.name);
+                // Debug.Log("Is hitting body part: " + hitbox.name);
                 hitbox.OnCollision += OnHitboxCollision;
             }
         }
 
-        void InitializeHUD()
+        void InitializeHUDs()
         {
             infoHUD = Game.UI.Create<PlayerHUDInfoUI>("Player HUD Info");
             infoHUD.Initialize(this);
@@ -247,16 +253,11 @@ namespace UZSG.Entities
             uiElements.Add(vitalsHUD);
         }
 
-        void InitializeInventory()
+        void InitializeInventoryUIs()
         {
-            inventory.Initialize();
-            // inventory.ReadSaveJson(new());
-            // inventory.ReadSaveJson(saveData.Inventory);
-
             invUI = Game.UI.Create<InventoryWindow>("Player Inventory");
             invUI.Initialize(this);
             invUI.Hide();
-            
             uiElements.Add(invUI);
 
             invUI.OnOpened += () =>
@@ -304,6 +305,32 @@ namespace UZSG.Entities
         #endregion
 
 
+        #region Event callbacks
+
+        void OnConsoleGuiOpened()
+        {
+            inputs["Look"].Disable();
+            Controls.Disable();
+            Actions.Disable();
+        }
+
+        void OnConsoleGuiClosed()
+        {
+            inputs["Look"].Enable();
+            Controls.Enable();
+            Actions.Enable();
+        }
+
+        void OnAnyWindowOpened(Window window)
+        {
+            Actions.Disable();
+        }
+
+        void OnAnyWindowClosed(Window window)
+        {
+            Actions.Enable();
+        }
+
         void OnExitWorld()
         {
             /// TODO: player itself shoule be first on notifying itself that it had exited the world
@@ -328,15 +355,17 @@ namespace UZSG.Entities
 
         void OnDestroy()
         {
-            Game.Tick.OnTick -= Tick;
+            Game.Tick.OnTick -= OnTick;
         }
         
-        void Tick(TickInfo t)
+        void OnTick(TickInfo t)
         {
             InnateConsumption();
             ConsumeStaminaWhileRunning();
             RegenerateStamina();
         }
+
+        #endregion
 
 
         #region Attribute events callbacks
@@ -364,7 +393,7 @@ namespace UZSG.Entities
             {
                 case Jump:
                 {
-                    JumpAction();
+                    ConsumeStatsBecauseJump();
                     break;
                 }
                 default:
@@ -374,7 +403,7 @@ namespace UZSG.Entities
             }
         }
 
-        void JumpAction()
+        void ConsumeStatsBecauseJump() /// HAHAHA
         {
             /// Consume Stamina on jump
             if (Attributes.TryGet("stamina", out var stamina))
@@ -438,6 +467,11 @@ namespace UZSG.Entities
 
         #region Saving/loading
 
+        /// <summary>
+        /// Reads and initializes all save data. Includes
+        ///     - Attributes
+        ///     - Inventory
+        /// </summary>
         public void ReadSaveData(PlayerSaveData saveData)
         {
             if (saveData == null)
@@ -446,24 +480,40 @@ namespace UZSG.Entities
                 return;
             }
             
-            base.ReadSaveData(saveData);
+            base.ReadSaveData(saveData); /// as Entity
 
             /// Load inventory, etc. and whatever the fuck not related to the Player
-            // Inventory.ReadSaveData(saveData.Inventory);
+            this.inventory.Initialize(this);
+            this.inventory.ReadSaveData(saveData.Inventory);
         }
-        
+
+        /// stuff to save?
+        /// - currentlsy selected hotbar
+        /// - known recipes
+        /// - player crafter (workstation) data
         public new PlayerSaveData WriteSaveData()
         {
             var esd = base.WriteSaveData();
+        
+            var userId = this.UserInfo.UserId;
             var psd = new PlayerSaveData
             {
+                UID = userId != null ? userId.ToString() :  "localplayer",
                 Id = esd.Id,
                 Transform = esd.Transform,
                 Attributes = attributes.WriteSaveData(),
                 Inventory = inventory.WriteSaveData()
             };
+            esd.Transform.Rotation = Utils.FromUnityVec3(FPP.Camera.LocalRotationEuler);
 
             return psd;
+        }
+
+        protected override void ReadTransformSaveData(TransformSaveData data)
+        {
+            this.Rigidbody.position = Utils.FromNumericVec3(data.Position);
+            this.FPP.Camera.LookRotation(Utils.FromNumericVec3(data.Rotation));
+            transform.localScale = Utils.FromNumericVec3(data.LocalScale);
         }
 
         #endregion

@@ -38,7 +38,8 @@ namespace UZSG.Attributes
         {
             foreach (var attrSaveData in saveData)
             {
-                if (Game.Attributes.TryGetData(attrSaveData.Id, out var attrData))
+                var id = attrSaveData.Id.Trim().ToLower();
+                if (Game.Attributes.TryGetData(id, out var attrData))
                 {
                     var newAttr = new Attribute(attrData);
                     newAttr.ReadSaveData(attrSaveData);
@@ -46,7 +47,7 @@ namespace UZSG.Attributes
                 }
                 else
                 {
-                    // Game.Console.LogAndUnityLog($"Tried to retrieve Attribute '{attrSaveData.Id}', but it does not exists.");
+                    Game.Console.LogWarn($"No such attribute to retrieve '{attrSaveData.Id}'.");
                 }
             }
         }

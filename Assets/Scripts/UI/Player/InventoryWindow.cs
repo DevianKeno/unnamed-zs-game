@@ -152,7 +152,7 @@ namespace UZSG.UI.Players
                 var slotUI = Game.UI.Create<ItemSlotUI>("Item Slot");
                 slotUI.name = $"Slot ({i})";
                 slotUI.transform.SetParent(bag.transform);
-                slotUI.Index = i;
+                // slotUI.Index = i;
                 slotUI.Link(Inventory.Bag[i]);
                 slotUI.OnMouseDown += OnBagSlotClick;
                 _bagSlotUIs.Add(i, slotUI);

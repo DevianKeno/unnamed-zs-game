@@ -1313,7 +1313,6 @@ MonoBehaviour:
   entityData: {fileID: 11400000, guid: 49cc9582dd61df247ab5d3da96dd2cf1, type: 2}
   attributes:
     attributesReadOnly: []
-  DisplayName: Player
   CanPickUpItems: 1
   inventory: {fileID: 6573940630714393000}
   crafting: {fileID: 2880011488093977876}
@@ -1464,7 +1463,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 1
   m_Constraints: 112
   m_CollisionDetection: 0

@@ -6,9 +6,7 @@ using UZSG.Systems;
 
 namespace UZSG.Entities
 {
-    /// <summary>
     /// Player animator functionalities.
-    /// </summary>
     public partial class Player : Entity
     {
         [Header("Animator")]

@@ -42,7 +42,7 @@ namespace UZSG.TitleScreen
         protected override void Awake()
         {
             base.Awake();
-            button.onClick.AddListener(OnClick);
+            button?.onClick.AddListener(OnClick);
         }
 
         public void OnClick()

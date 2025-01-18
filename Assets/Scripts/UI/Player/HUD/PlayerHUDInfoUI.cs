@@ -72,8 +72,8 @@ namespace UZSG.UI.HUD
             Game.World.CurrentWorld.Time.OnHourPassed += OnHourPassed;
             Game.World.CurrentWorld.Time.OnMinutePassed += OnMinutePassed;
             Game.World.CurrentWorld.Time.OnSecondPassed += OnSecondPassed;
-            Game.UI.OnWindowOpened += OnWindowOpened;
-            Game.UI.OnWindowClosed += OnWindowClosed;
+            Game.UI.OnAnyWindowOpened += OnWindowOpened;
+            Game.UI.OnAnyWindowClosed += OnWindowClosed;
         }
 
         void OnCrouch(bool crouched)
@@ -94,8 +94,8 @@ namespace UZSG.UI.HUD
             Player.Actions.OnLookAtSomething -= OnPlayerLookAtSomething;
             Player.Actions.OnPickupItem -= OnPlayerPickupedItem;
             
-            Game.UI.OnWindowOpened -= OnWindowOpened;
-            Game.UI.OnWindowClosed -= OnWindowClosed;
+            Game.UI.OnAnyWindowOpened -= OnWindowOpened;
+            Game.UI.OnAnyWindowClosed -= OnWindowClosed;
 
             interactionIndicator.Destruct();
             resourceHealthRingUI.Destruct();

@@ -35,7 +35,7 @@ namespace UZSG.UI
             {
                 var slot = Game.UI.Create<ItemSlotUI>("Item Slot", parent: slotsContainer);
                 slot.name = $"Hotbar Slot ({i})";
-                slot.Index = i;
+                // slot.Index = i;
                 slot.Link(Hotbar[i]);
                 slot.OnMouseDown += OnHotbarSlotClick;
                 slot.Show();

@@ -59,7 +59,7 @@ namespace UZSG.UI
         {
             if (!frames.IsValidIndex(index)) return;
 
-            SwitchToFrame(frames[index].DisplayName, instant: false, force: false);
+            SwitchToFrame(frames[index].Id, instant: false, force: false);
         }
 
         /// <param name="name">Actually the Id of the frame.</param>
@@ -83,7 +83,7 @@ namespace UZSG.UI
             if (IsTransitioning) return;
             IsTransitioning = true;
 
-            _previousFrame = currentFrame.DisplayName;
+            _previousFrame = currentFrame.Id;
             var context = new SwitchFrameContext()
             {
                 Status = SwitchStatus.Started,
@@ -95,7 +95,7 @@ namespace UZSG.UI
 
             if (Game.UI.EnableScreenAnimations && !instant)
             {
-                if (currentFrame != null && currentFrame.DisplayName != frame.DisplayName)
+                if (currentFrame != null && currentFrame.Id != frame.Id)
                 {
                     /// Move current frame out of the way
                     LeanTween.move(currentFrame.Rect, new Vector2(-1920, 0f), AnimationFactor)
@@ -141,12 +141,14 @@ namespace UZSG.UI
 
         public void AppendFrame(Frame frame, bool display = true)
         {
+            if (frame == null) return;
+
             frame.transform.SetParent(transform);
             frame.Rect.sizeDelta = Vector2.zero;
             frames.Add(frame);
             if (display)
             {
-                SwitchToFrame(frame.DisplayName, instant: true);
+                SwitchToFrame(frame.Id, instant: true);
             }
             else
             {

@@ -3,8 +3,10 @@ using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.InputSystem;
+
 using UZSG.Entities;
 using UZSG.UI;
+using UZSG.UI.Players;
 
 namespace UZSG.Systems
 {
@@ -55,11 +57,24 @@ namespace UZSG.Systems
 
         void InitializeWorldEvents()
         {
+            Game.World.OnDoneLoadWorld -= OnDoneLoadWorld;
+            Game.World.OnDoneLoadWorld += OnDoneLoadWorld;
+
             Game.World.CurrentWorld.OnPause -= OnWorldPaused;
             Game.World.CurrentWorld.OnPause += OnWorldPaused;
 
             Game.World.CurrentWorld.OnUnpause -= OnWorldUnpaused;
             Game.World.CurrentWorld.OnUnpause += OnWorldUnpaused;
+        }
+
+        void OnDoneLoadWorld()
+        {
+            if (_creativeIsOn)
+            {
+                creativeWindow = Game.UI.Create<CreativeWindow>("Creative Window");
+                creativeWindow.Initialize(localPlayer);
+                localPlayer.InventoryWindow.Append(creativeWindow);
+            }
         }
 
         void OnWorldPaused()

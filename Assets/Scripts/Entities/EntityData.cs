@@ -16,7 +16,7 @@ namespace UZSG.Data
     [CreateAssetMenu(fileName = "New Entity Data", menuName = "UZSG/Entity/Entity Data")]
     public class EntityData : BaseData
     {
-        protected string defaultsPath = Application.dataPath + "/Resources/Defaults/Entities/";
+        protected readonly string defaultsPath = Application.dataPath + "/Resources/Defaults/Entities/";
 
         [Header("Entity Data")]
         public AssetReference AssetReference;

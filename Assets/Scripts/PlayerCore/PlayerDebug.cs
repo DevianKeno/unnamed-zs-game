@@ -18,7 +18,7 @@ namespace UZSG.Players
             Player.OnDoneInit += Init;
         }
 
-        void Init(object sender, EventArgs e)
+        void Init(Player player)
         {
             UI = Instantiate(UIPrefab, Game.UI.Canvas.transform).GetComponent<PlayerDebugWindow>();
             UI.Hide();

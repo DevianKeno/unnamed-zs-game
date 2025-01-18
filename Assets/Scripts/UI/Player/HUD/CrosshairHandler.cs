@@ -51,8 +51,8 @@ namespace UZSG.UI.HUD
 
         void OnDestroy()
         {
-            Game.UI.OnWindowOpened -= OnWindowOpened;
-            Game.UI.OnWindowClosed -= OnWindowClosed;
+            Game.UI.OnAnyWindowOpened -= OnWindowOpened;
+            Game.UI.OnAnyWindowClosed -= OnWindowClosed;
         }
 
         

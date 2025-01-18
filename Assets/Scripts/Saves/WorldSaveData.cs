@@ -24,7 +24,5 @@ namespace UZSG.Saves
         
         public List<ObjectSaveData> Objects = new();
         public List<EntitySaveData> EntitySaves = new();
-        public List<PlayerSaveData> PlayerSaves = new();
-        public Dictionary<string, PlayerSaveData> PlayerIdSaves = new();
     }
 }

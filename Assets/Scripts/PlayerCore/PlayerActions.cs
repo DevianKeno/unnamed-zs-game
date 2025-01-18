@@ -95,14 +95,12 @@ namespace UZSG.Players
             InitializeEvents();
             InitializeInputs();
             
-            Game.Tick.OnTick += Tick;
+            Game.Tick.OnTick += OnTick;
         }
 
         void InitializeEvents()
         {
             Game.World.OnExitWorld += Deinitialize;
-            Game.UI.OnWindowOpened += OnWindowOpened;
-            Game.UI.OnWindowClosed += OnWindowClosed;
             this.OnInteract += OnInteractNotifySelf;
         }
 
@@ -153,7 +151,7 @@ namespace UZSG.Players
             DetectOutOfBounds();
         }
 
-        void Tick(TickInfo e)
+        void OnTick(TickInfo e)
         {
         }
 
@@ -358,16 +356,6 @@ namespace UZSG.Players
 
         #region Event callbacks
         
-        void OnWindowOpened(Window window)
-        {
-            Disable();
-        }
-
-        void OnWindowClosed(Window window)
-        {
-            Enable();
-        }
-
         void OnInteractNotifySelf(InteractionContext context)
         {
             if (context.Phase == InteractPhase.Started)
@@ -459,10 +447,7 @@ namespace UZSG.Players
         void Deinitialize()
         {
             Game.World.OnExitWorld -= Deinitialize;
-            
-            Game.Tick.OnTick -= Tick;
-            Game.UI.OnWindowOpened -= OnWindowOpened;
-            Game.UI.OnWindowClosed -= OnWindowClosed;
+            Game.Tick.OnTick -= OnTick;
             this.OnInteract -= OnInteractNotifySelf;
             DeinitializeInputs();
         }

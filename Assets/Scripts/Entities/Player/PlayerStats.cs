@@ -23,9 +23,7 @@ using static UZSG.Players.MoveStates;
 
 namespace UZSG.Entities
 {
-    /// <summary>
-    /// Player entity.
-    /// </summary>
+    /// Player stats
     public partial class Player : IPlayerBeingDamage
     {
         [Header("Player Information")]

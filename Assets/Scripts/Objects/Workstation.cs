@@ -304,7 +304,7 @@ namespace UZSG.Objects
                 void PutItemWhenOutputSlotIsEmpty(ItemSlot.ItemChangedContext slotInfo)
                 {
                     /// look for empty space
-                    if (!slotInfo.NewItem.CompareTo(Item.None)) return;
+                    if (!slotInfo.NewItem.Is(Item.None)) return;
                     
                     onOutputSlotItemChanged -= PutItemWhenOutputSlotIsEmpty;
                     slotInfo.ItemSlot.Put(outputItem);

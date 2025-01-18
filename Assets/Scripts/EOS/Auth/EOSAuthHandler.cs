@@ -67,9 +67,9 @@ namespace UZSG.EOS
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Debug.LogWarning(ex);
+                Debug.Log("Unable to validate and login persistent token");
             }
 
             if (rememberLogin)

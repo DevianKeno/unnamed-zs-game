@@ -214,9 +214,11 @@ namespace UZSG
 
         public void ReadSaveData(List<ItemSlotSaveData> saveData)
         {
+            if (saveData == null) return;
+            
             if (saveData.Count > SlotCount)
             {
-                Game.Console.LogWarn("[WARN]: ContainerSaveData has Items greater than the Container's capacity. You might lose some items.");
+                Game.Console.LogWarn($"ContainerSaveData has Items greater than the Container's capacity. You might lose some items.");
             }
             
             foreach (var sd in saveData)

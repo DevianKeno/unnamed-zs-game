@@ -55,7 +55,7 @@ namespace UZSG.UI
         /// </summary>
         public virtual void Show()
         {
-            gameObject?.SetActive(true);
+            gameObject.SetActive(true);
             OnShow();
         }
 
@@ -67,7 +67,7 @@ namespace UZSG.UI
         public virtual void Hide()
         {
             OnHide();
-            gameObject?.SetActive(false);
+            gameObject.SetActive(false);
         }
 
         public void SetActive(bool enabled)

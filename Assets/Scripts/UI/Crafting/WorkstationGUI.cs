@@ -190,7 +190,7 @@ namespace UZSG.UI.Objects
                 var slotUI = Game.UI.Create<ItemSlotUI>("Item Slot");
                 slotUI.name = $"Output Slot ({i})";
                 slotUI.transform.SetParent(outputSlotsHolder);
-                slotUI.Index = i;
+                // slotUI.Index = i;
 
                 slotUI.Link(workstation.OutputContainer[i]); /// link output container to UI
                 slotUI.OnMouseDown += OnOutputSlotClick;

@@ -3,13 +3,8 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-using UZSG.Crafting;
-using UZSG.Data;
 using UZSG.Entities;
 using UZSG.Items;
-
-using static UZSG.Systems.CommandPermissionLevel;
-using static UZSG.Systems.CommandLocationConstraint;
 using UZSG.UI.Players;
 using UZSG.TitleScreen;
 

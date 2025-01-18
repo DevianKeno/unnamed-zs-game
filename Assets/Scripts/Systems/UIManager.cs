@@ -73,11 +73,11 @@ namespace UZSG.UI
         /// <summary>
         /// Called when any window is opened.
         /// </summary>
-        public event Action<Window> OnWindowOpened;
+        public event Action<Window> OnAnyWindowOpened;
         /// <summary>
         /// Called when any window is closed.
         /// </summary>
-        public event Action<Window> OnWindowClosed;
+        public event Action<Window> OnAnyWindowClosed;
         
         #endregion
 
@@ -247,8 +247,8 @@ namespace UZSG.UI
                 {
                     if (element is Window window)
                     {
-                        window.OnOpened += () => { OnWindowOpened?.Invoke(window); };
-                        window.OnClosed += () => { OnWindowClosed?.Invoke(window); };
+                        window.OnOpened += () => { OnAnyWindowOpened?.Invoke(window); };
+                        window.OnClosed += () => { OnAnyWindowClosed?.Invoke(window); };
                     }
                     if (!show) element.Hide();
                     return element;
@@ -273,8 +273,8 @@ namespace UZSG.UI
                 {
                     if (element is Window window)
                     {
-                        window.OnOpened += () => { OnWindowOpened?.Invoke(window); };
-                        window.OnClosed += () => { OnWindowClosed?.Invoke(window); };
+                        window.OnOpened += () => { OnAnyWindowOpened?.Invoke(window); };
+                        window.OnClosed += () => { OnAnyWindowClosed?.Invoke(window); };
                     }
                     if (!show) element.Hide();
                     return element;

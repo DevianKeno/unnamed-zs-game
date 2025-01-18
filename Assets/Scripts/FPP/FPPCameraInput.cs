@@ -36,12 +36,17 @@ namespace UZSG.FPP
         public float CrouchLookForwardDamping = 10f;
         public LeanTweenType CrouchEase = LeanTweenType.linear;
 
+        bool _enable = false;
         bool _hasRecoil;
         /// <summary>
         /// True if the Player is looking around with the mouse.
         /// </summary>
         public bool IsLooking { get; private set; }
-
+        public Vector3 LocalRotationEuler
+        {
+            get => new(_verticalRotation, _horizontalRotation, 0f);
+        }
+        
         float _verticalRotation = 0f;
         float _horizontalRotation = 0f;
         float _addedVerticalRecoil;
@@ -51,7 +56,7 @@ namespace UZSG.FPP
         
         Dictionary<string, InputAction> inputs;
         InputActionMap actionMap;
-        InputAction look;
+        InputAction lookInput;
 
         [Header("Components")]
         public Transform Holder;
@@ -64,22 +69,22 @@ namespace UZSG.FPP
             InitializeInputs();
             Player.Controls.OnCrouch += OnCrouch;
             _originalLocalPosition = transform.localPosition;
+            _enable = true;
         }
 
         void InitializeInputs()
         {
             actionMap = Game.Main.GetActionMap("Player");
             inputs = Game.Main.GetActionsFromMap(actionMap);
-        }
-
-        void Start()
-        {
-            look = inputs["Look"];
-            look.Enable();
+            
+            lookInput = inputs["Look"];
+            lookInput.Enable();
         }
 
         void Update()
         {
+            if (!_enable) return;
+
             HandleLook();
             HandleRecoilRecovery();
         }
@@ -112,8 +117,8 @@ namespace UZSG.FPP
 
         IEnumerator<float> CrouchLookForwardCoroutine()
         {
-            const int MaxIter = 50;
-            for (int i = 0; i <= (CrouchDuration / 0.02f) || i <= MaxIter; i++) /// 0.02f is fixedUpdate interval in seconds
+            const int MAX_ITER = 50;
+            for (int i = 0; i <= (CrouchDuration / 0.02f) || i <= MAX_ITER; i++) /// 0.02f is fixedUpdate interval in seconds
             {
                 var targetRotation = Quaternion.Inverse(transform.localRotation) * Quaternion.LookRotation(Player.Forward * CrouchLookForwardDistance);
                 transform.localRotation = Quaternion.Slerp(
@@ -126,17 +131,23 @@ namespace UZSG.FPP
             }
         }
 
+        public void LookRotation(Vector3 euler)
+        {
+            _verticalRotation = euler.x;
+            _horizontalRotation = euler.y;
+        }
+
         public void ToggleControls(bool enabled)
         {
             EnableControls = enabled;
 
             if (enabled)
             {
-                look.Enable();
+                lookInput.Enable();
             }
             else
             {
-                look.Disable();
+                lookInput.Disable();
             }
         }
 
@@ -153,7 +164,7 @@ namespace UZSG.FPP
                 return; 
             }
 
-            var lookInput = look.ReadValue<Vector2>();
+            var lookInput = this.lookInput.ReadValue<Vector2>();
             IsLooking = lookInput.x != 0 || lookInput.y != 0;
             float mouseX = lookInput.x * Sensitivity;
             float mouseY = lookInput.y * Sensitivity;

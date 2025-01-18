@@ -7,8 +7,6 @@ using TMPro;
 
 using UZSG.Items;
 using UZSG.Inventory;
-using UnityEngine.InputSystem;
-using UZSG.Systems;
 
 namespace UZSG.UI
 {
@@ -30,21 +28,18 @@ namespace UZSG.UI
             public readonly PointerEventData.InputButton Button => Pointer.button;
         }
         
-        ItemSlot slot;
+        protected ItemSlot slot;
         public ItemSlot Slot => slot;
         [SerializeField] protected Item item = Item.None;
         public Item Item
         {
-            get
-            {
-                return item;
-            }
+            get => item;
             set
             {
                 SetDisplayedItem(item);
             }
         }
-        public int Index;
+        [SerializeField] protected int Index;
 
         [Space]
         [SerializeField] protected Image image;
@@ -172,7 +167,13 @@ namespace UZSG.UI
         public void Link(ItemSlot slot)
         {
             this.slot = slot;
+            this.Index = slot.Index;
             slot.OnItemChanged += OnSlotItemChanged;
+
+            if (!slot.IsEmpty)
+            {
+                SetDisplayedItem(slot.Item);
+            }
         }
 
         public void SetDisplayedItem(Item item)

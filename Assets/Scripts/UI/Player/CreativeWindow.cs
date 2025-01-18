@@ -261,7 +261,7 @@ namespace UZSG.UI.Players
             {
                 var slotUI = Game.UI.Create<ItemSlotUI>("Item Slot", parent: containerGameObject.transform);
                 slotUI.name = $"Item Slot ({index})";
-                slotUI.Index = index;
+                // slotUI.Index = index;
                 slotUI.Link(container[index]);
                 slotUI.OnMouseUp += OnSlotMouseUp;
                 slotUI.Show();

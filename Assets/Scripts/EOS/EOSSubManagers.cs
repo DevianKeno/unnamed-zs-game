@@ -10,6 +10,7 @@ namespace UZSG.EOS
     public class EOSSubManagers : MonoBehaviour
     {
         // public DiscordManager Discord => DiscordManager.Instance;
+        public static EOSAuthManager Auth => Game.EOS.GetOrCreateManager<EOSAuthManager>();
         public static EOSUserInfoManager UserInfo => Game.EOS.GetOrCreateManager<EOSUserInfoManager>();
         public static EOSFriendsManager Friends => Game.EOS.GetOrCreateManager<EOSFriendsManager>();
         public static EOSLobbyManager Lobbies => Game.EOS.GetOrCreateManager<EOSLobbyManager>();
@@ -17,6 +18,7 @@ namespace UZSG.EOS
 
         public static void Initialize()
         {
+            Game.EOS.GetOrCreateManager<EOSAuthManager>();
             Game.EOS.GetOrCreateManager<EOSUserInfoManager>();
             Game.EOS.GetOrCreateManager<EOSFriendsManager>();
             Game.EOS.GetOrCreateManager<EOSLobbyManager>();

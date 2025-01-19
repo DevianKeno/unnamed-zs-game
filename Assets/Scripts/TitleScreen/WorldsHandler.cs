@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.IO;
 
@@ -12,9 +13,9 @@ using UZSG.Saves;
 using UZSG.Systems;
 using UZSG.UI;
 using UZSG.UI.TitleScreen;
-using static UZSG.Systems.Status;
-using UZSG.Worlds;
 using Unity.VisualScripting;
+
+using static UZSG.Systems.Status;
 
 namespace UZSG.TitleScreen
 {
@@ -60,8 +61,10 @@ namespace UZSG.TitleScreen
             isHosting = value;
         }
 
-        public void ReadWorlds()
+        public async void ReadWorlds()
         {
+            await Task.Yield();
+            
             /// TODO: make a manifest file, read that instead of the entire save data
             loadingTmp.gameObject.SetActive(true);
             List<WorldSaveData> loadedSaveDatas = new();

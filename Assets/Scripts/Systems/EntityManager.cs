@@ -18,7 +18,6 @@ namespace UZSG.Systems
     {
         bool _isInitialized;
         public bool IsInitialized => _isInitialized;
-        public bool EnableLogging;
         /// <summary>
         /// Contains the list of all spawnABLE entities in the game.
         /// Key is Entity Id, Value is EntityData.
@@ -95,7 +94,7 @@ namespace UZSG.Systems
                         entity.OnKilled += OnEntityKilledInternal;
                         OnEntitySpawned?.Invoke(info);
 
-                        if (EnableLogging)
+                        if (Game.Main.EnableDebugMode)
                         {
                             Game.Console.LogInfo($"Spawned entity {entityId} at ({position.x}, {position.y}, {position.z})");
                         }
@@ -143,7 +142,7 @@ namespace UZSG.Systems
                             Entity = entity
                         });
                         
-                        if (EnableLogging)
+                        if (Game.Main.EnableDebugMode)
                         {
                             Game.Console.LogInfo($"Spawned entity {entityId} at ({position.x}, {position.y}, {position.z})");
                         }
@@ -177,7 +176,7 @@ namespace UZSG.Systems
                         itemEntity.OnSpawnInternal();
                         itemEntity.OnKilled += OnEntityKilledInternal;
                         
-                        if (EnableLogging)
+                        if (Game.Main.EnableDebugMode)
                         {
                             Game.Console.LogDebug($"Spawned item {id} at ({position.x}, {position.y}, {position.z})");
                         }

@@ -3,7 +3,7 @@
     "com.github-glitchenzo.nugetforunity": "https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity",
     "com.playeveryware.eos": "https://github.com/PlayEveryWare/eos_plugin_for_unity_upm.git",
     "com.unity.2d.sprite": "1.0.0",
-    "com.unity.addressables": "1.21.19",
+    "com.unity.addressables": "1.21.21",
     "com.unity.ai.navigation": "1.1.5",
     "com.unity.cinemachine": "2.9.5",
     "com.unity.collab-proxy": "2.3.1",

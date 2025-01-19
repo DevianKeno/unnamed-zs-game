@@ -68,8 +68,10 @@ namespace UZSG.Systems
                         // {
                         //     Entity = entity
                         // });
-                        
-                        Game.Console.LogInfo($"Placed object '{objectId}' at ({position.x}, {position.y}, {position.z})");
+                        if (Game.Main.EnableDebugMode)
+                        {
+                            Game.Console.LogInfo($"Placed object '{objectId}' at ({position.x}, {position.y}, {position.z})");
+                        }
                         return;
                     }
                     Destroy(go);
@@ -112,8 +114,10 @@ namespace UZSG.Systems
                         // {
                         //     Entity = entity
                         // });
-                        
-                        Game.Console.LogInfo($"Placed object '{objectId}' at ({position.x}, {position.y}, {position.z})");
+                        if (Game.Main.EnableDebugMode)
+                        {
+                            Game.Console.LogInfo($"Placed object '{objectId}' at ({position.x}, {position.y}, {position.z})");
+                        }
                         return;
                     }
                     Destroy(go);

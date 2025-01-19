@@ -6,6 +6,7 @@ using UnityEngine;
 using Epic.OnlineServices;
 using Epic.OnlineServices.UserInfo;
 using Epic.OnlineServices.Auth;
+using Epic.OnlineServices.Connect;
 using PlayEveryWare.EpicOnlineServices;
 
 using UZSG.Systems;
@@ -15,161 +16,203 @@ namespace UZSG.EOS
     /// <summary>
     /// General purpose access point for user info, including local user.
     /// </summary>
-    public class EOSUserInfoManager : IEOSSubManager, IConnectInterfaceEventListener, IAuthInterfaceEventListener
+    public class EOSUserInfoManager : IEOSSubManager, IAuthInterfaceEventListener, IConnectInterfaceEventListener
     {
-        UserInfoData LocalUserInfo;
-        UserInfoInterface UserInfoHandle;
+        UserInfoData localUserInfo;
+        UserInfoInterface userInfoHandle => Game.EOS.GetEOSPlatformInterface().GetUserInfoInterface();
 
-        public delegate void OnUserInfoChangedCallback(UserInfoData NewUserInfo);
-        public delegate void OnUserInfoQueryIdCallback(EpicAccountId UserId, Result QueryResult);
-        public delegate void OnUserInfoQueryDisplayNameCallback(string DisplayName, Result QueryResult);
+        Dictionary<EpicAccountId, UserInfoData> epicIdUserInfoMappings = new();
+        Dictionary<ProductUserId, ExternalAccountInfo> productIdUserInfoMappings = new();
+        /// <summary>
+        /// <c>string</c> is DisplayName.
+        /// </summary>
+        Dictionary<string, UserInfoData> userInfoDisplayNameMappings = new();
+        // List<OnUserInfoChangedCallback> localUserInfoChangedCallbacks = new();
 
-        Dictionary<EpicAccountId, UserInfoData> UserInfoIdMapping;
-        Dictionary<string, UserInfoData> UserInfoDisplayNameMapping;
-
-        List<OnUserInfoChangedCallback> LocalUserInfoChangedCallbacks;
+        public delegate void OnUserInfoChangedCallback(UserInfoData newUserInfo);
+        public delegate void QueryUserInfoByEpicIdCallback(UserInfoData userInfo, EpicAccountId accountId, Result result);
+        public delegate void QueryUserInfoProductIdCallback(ExternalAccountInfo userInfo, ProductUserId userId, Result result);
+        public delegate void QueryUserInfoDisplayNameCallback(string displayName, Result result);
 
         public EOSUserInfoManager()
         {
-            UserInfoHandle = Game.EOS.GetEOSPlatformInterface().GetUserInfoInterface();
-            UserInfoIdMapping = new Dictionary<EpicAccountId, UserInfoData>();
-            UserInfoDisplayNameMapping = new Dictionary<string, UserInfoData>();
-            LocalUserInfoChangedCallbacks = new List<OnUserInfoChangedCallback>();
-            UpdateLocalUserInfo();
+            Game.EOS.AddAuthLoginListener(this);
+            Game.EOS.AddConnectLoginListener(this);
         }
 
-        public void OnConnectLogin(Epic.OnlineServices.Connect.LoginCallbackInfo loginCallbackInfo)
+
+        #region EOS callbacks
+
+        public void OnAuthLogin(Epic.OnlineServices.Auth.LoginCallbackInfo info)
         {
-            UserInfoHandle = Game.EOS.GetEOSPlatformInterface().GetUserInfoInterface();
-            UpdateLocalUserInfo();
+            UpdateLocalUserInfo(info.LocalUserId);
+        }
+        
+        public void OnAuthLogout(Epic.OnlineServices.Auth.LogoutCallbackInfo info)
+        {
         }
 
-        public void OnAuthLogin(Epic.OnlineServices.Auth.LoginCallbackInfo loginCallbackInfo)
+        public void OnConnectLogin(Epic.OnlineServices.Connect.LoginCallbackInfo info)
         {
-            UserInfoHandle = Game.EOS.GetEOSPlatformInterface().GetUserInfoInterface();
-            UpdateLocalUserInfo();
+            UpdateLocalProductUserInfo(info.LocalUserId);
         }
 
-        public void OnAuthLogout(LogoutCallbackInfo logoutCallbackInfo)
-        {
-            LocalUserInfo = default;
-            foreach (var callback in LocalUserInfoChangedCallbacks)
-            {
-                callback?.Invoke(LocalUserInfo);
-            }
-        }
+        #endregion
 
-        public void AddNotifyLocalUserInfoChanged(OnUserInfoChangedCallback Callback)
-        {
-            LocalUserInfoChangedCallbacks.Add(Callback);
-        }
-
-        public void RemoveNotifyLocalUserInfoChanged(OnUserInfoChangedCallback Callback)
-        {
-            LocalUserInfoChangedCallbacks.Remove(Callback);
-        }
 
         public UserInfoData GetLocalUserInfo()
         {
-            return LocalUserInfo;
+            return localUserInfo;
         }
 
         public void ClearUserInfo()
         {
-            UserInfoIdMapping.Clear();
-            UserInfoDisplayNameMapping.Clear();
-            if (LocalUserInfo.UserId.IsValid())
+            epicIdUserInfoMappings.Clear();
+            userInfoDisplayNameMappings.Clear();
+            
+            if (localUserInfo.UserId.IsValid())
             {
-                //at minimum, local user info should be cached
-                UserInfoIdMapping.Add(LocalUserInfo.UserId, LocalUserInfo);
-                if (!string.IsNullOrEmpty(LocalUserInfo.DisplayName))
+                /// At minimum, local user info should be cached
+                epicIdUserInfoMappings.Add(localUserInfo.UserId, localUserInfo);
+                if (!string.IsNullOrEmpty(localUserInfo.DisplayName))
                 {
-                    UserInfoDisplayNameMapping.Add(LocalUserInfo.DisplayName, LocalUserInfo);
+                    userInfoDisplayNameMappings.Add(localUserInfo.DisplayName, localUserInfo);
                 }
             }
         }
 
-        void UpdateLocalUserInfo()
+        void UpdateLocalUserInfo(EpicAccountId userId)
         {
-            if (UserInfoHandle == null)
-            {
-                return;
-            }
+            QueryUserInfoByEpicId(userId);
+        }
 
-            var userId = Game.EOS.GetLocalUserId();
-            if (userId?.IsValid() == true)
-            {
-                QueryUserInfoById(userId);
-            }
+        void UpdateLocalProductUserInfo(ProductUserId userId)
+        {
+            QueryUserInfoByProductId(userId);
         }
 
         public UserInfoData GetUserInfoById(EpicAccountId UserId)
         {
-            UserInfoIdMapping.TryGetValue(UserId, out UserInfoData userInfo);
+            epicIdUserInfoMappings.TryGetValue(UserId, out UserInfoData userInfo);
             return userInfo;
         }
 
         public UserInfoData GetUserInfoByDisplayName(string DisplayName)
         {
-            UserInfoDisplayNameMapping.TryGetValue(DisplayName, out UserInfoData userInfo);
+            userInfoDisplayNameMappings.TryGetValue(DisplayName, out UserInfoData userInfo);
             return userInfo;
         }
-
-        public void QueryUserInfoById(EpicAccountId UserId, OnUserInfoQueryIdCallback Callback = null)
+        
+        public struct QueryUserInfoResult
         {
-            if(UserId?.IsValid() != true)
+            public Result Result { get; set; }
+            public UserInfoData UserInfoData { get; set; }
+        }
+
+
+        #region EpicAccountId
+
+        public void QueryUserInfoByEpicId(EpicAccountId userId, QueryUserInfoByEpicIdCallback callback = null)
+        {
+            if (userId == null || !userId.IsValid())
             {
-                Debug.LogError("UserInfo (QueryUserInfoById): Invalid UserId");
-                Callback?.Invoke(UserId, Result.InvalidUser);
+                Debug.LogError("[UserInfoManager/QueryUserInfoByEpicId()]: Invalid UserId");
+                callback?.Invoke(default, userId, Result.InvalidUser);
                 return;
             }
 
-            QueryUserInfoOptions options = new QueryUserInfoOptions()
+            var options = new QueryUserInfoOptions()
             {
                 LocalUserId = Game.EOS.GetLocalUserId(),
-                TargetUserId = UserId
+                TargetUserId = userId
             };
-
-            UserInfoHandle.QueryUserInfo(ref options, Callback, OnQueryUserInfoIdCompleted);
+            userInfoHandle.QueryUserInfo(ref options, callback, OnQueryUserInfoCompleted);
         }
 
-        void OnQueryUserInfoIdCompleted(ref QueryUserInfoCallbackInfo data)
+        void OnQueryUserInfoCompleted(ref QueryUserInfoCallbackInfo info)
         {
-            OnUserInfoQueryIdCallback Callback = data.ClientData as OnUserInfoQueryIdCallback;
-
-            if (data.ResultCode != Result.Success)
+            if (info.ResultCode == Result.Success)
             {
-                Debug.LogErrorFormat("UserData (OnQueryUserInfoCompleted): Error calling QueryUserInfo: {0}", data.ResultCode);
-                Callback?.Invoke(data.TargetUserId, data.ResultCode);
+                Debug.Log("[UserInfoManager/OnQueryUserInfoCompleted()]: QueryUserInfo successful");
+
+                var options = new CopyUserInfoOptions()
+                {
+                    LocalUserId = info.LocalUserId,
+                    TargetUserId = info.TargetUserId
+                };
+                Result result = userInfoHandle.CopyUserInfo(ref options, out UserInfoData? userInfo);
+                if (result == Result.Success && userInfo.HasValue)
+                {
+                    CacheUserInfo(userInfo.Value);
+                    if (info.ClientData is QueryUserInfoByEpicIdCallback callback)
+                    {
+                        callback?.Invoke(userInfo.Value, info.TargetUserId, info.ResultCode);
+                    }
+                    return;
+                }
+            }
+
+            Debug.LogError($"[UserInfoManager/OnQueryUserInfoCompleted()]: An error occured error: [{info.ResultCode}]");
+            if (info.ClientData is QueryUserInfoByEpicIdCallback callback1)
+            {
+                callback1?.Invoke(default, info.TargetUserId, info.ResultCode);
+            }
+        }
+        
+        #endregion
+
+
+        #region ProductUserId
+
+        public void QueryUserInfoByProductId(ProductUserId userId, QueryUserInfoProductIdCallback callback = null)
+        {
+            if (userId == null || !userId.IsValid())
+            {
+                Debug.LogError("[UserInfoManager/QueryUserInfoByProductId()]: Invalid ProductUserId");
+                callback?.Invoke(default, null, Result.InvalidUser);
                 return;
             }
 
-            Debug.Log("UserData (OnQueryUserInfoCompleted): QueryUserInfo successful");
-
-            CopyUserInfoOptions options = new CopyUserInfoOptions()
+            var options = new QueryProductUserIdMappingsOptions()
             {
-                LocalUserId = data.LocalUserId,
-                TargetUserId = data.TargetUserId
+                LocalUserId = Game.EOS.GetProductUserId(),
+                ProductUserIds = new ProductUserId[] { userId }
             };
-
-            Result result = UserInfoHandle.CopyUserInfo(ref options, out UserInfoData? userInfo);
-
-            if (result != Result.Success)
-            {
-                Debug.LogErrorFormat("UserData (OnQueryUserInfoCompleted): CopyUserInfo error: {0}", result);
-                Callback?.Invoke(data.TargetUserId, result);
-                return;
-            }
-
-            if (userInfo != null)
-            {
-                AddUserInfo((UserInfoData)userInfo);
-            }
-
-            Callback?.Invoke(data.TargetUserId, data.ResultCode);
+            Game.EOS.GetEOSConnectInterface().QueryProductUserIdMappings(ref options, callback, QueryProductUserIdMappingsCompleted);
         }
 
-        public void QueryUserInfoByDisplayName(string DisplayName, OnUserInfoQueryDisplayNameCallback Callback = null)
+        void QueryProductUserIdMappingsCompleted(ref QueryProductUserIdMappingsCallbackInfo info)
+        {
+            if (info.ResultCode == Result.Success)
+            {
+                var options = new CopyProductUserInfoOptions()
+                {
+                    TargetUserId = info.LocalUserId
+                };
+                var result = Game.EOS.GetEOSConnectInterface().CopyProductUserInfo(ref options, out ExternalAccountInfo? outUserInfo);
+                if (result == Result.Success && outUserInfo.HasValue)
+                {
+                    CacheUserInfo(outUserInfo.Value);
+                    if (info.ClientData is QueryUserInfoProductIdCallback callback)
+                    {
+                        callback?.Invoke(outUserInfo.Value, info.LocalUserId, info.ResultCode);
+                    }
+                    return;
+                }
+            }
+
+            if (info.ClientData is QueryUserInfoProductIdCallback callback1)
+            {
+                callback1?.Invoke(default, info.LocalUserId, info.ResultCode);
+            }
+        }
+
+        #endregion
+
+
+        #region DisplayName
+
+        public void QueryUserInfoByDisplayName(string DisplayName, QueryUserInfoDisplayNameCallback Callback = null)
         {
             if (string.IsNullOrEmpty(DisplayName))
             {
@@ -184,12 +227,12 @@ namespace UZSG.EOS
                 DisplayName = DisplayName
             };
 
-            UserInfoHandle.QueryUserInfoByDisplayName(ref options, Callback, OnQueryUserInfoDisplayNameCompleted);
+            userInfoHandle.QueryUserInfoByDisplayName(ref options, Callback, OnQueryUserInfoDisplayNameCompleted);
         }
 
         void OnQueryUserInfoDisplayNameCompleted(ref QueryUserInfoByDisplayNameCallbackInfo data)
         {
-            OnUserInfoQueryDisplayNameCallback Callback = data.ClientData as OnUserInfoQueryDisplayNameCallback;
+            QueryUserInfoDisplayNameCallback callback = data.ClientData as QueryUserInfoDisplayNameCallback;
 
             //QueryUserInfoByDisplayNameCallbackInfo.DisplayName memory is only valid within callback scope, so copy for safety
             string displayNameCopy = string.Copy(data.DisplayName);
@@ -197,52 +240,81 @@ namespace UZSG.EOS
             if (data.ResultCode != Result.Success)
             {
                 Debug.LogErrorFormat("UserData (OnQueryUserInfoDisplayNameCompleted): Error calling QueryUserInfoByDisplayName: {0}", data.ResultCode);
-                Callback?.Invoke(displayNameCopy, data.ResultCode);
+                callback?.Invoke(displayNameCopy, data.ResultCode);
                 return;
             }
 
             Debug.Log("UserData (OnQueryUserInfoDisplayNameCompleted): QueryUserInfoByDisplayName successful");
 
-            CopyUserInfoOptions options = new CopyUserInfoOptions()
+            var options = new CopyUserInfoOptions()
             {
                 LocalUserId = data.LocalUserId,
                 TargetUserId = data.TargetUserId
             };
-
-            Result result = UserInfoHandle.CopyUserInfo(ref options, out UserInfoData? userInfo);
+            Result result = userInfoHandle.CopyUserInfo(ref options, out UserInfoData? userInfo);
 
             if (result != Result.Success)
             {
                 Debug.LogErrorFormat("UserData (OnQueryUserInfoDisplayNameCompleted): CopyUserInfo error: {0}", result);
-                Callback?.Invoke(displayNameCopy, result);
+                callback?.Invoke(displayNameCopy, result);
                 return;
             }
 
             if (userInfo != null)
             {
-                AddUserInfo((UserInfoData)userInfo);
+                CacheUserInfo((UserInfoData) userInfo);
             }
 
-            Callback?.Invoke(displayNameCopy, data.ResultCode);
+            callback?.Invoke(displayNameCopy, data.ResultCode);
         }
 
-        void AddUserInfo(UserInfoData UserInfo)
+        #endregion
+
+
+        void CacheUserInfo(UserInfoData userInfo)
         {
-            UserInfoIdMapping[UserInfo.UserId] = UserInfo;
-            if (!string.IsNullOrEmpty(UserInfo.DisplayName))
+            epicIdUserInfoMappings[userInfo.UserId] = userInfo;
+            if (!string.IsNullOrEmpty(userInfo.DisplayName))
             {
-                UserInfoDisplayNameMapping[UserInfo.DisplayName] = UserInfo;
+                userInfoDisplayNameMappings[userInfo.DisplayName] = userInfo;
             }
 
-            if (UserInfo.UserId == Game.EOS.GetLocalUserId())
+            if (userInfo.UserId == Game.EOS.GetLocalUserId())
             {
-                LocalUserInfo = UserInfo;
-                foreach (var callback in LocalUserInfoChangedCallbacks)
-                {
-                    callback?.Invoke(LocalUserInfo);
-                }
+                localUserInfo = userInfo;
+                // foreach (var callback in localUserInfoChangedCallbacks)
+                // {
+                //     callback?.Invoke(localUserInfo);
+                // }
             }
         }
-    }
 
+        void CacheUserInfo(ExternalAccountInfo userInfo)
+        {
+            productIdUserInfoMappings[userInfo.ProductUserId] = userInfo;
+            if (!string.IsNullOrEmpty(userInfo.DisplayName))
+            {
+                // userInfoDisplayNameMappings[userInfo.DisplayName] = userInfo;
+            }
+
+            if (userInfo.ProductUserId == Game.EOS.GetProductUserId())
+            {
+                // localUserInfo = userInfo;
+                // foreach (var callback in localUserInfoChangedCallbacks)
+                // {
+                //     callback?.Invoke(localUserInfo);
+                // }
+            }
+        }
+
+        // public void AddNotifyLocalUserInfoChanged(OnUserInfoChangedCallback Callback)
+        // {
+        //     localUserInfoChangedCallbacks.Add(Callback);
+        // }
+
+        // public void RemoveNotifyLocalUserInfoChanged(OnUserInfoChangedCallback Callback)
+        // {
+        //     localUserInfoChangedCallbacks.Remove(Callback);
+        // }
+    }
 }

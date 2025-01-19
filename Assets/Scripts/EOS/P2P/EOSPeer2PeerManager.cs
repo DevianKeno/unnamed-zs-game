@@ -210,6 +210,7 @@ namespace UZSG.EOS
                     }
                     case PacketType.WorldDataFooter:
                     {
+                        HandleWorldDataFooterPacket(peerId, deserializedPacket);
                         break;
                     }
                 }
@@ -220,9 +221,19 @@ namespace UZSG.EOS
             }
         }
 
-        
+        void HandleWorldDataFooterPacket(ProductUserId userId, Packet packet)
+        {
+            var dataBytes = AssembleWorldDataFromPackets(_receivedWorldDataChunkPackets);
+            var worldSaveData = JsonConvert.DeserializeObject<WorldSaveData>(Encoding.UTF8.GetString(dataBytes));
+            var filepath = Game.World.ConstructWorldFromExternal(worldSaveData);
+            _receivedWorldDataChunkPackets.Clear();
+            onRequestWorldDataCompleted?.Invoke(filepath);
+            onRequestWorldDataCompleted = null;
+        }
+
+
         #region World data transfer
-        
+
         event Action<string> onRequestWorldDataCompleted;
 
         /// <summary>
@@ -551,12 +562,6 @@ namespace UZSG.EOS
                 }
                 case PacketType.WorldDataFooter:
                 {
-                    var dataBytes = AssembleWorldDataFromPackets(_receivedWorldDataChunkPackets);
-                    var worldSaveData = JsonConvert.DeserializeObject<WorldSaveData>(Encoding.UTF8.GetString(dataBytes));
-                    var filepath = Game.World.ConstructWorld(worldSaveData);
-                    _receivedWorldDataChunkPackets.Clear();
-                    onRequestWorldDataCompleted?.Invoke(filepath);
-                    onRequestWorldDataCompleted = null;
                     break;
                 }
             }

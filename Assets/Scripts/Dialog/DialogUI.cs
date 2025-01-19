@@ -1,14 +1,10 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using Ink.Runtime;
-using Mono.Cecil;
-using TMPro;
+
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
-using UZSG.DialogSystem;
-using UZSG.Systems;
+using TMPro;
 
 namespace UZSG.DialogSystem
 {

@@ -11,9 +11,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/ScenesLive/LoadingScreen.unity
     guid: 11044f83fa611ae4581da25b80c40b30
-  - enabled: 0
-    path: Assets/ScenesLive/World.unity
-    guid: 985e4e0b49d5c744faa4681720616b09
+  - enabled: 1
+    path: Assets/Scenes/AlphaWorld.unity
+    guid: 694cbdc736a3bd047bf5c2213a731dce
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: a4a6fed707741634f9dfcdb634e9f817, type: 2}
     com.unity.input.settings: {fileID: 11400000, guid: f17d94ae5ec043a44bf9b3d3782e9537, type: 2}

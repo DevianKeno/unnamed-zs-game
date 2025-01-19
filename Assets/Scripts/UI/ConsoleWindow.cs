@@ -1,17 +1,18 @@
-using System;
-using UnityEngine;
-using TMPro;
-using UZSG.Systems;
 using System.Collections.Generic;
+
+using UnityEngine;
 using UnityEngine.InputSystem;
+using TMPro;
+
+using UZSG.Systems;
 using UnityEngine.EventSystems;
 
 namespace UZSG.UI
 {
     public class ConsoleWindow : Window
     {
-        string _inputBuffer;
         int _navigatingIndex = 0;
+        string _inputBuffer;
         List<string> _previousInputs = new();
 
         [SerializeField] TextMeshProUGUI messages;
@@ -25,10 +26,15 @@ namespace UZSG.UI
             actionMap = Game.Main.GetActionMap("Console Window");
             inputs = Game.Main.GetActionsFromMap(actionMap);
             
-            inputs["Navigate Entry Up"].performed += NavigatePreviousEntry;
-            inputs["Navigate Entry Down"].performed += NavigateNextEntry;
+            var prevInput = inputs["Navigate Entry Up"];
+            prevInput.performed += NavigatePreviousEntry;
+            prevInput.Enable();
 
-            inputField.onSubmit.AddListener(InputSubmit);
+            var nextInput = inputs["Navigate Entry Down"];
+            nextInput.performed += NavigateNextEntry;
+            nextInput.Enable();
+
+            inputField.onSubmit.AddListener(OnInputFieldSubmit);
             
             Game.Console.OnLogMessage += UpdateMessages;
             messages.text = string.Join(' ', Game.Console.Messages);
@@ -40,7 +46,7 @@ namespace UZSG.UI
             {
                 _navigatingIndex = _previousInputs.Count;
 
-                if (inputField.text != "")
+                if (!string.IsNullOrEmpty(inputField.text))
                 {
                     _inputBuffer = inputField.text;
                 }                
@@ -69,13 +75,12 @@ namespace UZSG.UI
 
         protected override void OnShow()
         {
-            actionMap?.Enable();
             Game.UI.SetCursorVisible(true);
+            EventSystem.current.SetSelectedGameObject(inputField.gameObject);
         }
 
         protected override void OnHide()
         {
-            // actionMap.Disable();
             _inputBuffer = string.Empty;
             _navigatingIndex = 0;
             Game.UI.SetCursorVisible(false);
@@ -86,15 +91,15 @@ namespace UZSG.UI
             messages.text += message;
         }
 
-        void InputSubmit(string input)
+        void OnInputFieldSubmit(string input)
         {
-            if (input == "") return;
+            if (string.IsNullOrEmpty(input)) return;
             
             _previousInputs.Add(inputField.text);
-            _inputBuffer = "";
+            _inputBuffer = string.Empty;
             _navigatingIndex = 0;
-            inputField.text = "";
-            inputField.Select();
+            inputField.text = string.Empty;
+            EventSystem.current.SetSelectedGameObject(inputField.gameObject);
             Game.Console.Run(input);
         }
     }

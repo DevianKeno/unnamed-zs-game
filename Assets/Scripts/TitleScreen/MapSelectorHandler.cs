@@ -48,7 +48,7 @@ namespace UZSG.TitleScreen
             }
 
             /// Sort alphabetically
-            entries.Sort((entry1, entry2) => string.Compare(entry1.LevelData.Name, entry2.LevelData.Name, StringComparison.OrdinalIgnoreCase));
+            entries.Sort((entry1, entry2) => string.Compare(entry1.LevelData.DisplayName, entry2.LevelData.DisplayName, StringComparison.OrdinalIgnoreCase));
             // Rearrange game objects
             for (int i = 0; i < entries.Count; i++)
             {

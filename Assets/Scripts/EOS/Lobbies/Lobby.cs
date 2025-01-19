@@ -28,12 +28,11 @@ namespace UZSG.EOS.Lobbies
         public ProductUserId LobbyOwner;
         public EpicAccountId LobbyOwnerAccountId;
         public LobbyPermissionLevel LobbyPermissionLevel = LobbyPermissionLevel.Publicadvertised;
-        public ushort MaxNumLobbyMembers = 0;
-        public ushort AvailableSlots = 0;
+        public uint MaxNumLobbyMembers = WorldAttributes.DEFAULT_MAX_NUM_PLAYERS;
+        public uint AvailableSlots = 0;
         public bool AllowInvites = true;
         public bool? DisableHostMigration;
         public string LobbyOwnerDisplayName;
-
         /// <summary>
         /// Cached copy of the RoomName of the RTC room that our lobby has, if any
         /// </summary>
@@ -84,11 +83,14 @@ namespace UZSG.EOS.Lobbies
             return !string.IsNullOrEmpty(Id);
         }
 
-        public bool TryGetAttribute(string KEY, out LobbyAttribute attribute)
+        public bool TryGetAttribute(string key, out LobbyAttribute attribute)
         {
-            return _attributesDict.TryGetValue(KEY, out attribute);
+            return _attributesDict.TryGetValue(key, out attribute);
         }
 
+        /// <summary>
+        /// Checks if the member Id already exists in the lobby
+        /// </summary>
         public bool FindLobbyMember(ProductUserId memberId, out LobbyMember lobbyMember)
         {
             lobbyMember = Members.Find((LobbyMember member) =>
@@ -99,7 +101,7 @@ namespace UZSG.EOS.Lobbies
         }
 
         /// <summary>
-        /// Checks if the specified <c>ProductUserId</c> is the current owner
+        /// Checks if the specified <c>ProductUserId</c> is the owner if this lobby.
         /// </summary>
         /// <param name="userProductId">Specified <c>ProductUserId</c></param>
         /// <returns>True if specified user is owner</returns>
@@ -111,7 +113,7 @@ namespace UZSG.EOS.Lobbies
         /// <summary>
         /// Clears local cache of Lobby Id, owner, attributes and members
         /// </summary>
-        public void Clear()
+        public void ClearCache()
         {
             Id = string.Empty;
             LobbyOwner = new ProductUserId();
@@ -125,13 +127,9 @@ namespace UZSG.EOS.Lobbies
         /// <param name="lobbyId">Specified Lobby Id</param>
         public void InitFromLobbyHandle(string lobbyId)
         {
-            if (string.IsNullOrEmpty(lobbyId))
-            {
-                return;
-            }
+            if (string.IsNullOrEmpty(lobbyId)) return;
 
             Id = lobbyId;
-
             var options = new CopyLobbyDetailsHandleOptions
             {
                 LobbyId = Id,
@@ -226,11 +224,7 @@ namespace UZSG.EOS.Lobbies
                 };
 
                 ProductUserId memberId = outLobbyDetailsHandle.GetMemberByIndex(ref lobbyDetailsGetMemberByIndexOptions);
-                var newLobbyMember = new LobbyMember()
-                {
-                    ProductId = memberId
-                };
-
+                var newLobbyMember = new LobbyMember(memberId);
                 Members.Insert(memberIndex, newLobbyMember);
 
                 /// Member attributes
@@ -278,7 +272,7 @@ namespace UZSG.EOS.Lobbies
 
         public void SetWorldAttributes(WorldAttributes attributes)
         {
-            MaxNumLobbyMembers = (ushort) attributes.MaxPlayers;
+            MaxNumLobbyMembers = (uint) attributes.MaxPlayers;
         }
 
         #region World Data transfer

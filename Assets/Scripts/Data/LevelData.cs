@@ -2,6 +2,7 @@ using System;
 
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.Serialization;
 
 namespace UZSG.Data
 {
@@ -9,7 +10,7 @@ namespace UZSG.Data
     [CreateAssetMenu(fileName = "New Level Data", menuName = "UZSG/Level Data")]
     public class LevelData : BaseData
     {
-        public string Name;
+        [FormerlySerializedAs("Name")] public string DisplayName;
         [TextArea] public string Description;
         public Vector2 DimensionsKilometers;
         public bool Enable = true;

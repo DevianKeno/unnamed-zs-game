@@ -10,13 +10,16 @@ using PlayEveryWare.EpicOnlineServices;
 
 using UZSG.UI;
 using UZSG.EOS;
+using Epic.OnlineServices.Connect;
 
 namespace UZSG.Systems
 {
-    public class Game : MonoBehaviour
+    public class Game : MonoBehaviour, IConnectInterfaceEventListener
     {
         public static Game Main { get; private set; }
 
+        [SerializeField] bool enableDebugMode = true;
+        public bool EnableDebugMode => enableDebugMode;
         [SerializeField] int targetFramerate = -1;
 
         public const uint VERSION = 1;
@@ -80,7 +83,7 @@ namespace UZSG.Systems
 
         public bool IsAlive { get; private set; }
         public bool IsPaused { get; private set; }
-        public bool IsOnline { get; internal set; } = false;
+        public bool IsOnline { get; private set; } = false;
         public bool IsHosting { get; private set; }
         public Scene CurrentScene
         {
@@ -145,6 +148,7 @@ namespace UZSG.Systems
             UIManager.Initialize();
             audioManager.Initialize();
             worldManager.Initialize();
+            EOSSubManagers.Initialize();
 
             #region These should be only initialized upon entering worlds
             /// These are run only on scenes that are already "worlds"           
@@ -156,16 +160,6 @@ namespace UZSG.Systems
             particleManager.Initialize();
             recipeManager.Initialize();
 
-            IsOnline = EOSManager.Instance.GetEOSPlatformInterface() != null;
-            if (IsOnline)
-            {
-                Debug.Log("Currently online");
-            }
-            else
-            {
-                Debug.Log("Currently offline");
-            }
-        
             #endregion
 
             OnLateInit?.Invoke();
@@ -295,5 +289,17 @@ namespace UZSG.Systems
         {
             return $"{VERSION}.{BUILD_NUMBER}.{PATCH_NUMBER}";
         }
+
+
+        #region 
+
+        public void OnConnectLogin(LoginCallbackInfo info)
+        {
+            this.IsOnline = info.ResultCode == Epic.OnlineServices.Result.Success;
+            if (IsOnline) Game.Console.LogInfo($"Currently online");
+            else Game.Console.LogInfo($"Currently offline");
+        }
+
+        #endregion
     }
 }

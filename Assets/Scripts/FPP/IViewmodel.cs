@@ -1,4 +1,4 @@
-using UnityEditor.Animations;
+using UnityEngine;
 using UnityEngine.AddressableAssets;
 
 using UZSG.Data;
@@ -10,7 +10,7 @@ namespace UZSG.FPP
     /// </summary>
     public interface IViewmodel
     {
-        public AnimatorController ArmsAnimations { get; }
+        public RuntimeAnimatorController ArmsAnimations { get; }
         public AssetReference Viewmodel { get; }
         public ViewmodelSettings Settings { get; }
         public EquipmentAnimationData Animations { get; }

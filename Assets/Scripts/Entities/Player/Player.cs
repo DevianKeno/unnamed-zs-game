@@ -23,6 +23,7 @@ using UZSG.Building;
 using UZSG.Data;
 
 using static UZSG.Players.MoveStates;
+using UZSG.EOS;
 
 namespace UZSG.Entities
 {

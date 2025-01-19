@@ -458,11 +458,11 @@ MonoBehaviour:
   m_Content: {fileID: 7636991263177088305}
   m_Horizontal: 0
   m_Vertical: 1
-  m_MovementType: 1
+  m_MovementType: 2
   m_Elasticity: 0.1
-  m_Inertia: 1
+  m_Inertia: 0
   m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 1
+  m_ScrollSensitivity: 4
   m_Viewport: {fileID: 0}
   m_HorizontalScrollbar: {fileID: 0}
   m_VerticalScrollbar: {fileID: 2064191963433367448}
@@ -1208,7 +1208,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rect: {fileID: 0}
-  AnimationFactor: 0.3
+  FadeDuration: 0.3
   messages: {fileID: 3640037034390029841}
   inputField: {fileID: 4005093960711447774}
 --- !u!114 &2552010043469340969

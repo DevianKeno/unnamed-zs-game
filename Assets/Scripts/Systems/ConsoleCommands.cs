@@ -7,6 +7,7 @@ using UZSG.Entities;
 using UZSG.Items;
 using UZSG.UI.Players;
 using UZSG.TitleScreen;
+using UZSG.EOS;
 
 namespace UZSG.Systems
 {
@@ -138,6 +139,10 @@ namespace UZSG.Systems
 
 #endregion
 
+            CreateCommand("auth",
+                          "Auth commands.")
+                          .OnInvoke += CAuth;
+
             CreateCommand("clear",
                           "Clears the console messages.")
                           .OnInvoke += CClear;
@@ -216,6 +221,40 @@ namespace UZSG.Systems
         void CAttr(object sender, string[] args)
         {
             throw new NotImplementedException();
+        }        
+        
+        const string DEFAULT_DEV_AUTH_HOST = "localhost:7777";
+        /// <summary>
+        /// Auth commands.
+        /// </summary>
+        void CAuth(object sender, string[] args)
+        {
+            if (args[0] == "login" || args[0] == "li")
+            {
+                EOSSubManagers.Auth.StartLogin();
+            }
+            else if (args[0] == "logout" || args[0] == "lo")
+            {
+                EOSSubManagers.Auth.StartLogOut();
+            }
+            else if (args[0] == "removetoken" || args[0] == "rt")
+            {
+                EOSSubManagers.Auth.RemovePersistentToken();
+            }
+            else if (args[0] == "dev" || args[0] == "d")
+            {
+                if (args.Length == 2)
+                {
+                    EOSSubManagers.Auth.StartDevAuthLogin(DEFAULT_DEV_AUTH_HOST, args[1]);
+                }
+                else if (args.Length == 3)
+                {
+                    EOSSubManagers.Auth.StartDevAuthLogin(args[1], args[2]);
+                }
+
+                var authUi = GameObject.FindFirstObjectByType<AuthUserDisplay>();
+                authUi.SetUIFakeLogin();
+            }
         }        
         
         /// <summary>

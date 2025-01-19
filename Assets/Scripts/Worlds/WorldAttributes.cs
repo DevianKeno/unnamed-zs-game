@@ -10,8 +10,9 @@ namespace UZSG.Worlds
     [Serializable]
     public struct WorldAttributes
     {
-        public const int MIN_NUM_PLAYERS = 1;
-        public const int MAX_NUM_PLAYERS = 64;
+        public const int MIN_MAX_NUM_PLAYERS = 1;
+        public const int MAX_MAX_NUM_PLAYERS = 64;
+        public const int DEFAULT_MAX_NUM_PLAYERS = 8;
         public const int DAY_START_HOUR = 6; /// 6:00 AM
         public const int NIGHT_START_HOUR = 21; /// 9:00 PM
         public const int DEFAULT_DAY_LENGTH = 2400; /// 40 minutes
@@ -44,7 +45,7 @@ namespace UZSG.Worlds
 
         public static void Validate(ref WorldAttributes attributes)
         {
-            attributes.MaxPlayers = Math.Clamp(attributes.MaxPlayers, MIN_NUM_PLAYERS, MAX_NUM_PLAYERS);
+            attributes.MaxPlayers = Math.Clamp(attributes.MaxPlayers, MIN_MAX_NUM_PLAYERS, MAX_MAX_NUM_PLAYERS);
             attributes.DayLengthSeconds = Math.Clamp(attributes.DayLengthSeconds, MIN_DAY_LENGTH, MAX_DAY_LENGTH);
             /// TODO: few for testing, soon add the rest
         }

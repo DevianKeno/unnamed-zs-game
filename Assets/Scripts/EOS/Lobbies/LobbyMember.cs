@@ -9,8 +9,13 @@ namespace UZSG.EOS.Lobbies
     /// </summary>
     public class LobbyMember
     {
-        //public EpicAccountId AccountId;
-        public ProductUserId ProductId;
+        public LobbyMember(ProductUserId productUserId)
+        {
+            this.ProductId = productUserId;
+        }
+
+        // public EpicAccountId AccountId;
+        public ProductUserId ProductId { get; private set; }
 
         public string DisplayName
         {

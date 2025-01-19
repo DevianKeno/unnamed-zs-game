@@ -19,25 +19,36 @@ namespace UZSG.EOS
     /// </summary>
     public class EOSLobbyManager : IEOSSubManager
     {
-        /// Currently active lobby
+        LobbyInterface lobbyInterface = Game.EOS.GetEOSLobbyInterface();
+
         Lobby currentLobby;
+        /// <summary>
+        /// Currently active lobby
+        /// </summary>
         public Lobby CurrentLobby => currentLobby;
-        /// Currently active join request
         LobbyJoinRequest currentJoinRequest;
+        /// <summary>
+        /// Currently active join request
+        /// </summary>
         public LobbyJoinRequest CurrentJoinRequest => currentJoinRequest;
+        Dictionary<ProductUserId, LobbyInvite> pendingInvites = new();
+        /// <summary>
         /// Pending invites (up to one invite per friend)
-        Dictionary<ProductUserId, LobbyInvite> pendingInvites;
+        /// </summary>
         public Dictionary<ProductUserId, LobbyInvite> PendingInvites => pendingInvites;
-        /// Currently active invite
         LobbyInvite currentInvite;
+        /// <summary>
+        /// Currently active invite
+        /// </summary>
         public LobbyInvite CurrentInvite => currentInvite;
         /// Search 
         LobbySearch currentSearch;
         public LobbySearch CurrentSearch => currentSearch;
-        Dictionary<Lobby, LobbyDetails> searchResults;
+        Dictionary<Lobby, LobbyDetails> searchResults = new();
         public Dictionary<Lobby, LobbyDetails> SearchResults => searchResults;
 
         public LocalRTCOptions? customLocalRTCOptions;
+        public bool IsHosting { get; private set; }
 
         /// NotificationId
         NotifyEventHandle LobbyUpdateNotification;
@@ -54,16 +65,13 @@ namespace UZSG.EOS
         public bool _isDirty = true;
 
         /// Manager callbacks
-        OnLobbySearchCallback LobbySearchCallback;
-        public delegate void OnLobbyCallback(Result result);
-        public delegate void OnLobbySearchCallback(Result result);
+        OnSearchByLobbyIdCallback LobbySearchCallback;
+        public delegate void OnCreateLobbyCallback(Result result);
+        public delegate void OnSearchByLobbyIdCallback(Result result);
         public delegate void OnMemberUpdateCallback(string LobbyId, ProductUserId MemberId);
         List<OnMemberUpdateCallback> memberUpdatedCallbacks = new();
         List<Action> lobbyChangedCallbacks = new();
         List<Action> lobbyUpdatedCallbacks = new();
-
-        EOSUserInfoManager userInfo => EOSSubManagers.UserInfo;
-        LobbyInterface lobbyInterface => Game.EOS.GetEOSLobbyInterface();
         
         bool IsLobbyNotificationValid(NotifyEventHandle handle)
         {
@@ -109,22 +117,22 @@ namespace UZSG.EOS
             var lobbyInterface = Game.EOS.GetEOSLobbyInterface();
             LobbyUpdateNotification = new NotifyEventHandle(AddNotifyLobbyUpdateReceived(lobbyInterface, OnLobbyUpdateReceived), (ulong handle) =>
             {
-                EOSManager.Instance.GetEOSLobbyInterface().RemoveNotifyLobbyUpdateReceived(handle);
+                lobbyInterface.RemoveNotifyLobbyUpdateReceived(handle);
             });
 
             LobbyMemberUpdateNotification = new NotifyEventHandle(AddNotifyLobbyMemberUpdateReceived(lobbyInterface, OnMemberUpdateReceived), (ulong handle) => 
             {
-                EOSManager.Instance.GetEOSLobbyInterface().RemoveNotifyLobbyMemberUpdateReceived(handle);
+                lobbyInterface.RemoveNotifyLobbyMemberUpdateReceived(handle);
             });
 
             LobbyMemberStatusNotification = new NotifyEventHandle(AddNotifyLobbyMemberStatusReceived(lobbyInterface, OnMemberStatusReceived), (ulong handle) =>
             {
-                EOSManager.Instance.GetEOSLobbyInterface().RemoveNotifyLobbyMemberStatusReceived(handle);
+                lobbyInterface.RemoveNotifyLobbyMemberStatusReceived(handle);
             });
 
             LeaveLobbyRequestedNotification = new NotifyEventHandle(AddNotifyLeaveLobbyRequested(lobbyInterface, OnLeaveLobbyRequested), (ulong handle) =>
             {
-                EOSManager.Instance.GetEOSLobbyInterface().RemoveNotifyLeaveLobbyRequested(handle);
+                lobbyInterface.RemoveNotifyLeaveLobbyRequested(handle);
             });
         }
 
@@ -229,7 +237,7 @@ namespace UZSG.EOS
             AddNotifyRTCRoomConnectionChangedOptions addNotifyRTCRoomConnectionChangedOptions = new();
             currentLobby.RTCRoomConnectionChanged = new NotifyEventHandle(lobbyInterface.AddNotifyRTCRoomConnectionChanged(ref addNotifyRTCRoomConnectionChangedOptions, null, OnRTCRoomConnectionChangedReceived), (ulong handle) =>
             {
-                EOSManager.Instance.GetEOSLobbyInterface().RemoveNotifyRTCRoomConnectionChanged(handle);
+                lobbyInterface.RemoveNotifyRTCRoomConnectionChanged(handle);
             });
 
             if (!currentLobby.RTCRoomConnectionChanged.IsValid())
@@ -465,7 +473,7 @@ namespace UZSG.EOS
         /// </list>
         public void OnLoggedOut()
         {
-            LeaveLobby(null);
+            LeaveCurrentLobby(null);
             UnsubscribeFromLobbyInvites();
             UnsubscribeFromLobbyUpdates();
 
@@ -482,48 +490,48 @@ namespace UZSG.EOS
         /// <summary>
         /// Wrapper for calling [EOS_Lobby_CreateLobby](https://dev.epicgames.com/docs/services/en-US/API/Members/Functions/Lobby/EOS_Lobby_CreateLobby/index.html)
         /// </summary>
-        /// <param name="lobbyProperties"><b>Lobby</b> properties used to create new lobby</param>
-        /// <param name="onCreateLobbyCompleted">Callback when create lobby is completed</param>
-        public void CreateLobby(Lobby lobbyProperties, OnLobbyCallback onCreateLobbyCompleted)
+        /// <param name="lobby"><b>Lobby</b> properties used to create new lobby</param>
+        /// <param name="onCompleted">Callback when create lobby is completed</param>
+        public void CreateLobby(Lobby lobby, OnCreateLobbyCallback onCompleted = null)
         {
-            var currentUserProductId = Game.EOS.GetProductUserId();
-            if (!currentUserProductId.IsValid())
+            var localProductUserId = Game.EOS.GetProductUserId();
+            if (localProductUserId == null || !localProductUserId.IsValid())
             {
-                Debug.LogError("Lobbies (CreateLobby): Current player is invalid!");
-                onCreateLobbyCompleted?.Invoke(Result.InvalidProductUserID);
+                Debug.LogError("[LobbyManager/CreateLobby()]: Current user is invalid!");
+                onCompleted?.Invoke(Result.InvalidProductUserID);
                 return;
             }
 
             /// Check if there is current session. Leave it.
             if (currentLobby != null && currentLobby.IsValid())
             {
-                Debug.LogWarningFormat("Lobbies (Create Lobby): Leaving Current Lobby '{0}'", currentLobby.Id);
-                LeaveLobby(null);
+                Debug.Log($"[LobbyManager/CreateLobby()]: Leaving Current Lobby '{currentLobby.Id}'");
+                onCompleted?.Invoke(Result.LobbyInvalidSession);
+                LeaveCurrentLobby(null);
             }
 
             /// Create new lobby
             /// Max Players
-            CreateLobbyOptions createLobbyOptions = new()
+            var createLobbyOptions = new CreateLobbyOptions()
             {
-                LocalUserId = currentUserProductId,
-                MaxLobbyMembers = lobbyProperties.MaxNumLobbyMembers,
-                PermissionLevel = lobbyProperties.LobbyPermissionLevel,
-                PresenceEnabled = lobbyProperties.PresenceEnabled,
-                AllowInvites = lobbyProperties.AllowInvites,
-                BucketId = lobbyProperties.BucketId
+                LocalUserId = localProductUserId,
+                MaxLobbyMembers = lobby.MaxNumLobbyMembers,
+                PermissionLevel = lobby.LobbyPermissionLevel,
+                PresenceEnabled = lobby.PresenceEnabled,
+                AllowInvites = lobby.AllowInvites,
+                BucketId = lobby.BucketId
             };
-            if (lobbyProperties.DisableHostMigration != null)
+            if (lobby.DisableHostMigration != null)
             {
-                createLobbyOptions.DisableHostMigration = (bool)lobbyProperties.DisableHostMigration;
+                createLobbyOptions.DisableHostMigration = (bool)lobby.DisableHostMigration;
             }
             /// Voice Chat
-            if (lobbyProperties.RTCRoomEnabled)
+            if (lobby.RTCRoomEnabled)
             {
                 if (customLocalRTCOptions != null)
                 {
                     createLobbyOptions.LocalRTCOptions = customLocalRTCOptions;
                 }
-
                 createLobbyOptions.EnableRTCRoom = true;      
             }
             else
@@ -531,12 +539,13 @@ namespace UZSG.EOS
                 createLobbyOptions.EnableRTCRoom = false;
             }
 
-            EOSManager.Instance.GetEOSLobbyInterface().CreateLobby(ref createLobbyOptions, onCreateLobbyCompleted, OnCreateLobbyCompleted);
+            lobbyInterface.CreateLobby(ref createLobbyOptions, onCompleted, OnCreateLobbyCompleted);
 
             /// Save lobby data for modification
-            currentLobby = lobbyProperties;
+            currentLobby = lobby;
             currentLobby._isBeingCreated = true;
-            currentLobby.LobbyOwner = currentUserProductId;
+            currentLobby.LobbyOwner = localProductUserId;
+            IsHosting = true;
         }
 
         /// <summary>
@@ -544,7 +553,7 @@ namespace UZSG.EOS
         /// </summary>
         /// <param name="lobbyUpdates"><b>Lobby</b> properties used to update current lobby</param>
         /// <param name="onModifyLobbyCompleted">Callback when modify lobby is completed</param>
-        public void ModifyLobby(Lobby lobbyUpdates, OnLobbyCallback onModifyLobbyCompleted)
+        public void ModifyLobby(Lobby lobbyUpdates, OnCreateLobbyCallback onModifyLobbyCompleted)
         {
             // Validate current lobby
             if (!currentLobby.IsValid())
@@ -574,7 +583,7 @@ namespace UZSG.EOS
             options.LocalUserId = currentProductUserId;
 
             // Get LobbyModification object handle
-            Result result = EOSManager.Instance.GetEOSLobbyInterface().UpdateLobbyModification(ref options, out LobbyModification outLobbyModificationHandle);
+            Result result = lobbyInterface.UpdateLobbyModification(ref options, out LobbyModification outLobbyModificationHandle);
 
             if (result != Result.Success)
             {
@@ -674,19 +683,19 @@ namespace UZSG.EOS
             {
                 LobbyModificationHandle = outLobbyModificationHandle
             };
-            EOSManager.Instance.GetEOSLobbyInterface().UpdateLobby(ref updateLobbyOptions, onModifyLobbyCompleted, OnUpdateLobbyCallBack);
+            lobbyInterface.UpdateLobby(ref updateLobbyOptions, onModifyLobbyCompleted, OnUpdateLobbyCallBack);
         }
 
         /// <summary>
         /// Wrapper for calling [EOS_Lobby_LeaveLobby](https://dev.epicgames.com/docs/services/en-US/API/Members/Functions/Lobby/EOS_Lobby_LeaveLobby/index.html)
         /// </summary>
-        /// <param name="onLeaveLobbyCompleted">Callback when leave lobby is completed</param>
-        public void LeaveLobby(OnLobbyCallback onLeaveLobbyCompleted)
+        /// <param name="onCompleted">Callback when leave lobby is completed</param>
+        public void LeaveCurrentLobby(OnCreateLobbyCallback onCompleted = null)
         {
             if (currentLobby == null || string.IsNullOrEmpty(currentLobby.Id) || !EOSManager.Instance.GetProductUserId().IsValid())
             {
                 Debug.LogWarning("Lobbies (LeaveLobby): Not currently in a lobby.");
-                onLeaveLobbyCompleted?.Invoke(Result.NotFound);
+                onCompleted?.Invoke(Result.NotFound);
                 return;
             }
 
@@ -698,7 +707,7 @@ namespace UZSG.EOS
 
             Debug.LogFormat("Lobbies (LeaveLobby): Attempting to leave lobby: Id='{0}', LocalUserId='{1}'", options.LobbyId, options.LocalUserId);
 
-            EOSManager.Instance.GetEOSLobbyInterface().LeaveLobby(ref options, onLeaveLobbyCompleted, OnLeaveLobbyCompleted);
+            lobbyInterface.LeaveLobby(ref options, onCompleted, OnLeaveLobbyCompleted);
         }
 
         /// <summary>
@@ -726,7 +735,7 @@ namespace UZSG.EOS
                 TargetUserId = targetUserId
             };
 
-            EOSManager.Instance.GetEOSLobbyInterface().SendInvite(ref options, null, OnSendInviteCompleted);
+            lobbyInterface.SendInvite(ref options, null, OnSendInviteCompleted);
         }
 
         /// <summary>
@@ -741,15 +750,13 @@ namespace UZSG.EOS
                 return;
             }
 
-            // Modify Lobby
-
-            UpdateLobbyModificationOptions options = new UpdateLobbyModificationOptions()
+            /// Modify Lobby
+            var options = new UpdateLobbyModificationOptions()
             {
                 LobbyId = currentLobby.Id,
                 LocalUserId = EOSManager.Instance.GetProductUserId()
             };
-
-            Result result = EOSManager.Instance.GetEOSLobbyInterface().UpdateLobbyModification(ref options, out LobbyModification lobbyModificationHandle);
+            Result result = lobbyInterface.UpdateLobbyModification(ref options, out LobbyModification lobbyModificationHandle);
 
             if (result != Result.Success)
             {
@@ -757,16 +764,14 @@ namespace UZSG.EOS
                 return;
             }
 
-            // Update member attribute
-
+            /// Update member attribute
             AttributeData attributeData = memberAttribute.AsAttribute;
 
-            LobbyModificationAddMemberAttributeOptions attrOptions = new LobbyModificationAddMemberAttributeOptions()
+            var attrOptions = new LobbyModificationAddMemberAttributeOptions()
             {
                 Attribute = attributeData,
                 Visibility = LobbyAttributeVisibility.Public
             };
-
             result = lobbyModificationHandle.AddMemberAttribute(ref attrOptions);
 
             if (result != Result.Success)
@@ -775,14 +780,13 @@ namespace UZSG.EOS
                 return;
             }
 
-            // Trigger lobby update
-
-            UpdateLobbyOptions updateOptions = new UpdateLobbyOptions()
+            /// Trigger lobby update
+            var updateOptions = new UpdateLobbyOptions()
             {
                 LobbyModificationHandle = lobbyModificationHandle
             };
 
-            EOSManager.Instance.GetEOSLobbyInterface().UpdateLobby(ref updateOptions, null, OnUpdateLobbyCallBack);
+            lobbyInterface.UpdateLobby(ref updateOptions, null, OnUpdateLobbyCallBack);
         }
 
         void OnSendInviteCompleted(ref SendInviteCallbackInfo data)
@@ -802,25 +806,16 @@ namespace UZSG.EOS
             Debug.Log("Lobbies (OnSendInviteCompleted): invite sent.");
         }
 
-        void OnCreateLobbyCompleted(ref CreateLobbyCallbackInfo createLobbyCallbackInfo)
+        void OnCreateLobbyCompleted(ref CreateLobbyCallbackInfo info)
         {
-            OnLobbyCallback LobbyCreatedCallback = createLobbyCallbackInfo.ClientData as OnLobbyCallback;
-
-            //if (createLobbyCallbackInfo == null)
-            //{
-            //    Debug.Log("Lobbies (OnCreateLobbyCompleted): createLobbyCallbackInfo is null");
-            //    LobbyCreatedCallback?.Invoke(Result.InvalidState);
-            //    return;
-            //}
-
-            if (createLobbyCallbackInfo.ResultCode == Result.Success)
+            if (info.ResultCode == Result.Success)
             {
                 Debug.Log("Lobbies (OnCreateLobbyCompleted): Lobby created.");
 
                 // OnLobbyCreated
-                if (!string.IsNullOrEmpty(createLobbyCallbackInfo.LobbyId) && currentLobby._isBeingCreated)
+                if (!string.IsNullOrEmpty(info.LobbyId) && currentLobby._isBeingCreated)
                 {
-                    currentLobby.Id = createLobbyCallbackInfo.LobbyId;
+                    currentLobby.Id = info.LobbyId;
                     ModifyLobby(currentLobby, null);
 
                     if (currentLobby.RTCRoomEnabled)
@@ -831,14 +826,20 @@ namespace UZSG.EOS
 
                 _isDirty = true;
 
-                LobbyCreatedCallback?.Invoke(Result.Success);
+                if (info.ClientData is OnCreateLobbyCallback callback)
+                {
+                    callback?.Invoke(Result.Success);
+                }
 
                 OnCurrentLobbyChanged();
             }
             else
             {
-                Debug.LogFormat("Lobbies (OnCreateLobbyCompleted): error code: {0}", createLobbyCallbackInfo.ResultCode);
-                LobbyCreatedCallback?.Invoke(createLobbyCallbackInfo.ResultCode);
+                Debug.LogFormat("Lobbies (OnCreateLobbyCompleted): error code: {0}", info.ResultCode);
+                if (info.ClientData is OnCreateLobbyCallback callback)
+                {
+                    callback?.Invoke(info.ResultCode);
+                }
             }
         }
 
@@ -856,7 +857,7 @@ namespace UZSG.EOS
 
         void OnUpdateLobbyCallBack(ref UpdateLobbyCallbackInfo data)
         {
-            OnLobbyCallback LobbyModifyCallback = data.ClientData as OnLobbyCallback;
+            OnCreateLobbyCallback LobbyModifyCallback = data.ClientData as OnCreateLobbyCallback;
 
             //if (data == null)
             //{
@@ -877,7 +878,7 @@ namespace UZSG.EOS
             OnLobbyUpdated(data.LobbyId, LobbyModifyCallback);
         }
 
-        void OnLobbyUpdated(string lobbyId, OnLobbyCallback LobbyUpdateCompleted)
+        void OnLobbyUpdated(string lobbyId, OnCreateLobbyCallback LobbyUpdateCompleted)
         {
             // Update Lobby
             if (!string.IsNullOrEmpty(lobbyId) && currentLobby.Id == lobbyId)
@@ -912,7 +913,7 @@ namespace UZSG.EOS
         /// Wrapper for calling [EOS_Lobby_DestroyLobby](https://dev.epicgames.com/docs/services/en-US/API/Members/Functions/Lobby/EOS_Lobby_DestroyLobby/index.html)
         /// </summary>
         /// <param name="DestroyCurrentLobbyCompleted">Callback when destroy lobby is completed</param>
-        public void DestroyCurrentLobby(ref OnLobbyCallback DestroyCurrentLobbyCompleted)
+        public void DestroyCurrentLobby(ref OnCreateLobbyCallback DestroyCurrentLobbyCompleted)
         {
             if (currentLobby != null && !currentLobby.IsValid())
             {
@@ -938,19 +939,20 @@ namespace UZSG.EOS
                 return;
             }
 
-            DestroyLobbyOptions options = new DestroyLobbyOptions();
-            options.LocalUserId = currentProductUserId;
-            options.LobbyId = currentLobby.Id;
-
-            EOSManager.Instance.GetEOSLobbyInterface().DestroyLobby(ref options, DestroyCurrentLobbyCompleted, OnDestroyLobbyCompleted);
+            var options = new DestroyLobbyOptions()
+            {
+                LocalUserId = currentProductUserId,
+                LobbyId = currentLobby.Id
+            };
+            lobbyInterface.DestroyLobby(ref options, DestroyCurrentLobbyCompleted, OnDestroyLobbyCompleted);
 
             // Clear current lobby
-            currentLobby.Clear();
+            currentLobby.ClearCache();
         }
 
         void OnDestroyLobbyCompleted(ref DestroyLobbyCallbackInfo data)
         {
-            OnLobbyCallback DestroyLobbyCallback = data.ClientData as OnLobbyCallback;
+            OnCreateLobbyCallback DestroyLobbyCallback = data.ClientData as OnCreateLobbyCallback;
 
             //if (data == null)
             //{
@@ -979,7 +981,7 @@ namespace UZSG.EOS
             DestroyLobbyCallback?.Invoke(Result.Success);
         }
 
-        public void EnablePressToTalk(ProductUserId targetUserId, OnLobbyCallback EnablePressToTalkCompleted)
+        public void EnablePressToTalk(ProductUserId targetUserId, OnCreateLobbyCallback EnablePressToTalkCompleted)
         {
             RTCInterface rtcHandle = EOSManager.Instance.GetEOSRTCInterface();
             RTCAudioInterface rtcAudioHandle = rtcHandle.GetAudioInterface();
@@ -994,7 +996,7 @@ namespace UZSG.EOS
 
                 lobbyMember.RTCState.PressToTalkEnabled = !lobbyMember.RTCState.PressToTalkEnabled;
 
-                UpdateSendingVolumeOptions sendVolumeOptions = new UpdateSendingVolumeOptions()
+                var sendVolumeOptions = new UpdateSendingVolumeOptions()
                 {
                     LocalUserId = EOSManager.Instance.GetProductUserId(),
                     RoomName = currentLobby.RTCRoomName,
@@ -1007,7 +1009,7 @@ namespace UZSG.EOS
             }
         }
         // Member Events
-        public void PressToTalk(KeyCode PTTKeyCode, OnLobbyCallback TogglePressToTalkCompleted)
+        public void PressToTalk(KeyCode PTTKeyCode, OnCreateLobbyCallback TogglePressToTalkCompleted)
         {
             RTCInterface rtcHandle = EOSManager.Instance.GetEOSRTCInterface();
             RTCAudioInterface rtcAudioHandle = rtcHandle.GetAudioInterface();
@@ -1021,7 +1023,7 @@ namespace UZSG.EOS
                     continue;
                 }
 
-                UpdateSendingVolumeOptions sendVolumeOptions = new UpdateSendingVolumeOptions()
+                var sendVolumeOptions = new UpdateSendingVolumeOptions()
                 {
                     LocalUserId = EOSManager.Instance.GetProductUserId(),
                     RoomName = currentLobby.RTCRoomName,
@@ -1039,12 +1041,12 @@ namespace UZSG.EOS
         /// </summary>
         /// <param name="targetUserId">Target <c>ProductUserId</c> to mute or unmute</param>
         /// <param name="ToggleMuteCompleted">Callback when toggle mute is completed</param>
-        public void ToggleMute(ProductUserId targetUserId, OnLobbyCallback ToggleMuteCompleted)
+        public void ToggleMute(ProductUserId targetUserId, OnCreateLobbyCallback ToggleMuteCompleted)
         {
             RTCInterface rtcHandle = EOSManager.Instance.GetEOSRTCInterface();
             RTCAudioInterface rtcAudioHandle = rtcHandle.GetAudioInterface();
 
-            foreach(LobbyMember lobbyMember in currentLobby.Members)
+            foreach (LobbyMember lobbyMember in currentLobby.Members)
             {
                 // Find the correct lobby member
                 if (lobbyMember.ProductId != targetUserId)
@@ -1099,7 +1101,7 @@ namespace UZSG.EOS
 
         void OnRTCRoomUpdateSendingCompleted(ref UpdateSendingCallbackInfo data)
         {
-            OnLobbyCallback ToggleMuteCallback = data.ClientData as OnLobbyCallback;
+            OnCreateLobbyCallback ToggleMuteCallback = data.ClientData as OnCreateLobbyCallback;
 
             //if (data == null)
             //{
@@ -1117,21 +1119,21 @@ namespace UZSG.EOS
 
             Debug.LogFormat("Lobbies (OnRTCRoomUpdateSendingCompleted): Updated sending status successfully. Room={0}, AudioStatus={1}", data.RoomName, data.AudioStatus);
 
-            // Ensure this update is for our room
+            /// Ensure this update is for our room
             if (!currentLobby.RTCRoomName.Equals(data.RoomName, StringComparison.OrdinalIgnoreCase))
             {
                 Debug.LogErrorFormat("Lobbies (OnRTCRoomUpdateSendingCompleted): Incorrect Room! CurrentLobby.RTCRoomName={0} != data.RoomName", currentLobby.RTCRoomName, data.RoomName);
                 return;
             }
 
-            // Ensure this update is for us
+            /// Ensure this update is for us
             if (EOSManager.Instance.GetProductUserId() != data.LocalUserId)
             {
                 Debug.LogErrorFormat("Lobbies (OnRTCRoomUpdateSendingCompleted): Incorrect LocalUserId! LocalProductId={0} != data.LocalUserId", EOSManager.Instance.GetProductUserId(), data.LocalUserId);
                 return;
             }
 
-            // Update our mute status
+            /// Update our mute status
             foreach(LobbyMember lobbyMember in currentLobby.Members)
             {
                 // Find ourselves
@@ -1154,7 +1156,7 @@ namespace UZSG.EOS
 
         void OnRTCRoomUpdateReceivingCompleted(ref UpdateReceivingCallbackInfo data)
         {
-            OnLobbyCallback ToggleMuteCallback = data.ClientData as OnLobbyCallback;
+            OnCreateLobbyCallback ToggleMuteCallback = data.ClientData as OnCreateLobbyCallback;
 
             //if (data == null)
             //{
@@ -1208,7 +1210,7 @@ namespace UZSG.EOS
         /// </summary>
         /// <param name="productUserId">Target <c>ProductUserId</c> to kick from current lobby</param>
         /// <param name="KickMemberCompleted">Callback when kick member is completed</param>
-        public void KickMember(ProductUserId productUserId, OnLobbyCallback KickMemberCompleted)
+        public void KickMember(ProductUserId productUserId, OnCreateLobbyCallback KickMemberCompleted)
         {
             if (!productUserId.IsValid())
             {
@@ -1230,12 +1232,12 @@ namespace UZSG.EOS
             kickOptions.LobbyId = currentLobby.Id;
             kickOptions.LocalUserId = currentUserId;
 
-            EOSManager.Instance.GetEOSLobbyInterface().KickMember(ref kickOptions, KickMemberCompleted, OnKickMemberCompleted);
+            lobbyInterface.KickMember(ref kickOptions, KickMemberCompleted, OnKickMemberCompleted);
         }
 
         void OnKickMemberCompleted(ref KickMemberCallbackInfo data)
         {
-            OnLobbyCallback KickMemberCallback = data.ClientData as OnLobbyCallback;
+            OnCreateLobbyCallback KickMemberCallback = data.ClientData as OnCreateLobbyCallback;
 
             //if (data == null)
             //{
@@ -1260,71 +1262,68 @@ namespace UZSG.EOS
             Debug.LogFormat("Lobbies (OnKickedFromLobby):  Kicked from lobby: {0}", lobbyId);
             if (currentLobby != null && currentLobby.IsValid() && currentLobby.Id.Equals(lobbyId, StringComparison.OrdinalIgnoreCase))
             {
-                currentLobby.Clear();
+                currentLobby.ClearCache();
                 _isDirty = true;
 
                 OnCurrentLobbyChanged();
             }
         }
 
-
         /// <summary>
+        /// Promote an existing member of the lobby to owner, allowing them to make lobby data modifications.
         /// Wrapper for calling [EOS_Lobby_PromoteMember](https://dev.epicgames.com/docs/services/en-US/API/Members/Functions/Lobby/EOS_Lobby_PromoteMember/index.html)
         /// </summary>
         /// <param name="productUserId">Target <c>ProductUserId</c> to promote</param>
-        /// <param name="PromoteMemberCompleted">Callback when promote member is completed</param>
-        public void PromoteMember(ProductUserId productUserId, OnLobbyCallback PromoteMemberCompleted)
+        /// <param name="promoteMemberCompleted">Callback when promote member is completed</param>
+        public void PromoteMember(ProductUserId productUserId, OnCreateLobbyCallback promoteMemberCompleted)
         {
-            if (!productUserId.IsValid())
+            if (productUserId == null || !productUserId.IsValid())
             {
-                Debug.LogError("Lobbies (PromoteMember): productUserId is invalid!");
-                PromoteMemberCompleted?.Invoke(Result.InvalidProductUserID);
+                Debug.LogError("[LobbyManager/PromoteMember()]: productUserId is invalid!");
+                promoteMemberCompleted?.Invoke(Result.InvalidProductUserID);
                 return;
             }
 
             ProductUserId currentUserId = EOSManager.Instance.GetProductUserId();
-            if (!currentUserId.IsValid())
+            if (currentUserId == null || !currentUserId.IsValid())
             {
-                Debug.LogError("Lobbies (PromoteMember): Current player is invalid!");
-                PromoteMemberCompleted?.Invoke(Result.InvalidProductUserID);
+                Debug.LogError("[LobbyManager/PromoteMember()]: Current player is invalid!");
+                promoteMemberCompleted?.Invoke(Result.InvalidProductUserID);
                 return;
             }
 
-            PromoteMemberOptions promoteOptions = new PromoteMemberOptions();
-            promoteOptions.TargetUserId = productUserId;
-            promoteOptions.LocalUserId = currentUserId;
-            promoteOptions.LobbyId = currentLobby.Id;
-
-            EOSManager.Instance.GetEOSLobbyInterface().PromoteMember(ref promoteOptions, PromoteMemberCompleted, OnPromoteMemberCompleted);
+            var promoteOptions = new PromoteMemberOptions
+            {
+                TargetUserId = productUserId,
+                LocalUserId = currentUserId,
+                LobbyId = currentLobby.Id
+            };
+            lobbyInterface.PromoteMember(ref promoteOptions, promoteMemberCompleted, OnPromoteMemberCompleted);
         }
 
-        void OnPromoteMemberCompleted(ref PromoteMemberCallbackInfo data)
+        void OnPromoteMemberCompleted(ref PromoteMemberCallbackInfo info)
         {
-            OnLobbyCallback PromoteMemberCallback = data.ClientData as OnLobbyCallback;
-
-            //if (data == null)
-            //{
-            //    Debug.LogError("Lobbies (OnPromoteMemberCompleted): PromoteMemberCallbackInfo data is null");
-            //    PromoteMemberCallback?.Invoke(Result.InvalidState);
-            //    return;
-            //}
-
-            if (data.ResultCode != Result.Success)
+            if (info.ResultCode != Result.Success)
             {
-                Debug.LogErrorFormat("Lobbies (OnPromoteMemberFinished): error code: {0}", data.ResultCode);
-                PromoteMemberCallback?.Invoke(data.ResultCode);
+                if (info.ClientData is OnCreateLobbyCallback callback1)
+                {
+                    Debug.LogError($"[LobbyManager/OnPromoteMemberFinished()]: Error promoting member: {info.ResultCode}");
+                    callback1?.Invoke(info.ResultCode);
+                }
                 return;
             }
 
-            Debug.Log("Lobbies (OnPromoteMemberFinished): Member promoted.");
-
-            PromoteMemberCallback?.Invoke(Result.Success);
+            Debug.Log("[LobbyManager/OnPromoteMemberCompleted()]: Member promoted.");
+            if (info.ClientData is OnCreateLobbyCallback callback)
+            {
+                callback?.Invoke(Result.Success);
+            }
         }
 
         void OnLeaveLobbyRequested(ref LeaveLobbyRequestedCallbackInfo data)
         {
             Debug.Log("Lobbies (OnLeaveLobbyRequested): Leave Lobby Requested via Overlay.");
-            LeaveLobby(null);
+            LeaveCurrentLobby(null);
         }
         void OnMemberStatusReceived(ref LobbyMemberStatusReceivedCallbackInfo data)
         {
@@ -1437,7 +1436,7 @@ namespace UZSG.EOS
         /// </summary>
         /// <param name="lobbyId"><c>string</c> of lobbyId to search</param>
         /// <param name="SearchCompleted">Callback when search is completed</param>
-        public void SearchByLobbyId(string lobbyId, OnLobbySearchCallback SearchCompleted)
+        public void SearchByLobbyId(string lobbyId, OnSearchByLobbyIdCallback SearchCompleted)
         {
             Debug.LogFormat("Lobbies (SearchByLobbyId): lobbyId='{0}'", lobbyId);
 
@@ -1457,7 +1456,7 @@ namespace UZSG.EOS
             }
 
             var createLobbySearchOptions = new CreateLobbySearchOptions() { MaxResults = 10 };
-            Result result = EOSManager.Instance.GetEOSLobbyInterface().CreateLobbySearch(ref createLobbySearchOptions, out LobbySearch outLobbySearchHandle);
+            Result result = lobbyInterface.CreateLobbySearch(ref createLobbySearchOptions, out LobbySearch outLobbySearchHandle);
 
             if (result != Result.Success)
             {
@@ -1484,32 +1483,34 @@ namespace UZSG.EOS
             outLobbySearchHandle.Find(ref lobbySearchFindOptions, null, OnLobbySearchCompleted);
         }
 
+        const int MAX_LOBBY_SEARCH_RESULTS = 16;
         /// <summary>
         /// Wrapper for calling [EOS_LobbySearch_Find](https://dev.epicgames.com/docs/services/en-US/API/Members/Functions/Lobby/EOS_LobbySearch_Find/index.html)
         /// </summary>
         /// <param name="attributeKey"><c>string</c> of attributeKey to search</param>
         /// <param name="attributeValue"><c>string</c> of attributeValue to search</param>
         /// <param name="SearchCompleted">Callback when search is completed</param>
-        public void SearchByAttribute(string attributeKey, string attributeValue, OnLobbySearchCallback SearchCompleted)
+        public void SearchByAttribute(string attributeKey, string attributeValue, OnSearchByLobbyIdCallback SearchCompleted)
         {
             Debug.LogFormat("Lobbies (SearchByAttribute): searchString='{0}'", attributeKey);
 
             if (string.IsNullOrEmpty(attributeKey))
             {
-                Debug.LogError("Lobbies (SearchByAttribute): searchString is null or empty!");
+                Debug.LogError("[LobbyManager/SearchByAttribute()]: Search string is null or empty!");
                 SearchCompleted?.Invoke(Result.InvalidParameters);
                 return;
             }
 
             ProductUserId currentProductUserId = EOSManager.Instance.GetProductUserId();
-            if (!currentProductUserId.IsValid())
+            if (currentProductUserId == null || !currentProductUserId.IsValid())
             {
                 Debug.LogError("Lobbies (SearchByAttribute): Current player is invalid!");
                 SearchCompleted?.Invoke(Result.InvalidProductUserID);
                 return;
             }
-            var createLobbySearchOptions = new CreateLobbySearchOptions() { MaxResults = 10}; 
-            Result result = EOSManager.Instance.GetEOSLobbyInterface().CreateLobbySearch(ref createLobbySearchOptions, out LobbySearch outLobbySearchHandle);
+
+            var createLobbySearchOptions = new CreateLobbySearchOptions() { MaxResults = MAX_LOBBY_SEARCH_RESULTS }; 
+            Result result = lobbyInterface.CreateLobbySearch(ref createLobbySearchOptions, out LobbySearch outLobbySearchHandle);
 
             if (result != Result.Success)
             {
@@ -1520,13 +1521,16 @@ namespace UZSG.EOS
 
             currentSearch = outLobbySearchHandle;
 
-            LobbySearchSetParameterOptions paramOptions = new LobbySearchSetParameterOptions();
-            paramOptions.ComparisonOp = ComparisonOp.Equal;
-
-            // Turn SearchString into AttributeData
-            AttributeData attrData = new AttributeData();
-            attrData.Key = attributeKey.Trim();
-            attrData.Value = new AttributeDataValue();
+            var paramOptions = new LobbySearchSetParameterOptions
+            {
+                ComparisonOp = ComparisonOp.Equal
+            };
+            /// Turn SearchString into AttributeData
+            var attrData = new AttributeData
+            {
+                Key = attributeKey.Trim(),
+                Value = new AttributeDataValue()
+            };
             attrData.Value = attributeValue.Trim();
             paramOptions.Parameter = attrData;
 
@@ -1637,7 +1641,7 @@ namespace UZSG.EOS
             CopyLobbyDetailsHandleByInviteIdOptions options = new CopyLobbyDetailsHandleByInviteIdOptions();
             options.InviteId = inviteId;
 
-            Result result = EOSManager.Instance.GetEOSLobbyInterface().CopyLobbyDetailsHandleByInviteId(ref options, out LobbyDetails outLobbyDetailsHandle);
+            Result result = lobbyInterface.CopyLobbyDetailsHandleByInviteId(ref options, out LobbyDetails outLobbyDetailsHandle);
 
             if (result != Result.Success)
             {
@@ -1691,7 +1695,7 @@ namespace UZSG.EOS
             CopyLobbyDetailsHandleByUiEventIdOptions options = new CopyLobbyDetailsHandleByUiEventIdOptions();
             options.UiEventId = data.UiEventId;
 
-            Result result = EOSManager.Instance.GetEOSLobbyInterface().CopyLobbyDetailsHandleByUiEventId(ref options, out LobbyDetails outLobbyDetailsHandle);
+            Result result = lobbyInterface.CopyLobbyDetailsHandleByUiEventId(ref options, out LobbyDetails outLobbyDetailsHandle);
 
             if (result != Result.Success)
             {
@@ -1724,7 +1728,7 @@ namespace UZSG.EOS
             CopyLobbyDetailsHandleByInviteIdOptions options = new CopyLobbyDetailsHandleByInviteIdOptions();
             options.InviteId = data.InviteId;
 
-            Result result = EOSManager.Instance.GetEOSLobbyInterface().CopyLobbyDetailsHandleByInviteId(ref options, out LobbyDetails outLobbyDetailsHandle);
+            Result result = lobbyInterface.CopyLobbyDetailsHandleByInviteId(ref options, out LobbyDetails outLobbyDetailsHandle);
 
             if (result != Result.Success)
             {
@@ -1755,7 +1759,7 @@ namespace UZSG.EOS
                 InviteId = data.InviteId
             };
 
-            Result lobbyDetailsResult = EOSManager.Instance.GetEOSLobbyInterface().CopyLobbyDetailsHandleByInviteId(ref options, out LobbyDetails outLobbyDetailsHandle);
+            Result lobbyDetailsResult = lobbyInterface.CopyLobbyDetailsHandleByInviteId(ref options, out LobbyDetails outLobbyDetailsHandle);
 
             if (lobbyDetailsResult != Result.Success)
             {
@@ -1807,22 +1811,21 @@ namespace UZSG.EOS
 
         void AddLocalUserAttributes()
         {
-            string localUserDisplayName = EOSSubManagers.UserInfo.GetLocalUserInfo().DisplayName;
+            var userInfo = EOSSubManagers.UserInfo.GetLocalUserInfo();
 
-            if (!string.IsNullOrEmpty(localUserDisplayName))
+            if (!string.IsNullOrEmpty(userInfo.DisplayName))
             {
-                Debug.Log("Lobbies (AddLocalUserAttributes): adding displayname attribute.");
-                LobbyAttribute nameAttrib = new()
+                var attr = new LobbyAttribute()
                 {
-                    Key = LobbyMember.DisplayNameKey,
-                    AsString = localUserDisplayName,
+                    Key = AttributeKeys.LOBBY_OWNER_DISPLAY_NAME,
+                    AsString = userInfo.DisplayName,
                     ValueType = AttributeType.String
                 };
-                SetMemberAttribute(nameAttrib);
+                SetMemberAttribute(attr);
             }
         }
 
-        // Join Events
+        #region Join Events
 
         //-------------------------------------------------------------------------
         /// <summary>
@@ -1831,22 +1834,24 @@ namespace UZSG.EOS
         /// <param name="lobbyId">Target lobbyId of lobby to join</param>
         /// <param name="lobbyDetails">Reference to <c>LobbyDetails</c> of lobby to join</param>
         /// <param name="presenceEnabled">Presence Enabled if <c>true</c></param>
-        /// <param name="JoinLobbyCompleted">Callback when join lobby is completed</param>
-        public void JoinLobby(string lobbyId, LobbyDetails lobbyDetails, bool presenceEnabled, OnLobbyCallback JoinLobbyCompleted)
+        /// <param name="onCompleted">Callback when join lobby is completed</param>
+        public void JoinLobby(string lobbyId, LobbyDetails lobbyDetails, bool presenceEnabled, OnCreateLobbyCallback onCompleted)
         {
+            Game.Console.LogInfo($"Joining selected lobby [{lobbyId}]");
+
             HackWorkaroundRTCInitIssues();
 
             if (string.IsNullOrEmpty(lobbyId))
             {
                 Debug.LogError("Lobbies (JoinButtonOnClick): lobbyId is null or empty!");
-                JoinLobbyCompleted?.Invoke(Result.InvalidParameters);
+                onCompleted?.Invoke(Result.InvalidParameters);
                 return;
             }
 
             if (lobbyDetails == null)
             {
                 Debug.LogError("Lobbies (JoinButtonOnClick): lobbyDetails is null!");
-                JoinLobbyCompleted?.Invoke(Result.InvalidParameters);
+                onCompleted?.Invoke(Result.InvalidParameters);
                 return;
             }
 
@@ -1860,70 +1865,67 @@ namespace UZSG.EOS
 
                 // TODO Active Join
                 //ActiveJoin = 
-                LeaveLobby(null);
+                LeaveCurrentLobby(null);
                 Debug.LogError("Lobbies (JoinLobby): Leaving lobby now (must Join again, Active Join Not Implemented)!");
-                JoinLobbyCompleted?.Invoke(Result.InvalidState);
+                onCompleted?.Invoke(Result.InvalidState);
 
                 return;
             }
 
-            JoinLobbyOptions joinOptions = new JoinLobbyOptions();
-            joinOptions.LobbyDetailsHandle = lobbyDetails;
-            joinOptions.LocalUserId = EOSManager.Instance.GetProductUserId();
-            joinOptions.PresenceEnabled = presenceEnabled;
+            var joinOptions = new JoinLobbyOptions
+            {
+                LobbyDetailsHandle = lobbyDetails,
+                LocalUserId = EOSManager.Instance.GetProductUserId(),
+                PresenceEnabled = presenceEnabled
+            };
             if (customLocalRTCOptions != null)
             {
                 joinOptions.LocalRTCOptions = customLocalRTCOptions;
             }
-            EOSManager.Instance.GetEOSLobbyInterface().JoinLobby(ref joinOptions, JoinLobbyCompleted, OnJoinLobbyCompleted);
+            lobbyInterface.JoinLobby(ref joinOptions, onCompleted, OnJoinLobbyCompleted);
         }
 
         void OnJoinLobbyCompleted(ref JoinLobbyCallbackInfo data)
         {
-            OnLobbyCallback JoinLobbyCallback = data.ClientData as OnLobbyCallback;
-
-            //if (data == null)
-            //{
-            //    Debug.LogError("Lobbies (OnJoinLobbyCompleted): JoinLobbyCallbackInfo data is null");
-            //    JoinLobbyCallback?.Invoke(Result.InvalidState);
-            //    return;
-            //}
-
             if (data.ResultCode != Result.Success)
             {
-                Debug.LogErrorFormat("Lobbies (OnJoinLobbyCompleted): error code: {0}", data.ResultCode);
+                Debug.LogError($"[LobbyManager/OnJoinLobbyCompleted()]: Error joining lobby {data.ResultCode}");
+                if (data.ClientData is OnCreateLobbyCallback callback1)
+                {
+                    callback1?.Invoke(data.ResultCode);
+                }
                 OnLobbyJoinFailed(data.LobbyId);
-                JoinLobbyCallback?.Invoke(data.ResultCode);
                 return;
             }
 
-            Debug.Log("Lobbies (OnJoinLobbyCompleted): Lobby join finished.");
+            Game.Console.LogInfo($"Joined lobby [{data.LobbyId}]");
+            Game.Console.LogDebug($"[LobbyManager/OnJoinLobbyCompleted()]: Lobby join finished.");
 
-            // OnLobbyJoined
+            /// If there is a current lobby, and it's not the joined lobby, leave current
             if (currentLobby != null && currentLobby.IsValid() && !string.Equals(currentLobby.Id, data.LobbyId))
             {
-                LeaveLobby(null);
+                LeaveCurrentLobby(null);
             }
 
+            currentLobby = new();
             currentLobby.InitFromLobbyHandle(data.LobbyId);
-
             if (currentLobby.RTCRoomEnabled)
             {
                 SubscribeToRTCEvents();
             }
-
             _isDirty = true;
-
             PopLobbyInvite();
 
-            JoinLobbyCallback?.Invoke(Result.Success);
-
+            if (data.ClientData is OnCreateLobbyCallback callback)
+            {
+                callback?.Invoke(Result.Success);
+            }
             OnCurrentLobbyChanged();
         }
 
         void OnLeaveLobbyCompleted(ref LeaveLobbyCallbackInfo data)
         {
-            OnLobbyCallback LeaveLobbyCallback = data.ClientData as OnLobbyCallback;
+            OnCreateLobbyCallback LeaveLobbyCallback = data.ClientData as OnCreateLobbyCallback;
 
             //if (data == null)
             //{
@@ -1941,7 +1943,7 @@ namespace UZSG.EOS
             {
                 Debug.Log("Lobbies (OnLeaveLobbyCompleted): Successfully left lobby: " + data.LobbyId);
 
-                currentLobby.Clear();
+                currentLobby.ClearCache();
 
                 LeaveLobbyCallback?.Invoke(Result.Success);
 
@@ -1968,7 +1970,7 @@ namespace UZSG.EOS
                 rejectOptions.InviteId = currentInvite.InviteId;
                 rejectOptions.LocalUserId = currentUserProductId;
 
-                EOSManager.Instance.GetEOSLobbyInterface().RejectInvite(ref rejectOptions, null, OnDeclineInviteCompleted);
+                lobbyInterface.RejectInvite(ref rejectOptions, null, OnDeclineInviteCompleted);
             }
 
             // LobbyId does not match current invite, reject can be ignored
@@ -1998,7 +2000,7 @@ namespace UZSG.EOS
         /// </summary>
         /// <param name="enablePresence">Presence Enabled if <c>true</c></param>
         /// <param name="AcceptLobbyInviteCompleted">Callback when join lobby is completed</param>
-        public void AcceptCurrentLobbyInvite(bool enablePresence, OnLobbyCallback AcceptLobbyInviteCompleted)
+        public void AcceptCurrentLobbyInvite(bool enablePresence, OnCreateLobbyCallback AcceptLobbyInviteCompleted)
         {
             if (currentInvite != null && currentInvite.IsValid())
             {
@@ -2020,7 +2022,7 @@ namespace UZSG.EOS
         /// <param name="lobbyInvite">Specified invite to accept</param>
         /// <param name="enablePresence">Presence Enabled if <c>true</c></param>
         /// <param name="AcceptLobbyInviteCompleted">Callback when join lobby is completed</param>
-        public void AcceptLobbyInvite(LobbyInvite lobbyInvite, bool enablePresence, OnLobbyCallback AcceptLobbyInviteCompleted)
+        public void AcceptLobbyInvite(LobbyInvite lobbyInvite, bool enablePresence, OnCreateLobbyCallback AcceptLobbyInviteCompleted)
         {
             if (lobbyInvite != null && lobbyInvite.IsValid())
             {
@@ -2035,5 +2037,7 @@ namespace UZSG.EOS
                 AcceptLobbyInviteCompleted(Result.InvalidState);
             }
         }
+
+        #endregion
     }
 }

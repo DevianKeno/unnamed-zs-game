@@ -154,7 +154,7 @@ public class ScreenSpaceOutlines : ScriptableRendererFeature {
             cmd.GetTemporaryRT(temporaryBufferID, temporaryTargetDescriptor, FilterMode.Bilinear);
             temporaryBuffer = new RenderTargetIdentifier(temporaryBufferID);
 
-            cameraColorTarget = renderingData.cameraData.renderer.cameraColorTarget;
+            cameraColorTarget = renderingData.cameraData.renderer.cameraColorTargetHandle;
         }
 
         public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData) {

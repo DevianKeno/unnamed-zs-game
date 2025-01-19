@@ -11,7 +11,7 @@ using UnityEngine.UI;
 
 namespace UZSG.UI.Lobbies
 {
-    public class LobbyEntryUI : MonoBehaviour, IPointerDownHandler
+    public class LobbyEntryUI : MonoBehaviour, IPointerUpHandler
     {
         public Lobby Lobby { get; private set; }
         public LobbyDetails LobbyDetails { get; private set; }
@@ -25,7 +25,7 @@ namespace UZSG.UI.Lobbies
         [SerializeField] TextMeshProUGUI playerCountTmp;
         [SerializeField] TextMeshProUGUI versionMismatchText;
 
-        public void OnPointerDown(PointerEventData eventData)
+        public void OnPointerUp(PointerEventData eventData)
         {
             OnClick?.Invoke(this, new());
         }
@@ -36,35 +36,39 @@ namespace UZSG.UI.Lobbies
 
             Lobby = lobby;
             LobbyDetails = lobbyDetails;
+            string ownerName = string.Empty;
             string worldName = string.Empty;
-            string levelId = string.Empty;
+            string levelDisplayName = string.Empty;
             string gameVersion = string.Empty;
-            string maxPlayers = string.Empty;
-            string playerCount = string.Empty;
+            string maxPlayers = "-";
+            string playerCount = "-"; 
 
+            if (lobby.LobbyOwner != null && lobby.LobbyOwner.IsValid())
+            {
+                ownerName = lobby.LobbyOwnerDisplayName;
+            }
+            if (lobby.TryGetAttribute(AttributeKeys.LOBBY_OWNER_DISPLAY_NAME, out var own))
+            {
+                ownerName = own.AsString;
+            }
             if (lobby.TryGetAttribute(AttributeKeys.WORLD_NAME, out var wn))
             {
                 worldName = wn.AsString;
             }
-            if (lobby.TryGetAttribute(AttributeKeys.LEVEL_ID, out var lid))
+            if (lobby.TryGetAttribute(AttributeKeys.LEVEL_DISPLAY_NAME, out var lid))
             {
-                levelId = lid.AsString;
+                levelDisplayName = lid.AsString;
             }
             if (lobby.TryGetAttribute(AttributeKeys.GAME_VERSION, out var gv))
             {
                 gameVersion = gv.AsString;
             }
-            if (lobby.TryGetAttribute(AttributeKeys.MAX_PLAYERS, out var mp))
-            {
-                maxPlayers = mp.AsString;
-            }
-            if (lobby.TryGetAttribute(AttributeKeys.PLAYER_COUNT, out var pc))
-            {
-                playerCount = pc.AsString;
-            }
+
+            maxPlayers = lobby.MaxNumLobbyMembers.ToString();
+            playerCount = (lobby.MaxNumLobbyMembers - lobby.AvailableSlots).ToString();
 
             worldNameTmp.text = worldName;
-            infoTmp.text = $"Map: {levelId} | Game Version: {gameVersion}";
+            infoTmp.text = $"Host: {ownerName} | Map: {levelDisplayName} | Game Version: {gameVersion}";
             playerCountTmp.text = $"{playerCount}/{maxPlayers}";
         }
 

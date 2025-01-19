@@ -55,7 +55,7 @@ namespace UZSG.TitleScreen
             if (data == null) return;
 
             LevelData = data;
-            Label = data.Name;
+            Label = data.DisplayName;
             Subheading = $"{data.DimensionsKilometers.x} x {data.DimensionsKilometers.y}";
 
             if (data.Image != null)

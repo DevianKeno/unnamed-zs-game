@@ -1,16 +1,18 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
+
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using TMPro;
+
+using UZSG.Data;
 using UZSG.Saves;
 
 namespace UZSG.UI.TitleScreen
 {
     public class WorldEntryUI : UIElement, IPointerDownHandler
     {
+        public LevelData LevelData;
         public WorldSaveData SaveData { get; set; }
         public string Filepath { get; set; }
         public event Action<WorldEntryUI> OnClick;

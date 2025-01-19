@@ -1,13 +1,12 @@
 using System;
+using System.Collections.Generic;
 
 using UnityEngine;
-using UnityEditor.Animations;
 using UnityEngine.AddressableAssets;
+using UnityEngine.Serialization;
 
 using UZSG.FPP;
 using UZSG.Items.Weapons;
-using System.Collections.Generic;
-using UnityEngine.Serialization;
 
 namespace UZSG.Data
 {
@@ -43,9 +42,8 @@ namespace UZSG.Data
         
         #region Viewmodel Data
 
-        [SerializeField] AnimatorController armsAnimations;
-        public AnimatorController ArmsAnimations => armsAnimations;
-        
+        [SerializeField] RuntimeAnimatorController armsAnimations;
+        public RuntimeAnimatorController ArmsAnimations => armsAnimations;
         [FormerlySerializedAs("viewmodel"), SerializeField] AssetReference viewmodelAsset;
         public AssetReference Viewmodel => viewmodelAsset;
         [SerializeField] ViewmodelSettings viewmodelSettings;

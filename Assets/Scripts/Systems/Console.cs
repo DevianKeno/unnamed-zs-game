@@ -14,7 +14,6 @@ namespace UZSG.Systems
     {
         bool _isInitialized;
         public bool IsInitialized => _isInitialized;
-        [SerializeField] bool EnableDebugMode = true;
         [SerializeField] bool enableDebugCommands = true;
         /// <summary>
         /// <c>string</c> is command Name.
@@ -200,11 +199,11 @@ namespace UZSG.Systems
 
         public void LogInfo(object message)
         {
-            try
+            if (message is string)
             {
                 WriteLine($"{message}");
             }
-            catch
+            else
             {
                 UnityEngine.Debug.Log(message);
             }
@@ -215,9 +214,10 @@ namespace UZSG.Systems
         /// </summary>
         public void LogDebug(object message)
         {
-            if (EnableDebugMode)
+            if (Game.Main.EnableDebugMode)
             {
                 LogInfo($"<color=\"white\">[DEBUG]: {message}</color>");
+                Debug.Log(message);
             }
         }
         
@@ -235,6 +235,14 @@ namespace UZSG.Systems
         public void LogError(object message)
         {
             LogInfo($"<color=\"red\">[ERROR]: {message}</color>");
+        }
+        
+        /// <summary>
+        /// Log a debug message into the game's console.
+        /// </summary>
+        public void LogFatal(object message)
+        {
+            LogInfo($"<color=\"red\">[FATAL]: {message}</color>");
         }
 
         /// <summary>

@@ -18,6 +18,10 @@ using UZSG.UI;
 using UZSG.Data;
 using Unity.VisualScripting;
 using System.Text;
+using UZSG.EOS;
+using Epic.OnlineServices;
+using UZSG.EOS.Lobbies;
+using Epic.OnlineServices.Connect;
 
 namespace UZSG.Worlds
 {
@@ -91,6 +95,11 @@ namespace UZSG.Worlds
             var initializeTimer = new System.Diagnostics.Stopwatch();
             initializeTimer.Start();
 
+            if (Game.Main.IsOnline && EOSSubManagers.Lobbies.IsHosting)
+            {
+                EOSSubManagers.Lobbies.AddNotifyMemberUpdateReceived(OnLobbyMemberUpdate);
+            }
+
             InitializeInternal();
             InitializeAttributes(saveData);
             InitializeEvents();
@@ -101,6 +110,37 @@ namespace UZSG.Worlds
             
             this.onInitializeCompleted?.Invoke();
             this.onInitializeCompleted = null;
+        }
+
+        void OnLobbyMemberUpdate(string lobbyId, ProductUserId memberId)
+        {
+            if (memberId == null || !memberId.IsValid())
+            {
+                Game.Console.LogError("[WorldManager/OnLobbyMemberUpdate]: Member Id cannot be null");
+                return;
+            }
+            
+            var currentLobby = EOSSubManagers.Lobbies.CurrentLobby;
+            if (currentLobby.Id != lobbyId) return;
+
+            if (currentLobby.FindLobbyMember(memberId, out LobbyMember member))
+            {
+                Game.Console.LogError("[WorldManager/OnLobbyMemberUpdate]: Member Id already exists within the lobby");
+                return;
+            }
+
+            var newMember = new LobbyMember(memberId);
+            currentLobby.Members.Add(newMember);
+
+            EOSSubManagers.UserInfo.QueryUserInfoByProductId(memberId, OnQueryUserInfoCompleted);
+        }
+
+        void OnQueryUserInfoCompleted(ExternalAccountInfo userInfo, ProductUserId userId, Result result)
+        {
+            if (result == Result.Success)
+            {
+                JoinPlayerExternal(userInfo);
+            }
         }
 
         void InitializeAttributes(WorldSaveData saveData)
@@ -381,7 +421,7 @@ namespace UZSG.Worlds
 
         #region Public methods
         
-        public void Deinitialize()
+        internal void Deinitialize()
         {
             eventsController.Deinitialize();     
         }
@@ -389,7 +429,7 @@ namespace UZSG.Worlds
         /// <summary>
         /// Joins a player to the world.
         /// </summary>
-        public void JoinLocalPlayer()
+        internal void JoinLocalPlayer()
         {
             Game.Entity.Spawn<Player>("player", ValidateWorldSpawn(_saveData.WorldSpawn), (info) =>
             {
@@ -409,7 +449,7 @@ namespace UZSG.Worlds
         /// <summary>
         /// Joins a player to the world.
         /// </summary>
-        public void JoinPlayerId(UserInfoData userInfo)
+        internal void JoinPlayerId(UserInfoData userInfo)
         {
             Game.Entity.Spawn<Player>("player", position: ValidateWorldSpawn(_saveData.WorldSpawn), (info) =>
             {
@@ -425,6 +465,23 @@ namespace UZSG.Worlds
             });
 
             Game.Console.LogInfo($"[World]: {userInfo.DisplayName} has entered the world");
+        }
+
+        internal void JoinPlayerExternal(ExternalAccountInfo accountInfo)
+        {
+            Game.Entity.Spawn<Player>("player", ValidateWorldSpawn(_saveData.WorldSpawn), (info) =>
+            {
+                Player player = info.Entity;
+
+                var uid = accountInfo.AccountId.ToString();
+                this._playerIdSaves.TryGetValue(uid, out var playerSave);
+                player.Initialize(playerSave);
+
+                _playerEntities.Add(player);
+                OnPlayerJoined(player);
+            });
+
+            Game.Console.LogInfo($"[World]: {accountInfo.DisplayName} has entered the world");
         }
 
         /// <summary>

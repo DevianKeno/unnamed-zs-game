@@ -132,10 +132,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 5231931351080874021}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: 60}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6754490936393540741
 CanvasRenderer:
@@ -228,7 +228,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 16, y: 0, z: 0, w: 0}
+  m_margin: {x: 0, y: 0, z: 16, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -567,7 +567,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Map: MAP_NAME | Game Version: 1.0.0'
+  m_text: 'Host: DISPLAYNAME | Map: MAP_NAME | Game Version: 1.0.0'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a130051beed60b44bad11c5038d319b5, type: 2}
   m_sharedMaterial: {fileID: 5494290305507304718, guid: a130051beed60b44bad11c5038d319b5, type: 2}
@@ -677,7 +677,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 60}
+  m_SizeDelta: {x: 700, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8644557710891031404
 CanvasRenderer:
@@ -799,8 +799,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e883e6bae6750c74fbf0f6ce19f07f8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  button: {fileID: 0}
-  worldNameTmp: {fileID: 0}
-  infoTmp: {fileID: 0}
-  playerCountTmp: {fileID: 0}
-  versionMismatchText: {fileID: 0}
+  button: {fileID: 5145337555338110750}
+  worldNameTmp: {fileID: 4424245364401688604}
+  infoTmp: {fileID: 3467713440041256552}
+  playerCountTmp: {fileID: 4913278843522278988}
+  versionMismatchText: {fileID: 991201796296085830}

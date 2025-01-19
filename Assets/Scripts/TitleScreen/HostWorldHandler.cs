@@ -5,6 +5,8 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using Unity.VisualScripting;
+
 using Epic.OnlineServices;
 using Epic.OnlineServices.Lobby;
 
@@ -17,8 +19,7 @@ using UZSG.EOS;
 using UZSG.EOS.Lobbies;
 
 using static UZSG.Systems.Status;
-using System.Text;
-using Unity.VisualScripting;
+using UZSG.Data;
 
 namespace UZSG.TitleScreen
 {
@@ -36,10 +37,7 @@ namespace UZSG.TitleScreen
         [SerializeField] WorldEntryUI selectedWorldEntry;
         [SerializeField] Button startBtn;
 
-        ProductUserId localProductUserId => Game.EOS.GetProductUserId();
-
         [Header("Debugging")]
-        [SerializeField] bool enableDebugging = false;
         [SerializeField] bool loadWorldUponHost = false;
 
         void Awake()
@@ -63,7 +61,10 @@ namespace UZSG.TitleScreen
                 frameController.SwitchToFrame("worlds");
             };
 
-            currentWorldAttributes = new WorldAttributes();
+            currentWorldAttributes = new WorldAttributes
+            {
+                MaxPlayers = WorldAttributes.DEFAULT_MAX_NUM_PLAYERS
+            };
             ruleLinks[RuleTypeEnum.DaytimeLength] = currentWorldAttributes.DayLengthSeconds;
             ruleLinks[RuleTypeEnum.NighttimeLength] = currentWorldAttributes.NightLengthSeconds;
             ruleLinks[RuleTypeEnum.MaxPlayers] = currentWorldAttributes.MaxPlayers;
@@ -100,26 +101,13 @@ namespace UZSG.TitleScreen
         {
             WorldAttributes.Validate(ref currentWorldAttributes);
 
-            if (Game.Main.IsOnline)
+            if (EOSSubManagers.Auth.IsLoggedIn)
             {
-                var loginStatus = Game.EOS.GetEOSAuthInterface().GetLoginStatus(Game.EOS.GetLocalUserId());
-                if (loginStatus == LoginStatus.LoggedIn)
+                var localUser = Game.EOS.GetLocalUserId();
+                if (localUser != null && localUser.IsValid())
                 {
-                    if (!localProductUserId.IsValid())
-                    {
-                        Debug.LogError("Lobbies (CreateLobby): Current player is invalid!");
-                        return;
-                    }
-
+                    Game.Console.LogInfo($"Creating lobby...");
                     EOSSubManagers.Lobbies.CreateLobby(CreateLobbyFromProperties(), OnCreateLobbyCompleted);
-                    return;
-                }
-                else if (loginStatus == LoginStatus.UsingLocalProfile)
-                {
-                    startBtn.interactable = true;
-
-                    Game.Console.LogInfo($"Unhandled login status." + loginStatus);
-                    Debug.LogError($"Unhandled login status." + loginStatus);
                     return;
                 }
             }
@@ -133,6 +121,8 @@ namespace UZSG.TitleScreen
         /// </summary>
         public Lobby CreateLobbyFromProperties()
         {
+            // var localUser = EOSSubManagers.UserInfo.GetLocalUserInfo();
+            // var country = localUser.Country.ToString();
             var region = "ASIA";
             var world = selectedWorldEntry.SaveData;
             var bucketId = $"{region}:{world.LevelId}";
@@ -155,12 +145,39 @@ namespace UZSG.TitleScreen
                 ValueType = AttributeType.String,
                 Visibility = LobbyAttributeVisibility.Public
             });
+            
+            newLobby.AddAttribute(new()
+            {
+                Key = AttributeKeys.WORLD_NAME,
+                AsString = selectedWorldEntry.SaveData.WorldName,
+                ValueType = AttributeType.String,
+                Visibility = LobbyAttributeVisibility.Public
+            });
 
-            string levelId = currentWorldAttributes.LevelId.ToSafeString();
+            var levelData = Resources.Load<LevelData>($"Data/Levels/{selectedWorldEntry.SaveData.LevelId}");
+            newLobby.AddAttribute(new()
+            {
+                Key = AttributeKeys.LEVEL_DISPLAY_NAME,
+                AsString = levelData.DisplayName,
+                ValueType = AttributeType.String,
+                Visibility = LobbyAttributeVisibility.Public
+            });
+
+            string levelId = selectedWorldEntry.SaveData.LevelId.ToString();
             newLobby.AddAttribute(new()
             {
                 Key = AttributeKeys.LEVEL_ID,
                 AsString = levelId,
+                ValueType = AttributeType.String,
+                Visibility = LobbyAttributeVisibility.Public
+            });
+
+            /// NOTE: There's a promote member method in the lobby manager I suppose this is supposed to be there instead
+            var localUserInfo = EOSSubManagers.UserInfo.GetLocalUserInfo();
+            newLobby.AddAttribute(new()
+            {
+                Key = AttributeKeys.LOBBY_OWNER_DISPLAY_NAME,
+                AsString = localUserInfo.DisplayName,
                 ValueType = AttributeType.String,
                 Visibility = LobbyAttributeVisibility.Public
             });
@@ -180,25 +197,30 @@ namespace UZSG.TitleScreen
         {
             if (result == Result.Success)
             {
-                if (enableDebugging)
+                if (Game.Main.EnableDebugMode)
                 {
-                    Debug.Log($"Created lobby with id: {EOSSubManagers.Lobbies.CurrentLobby.Id}");
+                    string msg = $"Created lobby with id: {EOSSubManagers.Lobbies.CurrentLobby.Id}";
+                    Game.Console.LogDebug(msg);
+                    print(msg);
                 }
-                
-                EOSSubManagers.Lobbies.PromoteMember(localProductUserId, OnPromoteMemberCompleted);
-                EOSSubManagers.Lobbies.AddNotifyMemberUpdateReceived(OnMemberUpdate);
+
+                EOSSubManagers.Lobbies.PromoteMember(Game.EOS.GetProductUserId(), OnPromoteMemberCompleted);
+                // EOSSubManagers.Lobbies.AddNotifyMemberUpdateReceived(OnMemberUpdate);
             }
             else
             {
+                string msg = $"Error creating lobby. [" + result + "]";
+                Game.Console.LogInfo(msg);
+                Debug.LogError(msg);
+
                 startBtn.interactable = true;
-                Game.Console.LogInfo($"Error creating lobby. [" + result + "]");
-                Debug.LogError("Error creating lobby. [" + result + "]");
             }
         }
 
-        void OnMemberUpdate(string LobbyId, ProductUserId MemberId)
+        void OnMemberUpdate(string lobbyId, ProductUserId memberId)
         {   
-            Debug.Log($"NotifyMemberUpdateReceived, Id: {MemberId}");
+            Game.Console.LogDebug($"NotifyMemberUpdateReceived, Id: {memberId}");
+            
         }
 
         void OnPromoteMemberCompleted(Result result)
@@ -209,16 +231,17 @@ namespace UZSG.TitleScreen
             }
             else
             {
+                string msg = $"Error promoting owner: [" + result + "]";
+                Game.Console.LogInfo(msg);
+                Debug.LogError(msg);
+                
                 startBtn.interactable = true;
-
-                Game.Console.LogInfo($"Error promoting owner. [" + result + "]");
-                Debug.LogError("Error promoting owner. [" + result + "]");
             }
         }
 
         void LoadWorld()
         {
-            if (enableDebugging && !loadWorldUponHost) return;
+            if (Game.Main.EnableDebugMode && !loadWorldUponHost) return;
             
             Game.Main.LoadScene(
                 new(){

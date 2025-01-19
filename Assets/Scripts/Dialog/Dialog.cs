@@ -1,10 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using Mono.Cecil.Cil;
+
 using UnityEngine;
 using Ink.Runtime;
-using System;
-using System.Linq;
 
 namespace UZSG.DialogSystem
 {

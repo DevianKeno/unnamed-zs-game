@@ -16,6 +16,9 @@ using UnityEngine.InputSystem;
 using UZSG.UI;
 using PlayEveryWare.EpicOnlineServices;
 using System.Threading.Tasks;
+using Epic.OnlineServices;
+using UZSG.EOS.Lobbies;
+using Epic.OnlineServices.Connect;
 
 namespace UZSG.Systems
 {
@@ -206,7 +209,7 @@ namespace UZSG.Systems
             this.onLoadWorldCompleted = null;
         }
         
-        public void LoadWorld(string filepath, Action<LoadWorldResult> onLoadWorldCompleted = null)
+        public void LoadWorldFromLevelDat(string filepath, Action<LoadWorldResult> onLoadWorldCompleted = null)
         {
             this.onLoadWorldCompleted += onLoadWorldCompleted;
 
@@ -264,8 +267,61 @@ namespace UZSG.Systems
 
         void InitializeWorldLoaded()
         {
+            if (EOSSubManagers.Lobbies.IsHosting)
+            {
+                var hostingLobby = EOSSubManagers.Lobbies.CurrentLobby;
+                EOSSubManagers.Lobbies.AddNotifyMemberUpdateReceived(OnMemberUpdated);
+            }
+            
             JoinPlayer();
             pauseInput.Enable();
+        }
+
+        void OnMemberUpdated(string lobbyId, ProductUserId memberId)
+        {
+            var currentLobby = EOSSubManagers.Lobbies.CurrentLobby;
+            if (currentLobby.Id != lobbyId) return;
+                        
+            /// Check if memberId already exists in the lobby
+            if (!currentLobby.FindLobbyMember(memberId, out LobbyMember member))
+            {
+                var newMember = new LobbyMember(memberId);
+                currentLobby.Members.Add(newMember);
+                // SetMemberAsPlayer(newMember);
+
+                var options = new QueryProductUserIdMappingsOptions()
+                {
+                    LocalUserId = Game.EOS.GetProductUserId(),
+                    ProductUserIds = new ProductUserId[] { memberId },
+                };
+                Game.EOS.GetEOSConnectInterface().QueryProductUserIdMappings(ref options, null, OnQueryUserInfoCallback);
+            }
+
+            if (memberId != currentLobby.LobbyOwner)
+            {
+                // PrepareForMatch();
+            }
+            
+        }
+
+        void OnQueryUserInfoCallback(ref QueryProductUserIdMappingsCallbackInfo info)
+        {
+            if (info.ResultCode == Result.Success)
+            {
+                var options = new CopyProductUserInfoOptions()
+                {
+                    TargetUserId = info.LocalUserId
+                };
+                var result = Game.EOS.GetEOSConnectInterface().CopyProductUserInfo(ref options, out ExternalAccountInfo? outUserInfo);
+
+                if (result == Result.Success && outUserInfo.HasValue)
+                {
+                    var userInfo = outUserInfo.Value;
+                    Game.World.CurrentWorld.JoinPlayerExternal(userInfo);
+                    return;
+                }
+                info.ResultCode = result;
+            }
         }
 
         void JoinPlayer()
@@ -337,13 +393,14 @@ namespace UZSG.Systems
         /// <summary>
         /// Constructs a world save file from saveData. Used primarily to construct worlds from received data in multiplayer.
         /// </summary>
-        public string ConstructWorld(WorldSaveData saveData)
+        public string ConstructWorldFromExternal(WorldSaveData saveData)
         {
             var settings = new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
             var save = JsonConvert.SerializeObject(saveData, Formatting.Indented, settings);
-            var path = Application.persistentDataPath + $"/SavedWorlds/{saveData.WorldName}";
-            var filepath = path + "/level.dat";
-            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            var externalWorldsDirectory = Path.Join(Application.persistentDataPath, "ExternalWorlds", saveData.WorldName);
+            if (!Directory.Exists(externalWorldsDirectory)) Directory.CreateDirectory(externalWorldsDirectory);
+
+            var filepath = Path.Join(externalWorldsDirectory, "level.dat");
             File.WriteAllText(filepath, save);
 
             return filepath;

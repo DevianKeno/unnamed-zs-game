@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.Animations;
 using UnityEngine;
 
 namespace UZSG.FPP
@@ -10,11 +7,11 @@ namespace UZSG.FPP
         /// <summary>
         /// Static AnimatorController field for Viewmodel with no arms animations :)
         /// </summary>
-        [SerializeField] AnimatorController noAnimations;
+        [SerializeField] RuntimeAnimatorController noAnimations;
         [SerializeField] Animator animator;
         [SerializeField] Transform armsHolder;
 
-        public void SetAnimatorController(AnimatorController controller)
+        public void SetAnimatorController(RuntimeAnimatorController controller)
         {
             if (controller == null)
             {

@@ -6,7 +6,7 @@ namespace UZSG
     {
         public static bool IsSameVersion(string version)
         {
-            return string.Compare(version, Game.Main.GetVersionString()) != 0;
+            return Game.Main.GetVersionString() == version;
         }
         
         /// <summary>

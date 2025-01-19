@@ -22,7 +22,7 @@ namespace UZSG.EOS.Lobbies
 
         public void Clear()
         {
-            Lobby.Clear();
+            Lobby.ClearCache();
             LobbyInfo.Release();
             FriendId = new ProductUserId();
             FriendEpicId = new EpicAccountId();

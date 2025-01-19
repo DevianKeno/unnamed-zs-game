@@ -1,16 +1,13 @@
+using System;
+
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEditor;
+
 using UZSG.Data;
 using UZSG.Systems;
 using UZSG.Interactions;
-using UZSG.Attributes;
-using System.Collections.Generic;
-using System;
-using UZSG.Players;
 
 using static UZSG.Entities.EnemyActionStates;
-using System.Collections;
 
 namespace UZSG.Entities
 {

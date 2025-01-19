@@ -1,9 +1,10 @@
 using System;
 using System.Threading.Tasks;
-using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+using UnityEngine.InputSystem;
+using MEC;
 
 using UZSG.Systems;
 using UZSG.Data;
@@ -14,8 +15,6 @@ using UZSG.Items.Weapons;
 using UZSG.Items.Tools;
 using UZSG.Attacks;
 using UZSG.Inventory;
-using UnityEngine.InputSystem;
-using MEC;
 
 namespace UZSG.FPP
 {

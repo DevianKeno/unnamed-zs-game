@@ -47,7 +47,6 @@ namespace UZSG.UI.Lobbies
 
         void Awake()
         {
-
             parentFrameController.OnSwitchFrame += (context) =>
             {
                 if (context.Frame.Id != this.frame.Id)
@@ -84,11 +83,9 @@ namespace UZSG.UI.Lobbies
         
         public void JoinSelectedLobby()
         {
+            if (selectedLobby == null) return;
+
             joinBtn.gameObject.SetActive(false);
-            if (selectedLobby == null)
-            {
-                return;
-            }
             lobbyManager.JoinLobby(selectedLobby.Id, selectedLobbyDetails, false, OnJoinLobbyCompleted);
         }
 
@@ -110,7 +107,6 @@ namespace UZSG.UI.Lobbies
                     var lobby = kv.Key;
                     var lobbyDetails = kv.Value;
                     var go = Instantiate(lobbyEntryPrefab, lobbyContainer.transform);
-
                     LobbyEntryUI entry = go.GetComponent<LobbyEntryUI>();
                     entry.SetLobbyInfo(lobby, lobbyDetails);
                     entry.OnClick += (object sender, EventArgs e) =>
@@ -118,7 +114,6 @@ namespace UZSG.UI.Lobbies
                         OnClickLobbyEntry(sender as LobbyEntryUI);
                     };
 
-                    entry.SetVersionMismatch(true);
                     if (lobby.TryGetAttribute(AttributeKeys.GAME_VERSION, out var attr))
                     {
                         entry.SetVersionMismatch(!Utils.IsSameVersion(attr.AsString));
@@ -126,9 +121,10 @@ namespace UZSG.UI.Lobbies
 
                     lobbyEntriesUI.Add(entry);
                 }
-            } else
+            }
+            else
             {
-                Game.Console.LogInfo($"Error searching lobbies. [" + result + "]");
+                Game.Console.LogInfo($"An error occured when searching lobbies. [" + result + "]");
                 Debug.LogError("Error searching lobbies. [" + result + "]");
             }
         }
@@ -152,7 +148,15 @@ namespace UZSG.UI.Lobbies
         }
 
         #endregion
-
+        
+        void OnClickLobbyEntry(LobbyEntryUI entry)
+        {
+            selectedLobby = entry.Lobby;
+            selectedLobbyDetails = entry.LobbyDetails;
+            selector = GetOrCreateSelectorUI();
+            selector.Select(entry.transform as RectTransform);
+            joinBtn.gameObject.SetActive(true);
+        }
 
         void OnRequestWorldDataCompleted(string filepath)
         {
@@ -166,14 +170,14 @@ namespace UZSG.UI.Lobbies
                 {
                     var options = new WorldManager.LoadWorldOptions()
                     {
-                        OwnerId = Game.World.GetLocalUserId(),
+                        OwnerId = EOSSubManagers.Lobbies.CurrentLobby.LobbyOwnerAccountId.ToString(),
                         Filepath = filepath,
                         WorldSaveData = Game.World.DeserializeWorldData(filepath),
                     };
                     Game.World.LoadWorld(options, OnLoadWorldCompleted);
                 });
         }
-        
+
         void OnLoadWorldCompleted(WorldManager.LoadWorldResult result)
         {
             if (result.Status == Success)
@@ -191,13 +195,10 @@ namespace UZSG.UI.Lobbies
                 joinBtn.interactable = true;
             }
         }
-    
+
         void ClearLobbyEntries()
         {
-            if (selector != null)
-            {
-                selector.Hide();
-            }
+            selector?.Hide();
             foreach (LobbyEntryUI entry in lobbyEntriesUI)
             {
                 Destroy(entry.gameObject);
@@ -205,18 +206,15 @@ namespace UZSG.UI.Lobbies
             lobbyEntriesUI.Clear();
         }
 
-        void OnClickLobbyEntry(LobbyEntryUI entry)
+        Selector GetOrCreateSelectorUI()
         {
-            selectedLobby = entry.Lobby;
-            selectedLobbyDetails = entry.LobbyDetails;
             if (selector == null)
             {
-                selector ??= Game.UI.Create<Selector>("Selector", parent: lobbyContainer.transform);
+                selector = Game.UI.Create<Selector>("Selector", parent: lobbyContainer.transform);
                 var le = selector.AddComponent<LayoutElement>();
                 le.ignoreLayout = true;
             }
-            selector.Select(entry.transform as RectTransform);
-            joinBtn.gameObject.SetActive(true);
+            return selector;
         }
     }
 }

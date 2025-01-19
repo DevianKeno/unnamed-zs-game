@@ -8,7 +8,7 @@ using TMPro;
 using UZSG.EOS;
 using UZSG.Systems;
 
-using static UZSG.Systems.Status;
+using static UZSG.Systems.Result;
 
 namespace UZSG.TitleScreen
 {
@@ -95,7 +95,7 @@ namespace UZSG.TitleScreen
 
         void OnCreateWorldCompleted(WorldManager.CreateWorldResult result)
         {
-            if (result.Status == Success)
+            if (result.Result == Success)
             {
                 Game.Main.LoadScene(
                     new(){
@@ -108,7 +108,7 @@ namespace UZSG.TitleScreen
                         Game.World.LoadWorldFromLevelDat(result.Savepath, OnLoadWorldCompleted);
                     });
             }
-            else if (result.Status == Failed)
+            else if (result.Result == Failed)
             {
                 Debug.LogError("Unexpected error occured when creating world");
                 createBtn.interactable = true;
@@ -117,12 +117,12 @@ namespace UZSG.TitleScreen
 
         void OnLoadWorldCompleted(WorldManager.LoadWorldResult result)
         {
-            if (result.Status == Success)
+            if (result.Result == Success)
             {
                 Game.Main.UnloadScene("TitleScreen");
                 Game.Main.UnloadScene("LoadingScreen");
             }
-            else if (result.Status == Failed)
+            else if (result.Result == Failed)
             {
                 Game.Main.LoadScene(
                     new(){

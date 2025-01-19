@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6b7e2e119c8ab584aa3e9d5a795a27fa, type: 3}
-  m_Name: other_player
+  m_Name: network_player
   m_EditorClassIdentifier: 
-  SourceId: uzsg
-  Id: other_player
+  Namespace: uzsg
+  Id: network_player
   Tags: []
   AssetReference:
     m_AssetGUID: c605d68986dd78141ac198c381f2cb69
@@ -164,6 +164,13 @@ MonoBehaviour:
     LimitUnderflow: 1
   - data: {fileID: 11400000, guid: 33706780b721a9d488dc079df744375a, type: 2}
     value: 5
+    baseMaximum: 0
+    multiplier: 1
+    flatBonus: 0
+    LimitOverflow: 1
+    LimitUnderflow: 1
+  - data: {fileID: 11400000, guid: 22610e8a6e76e9a4eb688de490f82390, type: 2}
+    value: 6
     baseMaximum: 0
     multiplier: 1
     flatBonus: 0

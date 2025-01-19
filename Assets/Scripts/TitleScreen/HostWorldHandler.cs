@@ -18,7 +18,7 @@ using UZSG.Worlds;
 using UZSG.EOS;
 using UZSG.EOS.Lobbies;
 
-using static UZSG.Systems.Status;
+using static UZSG.Systems.Result;
 using UZSG.Data;
 
 namespace UZSG.TitleScreen
@@ -38,7 +38,7 @@ namespace UZSG.TitleScreen
         [SerializeField] Button startBtn;
 
         [Header("Debugging")]
-        [SerializeField] bool loadWorldUponHost = false;
+        [SerializeField] bool doNotLoadWorldUponHost = false;
 
         void Awake()
         {
@@ -193,19 +193,16 @@ namespace UZSG.TitleScreen
             return newLobby;
         }
 
-        void OnCreateLobbyCompleted(Result result)
+        void OnCreateLobbyCompleted(Epic.OnlineServices.Result result)
         {
-            if (result == Result.Success)
+            if (result == Epic.OnlineServices.Result.Success)
             {
                 if (Game.Main.EnableDebugMode)
                 {
-                    string msg = $"Created lobby with id: {EOSSubManagers.Lobbies.CurrentLobby.Id}";
-                    Game.Console.LogDebug(msg);
-                    print(msg);
+                    Game.Console.LogInfo($"Successfully created a lobby");
                 }
 
                 EOSSubManagers.Lobbies.PromoteMember(Game.EOS.GetProductUserId(), OnPromoteMemberCompleted);
-                // EOSSubManagers.Lobbies.AddNotifyMemberUpdateReceived(OnMemberUpdate);
             }
             else
             {
@@ -217,15 +214,9 @@ namespace UZSG.TitleScreen
             }
         }
 
-        void OnMemberUpdate(string lobbyId, ProductUserId memberId)
-        {   
-            Game.Console.LogDebug($"NotifyMemberUpdateReceived, Id: {memberId}");
-            
-        }
-
-        void OnPromoteMemberCompleted(Result result)
+        void OnPromoteMemberCompleted(Epic.OnlineServices.Result result)
         {
-            if (result == Result.Success)
+            if (result == Epic.OnlineServices.Result.Success)
             {
                 LoadWorld();
             }
@@ -234,48 +225,50 @@ namespace UZSG.TitleScreen
                 string msg = $"Error promoting owner: [" + result + "]";
                 Game.Console.LogInfo(msg);
                 Debug.LogError(msg);
-                
+
                 startBtn.interactable = true;
             }
         }
 
         void LoadWorld()
         {
-            if (Game.Main.EnableDebugMode && !loadWorldUponHost) return;
+            if (doNotLoadWorldUponHost) return;
             
-            Game.Main.LoadScene(
-                new(){
-                    SceneToLoad = "LoadingScreen",
-                    Mode = LoadSceneMode.Additive,
-                    ActivateOnLoad = true,
-                },
-                onLoadSceneCompleted: () =>
-                {
-                    var options = new WorldManager.LoadWorldOptions()
-                    {
-                        OwnerId = Game.World.GetLocalUserId(),
-                        Filepath = selectedWorldEntry.Filepath,
-                        WorldSaveData = selectedWorldEntry.SaveData,
-                    };
+            var options = new Game.LoadSceneOptions()
+            {
+                SceneToLoad = "LoadingScreen",
+                Mode = LoadSceneMode.Additive,
+                ActivateOnLoad = true,
+            };
+            Game.Main.LoadScene(options, OnLoadingScreenLoaded);
+        }
 
-                    Game.World.LoadWorld(options, OnLoadWorldCompleted);
-                });
+        void OnLoadingScreenLoaded()
+        {
+            var options = new WorldManager.LoadWorldOptions()
+            {
+                OwnerId = Game.World.GetLocalUserId(),
+                Filepath = selectedWorldEntry.Filepath,
+                WorldSaveData = selectedWorldEntry.SaveData,
+            };
+            Game.World.LoadWorld(options, OnLoadWorldCompleted);
         }
 
         void OnLoadWorldCompleted(WorldManager.LoadWorldResult result)
         {
-            if (result.Status == Success)
+            if (result.Result == Success)
             {
                 Game.Main.UnloadScene("TitleScreen");
                 Game.Main.UnloadScene("LoadingScreen");
             }
-            else if (result.Status == Failed)
+            else if (result.Result == Failed)
             {
-                Game.Main.LoadScene(
-                    new(){
-                        SceneToLoad = "TitleScreen",
-                        Mode = LoadSceneMode.Single
-                    });
+                var options = new Game.LoadSceneOptions()
+                {
+                    SceneToLoad = "TitleScreen",
+                    Mode = LoadSceneMode.Single
+                };
+                Game.Main.LoadScene(options);
                 startBtn.interactable = true;
             }
         }

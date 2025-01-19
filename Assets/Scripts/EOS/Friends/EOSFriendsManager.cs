@@ -37,7 +37,7 @@ namespace UZSG.EOS
 
         OnFriendsCallback QueryUserInfoCallback;
 
-        public delegate void OnFriendsCallback(Result result);
+        public delegate void OnFriendsCallback(Epic.OnlineServices.Result result);
 
         FriendsInterface FriendsHandle;
         UserInfoInterface UserInfoHandle;
@@ -126,7 +126,7 @@ namespace UZSG.EOS
             if(friendUserId.IsValid())
             {
                 Debug.LogError("Friends (AddFriend): friendUserId parameter is invalid!");
-                AddFriendCompleted?.Invoke(Result.InvalidProductUserID);
+                AddFriendCompleted?.Invoke(Epic.OnlineServices.Result.InvalidProductUserID);
                 return;
             }
 
@@ -151,7 +151,7 @@ namespace UZSG.EOS
             //    return;
             //}
 
-            if (data.ResultCode != Result.Success)
+            if (data.ResultCode != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogErrorFormat("Friends (SendInviteCallback): SendInvite error: {0}", data.ResultCode);
                 AddFriendCallback?.Invoke(data.ResultCode);
@@ -159,7 +159,7 @@ namespace UZSG.EOS
             }
 
             Debug.LogFormat("Friends (SendInviteCallback): SendInvite Complete for user id: {0}", data.LocalUserId);
-            AddFriendCallback?.Invoke(Result.Success);
+            AddFriendCallback?.Invoke(Epic.OnlineServices.Result.Success);
         }
 
         public void AcceptInvite(EpicAccountId friendUserId, OnFriendsCallback AcceptInviteCompleted)
@@ -167,7 +167,7 @@ namespace UZSG.EOS
             if (friendUserId.IsValid())
             {
                 Debug.LogError("Friends (AcceptInvite): friendUserId parameter is invalid!");
-                AcceptInviteCompleted?.Invoke(Result.InvalidProductUserID);
+                AcceptInviteCompleted?.Invoke(Epic.OnlineServices.Result.InvalidProductUserID);
                 return;
             }
 
@@ -191,7 +191,7 @@ namespace UZSG.EOS
             //    return;
             //}
 
-            if (data.ResultCode != Result.Success)
+            if (data.ResultCode != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogErrorFormat("Friends (OnAcceptInviteCompleted): AcceptInvite error: {0}", data.ResultCode);
                 AcceptInviteCallback?.Invoke(data.ResultCode);
@@ -199,7 +199,7 @@ namespace UZSG.EOS
             }
 
             Debug.LogFormat("Friends (OnAcceptInviteCompleted): Accept Invite Complete for user id: {0}", data.LocalUserId);
-            AcceptInviteCallback?.Invoke(Result.Success);
+            AcceptInviteCallback?.Invoke(Epic.OnlineServices.Result.Success);
         }
 
         public void RejectInvite(EpicAccountId friendUserId, OnFriendsCallback RejectInviteCompleted)
@@ -207,7 +207,7 @@ namespace UZSG.EOS
             if (friendUserId.IsValid())
             {
                 Debug.LogError("Friends (RejectInvite): friendUserId parameter is invalid!");
-                RejectInviteCompleted?.Invoke(Result.InvalidProductUserID);
+                RejectInviteCompleted?.Invoke(Epic.OnlineServices.Result.InvalidProductUserID);
                 return;
             }
 
@@ -231,7 +231,7 @@ namespace UZSG.EOS
             //    return;
             //}
 
-            if (data.ResultCode != Result.Success)
+            if (data.ResultCode != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogErrorFormat("Friends (OnRejectInviteCompleted): RejectInvite error: {0}", data.ResultCode);
                 RejectInviteCallback?.Invoke(data.ResultCode);
@@ -239,7 +239,7 @@ namespace UZSG.EOS
             }
 
             Debug.LogFormat("Friends (OnRejectInviteCompleted): Reject Invite Complete for user id: {0}", data.LocalUserId);
-            RejectInviteCallback?.Invoke(Result.Success);
+            RejectInviteCallback?.Invoke(Epic.OnlineServices.Result.Success);
         }
 
         /// <summary>(async) Query for friends.</summary>
@@ -269,7 +269,7 @@ namespace UZSG.EOS
             //    return;
             //}
 
-            if (data.ResultCode != Result.Success)
+            if (data.ResultCode != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogErrorFormat("Friends (QueryFriendsCallback): QueryFriends error: {0}", data.ResultCode);
                 QueryFriendCallback?.Invoke(data.ResultCode);
@@ -338,7 +338,7 @@ namespace UZSG.EOS
                 QueryFriendsConnectMappings();
             }
 
-            QueryFriendCallback?.Invoke(Result.Success);
+            QueryFriendCallback?.Invoke(Epic.OnlineServices.Result.Success);
         }
 
         void QueryPresenceInfo(EpicAccountId localUserId, EpicAccountId targetUserId)
@@ -360,7 +360,7 @@ namespace UZSG.EOS
             //    return;
             //}
 
-            if (data.ResultCode != Result.Success)
+            if (data.ResultCode != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogErrorFormat("Friends (OnQueryPresenceCompleted): Error calling QueryPresence: " + data.ResultCode);
                 return;
@@ -374,9 +374,9 @@ namespace UZSG.EOS
                 TargetUserId = data.TargetUserId
             };
 
-            Result result = PresenceHandle.CopyPresence(ref presenceOptions, out Info? presence);
+            Epic.OnlineServices.Result result = PresenceHandle.CopyPresence(ref presenceOptions, out Info? presence);
 
-            if(result != Result.Success)
+            if(result != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogErrorFormat("Friends (OnQueryPresenceCompleted): CopyPresence error: {0}", result);
                 return;
@@ -388,8 +388,8 @@ namespace UZSG.EOS
                 TargetUserId = data.TargetUserId
             };
 
-            Result joinInfoResult = PresenceHandle.GetJoinInfo(ref joinInfoOptions, out Utf8String joinInfo);
-            if (joinInfoResult != Result.Success)
+            Epic.OnlineServices.Result joinInfoResult = PresenceHandle.GetJoinInfo(ref joinInfoOptions, out Utf8String joinInfo);
+            if (joinInfoResult != Epic.OnlineServices.Result.Success)
             {
                 joinInfo = null;
             }
@@ -433,9 +433,9 @@ namespace UZSG.EOS
             int i = 0;
             foreach(EpicAccountId account in CachedFriends.Keys)
             {
-                Result result = account.ToString(out Utf8String accountAsString);
+                Epic.OnlineServices.Result result = account.ToString(out Utf8String accountAsString);
 
-                if(result != Result.Success)
+                if(result != Epic.OnlineServices.Result.Success)
                 {
                     Debug.LogErrorFormat("Friends (QueryFriendsConnectMappings): Couldn't convert EpicAccountId to string: {0}", result);
                     return;
@@ -463,7 +463,7 @@ namespace UZSG.EOS
             //    return;
             //}
 
-            if (data.ResultCode != Result.Success)
+            if (data.ResultCode != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogErrorFormat("Friends (OnQueryExternalAccountMappingsCompleted): Error calling QueryExternalAccountMappings: " + data.ResultCode);
                 return;
@@ -477,9 +477,9 @@ namespace UZSG.EOS
             {
                 if(friend.UserProductUserId == null || !friend.UserProductUserId.IsValid())
                 {
-                    Result result = friend.UserId.ToString(out Utf8String epidAccountIdString);
+                    Epic.OnlineServices.Result result = friend.UserId.ToString(out Utf8String epidAccountIdString);
 
-                    if(result == Result.Success)
+                    if(result == Epic.OnlineServices.Result.Success)
                     {
                         GetExternalAccountMappingsOptions options = new GetExternalAccountMappingsOptions()
                         {
@@ -560,7 +560,7 @@ namespace UZSG.EOS
             //    return;
             //}
 
-            if (data.ResultCode != Result.Success)
+            if (data.ResultCode != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogErrorFormat("Friends (QueryUserInfoByDisplaynameCompleted): ResultCode error: {0}", data.ResultCode);
                 return;
@@ -605,7 +605,7 @@ namespace UZSG.EOS
             //    return;
             //}
 
-            if (data.ResultCode != Result.Success)
+            if (data.ResultCode != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogErrorFormat("Friends (SendInviteCompleted): ResultCode error: {0}", data.ResultCode);
                 return;
@@ -623,7 +623,7 @@ namespace UZSG.EOS
             if (!targetUserId.IsValid())
             {
                 Debug.LogError("Friends (QueryUserInfo): targetUserId parameter is invalid!");
-                QueryUserInfoCompleted?.Invoke(Result.InvalidParameters);
+                QueryUserInfoCompleted?.Invoke(Epic.OnlineServices.Result.InvalidParameters);
                 return;
             }
 
@@ -647,7 +647,7 @@ namespace UZSG.EOS
             //    return;
             //}
 
-            if (data.ResultCode != Result.Success)
+            if (data.ResultCode != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogErrorFormat("Friends (OnQueryUserInfoCompleted): Error calling QueryUserInfo: " + data.ResultCode);
                 QueryUserInfoCallback?.Invoke(data.ResultCode);
@@ -655,7 +655,7 @@ namespace UZSG.EOS
             }
 
             Debug.Log("Friends (OnQueryUserInfoCompleted): QueryUserInfo successful");
-            QueryUserInfoCallback?.Invoke(Result.Success);
+            QueryUserInfoCallback?.Invoke(Epic.OnlineServices.Result.Success);
 
             CopyUserInfoOptions options = new CopyUserInfoOptions()
             {
@@ -663,9 +663,9 @@ namespace UZSG.EOS
                 TargetUserId = data.TargetUserId
             };
 
-            Result result = UserInfoHandle.CopyUserInfo(ref options, out UserInfoData? userInfo);
+            Epic.OnlineServices.Result result = UserInfoHandle.CopyUserInfo(ref options, out UserInfoData? userInfo);
 
-            if(result != Result.Success)
+            if(result != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogErrorFormat("Friends (OnQueryUserInfoCompleted): CopyUserInfo error: {0}", result);
                 QueryUserInfoCallback?.Invoke(result);
@@ -693,7 +693,7 @@ namespace UZSG.EOS
                 Debug.Log("Friends (OnQueryUserInfoCompleted): FriendData Added");
             }
 
-            QueryUserInfoCallback?.Invoke(Result.Success);
+            QueryUserInfoCallback?.Invoke(Epic.OnlineServices.Result.Success);
         }
 
 
@@ -714,7 +714,7 @@ namespace UZSG.EOS
             //    return;
             //}
 
-            if (data.ResultCode != Result.Success)
+            if (data.ResultCode != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogErrorFormat("Friends (OnShowFriendsCallback): Error calling ShowFriends: " + data.ResultCode);
                 ShowFriendsOverlayCallback?.Invoke(data.ResultCode);
@@ -722,7 +722,7 @@ namespace UZSG.EOS
             }
 
             Debug.Log("Friends (OnShowFriendsCallback): ShowFriends successful");
-            ShowFriendsOverlayCallback?.Invoke(Result.Success);
+            ShowFriendsOverlayCallback?.Invoke(Epic.OnlineServices.Result.Success);
         }
 
         //-------------------------------------------------------------------------
@@ -744,7 +744,7 @@ namespace UZSG.EOS
             //    return;
             //}
 
-            if (data.ResultCode != Result.Success)
+            if (data.ResultCode != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogErrorFormat("Friends (OnHideFriendsCallback): Error calling HideFriends: " + data.ResultCode);
                 HideFriendsOverlayCallback?.Invoke(data.ResultCode);
@@ -752,7 +752,7 @@ namespace UZSG.EOS
             }
 
             Debug.Log("Friends (OnHideFriendsCallback): HideFriends successful");
-            HideFriendsOverlayCallback?.Invoke(Result.Success);
+            HideFriendsOverlayCallback?.Invoke(Epic.OnlineServices.Result.Success);
         }
 
         public void SubscribeToFriendUpdates(EpicAccountId userId)

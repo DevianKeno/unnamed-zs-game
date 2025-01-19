@@ -15,7 +15,7 @@ using UZSG.UI;
 using UZSG.UI.TitleScreen;
 using Unity.VisualScripting;
 
-using static UZSG.Systems.Status;
+using static UZSG.Systems.Result;
 
 namespace UZSG.TitleScreen
 {
@@ -153,14 +153,14 @@ namespace UZSG.TitleScreen
 
         void OnLoadWorldCompleted(WorldManager.LoadWorldResult result)
         {
-            if (result.Status == Success)
+            if (result.Result == Success)
             {
                 selector.Hide();
                 
                 Game.Main.UnloadScene("TitleScreen");
                 Game.Main.UnloadScene("LoadingScreen");
             }
-            else if (result.Status == Failed)
+            else if (result.Result == Failed)
             {
                 Game.Main.LoadScene(
                     new(){

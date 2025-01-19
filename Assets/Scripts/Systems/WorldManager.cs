@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using System.Threading.Tasks;
+using System.Text;
 
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -14,15 +16,10 @@ using UZSG.Worlds;
 using UZSG.EOS;
 using UnityEngine.InputSystem;
 using UZSG.UI;
-using PlayEveryWare.EpicOnlineServices;
-using System.Threading.Tasks;
-using Epic.OnlineServices;
-using UZSG.EOS.Lobbies;
-using Epic.OnlineServices.Connect;
 
 namespace UZSG.Systems
 {
-    public enum Status { Success, Failed }
+    public enum Result { Success, Failed }
 
     public struct CreateWorldOptions
     {
@@ -121,7 +118,7 @@ namespace UZSG.Systems
         public struct CreateWorldResult
         {
             public string Savepath { get; set; }
-            public Status Status { get; set; }
+            public Result Result { get; set; }
         }
         event Action<CreateWorldResult> onCreateWorldCompleted;
         public void CreateWorld(ref CreateWorldOptions options, Action<CreateWorldResult> onCreateWorldCompleted = null)
@@ -144,7 +141,7 @@ namespace UZSG.Systems
             this.onCreateWorldCompleted?.Invoke(new()
             {
                 Savepath = savepath,
-                Status = Status.Success,
+                Result = Result.Success,
             });
             this.onCreateWorldCompleted = null;
         }
@@ -157,7 +154,7 @@ namespace UZSG.Systems
         }
         public struct LoadWorldResult
         {
-            public Status Status { get; set; }
+            public Result Result { get; set; }
         }
         event Action<LoadWorldResult> onLoadWorldCompleted;
         public async void LoadWorld(LoadWorldOptions options, Action<LoadWorldResult> onLoadWorldCompleted = null)
@@ -185,13 +182,14 @@ namespace UZSG.Systems
                         IsInWorld = true;
                         currentWorld.SetOwnerId(options.OwnerId);
 
+                        InitializeWorldLoaded();
+
                         this.onLoadWorldCompleted?.Invoke(new()
                         {
-                            Status = Status.Success
+                            Result = Result.Success
                         });
                         this.onLoadWorldCompleted = null;
 
-                        InitializeWorldLoaded();
                         return;
                     }
                 }
@@ -204,7 +202,7 @@ namespace UZSG.Systems
             Debug.LogError($"Unexpected error occured when loading world");
             this.onLoadWorldCompleted?.Invoke(new()
             {
-                Status = Status.Failed
+                Result = Result.Failed
             });
             this.onLoadWorldCompleted = null;
         }
@@ -218,7 +216,7 @@ namespace UZSG.Systems
                 Debug.Log($"World in path '{filepath}' does not exist");
                 this.onLoadWorldCompleted?.Invoke(new()
                 {
-                    Status = Status.Failed
+                    Result = Result.Failed
                 });
                 this.onLoadWorldCompleted = null;
                 return;
@@ -265,90 +263,36 @@ namespace UZSG.Systems
             return false;
         }
 
+        /// <summary>
+        /// Executed after world initialization is done.
+        /// </summary>
         void InitializeWorldLoaded()
         {
-            if (EOSSubManagers.Lobbies.IsHosting)
+            if (EOSSubManagers.Lobbies.IsInLobby)
             {
-                var hostingLobby = EOSSubManagers.Lobbies.CurrentLobby;
-                EOSSubManagers.Lobbies.AddNotifyMemberUpdateReceived(OnMemberUpdated);
+                var currentLobby = EOSSubManagers.Lobbies.CurrentLobby;
+                currentLobby.RequestPlayerSaveData(Game.EOS.GetProductUserId(), OnRequestPlayerSaveDataCompleted);
             }
             
-            JoinPlayer();
             pauseInput.Enable();
         }
 
-        void OnMemberUpdated(string lobbyId, ProductUserId memberId)
+        void OnRequestPlayerSaveDataCompleted(byte[] data, Epic.OnlineServices.Result result)
         {
-            var currentLobby = EOSSubManagers.Lobbies.CurrentLobby;
-            if (currentLobby.Id != lobbyId) return;
-                        
-            /// Check if memberId already exists in the lobby
-            if (!currentLobby.FindLobbyMember(memberId, out LobbyMember member))
+            if (result == Epic.OnlineServices.Result.Success)
             {
-                var newMember = new LobbyMember(memberId);
-                currentLobby.Members.Add(newMember);
-                // SetMemberAsPlayer(newMember);
+                var contents = Encoding.UTF8.GetString(data);
+                var psd = JsonConvert.DeserializeObject<PlayerSaveData>(contents);
 
-                var options = new QueryProductUserIdMappingsOptions()
-                {
-                    LocalUserId = Game.EOS.GetProductUserId(),
-                    ProductUserIds = new ProductUserId[] { memberId },
-                };
-                Game.EOS.GetEOSConnectInterface().QueryProductUserIdMappings(ref options, null, OnQueryUserInfoCallback);
+                var localUserInfo = EOSSubManagers.UserInfo.GetLocalUserInfo();
+                CurrentWorld.JoinPlayerByUserInfo(localUserInfo, psd);
             }
-
-            if (memberId != currentLobby.LobbyOwner)
+            else
             {
-                // PrepareForMatch();
-            }
-            
-        }
-
-        void OnQueryUserInfoCallback(ref QueryProductUserIdMappingsCallbackInfo info)
-        {
-            if (info.ResultCode == Result.Success)
-            {
-                var options = new CopyProductUserInfoOptions()
-                {
-                    TargetUserId = info.LocalUserId
-                };
-                var result = Game.EOS.GetEOSConnectInterface().CopyProductUserInfo(ref options, out ExternalAccountInfo? outUserInfo);
-
-                if (result == Result.Success && outUserInfo.HasValue)
-                {
-                    var userInfo = outUserInfo.Value;
-                    Game.World.CurrentWorld.JoinPlayerExternal(userInfo);
-                    return;
-                }
-                info.ResultCode = result;
+                Game.Console.LogDebug("Failed to request player save data");
             }
         }
 
-        void JoinPlayer()
-        {
-            try
-            {
-                if (Game.Main.IsOnline)
-                {
-                    var userId = Game.EOS.GetProductUserId();
-                    if (userId != null || userId.IsValid())
-                    {
-                        var loginStatus =  Game.EOS.GetEOSConnectInterface().GetLoginStatus(userId);
-                        if (loginStatus == Epic.OnlineServices.LoginStatus.LoggedIn)
-                        {
-                            Game.World.CurrentWorld.JoinPlayerId(EOSSubManagers.UserInfo.GetLocalUserInfo());
-                            return;
-                        }
-                    }
-                }
-            }
-            catch (Exception)
-            {
-            }
-
-            /// Fallback to local player
-            Game.World.CurrentWorld.JoinLocalPlayer();
-        }
 
         public void ExitCurrentWorld()
         {

@@ -14,7 +14,7 @@ using UZSG.EOS;
 using UZSG.EOS.Lobbies;
 using UZSG.UI.TitleScreen;
 
-using static UZSG.Systems.Status;
+using static UZSG.Systems.Result;
 using UZSG.Saves;
 using UZSG.EOS.P2P;
 using Unity.VisualScripting;
@@ -94,11 +94,11 @@ namespace UZSG.UI.Lobbies
 
         #region EOS callbacks
 
-        void OnSearchCompleted(Result result)
+        void OnSearchCompleted(Epic.OnlineServices.Result result)
         {
             loadingIcon.gameObject.SetActive(false);
 
-            if (result == Result.Success)
+            if (result == Epic.OnlineServices.Result.Success)
             {
                 ClearLobbyEntries();
                 
@@ -129,13 +129,13 @@ namespace UZSG.UI.Lobbies
             }
         }
 
-        void OnJoinLobbyCompleted(Result result)
+        void OnJoinLobbyCompleted(Epic.OnlineServices.Result result)
         {
-            if (result == Result.Success)
+            if (result == Epic.OnlineServices.Result.Success)
             {
                 if (selectedLobby.TryGetAttribute(AttributeKeys.LEVEL_ID, out var attr))
                 {
-                    EOSSubManagers.P2P.RequestWorldData(selectedLobby.LobbyOwner, OnRequestWorldDataCompleted);
+                    selectedLobby.RequestWorldSaveData(selectedLobby.LobbyOwner, OnRequestWorldDataCompleted);
                 }
             }
             else
@@ -180,12 +180,12 @@ namespace UZSG.UI.Lobbies
 
         void OnLoadWorldCompleted(WorldManager.LoadWorldResult result)
         {
-            if (result.Status == Success)
+            if (result.Result == Success)
             {
                 Game.Main.UnloadScene("TitleScreen");
                 Game.Main.UnloadScene("LoadingScreen");
             }
-            else if (result.Status == Failed)
+            else if (result.Result == Failed)
             {
                 Game.Main.LoadScene(
                     new(){

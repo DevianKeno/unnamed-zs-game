@@ -70,7 +70,7 @@ namespace UZSG.Systems
                         // });
                         if (Game.Main.EnableDebugMode)
                         {
-                            Game.Console.LogInfo($"Placed object '{objectId}' at ({position.x}, {position.y}, {position.z})");
+                            Game.Console.LogDebug($"Placed object '{objectId}' at ({position.x}, {position.y}, {position.z})");
                         }
                         return;
                     }

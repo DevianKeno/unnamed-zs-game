@@ -95,7 +95,7 @@ namespace UZSG.EOS
         
         public void OnAuthLogin(Epic.OnlineServices.Auth.LoginCallbackInfo info)
         {
-            if (info.ResultCode == Result.Success)
+            if (info.ResultCode == Epic.OnlineServices.Result.Success)
             {
                 Game.Console.LogInfo($"Fetching user info...");
                 EOSSubManagers.UserInfo.QueryUserInfoByEpicId(info.LocalUserId, OnQueryUserInfoByEpicIdCompleted);
@@ -112,9 +112,9 @@ namespace UZSG.EOS
             }
         }
 
-        void OnQueryUserInfoByEpicIdCompleted(UserInfoData userInfo, EpicAccountId accountId, Result result)
+        void OnQueryUserInfoByEpicIdCompleted(UserInfoData userInfo, EpicAccountId accountId, Epic.OnlineServices.Result result)
         {
-            if (result == Result.Success)
+            if (result == Epic.OnlineServices.Result.Success)
             {
                 SetDisplayedAccount(userInfo);
                 return;
@@ -135,7 +135,7 @@ namespace UZSG.EOS
 
         public void OnConnectLogin(Epic.OnlineServices.Connect.LoginCallbackInfo info)
         {
-            if (info.ResultCode == Result.Success)
+            if (info.ResultCode == Epic.OnlineServices.Result.Success)
             {
                 Game.Console.LogInfo($"Fetching user info...");
                 EOSSubManagers.UserInfo.QueryUserInfoByProductId(info.LocalUserId, OnQueryUserInfoByProductIdCallback);
@@ -152,9 +152,9 @@ namespace UZSG.EOS
             }
         }
 
-        void OnQueryUserInfoByProductIdCallback(ExternalAccountInfo userInfo, ProductUserId userId, Result result)
+        void OnQueryUserInfoByProductIdCallback(ExternalAccountInfo userInfo, ProductUserId userId, Epic.OnlineServices.Result result)
         {
-            if (result == Result.Success)
+            if (result == Epic.OnlineServices.Result.Success)
             {
                 SetDisplayedAccount(userInfo);
                 return;

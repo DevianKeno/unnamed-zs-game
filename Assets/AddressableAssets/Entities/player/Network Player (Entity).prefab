@@ -259,7 +259,7 @@ GameObject:
   - component: {fileID: 7388258057917320939}
   - component: {fileID: 1668294420427726490}
   m_Layer: 8
-  m_Name: Network Player
+  m_Name: Network Player (Entity)
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

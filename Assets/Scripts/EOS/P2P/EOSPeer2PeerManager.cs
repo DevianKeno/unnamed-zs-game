@@ -1,8 +1,11 @@
 using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Text;
+using System.Collections.Generic;
+using System.Linq;
 
 using UnityEngine;
+using Newtonsoft.Json;
 
 using Epic.OnlineServices;
 using Epic.OnlineServices.P2P;
@@ -10,10 +13,6 @@ using PlayEveryWare.EpicOnlineServices;
 
 using UZSG.EOS.P2P;
 using UZSG.Systems;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
-using Newtonsoft.Json;
-using System.Linq;
 using UZSG.Saves;
 
 namespace UZSG.EOS
@@ -21,13 +20,15 @@ namespace UZSG.EOS
     /// <summary>
     /// Simplified wrapper for EOS [P2P Interface](https://dev.epicgames.com/docs/services/en-US/Interfaces/P2P/index.html).
     /// </summary>
-    public partial class EOSPeer2PeerManager : IEOSSubManager
+    public partial class EOSPeer2PeerManager : IEOSSubManager, IAuthInterfaceEventListener, IConnectInterfaceEventListener
     {
-        const int WORLD_DATA_CHUNK_SIZE_BYTES = 4096;
+        const int MAX_PACKET_SIZE_BYTES = 1170;
+        const int WORLD_DATA_CHUNK_SIZE_BYTES = 1024;
+        const string DEFAULT_SOCKET_NAME = "UZSG_P2P";
         
-        P2PInterface P2PHandle => Game.EOS.GetEOSP2PInterface();
-
-        ulong ConnectionNotificationId;
+        P2PInterface p2pInterface;
+        bool _isActive;
+        ulong _connectionNotificationId;
         Dictionary<ProductUserId, ChatWithFriendData> ChatDataCache;
         bool ChatDataCacheDirty;
 
@@ -37,26 +38,13 @@ namespace UZSG.EOS
         [Header("Debugging")]
         [SerializeField] bool enableDebugging = false;
 
-#if UNITY_EDITOR
-        void OnPlayModeChanged(UnityEditor.PlayModeStateChange modeChange)
-        {
-            if (modeChange == UnityEditor.PlayModeStateChange.ExitingPlayMode)
-            {
-                //prevent attempts to call native EOS code while exiting play mode, which crashes the editor
-                // P2PHandle = null;
-            }
-        }
-#endif
-
         public EOSPeer2PeerManager()
         {
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.playModeStateChanged -= OnPlayModeChanged;
             UnityEditor.EditorApplication.playModeStateChanged += OnPlayModeChanged;
 #endif
-
-            // P2PHandle = EOSManager.Instance.GetEOSPlatformInterface().GetP2PInterface();
-
+            p2pInterface = Game.EOS.GetEOSP2PInterface();
             ChatDataCache = new Dictionary<ProductUserId, ChatWithFriendData>();
             ChatDataCacheDirty = true;
         }
@@ -68,29 +56,35 @@ namespace UZSG.EOS
         }
 #endif
 
+#if UNITY_EDITOR
+        void OnPlayModeChanged(UnityEditor.PlayModeStateChange modeChange)
+        {
+            _isActive = false;
+            if (modeChange == UnityEditor.PlayModeStateChange.ExitingPlayMode)
+            {
+                /// Prevent attempts to call native EOS code while exiting play mode, which crashes the editor
+                p2pInterface = null;
+            }
+        }
+#endif
+
         public bool GetChatDataCache(out Dictionary<ProductUserId, ChatWithFriendData> ChatDataCache)
         {
             ChatDataCache = this.ChatDataCache;
             return ChatDataCacheDirty;
         }
 
-        void RefreshNATType()
-        {
-            var options = new QueryNATTypeOptions();
-            P2PHandle.QueryNATType(ref options, null, OnRefreshNATTypeFinished);
-        }
-
         public NATType GetNATType()
         {
             var options = new GetNATTypeOptions();
-            Result result = P2PHandle.GetNATType(ref options, out NATType natType);
+            Epic.OnlineServices.Result result = p2pInterface.GetNATType(ref options, out NATType natType);
 
-            if (result == Result.NotFound)
+            if (result == Epic.OnlineServices.Result.NotFound)
             {
                 return NATType.Unknown;
             }
 
-            if (result != Result.Success)
+            if (result != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogErrorFormat("EOS P2PNAT GetNatType: error while retrieving NAT Type: {0}", result);
                 return NATType.Unknown;
@@ -99,51 +93,72 @@ namespace UZSG.EOS
             return natType;
         }
 
-        internal void Update()
+        public void Update()
         {
+            if (!_isActive) return;
+
             HandleReceivedPackets();
         }
 
-
-        #region Event callbacks
-
-        void OnLoggedIn()
+        public void OnAuthLogin(Epic.OnlineServices.Auth.LoginCallbackInfo info)
         {
-            RefreshNATType();
-
-            SubscribeToConnectionRequest();
+            /// NOTE: Idk really know which is used when logging if its either Auth or Connect
+            /// but I'm team connect for now
+            
+            // if (info.ResultCode == Result.Success)
+            // {
+            //      Game.Main.AddUpdateCoListener((Game.IUpdateCoListener) this);
+            // }
         }
 
-        void OnLoggedOut()
+        public void OnAuthLogout(Epic.OnlineServices.Auth.LogoutCallbackInfo info)
+        {
+            if (info.ResultCode == Epic.OnlineServices.Result.Success)
+            {
+                DeinitializeLoggedOut();
+            }
+        }
+
+        public void OnConnectLogin(Epic.OnlineServices.Connect.LoginCallbackInfo info)
+        {
+            if (info.ResultCode == Epic.OnlineServices.Result.Success)
+            {
+                InitializeLoggedIn();
+            }
+        }
+
+        void InitializeLoggedIn()
+        {
+            RefreshNATType();
+            SubscribeToConnectionRequest();
+            _isActive = true;
+        }
+
+        void DeinitializeLoggedOut()
         {
             UnsubscribeFromConnectionRequests();
         }
 
-        void OnRefreshNATTypeFinished(ref OnQueryNATTypeCompleteInfo data)
+        void RefreshNATType()
         {
-            //if (data == null)
-            //{
-            //    Debug.LogError("P2P (OnRefreshNATTypeFinished): data is null");
-            //    return;
-            //}
+            var options = new QueryNATTypeOptions();
+            p2pInterface.QueryNATType(ref options, null, OnRefreshNATTypeFinished);
+        }
 
-            if (data.ResultCode != Result.Success)
+        void OnRefreshNATTypeFinished(ref OnQueryNATTypeCompleteInfo info)
+        {
+            if (info.ResultCode != Epic.OnlineServices.Result.Success)
             {
-                Debug.LogErrorFormat("P2p (OnRefreshNATTypeFinished): RefreshNATType error: {0}", data.ResultCode);
+                Game.Console.LogDebug($"P2p (OnRefreshNATTypeFinished): RefreshNATType error: {info.ResultCode}");
                 return;
             }
 
-            Debug.Log("P2p (OnRefreshNATTypeFinished): RefreshNATType Completed");
+            Game.Console.LogDebug($"P2p (OnRefreshNATTypeFinished): RefreshNATType Completed");
         }
-
-        #endregion
-
-
+        
         const int MAX_RECEIVE_PACKET_SIZE_BYTES = 8192;
         public void HandleReceivedPackets()
         {
-            if (!Game.Main.IsOnline) return;
-
             var receivePacketOptions = new ReceivePacketOptions()
             {
                 LocalUserId = Game.EOS.GetProductUserId(),
@@ -156,16 +171,16 @@ namespace UZSG.EOS
                 RequestedChannel = null
             };
 
-            P2PHandle.GetNextReceivedPacketSize(ref receivedPacketSizeOptions, out uint nextPacketSizeBytes);
+            p2pInterface.GetNextReceivedPacketSize(ref receivedPacketSizeOptions, out uint nextPacketSizeBytes);
             if (nextPacketSizeBytes == 0) return;
 
             var dataBytes = new byte[nextPacketSizeBytes];
             var dataSegment = new ArraySegment<byte>(dataBytes);
             ProductUserId peerId = null;
             SocketId socketId = default;
-            Result result = P2PHandle.ReceivePacket(ref receivePacketOptions, ref peerId, ref socketId, out byte outChannel, dataSegment, out uint bytesWritten);
+            Epic.OnlineServices.Result result = p2pInterface.ReceivePacket(ref receivePacketOptions, ref peerId, ref socketId, out byte outChannel, dataSegment, out uint bytesWritten);
 
-            if (result == Result.Success)
+            if (result == Epic.OnlineServices.Result.Success)
             {
                 if (enableDebugging) Debug.Log($"Received packet from: peerId={peerId}, socketId={socketId}");
 
@@ -175,52 +190,56 @@ namespace UZSG.EOS
                     return;
                 }
 
-                Packet deserializedPacket;
-                try
+                var packet = new Packet()
                 {
-                    deserializedPacket = JsonConvert.DeserializeObject<Packet>(Encoding.UTF8.GetString(dataBytes));
-                }
-                catch
-                {
-                    Debug.LogError($"Encountered an error when deserializing packet from: peerId={peerId}, socketId={socketId}");
-                    return;
-                }
-                
-                switch (deserializedPacket.Type)
+                    Type = dataBytes[0],
+                    Data = dataBytes[1..],
+                };
+                var packetType = (PacketType) packet.Type;
+                switch (packetType)
                 {
                     case PacketType.ChatMessage:
                     {
-                        HandleChatPacket(peerId, deserializedPacket);
+                        // HandleChatPacket(peerId, deserializedPacket);
                         break;
                     }
                     case PacketType.WorldDataRequest:
                     {
-                        HandleWorldDataRequestPacket(peerId, deserializedPacket);
+                        HandleWorldDataRequestPacket(peerId, packet);
                         break;
                     }
                     case PacketType.WorldDataHeading:
                     {
-                        HandleWorldSendDataHeadingPacket(peerId, deserializedPacket);
+                        HandleWorldDataHeadingPacket(peerId, packet);
                         break;
                     }
                     case PacketType.WorldDataChunk:
                     {
-                        HandleWorldDataChunkPacket(peerId, deserializedPacket);
+                        HandleWorldDataChunkPacket(peerId, packet);
                         break;
                     }
                     case PacketType.WorldDataFooter:
                     {
-                        HandleWorldDataFooterPacket(peerId, deserializedPacket);
+                        HandleWorldDataFooterPacket(peerId, packet);
+                        break;
+                    }
+                    case PacketType.PlayerSaveDataRequest:
+                    {
+                        HandlePlayerDataRequestPacket(peerId, packet);
+                        break;
+                    }
+                    case PacketType.PlayerSaveDataReceived:
+                    {
+                        HandlePlayerSaveDataReceivedPacket(peerId, packet);
                         break;
                     }
                 }
             }
-            else if (result == Result.NotFound)
+            else if (result == Epic.OnlineServices.Result.NotFound)
             {
                 return;
             }
         }
-
         void HandleWorldDataFooterPacket(ProductUserId userId, Packet packet)
         {
             var dataBytes = AssembleWorldDataFromPackets(_receivedWorldDataChunkPackets);
@@ -229,6 +248,47 @@ namespace UZSG.EOS
             _receivedWorldDataChunkPackets.Clear();
             onRequestWorldDataCompleted?.Invoke(filepath);
             onRequestWorldDataCompleted = null;
+        }
+
+        void HandlePlayerDataRequestPacket(ProductUserId userId, Packet deserializedPacket)
+        {
+            Game.Console.LogDebug($"Received player data request from: user[{userId}]");
+
+            var playerData = Game.World.CurrentWorld.GetPlayerDataFromUID(userId.ToString());
+            var packet = new Packet()
+            {
+                Type = (byte) PacketType.PlayerSaveDataRequest,
+                Data = playerData,
+            };
+            var socketId = new SocketId() { SocketName = DEFAULT_SOCKET_NAME };
+            var sendPacketOptions = new SendPacketOptions()
+            {
+                LocalUserId = Game.EOS.GetProductUserId(),
+                RemoteUserId = userId,
+                SocketId = socketId,
+                AllowDelayedDelivery = true,
+                Channel = 0,
+                Reliability = PacketReliability.ReliableOrdered,
+                Data = packet.ToBytes()
+            };
+
+            Epic.OnlineServices.Result result = p2pInterface.SendPacket(ref sendPacketOptions);
+            if (result == Epic.OnlineServices.Result.Success)
+            {
+                Game.Console.LogDebug($"Sending player data to user[{userId}]...");
+            }
+            else
+            {
+                Game.Console.LogDebug($"Failed to send player data to user[{userId}]: [{result}]");
+            }
+        }
+
+        void HandlePlayerSaveDataReceivedPacket(ProductUserId userId, Packet packet)
+        {
+            Game.Console.LogDebug($"Received player data from: user[{userId}]");
+
+            onRequestPlayerSaveDataCompleted?.Invoke(packet.Data, Epic.OnlineServices.Result.Success);
+            onRequestPlayerSaveDataCompleted = null;
         }
 
 
@@ -240,17 +300,17 @@ namespace UZSG.EOS
         /// 
         /// </summary>
         /// <param name="fromUserId"></param>
-        /// <param name="onCompleted"><c>string</c> is filepath of received "level.dat"</param>
+        /// <param name="onCompleted"><c>string</c> is filepath of received world dat file</param>
         public void RequestWorldData(ProductUserId fromUserId, Action<string> onCompleted = null)
         {
             onRequestWorldDataCompleted += onCompleted;
 
             var packet = new Packet()
             {
-                Type = PacketType.WorldDataHeading,
+                Type = (byte) PacketType.WorldDataRequest,
                 Data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject("world please")),
             };
-            var socketId = new SocketId() { SocketName = "WORLD_DATA" };
+            var socketId = new SocketId() { SocketName = DEFAULT_SOCKET_NAME };
             var sendPacketOptions = new SendPacketOptions()
             {
                 LocalUserId = Game.EOS.GetProductUserId(),
@@ -259,26 +319,28 @@ namespace UZSG.EOS
                 AllowDelayedDelivery = true,
                 Channel = 0,
                 Reliability = PacketReliability.ReliableOrdered,
-                Data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(packet))
+                Data = packet.ToBytes()
             };
 
-            Debug.Log("Requesting world data...");
-            Result result = P2PHandle.SendPacket(ref sendPacketOptions);
-            if (result != Result.Success) return;
+            Epic.OnlineServices.Result result = p2pInterface.SendPacket(ref sendPacketOptions);
+            if (result == Epic.OnlineServices.Result.Success)
+            {
+                Game.Console.LogDebug("Requesting world data...");
+            }
         }
 
         void SendWorldData(string filepath, ProductUserId targetId)
         {
-            string worldDataBytes = File.ReadAllText(filepath);
+            var worldDataBytes = File.ReadAllBytes(filepath);
             int packetCount = Mathf.CeilToInt(worldDataBytes.Length / (float) WORLD_DATA_CHUNK_SIZE_BYTES);
             
             /// Send heading first with metadata
             var headingPacket = new Packet()
             {
-                Type = PacketType.WorldDataHeading,
-                Data = Encoding.UTF8.GetBytes($"world_{packetCount}"),
+                Type = (int) PacketType.WorldDataHeading,
+                Data = Encoding.UTF8.GetBytes($"size:{worldDataBytes.Length}"),
             };
-            var socketId = new SocketId() { SocketName = "WORLD_DATA" };
+            var socketId = new SocketId() { SocketName = DEFAULT_SOCKET_NAME };
             var headerPacketOptions = new SendPacketOptions()
             {
                 LocalUserId = Game.EOS.GetProductUserId(),
@@ -287,57 +349,61 @@ namespace UZSG.EOS
                 AllowDelayedDelivery = true,
                 Channel = 0,
                 Reliability = PacketReliability.ReliableOrdered,
-                Data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(headingPacket))
+                Data = headingPacket.ToBytes()
             };
 
-            Result result = P2PHandle.SendPacket(ref headerPacketOptions);
-            if (result != Result.Success) return;
+            Epic.OnlineServices.Result result = p2pInterface.SendPacket(ref headerPacketOptions);
+            if (result != Epic.OnlineServices.Result.Success)
+            {
+                Game.Console.LogDebug($"Error sending packet: [{result}]");
+                return;
+            }
+            Game.Console.LogDebug($"Sent world data header to user: [{targetId}]");
+            Game.Console.LogDebug($"Begin send world data...");
 
             /// Send world data chunks
-            using var memoryStream = new MemoryStream();
-
-            for (int i = 0; i < packetCount && i < 65536; i++)
+            for (int i = 0; i < packetCount; i++)
             {
                 int offset = i * WORLD_DATA_CHUNK_SIZE_BYTES;
                 int chunkSize = Mathf.Min(WORLD_DATA_CHUNK_SIZE_BYTES, worldDataBytes.Length - offset);
-                string data = worldDataBytes[offset..chunkSize];
-             
-                var packet = new Packet()
-                {
-                    Type = PacketType.WorldDataChunk,
-                    Data = Encoding.UTF8.GetBytes(data),
-                };
-                byte[] packetBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(packet));
-                
-                var worldDataPacketOptions = new SendPacketOptions()
-                {
-                    LocalUserId = Game.EOS.GetProductUserId(),
-                    RemoteUserId = targetId,
-                    SocketId = socketId,
-                    AllowDelayedDelivery = true,
-                    Channel = 0,
-                    Reliability = PacketReliability.ReliableOrdered,
-                    Data = packetBytes
-                };
 
-                result = P2PHandle.SendPacket(ref worldDataPacketOptions);
-
-                if (result == Result.Success)
+                using (var stream = new MemoryStream())
                 {
-                    Debug.Log("EOS P2PNAT SendMessage: Message successfully sent to user.");
+                    stream.WriteByte((byte) PacketType.WorldDataChunk);
+                    stream.Write(worldDataBytes, offset, chunkSize);
+                    byte[] packetBytes = stream.ToArray();
+
+                    var worldDataPacketOptions = new SendPacketOptions()
+                    {
+                        LocalUserId = Game.EOS.GetProductUserId(),
+                        RemoteUserId = targetId,
+                        SocketId = socketId,
+                        AllowDelayedDelivery = true,
+                        Channel = 0,
+                        Reliability = PacketReliability.ReliableOrdered,
+                        Data = packetBytes
+                    };
+                    result = p2pInterface.SendPacket(ref worldDataPacketOptions);
+                }
+
+                if (result == Epic.OnlineServices.Result.Success)
+                {
+                    Game.Console.LogDebug($"Sending world data chunk: [{i}/{packetCount}]");
                 }
                 else
                 {
-                    Debug.LogError($"EOS P2PNAT SendMessage: error while sending data: {result}");
+                    Game.Console.LogDebug($"Error sending packet: [{result}]");
                     return;
                 }
             }
-            
+            Game.Console.LogDebug($"Send chunks complete");
+            Game.Console.LogDebug($"Sending footer");
+
             /// Send world data footer
             var footerPacket = new Packet()
             {
-                Type = PacketType.WorldDataFooter,
-                Data = Encoding.UTF8.GetBytes($"TotalPackets:{packetCount}")
+                Type = (byte) PacketType.WorldDataFooter,
+                Data = new byte[0]
             };
             var footerPacketOptions = new SendPacketOptions()
             {
@@ -347,9 +413,14 @@ namespace UZSG.EOS
                 AllowDelayedDelivery = true,
                 Channel = 0,
                 Reliability = PacketReliability.ReliableOrdered,
-                Data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(footerPacket))
+                Data = footerPacket.ToBytes()
             };
-            result = P2PHandle.SendPacket(ref footerPacketOptions);
+            result = p2pInterface.SendPacket(ref footerPacketOptions);
+            if (result == Epic.OnlineServices.Result.Success)
+            {
+                Game.Console.LogDebug($"Sent footer to user: [{targetId}]");
+            }
+            Game.Console.LogDebug($"World data send completed");
         }
 
         byte[] AssembleWorldDataFromPackets(List<Packet> packets)
@@ -369,221 +440,241 @@ namespace UZSG.EOS
         
         #endregion
 
-        #region Messages transfer
 
-        public void SendMessage(ProductUserId friendId, MessageData message)
+        #region PlayerSaveData transfer
+
+        public delegate void OnRequestData(byte[] data, Epic.OnlineServices.Result result);
+        public delegate void OnRequestPlayerSaveData(byte[] data, Epic.OnlineServices.Result result);
+        event OnRequestPlayerSaveData onRequestPlayerSaveDataCompleted;
+        public void RequestPlayerSaveData(ProductUserId userId, OnRequestPlayerSaveData onCompleted = null)
         {
-            if (!friendId.IsValid())
+            onRequestPlayerSaveDataCompleted += onCompleted;
+            
+            var packet = new Packet()
             {
-                Debug.LogError("EOS P2PNAT SendMessage: bad input data: account id is wrong.");
-                return;
-            }
-            if (message.Type == MessageType.TextMessage)
+                Type = (byte) PacketType.PlayerSaveDataRequest,
+                Data = new byte[1],
+            };
+            var socketId = new SocketId() { SocketName = DEFAULT_SOCKET_NAME };
+            var sendPacketOptions = new SendPacketOptions()
             {
-                if (string.IsNullOrEmpty(message.TextData))
-                {
-                    Debug.LogError("EOS P2PNAT SendMessage: bad input data message is empty.");
-                    return;
-                }
+                LocalUserId = Game.EOS.GetProductUserId(),
+                RemoteUserId = userId,
+                SocketId = socketId,
+                AllowDelayedDelivery = true,
+                Channel = 0,
+                Reliability = PacketReliability.ReliableOrdered,
+                Data = packet.ToBytes()
+            };
 
-                // Update Cache
-                ChatEntry chatEntry = new()
-                {
-                    IsOwnEntry = true,
-                    Message = message.TextData
-                };
-
-                if (ChatDataCache.TryGetValue(friendId, out ChatWithFriendData chatData))
-                {
-                    chatData.ChatLines.Enqueue(chatEntry);
-                    ChatDataCacheDirty = true;
-                }
-                else
-                {
-                    var newChatData = new ChatWithFriendData()
-                    {
-                        FriendId = friendId
-                    };
-                    newChatData.ChatLines.Enqueue(chatEntry);
-
-                    ChatDataCache.Add(friendId, newChatData);
-                    ChatDataCacheDirty = true;
-                }
-
-                // Send Message
-                SocketId socketId = new SocketId()
-                {
-                    SocketName = "CHAT"
-                };
-
-                SendPacketOptions options = new SendPacketOptions()
-                {
-                    LocalUserId = EOSManager.Instance.GetProductUserId(),
-                    RemoteUserId = friendId,
-                    SocketId = socketId,
-                    AllowDelayedDelivery = true,
-                    Channel = 0,
-                    Reliability = PacketReliability.ReliableOrdered,
-                    Data = new ArraySegment<byte>(Encoding.UTF8.GetBytes("t" + message.TextData))
-                };
-
-                Result result = P2PHandle.SendPacket(ref options);
-
-                if (result != Result.Success)
-                {
-                    Debug.LogErrorFormat("EOS P2PNAT SendMessage: error while sending data, code: {0}", result);
-                    return;
-                }
-
-                Debug.Log("EOS P2PNAT SendMessage: Message successfully sent to user.");
-            }
-
-            else if (message.Type == MessageType.CoordinatesMessage)
+            Epic.OnlineServices.Result result = p2pInterface.SendPacket(ref sendPacketOptions);
+            if (result == Epic.OnlineServices.Result.Success)
             {
-
-                string rawData = ("m" + message.PositionX.ToString() + "," + message.PositionY.ToString());
-                // Send Message
-                SocketId socketId = new SocketId()
-                {
-                    SocketName = "CHAT"
-                };
-
-                SendPacketOptions options = new SendPacketOptions()
-                {
-                    LocalUserId = EOSManager.Instance.GetProductUserId(),
-                    RemoteUserId = friendId,
-                    SocketId = socketId,
-                    AllowDelayedDelivery = true,
-                    Channel = 0,
-                    Reliability = PacketReliability.ReliableOrdered,
-                    Data = new ArraySegment<byte>(Encoding.UTF8.GetBytes(rawData))
-                };
-
-                Result result = P2PHandle.SendPacket(ref options);
-
-                if (result != Result.Success)
-                {
-                    Debug.LogErrorFormat("EOS P2PNAT SendMessage: error while sending data, code: {0}", result);
-                    return;
-                }
-            }
-
-            else
-            {
-                Debug.Log("EOS P2PNAT SendMessage: Message content was not valid.");
+                Game.Console.LogDebug($"Requesting player data...");
             }
         }
+        
+        #endregion
+
+
+        #region Messages transfer
+
+        // public void SendMessage(ProductUserId friendId, MessageData message)
+        // {
+        //     if (!friendId.IsValid())
+        //     {
+        //         Debug.LogError("EOS P2PNAT SendMessage: bad input data: account id is wrong.");
+        //         return;
+        //     }
+        //     if (message.Type == MessageType.TextMessage)
+        //     {
+        //         if (string.IsNullOrEmpty(message.TextData))
+        //         {
+        //             Debug.LogError("EOS P2PNAT SendMessage: bad input data message is empty.");
+        //             return;
+        //         }
+
+        //         // Update Cache
+        //         ChatEntry chatEntry = new()
+        //         {
+        //             IsOwnEntry = true,
+        //             Message = message.TextData
+        //         };
+
+        //         if (ChatDataCache.TryGetValue(friendId, out ChatWithFriendData chatData))
+        //         {
+        //             chatData.ChatLines.Enqueue(chatEntry);
+        //             ChatDataCacheDirty = true;
+        //         }
+        //         else
+        //         {
+        //             var newChatData = new ChatWithFriendData()
+        //             {
+        //                 FriendId = friendId
+        //             };
+        //             newChatData.ChatLines.Enqueue(chatEntry);
+
+        //             ChatDataCache.Add(friendId, newChatData);
+        //             ChatDataCacheDirty = true;
+        //         }
+
+        //         // Send Message
+        //         SocketId socketId = new SocketId()
+        //         {
+        //             SocketName = "CHAT"
+        //         };
+
+        //         SendPacketOptions options = new SendPacketOptions()
+        //         {
+        //             LocalUserId = EOSManager.Instance.GetProductUserId(),
+        //             RemoteUserId = friendId,
+        //             SocketId = socketId,
+        //             AllowDelayedDelivery = true,
+        //             Channel = 0,
+        //             Reliability = PacketReliability.ReliableOrdered,
+        //             Data = new ArraySegment<byte>(Encoding.UTF8.GetBytes("t" + message.TextData))
+        //         };
+
+        //         Epic.OnlineServices.Result result = p2pInterface.SendPacket(ref options);
+
+        //         if (result != Epic.OnlineServices.Result.Success)
+        //         {
+        //             Debug.LogErrorFormat("EOS P2PNAT SendMessage: error while sending data, code: {0}", result);
+        //             return;
+        //         }
+
+        //         Debug.Log("EOS P2PNAT SendMessage: Message successfully sent to user.");
+        //     }
+
+        //     else if (message.Type == MessageType.CoordinatesMessage)
+        //     {
+
+        //         string rawData = ("m" + message.PositionX.ToString() + "," + message.PositionY.ToString());
+        //         // Send Message
+        //         SocketId socketId = new SocketId()
+        //         {
+        //             SocketName = "CHAT"
+        //         };
+
+        //         SendPacketOptions options = new SendPacketOptions()
+        //         {
+        //             LocalUserId = EOSManager.Instance.GetProductUserId(),
+        //             RemoteUserId = friendId,
+        //             SocketId = socketId,
+        //             AllowDelayedDelivery = true,
+        //             Channel = 0,
+        //             Reliability = PacketReliability.ReliableOrdered,
+        //             Data = new ArraySegment<byte>(Encoding.UTF8.GetBytes(rawData))
+        //         };
+
+        //         Epic.OnlineServices.Result result = p2pInterface.SendPacket(ref options);
+
+        //         if (result != Epic.OnlineServices.Result.Success)
+        //         {
+        //             Debug.LogErrorFormat("EOS P2PNAT SendMessage: error while sending data, code: {0}", result);
+        //             return;
+        //         }
+        //     }
+
+        //     else
+        //     {
+        //         Debug.Log("EOS P2PNAT SendMessage: Message content was not valid.");
+        //     }
+        // }
 
         #endregion
 
-        ProductUserId HandleChatPacket(ProductUserId peerId, Packet packet)
-        {
-            var message = Convert.ToBase64String(packet.Data);
-            if (message.StartsWith("t"))
-            {
-                ChatEntry newMessage = new()
-                {
-                    IsOwnEntry = false,
-                    Message = message[1..]
-                };
+        // ProductUserId HandleChatPacket(ProductUserId peerId, Packet packet)
+        // {
+        //     var message = Convert.ToBase64String(packet.Data);
+        //     if (message.StartsWith("t"))
+        //     {
+        //         ChatEntry newMessage = new()
+        //         {
+        //             IsOwnEntry = false,
+        //             Message = message[1..]
+        //         };
 
-                if (ChatDataCache.TryGetValue(peerId, out ChatWithFriendData chatData))
-                {
-                    // Update existing chat
-                    chatData.ChatLines.Enqueue(newMessage);
+        //         if (ChatDataCache.TryGetValue(peerId, out ChatWithFriendData chatData))
+        //         {
+        //             // Update existing chat
+        //             chatData.ChatLines.Enqueue(newMessage);
 
-                    ChatDataCacheDirty = true;
-                    return peerId;
-                }
-                else
-                {
-                    var newChat = new ChatWithFriendData()
-                    {
-                        FriendId = peerId
-                    };
-                    newChat.ChatLines.Enqueue(newMessage);
-                    /// New Chat Request
-                    ChatDataCache.Add(peerId, newChat);
-                    return peerId;
-                }
-            }
-            else if (message.StartsWith("m"))
-            {
-                message = message[1..];
+        //             ChatDataCacheDirty = true;
+        //             return peerId;
+        //         }
+        //         else
+        //         {
+        //             var newChat = new ChatWithFriendData()
+        //             {
+        //                 FriendId = peerId
+        //             };
+        //             newChat.ChatLines.Enqueue(newMessage);
+        //             /// New Chat Request
+        //             ChatDataCache.Add(peerId, newChat);
+        //             return peerId;
+        //         }
+        //     }
+        //     else if (message.StartsWith("m"))
+        //     {
+        //         message = message[1..];
 
-                string[] coords = message.Split(',');
-                int xPos = int.Parse(coords[0]);
-                int yPos = int.Parse(coords[1]);
-                Debug.Log("EOS P2PNAT HandleReceivedMessages:  Mouse position Recieved at " + xPos + ", " + yPos);
+        //         string[] coords = message.Split(',');
+        //         int xPos = int.Parse(coords[0]);
+        //         int yPos = int.Parse(coords[1]);
+        //         Debug.Log("EOS P2PNAT HandleReceivedMessages:  Mouse position Recieved at " + xPos + ", " + yPos);
 
-                ParticleController.SpawnParticles(xPos, yPos, parent);
+        //         ParticleController.SpawnParticles(xPos, yPos, parent);
 
-                return peerId;
-            }
-            else
-            {
-                // Debug.LogErrorFormat("EOS P2PNAT HandleReceivedMessages: error while reading data, code: {0}", result);
-                return null;
-            }
-        }
-
-        void HandleWorldDataRequestPacket(ProductUserId userId, Packet packet)
-        {
-            if (!Game.World.IsInWorld) return;
-            
-            var savepath = Game.World.CurrentWorld.GetPath();
-            SendWorldData(savepath, userId);
-        }
+        //         return peerId;
+        //     }
+        //     else
+        //     {
+        //         // Debug.LogErrorFormat("EOS P2PNAT HandleReceivedMessages: error while reading data, code: {0}", result);
+        //         return null;
+        //     }
+        // }
 
         List<Packet> _receivedWorldDataChunkPackets = new();
-        void HandleWorldSendDataHeadingPacket(ProductUserId userId, Packet packet)
+        void HandleWorldDataRequestPacket(ProductUserId userId, Packet packet)
         {
-            if (packet.Type != PacketType.WorldDataHeading) return;
-            Debug.Log($"Received WorldSendDataHeading from: {userId}, world size: {packet.Data.Length} bytes");
+            Game.Console.LogDebug($"Received world data request from user: [{userId}]");
+            /// NOTE: testing absolute path 
+            var testpath = Path.Combine(Application.persistentDataPath, "SavedWorlds", "alpha", "level.dat");
+            SendWorldData(testpath, userId);
+        }
+
+        void HandleWorldDataHeadingPacket(ProductUserId userId, Packet packet)
+        {
+            var message = Encoding.UTF8.GetString(packet.Data).Split(":");
+
+            Game.Console.LogDebug($"Received world data heading from user: [{userId}], world size: {message[1]} bytes");
             _receivedWorldDataChunkPackets = new();
         }
 
-
         void HandleWorldDataChunkPacket(ProductUserId userId, Packet packet)
         {
-            if (packet.Type != PacketType.WorldDataChunk) return;
-            Debug.Log($"Received World Data Chunk from: {userId}, chunk size: {packet.Data.Length} bytes");
-        
-            switch (packet.Type)
-            {
-                case PacketType.WorldDataHeading:
-                {
-                    break;
-                }
-                case PacketType.WorldDataChunk:
-                {
-                    _receivedWorldDataChunkPackets.Add(packet);
-                    break;
-                }
-                case PacketType.WorldDataFooter:
-                {
-                    break;
-                }
-            }
+            Game.Console.LogDebug($"Received world data chunk from: {userId}, chunk size: {packet.Data.Length} bytes");
+            _receivedWorldDataChunkPackets.Add(packet);
         }
 
         void SubscribeToConnectionRequest()
         {
-            if (ConnectionNotificationId == 0)
+            if (this._connectionNotificationId == 0)
             {
-                SocketId socketId = new SocketId()
+                var socketId = new SocketId()
                 {
-                    SocketName = "CHAT"
+                    SocketName = DEFAULT_SOCKET_NAME
                 };
 
-                AddNotifyPeerConnectionRequestOptions options = new AddNotifyPeerConnectionRequestOptions()
+                var options = new AddNotifyPeerConnectionRequestOptions()
                 {
                     LocalUserId = EOSManager.Instance.GetProductUserId(),
                     SocketId = socketId
                 };
-
-                ConnectionNotificationId = P2PHandle.AddNotifyPeerConnectionRequest(ref options, null, OnIncomingConnectionRequest);
-                if (ConnectionNotificationId == 0)
+                this._connectionNotificationId = p2pInterface.AddNotifyPeerConnectionRequest(ref options, null, OnIncomingConnectionRequest);
+                
+                if (_connectionNotificationId == 0)
                 {
                     Debug.Log("EOS P2PNAT SubscribeToConnectionRequests: could not subscribe, bad notification id returned.");
                 }
@@ -592,44 +683,36 @@ namespace UZSG.EOS
 
         void UnsubscribeFromConnectionRequests()
         {
-            if (ConnectionNotificationId != 0)//check to prevent warnings when done unnecessarily during p2p startup
+            if (_connectionNotificationId != 0)//check to prevent warnings when done unnecessarily during p2p startup
             {
-                P2PHandle.RemoveNotifyPeerConnectionRequest(ConnectionNotificationId);
-                ConnectionNotificationId = 0;
+                p2pInterface.RemoveNotifyPeerConnectionRequest(_connectionNotificationId);
+                _connectionNotificationId = 0;
             }
         }
 
         void OnIncomingConnectionRequest(ref OnIncomingConnectionRequestInfo data)
         {
-            //if (data == null)
-            //{
-            //    Debug.LogError("P2P (OnIncomingConnectionRequest): data is null");
-            //    return;
-            //}
-
-            if (!(bool)data.SocketId?.SocketName.Equals("CHAT"))
+            if (!(bool)data.SocketId?.SocketName.Equals(DEFAULT_SOCKET_NAME))
             {
-                Debug.LogError("P2p (OnIncomingConnectionRequest): bad socket id");
+                Game.Console.LogDebug($"[P2P/OnIncomingConnectionRequest()]: Bad socket id");
                 return;
             }
 
-            SocketId socketId = new SocketId()
+            var socketId = new SocketId()
             {
-                SocketName = "CHAT"
+                SocketName = DEFAULT_SOCKET_NAME
             };
-
-            AcceptConnectionOptions options = new AcceptConnectionOptions()
+            var options = new AcceptConnectionOptions()
             {
-                LocalUserId = EOSManager.Instance.GetProductUserId(),
+                LocalUserId = Game.EOS.GetProductUserId(),
                 RemoteUserId = data.RemoteUserId,
                 SocketId = socketId
             };
+            Epic.OnlineServices.Result result = p2pInterface.AcceptConnection(ref options);
 
-            Result result = P2PHandle.AcceptConnection(ref options);
-
-            if (result != Result.Success)
+            if (result != Epic.OnlineServices.Result.Success)
             {
-                Debug.LogErrorFormat("P2p (OnIncomingConnectionRequest): error while accepting connection, code: {0}", result);
+                Game.Console.LogDebug($"[P2P/OnIncomingConnectionRequest()]: Error while accepting connection, code: {result}");
             }
         }
     }

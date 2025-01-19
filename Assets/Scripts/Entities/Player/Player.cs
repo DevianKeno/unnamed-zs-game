@@ -164,6 +164,8 @@ namespace UZSG.Entities
             if (saveData == null)
             {
                 LoadDefaultSaveData<PlayerSaveData>();
+                _isInitialized = true;
+                return;
             }
             else
             {

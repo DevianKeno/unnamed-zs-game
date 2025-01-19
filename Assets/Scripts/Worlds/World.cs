@@ -22,6 +22,7 @@ using UZSG.EOS;
 using Epic.OnlineServices;
 using UZSG.EOS.Lobbies;
 using Epic.OnlineServices.Connect;
+using Epic.OnlineServices.Lobby;
 
 namespace UZSG.Worlds
 {
@@ -95,9 +96,9 @@ namespace UZSG.Worlds
             var initializeTimer = new System.Diagnostics.Stopwatch();
             initializeTimer.Start();
 
-            if (Game.Main.IsOnline && EOSSubManagers.Lobbies.IsHosting)
+            if (Game.Main.IsOnline)
             {
-                EOSSubManagers.Lobbies.AddNotifyMemberUpdateReceived(OnLobbyMemberUpdate);
+                // EOSSubManagers.Lobbies.AddNotifyMemberStatusReceived(OnMemberStatusReceived);
             }
 
             InitializeInternal();
@@ -112,34 +113,31 @@ namespace UZSG.Worlds
             this.onInitializeCompleted = null;
         }
 
-        void OnLobbyMemberUpdate(string lobbyId, ProductUserId memberId)
+        void OnMemberStatusReceived(string lobbyId, ProductUserId memberId, LobbyMemberStatus status)
         {
             if (memberId == null || !memberId.IsValid())
             {
-                Game.Console.LogError("[WorldManager/OnLobbyMemberUpdate]: Member Id cannot be null");
+                Game.Console.LogDebug("[WorldManager/OnMemberStatusReceived()]: Member Id is invalid");
                 return;
             }
-            
-            var currentLobby = EOSSubManagers.Lobbies.CurrentLobby;
-            if (currentLobby.Id != lobbyId) return;
 
-            if (currentLobby.FindLobbyMember(memberId, out LobbyMember member))
+            if (EOSSubManagers.Lobbies.CurrentLobby.Id != lobbyId) return;
+
+            if (status == LobbyMemberStatus.Joined)
             {
-                Game.Console.LogError("[WorldManager/OnLobbyMemberUpdate]: Member Id already exists within the lobby");
-                return;
+                EOSSubManagers.UserInfo.QueryUserInfoByProductId(memberId, onCompleted: OnQueryUserInfoCompleted);
             }
+            else if (status == LobbyMemberStatus.Disconnected)
+            {
 
-            var newMember = new LobbyMember(memberId);
-            currentLobby.Members.Add(newMember);
-
-            EOSSubManagers.UserInfo.QueryUserInfoByProductId(memberId, OnQueryUserInfoCompleted);
+            }
         }
 
-        void OnQueryUserInfoCompleted(ExternalAccountInfo userInfo, ProductUserId userId, Result result)
+        void OnQueryUserInfoCompleted(ExternalAccountInfo userInfo, ProductUserId userId, Epic.OnlineServices.Result result)
         {
-            if (result == Result.Success)
+            if (result == Epic.OnlineServices.Result.Success)
             {
-                JoinPlayerExternal(userInfo);
+                JoinPlayerByExternalAccountInfo(userInfo);
             }
         }
 
@@ -177,7 +175,7 @@ namespace UZSG.Worlds
 
         /// <summary>
         /// Register object/entity instances from the scene to avoid duplicates.
-        /// </summary>g
+        /// </summary>
         void RegisterExistingInstances()
         {
             /// Objects
@@ -220,11 +218,6 @@ namespace UZSG.Worlds
             Game.Console.LogInfo("[World]: Loading objects...");
             if (_saveData.Objects == null) return;
             
-            // foreach (var baseObject in _objectInstanceIds.Values)
-            // {
-            //     PlaceExistingAsNew(baseObject);
-            // }
-
             foreach (var objectSaveData in _saveData.Objects)
             {
                 if (_objectInstanceIds.TryGetValue(objectSaveData.InstanceId, out BaseObject baseObject))
@@ -234,7 +227,8 @@ namespace UZSG.Worlds
                 else
                 {
                     /// construct the object and initialize
-                    Game.Objects.PlaceNew(objectSaveData.Id, callback: (info) =>
+                    var position = Utils.FromNumericVec3(objectSaveData.Transform.Position);
+                    Game.Objects.PlaceNew(objectSaveData.Id, position: position, callback: (info) =>
                     {
                         info.Object.ReadSaveData(objectSaveData);
                     });
@@ -426,6 +420,13 @@ namespace UZSG.Worlds
             eventsController.Deinitialize();     
         }
         
+        public byte[] GetPlayerDataFromUID(string uid)
+        {
+            var filepath = Path.Join(this.worldpath, "playerdata", $"{uid}.dat");
+            var contents = ReadPlayerDataFile(filepath);
+            return Encoding.UTF8.GetBytes(contents);
+        }
+
         /// <summary>
         /// Joins a player to the world.
         /// </summary>
@@ -449,15 +450,23 @@ namespace UZSG.Worlds
         /// <summary>
         /// Joins a player to the world.
         /// </summary>
-        internal void JoinPlayerId(UserInfoData userInfo)
+        internal void JoinPlayerByUserInfo(UserInfoData userInfo, PlayerSaveData saveData = null)
         {
             Game.Entity.Spawn<Player>("player", position: ValidateWorldSpawn(_saveData.WorldSpawn), (info) =>
             {
                 Player player = info.Entity;
 
                 var uid = userInfo.UserId.ToString();
-                this._playerIdSaves.TryGetValue(uid, out var playerSave);
-                player.Initialize(playerSave);
+                PlayerSaveData psdToLoad;
+                if (saveData == null)
+                {
+                    this._playerIdSaves.TryGetValue(uid, out psdToLoad);
+                }
+                else
+                {
+                    psdToLoad = saveData;
+                }
+                player.Initialize(psdToLoad);
                 player.UserInfo = userInfo;
 
                 _playerEntities.Add(player);
@@ -467,15 +476,23 @@ namespace UZSG.Worlds
             Game.Console.LogInfo($"[World]: {userInfo.DisplayName} has entered the world");
         }
 
-        internal void JoinPlayerExternal(ExternalAccountInfo accountInfo)
+        internal void JoinPlayerByExternalAccountInfo(ExternalAccountInfo accountInfo, PlayerSaveData saveData = null)
         {
             Game.Entity.Spawn<Player>("player", ValidateWorldSpawn(_saveData.WorldSpawn), (info) =>
             {
                 Player player = info.Entity;
 
                 var uid = accountInfo.AccountId.ToString();
-                this._playerIdSaves.TryGetValue(uid, out var playerSave);
-                player.Initialize(playerSave);
+                PlayerSaveData psdToLoad;
+                if (saveData == null)
+                {
+                    this._playerIdSaves.TryGetValue(uid, out psdToLoad);
+                }
+                else
+                {
+                    psdToLoad = saveData;
+                }
+                player.Initialize(psdToLoad);
 
                 _playerEntities.Add(player);
                 OnPlayerJoined(player);
@@ -604,20 +621,8 @@ namespace UZSG.Worlds
             {
                 try
                 {
-                    PlayerSaveData psd;
-                    if (readPlayerDataAsBytes)
-                    {
-                        var bytes = File.ReadAllBytes(file);
-                        var content = Encoding.UTF8.GetString(bytes);
-                        psd = JsonConvert.DeserializeObject<PlayerSaveData>(content);
-
-                    }
-                    else
-                    {
-                        var content = File.ReadAllText(file);
-                        psd = JsonConvert.DeserializeObject<PlayerSaveData>(content);
-                    }
-
+                    var contents = ReadPlayerDataFile(file);
+                    PlayerSaveData psd = JsonConvert.DeserializeObject<PlayerSaveData>(contents);
                     this._playerIdSaves[psd.UID] = psd;
                 }
                 catch (Exception ex)
@@ -627,8 +632,31 @@ namespace UZSG.Worlds
                     Debug.LogException(ex);
                     continue;
                 }
-                
             }
+        }
+
+        string ReadPlayerDataFile(string filepath)
+        {
+            if (!File.Exists(filepath)) return string.Empty;
+
+            try
+            {
+                if (readPlayerDataAsBytes)
+                {
+                    var bytes = File.ReadAllBytes(filepath);
+                    return Encoding.UTF8.GetString(bytes);
+                }
+                else
+                {
+                    return File.ReadAllText(filepath);
+                }
+            }
+            catch
+            {
+                Game.Console.LogError($"An error occured when reading player data file: '{filepath}'");
+            }
+
+            return string.Empty;
         }
 
         void SavePlayerData()

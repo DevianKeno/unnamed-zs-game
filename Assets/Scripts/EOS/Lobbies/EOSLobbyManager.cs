@@ -17,9 +17,9 @@ namespace UZSG.EOS
     /// <summary>
     /// Class <c>EOSLobbyManager</c> is a simplified wrapper for EOS [Lobby Interface](https://dev.epicgames.com/docs/services/en-US/Interfaces/Lobby/index.html).
     /// </summary>
-    public class EOSLobbyManager : IEOSSubManager
+    public class EOSLobbyManager : IEOSSubManager, IAuthInterfaceEventListener, IConnectInterfaceEventListener
     {
-        LobbyInterface lobbyInterface = Game.EOS.GetEOSLobbyInterface();
+        LobbyInterface lobbyInterface;
 
         Lobby currentLobby;
         /// <summary>
@@ -49,15 +49,16 @@ namespace UZSG.EOS
 
         public LocalRTCOptions? customLocalRTCOptions;
         public bool IsHosting { get; private set; }
+        public bool IsInLobby { get; private set; }
 
         /// NotificationId
-        NotifyEventHandle LobbyUpdateNotification;
-        NotifyEventHandle LobbyMemberUpdateNotification;
-        NotifyEventHandle LobbyMemberStatusNotification;
-        NotifyEventHandle LobbyInviteNotification;
-        NotifyEventHandle LobbyInviteAcceptedNotification;
-        NotifyEventHandle JoinLobbyAcceptedNotification;
-        NotifyEventHandle LeaveLobbyRequestedNotification;
+        NotifyEventHandle lobbyUpdateNotification;
+        NotifyEventHandle lobbyMemberUpdateNotification;
+        NotifyEventHandle lobbyMemberStatusNotification;
+        NotifyEventHandle lobbyInviteNotification;
+        NotifyEventHandle lobbyInviteAcceptedNotification;
+        NotifyEventHandle joinLobbyAcceptedNotification;
+        NotifyEventHandle leaveLobbyRequestedNotification;
 
         // TODO: Does this constant exist in the EOS SDK C# Wrapper?
         const ulong EOS_INVALID_NOTIFICATIONID = 0;
@@ -65,14 +66,48 @@ namespace UZSG.EOS
         public bool _isDirty = true;
 
         /// Manager callbacks
-        OnSearchByLobbyIdCallback LobbySearchCallback;
-        public delegate void OnCreateLobbyCallback(Result result);
-        public delegate void OnSearchByLobbyIdCallback(Result result);
-        public delegate void OnMemberUpdateCallback(string LobbyId, ProductUserId MemberId);
-        List<OnMemberUpdateCallback> memberUpdatedCallbacks = new();
-        List<Action> lobbyChangedCallbacks = new();
-        List<Action> lobbyUpdatedCallbacks = new();
-        
+        OnSearchByLobbyIdCallback _lobbySearchCallback;
+        public delegate void OnCreateLobbyCallback(Epic.OnlineServices.Result result);
+        public delegate void OnSearchByLobbyIdCallback(Epic.OnlineServices.Result result);
+        public delegate void OnMemberUpdateCallback(string lobbyId, ProductUserId memberId);
+        public delegate void OnMemberStatusCallback(string lobbyId, ProductUserId memberId, LobbyMemberStatus status);
+        List<OnMemberUpdateCallback> _memberUpdatedCallbacks = new();
+        List<OnMemberStatusCallback> _memberStatusCallbacks = new();
+        List<Action> _lobbyChangedCallbacks = new();
+        List<Action> _lobbyUpdatedCallbacks = new();
+
+        public EOSLobbyManager()
+        {
+            Game.EOS.AddAuthLoginListener(this);
+            Game.EOS.AddAuthLogoutListener(this);
+            Game.EOS.AddConnectLoginListener(this);
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.playModeStateChanged -= OnPlayModeChanged;
+            UnityEditor.EditorApplication.playModeStateChanged += OnPlayModeChanged;
+#endif
+            lobbyInterface = Game.EOS.GetEOSLobbyInterface();
+        }
+
+#if UNITY_EDITOR
+        ~EOSLobbyManager()
+        {
+            UnityEditor.EditorApplication.playModeStateChanged -= OnPlayModeChanged;
+        }
+#endif
+
+#if UNITY_EDITOR
+        void OnPlayModeChanged(UnityEditor.PlayModeStateChange modeChange)
+        {
+            if (modeChange == UnityEditor.PlayModeStateChange.ExitingPlayMode)
+            {
+                /// Prevent attempts to call native EOS code while exiting play mode, which crashes the editor
+                UnsubscribeFromLobbyUpdates();
+                UnsubscribeFromLobbyInvites();
+                lobbyInterface = null;
+            }
+        }
+#endif
+
         bool IsLobbyNotificationValid(NotifyEventHandle handle)
         {
             return handle != null && handle.IsValid();
@@ -105,32 +140,31 @@ namespace UZSG.EOS
 
         void SubscribeToLobbyUpdates()
         {
-            if (IsLobbyNotificationValid(LobbyUpdateNotification) ||
-                IsLobbyNotificationValid(LobbyMemberUpdateNotification) || 
-                IsLobbyNotificationValid(LobbyMemberStatusNotification) ||
-                IsLobbyNotificationValid(LeaveLobbyRequestedNotification))
+            if (IsLobbyNotificationValid(lobbyUpdateNotification) ||
+                IsLobbyNotificationValid(lobbyMemberUpdateNotification) || 
+                IsLobbyNotificationValid(lobbyMemberStatusNotification) ||
+                IsLobbyNotificationValid(leaveLobbyRequestedNotification))
             {
                 Debug.LogError("Lobbies (SubscribeToLobbyUpdates): SubscribeToLobbyUpdates called but already subscribed!");
                 return;
             }
             
-            var lobbyInterface = Game.EOS.GetEOSLobbyInterface();
-            LobbyUpdateNotification = new NotifyEventHandle(AddNotifyLobbyUpdateReceived(lobbyInterface, OnLobbyUpdateReceived), (ulong handle) =>
+            lobbyUpdateNotification = new NotifyEventHandle(AddNotifyLobbyUpdateReceived(lobbyInterface, OnLobbyUpdateReceived), (ulong handle) =>
             {
                 lobbyInterface.RemoveNotifyLobbyUpdateReceived(handle);
             });
 
-            LobbyMemberUpdateNotification = new NotifyEventHandle(AddNotifyLobbyMemberUpdateReceived(lobbyInterface, OnMemberUpdateReceived), (ulong handle) => 
+            lobbyMemberUpdateNotification = new NotifyEventHandle(AddNotifyLobbyMemberUpdateReceived(lobbyInterface, OnMemberUpdateReceived), (ulong handle) => 
             {
                 lobbyInterface.RemoveNotifyLobbyMemberUpdateReceived(handle);
             });
 
-            LobbyMemberStatusNotification = new NotifyEventHandle(AddNotifyLobbyMemberStatusReceived(lobbyInterface, OnMemberStatusReceived), (ulong handle) =>
+            lobbyMemberStatusNotification = new NotifyEventHandle(AddNotifyLobbyMemberStatusReceived(lobbyInterface, OnMemberStatusReceived), (ulong handle) =>
             {
                 lobbyInterface.RemoveNotifyLobbyMemberStatusReceived(handle);
             });
 
-            LeaveLobbyRequestedNotification = new NotifyEventHandle(AddNotifyLeaveLobbyRequested(lobbyInterface, OnLeaveLobbyRequested), (ulong handle) =>
+            leaveLobbyRequestedNotification = new NotifyEventHandle(AddNotifyLeaveLobbyRequested(lobbyInterface, OnLeaveLobbyRequested), (ulong handle) =>
             {
                 lobbyInterface.RemoveNotifyLeaveLobbyRequested(handle);
             });
@@ -138,37 +172,37 @@ namespace UZSG.EOS
 
         void UnsubscribeFromLobbyUpdates()
         {
-            LobbyUpdateNotification.Dispose();
-            LobbyMemberUpdateNotification.Dispose();
-            LobbyMemberStatusNotification.Dispose();
-            LeaveLobbyRequestedNotification.Dispose();
+            lobbyUpdateNotification.Dispose();
+            lobbyMemberUpdateNotification.Dispose();
+            lobbyMemberStatusNotification.Dispose();
+            leaveLobbyRequestedNotification.Dispose();
         }
 
         //-------------------------------------------------------------------------
         void SubscribeToLobbyInvites()
         {
-            if (IsLobbyNotificationValid(LobbyInviteNotification) || 
-                IsLobbyNotificationValid(LobbyInviteAcceptedNotification) || 
-                IsLobbyNotificationValid(JoinLobbyAcceptedNotification) )
+            if (IsLobbyNotificationValid(lobbyInviteNotification) || 
+                IsLobbyNotificationValid(lobbyInviteAcceptedNotification) || 
+                IsLobbyNotificationValid(joinLobbyAcceptedNotification) )
             {
                 Debug.LogError("Lobbies (SubscribeToLobbyInvites): SubscribeToLobbyInvites called but already subscribed!");
                 return;
             }
 
             var addNotifyLobbyInviteReceivedOptions = new AddNotifyLobbyInviteReceivedOptions();
-            LobbyInviteNotification = new NotifyEventHandle(lobbyInterface.AddNotifyLobbyInviteReceived(ref addNotifyLobbyInviteReceivedOptions, null, OnLobbyInviteReceived), (ulong handle) =>
+            lobbyInviteNotification = new NotifyEventHandle(lobbyInterface.AddNotifyLobbyInviteReceived(ref addNotifyLobbyInviteReceivedOptions, null, OnLobbyInviteReceived), (ulong handle) =>
             {
                 lobbyInterface.RemoveNotifyLobbyInviteReceived(handle);
             });
 
             var addNotifyLobbyInviteAcceptedOptions = new AddNotifyLobbyInviteAcceptedOptions();
-            LobbyInviteAcceptedNotification = new NotifyEventHandle(lobbyInterface.AddNotifyLobbyInviteAccepted(ref addNotifyLobbyInviteAcceptedOptions, null, OnLobbyInviteAccepted), (ulong handle) =>
+            lobbyInviteAcceptedNotification = new NotifyEventHandle(lobbyInterface.AddNotifyLobbyInviteAccepted(ref addNotifyLobbyInviteAcceptedOptions, null, OnLobbyInviteAccepted), (ulong handle) =>
             {
                 lobbyInterface.RemoveNotifyLobbyInviteAccepted(handle);
             });
 
             var addNotifyJoinLobbyAcceptedOptions = new AddNotifyJoinLobbyAcceptedOptions();
-            JoinLobbyAcceptedNotification = new NotifyEventHandle(lobbyInterface.AddNotifyJoinLobbyAccepted(ref addNotifyJoinLobbyAcceptedOptions, null, OnJoinLobbyAccepted), (ulong handle) =>
+            joinLobbyAcceptedNotification = new NotifyEventHandle(lobbyInterface.AddNotifyJoinLobbyAccepted(ref addNotifyJoinLobbyAcceptedOptions, null, OnJoinLobbyAccepted), (ulong handle) =>
             {
                 lobbyInterface.RemoveNotifyJoinLobbyAccepted(handle);
             });
@@ -177,9 +211,9 @@ namespace UZSG.EOS
         //-------------------------------------------------------------------------
         void UnsubscribeFromLobbyInvites()
         {
-            LobbyInviteNotification.Dispose(); 
-            LobbyInviteAcceptedNotification.Dispose(); 
-            JoinLobbyAcceptedNotification.Dispose();
+            lobbyInviteNotification.Dispose(); 
+            lobbyInviteAcceptedNotification.Dispose(); 
+            joinLobbyAcceptedNotification.Dispose();
         }
 
         string GetRTCRoomName()
@@ -190,9 +224,9 @@ namespace UZSG.EOS
                 LocalUserId = EOSManager.Instance.GetProductUserId()
             };
 
-            Result result = lobbyInterface.GetRTCRoomName(ref options, out Utf8String roomName);
+            Epic.OnlineServices.Result result = lobbyInterface.GetRTCRoomName(ref options, out Utf8String roomName);
 
-            if (result != Result.Success)
+            if (result != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogFormat("Lobbies (GetRTCRoomName): Could not get RTC Room Name. Error Code: {0}", result);
                 return string.Empty;
@@ -253,9 +287,9 @@ namespace UZSG.EOS
                 LocalUserId = EOSManager.Instance.GetProductUserId()
             };
 
-            Result result = lobbyInterface.IsRTCRoomConnected(ref isRTCRoomConnectedOptions, out bool isConnected);
+            Epic.OnlineServices.Result result = lobbyInterface.IsRTCRoomConnected(ref isRTCRoomConnectedOptions, out bool isConnected);
 
-            if (result != Result.Success)
+            if (result != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogFormat("Lobbies (SubscribeToRTCEvents): Failed to get RTC Room connection status:. Error Code: {0}", result);
                 return;
@@ -447,11 +481,34 @@ namespace UZSG.EOS
             }
         }
 
-        /// <summary>User Logged In actions</summary>
-        /// <list type="bullet">
-        ///     <item><description>Reset local cache for Invites</description></item>
-        /// </list>
-        public void OnLoggedIn()
+        public void OnAuthLogin(Epic.OnlineServices.Auth.LoginCallbackInfo info)
+        {
+            /// NOTE: Idk really know which is used when logging if its either Auth or Connect
+            /// but I'm team connect for now
+            
+            // if (info.ResultCode == Result.Success)
+            // {
+            //     InitializeLoggedIn();
+            // }
+        }
+
+        public void OnAuthLogout(Epic.OnlineServices.Auth.LogoutCallbackInfo info)
+        {
+            if (info.ResultCode == Epic.OnlineServices.Result.Success)
+            {
+                DeinitializeLoggedOut();
+            }
+        }
+
+        public void OnConnectLogin(Epic.OnlineServices.Connect.LoginCallbackInfo info)
+        {
+            if (info.ResultCode == Epic.OnlineServices.Result.Success)
+            {
+                InitializeLoggedIn();
+            }
+        }
+
+        void InitializeLoggedIn()
         {
             _isDirty = true;
             currentInvite = null;
@@ -460,7 +517,7 @@ namespace UZSG.EOS
             SubscribeToLobbyUpdates();
             SubscribeToLobbyInvites();
 
-            LobbySearchCallback = null;
+            _lobbySearchCallback = null;
 
             EOSManagerPlatformSpecificsSingleton.Instance.SetDefaultAudioSession();
         }
@@ -471,7 +528,7 @@ namespace UZSG.EOS
         ///     <item><description>Unsubscribe from Lobby invites and updates</description></item>
         ///     <item><description>Reset local cache for <c>Lobby</c>, <c>LobbyJoinRequest</c>, Invites, <c>LobbySearch</c> and </description></item>
         /// </list>
-        public void OnLoggedOut()
+        public void DeinitializeLoggedOut()
         {
             LeaveCurrentLobby(null);
             UnsubscribeFromLobbyInvites();
@@ -498,7 +555,7 @@ namespace UZSG.EOS
             if (localProductUserId == null || !localProductUserId.IsValid())
             {
                 Debug.LogError("[LobbyManager/CreateLobby()]: Current user is invalid!");
-                onCompleted?.Invoke(Result.InvalidProductUserID);
+                onCompleted?.Invoke(Epic.OnlineServices.Result.InvalidProductUserID);
                 return;
             }
 
@@ -506,7 +563,7 @@ namespace UZSG.EOS
             if (currentLobby != null && currentLobby.IsValid())
             {
                 Debug.Log($"[LobbyManager/CreateLobby()]: Leaving Current Lobby '{currentLobby.Id}'");
-                onCompleted?.Invoke(Result.LobbyInvalidSession);
+                onCompleted?.Invoke(Epic.OnlineServices.Result.LobbyInvalidSession);
                 LeaveCurrentLobby(null);
             }
 
@@ -559,7 +616,7 @@ namespace UZSG.EOS
             if (!currentLobby.IsValid())
             {
                 Debug.LogError("Lobbies (ModifyLobby): Current Lobby {0} is invalid!");
-                onModifyLobbyCompleted?.Invoke(Result.InvalidState);
+                onModifyLobbyCompleted?.Invoke(Epic.OnlineServices.Result.InvalidState);
                 return;
             }
 
@@ -567,14 +624,14 @@ namespace UZSG.EOS
             if (!currentProductUserId.IsValid())
             {
                 Debug.LogError("Lobbies (ModifyLobby): Current player is invalid!");
-                onModifyLobbyCompleted?.Invoke(Result.InvalidProductUserID);
+                onModifyLobbyCompleted?.Invoke(Epic.OnlineServices.Result.InvalidProductUserID);
                 return;
             }
 
             if (!currentLobby.IsOwner(currentProductUserId))
             {
                 Debug.LogError("Lobbies (ModifyLobby): Current player is not lobby owner!");
-                onModifyLobbyCompleted?.Invoke(Result.LobbyNotOwner);
+                onModifyLobbyCompleted?.Invoke(Epic.OnlineServices.Result.LobbyNotOwner);
                 return;
             }
 
@@ -583,9 +640,9 @@ namespace UZSG.EOS
             options.LocalUserId = currentProductUserId;
 
             // Get LobbyModification object handle
-            Result result = lobbyInterface.UpdateLobbyModification(ref options, out LobbyModification outLobbyModificationHandle);
+            Epic.OnlineServices.Result result = lobbyInterface.UpdateLobbyModification(ref options, out LobbyModification outLobbyModificationHandle);
 
-            if (result != Result.Success)
+            if (result != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogErrorFormat("Lobbies (ModifyLobby): Could not create lobby modification. Error code: {0}", result);
                 onModifyLobbyCompleted?.Invoke(result);
@@ -598,7 +655,7 @@ namespace UZSG.EOS
                 var lobbyModificationSetBucketIdOptions = new LobbyModificationSetBucketIdOptions() { BucketId = lobbyUpdates.BucketId };
                 result = outLobbyModificationHandle.SetBucketId(ref lobbyModificationSetBucketIdOptions);
 
-                if (result != Result.Success)
+                if (result != Epic.OnlineServices.Result.Success)
                 {
                     Debug.LogErrorFormat("Lobbies (ModifyLobby): Could not set bucket id. Error code: {0}", result);
                     onModifyLobbyCompleted?.Invoke(result);
@@ -612,7 +669,7 @@ namespace UZSG.EOS
                 var lobbyModificationSetMaxMembersOptions = new LobbyModificationSetMaxMembersOptions() { MaxMembers = lobbyUpdates.MaxNumLobbyMembers };
                 result = outLobbyModificationHandle.SetMaxMembers(ref lobbyModificationSetMaxMembersOptions);
 
-                if (result != Result.Success)
+                if (result != Epic.OnlineServices.Result.Success)
                 {
                     Debug.LogErrorFormat("Lobbies (ModifyLobby): Could not set max players. Error code: {0}", result);
                     onModifyLobbyCompleted?.Invoke(result);
@@ -642,7 +699,7 @@ namespace UZSG.EOS
                 //}
 
                 result = outLobbyModificationHandle.AddAttribute(ref addAttributeOptions);
-                if (result != Result.Success)
+                if (result != Epic.OnlineServices.Result.Success)
                 {
                     Debug.LogErrorFormat("Lobbies (ModifyLobby): Could not add attribute. Error code: {0}", result);
                     onModifyLobbyCompleted?.Invoke(result);
@@ -656,7 +713,7 @@ namespace UZSG.EOS
                 var lobbyModificationSetPermissionLevelOptions = new LobbyModificationSetPermissionLevelOptions() { PermissionLevel = lobbyUpdates.LobbyPermissionLevel };
                 result = outLobbyModificationHandle.SetPermissionLevel(ref lobbyModificationSetPermissionLevelOptions);
 
-                if (result != Result.Success)
+                if (result != Epic.OnlineServices.Result.Success)
                 {
                     Debug.LogErrorFormat("Lobbies (ModifyLobby): Could not set permission level. Error code: {0}", result);
                     onModifyLobbyCompleted?.Invoke(result);
@@ -670,7 +727,7 @@ namespace UZSG.EOS
                 var lobbyModificationSetInvitesAllowedOptions = new LobbyModificationSetInvitesAllowedOptions() { InvitesAllowed = lobbyUpdates.AllowInvites };
                 result = outLobbyModificationHandle.SetInvitesAllowed(ref lobbyModificationSetInvitesAllowedOptions);
 
-                if (result != Result.Success)
+                if (result != Epic.OnlineServices.Result.Success)
                 {
                     Debug.LogErrorFormat("Lobbies (ModifyLobby): Could not set allow invites. Error code: {0}", result);
                     onModifyLobbyCompleted?.Invoke(result);
@@ -695,7 +752,7 @@ namespace UZSG.EOS
             if (currentLobby == null || string.IsNullOrEmpty(currentLobby.Id) || !EOSManager.Instance.GetProductUserId().IsValid())
             {
                 Debug.LogWarning("Lobbies (LeaveLobby): Not currently in a lobby.");
-                onCompleted?.Invoke(Result.NotFound);
+                onCompleted?.Invoke(Epic.OnlineServices.Result.NotFound);
                 return;
             }
 
@@ -756,9 +813,9 @@ namespace UZSG.EOS
                 LobbyId = currentLobby.Id,
                 LocalUserId = EOSManager.Instance.GetProductUserId()
             };
-            Result result = lobbyInterface.UpdateLobbyModification(ref options, out LobbyModification lobbyModificationHandle);
+            Epic.OnlineServices.Result result = lobbyInterface.UpdateLobbyModification(ref options, out LobbyModification lobbyModificationHandle);
 
-            if (result != Result.Success)
+            if (result != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogErrorFormat("Lobbies (SetMemberAttribute): Could not create lobby modification: Error code: {0}", result);
                 return;
@@ -774,7 +831,7 @@ namespace UZSG.EOS
             };
             result = lobbyModificationHandle.AddMemberAttribute(ref attrOptions);
 
-            if (result != Result.Success)
+            if (result != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogErrorFormat("Lobbies (SetMemberAttribute): Could not add member attribute: Error code: {0}", result);
                 return;
@@ -791,13 +848,7 @@ namespace UZSG.EOS
 
         void OnSendInviteCompleted(ref SendInviteCallbackInfo data)
         {
-            //if (data == null)
-            //{
-            //    Debug.LogError("Lobbies (OnSendInviteCompleted): SendInviteCallbackInfo data is null");
-            //    return;
-            //}
-
-            if (data.ResultCode != Result.Success)
+            if (data.ResultCode != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogErrorFormat("Lobbies (OnSendInviteCompleted): error code: {0}", data.ResultCode);
                 return;
@@ -808,11 +859,11 @@ namespace UZSG.EOS
 
         void OnCreateLobbyCompleted(ref CreateLobbyCallbackInfo info)
         {
-            if (info.ResultCode == Result.Success)
+            if (info.ResultCode == Epic.OnlineServices.Result.Success)
             {
-                Debug.Log("Lobbies (OnCreateLobbyCompleted): Lobby created.");
+                Game.Console.LogDebug($"LobbyManager/OnCreateLobbyCompleted(): Lobby create finished.");
 
-                // OnLobbyCreated
+                /// OnLobbyCreated
                 if (!string.IsNullOrEmpty(info.LobbyId) && currentLobby._isBeingCreated)
                 {
                     currentLobby.Id = info.LobbyId;
@@ -828,14 +879,14 @@ namespace UZSG.EOS
 
                 if (info.ClientData is OnCreateLobbyCallback callback)
                 {
-                    callback?.Invoke(Result.Success);
+                    callback?.Invoke(Epic.OnlineServices.Result.Success);
                 }
 
                 OnCurrentLobbyChanged();
             }
             else
             {
-                Debug.LogFormat("Lobbies (OnCreateLobbyCompleted): error code: {0}", info.ResultCode);
+                Game.Console.LogDebug($"LobbyManager/OnCreateLobbyCompleted(): Error creating lobby: [{info.ResultCode}]");
                 if (info.ClientData is OnCreateLobbyCallback callback)
                 {
                     callback?.Invoke(info.ResultCode);
@@ -849,7 +900,7 @@ namespace UZSG.EOS
             {
                 AddLocalUserAttributes();
             }
-            foreach (var callback in lobbyChangedCallbacks)
+            foreach (var callback in _lobbyChangedCallbacks)
             {
                 callback?.Invoke();
             }
@@ -859,14 +910,7 @@ namespace UZSG.EOS
         {
             OnCreateLobbyCallback LobbyModifyCallback = data.ClientData as OnCreateLobbyCallback;
 
-            //if (data == null)
-            //{
-            //    Debug.LogError("Lobbies (OnUpdateLobbyCallBack): UpdateLobbyCallbackInfo data is null");
-            //    LobbyModifyCallback?.Invoke(Result.InvalidState);
-            //    return;
-            //}
-
-            if (data.ResultCode != Result.Success)
+            if (data.ResultCode != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogErrorFormat("Lobbies (OnUpdateLobbyCallBack): error code: {0}", data.ResultCode);
                 LobbyModifyCallback?.Invoke(data.ResultCode);
@@ -885,9 +929,9 @@ namespace UZSG.EOS
             {
                 currentLobby.InitFromLobbyHandle(lobbyId);
 
-                LobbyUpdateCompleted?.Invoke(Result.Success);
+                LobbyUpdateCompleted?.Invoke(Epic.OnlineServices.Result.Success);
 
-                foreach (var callback in lobbyUpdatedCallbacks)
+                foreach (var callback in _lobbyUpdatedCallbacks)
                 {
                     callback?.Invoke();
                 }
@@ -918,7 +962,7 @@ namespace UZSG.EOS
             if (currentLobby != null && !currentLobby.IsValid())
             {
                 Debug.LogError("Lobbies (DestroyCurrentLobby): CurrentLobby is invalid!");
-                DestroyCurrentLobbyCompleted?.Invoke(Result.InvalidState);
+                DestroyCurrentLobbyCompleted?.Invoke(Epic.OnlineServices.Result.InvalidState);
                 return;
             }
 
@@ -928,14 +972,14 @@ namespace UZSG.EOS
             if (!currentProductUserId.IsValid())
             {
                 Debug.LogError("Lobbies (DestroyCurrentLobby): Current player is invalid!");
-                DestroyCurrentLobbyCompleted?.Invoke(Result.InvalidProductUserID);
+                DestroyCurrentLobbyCompleted?.Invoke(Epic.OnlineServices.Result.InvalidProductUserID);
                 return;
             }
 
             if (!currentLobby.IsOwner(currentProductUserId))
             {
                 Debug.LogError("Lobbies (DestroyCurrentLobby): Current player is now lobby owner!");
-                DestroyCurrentLobbyCompleted?.Invoke(Result.LobbyNotOwner);
+                DestroyCurrentLobbyCompleted?.Invoke(Epic.OnlineServices.Result.LobbyNotOwner);
                 return;
             }
 
@@ -954,14 +998,7 @@ namespace UZSG.EOS
         {
             OnCreateLobbyCallback DestroyLobbyCallback = data.ClientData as OnCreateLobbyCallback;
 
-            //if (data == null)
-            //{
-            //    Debug.LogError("Lobbies (OnDestroyLobbyCompleted): DestroyLobbyCallbackInfo data is null");
-            //    DestroyLobbyCallback?.Invoke(Result.InvalidState);
-            //    return;
-            //}
-
-            if (data.ResultCode != Result.Success)
+            if (data.ResultCode != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogErrorFormat("Lobbies (OnDestroyLobbyCompleted): error code: {0}", data.ResultCode);
                 DestroyLobbyCallback?.Invoke(data.ResultCode);
@@ -978,7 +1015,7 @@ namespace UZSG.EOS
 
             }
 
-            DestroyLobbyCallback?.Invoke(Result.Success);
+            DestroyLobbyCallback?.Invoke(Epic.OnlineServices.Result.Success);
         }
 
         public void EnablePressToTalk(ProductUserId targetUserId, OnCreateLobbyCallback EnablePressToTalkCompleted)
@@ -1058,7 +1095,7 @@ namespace UZSG.EOS
                 if (lobbyMember.RTCState.MuteActionInProgress)
                 {
                     Debug.LogWarningFormat("Lobbies (ToggleMute): 'MuteActionInProgress' for productUserId {0}.", targetUserId);
-                    ToggleMuteCompleted?.Invoke(Result.RequestInProgress);
+                    ToggleMuteCompleted?.Invoke(Epic.OnlineServices.Result.RequestInProgress);
                     return;
                 }
 
@@ -1103,14 +1140,7 @@ namespace UZSG.EOS
         {
             OnCreateLobbyCallback ToggleMuteCallback = data.ClientData as OnCreateLobbyCallback;
 
-            //if (data == null)
-            //{
-            //    Debug.LogError("Lobbies (OnRTCRoomUpdateSendingCompleted): UpdateSendingCallbackInfo data is null");
-            //    ToggleMuteCallback?.Invoke(Result.InvalidState);
-            //    return;
-            //}
-
-            if (data.ResultCode != Result.Success)
+            if (data.ResultCode != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogErrorFormat("Lobbies (OnRTCRoomUpdateSendingCompleted): error code: {0}", data.ResultCode);
                 ToggleMuteCallback?.Invoke(data.ResultCode);
@@ -1158,14 +1188,7 @@ namespace UZSG.EOS
         {
             OnCreateLobbyCallback ToggleMuteCallback = data.ClientData as OnCreateLobbyCallback;
 
-            //if (data == null)
-            //{
-            //    Debug.LogError("Lobbies (OnRTCRoomUpdateReceivingCompleted): UpdateSendingCallbackInfo data is null");
-            //    ToggleMuteCallback?.Invoke(Result.InvalidState);
-            //    return;
-            //}
-
-            if (data.ResultCode != Result.Success)
+            if (data.ResultCode != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogErrorFormat("Lobbies (OnRTCRoomUpdateReceivingCompleted): error code: {0}", data.ResultCode);
                 ToggleMuteCallback?.Invoke(data.ResultCode);
@@ -1215,7 +1238,7 @@ namespace UZSG.EOS
             if (!productUserId.IsValid())
             {
                 Debug.LogError("Lobbies (KickMember): productUserId is invalid!");
-                KickMemberCompleted?.Invoke(Result.InvalidState);
+                KickMemberCompleted?.Invoke(Epic.OnlineServices.Result.InvalidState);
                 return;
             }
 
@@ -1223,7 +1246,7 @@ namespace UZSG.EOS
             if (!currentUserId.IsValid())
             {
                 Debug.LogError("Lobbies (KickMember): Current player is invalid!");
-                KickMemberCompleted?.Invoke(Result.InvalidState);
+                KickMemberCompleted?.Invoke(Epic.OnlineServices.Result.InvalidState);
                 return;
             }
 
@@ -1239,14 +1262,7 @@ namespace UZSG.EOS
         {
             OnCreateLobbyCallback KickMemberCallback = data.ClientData as OnCreateLobbyCallback;
 
-            //if (data == null)
-            //{
-            //    Debug.LogError("Lobbies (OnKickMemberCompleted): KickMemberCallbackInfo data is null");
-            //    KickMemberCallback?.Invoke(Result.InvalidState);
-            //    return;
-            //}
-
-            if (data.ResultCode != Result.Success)
+            if (data.ResultCode != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogErrorFormat("Lobbies (OnKickMemberFinished): error code: {0}", data.ResultCode);
                 KickMemberCallback?.Invoke(data.ResultCode);
@@ -1254,7 +1270,7 @@ namespace UZSG.EOS
             }
 
             Debug.Log("Lobbies (OnKickMemberFinished): Member kicked.");
-            KickMemberCallback?.Invoke(Result.Success);
+            KickMemberCallback?.Invoke(Epic.OnlineServices.Result.Success);
         }
 
         void OnKickedFromLobby(string lobbyId)
@@ -1280,7 +1296,7 @@ namespace UZSG.EOS
             if (productUserId == null || !productUserId.IsValid())
             {
                 Debug.LogError("[LobbyManager/PromoteMember()]: productUserId is invalid!");
-                promoteMemberCompleted?.Invoke(Result.InvalidProductUserID);
+                promoteMemberCompleted?.Invoke(Epic.OnlineServices.Result.InvalidProductUserID);
                 return;
             }
 
@@ -1288,7 +1304,7 @@ namespace UZSG.EOS
             if (currentUserId == null || !currentUserId.IsValid())
             {
                 Debug.LogError("[LobbyManager/PromoteMember()]: Current player is invalid!");
-                promoteMemberCompleted?.Invoke(Result.InvalidProductUserID);
+                promoteMemberCompleted?.Invoke(Epic.OnlineServices.Result.InvalidProductUserID);
                 return;
             }
 
@@ -1303,7 +1319,7 @@ namespace UZSG.EOS
 
         void OnPromoteMemberCompleted(ref PromoteMemberCallbackInfo info)
         {
-            if (info.ResultCode != Result.Success)
+            if (info.ResultCode != Epic.OnlineServices.Result.Success)
             {
                 if (info.ClientData is OnCreateLobbyCallback callback1)
                 {
@@ -1316,7 +1332,7 @@ namespace UZSG.EOS
             Debug.Log("[LobbyManager/OnPromoteMemberCompleted()]: Member promoted.");
             if (info.ClientData is OnCreateLobbyCallback callback)
             {
-                callback?.Invoke(Result.Success);
+                callback?.Invoke(Epic.OnlineServices.Result.Success);
             }
         }
 
@@ -1325,47 +1341,50 @@ namespace UZSG.EOS
             Debug.Log("Lobbies (OnLeaveLobbyRequested): Leave Lobby Requested via Overlay.");
             LeaveCurrentLobby(null);
         }
-        void OnMemberStatusReceived(ref LobbyMemberStatusReceivedCallbackInfo data)
+
+        void OnMemberStatusReceived(ref LobbyMemberStatusReceivedCallbackInfo info)
         {
-            // Callback for LobbyMemberStatusNotification
+            Game.Console.LogDebug($"[LobbyManager/OnMemberStatusReceived()]: Member status update received");
 
-            //if (data == null)
-            //{
-            //    Debug.LogError("Lobbies (OnMemberStatusReceived): LobbyMemberStatusReceivedCallbackInfo data is null");
-            //    return;
-            //}
-
-            Debug.Log("Lobbies (OnMemberStatusReceived): Member status update received.");
-
-            if (!data.TargetUserId.IsValid())
+            if (!info.TargetUserId.IsValid())
             {
-                Debug.Log("Lobbies  (OnMemberStatusReceived): Current player is invalid!");
-
-                //Simply update the whole lobby
-                OnLobbyUpdated(data.LobbyId, null);
+                Game.Console.LogDebug($"[LobbyManager/OnMemberStatusReceived()]: Invalid user");
+                /// Simply update the whole lobby
+                OnLobbyUpdated(info.LobbyId, null);
                 return;
             }
 
             bool updateLobby = true;
 
-            // Current player updates need special handing
-            ProductUserId currentPlayer = EOSManager.Instance.GetProductUserId();
-
-            if (data.TargetUserId == currentPlayer)
+            if (info.CurrentStatus == LobbyMemberStatus.Joined)
             {
-                if (data.CurrentStatus == LobbyMemberStatus.Closed ||
-                    data.CurrentStatus == LobbyMemberStatus.Kicked ||
-                    data.CurrentStatus == LobbyMemberStatus.Disconnected)
+                Game.Console.LogDebug($"[LobbyManager/OnMemberStatusReceived()]: User[{info.TargetUserId}] joined the lobby");
+                Game.Console.LogInfo($"User[{info.TargetUserId}] joined the lobby");
+            }
+
+            /// Update target member status for everyone
+            /// Current player updates need special handing
+            ProductUserId currentPlayer = Game.EOS.GetProductUserId();
+
+            if (info.TargetUserId == currentPlayer)
+            {
+                if (info.CurrentStatus == LobbyMemberStatus.Closed ||
+                    info.CurrentStatus == LobbyMemberStatus.Kicked ||
+                    info.CurrentStatus == LobbyMemberStatus.Disconnected)
                 {
-                    OnKickedFromLobby(data.LobbyId);
+                    OnKickedFromLobby(info.LobbyId);
                     updateLobby = false;
                 }
             }
 
             if (updateLobby)
             {
-                // Update lobby
-                OnLobbyUpdated(data.LobbyId, null);
+                OnLobbyUpdated(info.LobbyId, null);
+            }
+
+            foreach (var callback in _memberStatusCallbacks)
+            {
+                callback?.Invoke(info.LobbyId, info.TargetUserId, info.CurrentStatus);
             }
         }
 
@@ -1379,27 +1398,40 @@ namespace UZSG.EOS
             //    return;
             //}
 
-            Debug.Log("Lobbies (OnMemberUpdateReceived): Member update received.");
+            Game.Console.LogDebug($"[LobbyManager/OnMemberUpdateReceived()]: Member update received.");
             OnLobbyUpdated(data.LobbyId, null);
 
-            foreach (var callback in memberUpdatedCallbacks)
+            foreach (var callback in _memberUpdatedCallbacks)
             {
                 callback?.Invoke(data.LobbyId, data.TargetUserId);
             }
         }
 
         /// <summary>
-        /// Use to access functionality of [EOS_Lobby_AddNotifyLobbyMemberUpdateReceived](https://dev.epicgames.com/docs/services/en-US/API/Members/Functions/Lobby/EOS_Lobby_AddNotifyLobbyMemberUpdateReceived/index.html)
+        /// Use to access functionality of [EOS_Lobby_AddNotifyLobbyMemberUpdateReceived](https://dev.epicgames.com/docs/api-ref/functions/eos-lobby-add-notify-lobby-member-status-received)
         /// </summary>
-        /// <param name="Callback">Callback to receive notification when lobby member update is received</param>
-        public void AddNotifyMemberUpdateReceived(OnMemberUpdateCallback Callback)
+        /// <param name="callback">Callback to receive notification when lobby member update is received</param>
+        public void AddNotifyMemberUpdateReceived(OnMemberUpdateCallback callback)
         {
-            memberUpdatedCallbacks.Add(Callback);
+            _memberUpdatedCallbacks.Add(callback);
         }
 
-        public void RemoveNotifyMemberUpdate(OnMemberUpdateCallback Callback)
+        public void RemoveNotifyMemberUpdate(OnMemberUpdateCallback callback)
         {
-            memberUpdatedCallbacks.Remove(Callback);
+            _memberUpdatedCallbacks.Remove(callback);
+        }
+        
+        /// <summary>
+        /// Use to access functionality of [EOS_Lobby_AddNotifyLobbyMemberUpdateReceived](https://dev.epicgames.com/docs/services/en-US/API/Members/Functions/Lobby/EOS_Lobby_AddNotifyLobbyMemberUpdateReceived/index.html)
+        /// </summary>
+        /// <param name="callback">Callback to receive notification when lobby member update is received</param>
+        public void AddNotifyMemberStatusReceived(OnMemberStatusCallback Callback)
+        {
+            _memberStatusCallbacks.Add(Callback);
+        }
+        public void RemoveNotifyMemberStatusReceived(OnMemberStatusCallback Callback)
+        {
+            _memberStatusCallbacks.Remove(Callback);
         }
 
         /// <summary>
@@ -1408,12 +1440,12 @@ namespace UZSG.EOS
         /// <param name="Callback">Callback to receive notification when lobby is changed</param>
         public void AddNotifyLobbyChange(Action Callback)
         {
-            lobbyChangedCallbacks.Add(Callback);
+            _lobbyChangedCallbacks.Add(Callback);
         }
 
         public void RemoveNotifyLobbyChange(Action Callback)
         {
-            lobbyChangedCallbacks.Remove(Callback);
+            _lobbyChangedCallbacks.Remove(Callback);
         }
 
         /// <summary>
@@ -1422,12 +1454,12 @@ namespace UZSG.EOS
         /// <param name="Callback">Callback to receive notification when lobby data is updated</param>
         public void AddNotifyLobbyUpdate(Action Callback)
         {
-            lobbyUpdatedCallbacks.Add(Callback);
+            _lobbyUpdatedCallbacks.Add(Callback);
         }
 
         public void RemoveNotifyLobbyUpdate(Action Callback)
         {
-            lobbyUpdatedCallbacks.Remove(Callback);
+            _lobbyUpdatedCallbacks.Remove(Callback);
         }
         // Search Events
 
@@ -1443,7 +1475,7 @@ namespace UZSG.EOS
             if (string.IsNullOrEmpty(lobbyId))
             {
                 Debug.LogWarning("Lobbies (SearchByLobbyId): lobbyId is null or empty!");
-                SearchCompleted?.Invoke(Result.InvalidParameters);
+                SearchCompleted?.Invoke(Epic.OnlineServices.Result.InvalidParameters);
                 return;
             }
 
@@ -1451,14 +1483,14 @@ namespace UZSG.EOS
             if (!currentProductUserId.IsValid())
             {
                 Debug.LogError("Lobbies (SearchByLobbyId): Current player is invalid!");
-                SearchCompleted?.Invoke(Result.InvalidProductUserID);
+                SearchCompleted?.Invoke(Epic.OnlineServices.Result.InvalidProductUserID);
                 return;
             }
 
             var createLobbySearchOptions = new CreateLobbySearchOptions() { MaxResults = 10 };
-            Result result = lobbyInterface.CreateLobbySearch(ref createLobbySearchOptions, out LobbySearch outLobbySearchHandle);
+            Epic.OnlineServices.Result result = lobbyInterface.CreateLobbySearch(ref createLobbySearchOptions, out LobbySearch outLobbySearchHandle);
 
-            if (result != Result.Success)
+            if (result != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogErrorFormat("Lobbies (SearchByLobbyId): could not create SearchByLobbyId. Error code: {0}", result);
                 SearchCompleted?.Invoke(result);
@@ -1471,14 +1503,14 @@ namespace UZSG.EOS
             setLobbyOptions.LobbyId = lobbyId;
 
             result = outLobbySearchHandle.SetLobbyId(ref setLobbyOptions);
-            if (result != Result.Success)
+            if (result != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogErrorFormat("Lobbies (SearchByLobbyId): failed to update SearchByLobbyId with lobby id. Error code: {0}", result);
                 SearchCompleted?.Invoke(result);
                 return;
             }
 
-            LobbySearchCallback = SearchCompleted;
+            _lobbySearchCallback = SearchCompleted;
             var lobbySearchFindOptions = new LobbySearchFindOptions() { LocalUserId = currentProductUserId };
             outLobbySearchHandle.Find(ref lobbySearchFindOptions, null, OnLobbySearchCompleted);
         }
@@ -1497,7 +1529,7 @@ namespace UZSG.EOS
             if (string.IsNullOrEmpty(attributeKey))
             {
                 Debug.LogError("[LobbyManager/SearchByAttribute()]: Search string is null or empty!");
-                SearchCompleted?.Invoke(Result.InvalidParameters);
+                SearchCompleted?.Invoke(Epic.OnlineServices.Result.InvalidParameters);
                 return;
             }
 
@@ -1505,14 +1537,14 @@ namespace UZSG.EOS
             if (currentProductUserId == null || !currentProductUserId.IsValid())
             {
                 Debug.LogError("Lobbies (SearchByAttribute): Current player is invalid!");
-                SearchCompleted?.Invoke(Result.InvalidProductUserID);
+                SearchCompleted?.Invoke(Epic.OnlineServices.Result.InvalidProductUserID);
                 return;
             }
 
-            var createLobbySearchOptions = new CreateLobbySearchOptions() { MaxResults = MAX_LOBBY_SEARCH_RESULTS }; 
-            Result result = lobbyInterface.CreateLobbySearch(ref createLobbySearchOptions, out LobbySearch outLobbySearchHandle);
+            var createLobbySearchOptions = new CreateLobbySearchOptions() { MaxResults = MAX_LOBBY_SEARCH_RESULTS };
+            Epic.OnlineServices.Result result = lobbyInterface.CreateLobbySearch(ref createLobbySearchOptions, out LobbySearch outLobbySearchHandle);
 
-            if (result != Result.Success)
+            if (result != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogErrorFormat("Lobbies (SearchByAttribute): could not create SearchByAttribute. Error code: {0}", result);
                 SearchCompleted?.Invoke(result);
@@ -1536,30 +1568,23 @@ namespace UZSG.EOS
 
             result = outLobbySearchHandle.SetParameter(ref paramOptions);
 
-            if (result != Result.Success)
+            if (result != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogErrorFormat("Lobbies (SearchByAttribute): failed to update SearchByAttribute with parameter. Error code: {0}", result);
                 SearchCompleted?.Invoke(result);
                 return;
             }
 
-            LobbySearchCallback = SearchCompleted;
+            _lobbySearchCallback = SearchCompleted;
             var lobbySearchFindOptions = new LobbySearchFindOptions() { LocalUserId = currentProductUserId };
             outLobbySearchHandle.Find(ref lobbySearchFindOptions, null, OnLobbySearchCompleted);
         }
 
         void OnLobbySearchCompleted(ref LobbySearchFindCallbackInfo data)
         {
-            //if (data == null)
-            //{
-            //    Debug.LogError("Lobbies (OnLobbySearchCompleted): LobbySearchFindCallbackInfo data is null");
-            //    LobbySearchCallback?.Invoke(Result.InvalidState);
-            //    return;
-            //}
-
-            if (data.ResultCode != Result.Success)
+            if (data.ResultCode != Epic.OnlineServices.Result.Success)
             {
-                if (data.ResultCode == Result.NotFound)
+                if (data.ResultCode == Epic.OnlineServices.Result.NotFound)
                 {
                     // It's not an error if there's no results found when searching
                     Debug.Log("Lobbies (OnLobbySearchCompleted): No results found.");
@@ -1569,7 +1594,7 @@ namespace UZSG.EOS
                     Debug.LogErrorFormat("Lobbies (OnLobbySearchCompleted): error code: {0}", data.ResultCode);
                 }
 
-                LobbySearchCallback?.Invoke(data.ResultCode);
+                _lobbySearchCallback?.Invoke(data.ResultCode);
                 return;
             }
 
@@ -1591,9 +1616,9 @@ namespace UZSG.EOS
 
                 indexOptions.LobbyIndex = i;
 
-                Result result = currentSearch.CopySearchResultByIndex(ref indexOptions, out LobbyDetails outLobbyDetailsHandle);
+                Epic.OnlineServices.Result result = currentSearch.CopySearchResultByIndex(ref indexOptions, out LobbyDetails outLobbyDetailsHandle);
 
-                if (result == Result.Success && outLobbyDetailsHandle != null)
+                if (result == Epic.OnlineServices.Result.Success && outLobbyDetailsHandle != null)
                 {
                     lobbyObj.InitializeFromLobbyDetails(outLobbyDetailsHandle);
 
@@ -1623,7 +1648,7 @@ namespace UZSG.EOS
 
             Debug.Log("Lobbies  (OnLobbySearchCompleted):  SearchResults Lobby objects = " + searchResults.Count);
 
-            LobbySearchCallback?.Invoke(Result.Success);
+            _lobbySearchCallback?.Invoke(Epic.OnlineServices.Result.Success);
         }
 
         void OnLobbyJoinFailed(string lobbyId)
@@ -1641,9 +1666,9 @@ namespace UZSG.EOS
             CopyLobbyDetailsHandleByInviteIdOptions options = new CopyLobbyDetailsHandleByInviteIdOptions();
             options.InviteId = inviteId;
 
-            Result result = lobbyInterface.CopyLobbyDetailsHandleByInviteId(ref options, out LobbyDetails outLobbyDetailsHandle);
+            Epic.OnlineServices.Result result = lobbyInterface.CopyLobbyDetailsHandleByInviteId(ref options, out LobbyDetails outLobbyDetailsHandle);
 
-            if (result != Result.Success)
+            if (result != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogErrorFormat("Lobbies (OnLobbyInvite): could not get lobby details: error code: {0}", result);
                 return;
@@ -1695,9 +1720,9 @@ namespace UZSG.EOS
             CopyLobbyDetailsHandleByUiEventIdOptions options = new CopyLobbyDetailsHandleByUiEventIdOptions();
             options.UiEventId = data.UiEventId;
 
-            Result result = lobbyInterface.CopyLobbyDetailsHandleByUiEventId(ref options, out LobbyDetails outLobbyDetailsHandle);
+            Epic.OnlineServices.Result result = lobbyInterface.CopyLobbyDetailsHandleByUiEventId(ref options, out LobbyDetails outLobbyDetailsHandle);
 
-            if (result != Result.Success)
+            if (result != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogErrorFormat("Lobbies (OnJoinLobbyAccepted): could not get lobby details: error code: {0}", result);
                 return;
@@ -1728,9 +1753,9 @@ namespace UZSG.EOS
             CopyLobbyDetailsHandleByInviteIdOptions options = new CopyLobbyDetailsHandleByInviteIdOptions();
             options.InviteId = data.InviteId;
 
-            Result result = lobbyInterface.CopyLobbyDetailsHandleByInviteId(ref options, out LobbyDetails outLobbyDetailsHandle);
+            Epic.OnlineServices.Result result = lobbyInterface.CopyLobbyDetailsHandleByInviteId(ref options, out LobbyDetails outLobbyDetailsHandle);
 
-            if (result != Result.Success)
+            if (result != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogErrorFormat("Lobbies (OnLobbyInvite): could not get lobby details: error code: {0}", result);
                 return;
@@ -1759,9 +1784,9 @@ namespace UZSG.EOS
                 InviteId = data.InviteId
             };
 
-            Result lobbyDetailsResult = lobbyInterface.CopyLobbyDetailsHandleByInviteId(ref options, out LobbyDetails outLobbyDetailsHandle);
+            Epic.OnlineServices.Result lobbyDetailsResult = lobbyInterface.CopyLobbyDetailsHandleByInviteId(ref options, out LobbyDetails outLobbyDetailsHandle);
 
-            if (lobbyDetailsResult != Result.Success)
+            if (lobbyDetailsResult != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogErrorFormat("Lobbies (OnLobbyInviteAccepted) could not get lobby details: error code: {0}", lobbyDetailsResult);
                 return;
@@ -1825,6 +1850,7 @@ namespace UZSG.EOS
             }
         }
 
+
         #region Join Events
 
         //-------------------------------------------------------------------------
@@ -1844,14 +1870,14 @@ namespace UZSG.EOS
             if (string.IsNullOrEmpty(lobbyId))
             {
                 Debug.LogError("Lobbies (JoinButtonOnClick): lobbyId is null or empty!");
-                onCompleted?.Invoke(Result.InvalidParameters);
+                onCompleted?.Invoke(Epic.OnlineServices.Result.InvalidParameters);
                 return;
             }
 
             if (lobbyDetails == null)
             {
                 Debug.LogError("Lobbies (JoinButtonOnClick): lobbyDetails is null!");
-                onCompleted?.Invoke(Result.InvalidParameters);
+                onCompleted?.Invoke(Epic.OnlineServices.Result.InvalidParameters);
                 return;
             }
 
@@ -1867,7 +1893,7 @@ namespace UZSG.EOS
                 //ActiveJoin = 
                 LeaveCurrentLobby(null);
                 Debug.LogError("Lobbies (JoinLobby): Leaving lobby now (must Join again, Active Join Not Implemented)!");
-                onCompleted?.Invoke(Result.InvalidState);
+                onCompleted?.Invoke(Epic.OnlineServices.Result.InvalidState);
 
                 return;
             }
@@ -1887,7 +1913,7 @@ namespace UZSG.EOS
 
         void OnJoinLobbyCompleted(ref JoinLobbyCallbackInfo data)
         {
-            if (data.ResultCode != Result.Success)
+            if (data.ResultCode != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogError($"[LobbyManager/OnJoinLobbyCompleted()]: Error joining lobby {data.ResultCode}");
                 if (data.ClientData is OnCreateLobbyCallback callback1)
@@ -1918,7 +1944,7 @@ namespace UZSG.EOS
 
             if (data.ClientData is OnCreateLobbyCallback callback)
             {
-                callback?.Invoke(Result.Success);
+                callback?.Invoke(Epic.OnlineServices.Result.Success);
             }
             OnCurrentLobbyChanged();
         }
@@ -1934,7 +1960,7 @@ namespace UZSG.EOS
             //    return;
             //}
 
-            if (data.ResultCode != Result.Success)
+            if (data.ResultCode != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogFormat("Lobbies (OnLeaveLobbyCompleted): error code: {0}", data.ResultCode);
                 LeaveLobbyCallback?.Invoke(data.ResultCode);
@@ -1945,7 +1971,7 @@ namespace UZSG.EOS
 
                 currentLobby.ClearCache();
 
-                LeaveLobbyCallback?.Invoke(Result.Success);
+                LeaveLobbyCallback?.Invoke(Epic.OnlineServices.Result.Success);
 
                 OnCurrentLobbyChanged();
             }
@@ -1984,7 +2010,7 @@ namespace UZSG.EOS
             //    return;
             //}
 
-            if (data.ResultCode != Result.Success)
+            if (data.ResultCode != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogErrorFormat("Lobbies (OnDeclineInviteCompleted): error code: {0}", data.ResultCode);
                 return;
@@ -2012,7 +2038,7 @@ namespace UZSG.EOS
             {
                 Debug.LogError("Lobbies (AcceptCurrentLobbyInvite): Current invite is null or invalid!");
 
-                AcceptLobbyInviteCompleted(Result.InvalidState);
+                AcceptLobbyInviteCompleted(Epic.OnlineServices.Result.InvalidState);
             }
         }
 
@@ -2034,7 +2060,7 @@ namespace UZSG.EOS
             {
                 Debug.LogError("Lobbies (AcceptLobbyInvite): lobbyInvite parameter is null or invalid!");
 
-                AcceptLobbyInviteCompleted(Result.InvalidState);
+                AcceptLobbyInviteCompleted(Epic.OnlineServices.Result.InvalidState);
             }
         }
 

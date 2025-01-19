@@ -100,6 +100,11 @@ namespace UZSG.EOS.Lobbies
             return lobbyMember != null;
         }
 
+        public List<LobbyMember> GetMembers()
+        {
+            return new();
+        }
+
         /// <summary>
         /// Checks if the specified <c>ProductUserId</c> is the owner if this lobby.
         /// </summary>
@@ -136,8 +141,8 @@ namespace UZSG.EOS.Lobbies
                 LocalUserId = Game.EOS.GetProductUserId()
             };
 
-            Result result = Game.EOS.GetEOSLobbyInterface().CopyLobbyDetailsHandle(ref options, out LobbyDetails outLobbyDetailsHandle);
-            if (result != Result.Success)
+            Epic.OnlineServices.Result result = Game.EOS.GetEOSLobbyInterface().CopyLobbyDetailsHandle(ref options, out LobbyDetails outLobbyDetailsHandle);
+            if (result != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogErrorFormat("Lobbies (InitFromLobbyHandle): can't get lobby info handle. Error code: {0}", result);
                 return;
@@ -169,8 +174,8 @@ namespace UZSG.EOS.Lobbies
 
             /// Copy lobby info
             var lobbyDetailsCopyInfoOptions = new LobbyDetailsCopyInfoOptions();
-            Result infoResult = outLobbyDetailsHandle.CopyInfo(ref lobbyDetailsCopyInfoOptions, out LobbyDetailsInfo? outLobbyDetailsInfo);
-            if (infoResult != Result.Success)
+            Epic.OnlineServices.Result infoResult = outLobbyDetailsHandle.CopyInfo(ref lobbyDetailsCopyInfoOptions, out LobbyDetailsInfo? outLobbyDetailsInfo);
+            if (infoResult != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogErrorFormat("Lobbies (InitFromLobbyDetails): can't copy lobby info. Error code: {0}", infoResult);
                 return;
@@ -199,9 +204,9 @@ namespace UZSG.EOS.Lobbies
                 {
                     AttrIndex = i
                 };
-                
-                Result copyAttrResult = outLobbyDetailsHandle.CopyAttributeByIndex(ref attrOptions, out Epic.OnlineServices.Lobby.Attribute? outAttribute);
-                if (copyAttrResult == Result.Success && outAttribute != null && outAttribute?.Data != null)
+
+                Epic.OnlineServices.Result copyAttrResult = outLobbyDetailsHandle.CopyAttributeByIndex(ref attrOptions, out Epic.OnlineServices.Lobby.Attribute? outAttribute);
+                if (copyAttrResult == Epic.OnlineServices.Result.Success && outAttribute != null && outAttribute?.Data != null)
                 {
                     LobbyAttribute attr = new();
                     attr.InitFromAttribute(outAttribute);
@@ -242,8 +247,8 @@ namespace UZSG.EOS.Lobbies
                         TargetUserId = memberId
                     };
 
-                    Result memberAttributeResult = outLobbyDetailsHandle.CopyMemberAttributeByIndex(ref lobbyDetailsCopyMemberAttributeByIndexOptions, out Epic.OnlineServices.Lobby.Attribute? outAttribute);
-                    if (memberAttributeResult != Result.Success)
+                    Epic.OnlineServices.Result memberAttributeResult = outLobbyDetailsHandle.CopyMemberAttributeByIndex(ref lobbyDetailsCopyMemberAttributeByIndexOptions, out Epic.OnlineServices.Lobby.Attribute? outAttribute);
+                    if (memberAttributeResult != Epic.OnlineServices.Result.Success)
                     {
                         Debug.LogFormat("Lobbies (InitFromLobbyDetails): can't copy member attribute. Error code: {0}", memberAttributeResult);
                         continue;
@@ -274,6 +279,19 @@ namespace UZSG.EOS.Lobbies
         {
             MaxNumLobbyMembers = (uint) attributes.MaxPlayers;
         }
+
+        /// Wrapper
+        public void RequestWorldSaveData(ProductUserId userId, Action<string> callback)
+        {
+            EOSSubManagers.P2P.RequestWorldData(userId, callback);
+        }
+
+        /// Wrapper
+        public void RequestPlayerSaveData(ProductUserId userId, EOSPeer2PeerManager.OnRequestPlayerSaveData callback)
+        {
+            EOSSubManagers.P2P.RequestPlayerSaveData(userId, callback);
+        }
+        
 
         #region World Data transfer
 

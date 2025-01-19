@@ -72,7 +72,7 @@ namespace UZSG.EOS
 
         void OnAuthLoginCallback(Epic.OnlineServices.Auth.LoginCallbackInfo info)
         {
-            if (info.ResultCode == Result.Success)
+            if (info.ResultCode == Epic.OnlineServices.Result.Success)
             {
                 Game.EOS.StartConnectLoginWithEpicAccount(info.LocalUserId, OnConnectLoginCallback);
                 return;
@@ -82,14 +82,14 @@ namespace UZSG.EOS
                 string msg = $"Encountered an error when logging in: [{info.ResultCode}]";
                 Game.Console.LogInfo(msg);
                 Debug.LogError(msg);
-                
+
                 LoginType = LoginCredentialType.AccountPortal;
             }
         }
 
         void OnConnectLoginCallback(Epic.OnlineServices.Connect.LoginCallbackInfo info)
         {
-            if (info.ResultCode == Result.Success)
+            if (info.ResultCode == Epic.OnlineServices.Result.Success)
             {
                 Game.Console.LogInfo($"Logged in successfully");
                 isLoggedIn = true;
@@ -101,7 +101,7 @@ namespace UZSG.EOS
                 /// Create new Connect user
                 Game.EOS.CreateConnectUserWithContinuanceToken(info.ContinuanceToken, (CreateUserCallbackInfo createUserCallbackInfo) =>
                 {
-                    if (createUserCallbackInfo.ResultCode == Result.Success)
+                    if (createUserCallbackInfo.ResultCode == Epic.OnlineServices.Result.Success)
                     {
                         Game.Console.LogInfo($"Logged in successfully");
                         isLoggedIn = true;
@@ -134,7 +134,7 @@ namespace UZSG.EOS
 
         void OnLogoutCompleted(ref Epic.OnlineServices.Connect.LogoutCallbackInfo info)
         {
-            if (info.ResultCode == Result.Success)
+            if (info.ResultCode == Epic.OnlineServices.Result.Success)
             {
                 var options = new UnlinkAccountOptions()
                 {
@@ -150,7 +150,7 @@ namespace UZSG.EOS
 
         void OnUnlinkAccountCompleted(ref UnlinkAccountCallbackInfo data)
         {
-            if (data.ResultCode == Result.Success)
+            if (data.ResultCode == Epic.OnlineServices.Result.Success)
             {
                 return;
             }

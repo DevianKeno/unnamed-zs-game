@@ -19,27 +19,50 @@ namespace UZSG.EOS
     public class EOSUserInfoManager : IEOSSubManager, IAuthInterfaceEventListener, IConnectInterfaceEventListener
     {
         UserInfoData localUserInfo;
-        UserInfoInterface userInfoHandle => Game.EOS.GetEOSPlatformInterface().GetUserInfoInterface();
+        UserInfoInterface userInfoInterface;
 
         Dictionary<EpicAccountId, UserInfoData> epicIdUserInfoMappings = new();
         Dictionary<ProductUserId, ExternalAccountInfo> productIdUserInfoMappings = new();
         /// <summary>
         /// <c>string</c> is DisplayName.
         /// </summary>
-        Dictionary<string, UserInfoData> userInfoDisplayNameMappings = new();
+        Dictionary<string, UserInfoData> displayNameUserInfoMappings = new();
+        Dictionary<string, ExternalAccountInfo> displayNameExternalMappings = new();
         // List<OnUserInfoChangedCallback> localUserInfoChangedCallbacks = new();
 
         public delegate void OnUserInfoChangedCallback(UserInfoData newUserInfo);
-        public delegate void QueryUserInfoByEpicIdCallback(UserInfoData userInfo, EpicAccountId accountId, Result result);
-        public delegate void QueryUserInfoProductIdCallback(ExternalAccountInfo userInfo, ProductUserId userId, Result result);
-        public delegate void QueryUserInfoDisplayNameCallback(string displayName, Result result);
+        public delegate void QueryUserInfoByEpicIdCallback(UserInfoData userInfo, EpicAccountId accountId, Epic.OnlineServices.Result result);
+        public delegate void QueryUserInfoProductIdCallback(ExternalAccountInfo userInfo, ProductUserId userId, Epic.OnlineServices.Result result);
+        public delegate void QueryUserInfoDisplayNameCallback(string displayName, Epic.OnlineServices.Result result);
 
         public EOSUserInfoManager()
         {
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.playModeStateChanged -= OnPlayModeChanged;
+            UnityEditor.EditorApplication.playModeStateChanged += OnPlayModeChanged;
+#endif
             Game.EOS.AddAuthLoginListener(this);
             Game.EOS.AddConnectLoginListener(this);
+            userInfoInterface = Game.EOS.GetEOSUserInfoInterface();
         }
 
+#if UNITY_EDITOR
+        ~EOSUserInfoManager()
+        {
+            UnityEditor.EditorApplication.playModeStateChanged -= OnPlayModeChanged;
+        }
+#endif
+
+#if UNITY_EDITOR
+        void OnPlayModeChanged(UnityEditor.PlayModeStateChange modeChange)
+        {
+            if (modeChange == UnityEditor.PlayModeStateChange.ExitingPlayMode)
+            {
+                /// Prevent attempts to call native EOS code while exiting play mode, which crashes the editor
+                userInfoInterface = null;
+            }
+        }
+#endif
 
         #region EOS callbacks
 
@@ -68,7 +91,7 @@ namespace UZSG.EOS
         public void ClearUserInfo()
         {
             epicIdUserInfoMappings.Clear();
-            userInfoDisplayNameMappings.Clear();
+            displayNameUserInfoMappings.Clear();
             
             if (localUserInfo.UserId.IsValid())
             {
@@ -76,7 +99,7 @@ namespace UZSG.EOS
                 epicIdUserInfoMappings.Add(localUserInfo.UserId, localUserInfo);
                 if (!string.IsNullOrEmpty(localUserInfo.DisplayName))
                 {
-                    userInfoDisplayNameMappings.Add(localUserInfo.DisplayName, localUserInfo);
+                    displayNameUserInfoMappings.Add(localUserInfo.DisplayName, localUserInfo);
                 }
             }
         }
@@ -99,13 +122,13 @@ namespace UZSG.EOS
 
         public UserInfoData GetUserInfoByDisplayName(string DisplayName)
         {
-            userInfoDisplayNameMappings.TryGetValue(DisplayName, out UserInfoData userInfo);
+            displayNameUserInfoMappings.TryGetValue(DisplayName, out UserInfoData userInfo);
             return userInfo;
         }
         
         public struct QueryUserInfoResult
         {
-            public Result Result { get; set; }
+            public Epic.OnlineServices.Result Result { get; set; }
             public UserInfoData UserInfoData { get; set; }
         }
 
@@ -117,7 +140,13 @@ namespace UZSG.EOS
             if (userId == null || !userId.IsValid())
             {
                 Debug.LogError("[UserInfoManager/QueryUserInfoByEpicId()]: Invalid UserId");
-                callback?.Invoke(default, userId, Result.InvalidUser);
+                callback?.Invoke(default, userId, Epic.OnlineServices.Result.InvalidUser);
+                return;
+            }
+
+            if (epicIdUserInfoMappings.TryGetValue(userId, out var userInfo))
+            {
+                callback?.Invoke(userInfo, userId, Epic.OnlineServices.Result.Success);
                 return;
             }
 
@@ -126,12 +155,12 @@ namespace UZSG.EOS
                 LocalUserId = Game.EOS.GetLocalUserId(),
                 TargetUserId = userId
             };
-            userInfoHandle.QueryUserInfo(ref options, callback, OnQueryUserInfoCompleted);
+            userInfoInterface.QueryUserInfo(ref options, callback, OnQueryUserInfoCompleted);
         }
 
         void OnQueryUserInfoCompleted(ref QueryUserInfoCallbackInfo info)
         {
-            if (info.ResultCode == Result.Success)
+            if (info.ResultCode == Epic.OnlineServices.Result.Success)
             {
                 Debug.Log("[UserInfoManager/OnQueryUserInfoCompleted()]: QueryUserInfo successful");
 
@@ -140,8 +169,8 @@ namespace UZSG.EOS
                     LocalUserId = info.LocalUserId,
                     TargetUserId = info.TargetUserId
                 };
-                Result result = userInfoHandle.CopyUserInfo(ref options, out UserInfoData? userInfo);
-                if (result == Result.Success && userInfo.HasValue)
+                Epic.OnlineServices.Result result = userInfoInterface.CopyUserInfo(ref options, out UserInfoData? userInfo);
+                if (result == Epic.OnlineServices.Result.Success && userInfo.HasValue)
                 {
                     CacheUserInfo(userInfo.Value);
                     if (info.ClientData is QueryUserInfoByEpicIdCallback callback)
@@ -164,12 +193,18 @@ namespace UZSG.EOS
 
         #region ProductUserId
 
-        public void QueryUserInfoByProductId(ProductUserId userId, QueryUserInfoProductIdCallback callback = null)
+        public void QueryUserInfoByProductId(ProductUserId userId, QueryUserInfoProductIdCallback onCompleted = null)
         {
             if (userId == null || !userId.IsValid())
             {
                 Debug.LogError("[UserInfoManager/QueryUserInfoByProductId()]: Invalid ProductUserId");
-                callback?.Invoke(default, null, Result.InvalidUser);
+                onCompleted?.Invoke(default, null, Epic.OnlineServices.Result.InvalidUser);
+                return;
+            }
+
+            if (productIdUserInfoMappings.TryGetValue(userId, out var userInfo))
+            {
+                onCompleted?.Invoke(userInfo, userId, Epic.OnlineServices.Result.Success);
                 return;
             }
 
@@ -178,19 +213,19 @@ namespace UZSG.EOS
                 LocalUserId = Game.EOS.GetProductUserId(),
                 ProductUserIds = new ProductUserId[] { userId }
             };
-            Game.EOS.GetEOSConnectInterface().QueryProductUserIdMappings(ref options, callback, QueryProductUserIdMappingsCompleted);
+            Game.EOS.GetEOSConnectInterface().QueryProductUserIdMappings(ref options, onCompleted, QueryProductUserIdMappingsCompleted);
         }
 
         void QueryProductUserIdMappingsCompleted(ref QueryProductUserIdMappingsCallbackInfo info)
         {
-            if (info.ResultCode == Result.Success)
+            if (info.ResultCode == Epic.OnlineServices.Result.Success)
             {
                 var options = new CopyProductUserInfoOptions()
                 {
                     TargetUserId = info.LocalUserId
                 };
                 var result = Game.EOS.GetEOSConnectInterface().CopyProductUserInfo(ref options, out ExternalAccountInfo? outUserInfo);
-                if (result == Result.Success && outUserInfo.HasValue)
+                if (result == Epic.OnlineServices.Result.Success && outUserInfo.HasValue)
                 {
                     CacheUserInfo(outUserInfo.Value);
                     if (info.ClientData is QueryUserInfoProductIdCallback callback)
@@ -217,7 +252,7 @@ namespace UZSG.EOS
             if (string.IsNullOrEmpty(DisplayName))
             {
                 Debug.LogError("UserInfo (QueryUserInfoByDisplayName): Invalid Display Name");
-                Callback?.Invoke(DisplayName, Result.InvalidParameters);
+                Callback?.Invoke(DisplayName, Epic.OnlineServices.Result.InvalidParameters);
                 return;
             }
 
@@ -227,7 +262,7 @@ namespace UZSG.EOS
                 DisplayName = DisplayName
             };
 
-            userInfoHandle.QueryUserInfoByDisplayName(ref options, Callback, OnQueryUserInfoDisplayNameCompleted);
+            userInfoInterface.QueryUserInfoByDisplayName(ref options, Callback, OnQueryUserInfoDisplayNameCompleted);
         }
 
         void OnQueryUserInfoDisplayNameCompleted(ref QueryUserInfoByDisplayNameCallbackInfo data)
@@ -237,7 +272,7 @@ namespace UZSG.EOS
             //QueryUserInfoByDisplayNameCallbackInfo.DisplayName memory is only valid within callback scope, so copy for safety
             string displayNameCopy = string.Copy(data.DisplayName);
 
-            if (data.ResultCode != Result.Success)
+            if (data.ResultCode != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogErrorFormat("UserData (OnQueryUserInfoDisplayNameCompleted): Error calling QueryUserInfoByDisplayName: {0}", data.ResultCode);
                 callback?.Invoke(displayNameCopy, data.ResultCode);
@@ -251,9 +286,9 @@ namespace UZSG.EOS
                 LocalUserId = data.LocalUserId,
                 TargetUserId = data.TargetUserId
             };
-            Result result = userInfoHandle.CopyUserInfo(ref options, out UserInfoData? userInfo);
+            Epic.OnlineServices.Result result = userInfoInterface.CopyUserInfo(ref options, out UserInfoData? userInfo);
 
-            if (result != Result.Success)
+            if (result != Epic.OnlineServices.Result.Success)
             {
                 Debug.LogErrorFormat("UserData (OnQueryUserInfoDisplayNameCompleted): CopyUserInfo error: {0}", result);
                 callback?.Invoke(displayNameCopy, result);
@@ -276,7 +311,7 @@ namespace UZSG.EOS
             epicIdUserInfoMappings[userInfo.UserId] = userInfo;
             if (!string.IsNullOrEmpty(userInfo.DisplayName))
             {
-                userInfoDisplayNameMappings[userInfo.DisplayName] = userInfo;
+                displayNameUserInfoMappings[userInfo.DisplayName] = userInfo;
             }
 
             if (userInfo.UserId == Game.EOS.GetLocalUserId())
@@ -294,7 +329,7 @@ namespace UZSG.EOS
             productIdUserInfoMappings[userInfo.ProductUserId] = userInfo;
             if (!string.IsNullOrEmpty(userInfo.DisplayName))
             {
-                // userInfoDisplayNameMappings[userInfo.DisplayName] = userInfo;
+                displayNameExternalMappings[userInfo.DisplayName] = userInfo;
             }
 
             if (userInfo.ProductUserId == Game.EOS.GetProductUserId())

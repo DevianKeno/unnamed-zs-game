@@ -210,14 +210,14 @@ namespace UZSG.Systems
         }
                 
         /// <summary>
-        /// Log a debug message into the game's console.
+        /// If debugging is enabled, logs a debug message into the in-game console as well as Unity console.
         /// </summary>
-        public void LogDebug(object message)
+        public void LogDebug(object message, bool logWithUnity = true)
         {
             if (Game.Main.EnableDebugMode)
             {
                 LogInfo($"<color=\"white\">[DEBUG]: {message}</color>");
-                Debug.Log(message);
+                if (logWithUnity) Debug.Log(message);
             }
         }
         

@@ -8,6 +8,8 @@ namespace UZSG.EOS.P2P
         WorldDataHeading,
         WorldDataChunk,
         WorldDataFooter,
+        PlayerSaveDataRequest,
+        PlayerSaveDataReceived,
         ConnectionRequest,
     }
 }

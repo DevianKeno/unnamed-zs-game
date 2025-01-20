@@ -172,10 +172,10 @@ namespace UZSG.EOS
 
         void UnsubscribeFromLobbyUpdates()
         {
-            lobbyUpdateNotification.Dispose();
-            lobbyMemberUpdateNotification.Dispose();
-            lobbyMemberStatusNotification.Dispose();
-            leaveLobbyRequestedNotification.Dispose();
+            lobbyUpdateNotification?.Dispose();
+            lobbyMemberUpdateNotification?.Dispose();
+            lobbyMemberStatusNotification?.Dispose();
+            leaveLobbyRequestedNotification?.Dispose();
         }
 
         //-------------------------------------------------------------------------
@@ -211,9 +211,9 @@ namespace UZSG.EOS
         //-------------------------------------------------------------------------
         void UnsubscribeFromLobbyInvites()
         {
-            lobbyInviteNotification.Dispose(); 
-            lobbyInviteAcceptedNotification.Dispose(); 
-            joinLobbyAcceptedNotification.Dispose();
+            lobbyInviteNotification?.Dispose(); 
+            lobbyInviteAcceptedNotification?.Dispose(); 
+            joinLobbyAcceptedNotification?.Dispose();
         }
 
         string GetRTCRoomName()

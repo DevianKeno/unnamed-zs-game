@@ -18,8 +18,9 @@ namespace UZSG.EOS
     /// </summary>
     public class EOSUserInfoManager : IEOSSubManager, IAuthInterfaceEventListener, IConnectInterfaceEventListener
     {
-        UserInfoData localUserInfo;
         UserInfoInterface userInfoInterface;
+        UserInfoData localUserInfo;
+        ExternalAccountInfo externalAccountInfo;
 
         Dictionary<EpicAccountId, UserInfoData> epicIdUserInfoMappings = new();
         Dictionary<ProductUserId, ExternalAccountInfo> productIdUserInfoMappings = new();
@@ -334,7 +335,7 @@ namespace UZSG.EOS
 
             if (userInfo.ProductUserId == Game.EOS.GetProductUserId())
             {
-                // localUserInfo = userInfo;
+                externalAccountInfo = userInfo;
                 // foreach (var callback in localUserInfoChangedCallbacks)
                 // {
                 //     callback?.Invoke(localUserInfo);

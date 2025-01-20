@@ -273,6 +273,17 @@ namespace UZSG.Systems
                 var currentLobby = EOSSubManagers.Lobbies.CurrentLobby;
                 currentLobby.RequestPlayerSaveData(Game.EOS.GetProductUserId(), OnRequestPlayerSaveDataCompleted);
             }
+            else
+            {
+                if (EOSSubManagers.Auth.IsLoggedIn)
+                {
+                    CurrentWorld.JoinPlayerByUserInfo(EOSSubManagers.UserInfo.GetLocalUserInfo());
+                }
+                else
+                {
+                    CurrentWorld.JoinLocalPlayer();
+                }
+            }
             
             pauseInput.Enable();
         }

@@ -83,7 +83,15 @@ namespace UZSG.EOS
                 Game.Console.LogInfo(msg);
                 Debug.LogError(msg);
 
-                LoginType = LoginCredentialType.AccountPortal;
+                if (LoginType == LoginCredentialType.PersistentAuth)
+                {
+                    LoginType = LoginCredentialType.AccountPortal;
+                    Game.EOS.StartLoginWithLoginTypeAndToken(
+                        LoginCredentialType.AccountPortal,
+                        null,
+                        null,
+                        OnAuthLoginCallback);
+                }
             }
         }
 

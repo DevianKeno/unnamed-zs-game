@@ -121,23 +121,33 @@ namespace UZSG.Systems
         /// <summary>
         /// Run a console command.
         /// </summary>
-        public void Run(string input)
+        public void RunCommand(string input)
         {
+            if (string.IsNullOrEmpty(input)) return;
             if (input.StartsWith("/")) input = input[1..]; /// Removes '/' if present
-            string[] args = input.Split(' ');
 
-            ExecuteCommand(args[0], args[1..]);
+            input = input.ToLower();
+            int splitAt = input.IndexOf(' ');
+            var command = input[..splitAt];
+            var args = input [(splitAt + 1)..];
+
+            ExecuteCommand(command, args);
         }
 
-        void ExecuteCommand(string command, string[] args)
+        void ExecuteCommand(string command, string args)
         {
-            if (command.StartsWith("/")) command = command[1..]; /// Removes '/' if present
-
             // if (Game.World.HasWorld)
             // if (Game.World.CurrentWorld.Attributes.OwnerId != commandSenderId)
             // {
             //     return;
             // }
+
+            if (command.Equals("msg", StringComparison.OrdinalIgnoreCase))
+            {
+                var sliced = args.Split(' ', count: 2);
+                CMessage(this, sliced[0], sliced[1]);
+                return;
+            }
 
             if (_commandsDict.TryGetValue(command, out var c))
             {
@@ -145,7 +155,7 @@ namespace UZSG.Systems
                 {
                     if (c.IsDebugCommand && !enableDebugCommands) return;
 
-                    _commandsDict[command].Invoke(args);
+                    _commandsDict[command].Invoke(args.Split(' '));
                     return;
                 }
                 catch (Exception ex)
@@ -197,6 +207,9 @@ namespace UZSG.Systems
             OnLogMessage?.Invoke($"\n{message}");
         }
 
+        /// <summary>
+        /// Log a message to the in-game console.
+        /// </summary>
         public void LogInfo(object message)
         {
             if (message is string)
@@ -216,33 +229,33 @@ namespace UZSG.Systems
         {
             if (Game.Main.EnableDebugMode)
             {
-                LogInfo($"<color=\"white\">[DEBUG]: {message}</color>");
+                LogInfo($"<b><color=#B6F7FF>[DEBUG]:</b> {message}</color>");
                 if (logWithUnity) Debug.Log(message);
             }
         }
         
         /// <summary>
-        /// Log a debug message into the game's console.
+        /// Log a yellow warning message into the game's console.
         /// </summary>
         public void LogWarn(object message)
         {
-            LogInfo($"<color=\"orange\">[WARN]: {message}</color>");
+            LogInfo($"<b><color=\"yellow\">[WARN]:</b> {message}</color>");
         }
 
         /// <summary>
-        /// Log a debug message into the game's console.
+        /// Log an orange error message into the game's console.
         /// </summary>
         public void LogError(object message)
         {
-            LogInfo($"<color=\"red\">[ERROR]: {message}</color>");
+            LogInfo($"<b><color=\"orange\">[ERROR]:</b> {message}</color>");
         }
         
         /// <summary>
-        /// Log a debug message into the game's console.
+        /// Log a red fatal message into the game's console.
         /// </summary>
         public void LogFatal(object message)
         {
-            LogInfo($"<color=\"red\">[FATAL]: {message}</color>");
+            LogInfo($"<b><color=\"red\">[FATAL]:</b> {message}</color>");
         }
 
         /// <summary>

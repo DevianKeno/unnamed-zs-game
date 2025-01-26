@@ -23,6 +23,7 @@ using Epic.OnlineServices;
 using UZSG.EOS.Lobbies;
 using Epic.OnlineServices.Connect;
 using Epic.OnlineServices.Lobby;
+using Unity.Netcode;
 
 namespace UZSG.Worlds
 {
@@ -96,11 +97,6 @@ namespace UZSG.Worlds
             var initializeTimer = new System.Diagnostics.Stopwatch();
             initializeTimer.Start();
 
-            if (Game.Main.IsOnline)
-            {
-                // EOSSubManagers.Lobbies.AddNotifyMemberStatusReceived(OnMemberStatusReceived);
-            }
-
             InitializeInternal();
             InitializeAttributes(saveData);
             InitializeEvents();
@@ -154,7 +150,6 @@ namespace UZSG.Worlds
 
         void InitializeInternal()
         {
-            // Game.Main.OnLateInit -= InitializeInternal;
             timeController.Initialize();
             eventsController.Initialize();
             // RegisterExistingInstances();
@@ -174,7 +169,9 @@ namespace UZSG.Worlds
         }
 
         /// <summary>
+        /// IMPORTANT NOTE: as it turns out, every time the level is loaded the instance id is differnet 
         /// Register object/entity instances from the scene to avoid duplicates.
+        /// 
         /// </summary>
         void RegisterExistingInstances()
         {
@@ -420,7 +417,24 @@ namespace UZSG.Worlds
             eventsController.Deinitialize();     
         }
         
-        public byte[] GetPlayerDataFromUID(string uid)
+        public bool CheckIfPlayerHasSave(ProductUserId userId)
+        {
+            return userId != null && userId.IsValid() && _playerIdSaves.ContainsKey(userId.ToString());
+        }
+
+        public PlayerSaveData GetPlayerSaveData(ProductUserId userId)
+        {
+            if (_playerIdSaves.ContainsKey(userId.ToString()))
+            {
+                return _playerIdSaves[userId.ToString()];
+            }
+            else
+            {
+                return PlayerSaveData.Empty;
+            }
+        }
+
+        public byte[] GetPlayerDataBytesFromUID(string uid)
         {
             var filepath = Path.Join(this.worldpath, "playerdata", $"{uid}.dat");
             var contents = ReadPlayerDataFile(filepath);
@@ -438,7 +452,7 @@ namespace UZSG.Worlds
 
                 var uid = "localplayer";
                 this._playerIdSaves.TryGetValue(uid, out var playerSave);
-                player.Initialize(playerSave);
+                player.InitializeAsClient();
 
                 _playerEntities.Add(player);
                 OnPlayerJoined(player);
@@ -448,32 +462,34 @@ namespace UZSG.Worlds
         }
 
         /// <summary>
-        /// Joins a player to the world.
+        /// Request to the server to spawn our player client.
+        /// mServer means that this method should only be called on the server. 
+        /// mServer just stands for "method Server" lol
         /// </summary>
-        internal void JoinPlayerByUserInfo(UserInfoData userInfo, PlayerSaveData saveData = null)
+        /// <param name="userId">User id of to be owner</param>
+        internal void SpawnPlayer_mServer(ProductUserId userId)
         {
-            Game.Entity.Spawn<Player>("player", position: ValidateWorldSpawn(_saveData.WorldSpawn), (info) =>
+            Game.Entity.Spawn<Player>("player", position: ValidateWorldSpawn(_saveData.WorldSpawn), onCompleted: (info) =>
             {
-                Player player = info.Entity;
+                var player = info.Entity;
+                var uid = userId.ToString();
+                // PlayerSaveData psdToLoad;
+                // if (saveData == null)
+                // {
+                //     this._playerIdSaves.TryGetValue(uid, out psdToLoad);
+                // }
+                // else
+                // {
+                //     psdToLoad = saveData;
+                // }
+                // player.Initialize(psdToLoad);
+                // player.UserInfo = userInfo;
+                
+                player.NetworkObject.Spawn();
 
-                var uid = userInfo.UserId.ToString();
-                PlayerSaveData psdToLoad;
-                if (saveData == null)
-                {
-                    this._playerIdSaves.TryGetValue(uid, out psdToLoad);
-                }
-                else
-                {
-                    psdToLoad = saveData;
-                }
-                player.Initialize(psdToLoad);
-                player.UserInfo = userInfo;
-
-                _playerEntities.Add(player);
+                _playerEntities.Add(info.Entity);
                 OnPlayerJoined(player);
             });
-
-            Game.Console.LogInfo($"[World]: {userInfo.DisplayName} has entered the world");
         }
 
         internal void JoinPlayerByExternalAccountInfo(ExternalAccountInfo accountInfo, PlayerSaveData saveData = null)
@@ -492,13 +508,11 @@ namespace UZSG.Worlds
                 {
                     psdToLoad = saveData;
                 }
-                player.Initialize(psdToLoad);
+                player.InitializeAsClient();
 
                 _playerEntities.Add(player);
                 OnPlayerJoined(player);
             });
-
-            Game.Console.LogInfo($"[World]: {accountInfo.DisplayName} has entered the world");
         }
 
         /// <summary>

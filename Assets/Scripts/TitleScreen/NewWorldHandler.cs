@@ -105,7 +105,7 @@ namespace UZSG.TitleScreen
                     },
                     onLoadSceneCompleted: () =>
                     {
-                        Game.World.LoadWorldFromLevelDat(result.Savepath, OnLoadWorldCompleted);
+                        Game.World.LoadWorldFromFilepath(result.Savepath, OnLoadWorldCompleted);
                     });
             }
             else if (result.Result == Failed)

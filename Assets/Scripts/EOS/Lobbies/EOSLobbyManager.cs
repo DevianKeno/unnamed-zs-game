@@ -1,3 +1,25 @@
+/*
+* Copyright (c) 2021 PlayEveryWare
+* 
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+* 
+* The above copyright notice and this permission notice shall be included in all
+* copies or substantial portions of the Software.
+* 
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+* SOFTWARE.
+*/
+
 using System;
 using System.Collections.Generic;
 
@@ -49,7 +71,13 @@ namespace UZSG.EOS
 
         public LocalRTCOptions? customLocalRTCOptions;
         public bool IsHosting { get; private set; }
-        public bool IsInLobby { get; private set; }
+        public bool IsInLobby
+        {
+            get
+            {
+                return CurrentLobby != null && CurrentLobby.IsValid();
+            }
+        }
 
         /// NotificationId
         NotifyEventHandle lobbyUpdateNotification;
@@ -364,7 +392,7 @@ namespace UZSG.EOS
 
             foreach(LobbyMember lobbyMember in currentLobby.Members)
             {
-                if (lobbyMember.ProductId == EOSManager.Instance.GetProductUserId())
+                if (lobbyMember.ProductUserId == EOSManager.Instance.GetProductUserId())
                 {
                     lobbyMember.RTCState.IsInRTCRoom = data.IsConnected;
                     if (!data.IsConnected)
@@ -407,10 +435,10 @@ namespace UZSG.EOS
 
             //OnRTCRoomParticipantJoined / OnRTCRoomParticipantLeft
 
-            // Find this participant in our list
+            /// Find this participant in our list
             foreach (LobbyMember lobbyMember in currentLobby.Members)
             {
-                if (lobbyMember.ProductId != data.ParticipantId)
+                if (lobbyMember.ProductUserId != data.ParticipantId)
                 {
                     continue;
                 }
@@ -459,7 +487,7 @@ namespace UZSG.EOS
             // Find this participant in our list
             foreach(LobbyMember lobbyMember in currentLobby.Members)
             {
-                if (lobbyMember.ProductId != data.ParticipantId)
+                if (lobbyMember.ProductUserId != data.ParticipantId)
                 {
                     continue;
                 }
@@ -471,7 +499,7 @@ namespace UZSG.EOS
                 }
 
                 // Only update the audio status for other players (we control their own status)
-                if (lobbyMember.ProductId != EOSManager.Instance.GetProductUserId())
+                if (lobbyMember.ProductUserId != EOSManager.Instance.GetProductUserId())
                 {
                     lobbyMember.RTCState.IsAudioOutputDisabled = data.AudioStatus != RTCAudioStatus.Enabled;
                 }
@@ -601,7 +629,7 @@ namespace UZSG.EOS
             /// Save lobby data for modification
             currentLobby = lobby;
             currentLobby._isBeingCreated = true;
-            currentLobby.LobbyOwner = localProductUserId;
+            currentLobby.OwnerProductUserId = localProductUserId;
             IsHosting = true;
         }
 
@@ -876,6 +904,7 @@ namespace UZSG.EOS
                 }
 
                 _isDirty = true;
+                // IsInLobby = true;
 
                 if (info.ClientData is OnCreateLobbyCallback callback)
                 {
@@ -927,7 +956,7 @@ namespace UZSG.EOS
             // Update Lobby
             if (!string.IsNullOrEmpty(lobbyId) && currentLobby.Id == lobbyId)
             {
-                currentLobby.InitFromLobbyHandle(lobbyId);
+                currentLobby.InitializeFromLobbyHandle(lobbyId);
 
                 LobbyUpdateCompleted?.Invoke(Epic.OnlineServices.Result.Success);
 
@@ -1006,6 +1035,7 @@ namespace UZSG.EOS
             }
 
             Debug.Log("Lobbies (OnDestroyLobbyCompleted): Lobby destroyed.");
+            // IsInLobby = false;
 
             //_LobbyLeaveInProgress = false;
             if (currentJoinRequest.IsValid())
@@ -1026,7 +1056,7 @@ namespace UZSG.EOS
             foreach (LobbyMember lobbyMember in currentLobby.Members)
             {
                 // Find the correct lobby member
-                if (lobbyMember.ProductId != targetUserId)
+                if (lobbyMember.ProductUserId != targetUserId)
                 {
                     continue;
                 }
@@ -1055,7 +1085,7 @@ namespace UZSG.EOS
             foreach (LobbyMember lobbyMember in currentLobby.Members)
             {
                 // Find the correct lobby member
-                if (lobbyMember.ProductId != targetUserId)
+                if (lobbyMember.ProductUserId != targetUserId)
                 {
                     continue;
                 }
@@ -1086,7 +1116,7 @@ namespace UZSG.EOS
             foreach (LobbyMember lobbyMember in currentLobby.Members)
             {
                 // Find the correct lobby member
-                if (lobbyMember.ProductId != targetUserId)
+                if (lobbyMember.ProductUserId != targetUserId)
                 {
                     continue;
                 }
@@ -1167,7 +1197,7 @@ namespace UZSG.EOS
             foreach(LobbyMember lobbyMember in currentLobby.Members)
             {
                 // Find ourselves
-                if (lobbyMember.ProductId != data.LocalUserId)
+                if (lobbyMember.ProductUserId != data.LocalUserId)
                 {
                     continue;
                 }
@@ -1175,7 +1205,7 @@ namespace UZSG.EOS
                 lobbyMember.RTCState.IsAudioOutputDisabled = data.AudioStatus == RTCAudioStatus.Disabled;
                 lobbyMember.RTCState.MuteActionInProgress = false;
 
-                Debug.LogFormat("Lobbies (OnRTCRoomUpdateSendingCompleted): Cache updated for '{0}'", lobbyMember.ProductId);
+                Debug.LogFormat("Lobbies (OnRTCRoomUpdateSendingCompleted): Cache updated for '{0}'", lobbyMember.ProductUserId);
 
                 _isDirty = true;
                 break;
@@ -1213,7 +1243,7 @@ namespace UZSG.EOS
 
             foreach(LobbyMember lobbyMember in currentLobby.Members)
             { 
-                if (lobbyMember.ProductId != data.ParticipantId)
+                if (lobbyMember.ProductUserId != data.ParticipantId)
                 {
                     continue;
                 }
@@ -1221,7 +1251,7 @@ namespace UZSG.EOS
                 lobbyMember.RTCState.IsLocalMuted = data.AudioEnabled == false;
                 lobbyMember.RTCState.MuteActionInProgress = false;
 
-                Debug.LogFormat("Lobbies (OnRTCRoomUpdateReceivingCompleted): Cache updated for '{0}'", lobbyMember.ProductId);
+                Debug.LogFormat("Lobbies (OnRTCRoomUpdateReceivingCompleted): Cache updated for '{0}'", lobbyMember.ProductUserId);
 
                 _isDirty = true;
                 break;
@@ -1934,7 +1964,7 @@ namespace UZSG.EOS
             }
 
             currentLobby = new();
-            currentLobby.InitFromLobbyHandle(data.LobbyId);
+            currentLobby.InitializeFromLobbyHandle(data.LobbyId);
             if (currentLobby.RTCRoomEnabled)
             {
                 SubscribeToRTCEvents();
@@ -1946,6 +1976,8 @@ namespace UZSG.EOS
             {
                 callback?.Invoke(Epic.OnlineServices.Result.Success);
             }
+            
+            // IsInLobby = true;
             OnCurrentLobbyChanged();
         }
 

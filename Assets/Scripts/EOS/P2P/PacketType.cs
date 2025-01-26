@@ -11,5 +11,6 @@ namespace UZSG.EOS.P2P
         PlayerSaveDataRequest,
         PlayerSaveDataReceived,
         ConnectionRequest,
+        Request,
     }
 }

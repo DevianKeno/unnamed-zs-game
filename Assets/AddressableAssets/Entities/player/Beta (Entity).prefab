@@ -910,8 +910,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 596c3ac212542b8489d08e2da4116e7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Player: {fileID: 8107631895800867322}
-  ThrowForce: 5
+  throwForce: 5
   FindItemId: 
 --- !u!1 &5950259277001712762
 GameObject:
@@ -1263,6 +1262,8 @@ GameObject:
   - component: {fileID: 8623776553954527420}
   - component: {fileID: 510820268512717889}
   - component: {fileID: 2848331815560721266}
+  - component: {fileID: 4074435136900750905}
+  - component: {fileID: 9214551541937808689}
   - component: {fileID: 8394152581638175708}
   - component: {fileID: 7388258057917320939}
   m_Layer: 20
@@ -1319,6 +1320,8 @@ MonoBehaviour:
   buildingManager: {fileID: 950595445824118707}
   audioController: {fileID: 5583044567273583744}
   hitboxes: {fileID: 4176212794605248286}
+  networkObject: {fileID: 4074435136900750905}
+  networkEntity: {fileID: 9214551541937808689}
   Damping: 16
   CrossfadeTransitionDuration: 0.1
   _targetX: 0
@@ -1440,6 +1443,41 @@ MonoBehaviour:
   AllowReentry: 0
   InState: 0
   DebugMode: 0
+--- !u!114 &4074435136900750905
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9031321928697203625}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 53316931
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+--- !u!114 &9214551541937808689
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9031321928697203625}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 141f4ff22b565c34fad027a5cdf5990f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 8107631895800867322}
+  networkObject: {fileID: 4074435136900750905}
 --- !u!54 &8394152581638175708
 Rigidbody:
   m_ObjectHideFlags: 0

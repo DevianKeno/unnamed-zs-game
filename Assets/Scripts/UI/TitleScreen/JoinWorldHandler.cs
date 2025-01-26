@@ -10,21 +10,17 @@ using Epic.OnlineServices;
 using Epic.OnlineServices.Lobby;
 
 using UZSG.Systems;
+using UZSG.UI.TitleScreen;
 using UZSG.EOS;
 using UZSG.EOS.Lobbies;
-using UZSG.UI.TitleScreen;
 
 using static UZSG.Systems.Result;
-using UZSG.Saves;
-using UZSG.EOS.P2P;
-using Unity.VisualScripting;
 
 namespace UZSG.UI.Lobbies
 {
     public class JoinWorldHandler : MonoBehaviour
     {
-        EOSLobbyManager lobbyManager => EOSSubManagers.Lobbies;
-
+        [SerializeField] EOSTransport EOSTransport;
         Lobby selectedLobby = null;
         LobbyDetails selectedLobbyDetails = null;
         List<LobbyEntryUI> lobbyEntriesUI = new();
@@ -78,7 +74,7 @@ namespace UZSG.UI.Lobbies
             ClearLobbyEntries();
             joinBtn.gameObject.SetActive(false);
             loadingIcon.gameObject.SetActive(true);
-            lobbyManager.SearchByAttribute(AttributeKeys.GAME_VERSION, Game.Main.GetVersionString(), OnSearchCompleted);
+            EOSSubManagers.Lobbies.SearchByAttribute(AttributeKeys.GAME_VERSION, Game.Main.GetVersionString(), OnSearchCompleted);
         }
         
         public void JoinSelectedLobby()
@@ -86,7 +82,7 @@ namespace UZSG.UI.Lobbies
             if (selectedLobby == null) return;
 
             joinBtn.gameObject.SetActive(false);
-            lobbyManager.JoinLobby(selectedLobby.Id, selectedLobbyDetails, false, OnJoinLobbyCompleted);
+            EOSSubManagers.Lobbies.JoinLobby(selectedLobby.Id, selectedLobbyDetails, false, OnJoinLobbyCompleted);
         }
 
         #endregion
@@ -102,7 +98,7 @@ namespace UZSG.UI.Lobbies
             {
                 ClearLobbyEntries();
                 
-                foreach (var kv in lobbyManager.SearchResults)
+                foreach (var kv in EOSSubManagers.Lobbies.SearchResults)
                 {
                     var lobby = kv.Key;
                     var lobbyDetails = kv.Value;
@@ -133,9 +129,14 @@ namespace UZSG.UI.Lobbies
         {
             if (result == Epic.OnlineServices.Result.Success)
             {
+                EOSTransport.ServerUserIdToConnectTo = selectedLobby.OwnerProductUserId;
+                EOSSubManagers.Transport.StartClient();
+                // EOSSubManagers.Transport.OpenConnection(selectedLobby.OwnerProductUserId, EOSTransport.DEFAULT_SOCKET_NAME);
+
                 if (selectedLobby.TryGetAttribute(AttributeKeys.LEVEL_ID, out var attr))
                 {
-                    selectedLobby.RequestWorldSaveData(selectedLobby.LobbyOwner, OnRequestWorldDataCompleted);
+                    this.worldFilepath = string.Empty;
+                    EOSSubManagers.P2P.RequestWorldSaveData(selectedLobby.OwnerProductUserId, OnRequestWorldSaveDataCompleted);
                 }
             }
             else
@@ -158,24 +159,30 @@ namespace UZSG.UI.Lobbies
             joinBtn.gameObject.SetActive(true);
         }
 
-        void OnRequestWorldDataCompleted(string filepath)
+        string worldFilepath = string.Empty;
+        void OnRequestWorldSaveDataCompleted(string filepath)
         {
-            Game.Main.LoadScene(
-                new(){
-                    SceneToLoad = "LoadingScreen",
-                    Mode = LoadSceneMode.Additive,
-                    ActivateOnLoad = true,
-                },
-                onLoadSceneCompleted: () =>
-                {
-                    var options = new WorldManager.LoadWorldOptions()
-                    {
-                        OwnerId = EOSSubManagers.Lobbies.CurrentLobby.LobbyOwnerAccountId.ToString(),
-                        Filepath = filepath,
-                        WorldSaveData = Game.World.DeserializeWorldData(filepath),
-                    };
-                    Game.World.LoadWorld(options, OnLoadWorldCompleted);
-                });
+            if (string.IsNullOrEmpty(filepath)) return;
+
+            this.worldFilepath = filepath;
+            var loadOptions = new Game.LoadSceneOptions()
+            {
+                SceneToLoad = "LoadingScreen",
+                Mode = LoadSceneMode.Additive,
+                ActivateOnLoad = true,
+            };
+            Game.Main.LoadScene(loadOptions, OnLoadSceneCompleted);
+        }
+
+        void OnLoadSceneCompleted()
+        {
+            var loadWorldOptions = new WorldManager.LoadWorldOptions()
+            {
+                OwnerId = EOSSubManagers.Lobbies.CurrentLobby.OwnerEpicId.ToString(),
+                Filepath = worldFilepath,
+                WorldSaveData = Game.World.Deserialize(worldFilepath),
+            };
+            Game.World.LoadWorldFromFilepath(worldFilepath, OnLoadWorldCompleted);
         }
 
         void OnLoadWorldCompleted(WorldManager.LoadWorldResult result)
@@ -211,7 +218,7 @@ namespace UZSG.UI.Lobbies
             if (selector == null)
             {
                 selector = Game.UI.Create<Selector>("Selector", parent: lobbyContainer.transform);
-                var le = selector.AddComponent<LayoutElement>();
+                var le = selector.gameObject.AddComponent<LayoutElement>();
                 le.ignoreLayout = true;
             }
             return selector;

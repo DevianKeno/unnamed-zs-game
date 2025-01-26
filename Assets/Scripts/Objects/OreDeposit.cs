@@ -45,7 +45,7 @@ namespace UZSG.Objects
                         }
                         else
                         {
-                            Game.Entity.Spawn<ItemEntity>("item_entity", player.Position, callback: (info) =>
+                            Game.Entity.Spawn<ItemEntity>("item_entity", player.Position, onCompleted: (info) =>
                             {
                                 info.Entity.Item = yield;
                             });

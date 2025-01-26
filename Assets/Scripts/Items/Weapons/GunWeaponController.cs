@@ -379,7 +379,7 @@ namespace UZSG.Items.Weapons
             var bulletInfo = RangedAttributes.BulletAttributes;
             var trajectory = ApplyBulletSpread(player.Forward, RangedAttributes.Spread);
 
-            Game.Entity.Spawn<Bullet>("bullet", callback: (info) =>
+            Game.Entity.Spawn<Bullet>("bullet", onCompleted: (info) =>
             {
                 var bullet = info.Entity;
                 bullet.SetBulletAttributes(bulletInfo);

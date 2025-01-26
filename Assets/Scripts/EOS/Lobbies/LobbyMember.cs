@@ -9,27 +9,26 @@ namespace UZSG.EOS.Lobbies
     /// </summary>
     public class LobbyMember
     {
+        public ProductUserId ProductUserId { get; private set; }
+        public string DisplayName { get; set; } = string.Empty;
+        Dictionary<string, LobbyAttribute> _attributes = new();
+        public LobbyRTCState RTCState = new();
+        
         public LobbyMember(ProductUserId productUserId)
         {
-            this.ProductId = productUserId;
+            this.ProductUserId = productUserId;
         }
 
-        // public EpicAccountId AccountId;
-        public ProductUserId ProductId { get; private set; }
-
-        public string DisplayName
+        public void AddAttribute(LobbyAttribute attribute)
         {
-            get
-            {
-                MemberAttributes.TryGetValue(DisplayNameKey, out LobbyAttribute nameAttrib);
-                return nameAttrib?.AsString ?? string.Empty;
-            }
+            if (attribute == null) return;
+            
+            this._attributes[attribute.Key] = attribute;
         }
 
-        public const string DisplayNameKey = "DISPLAYNAME";
-
-        public Dictionary<string, LobbyAttribute> MemberAttributes = new Dictionary<string, LobbyAttribute>();
-
-        public LobbyRTCState RTCState = new LobbyRTCState();
+        public bool TryGetAttribute(string key, out LobbyAttribute attribute)
+        {
+            return this._attributes.TryGetValue(key, out attribute);
+        }
     }
 }

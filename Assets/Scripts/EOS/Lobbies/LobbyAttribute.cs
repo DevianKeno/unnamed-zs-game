@@ -68,9 +68,18 @@ namespace UZSG.EOS.Lobbies
             return base.GetHashCode();
         }
 
-        public void InitFromAttribute(Epic.OnlineServices.Lobby.Attribute? attributeParam)
+        public LobbyAttribute()
         {
-            AttributeData attributeData = (AttributeData)(attributeParam?.Data);
+        }
+        
+        public LobbyAttribute(Attribute other)
+        {
+            InitFromAttribute(other);
+        }
+
+        public void InitFromAttribute(Attribute attributeParam)
+        {
+            AttributeData attributeData = (AttributeData) attributeParam.Data;
 
             Key = attributeData.Key;
             ValueType = attributeData.Value.ValueType;

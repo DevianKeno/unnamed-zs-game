@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
+
 using UZSG.Data;
 using UZSG.Items;
 
@@ -18,7 +20,7 @@ namespace UZSG.Systems
         public bool IsInitialized => _isInitialized;
         Dictionary<string, ParticleData> _particlesDict = new();
 
-        Dictionary<ParticleData, Queue<Particle>> _particlePoolDict; 
+        Dictionary<ParticleData, Queue<Particle>> _pooledParticlesDict; 
 
         internal void Initialize()
         {
@@ -31,11 +33,17 @@ namespace UZSG.Systems
             {
                 _particlesDict[particle.name] = particle;
             }
+        }
 
-            _particlePoolDict = new();
+        /// <summary>
+        /// Should be called upon world load only.
+        /// </summary>
+        internal void InitializePooledParticles()
+        {
+            _pooledParticlesDict = new();
             foreach (string id in POOLED_PARTICLES)
             {
-                CreateParticlePool<MaterialBreak>(id, size: 8);
+                CreateParticlePool<Particle>(id, size: 8);
             }
         }
 
@@ -43,7 +51,7 @@ namespace UZSG.Systems
         {
             if (!_particlesDict.TryGetValue(id, out var particleData)) return;
 
-            _particlePoolDict[particleData] = new Queue<Particle>();
+            _pooledParticlesDict[particleData] = new Queue<Particle>();
             Addressables.LoadAssetAsync<GameObject>(particleData.Asset).Completed += (a) =>
             {
                 if (a.Status == AsyncOperationStatus.Succeeded)
@@ -57,7 +65,7 @@ namespace UZSG.Systems
                             particle.ParticleSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
                             var p = particle.ParticleSystem.main;
                             p.stopAction = ParticleSystemStopAction.None;
-                            _particlePoolDict[particleData].Enqueue(particle);
+                            _pooledParticlesDict[particleData].Enqueue(particle);
                         }
                     }
                 }
@@ -101,12 +109,12 @@ namespace UZSG.Systems
 
         public void Create<T>(ParticleData particleData, Vector3 position, Action<T> onSpawn = null) where T : Particle
         {
-            if (_particlePoolDict.ContainsKey(particleData))
+            if (_pooledParticlesDict.ContainsKey(particleData))
             {
-                var particle = _particlePoolDict[particleData].Dequeue();
+                var particle = _pooledParticlesDict[particleData].Dequeue();
                 particle.gameObject.transform.position = position;
                 particle.ParticleSystem.Play();
-                _particlePoolDict[particleData].Enqueue(particle);
+                _pooledParticlesDict[particleData].Enqueue(particle);
             }
             else
             {

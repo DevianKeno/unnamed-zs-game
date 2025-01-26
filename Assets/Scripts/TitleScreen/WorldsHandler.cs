@@ -79,7 +79,7 @@ namespace UZSG.TitleScreen
                 var datFile = Path.Join(path, "level.dat");
                 if (!File.Exists(datFile)) continue;
                 var json = File.ReadAllText(datFile);
-                var saveData = Game.World.DeserializeWorldData(datFile);
+                var saveData = Game.World.Deserialize(datFile);
 
                 if (saveData == null) continue;
                         
@@ -145,7 +145,6 @@ namespace UZSG.TitleScreen
                             Filepath = selectedEntry.Filepath,
                             WorldSaveData = selectedEntry.SaveData,
                         };
-
                         Game.World.LoadWorld(options, OnLoadWorldCompleted);
                     });
             }

@@ -178,6 +178,11 @@ namespace UZSG.Systems
                           isDebugCommand: true)
                           .OnInvoke += CHost;
 
+            // CreateCommand("msg <username> <msg>",
+            //               "Message a player (in the current lobby). Will only work when in a lobby.",
+            //               isDebugCommand: true)
+            //               .OnInvoke += CMessage;
+
             CreateCommand("say <message>",
                           "Send a message.")
                           .OnInvoke += CSay;
@@ -424,6 +429,20 @@ namespace UZSG.Systems
 
             var handler = FindAnyObjectByType<HostWorldHandler>();
             handler.CreateLobby();
+        }  
+
+        /// <summary>
+        /// Prints a message to the console.
+        /// </summary>
+        void CMessage(object sender, string targetUserId, string message)
+        {
+            if (!EOSSubManagers.Lobbies.IsInLobby)
+            {
+                Game.Console.LogInfo($"Must be in a lobby to send messages to other players.");
+                return;
+            }
+
+            EOSSubManagers.P2P.SendChatMessage(targetUserId, message);
         }
 
         /// <summary>

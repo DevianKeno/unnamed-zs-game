@@ -203,6 +203,7 @@ namespace UZSG.TitleScreen
                 }
 
                 EOSSubManagers.Lobbies.PromoteMember(Game.EOS.GetProductUserId(), OnPromoteMemberCompleted);
+                EOSSubManagers.Transport.StartHost();
             }
             else
             {

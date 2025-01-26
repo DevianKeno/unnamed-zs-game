@@ -100,7 +100,7 @@ namespace UZSG.UI
             _navigatingIndex = 0;
             inputField.text = string.Empty;
             EventSystem.current.SetSelectedGameObject(inputField.gameObject);
-            Game.Console.Run(input);
+            Game.Console.RunCommand(input);
         }
     }
 }

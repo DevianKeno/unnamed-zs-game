@@ -668,21 +668,19 @@ MonoBehaviour:
 
     [Debug]: Log.
 
-    [Debug]: Log.
 
-    [Debug]:
-    Log.
+    [INFO]: Log.
 
-    [Debug]: Log.
-
-    [Debug]: Log.
-
-    [Debug]: Log.
-
-    [Debug]: Log.
-
-    <color="yellow">[Debug]:
+    <b><color=#B6F7FF>[DEBUG]:</b>
     Log.</color>
+
+    <b><color="yellow">[WARN]:</b> Log.</color>
+
+    <b><color="orange">[ERROR]:</b>
+    Log.</color>
+
+    <b><color="red">[FATAL]:</b> Log.</color>
+
 
     [Debug]: Log.'
   m_isRightToLeft: 0

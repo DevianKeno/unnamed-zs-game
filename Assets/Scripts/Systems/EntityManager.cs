@@ -107,13 +107,13 @@ namespace UZSG.Systems
             };
         }
 
-        public delegate void OnEntitySpawnComplete<T>(EntitySpawnedInfo<T> info);
+        public delegate void OnSpawnCallback<T>(EntitySpawnedInfo<T> info);
         public struct EntitySpawnedInfo<T>
         {
             public T Entity { get; set; }
         }
 
-        public void Spawn<T>(string entityId, Vector3 position = default, OnEntitySpawnComplete<T> callback = null) where T : Entity
+        public void Spawn<T>(string entityId, Vector3 position = default, OnSpawnCallback<T> onCompleted = null) where T : Entity
         {
             if (!_entitiesDict.ContainsKey(entityId))
             {
@@ -134,7 +134,7 @@ namespace UZSG.Systems
                         {
                             Entity = entity as T
                         };
-                        callback?.Invoke(info);
+                        onCompleted?.Invoke(info);
                         entity.OnSpawnInternal();
                         entity.OnKilled += OnEntityKilledInternal;
                         OnEntitySpawned?.Invoke(new()

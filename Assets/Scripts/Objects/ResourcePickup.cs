@@ -70,7 +70,7 @@ namespace UZSG.Objects
                     }
                     else /// incapable of picking up, drop on ground
                     {
-                        Game.Entity.Spawn<ItemEntity>("item_entity", Position, callback: (info) =>
+                        Game.Entity.Spawn<ItemEntity>("item_entity", Position, onCompleted: (info) =>
                         {
                             info.Entity.Item = ResourceData.Yield;
                         });

@@ -146,91 +146,98 @@ namespace UZSG.Systems
             this.onCreateWorldCompleted = null;
         }
 
+        public delegate void OnLoadWorldCompletedCallback(LoadWorldResult result);
+        
         public struct LoadWorldOptions
         {
             public string OwnerId { get; set; }
             public string Filepath { get; set; }
             public WorldSaveData WorldSaveData { get; set; }
         }
+
         public struct LoadWorldResult
         {
             public Result Result { get; set; }
         }
-        event Action<LoadWorldResult> onLoadWorldCompleted;
-        public async void LoadWorld(LoadWorldOptions options, Action<LoadWorldResult> onLoadWorldCompleted = null)
-        {
-            this.onLoadWorldCompleted = null;
-            this.onLoadWorldCompleted += onLoadWorldCompleted;
-
-            try
-            {
-                if (options.WorldSaveData != null)
-                {
-                    if (TryLoadLevelSceneAsync(options.WorldSaveData.LevelId, out var asyncOp))
-                    {
-                        // while (!asyncOp.IsDone)
-                        // {
-                        //     LoadingScreenHandler.Instance.Progress = asyncOp.PercentComplete;
-                        // }
-                        // LoadingScreenHandler.Instance.Message = "Loading map...";
-                        
-                        await asyncOp.Task;
-
-                        currentWorld = GameObject.FindWithTag("World").GetComponent<World>();
-                        currentWorld.Initialize(options.WorldSaveData);
-                        currentWorld.filepath = options.Filepath;
-                        IsInWorld = true;
-                        currentWorld.SetOwnerId(options.OwnerId);
-
-                        InitializeWorldLoaded();
-
-                        this.onLoadWorldCompleted?.Invoke(new()
-                        {
-                            Result = Result.Success
-                        });
-                        this.onLoadWorldCompleted = null;
-
-                        return;
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.LogException(e);
-            }
-
-            Debug.LogError($"Unexpected error occured when loading world");
-            this.onLoadWorldCompleted?.Invoke(new()
-            {
-                Result = Result.Failed
-            });
-            this.onLoadWorldCompleted = null;
-        }
         
-        public void LoadWorldFromLevelDat(string filepath, Action<LoadWorldResult> onLoadWorldCompleted = null)
+        public async void LoadWorldFromFilepath(string filepath, OnLoadWorldCompletedCallback callback = null)
         {
-            this.onLoadWorldCompleted += onLoadWorldCompleted;
+            await LoadWorldFromFilepathAsync(filepath, callback);
+        }
 
+        public async Task LoadWorldFromFilepathAsync(string filepath, OnLoadWorldCompletedCallback callback = null)
+        {
             if (!Directory.Exists(Path.GetDirectoryName(filepath)))
             {
                 Debug.Log($"World in path '{filepath}' does not exist");
-                this.onLoadWorldCompleted?.Invoke(new()
+                callback(new LoadWorldResult()
                 {
                     Result = Result.Failed
                 });
-                this.onLoadWorldCompleted = null;
                 return;
             }
             
+            var saveData = JsonConvert.DeserializeObject<WorldSaveData>(File.ReadAllText(filepath));
             var options = new LoadWorldOptions()
             {
-                OwnerId = GetLocalUserId(),
-                WorldSaveData = JsonConvert.DeserializeObject<WorldSaveData>(File.ReadAllText(filepath)),
+                OwnerId = saveData.OwnerId,
+                WorldSaveData = saveData,
             };
 
-            LoadWorld(options, onLoadWorldCompleted);
+            await LoadWorldAsync(options, callback);
         }
 
+        public async void LoadWorld(LoadWorldOptions options, OnLoadWorldCompletedCallback callback = null)
+        {
+            await LoadWorldAsync(options, callback);
+        }
+
+        public async Task LoadWorldAsync(LoadWorldOptions options, OnLoadWorldCompletedCallback callback = null)
+        {
+            try
+            {
+                if (options.WorldSaveData == null)
+                {
+                    Debug.LogError($"Error loading world. Save data is null");
+                    callback(new LoadWorldResult()
+                    {
+                        Result = Result.Failed
+                    });
+                }
+
+                if (TryLoadLevelScene(options.WorldSaveData.LevelId, out var asyncOp))
+                {
+                    await asyncOp.Task;
+                    await Task.Delay(100); /// maybe just enough to give ample time
+                    
+                    currentWorld = FindObjectOfType<World>();
+                    currentWorld.Initialize(options.WorldSaveData);
+                    currentWorld.SetOwnerId(options.OwnerId);
+                    currentWorld.filepath = options.Filepath;
+                    IsInWorld = true;
+
+                    Game.Particles.InitializePooledParticles();
+                    InitializeWorldLoaded();
+
+                    callback(new LoadWorldResult()
+                    {
+                        Result = Result.Success
+                    });
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex);
+            }
+
+            Debug.LogError($"Unexpected error occured when loading world");
+            callback(new LoadWorldResult()
+            {
+                Result = Result.Failed
+            });
+        }
+        
         public string GetLocalUserId()
         {
             try
@@ -250,17 +257,17 @@ namespace UZSG.Systems
             }
         }
         
-        public bool TryLoadLevelSceneAsync(string levelId, out AsyncOperationHandle handle)
+        bool TryLoadLevelScene(string levelId, out AsyncOperationHandle handle)
         {
+            handle = default;
             var data = Resources.Load<LevelData>($"Data/Levels/{levelId}");
-            if (data != null)
+            if (data == null || data.Scene == null || !data.Scene.IsSet())
             {
-                handle = Addressables.LoadSceneAsync(data.Scene, LoadSceneMode.Additive);
-                return true;
+                return false;
             }
             
-            handle = default;
-            return false;
+            handle = Addressables.LoadSceneAsync(data.Scene, LoadSceneMode.Additive);
+            return true;
         }
 
         /// <summary>
@@ -270,14 +277,27 @@ namespace UZSG.Systems
         {
             if (EOSSubManagers.Lobbies.IsInLobby)
             {
-                var currentLobby = EOSSubManagers.Lobbies.CurrentLobby;
-                currentLobby.RequestPlayerSaveData(Game.EOS.GetProductUserId(), OnRequestPlayerSaveDataCompleted);
+                if (EOSSubManagers.Lobbies.CurrentLobby.IsOwner(Game.EOS.GetProductUserId()))
+                {
+                    /// we are the server
+                    Game.World.CurrentWorld.SpawnPlayer_mServer(Game.EOS.GetProductUserId());
+                }
+                else
+                {
+                    // EOSSubManagers.P2P.RequestPlayerSaveData(Game.EOS.GetProductUserId(), OnRequestPlayerSaveDataCompleted);
+                    EOSSubManagers.P2P.RequestSpawnPlayer(EOSSubManagers.Lobbies.CurrentLobby.OwnerProductUserId, onCompleted: () => 
+                    {
+                        Game.Console.LogInfo("I think we're spawned on the server now");
+                        // EOSSubManagers.P2P.RequestPlayerSaveData();
+                    });
+                }
             }
             else
             {
                 if (EOSSubManagers.Auth.IsLoggedIn)
                 {
-                    CurrentWorld.JoinPlayerByUserInfo(EOSSubManagers.UserInfo.GetLocalUserInfo());
+                    /// getting local user info has zero chance to fail if we're logged in
+                    // CurrentWorld.JoinPlayerByUserInfo(EOSSubManagers.UserInfo.GetLocalUserInfo()); 
                 }
                 else
                 {
@@ -288,22 +308,19 @@ namespace UZSG.Systems
             pauseInput.Enable();
         }
 
-        void OnRequestPlayerSaveDataCompleted(byte[] data, Epic.OnlineServices.Result result)
+        void OnRequestPlayerSaveDataCompleted(PlayerSaveData playerSaveData, Epic.OnlineServices.Result result)
         {
+            var localUserInfo = EOSSubManagers.UserInfo.GetLocalUserInfo();
             if (result == Epic.OnlineServices.Result.Success)
             {
-                var contents = Encoding.UTF8.GetString(data);
-                var psd = JsonConvert.DeserializeObject<PlayerSaveData>(contents);
-
-                var localUserInfo = EOSSubManagers.UserInfo.GetLocalUserInfo();
-                CurrentWorld.JoinPlayerByUserInfo(localUserInfo, psd);
+                // CurrentWorld.JoinPlayerByUserInfo(localUserInfo, playerSaveData);
             }
             else
             {
                 Game.Console.LogDebug("Failed to request player save data");
+                // CurrentWorld.JoinPlayerByUserInfo(localUserInfo, playerSaveData);
             }
         }
-
 
         public void ExitCurrentWorld()
         {
@@ -350,18 +367,28 @@ namespace UZSG.Systems
         /// </summary>
         public string ConstructWorldFromExternal(WorldSaveData saveData)
         {
-            var settings = new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
-            var save = JsonConvert.SerializeObject(saveData, Formatting.Indented, settings);
+            if (saveData == null)
+            {
+                Game.Console.LogDebug($"Unable to construct world if save data is null");
+                return string.Empty;
+            }
+            if (string.IsNullOrEmpty(saveData.WorldName))
+            {
+                Game.Console.LogDebug($"Unable to construct world if world name is null or empty");
+                return string.Empty;
+            }
+
+            var serializerSettings = new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
+            var contents = JsonConvert.SerializeObject(saveData, Formatting.Indented, serializerSettings);
             var externalWorldsDirectory = Path.Join(Application.persistentDataPath, "ExternalWorlds", saveData.WorldName);
             if (!Directory.Exists(externalWorldsDirectory)) Directory.CreateDirectory(externalWorldsDirectory);
-
             var filepath = Path.Join(externalWorldsDirectory, "level.dat");
-            File.WriteAllText(filepath, save);
+            File.WriteAllText(filepath, contents);
 
             return filepath;
         }
         
-        public WorldSaveData DeserializeWorldData(string filepath)
+        public WorldSaveData Deserialize(string filepath)
         {
             try
             {

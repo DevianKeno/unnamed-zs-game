@@ -102,7 +102,7 @@ namespace UZSG.Inventory
             if (item.IsNone) return;
             
             var position = Player.EyeLevel + Player.Forward;
-            Game.Entity.Spawn<ItemEntity>("item", position, callback: (info) =>
+            Game.Entity.Spawn<ItemEntity>("item", position, onCompleted: (info) =>
             {
                 info.Entity.Item = item;
                 var throwDirection = Player.Forward + Vector3.up;
@@ -120,7 +120,7 @@ namespace UZSG.Inventory
                 if (slot.IsEmpty) return;
 
                 var position = Player.EyeLevel + Player.Forward;
-                Game.Entity.Spawn<ItemEntity>("item", position, callback: (info) =>
+                Game.Entity.Spawn<ItemEntity>("item", position, onCompleted: (info) =>
                 {
                     info.Entity.Item = slot.TakeAll();
                     var throwForce = (Player.Forward + Vector3.up) * this.throwForce;

@@ -315,7 +315,7 @@ namespace UZSG.Building
             if (_previousObjectData == null || _previousObjectData.Id != _heldItem.ObjectData.Id)
             {
                 KillObjectGhost();
-                Game.Entity.Spawn<ObjectGhost>("object_ghost", targetPosition, callback: (info) =>
+                Game.Entity.Spawn<ObjectGhost>("object_ghost", targetPosition, onCompleted: (info) =>
                 {
                     objectGhost = info.Entity;
                     objectGhost.Position = targetPosition;

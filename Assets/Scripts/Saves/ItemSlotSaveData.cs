@@ -11,7 +11,7 @@ namespace UZSG.Saves
         /// <summary>
         /// Slot index.
         /// </summary>
-        public int Index;
+        public int Index = -1;
         public ItemSaveData Item;
     }
 }

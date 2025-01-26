@@ -43,7 +43,7 @@ namespace UZSG.UI.Lobbies
             string maxPlayers = "-";
             string playerCount = "-"; 
 
-            if (lobby.LobbyOwner != null && lobby.LobbyOwner.IsValid())
+            if (lobby.OwnerProductUserId != null && lobby.OwnerProductUserId.IsValid())
             {
                 ownerName = lobby.LobbyOwnerDisplayName;
             }

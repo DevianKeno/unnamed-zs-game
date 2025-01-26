@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Unity.Netcode;
 using MEC;
 
 using Epic.OnlineServices.UserInfo;
@@ -21,9 +22,8 @@ using UZSG.UI.Objects;
 using UZSG.UI;
 using UZSG.Building;
 using UZSG.Data;
-
+using UZSG.Network;
 using static UZSG.Players.MoveStates;
-using UZSG.EOS;
 
 namespace UZSG.Entities
 {
@@ -58,6 +58,14 @@ namespace UZSG.Entities
 
         [SerializeField] EntityHitboxController hitboxes;
         public EntityHitboxController Hitboxes => hitboxes;
+
+        #region Network
+        [SerializeField] NetworkObject networkObject;
+        public NetworkObject NetworkObject => networkObject;
+        [SerializeField] PlayerNetworkEntity networkEntity;
+        public PlayerNetworkEntity NetworkEntity => networkEntity;
+
+        #endregion
         
         bool _isInitialized = false;
         /// <summary>
@@ -75,7 +83,16 @@ namespace UZSG.Entities
 
 
         #region Properties
-
+        public override Vector3 Position
+        {
+            get => Rigidbody.position;
+            set => Rigidbody.position = value;
+        }
+        public override Quaternion Rotation
+        {
+            get => Model.rotation;
+            set => Model.rotation = value;
+        }
         /// <summary>
         /// Player's forward direction relative to the FPP Camera.
         /// </summary>
@@ -156,22 +173,26 @@ namespace UZSG.Entities
             audioController.LoadAudioAssetsData(PlayerEntityData.AudioAssetsData); /// TODO: should be global player sounds only
         }
 
-        public void Initialize(PlayerSaveData saveData = null)
+        /// <summary>
+        /// Initializing a player entity as client means to enable all client things associated with it
+        /// (e.g., inputs, actions, camera renders, etc)
+        /// </summary>
+        public void InitializeAsClient()
         {
             if (_isInitialized) return;
             
             /// Data handle
-            if (saveData == null)
-            {
-                LoadDefaultSaveData<PlayerSaveData>();
-                _isInitialized = true;
-                return;
-            }
-            else
-            {
-                this.saveData = saveData;
-            }
-            this.ReadSaveData(this.saveData as PlayerSaveData);
+            // if (saveData == null)
+            // {
+            //     LoadDefaultSaveData<PlayerSaveData>();
+            //     _isInitialized = true;
+            //     return;
+            // }
+            // else
+            // {
+            //     this.saveData = saveData;
+            // }
+            // this.ReadSaveData(this.saveData as PlayerSaveData);
             
             /// Components handle (order important)
             InitializeAttributeEvents();
@@ -201,6 +222,11 @@ namespace UZSG.Entities
             Game.Tick.OnTick += OnTick;
             _isInitialized = true;
             OnDoneInit?.Invoke(this);
+        }
+
+        void InitializePostSaveDataRead()
+        {
+            
         }
 
         void InitializeInventory()
@@ -477,14 +503,14 @@ namespace UZSG.Entities
         /// </summary>
         public void ReadSaveData(PlayerSaveData saveData)
         {
-            if (saveData == null)
+            if (saveData == null || PlayerSaveData.IsEmpty(saveData))
             {
-                Game.Console.LogError($"Invalid PlayerSaveData loaded for Player.");
-                return;
+                Game.Console.LogDebug($"Tried to load a save data for player but it was invalid. Loading defaults instead...");
+                LoadDefaultSaveData<PlayerSaveData>();
+                saveData = this.saveData as PlayerSaveData; /// override
             }
-            
-            base.ReadSaveData(saveData); /// as Entity
 
+            base.ReadSaveData(saveData); /// as Entity
             /// Load inventory, etc. and whatever the fuck not related to the Player
             this.inventory.Initialize(this);
             this.inventory.ReadSaveData(saveData.Inventory);

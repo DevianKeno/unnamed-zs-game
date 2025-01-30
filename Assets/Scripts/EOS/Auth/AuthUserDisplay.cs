@@ -31,6 +31,14 @@ namespace UZSG.EOS
             signOutBtn.onClick.AddListener(StartLogout);
         }
 
+        void OnDestroy()
+        {
+            signInBtn.onClick.RemoveListener(StartLogin);
+            signOutBtn.onClick.RemoveListener(StartLogout);
+            Game.EOS.RemoveAuthLoginListener(this);
+            Game.EOS.RemoveConnectLoginListener(this);
+        }
+
         void Start()
         {
             if (EOSSubManagers.Auth.GetLoginStatus() == LoginStatus.LoggedIn)
@@ -95,21 +103,21 @@ namespace UZSG.EOS
         
         public void OnAuthLogin(Epic.OnlineServices.Auth.LoginCallbackInfo info)
         {
-            if (info.ResultCode == Epic.OnlineServices.Result.Success)
-            {
-                Game.Console.LogInfo($"Fetching user info...");
-                EOSSubManagers.UserInfo.QueryUserInfoByEpicId(info.LocalUserId, OnQueryUserInfoByEpicIdCompleted);
-                SetUIForLogout();
-                return;
-            }
-            else
-            {
-                string msg = $"Encountered an error upon logging in: [{info.ResultCode}]";
-                Game.Console.LogInfo(msg);
-                Debug.Log(msg);
-                SetUIForLogin();
-                return;
-            }
+            // if (info.ResultCode == Epic.OnlineServices.Result.Success)
+            // {
+            //     Game.Console.LogInfo($"Fetching auth user info...");
+            //     EOSSubManagers.UserInfo.QueryUserInfoByEpicId(info.LocalUserId, OnQueryUserInfoByEpicIdCompleted);
+            //     SetUIForLogout();
+            //     return;
+            // }
+            // else
+            // {
+            //     string msg = $"Encountered an error upon logging in: [{info.ResultCode}]";
+            //     Game.Console.LogInfo(msg);
+            //     Debug.Log(msg);
+            //     SetUIForLogin();
+            //     return;
+            // }
         }
 
         void OnQueryUserInfoByEpicIdCompleted(UserInfoData userInfo, EpicAccountId accountId, Epic.OnlineServices.Result result)
@@ -137,7 +145,7 @@ namespace UZSG.EOS
         {
             if (info.ResultCode == Epic.OnlineServices.Result.Success)
             {
-                Game.Console.LogInfo($"Fetching user info...");
+                Game.Console.LogInfo($"Fetching connect user info...");
                 EOSSubManagers.UserInfo.QueryUserInfoByProductId(info.LocalUserId, OnQueryUserInfoByProductIdCallback);
                 SetUIForLogout();
                 return;

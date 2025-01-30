@@ -66,13 +66,22 @@ namespace UZSG.Entities
         {
             if (_hasAlreadySpawned) return;
 
+            try /// throws an error for networked objects
+            {            
+                transform.SetParent(Game.World.CurrentWorld.entitiesContainer, worldPositionStays: true);
+            }
+            catch { }
             _hasAlreadySpawned = true;
             instanceId = GetInstanceID();
             OnSpawn();
         }
 
+        /// <summary>
+        /// Immediately assigns to current save data.
+        /// </summary>
         protected virtual void LoadDefaultSaveData<T>() where T : EntitySaveData
         {
+            this.saveData = new();
             this.saveData = entityData.GetDefaultSaveData<T>();
         }
 
@@ -88,7 +97,7 @@ namespace UZSG.Entities
         public virtual void ReadSaveData(EntitySaveData saveData)
         {
             this.saveData = saveData;
-             
+            
             if (saveData.Transform != null)
             {
                 ReadTransformSaveData(saveData.Transform);
@@ -108,9 +117,9 @@ namespace UZSG.Entities
                 Id = entityData.Id,
                 Transform = new()
                 {
-                    Position = Utils.FromUnityVec3(transform.position),
-                    Rotation = Utils.FromUnityVec3(transform.rotation.eulerAngles),
-                    LocalScale = Utils.FromUnityVec3(transform.localScale),
+                    Position = Utils.ToFloatArray(transform.position),
+                    Rotation = Utils.ToFloatArray(transform.rotation.eulerAngles),
+                    LocalScale = Utils.ToFloatArray(transform.localScale),
                 }
             };
 
@@ -119,8 +128,8 @@ namespace UZSG.Entities
         
         protected virtual void ReadTransformSaveData(TransformSaveData data)
         {
-            var position = Utils.FromNumericVec3(data.Position);
-            var rotation = Utils.FromNumericVec3(data.Rotation);
+            var position = Utils.FromFloatArray(data.Position);
+            var rotation = Utils.FromFloatArray(data.Rotation);
             // var scale = Utils.FromNumericVec3(data.LocalScale);
             transform.SetPositionAndRotation(position, Quaternion.Euler(rotation));
             // transform.localScale = scale;

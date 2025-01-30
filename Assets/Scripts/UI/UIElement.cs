@@ -40,7 +40,7 @@ namespace UZSG.UI
                 rect ??= GetComponent<RectTransform>();
             }
         }
-
+        
         /// <summary>
         /// Executes once ONLY IF the window is previously hidden, then made visible.
         /// </summary>

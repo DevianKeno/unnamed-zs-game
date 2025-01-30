@@ -220,26 +220,15 @@ namespace UZSG.EOS.Lobbies
 
             for (int i = 0; i < memberCount; i++)
             {
-                var lobbyDetailsGetMemberByIndexOptions = new LobbyDetailsGetMemberByIndexOptions()
+                var getMemberByIndexOptions = new LobbyDetailsGetMemberByIndexOptions()
                 {
                     MemberIndex = (uint) i
                 };
 
-                var memberProductId = lobbyDetails.GetMemberByIndex(ref lobbyDetailsGetMemberByIndexOptions);
+                var memberProductId = lobbyDetails.GetMemberByIndex(ref getMemberByIndexOptions);
+                if (memberProductId == null || !memberProductId.IsValid()) continue;
+                
                 var newLobbyMember = new LobbyMember(memberProductId);
-                EOSSubManagers.UserInfo.QueryUserInfoByProductId(memberProductId, onCompleted: (userInfo, userId, result) =>
-                {
-                    if (result == Success && userId != null && userId.IsValid() && userId.Equals(memberProductId))
-                    {
-                        newLobbyMember.AddAttribute(new LobbyAttribute()
-                        {
-                            Key = AttributeKeys.MEMBER_DISPLAY_NAME,
-                            ValueType = AttributeType.String,
-                            AsString = userInfo.DisplayName,
-                        });
-                        newLobbyMember.DisplayName = userInfo.DisplayName;
-                    }
-                });
                 members.Insert(i, newLobbyMember);
 
                 /// Member attributes

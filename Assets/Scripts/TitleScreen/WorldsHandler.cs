@@ -1,20 +1,21 @@
 using System;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using TMPro;
+
 using Newtonsoft.Json;
+using TMPro;
 
 using UZSG.Saves;
 using UZSG.Systems;
 using UZSG.UI;
 using UZSG.UI.TitleScreen;
-using Unity.VisualScripting;
-
+using UZSG.Worlds;
 using static UZSG.Systems.Result;
 
 namespace UZSG.TitleScreen
@@ -48,9 +49,18 @@ namespace UZSG.TitleScreen
             deleteBtn.onClick.AddListener(OnDeleteBtnClick);
             parentFrameController.OnSwitchFrame += (context) =>
             {
-                if (context.Frame.Id != this.frame.Id)
+                if (!context.Frame.Id.Equals(this.frame.Id, StringComparison.OrdinalIgnoreCase))
                 {
                     this.selector?.Hide();
+                }
+                if (context.Frame.Id.Equals(this.frame.Id, StringComparison.OrdinalIgnoreCase))
+                {
+                    var tmp = playBtn.GetComponentInChildren<TextMeshProUGUI>();
+                    if (tmp != null)
+                    {
+                        if (isHosting) tmp.text = "Host selected world";
+                        else tmp.text = "Play selected world";
+                    }
                 }
             };
         }
@@ -63,35 +73,52 @@ namespace UZSG.TitleScreen
 
         public async void ReadWorlds()
         {
+            await ReadWorldsAsync();
+        }
+
+        public async Task ReadWorldsAsync()
+        {
             await Task.Yield();
-            
-            /// TODO: make a manifest file, read that instead of the entire save data
+
             loadingTmp.gameObject.SetActive(true);
-            List<WorldSaveData> loadedSaveDatas = new();
-            var savedWorldsPath = Path.Join(Application.persistentDataPath, "SavedWorlds");
-            if (!Directory.Exists(savedWorldsPath)) Directory.CreateDirectory(savedWorldsPath);
-            var worldPaths = Directory.GetDirectories(savedWorldsPath, "*", SearchOption.TopDirectoryOnly);
-            
             ClearEntries();
 
-            foreach (var path in worldPaths)
-            {
-                var datFile = Path.Join(path, "level.dat");
-                if (!File.Exists(datFile)) continue;
-                var json = File.ReadAllText(datFile);
-                var saveData = Game.World.Deserialize(datFile);
+            var savedWorldsPath = Path.Join(Application.persistentDataPath, WorldManager.WORLDS_FOLDER);
+            if (!Directory.Exists(savedWorldsPath)) Directory.CreateDirectory(savedWorldsPath);
+            
+            var worldPaths = Directory.GetDirectories(savedWorldsPath, "*", SearchOption.TopDirectoryOnly);
+            List<WorldManifest> manifests = await LoadWorldManifestsAsync(worldPaths);
 
-                if (saveData == null) continue;
-                        
-                var entry = Game.UI.Create<WorldEntryUI>("World Entry UI");
-                entry.SetParent(entryContainer);
-                entry.SetData(saveData);
-                entry.Filepath = datFile;
+            foreach (var manifest in manifests)
+            {
+                var entry = Game.UI.Create<WorldEntryUI>("World Entry UI", parent: entryContainer);
+                entry.SetManifest(manifest);
                 entry.OnClick += OnEntryClicked;
                 entries.Add(entry);
             }
 
             loadingTmp.gameObject.SetActive(false);
+        }
+
+        async Task<List<WorldManifest>> LoadWorldManifestsAsync(string[] worldPaths)
+        {
+            return await Task.Run(async () =>
+            {
+                List<WorldManifest> manifests = new();
+
+                foreach (var worldPath in worldPaths)
+                {
+                    var manifestPath = Path.Join(worldPath, "world.manifest");
+                    if (!File.Exists(manifestPath)) continue;
+
+                    string json = await File.ReadAllTextAsync(manifestPath); // Read file asynchronously
+                    var manifest = JsonConvert.DeserializeObject<WorldManifest>(json);
+                    manifest.WorldRootDirectory = worldPath;
+                    manifests.Add(manifest);
+                }
+
+                return manifests;
+            });
         }
 
         void ClearEntries()
@@ -126,28 +153,25 @@ namespace UZSG.TitleScreen
             if (isHosting)
             {
                 parentFrameController.SwitchToFrame("host_world");
-                hostWorldHandler.SetWorld(selectedEntry.SaveData);
+                hostWorldHandler.SetWorld(selectedEntry);
             }
             else
             {
                 playBtn.interactable = false;
-                Game.Main.LoadScene(
-                    new(){
-                        SceneToLoad = "LoadingScreen",
-                        Mode = LoadSceneMode.Additive,
-                        ActivateOnLoad = true,
-                    },
-                    onLoadSceneCompleted: () =>
-                    {
-                        var options = new WorldManager.LoadWorldOptions()
-                        {
-                            OwnerId = Game.World.GetLocalUserId(),
-                            Filepath = selectedEntry.Filepath,
-                            WorldSaveData = selectedEntry.SaveData,
-                        };
-                        Game.World.LoadWorld(options, OnLoadWorldCompleted);
-                    });
+
+                var options = new Game.LoadSceneOptions()
+                {
+                    SceneToLoad = "LoadingScreen",
+                    Mode = LoadSceneMode.Additive,
+                    ActivateOnLoad = true,
+                };
+                Game.Main.LoadSceneAsync(options, OnLoadingScreenLoaded);
             }
+        }
+
+        void OnLoadingScreenLoaded()
+        {
+            Game.World.LoadWorldFromFilepathAsync(selectedEntry.LevelDataPath, OnLoadWorldCompleted);
         }
 
         void OnLoadWorldCompleted(WorldManager.LoadWorldResult result)
@@ -155,13 +179,14 @@ namespace UZSG.TitleScreen
             if (result.Result == Success)
             {
                 selector.Hide();
+                Game.World.InitializeWorld();
                 
                 Game.Main.UnloadScene("TitleScreen");
                 Game.Main.UnloadScene("LoadingScreen");
             }
             else if (result.Result == Failed)
             {
-                Game.Main.LoadScene(
+                Game.Main.LoadSceneAsync(
                     new(){
                         SceneToLoad = "TitleScreen",
                         Mode = LoadSceneMode.Single

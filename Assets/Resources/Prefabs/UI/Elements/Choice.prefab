@@ -363,6 +363,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7672d8216a25a1641ac4aef3238ceaf3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rect: {fileID: 297703721638732312}
   HasIcon: 0
   labelText: {fileID: 501988236388484827}
   iconImage: {fileID: 1235730398036513974}

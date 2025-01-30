@@ -281,12 +281,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f81b7918781d1f418ce8880c14d85c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rect: {fileID: 0}
-  indicator: {fileID: 8250109019733149546}
-  key: {fileID: 0}
-  buttonText: {fileID: 0}
-  actionText: {fileID: 8250109019658285424}
-  objectText: {fileID: 8250109019658285424}
+  rect: {fileID: 8250109019733149549}
+  actionPrefab: {fileID: 0}
 --- !u!1 &8401173355290518190
 GameObject:
   m_ObjectHideFlags: 0

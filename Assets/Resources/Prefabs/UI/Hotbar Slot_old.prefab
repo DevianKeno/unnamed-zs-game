@@ -224,15 +224,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 179d4a2b432e9e046b993c41d6444e34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rect: {fileID: 0}
-  AnimationFactor: 0.3
-  Item:
-    _itemData: {fileID: 0}
-    _count: 0
+  rect: {fileID: 3879224218566983953}
+  item:
+    itemData: {fileID: 0}
+    count: 0
+    attributes:
+      attributesReadOnly: []
   Index: 9
   image: {fileID: 3879224218566983952}
   indexTMP: {fileID: 1635797669913276550}
   itemDisplayUI: {fileID: 4161374555689083094}
+  button: {fileID: 0}
 --- !u!1001 &485297334251554591
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -351,6 +353,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4397969410178795938, guid: 69f9d656166c5f343947161e86d926db, type: 3}
       propertyPath: m_enableWordWrapping
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4574587701464950729, guid: 69f9d656166c5f343947161e86d926db, type: 3}
+      propertyPath: item.count
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5993031782858655458, guid: 69f9d656166c5f343947161e86d926db, type: 3}

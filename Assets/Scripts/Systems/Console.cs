@@ -1,15 +1,25 @@
 using System;
 using System.Collections.Generic;
-
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 using UZSG.Entities;
+using UZSG.EOS;
 using UZSG.UI;
 using UZSG.UI.Players;
 
 namespace UZSG.Systems
 {
+    public enum LogMessageType {
+        Info, Warn, Error, Fatal
+    }
+
+    public class InvalidCommandUsageException : Exception
+    {
+        
+    }
+
     public sealed partial class Console : MonoBehaviour
     {
         bool _isInitialized;
@@ -53,6 +63,11 @@ namespace UZSG.Systems
             toggleUI.Enable();
         }
 
+        public void StartListenForLocalPlayer()
+        {
+            Game.Entity.OnEntitySpawned += OnEntitySpawned;
+            _creativeIsOn = false; /// TODO: save to player
+        }
 
         void InitializeWorldEvents()
         {
@@ -68,12 +83,6 @@ namespace UZSG.Systems
 
         void OnDoneLoadWorld()
         {
-            if (_creativeIsOn)
-            {
-                creativeWindow = Game.UI.Create<CreativeWindow>("Creative Window");
-                creativeWindow.Initialize(localPlayer);
-                localPlayer.InventoryWindow.Append(creativeWindow);
-            }
         }
 
         void OnWorldPaused()
@@ -96,7 +105,6 @@ namespace UZSG.Systems
             InitializeInputs();
             
             Game.World.OnDoneLoadWorld += InitializeWorldEvents;
-            Game.Entity.OnEntitySpawned += OnEntitySpawned;
         }
 
         void OnEntitySpawned(EntityManager.EntityInfo info)
@@ -128,10 +136,18 @@ namespace UZSG.Systems
 
             input = input.ToLower();
             int splitAt = input.IndexOf(' ');
-            var command = input[..splitAt];
-            var args = input [(splitAt + 1)..];
+            if (splitAt >= 0)
+            {
+                var command = input[..splitAt];
+                var args = input [(splitAt + 1)..];
 
-            ExecuteCommand(command, args);
+                ExecuteCommand(command, args);
+            }
+            else
+            {
+                ExecuteCommand(input, string.Empty);
+            }
+
         }
 
         void ExecuteCommand(string command, string args)
@@ -151,24 +167,43 @@ namespace UZSG.Systems
 
             if (_commandsDict.TryGetValue(command, out var c))
             {
+                if (c.LocationConstraint == CommandLocationConstraint.WorldOnly && !Game.World.IsInWorld)
+                {
+                    Game.Console.LogInfo($"The command '{command} can only be executed within a world.");
+                    return;
+                }
+                if (c.IsDebugCommand && !enableDebugCommands) 
+                {
+                    Game.Console.LogInfo($"The command '{command} is a debug command. Enable debugging first.");
+                    return;
+                }
+
                 try
                 {
-                    if (c.IsDebugCommand && !enableDebugCommands) return;
-
-                    _commandsDict[command].Invoke(args.Split(' '));
+                    if (!NetworkManager.Singleton.IsListening || NetworkManager.Singleton.IsServer)
+                    {
+                        _commandsDict[command].Invoke(args.Split(' '));
+                    }
+                    else
+                    {
+                        // EOSSubManagers.P2P.RequestCommandInvoke(EOSSubManagers.Transport.GetEOSTransport().ServerUserId, command, args);
+                    }
                     return;
                 }
                 catch (Exception ex)
                 {
-                    LogError($"An internal exception occurred when performing the command");
-                    Debug.LogException(ex);
-                    return;
+                    if (ex is InvalidCommandUsageException)
+                    {
+                        PromptInvalid(command);
+                        return;
+                    }
+                    else
+                    {
+                        LogError($"An internal exception occurred when performing the command");
+                        Debug.LogException(ex);
+                        return;
+                    }
                 }
-            }
-            else
-            {
-                PromptInvalid();
-                return;
             }
         }
 
@@ -180,16 +215,12 @@ namespace UZSG.Systems
             LogInfo("Invalid command. Type '/help' for a list of available commands.");
         }
 
+        /// <summary>
+        /// Prompts invalid command usage.
+        /// </summary>
         void PromptInvalid(string command)
         {
-            if (_commandsDict.ContainsKey(command))
-            {
-                LogInfo($"Invalid command usage. Try '/help {command}'");
-            }
-            else
-            {
-                PromptInvalid();
-            }
+            LogInfo($"Invalid command usage. Try '/help {command}'");
         }
 
 
@@ -214,7 +245,7 @@ namespace UZSG.Systems
         {
             if (message is string)
             {
-                WriteLine($"{message}");
+                WriteLine($"{message.ToString()}");
             }
             else
             {
@@ -256,6 +287,39 @@ namespace UZSG.Systems
         public void LogFatal(object message)
         {
             LogInfo($"<b><color=\"red\">[FATAL]:</b> {message}</color>");
+        }
+
+        public void LogFormat(string format, params object[] args)
+        {
+            Debug.LogFormat(format, args);
+        }
+
+        public void Log(object message, LogMessageType type = LogMessageType.Info)
+        {
+            switch (type)
+            {
+                case LogMessageType.Info:
+                    LogInfo(message);
+                    break;
+                case LogMessageType.Warn:
+                    LogWarn(message);
+                    break;
+                case LogMessageType.Error:
+                    LogError(message);
+                    break;
+                case LogMessageType.Fatal:
+                    LogFatal(message);
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Asserts a condition, logging an error message upon failure.
+        /// </summary>
+        public void Assert(bool value, object message = null)
+        {
+            if (!value) LogError(message);
+            Debug.Assert(value);
         }
 
         /// <summary>

@@ -224,11 +224,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 179d4a2b432e9e046b993c41d6444e34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rect: {fileID: 0}
-  FadeDuration: 0.3
+  rect: {fileID: 3489798448610692727}
   item:
-    _itemData: {fileID: 0}
-    _count: 0
+    itemData: {fileID: 0}
+    count: 0
+    attributes:
+      attributesReadOnly: []
   Index: 9
   image: {fileID: 3489798448610692726}
   indexTMP: {fileID: 1371347997584457696}
@@ -336,6 +337,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4397969410178795938, guid: 69f9d656166c5f343947161e86d926db, type: 3}
       propertyPath: m_enableWordWrapping
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4574587701464950729, guid: 69f9d656166c5f343947161e86d926db, type: 3}
+      propertyPath: item.count
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4574587701464950729, guid: 69f9d656166c5f343947161e86d926db, type: 3}

@@ -59,11 +59,15 @@ namespace UZSG.Players
         /// <summary>
         /// The input values performed in the current frame.
         /// </summary>
-        FrameInput _frameInput;
+        FrameInput frameInput;
         /// <summary>
         /// The input values performed in the current frame.
         /// </summary>
-        public FrameInput FrameInput => _frameInput;
+        public FrameInput FrameInput
+        {
+            get => frameInput;
+            set => frameInput = value;
+        }
         MoveStates _targetMoveState;
 
 
@@ -81,7 +85,7 @@ namespace UZSG.Players
         }
         public bool IsAnyMoveKeyPressed
         {
-            get => _frameInput.Move != Vector2.zero;
+            get => frameInput.Move != Vector2.zero;
         }
         public bool IsGrounded
         {
@@ -89,7 +93,7 @@ namespace UZSG.Players
         }
         public bool IsFalling
         {
-            get => _frameVelocity.y < 0f;
+            get => rb.velocity.y < 0f;
         }
         public bool CanRun
         {
@@ -299,10 +303,10 @@ namespace UZSG.Players
         {
             if (!AllowMovement) return;
 
-            _frameInput.Move = input.ReadValue<Vector2>();
-            _isAnyMovePressed = _frameInput.Move.x != 0f || _frameInput.Move.y != 0f;
-            _isMovingSideways = _frameInput.Move.x != 0f;
-            _isMovingBackwards = _frameInput.Move.y < 0f;
+            frameInput.Move = input.ReadValue<Vector2>();
+            _isAnyMovePressed = frameInput.Move.x != 0f || frameInput.Move.y != 0f;
+            _isMovingSideways = frameInput.Move.x != 0f;
+            _isMovingBackwards = frameInput.Move.y < 0f;
 
             CancelRunIfNotRunningForwards();
         }
@@ -449,8 +453,8 @@ namespace UZSG.Players
 
         void HandleDirection()
         {
-            var x = _frameInput.Move.x * Player.Right;
-            var y = _frameInput.Move.y * CameraForward.normalized;
+            var x = frameInput.Move.x * Player.Right;
+            var y = frameInput.Move.y * CameraForward.normalized;
             _frameVelocity = x + y;
             _frameVelocity.Normalize();
         }
@@ -554,7 +558,7 @@ namespace UZSG.Players
         void DeinitializeInputs()
         {
             inputs["Move"].performed -= OnInputMove;
-            inputs["Move"].started += OnInputMove;
+            inputs["Move"].started -= OnInputMove;
             inputs["Move"].canceled -= OnInputMove;
 
             inputs["Jump"].started -= OnInputJump;
@@ -612,6 +616,11 @@ namespace UZSG.Players
             {
                 SetControl(id, enabled);
             }
+        }
+
+        internal void SetAsClient()
+        {
+            
         }
 
         #endregion

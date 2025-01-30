@@ -53,9 +53,11 @@ namespace UZSG.UI.Players
         public async void Initialize(Player player)
         {
             if (_isInitialized) return;
-
             _isInitialized = true;
-            container = new Container(Container.MAX_CONTAINER_SIZE);
+
+            await Task.Yield();
+
+            container = new Container(Game.Items.ItemDataDict.Count + 64);
             _itemSlotUIs = new();
             _loadedItemsOfType = new();
             _minItemSlotUICount = 50;
@@ -99,6 +101,7 @@ namespace UZSG.UI.Players
         async Task LoadResourcesAsync()
         {
             await Task.Yield();
+            
             var assets = Resources.LoadAll<ItemData>("Data/Items");
             if (assets.Length == 0)
             {

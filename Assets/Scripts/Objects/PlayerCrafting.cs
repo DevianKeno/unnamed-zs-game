@@ -11,7 +11,7 @@ namespace UZSG.Players
             /// override, don't call
         }
 
-        internal void Initialize(Player player)
+        internal void Initialize(Player player, bool isLocalPlayer)
         {
             this.player = player;
 
@@ -23,10 +23,13 @@ namespace UZSG.Players
             crafter.OnRoutineNotify += OnRoutineEventCall;
             crafter.OnRoutineSecond += OnRoutineSecond;
 
-            this.gui = player.InventoryWindow.PlayerCraftingGUI;
-            this.gui.LinkWorkstation(this);
-            this.gui.SetPlayer(player);
-            this.gui.Show();
+            if (isLocalPlayer)
+            {
+                this.gui = player.InventoryWindow.PlayerCraftingGUI;
+                this.gui.LinkWorkstation(this);
+                this.gui.SetPlayer(player);
+                this.gui.Show();
+            }
 
             AddInputContainer(player.Inventory.Bag);
         }

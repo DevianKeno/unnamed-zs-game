@@ -203,7 +203,7 @@ namespace UZSG.Players
             if (Physics.Raycast(new Vector3(Player.Position.x, 300f, Player.Position.z), -Vector3.up, out var hit, 999f))
             if (hit.collider.TryGetComponent<Terrain>(out var terrain))
             {
-                Player.Position = new(Player.Position.x, hit.point.y + 1f, Player.Position.z);
+                Player.Position = new(Player.Position.x, hit.point.y + 0.1f, Player.Position.z);
             }
         }
 

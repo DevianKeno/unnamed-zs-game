@@ -5,10 +5,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
 
-using UZSG.EOS;
 using UZSG.Systems;
-
-using static UZSG.Systems.Result;
 
 namespace UZSG.TitleScreen
 {
@@ -57,21 +54,9 @@ namespace UZSG.TitleScreen
             {
                 WorldName = worldnameInput.text,
                 MapId = mapEntry.LevelData.Id,
-                OwnerId = "localplayer",
                 CreatedDate = DateTime.Now,
                 LastModifiedDate = DateTime.Now,
             };
-
-            var userId = Game.EOS.GetProductUserId();
-            if (userId != null || userId.IsValid())
-            {
-                var loginStatus =  Game.EOS.GetEOSConnectInterface().GetLoginStatus(userId);
-                if (loginStatus == Epic.OnlineServices.LoginStatus.LoggedIn)
-                {
-                    var localUser = EOSSubManagers.UserInfo.GetLocalUserInfo();
-                    options.OwnerId = localUser.UserId.ToString();
-                }
-            }
 
             Game.World.CreateWorld(ref options, OnCreateWorldCompleted);
         }
@@ -95,36 +80,43 @@ namespace UZSG.TitleScreen
 
         void OnCreateWorldCompleted(WorldManager.CreateWorldResult result)
         {
-            if (result.Result == Success)
+            if (result.Result == Result.Success)
             {
-                Game.Main.LoadScene(
-                    new(){
-                        SceneToLoad = "LoadingScreen",
-                        Mode = LoadSceneMode.Additive,
-                        ActivateOnLoad = true,
-                    },
-                    onLoadSceneCompleted: () =>
-                    {
-                        Game.World.LoadWorldFromFilepath(result.Savepath, OnLoadWorldCompleted);
-                    });
+                var options = new Game.LoadSceneOptions()
+                {
+                    SceneToLoad = "LoadingScreen",
+                    Mode = LoadSceneMode.Single,
+                    ActivateOnLoad = true,
+                };
+                Game.Main.LoadSceneAsync(options, () =>
+                {
+                    OnLoadingScreenLoaded(result.FilePath);
+                });
             }
-            else if (result.Result == Failed)
+            else if (result.Result == Result.Failed)
             {
                 Debug.LogError("Unexpected error occured when creating world");
                 createBtn.interactable = true;
             }
         }
 
+        void OnLoadingScreenLoaded(string filepath)
+        {
+            Game.World.LoadWorldFromFilepathAsync(filepath, OnLoadWorldCompleted);
+        }
+
         void OnLoadWorldCompleted(WorldManager.LoadWorldResult result)
         {
-            if (result.Result == Success)
+            if (result.Result == Result.Success)
             {
+                Game.World.InitializeWorld();
+                
                 Game.Main.UnloadScene("TitleScreen");
                 Game.Main.UnloadScene("LoadingScreen");
             }
-            else if (result.Result == Failed)
+            else if (result.Result == Result.Failed)
             {
-                Game.Main.LoadScene(
+                Game.Main.LoadSceneAsync(
                     new(){
                         SceneToLoad = "TitleScreen",
                         Mode = LoadSceneMode.Single

@@ -8,6 +8,7 @@ using UZSG.Saves;
 using UZSG.Inventory;
 using UZSG.Items;
 using UZSG.Systems;
+using Unity.Mathematics;
 
 namespace UZSG
 {
@@ -85,9 +86,25 @@ namespace UZSG
 
         public Container(int slotsCount = 0)
         {
-            _slotCount = Math.Clamp(slotsCount, 0, MAX_CONTAINER_SIZE);
+            this._slotCount = Math.Clamp(slotsCount, 0, MAX_CONTAINER_SIZE);
             
             for (int i = 0; i < SlotCount; i++)
+            {
+                var newSlot = new ItemSlot(i, ItemSlotType.All);
+                newSlot.OnItemChangedInternal += SlotContentChangedInternal;
+                _slots.Add(newSlot);
+            }
+        }
+
+        /// <summary>
+        /// Experimental
+        /// </summary>
+        public void AddSlots(int count)
+        {
+            int addedSlotCount = Math.Clamp(count, 0, MAX_CONTAINER_SIZE - SlotCount);
+            this._slotCount += addedSlotCount;
+            
+            for (int i = 0; i < addedSlotCount; i++)
             {
                 var newSlot = new ItemSlot(i, ItemSlotType.All);
                 newSlot.OnItemChangedInternal += SlotContentChangedInternal;

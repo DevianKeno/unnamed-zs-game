@@ -68,7 +68,7 @@ public class FuelCraftingGUI : WorkstationGUI
 
                 var heldItem = player.InventoryWindow.HeldItem;
 
-                if (slot.IsEmpty || slot.Item.CompareTo(heldItem))
+                if (slot.IsEmpty || slot.Item.Is(heldItem))
                 {
                     slot.TryStack(player.InventoryWindow.TakeHeldItem(), out var excess);
                     if (!excess.IsNone)
@@ -116,7 +116,7 @@ public class FuelCraftingGUI : WorkstationGUI
                 
                 var heldItem = player.InventoryWindow.HeldItem;
 
-                if (slot.IsEmpty || slot.Item.CompareTo(heldItem))
+                if (slot.IsEmpty || slot.Item.Is(heldItem))
                 {
                     slot.TryStack(player.InventoryWindow.TakeHeldItemSingle(), out var excess);
                     if (!excess.IsNone)

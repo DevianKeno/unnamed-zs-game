@@ -20,14 +20,16 @@
 * SOFTWARE.
 */
 
-using System;
-using System.IO;
-using System.Text;
-using System.Collections.Generic;
-using System.Linq;
 
-using UnityEngine;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+
 using Unity.Netcode;
+using UnityEngine;
+
 using Newtonsoft.Json;
 
 using Epic.OnlineServices;
@@ -35,9 +37,9 @@ using Epic.OnlineServices.P2P;
 using PlayEveryWare.EpicOnlineServices;
 
 using UZSG.EOS.P2P;
+using UZSG.EOS.Lobbies;
 using UZSG.Systems;
 using UZSG.Saves;
-using UZSG.EOS.Lobbies;
 
 namespace UZSG.EOS
 {
@@ -46,12 +48,14 @@ namespace UZSG.EOS
     /// </summary>
     public partial class EOSPeer2PeerManager : IEOSSubManager
     {
+        const bool OnlyAcceptPacketsFromServer = true;
         EOSTransport transport;
         P2PInterface p2pInterface;
         bool _isActive;
-        bool _onlyAcceptPacketsFromServer = true;
         bool _isChatDataCacheDirty;
         Dictionary<ProductUserId, ChatWithFriendData> _chatDataCache;
+
+        ProductUserId serverUserId;
 
         [Header("Debugging")]
         [SerializeField] bool enableDebugging = false;
@@ -121,9 +125,10 @@ namespace UZSG.EOS
         /// <param name="payload"></param>
         internal void HandlePacket(ProductUserId userId, byte[] payload)
         {
-            if (_onlyAcceptPacketsFromServer &&
-                !transport.IsServer &&
-                transport.GetClientIdMapping(userId) != transport.ServerClientId)
+            if (!transport.IsServer &&
+                OnlyAcceptPacketsFromServer &&
+                transport.TryGetClientIdMapping(userId, out var clientId) &&
+                clientId != transport.ServerClientId)
             {
                 return;
             }
@@ -152,36 +157,6 @@ namespace UZSG.EOS
                     ReceiveChatMessage(userId, packet);
                     break;
                 }
-                case PacketType.WorldDataRequest:
-                {
-                    ReceiveWorldDataRequestPacket(userId, packet);
-                    break;
-                }
-                case PacketType.WorldDataHeading:
-                {
-                    HandleWorldDataHeadingPacket(userId, packet);
-                    break;
-                }
-                case PacketType.WorldDataChunk:
-                {
-                    HandleWorldDataChunkPacket(userId, packet);
-                    break;
-                }
-                case PacketType.WorldDataFooter:
-                {
-                    HandleWorldDataFooterPacket(userId, packet);
-                    break;
-                }
-                case PacketType.PlayerSaveDataRequest:
-                {
-                    HandlePlayerDataRequestPacket(userId, packet);
-                    break;
-                }
-                case PacketType.PlayerSaveDataReceived:
-                {
-                    HandlePlayerSaveDataReceivedPacket(userId, packet);
-                    break;
-                }
             }
         }
 
@@ -189,6 +164,36 @@ namespace UZSG.EOS
         {
             switch (packet.Subtype)
             {
+                case PacketSubtype.RequestWorldData:
+                {
+                    HandleWorldDataRequestPacket(senderId, packet);
+                    break;
+                }
+                case PacketSubtype.ReceiveWorldDataHeading:
+                {
+                    HandleWorldDataHeadingPacket(senderId, packet);
+                    break;
+                }
+                case PacketSubtype.ReceiveWorldDataChunk:
+                {
+                    HandleWorldDataChunkPacket(senderId, packet);
+                    break;
+                }
+                case PacketSubtype.ReceiveWorldDataFooter:
+                {
+                    HandleWorldDataFooterPacket(senderId, packet);
+                    break;
+                }
+                case PacketSubtype.RequestPlayerSaveData:
+                {
+                    HandlePlayerSaveDataRequestPacket(senderId, packet);
+                    break;
+                }
+                case PacketSubtype.ReceivePlayerSaveData:
+                {
+                    HandlePlayerSaveDataReceivedPacket(senderId, packet);
+                    break;
+                }
                 case PacketSubtype.SpawnMyPlayer:
                 {
                     HandleSpawnMyPlayerRequestPacket(senderId, packet);
@@ -204,7 +209,7 @@ namespace UZSG.EOS
 
         void HandleSpawnMyPlayerRequestPacket(ProductUserId senderId, Packet packet)
         {
-            Game.World.CurrentWorld.SpawnPlayer_mServer(senderId);
+            Game.World.CurrentWorld.SpawnPlayer_ServerMethod(senderId);
 
             var packetToSend = new Packet()
             {
@@ -227,11 +232,11 @@ namespace UZSG.EOS
         }
 
         List<Packet> _receivedWorldDataChunkPackets = new();
-        void ReceiveWorldDataRequestPacket(ProductUserId userId, Packet packet)
+        void HandleWorldDataRequestPacket(ProductUserId userId, Packet packet)
         {
             Game.Console.LogDebug($"Received world data request from user: [{userId}]");
             /// NOTE: testing absolute path 
-            var testpath = Path.Combine(Application.persistentDataPath, "SavedWorlds", "alpha", "level.dat");
+            var testpath = Path.Combine(Application.persistentDataPath, WorldManager.WORLDS_FOLDER, "alpha", "level.dat");
 
             if (File.Exists(testpath))
             {
@@ -278,7 +283,7 @@ namespace UZSG.EOS
             onRequestWorldDataCompleted = null;
         }
 
-        void HandlePlayerDataRequestPacket(ProductUserId userId, Packet deserializedPacket)
+        void HandlePlayerSaveDataRequestPacket(ProductUserId userId, Packet deserializedPacket)
         {
             Game.Console.LogDebug($"Received player data request from user[{userId}]");
 
@@ -297,7 +302,8 @@ namespace UZSG.EOS
 
             var packet = new Packet()
             {
-                Type = PacketType.PlayerSaveDataRequest,
+                Type = PacketType.Request,
+                Subtype = PacketSubtype.ReceivePlayerSaveData,
                 Data = playerData,
             };
             EOSSubManagers.Transport.SendPacket(
@@ -313,7 +319,7 @@ namespace UZSG.EOS
             Game.Console.LogDebug($"Received player data from host: user[{userId}]");
 
             var contents = Encoding.UTF8.GetString(packet.Data);
-            PlayerSaveData psd = new();
+            PlayerSaveData psd = PlayerSaveData.Empty;
             if (!contents.Equals("empty"))
             {
                 psd = JsonConvert.DeserializeObject<PlayerSaveData>(contents);
@@ -381,7 +387,8 @@ namespace UZSG.EOS
 
             var packet = new Packet()
             {
-                Type = PacketType.WorldDataRequest,
+                Type = PacketType.Request,
+                Subtype = PacketSubtype.RequestWorldData,
                 Data = Encoding.UTF8.GetBytes("world please"),
             };
             EOSSubManagers.Transport.SendPacket(
@@ -406,7 +413,8 @@ namespace UZSG.EOS
             /// Send heading first with metadata
             var headingPacket = new Packet()
             {
-                Type = PacketType.WorldDataHeading,
+                Type = PacketType.Request,
+                Subtype = PacketSubtype.ReceiveWorldDataHeading,
                 Data = Encoding.UTF8.GetBytes($"worldname:{saveData.WorldName},size:{worldDataBytes.Length}"),
             };
             EOSSubManagers.Transport.SendPacket(
@@ -418,7 +426,8 @@ namespace UZSG.EOS
 
             var worldDataPacket = new Packet()
             {
-                Type = PacketType.WorldDataChunk,
+                Type = PacketType.Request,
+                Subtype = PacketSubtype.ReceiveWorldDataChunk,
                 Data = worldDataBytes,
             };
             Game.Console.LogDebug($"Sending world data to user: [{targetId}]");
@@ -434,7 +443,8 @@ namespace UZSG.EOS
             /// Send world data footer
             var footerPacket = new Packet()
             {
-                Type = PacketType.WorldDataFooter,
+                Type = PacketType.Request,
+                Subtype = PacketSubtype.ReceiveWorldDataFooter,
                 Data = Encoding.UTF8.GetBytes("footer")
             };
             EOSSubManagers.Transport.SendPacket(
@@ -480,7 +490,8 @@ namespace UZSG.EOS
             
             var packet = new Packet()
             {
-                Type = PacketType.PlayerSaveDataRequest,
+                Type = PacketType.Request,
+                Subtype = PacketSubtype.RequestPlayerSaveData,
                 Data = new byte[1],
             };
             EOSSubManagers.Transport.SendPacket(

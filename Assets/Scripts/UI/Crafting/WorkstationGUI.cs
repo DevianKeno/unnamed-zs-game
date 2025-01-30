@@ -334,10 +334,7 @@ namespace UZSG.UI.Objects
 
         void CreateRoutineProgressUI(CraftingRoutine routine)
         {
-            var routineUI = Game.UI.Create<CraftingProgressUI>("Craft Progress UI");
-            var options = routine.Options;
-
-            routineUI.transform.SetParent(progressContainer, false);
+            var routineUI = Game.UI.Create<CraftingProgressUI>("Craft Progress UI", parent: progressContainer);
             routineUI.SetCraftingRoutine(routine);
             _routineUIs[routine] = routineUI;
         }
@@ -455,7 +452,9 @@ namespace UZSG.UI.Objects
             foreach (var id in ids)
             {
                 if (Game.Recipes.TryGetRecipeData(id, out var data))
-                CreateCraftableItemUI(data);
+                {
+                    CreateCraftableItemUI(data);
+                }
             }
             LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
         }
@@ -480,12 +479,12 @@ namespace UZSG.UI.Objects
 
         public void CreateCraftableItemUI(RecipeData recipeData)
         {
-            if (craftableItemUIs.ContainsKey(recipeData.Output.Id)) /// disregard dupes
+            if (craftableItemUIs.ContainsKey(recipeData.Id)) /// disregard dupes
             {
                 return;
             }
 
-            var craftableUI = Game.UI.Create<CraftableItemUI>("Craftable Item", craftablesHolder);
+            var craftableUI = Game.UI.Create<CraftableItemUI>("Craftable Item", parent: craftablesHolder);
             craftableUI.SetRecipe(recipeData);
             craftableUI.OnClick += OnClickCraftable;
 
@@ -505,7 +504,6 @@ namespace UZSG.UI.Objects
                 craftable.Status = CraftableItemStatus.CannotCraft;
             }
         }
-
 
         void ClearCraftableItems()
         {

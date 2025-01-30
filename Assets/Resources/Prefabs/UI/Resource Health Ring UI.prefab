@@ -200,7 +200,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1975ab61636bc9c45bb7ea41c8729f70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rect: {fileID: 0}
+  rect: {fileID: 8251184333928775843}
   MaxValue: 250
   CurrentValue: 50
   progress: 0.484

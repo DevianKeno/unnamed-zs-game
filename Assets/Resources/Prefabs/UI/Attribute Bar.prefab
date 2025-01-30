@@ -254,6 +254,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 817ff1558a8f94f46bed7a8aa689ff3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rect: {fileID: 8963817805981456813}
   _value: 50
   barRect: {fileID: 8963817805981456813}
   fillRect: {fileID: 1468061552080109571}
@@ -265,7 +266,6 @@ MonoBehaviour:
     flatBonus: 0
     LimitOverflow: 0
     LimitUnderflow: 0
-  BufferOnDecreaseValue: 0
   BufferDuration: 0.2
-  TweenType: 1
+  BufferEase: 1
   bufferRect: {fileID: 4464040806379643172}

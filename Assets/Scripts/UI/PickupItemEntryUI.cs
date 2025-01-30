@@ -108,7 +108,7 @@ namespace UZSG.UI
 
         public void IncrementCount(Item item)
         {
-            if (!Item.CompareTo(item)) return;
+            if (!Item.Is(item)) return;
 
             Item.Count += item.Count;
             countTMP.text = Item.Count.ToString();

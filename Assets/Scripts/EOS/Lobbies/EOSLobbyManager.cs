@@ -1376,7 +1376,7 @@ namespace UZSG.EOS
         {
             Game.Console.LogDebug($"[LobbyManager/OnMemberStatusReceived()]: Member status update received");
 
-            if (!info.TargetUserId.IsValid())
+            if (info.TargetUserId == null || !info.TargetUserId.IsValid())
             {
                 Game.Console.LogDebug($"[LobbyManager/OnMemberStatusReceived()]: Invalid user");
                 /// Simply update the whole lobby
@@ -1390,6 +1390,22 @@ namespace UZSG.EOS
             {
                 Game.Console.LogDebug($"[LobbyManager/OnMemberStatusReceived()]: User[{info.TargetUserId}] joined the lobby");
                 Game.Console.LogInfo($"User[{info.TargetUserId}] joined the lobby");
+            }
+            else if (info.CurrentStatus == LobbyMemberStatus.Left || 
+                info.CurrentStatus == LobbyMemberStatus.Kicked || 
+                info.CurrentStatus == LobbyMemberStatus.Disconnected)
+            {
+                Game.Console.LogDebug($"[LobbyManager/OnMemberStatusReceived()]: User[{info.TargetUserId}] left the lobby ({info.CurrentStatus})");
+                Game.Console.LogInfo($"User[{info.TargetUserId}] left the lobby");
+            }
+
+            if (info.CurrentStatus == LobbyMemberStatus.Joined)
+            {
+                EOSSubManagers.UserInfo.QueryUserInfoByProductId(info.TargetUserId);
+            }
+            else
+            {
+                EOSSubManagers.UserInfo.RemoveCachedInfo(info.TargetUserId);
             }
 
             /// Update target member status for everyone
@@ -2002,6 +2018,7 @@ namespace UZSG.EOS
                 Debug.Log("Lobbies (OnLeaveLobbyCompleted): Successfully left lobby: " + data.LobbyId);
 
                 currentLobby.ClearCache();
+                IsHosting = false;
 
                 LeaveLobbyCallback?.Invoke(Epic.OnlineServices.Result.Success);
 

@@ -25,7 +25,7 @@ namespace UZSG.Entities
 #endif
         }
 
-        void GetHitboxFromChildrenRecursive(Transform transform)
+        void GetHitboxFromChildrenRecursive(Transform transform, bool includeChildren = true)
         {
             foreach (Transform child in transform)
             {
@@ -47,7 +47,11 @@ namespace UZSG.Entities
                     hitbox.gameObject.layer = LayerMask.NameToLayer(Layer);
                     hitboxes.Add(hitbox);
                 }
-                GetHitboxFromChildrenRecursive(child);
+                
+                if (includeChildren)
+                {
+                    GetHitboxFromChildrenRecursive(child);
+                }
             }
         }
     }

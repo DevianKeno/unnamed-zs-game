@@ -9,7 +9,6 @@ namespace UZSG.Saves
         public string WorldName;
         public string LevelId;
         public string CreatedDate;
-        public string LastModifiedDate;
         public string LastPlayedDate;
         public string OwnerId;
         public int MaxPlayers;

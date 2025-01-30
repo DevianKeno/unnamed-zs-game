@@ -18,13 +18,8 @@ namespace UZSG.Attributes
     [Serializable]
     public class AttributeCollection : IEnumerable<Attribute>, ISaveDataReadWrite<List<AttributeSaveData>>
     {
-        /// Just so can view in Inspector
-        [SerializeField] List<Attribute> attributesReadOnly = new();
         Dictionary<string, Attribute> _attrsDict = new();
-        /// <summary>
-        /// Returns a COPY of the Attributes in this collection. [Read Only]
-        /// </summary>
-        public List<Attribute> List => new(_attrsDict.Values);
+        public Dictionary<string, Attribute> AttributesDict => _attrsDict;
 
         public Attribute this[string id]
         {
@@ -39,15 +34,20 @@ namespace UZSG.Attributes
             foreach (var attrSaveData in saveData)
             {
                 var id = attrSaveData.Id.Trim().ToLower();
-                if (Game.Attributes.TryGetData(id, out var attrData))
+                
+                if (_attrsDict.TryGetValue(id, out var attr))
                 {
-                    var newAttr = new Attribute(attrData);
-                    newAttr.ReadSaveData(attrSaveData);
-                    Add(newAttr);
+                    /// overwrite existing
+                    attr.ReadSaveData(attrSaveData);
                 }
                 else
                 {
-                    Game.Console.LogWarn($"No such attribute to retrieve '{attrSaveData.Id}'.");
+                    if (Game.Attributes.TryGetData(id, out var attrData))
+                    {
+                        var newAttr = new Attribute(attrData);
+                        newAttr.ReadSaveData(attrSaveData);
+                        Add(newAttr);
+                    }
                 }
             }
         }
@@ -70,11 +70,10 @@ namespace UZSG.Attributes
         public void Add(Attribute attribute)
         {
             if (!attribute.IsValid) return;
-
+            
             if (!_attrsDict.ContainsKey(attribute.Data.Id))
             {
                 _attrsDict[attribute.Data.Id] = attribute;
-                attributesReadOnly.Add(attribute);
             }
             else
             {
@@ -100,7 +99,6 @@ namespace UZSG.Attributes
         {
             if (_attrsDict.ContainsKey(id))
             {
-                attributesReadOnly.Remove(_attrsDict[id]);
                 _attrsDict.Remove(id);
             }
             else
@@ -113,7 +111,6 @@ namespace UZSG.Attributes
         {
             if (_attrsDict.ContainsKey(id))
             {
-                attributesReadOnly.Remove(_attrsDict[id]);
                 _attrsDict.Remove(id, out attribute);
                 return true;
             }
@@ -177,9 +174,14 @@ namespace UZSG.Attributes
             return false;
         }
         
+        public List<Attribute> AsList()
+        {
+            return _attrsDict.Values.ToList();
+        }
+
         public IEnumerator<Attribute> GetEnumerator()
         {
-            return attributesReadOnly.GetEnumerator();
+            return _attrsDict.Values.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

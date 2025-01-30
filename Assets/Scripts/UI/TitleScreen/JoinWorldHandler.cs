@@ -6,15 +6,11 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
 
-using Epic.OnlineServices;
 using Epic.OnlineServices.Lobby;
 
 using UZSG.Systems;
-using UZSG.UI.TitleScreen;
 using UZSG.EOS;
 using UZSG.EOS.Lobbies;
-
-using static UZSG.Systems.Result;
 
 namespace UZSG.UI.Lobbies
 {
@@ -24,6 +20,9 @@ namespace UZSG.UI.Lobbies
         Lobby selectedLobby = null;
         LobbyDetails selectedLobbyDetails = null;
         List<LobbyEntryUI> lobbyEntriesUI = new();
+        
+        string serverWorldFilepath = string.Empty;
+        string serverLevelId = string.Empty;
         
         [Header("Scripts")]
         // [SerializeField] LobbyInfoContainer lobbyInfo;
@@ -129,13 +128,14 @@ namespace UZSG.UI.Lobbies
         {
             if (result == Epic.OnlineServices.Result.Success)
             {
-                EOSTransport.ServerUserIdToConnectTo = selectedLobby.OwnerProductUserId;
+                EOSTransport.SetConnection(selectedLobby.OwnerProductUserId);
                 EOSSubManagers.Transport.StartClient();
-                // EOSSubManagers.Transport.OpenConnection(selectedLobby.OwnerProductUserId, EOSTransport.DEFAULT_SOCKET_NAME);
 
                 if (selectedLobby.TryGetAttribute(AttributeKeys.LEVEL_ID, out var attr))
                 {
-                    this.worldFilepath = string.Empty;
+                    this.serverWorldFilepath = string.Empty;
+                    this.serverLevelId = attr.AsString;
+                    
                     EOSSubManagers.P2P.RequestWorldSaveData(selectedLobby.OwnerProductUserId, OnRequestWorldSaveDataCompleted);
                 }
             }
@@ -149,7 +149,8 @@ namespace UZSG.UI.Lobbies
         }
 
         #endregion
-        
+
+
         void OnClickLobbyEntry(LobbyEntryUI entry)
         {
             selectedLobby = entry.Lobby;
@@ -159,48 +160,57 @@ namespace UZSG.UI.Lobbies
             joinBtn.gameObject.SetActive(true);
         }
 
-        string worldFilepath = string.Empty;
+        /// <summary>
+        /// TODO: add result, leave lobby upon fail
+        /// </summary>
+        /// <param name="filepath">The location of the downloaded world save data from the server</param>
         void OnRequestWorldSaveDataCompleted(string filepath)
         {
             if (string.IsNullOrEmpty(filepath)) return;
 
-            this.worldFilepath = filepath;
+            this.serverWorldFilepath = filepath;
             var loadOptions = new Game.LoadSceneOptions()
             {
                 SceneToLoad = "LoadingScreen",
-                Mode = LoadSceneMode.Additive,
+                Mode = LoadSceneMode.Single,
                 ActivateOnLoad = true,
             };
-            Game.Main.LoadScene(loadOptions, OnLoadSceneCompleted);
+            Game.Main.LoadSceneAsync(loadOptions, OnLoadingScreenLoaded);
         }
 
-        void OnLoadSceneCompleted()
+        void OnLoadingScreenLoaded()
         {
-            var loadWorldOptions = new WorldManager.LoadWorldOptions()
-            {
-                OwnerId = EOSSubManagers.Lobbies.CurrentLobby.OwnerEpicId.ToString(),
-                Filepath = worldFilepath,
-                WorldSaveData = Game.World.Deserialize(worldFilepath),
-            };
-            Game.World.LoadWorldFromFilepath(worldFilepath, OnLoadWorldCompleted);
+            Game.World.LoadWorldFromFilepathAsync(this.serverWorldFilepath, OnLoadWorldCompleted);
         }
 
         void OnLoadWorldCompleted(WorldManager.LoadWorldResult result)
         {
-            if (result.Result == Success)
+            if (result.Result == Result.Success)
             {
+                Game.World.InitializeWorld();
+
                 Game.Main.UnloadScene("TitleScreen");
                 Game.Main.UnloadScene("LoadingScreen");
             }
-            else if (result.Result == Failed)
+            else if (result.Result == Result.Failed)
             {
-                Game.Main.LoadScene(
-                    new(){
-                        SceneToLoad = "TitleScreen",
-                        Mode = LoadSceneMode.Single
-                    });
-                joinBtn.interactable = true;
+                BackToTitleScreen();
             }
+        }
+
+        void BackToTitleScreen(bool leaveCurrentLobby = true)
+        {
+            if (leaveCurrentLobby)
+            {
+                EOSSubManagers.Lobbies.LeaveCurrentLobby();
+            }
+
+            Game.Main.LoadSceneAsync(
+                new(){
+                    SceneToLoad = "TitleScreen",
+                    Mode = LoadSceneMode.Single
+                });
+            joinBtn.interactable = true;
         }
 
         void ClearLobbyEntries()

@@ -22,17 +22,19 @@ namespace UZSG.Network
     {
         [SerializeField] protected Player player;
         public Player Player => player;
-
         ProductUserId productUserId;
-        ExternalAccountInfo userInfo;
+        public ProductUserId ProductUserId => productUserId;
+        ExternalAccountInfo accountInfo;
+        public ExternalAccountInfo AccountInfo => accountInfo;
 
         [SerializeField] NetworkObject networkObject;
 
-        #region Tracked network variables
+        #region Network variables
         NetworkVariable<Vector3> nPosition = new(Vector3.zero);
-        // NetworkVariable<Quaternion> nRotation = new(Quaternion.identity);
+        NetworkVariable<Vector3> nRotationEuler = new(Vector3.zero);
 
         #endregion
+
 
         void Awake()
         {
@@ -40,74 +42,110 @@ namespace UZSG.Network
             this.networkObject = GetComponent<NetworkObject>();
         }
 
-        public override void OnNetworkSpawn()
+        bool _enableTracking = false;
+        void FixedUpdate()
         {
-            if (IsOwner) 
-            {
-                SetUserIdServerRpc(Game.EOS.GetProductUserId().ToString());
-
-                /// NOTE: should you allow player movement controls only on all initializations completed? 
-            }
+            if (!_enableTracking) return;
 
             if (IsServer)
             {
+                nPosition.Value = player.Position;
+                nRotationEuler.Value = player.Rotation.eulerAngles;
+            }
+        }
+
+        public override void OnNetworkSpawn()
+        {
+            RequestUserInfoByClientIdRpc(this.OwnerClientId);
+                        
+            if (IsServer)
+            {
                 var psd = Game.World.CurrentWorld.GetPlayerSaveData(Game.EOS.GetProductUserId());
-                player.ReadSaveData(psd);
-                if (IsOwner) player.InitializeAsClient();
+                this.player.InitializeAsPlayer(psd, IsLocalPlayer);
             }
             else
             {
-                EOSSubManagers.P2P.RequestPlayerSaveData(
-                    EOSSubManagers.Lobbies.CurrentLobby.OwnerProductUserId,
-                    onCompleted: OnRequestPlayerSaveDataCompleted);
+                EOSSubManagers.P2P.RequestPlayerSaveData(EOSSubManagers.Lobbies.CurrentLobby.OwnerProductUserId, onCompleted: OnRequestPlayerSaveDataCompleted);
             }
             
             InitializeNetworkVariableTrackings();
 
-            Game.Console.LogInfo($"[World]: {this.userInfo.DisplayName} has entered the world");
+            Game.Console.LogInfo($"[World]: {this.accountInfo.DisplayName} has entered the world");
         }
 
         void InitializeNetworkVariableTrackings()
         {
-            nPosition.OnValueChanged += OnPositionChanged;
+            if (!IsOwner)
+            {
+                nPosition.OnValueChanged += OnPositionChanged;
+                nRotationEuler.OnValueChanged += OnRotationChanged;
+            }
+            _enableTracking = true;
         }
 
         void OnRequestPlayerSaveDataCompleted(PlayerSaveData saveData, Epic.OnlineServices.Result result)
         {
             if (!IsOwner) return;
 
-            if (result == Epic.OnlineServices.Result.Success && saveData != null)
+            if (result == Epic.OnlineServices.Result.Success)
             {
-                player.ReadSaveData(saveData);
-                player.InitializeAsClient();
+                this.player.InitializeAsPlayer(saveData, isLocalPlayer: true);
             }
         }
 
         void OnPositionChanged(Vector3 oldPos, Vector3 newPos)
         {
-            player.Position = newPos;
+            this.player.Position = newPos;
         }
 
-        [ServerRpc]
-        void SetUserIdServerRpc(string uid)
+        void OnRotationChanged(Vector3 oldPos, Vector3 newPos)
         {
-            var puid = ProductUserId.FromString(uid);
-            if (puid != null && puid.IsValid())
+            this.player.Rotation = Quaternion.Euler(newPos);
+        }
+
+        [Rpc(SendTo.Server)]
+        void RequestUserInfoByClientIdRpc(ulong clientId, RpcParams rpcParams = default)
+        {
+            if (EOSSubManagers.Transport.GetEOSTransport().TryGetProductUserIdMapping(clientId, out ProductUserId puid))
             {
+                if (puid == null || !puid.IsValid())
+                {
+                    Game.Console.LogWarn($"Client:[{rpcParams.Receive.SenderClientId}] requested user info for Client:[{clientId}], but PUID:[{puid}] is invalid!");
+                    return;
+                }
+                
                 this.productUserId = puid;
-                EOSSubManagers.UserInfo.QueryUserInfoByProductId(puid, onCompleted: (accountInfo, userId, result) =>
+                EOSSubManagers.UserInfo.QueryUserInfoByProductId(puid, OnQueryUserInfoByProductIdCompleted);
+                void OnQueryUserInfoByProductIdCompleted(ExternalAccountInfo userInfo, ProductUserId userId, Epic.OnlineServices.Result result)
                 {
                     if (result == Epic.OnlineServices.Result.Success &&
                         userId == puid)
                     {
-                        this.userInfo = accountInfo;
+                        this.accountInfo = userInfo;
+                        player.DisplayName = userInfo.DisplayName;
+                        ReceiveUserInfoRpc(userInfo.DisplayName, RpcTarget.Single(rpcParams.Receive.SenderClientId, RpcTargetUse.Temp));
+                        player.SetNametagVisible(true);
                     }
-                });
+                }
             }
-            else
+        }
+
+        [Rpc(SendTo.SpecifiedInParams)]
+        void ReceiveUserInfoRpc(string displayName, RpcParams rpcParams)
+        {
+            player.DisplayName = displayName;
+            if (!IsOwner)
             {
-                Game.Console.LogWarn($"Error setting puid for network player entity: [{uid}]");
+                player.SetNametagVisible(true);
             }
+        }
+
+        public override void OnNetworkDespawn()
+        {
+            _enableTracking = false;
+            
+            nPosition.OnValueChanged -= OnPositionChanged;
+            nRotationEuler.OnValueChanged -= OnRotationChanged;
         }
     }
 }

@@ -1,25 +1,19 @@
-using System;
 using System.Collections.Generic;
-using System.IO;
 
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using Unity.VisualScripting;
+using UnityEngine.UI;
 
 using Epic.OnlineServices;
 using Epic.OnlineServices.Lobby;
 
-using UZSG.Saves;
+using UZSG.Data;
+using UZSG.EOS;
+using UZSG.EOS.Lobbies;
 using UZSG.Systems;
 using UZSG.UI;
 using UZSG.UI.TitleScreen;
 using UZSG.Worlds;
-using UZSG.EOS;
-using UZSG.EOS.Lobbies;
-
-using static UZSG.Systems.Result;
-using UZSG.Data;
 
 namespace UZSG.TitleScreen
 {
@@ -36,9 +30,6 @@ namespace UZSG.TitleScreen
         [SerializeField] FrameController frameController;
         [SerializeField] WorldEntryUI selectedWorldEntry;
         [SerializeField] Button startBtn;
-
-        [Header("Debugging")]
-        [SerializeField] bool doNotLoadWorldUponHost = false;
 
         void Awake()
         {
@@ -92,9 +83,10 @@ namespace UZSG.TitleScreen
         #endregion
         
         
-        public void SetWorld(WorldSaveData worldSaveData)
+        public void SetWorld(WorldEntryUI worldEntry)
         {
-            selectedWorldEntry.SetData(worldSaveData);
+            selectedWorldEntry = worldEntry;
+            selectedWorldEntry.SetManifest(worldEntry.WorldManifest);
         }
         
         public void CreateLobby()
@@ -124,7 +116,7 @@ namespace UZSG.TitleScreen
             // var localUser = EOSSubManagers.UserInfo.GetLocalUserInfo();
             // var country = localUser.Country.ToString();
             var region = "ASIA";
-            var world = selectedWorldEntry.SaveData;
+            var world = selectedWorldEntry.WorldManifest;
             var bucketId = $"{region}:{world.LevelId}";
 
             var newLobby = new Lobby()
@@ -149,12 +141,12 @@ namespace UZSG.TitleScreen
             newLobby.AddAttribute(new()
             {
                 Key = AttributeKeys.WORLD_NAME,
-                AsString = selectedWorldEntry.SaveData.WorldName,
+                AsString = selectedWorldEntry.WorldManifest.WorldName,
                 ValueType = AttributeType.String,
                 Visibility = LobbyAttributeVisibility.Public
             });
 
-            var levelData = Resources.Load<LevelData>($"Data/Levels/{selectedWorldEntry.SaveData.LevelId}");
+            var levelData = Resources.Load<LevelData>($"Data/Levels/{selectedWorldEntry.WorldManifest.LevelId}");
             newLobby.AddAttribute(new()
             {
                 Key = AttributeKeys.LEVEL_DISPLAY_NAME,
@@ -163,7 +155,7 @@ namespace UZSG.TitleScreen
                 Visibility = LobbyAttributeVisibility.Public
             });
 
-            string levelId = selectedWorldEntry.SaveData.LevelId.ToString();
+            string levelId = selectedWorldEntry.WorldManifest.LevelId.ToString();
             newLobby.AddAttribute(new()
             {
                 Key = AttributeKeys.LEVEL_ID,
@@ -204,6 +196,7 @@ namespace UZSG.TitleScreen
 
                 EOSSubManagers.Lobbies.PromoteMember(Game.EOS.GetProductUserId(), OnPromoteMemberCompleted);
                 EOSSubManagers.Transport.StartHost();
+                LoadWorld();
             }
             else
             {
@@ -219,7 +212,7 @@ namespace UZSG.TitleScreen
         {
             if (result == Epic.OnlineServices.Result.Success)
             {
-                LoadWorld();
+
             }
             else
             {
@@ -233,45 +226,48 @@ namespace UZSG.TitleScreen
 
         void LoadWorld()
         {
-            if (doNotLoadWorldUponHost) return;
-            
             var options = new Game.LoadSceneOptions()
             {
                 SceneToLoad = "LoadingScreen",
-                Mode = LoadSceneMode.Additive,
+                Mode = LoadSceneMode.Single,
                 ActivateOnLoad = true,
             };
-            Game.Main.LoadScene(options, OnLoadingScreenLoaded);
+            Game.Main.LoadSceneAsync(options, OnLoadingScreenLoaded);
         }
 
         void OnLoadingScreenLoaded()
         {
-            var options = new WorldManager.LoadWorldOptions()
-            {
-                OwnerId = Game.World.GetLocalUserId(),
-                Filepath = selectedWorldEntry.Filepath,
-                WorldSaveData = selectedWorldEntry.SaveData,
-            };
-            Game.World.LoadWorld(options, OnLoadWorldCompleted);
+            Game.World.LoadWorldFromFilepathAsync(selectedWorldEntry.LevelDataPath, OnLoadWorldCompleted);
         }
 
         void OnLoadWorldCompleted(WorldManager.LoadWorldResult result)
         {
-            if (result.Result == Success)
+            if (result.Result == Systems.Result.Success)
             {
+                Game.World.InitializeWorld();
+
                 Game.Main.UnloadScene("TitleScreen");
                 Game.Main.UnloadScene("LoadingScreen");
             }
-            else if (result.Result == Failed)
+            else if (result.Result == Systems.Result.Failed)
             {
-                var options = new Game.LoadSceneOptions()
-                {
-                    SceneToLoad = "TitleScreen",
-                    Mode = LoadSceneMode.Single
-                };
-                Game.Main.LoadScene(options);
+                BackToTitleScreen();
                 startBtn.interactable = true;
             }
+        }
+
+        void BackToTitleScreen(bool leaveCurrentLobby = true)
+        {
+            if (leaveCurrentLobby)
+            {
+                EOSSubManagers.Lobbies.LeaveCurrentLobby();
+            }
+
+            Game.Main.LoadSceneAsync(
+                new(){
+                    SceneToLoad = "TitleScreen",
+                    Mode = LoadSceneMode.Single
+                });
         }
     }
 }

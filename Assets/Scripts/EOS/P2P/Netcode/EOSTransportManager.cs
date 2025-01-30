@@ -1244,5 +1244,13 @@ namespace UZSG.EOS
         {
             NetworkManager.Singleton?.Shutdown(discardMessageQueue);
         }
+
+        public EOSTransport GetEOSTransport()
+        {
+            if (NetworkManager.Singleton.NetworkConfig.NetworkTransport is EOSTransport EOSTransport)
+                return EOSTransport;
+            else
+                return null;
+        }
     }
 }

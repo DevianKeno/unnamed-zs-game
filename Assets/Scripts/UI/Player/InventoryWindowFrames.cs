@@ -99,8 +99,12 @@ namespace UZSG.UI.Players
                 });
                 frameController.AppendFrame(window.Frame);
                 _appendedFrameButtons[window] = btn;
-            }
-            
+            }   
+        }
+
+        public void RemoveAppendedFrame(IInventoryWindowAppendable window)
+        {
+            frameController.RemoveFrame(window.Frame);
         }
 
         /// <summary>

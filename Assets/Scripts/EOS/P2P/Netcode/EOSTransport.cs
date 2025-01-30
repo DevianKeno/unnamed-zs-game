@@ -67,18 +67,19 @@ namespace UZSG.EOS
         public ProductUserId ServerUserIdToConnectTo = null;
 
         // Locked in after calling StartClient to avoid changing unexpectedly
-        ProductUserId ServerUserId = null;          
+        ProductUserId serverUserId = null;
+        public ProductUserId ServerUserId => serverUserId;
 
         // Override local user id for testing multiple clients at once
         public ProductUserId LocalUserIdOverride = null;
 
-#if UNITY_EDITOR
-        //editor field to input a PUID to connect to(ease of access when using editor buttons in the network manager
-        public string ServerUserIdToConnectToInput = null;
+// #if UNITY_EDITOR
+//         //editor field to input a PUID to connect to(ease of access when using editor buttons in the network manager
+//         public string ServerUserIdToConnectToInput = null;
 
-        //String of the current server PUID for copying purposes
-        public string ServerUserIDForCopying = null;
-#endif
+//         //String of the current server PUID for copying purposes
+//         public string ServerUserIDForCopying = null;
+// #endif
         /// <summary>
         /// A constant `clientId` that represents the server.
         /// When this value is found in methods such as `Send`, it should be treated as a placeholder that means "the server".
@@ -124,7 +125,11 @@ namespace UZSG.EOS
         {
             if (!IsInitialized) return;
 
-            ProductUserId userId = GetProductUserIdMapping(clientId);
+            if (!TryGetProductUserIdMapping(clientId, out ProductUserId userId))
+            {
+                printError($"EOSP2PTransport.Send: Unable to send payload - clientId [{clientId}] does not exist within the connection.");
+                return;
+            }
 
             print($"EOSP2PTransport.Send: [ClientId='{clientId}', UserId='{userId}', PayloadBytes='{payload.Count}', SendTimeSec='{Time.realtimeSinceStartup}']");
 
@@ -158,7 +163,11 @@ namespace UZSG.EOS
         {
             if (!IsInitialized) return;
 
-            ProductUserId userId = GetProductUserIdMapping(clientId);
+            if (!TryGetProductUserIdMapping(clientId, out ProductUserId userId))
+            {
+                printError($"EOSP2PTransport.Send: Unable to send payload - clientId [{clientId}] does not exist within the connection.");
+                return;
+            }
 
             print($"EOSP2PTransport.Send: [ClientId='{clientId}', UserId='{userId}', PayloadBytes='{payload.Count}', SendTimeSec='{Time.realtimeSinceStartup}']");
 
@@ -221,11 +230,13 @@ namespace UZSG.EOS
             {
                 Debug.Assert(socketName == DEFAULT_SOCKET_NAME);
 
-                clientId = GetClientIdMapping(userId);
-                payload = new ArraySegment<byte>(packet);
-                receiveTime = Time.realtimeSinceStartup;
-                print($"EOSP2PTransport.PollEvent: [{NetworkEvent.Data}, ClientId='{clientId}', UserId='{userId}', PayloadBytes='{payload.Count}', RecvTimeSec='{receiveTime}']");
-                return NetworkEvent.Data;
+                if (TryGetClientIdMapping(userId, out clientId))
+                {
+                    payload = new ArraySegment<byte>(packet);
+                    receiveTime = Time.realtimeSinceStartup;
+                    print($"EOSP2PTransport.PollEvent: [{NetworkEvent.Data}, ClientId='{clientId}', UserId='{userId}', PayloadBytes='{payload.Count}', RecvTimeSec='{receiveTime}']");
+                    return NetworkEvent.Data;
+                }
             }
 
             // Otherwise, nothing to report
@@ -264,17 +275,17 @@ namespace UZSG.EOS
             if (result = (ServerUserIdToConnectTo != null && ServerUserIdToConnectTo.IsValid()))
             {
                 // Store it in ServerUserId so it can't be changed after start up
-                ServerUserId = ServerUserIdToConnectTo;
+                serverUserId = ServerUserIdToConnectTo;
 
                 // Attempt to connect to the server hosted by ServerUserId - was the request successfully initiated?
-                if (result = p2pManager.OpenConnection(ServerUserId, DEFAULT_SOCKET_NAME))
+                if (result = p2pManager.OpenConnection(serverUserId, DEFAULT_SOCKET_NAME))
                 {
-                    print($"EOSP2PTransport.StartClient: Successful Client start up - REQUESTED outgoing '{DEFAULT_SOCKET_NAME}' socket connection with Server UserId Server UserId='{ServerUserId}'.");
+                    print($"EOSP2PTransport.StartClient: Successful Client start up - REQUESTED outgoing '{DEFAULT_SOCKET_NAME}' socket connection with Server UserId Server UserId='{serverUserId}'.");
                     result = true;
                 }
                 else
                 {
-                    printError($"EOSP2PTransport.StartClient: Failed Client start up - Unable to initiate a connect request with Server UserId='{ServerUserId}'.");
+                    printError($"EOSP2PTransport.StartClient: Failed Client start up - Unable to initiate a connect request with Server UserId='{serverUserId}'.");
                 }
             }
             else
@@ -295,9 +306,10 @@ namespace UZSG.EOS
         {
             Debug.Assert(IsInitialized);
             print($"EOSP2PTransport.StartServer: Entering Server mode with EOS UserId='{OurUserId}'.");
-#if UNITY_EDITOR
-            ServerUserIDForCopying = OurUserId.ToString();
-#endif
+// #if UNITY_EDITOR
+//             ServerUserIDForCopying = OurUserId.ToString();
+// #endif
+            serverUserId = OurUserId;
             // Set server mode
             IsServer = true;
 
@@ -315,7 +327,11 @@ namespace UZSG.EOS
             Debug.Assert(IsInitialized);
             Debug.Assert(IsServer);
 
-            ProductUserId userId = GetProductUserIdMapping(clientId);
+            if (!TryGetProductUserIdMapping(clientId, out ProductUserId userId))
+            {
+                printError($"EOSP2PTransport.DisconnectRemoteClient: Unable to disconnect client - clientId [{clientId}] does not exist within the connection.");
+                return;
+            }
 
             print($"EOSP2PTransport.DisconnectRemoteClient: Disconnecting ClientId='{clientId}' (UserId='{userId}') from our Server.");
             p2pManager.CloseConnection(userId, DEFAULT_SOCKET_NAME, true);
@@ -329,8 +345,8 @@ namespace UZSG.EOS
             Debug.Assert(IsInitialized);
             Debug.Assert(IsServer == false);
 
-            print($"EOSP2PTransport.DisconnectLocalClient: Disconnecting our Client from the Server (UserId='{ServerUserId}').");
-            p2pManager.CloseConnection(ServerUserId, DEFAULT_SOCKET_NAME, true);
+            print($"EOSP2PTransport.DisconnectLocalClient: Disconnecting our Client from the Server (UserId='{serverUserId}').");
+            p2pManager.CloseConnection(serverUserId, DEFAULT_SOCKET_NAME, true);
             IsRunning = false;
         }
 
@@ -386,7 +402,7 @@ namespace UZSG.EOS
             _userIdToClientId = null;
 
             // Clear Server UserId target
-            ServerUserId = null;
+            serverUserId = null;
         }
         
         /// <summary>
@@ -509,10 +525,11 @@ namespace UZSG.EOS
                 }
 
                 // Get mapped client ID
-                ulong clientId = GetClientIdMapping(userId);
-
-                // Cache user connection event, will be returned in a later PollEvent call
-                ConnectedDisconnectedUserEvents.Enqueue(new Tuple<ProductUserId, ulong, bool>(userId, clientId, true));
+                if (TryGetClientIdMapping(userId, out ulong clientId))
+                {
+                    // Cache user connection event, will be returned in a later PollEvent call
+                    ConnectedDisconnectedUserEvents.Enqueue(new Tuple<ProductUserId, ulong, bool>(userId, clientId, true));
+                }
             }
         }
 
@@ -540,66 +557,89 @@ namespace UZSG.EOS
                 }
 
                 // Get mapped client ID
-                ulong clientId = GetClientIdMapping(userId);
+                if (TryGetClientIdMapping(userId, out ulong clientId))
+                {
+                    // NOTE: For simplicity of event processing order and ID lookups we will simply allow the client ID map
+                    // to continually grow as we don't expect to receive an unreasonable number (>10k) of unique
+                    // user connections during the lifetime of the host application.
 
-                // NOTE: For simplicity of event processing order and ID lookups we will simply allow the client ID map
-                // to continually grow as we don't expect to receive an unreasonable number (>10k) of unique
-                // user connections during the lifetime of the host application.
+                    // if (IsServer)
+                    // {
+                    //   // Remove client ID mapping
+                    //   ulong clientId = UserIdToClientId[userId];
+                    //   ClientIdToUserId.Remove(clientId);
+                    //   UserIdToClientId.Remove(userId);
+                    // }
 
-                // if (IsServer)
-                // {
-                //   // Remove client ID mapping
-                //   ulong clientId = UserIdToClientId[userId];
-                //   ClientIdToUserId.Remove(clientId);
-                //   UserIdToClientId.Remove(userId);
-                // }
-
-                // Cache user disconnection event, will be returned in a later PollEvent call
-                ConnectedDisconnectedUserEvents.Enqueue(new Tuple<ProductUserId, ulong, bool>(userId, clientId, false));
+                    // Cache user disconnection event, will be returned in a later PollEvent call
+                    ConnectedDisconnectedUserEvents.Enqueue(new Tuple<ProductUserId, ulong, bool>(userId, clientId, false));
+                }
             }
         }
 
-        // Returns the ProductUserId corresponding to a given ClientId
-        public ProductUserId GetProductUserIdMapping(ulong clientId)
+        /// <summary>
+        /// Set the server user id to connect to.
+        /// </summary>
+        public void SetConnection(ProductUserId userId)
+        {
+            if (userId == null || !userId.IsValid())
+            {
+                Game.Console.LogError("Invalid user to connect to!");
+                return;
+            }
+            
+            ServerUserIdToConnectTo = userId;
+        }
+
+        /// <summary>
+        /// Returns the ProductUserId corresponding to a given ClientId
+        /// </summary>
+        public bool TryGetProductUserIdMapping(ulong clientId, out ProductUserId userId)
         {
             Debug.Assert(IsInitialized);
 
-            // We're a Client?
-            if (IsServer == false)
+            if (clientId == 0uL)
+            {
+                userId = serverUserId;
+                return true;
+            }
+
+            if (IsServer)
+            {
+                return _clientIdToUserId.TryGetValue(clientId, out userId);
+            }
+            else // we're a client
             {
                 Debug.AssertFormat(clientId == ServerClientId, "EOSP2PTransport.GetUserId: Unexpected ClientId='{0}' given - We're a Client so we should only be dealing with the Server by definition (Server ClientId='{1}').",
                                    clientId, ServerClientId);
-                return ServerUserId;
-            }
-            else
-            {
-                return _clientIdToUserId[clientId];
+                userId = serverUserId;
+                return true;
             }
         }
 
         /// <summary>
         /// Returns the ClientId corresponding to a given ProductUserId
         /// </summary>
-        /// <param name="userId"></param>
-        /// <returns></returns>
-        public ulong GetClientIdMapping(ProductUserId userId)
+        public bool TryGetClientIdMapping(ProductUserId userId, out ulong clientId)
         {
             Debug.Assert(IsInitialized);
 
-            // We're a Client?
-            if (IsServer == false)
+            if (userId == serverUserId)
             {
-                Debug.AssertFormat(userId == ServerUserId, "EOSP2PTransport.GetClientId: Unexpected UserId='{0}' given - We're a Client so we should only be dealing with the Server by definition (Server UserId='{1}').",
-                                   userId, ServerUserId);
-                return ServerClientId;
+                clientId = ServerClientId;
+                return true;
             }
-            else
+
+            if (IsServer)
             {
-                if (_userIdToClientId.TryGetValue(userId, out ulong clientId))
-                {
-                    return clientId;
-                }
-                return 0;
+                return _userIdToClientId.TryGetValue(userId, out clientId);
+            }
+            else // we're a client
+            {
+                Debug.AssertFormat(userId == serverUserId, "EOSP2PTransport.GetClientId: Unexpected UserId='{0}' given - We're a Client so we should only be dealing with the Server by definition (Server UserId='{1}').",
+                                   userId, serverUserId);
+                clientId = ServerClientId;
+                return true;
             }
         }
     }

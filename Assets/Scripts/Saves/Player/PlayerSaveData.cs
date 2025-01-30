@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 
 namespace UZSG.Saves
 {
@@ -10,6 +9,7 @@ namespace UZSG.Saves
         public static readonly PlayerSaveData Empty = new();
 
         public string UID = string.Empty;
+        public string DisplayName = string.Empty;
         public InventorySaveData Inventory = new();
         public List<string> KnownRecipes = new();
         public bool IsCreative = false;

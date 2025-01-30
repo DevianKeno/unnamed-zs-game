@@ -162,8 +162,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59163c36e057b3e4786a648c3f8f86b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rect: {fileID: 0}
-  FadeDuration: 0.3
+  rect: {fileID: 6750226801756487028}
   RecipeData: {fileID: 0}
   button: {fileID: 5202387477307214840}
   background: {fileID: 8132384543493191437}

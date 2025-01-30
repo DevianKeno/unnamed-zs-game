@@ -23,8 +23,8 @@ namespace UZSG.UI.Players
     {
         const string CraftingTitle = "Crafting"; /// this should be read from a Lang file
         
-        public Player Player;
-        public InventoryHandler Inventory => Player.Inventory;
+        public Player Player { get; set; }
+        public PlayerInventoryManager Inventory => Player.Inventory;
         [Space]
 
         bool _isInitialized;
@@ -62,9 +62,6 @@ namespace UZSG.UI.Players
         [SerializeField] GameObject selectorPrefab;
         [SerializeField] Button closeButton;
         
-        // InputActionMap actionMap;
-        // Dictionary<string, InputAction> inputs = new();
-
         void Update()
         {
             if (_hasDisplayedItem)
@@ -84,9 +81,7 @@ namespace UZSG.UI.Players
             _isInitialized = true;
             
             Player = player;
-
             hotbarUI.Initialize(player);
-
             InitializeElements();
             InitializeEvents();
             InitializeBagSlotUIs();
@@ -103,7 +98,7 @@ namespace UZSG.UI.Players
             closeButton.onClick.AddListener(Hide);
             Hide();
         }
-
+        
         void InitializeSelector()
         {
             selector = Game.UI.Create<Selector>("Selector");
@@ -149,12 +144,10 @@ namespace UZSG.UI.Players
             int maxSlots = Inventory.Bag.SlotCount;
             for (int i = 0; i < maxSlots; i++)
             {
-                var slotUI = Game.UI.Create<ItemSlotUI>("Item Slot");
+                var slotUI = Game.UI.Create<ItemSlotUI>("Item Slot", parent: bag.transform);
                 slotUI.name = $"Slot ({i})";
-                slotUI.transform.SetParent(bag.transform);
-                // slotUI.Index = i;
                 slotUI.Link(Inventory.Bag[i]);
-                slotUI.OnMouseDown += OnBagSlotClick;
+                slotUI.OnMouseDown += OnBagSlotClicked;
                 _bagSlotUIs.Add(i, slotUI);
                 slotUI.Show();
             }
@@ -261,11 +254,13 @@ namespace UZSG.UI.Players
             ReleaseHeldItem();
             return toReturn;
         }
+
         public Item TakeHeldItemSingle()
         {
             Item toReturn = _heldItem.Take(1);
             return toReturn;
         }
+
         /// <summary>
         /// Swaps held items, holding the new given Item, and returning the previously held Item.
         /// </summary>
@@ -287,7 +282,7 @@ namespace UZSG.UI.Players
             
         }
 
-        void OnBagSlotClick(object sender, ItemSlotUI.ClickedContext click)
+        void OnBagSlotClicked(object sender, ItemSlotUI.ClickedContext click)
         {
             _selectedSlotUI = (ItemSlotUI) sender;
             _selectedSlot = _selectedSlotUI.Slot;
@@ -323,9 +318,8 @@ namespace UZSG.UI.Players
                         }
                         else /// swap items
                         {
-                            Item taken = _selectedSlot.TakeAll();
-                            var previousHeld = SwapHeldWith(taken);
-                            _selectedSlot.Put(previousHeld);
+                            HoldItem(_selectedSlot.TakeAll());
+                            _selectedSlot.Put(heldItem);
                         }
                     }
                     else /// swap items
@@ -355,13 +349,14 @@ namespace UZSG.UI.Players
                     }
                     else if (_selectedSlot.Item.Is(HeldItem))
                     {
-                        Item ofOne = _heldItem.Take(1);
+                        Item ofOne = TakeHeldItemSingle();
                         if (_selectedSlot.TryStack(ofOne, out var excess))
                         {
                             if (!excess.IsNone) HoldItem(excess);
                         } 
                         else /// swap items
                         {
+                            _heldItem.Stack(ofOne); /// return the item we took earlier
                             Item taken = _selectedSlot.TakeAll();
                             var previousHeld = SwapHeldWith(taken);
                             _selectedSlot.Put(previousHeld);

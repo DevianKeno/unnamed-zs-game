@@ -14,6 +14,8 @@ namespace UZSG.Entities
         public float CrossfadeTransitionDuration = 0.5f;
 
         bool _isPlayingAnimation = false;
+        bool _enableModelAnimations = true;
+        bool _enableClientAnimations = false;
         [SerializeField] float _targetX = 0f;
         [SerializeField] float _targetY = 0f;
 
@@ -33,6 +35,15 @@ namespace UZSG.Entities
             Controls.OnCrouch += OnCrouch;
             Controls.OnTurn += OnTurn;
             Actions.OnInteractVehicle += OnInteractVehicle;
+        }
+
+        void InitializeAnimatorAsClient()
+        {
+            animatorFPP.gameObject.SetActive(true);
+            _enableClientAnimations = true;
+
+            animator.gameObject.SetActive(false);
+            _enableModelAnimations = false;
         }
 
 
@@ -56,8 +67,14 @@ namespace UZSG.Entities
         {
             AnimateTogether($"turn", 0f);
 
-            animator.SetFloat("turn", direction);
-            animatorFPP.SetFloat("turn", direction);
+            if (_enableModelAnimations)
+            {
+                animator.SetFloat("turn", direction);
+            }
+            if (_enableClientAnimations)
+            {
+                animatorFPP.SetFloat("turn", direction);
+            }
         }
 
         void OnInteractVehicle(VehicleInteractContext context)
@@ -83,8 +100,14 @@ namespace UZSG.Entities
         /// </summary>
         void AnimateTogether(string anim, float crossfadeTransitionDuration)
         {
-            animator.CrossFade(anim, crossfadeTransitionDuration);
-            animatorFPP.CrossFade(anim, crossfadeTransitionDuration);
+            if (_enableModelAnimations)
+            {
+                animator.CrossFade(anim, crossfadeTransitionDuration);
+            }
+            if (_enableClientAnimations)
+            {
+                animatorFPP.CrossFade(anim, crossfadeTransitionDuration);
+            }
         }
 
         void TransitionAnimator(StateMachine<MoveStates>.TransitionContext t)
@@ -101,11 +124,16 @@ namespace UZSG.Entities
             _targetX = Mathf.Lerp(Animator.GetFloat("x"), x, Damping * Time.deltaTime);
             _targetY = Mathf.Lerp(Animator.GetFloat("y"), y, Damping * Time.deltaTime);
 
-            animator.SetFloat("x", _targetX);
-            animator.SetFloat("y", _targetY);
-
-            animatorFPP.SetFloat("x", _targetX);
-            animatorFPP.SetFloat("y", _targetY);
+            if (_enableModelAnimations)
+            {
+                animator.SetFloat("x", _targetX);
+                animator.SetFloat("y", _targetY);
+            }
+            if (_enableClientAnimations)
+            {
+                animatorFPP.SetFloat("x", _targetX);
+                animatorFPP.SetFloat("y", _targetY);
+            }
         }
         
         IEnumerator FinishAnimation(float durationSeconds)

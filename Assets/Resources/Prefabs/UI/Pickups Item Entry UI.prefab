@@ -689,7 +689,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 065d55751c233a341a7bf23e95e983ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rect: {fileID: 0}
+  rect: {fileID: 6805103343112894178}
   FadeDuration: 0.3
   Item:
     itemData: {fileID: 0}

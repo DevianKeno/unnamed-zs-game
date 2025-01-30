@@ -62,14 +62,7 @@ namespace UZSG.Inventory
         /// </summary>
         public event EventHandler<ItemChangedContext> OnItemChanged;
 
-        public ItemSlot(int index)
-        {
-            this.index = index;
-            item = Item.None;
-            SlotType = ItemSlotType.All;
-        }
-        
-        public ItemSlot(int index, ItemSlotType slotType)
+        public ItemSlot(int index, ItemSlotType slotType = ItemSlotType.All)
         {
             this.index = index;
             item = Item.None;

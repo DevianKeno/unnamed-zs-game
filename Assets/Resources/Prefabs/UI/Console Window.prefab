@@ -1205,7 +1205,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0410ae27c05a8e40a789507a72229b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rect: {fileID: 0}
+  rect: {fileID: 8375136382778422168}
   FadeDuration: 0.3
   messages: {fileID: 3640037034390029841}
   inputField: {fileID: 4005093960711447774}

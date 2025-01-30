@@ -15,7 +15,7 @@ namespace UZSG.Saves
     {
         public int InstanceId;
         public string Id;
-        public TransformSaveData Transform = null;
+        public TransformSaveData Transform = new();
         public List<AttributeSaveData> Attributes = new();
     }
 }

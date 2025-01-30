@@ -28,13 +28,8 @@ MonoBehaviour:
     m_SerializedLabels:
     - player_audio
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 795e237b0b69232468c517930ff9367b
-    m_Address: Assets/Scenes/Plane.unity
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 694cbdc736a3bd047bf5c2213a731dce
-    m_Address: Assets/Scenes/AlphaWorld.unity
+    m_Address: Assets/AddressableAssets/Scenes/AlphaWorld.unity
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

@@ -148,7 +148,7 @@ namespace UZSG.Entities
             }
 
             if (IsInSiteRange)
-                return WildlifeActionStates.RunAway;
+                return WildlifeActionStates.Flee;
             else
                 return WildlifeActionStates.Roam;
         }
@@ -193,7 +193,7 @@ namespace UZSG.Entities
 
         void RunAway()
         {
-            wildlifeStateMachine.ToState(WildlifeActionStates.RunAway);
+            wildlifeStateMachine.ToState(WildlifeActionStates.Flee);
 
             // set rigid body to dynamic
             rb.isKinematic = false;
@@ -253,7 +253,7 @@ namespace UZSG.Entities
                 case WildlifeActionStates.Roam:
                     Roam();
                     break;
-                case WildlifeActionStates.RunAway:
+                case WildlifeActionStates.Flee:
                     RunAway();
                     break;
             }

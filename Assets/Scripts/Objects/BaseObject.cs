@@ -81,10 +81,9 @@ namespace UZSG.Objects
             transform.SetParent(Game.World.CurrentWorld.objectsContainer, worldPositionStays: true);
             if (this is IInteractable)
             {
-                var c = this.GetComponentInChildren<Collider>();
-                if (c != null)
+                foreach (var coll in GetComponentsInChildren<Collider>())
                 {
-                    c.gameObject.tag = Tags.INTERACTABLE;
+                    coll.gameObject.tag = Tags.INTERACTABLE;
                 }
             }
             var renderer = GetComponentInChildren<Renderer>();
@@ -155,9 +154,9 @@ namespace UZSG.Objects
                 Id = objectData.Id,
                 Transform = new()
                 {
-                    Position = Utils.FromUnityVec3(transform.position),
-                    Rotation = Utils.FromUnityVec3(transform.rotation.eulerAngles),
-                    LocalScale = Utils.FromUnityVec3(transform.localScale),
+                    Position = Utils.ToFloatArray(transform.position),
+                    Rotation = Utils.ToFloatArray(transform.rotation.eulerAngles),
+                    LocalScale = Utils.ToFloatArray(transform.localScale),
                 }
             };
 
@@ -213,8 +212,8 @@ namespace UZSG.Objects
 
         void InitializeTransform(TransformSaveData data)
         {
-            var position = Utils.FromNumericVec3(data.Position);
-            var rotation = Utils.FromNumericVec3(data.Rotation);
+            var position = Utils.FromFloatArray(data.Position);
+            var rotation = Utils.FromFloatArray(data.Rotation);
             // var scale = Utils.FromNumericVec3(data.LocalScale);
             transform.SetPositionAndRotation(position, Quaternion.Euler(rotation));
             // transform.localScale = scale;

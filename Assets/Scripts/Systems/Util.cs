@@ -46,6 +46,26 @@ namespace UZSG
                 z: vector.z
                 );
         }
+        
+        /// <summary>
+        /// Convert UnityEngine Vector3 to float array size 3.
+        /// </summary>
+        public static float[] ToFloatArray(UnityEngine.Vector3 vector)
+        {
+            return new float[] { vector.x, vector.y, vector.z };
+        }
+
+        /// <summary>
+        /// Convert float array size 3 to UnityEngine Vector3. 
+        /// </summary>
+        public static UnityEngine.Vector3 FromFloatArray(float[] values)
+        {
+            return new UnityEngine.Vector3(
+                x: values[0],
+                y: values[1],
+                z: values[2]
+            );
+        }
 
         /// <summary>
         /// Convert System.Numerics Vector3 to UnityEngine Vector3.

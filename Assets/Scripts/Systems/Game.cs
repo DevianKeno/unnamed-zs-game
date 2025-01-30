@@ -11,6 +11,7 @@ using PlayEveryWare.EpicOnlineServices;
 using UZSG.UI;
 using UZSG.EOS;
 using Epic.OnlineServices.Connect;
+using System.Threading.Tasks;
 
 namespace UZSG.Systems
 {
@@ -181,33 +182,63 @@ namespace UZSG.Systems
             public SceneTransitionOptions TransitionOptions { get; set; }
         }
 
-        event Action onLoadSceneCompleted;
-        public void LoadScene(LoadSceneOptions options, Action onLoadSceneCompleted = null)
+        public delegate void OnLoadSceneCallback();
+
+        public async void LoadSceneAsync(LoadSceneOptions options, OnLoadSceneCallback onCompleted = null)
         {
             try
             {
-                StartCoroutine(LoadSceneCoroutine(options, onLoadSceneCompleted));
+                await Task.Delay((int) Math.Clamp(options.DelaySeconds, 0, options.DelaySeconds) * 1000);
+                await LoadScene(options, onCompleted);
             }
-            catch (NullReferenceException e)
+            catch (Exception ex)
             {
-                Debug.LogError($"Scene does not exist" + e);
+                Debug.LogError(ex);
             }
         }
 
+        Dictionary<string, Scene> unactivatedScenes = new();
+
+        async Task LoadScene(LoadSceneOptions options, OnLoadSceneCallback onCompleted = null)
+        {
+            var asyncOp = SceneManager.LoadSceneAsync(options.SceneToLoad, options.Mode);
+            asyncOp.allowSceneActivation = false;
+            while (asyncOp.progress < 0.9f)
+            {
+                await Task.Yield();
+            }
+            if (options.ActivateOnLoad)
+            {
+                asyncOp.allowSceneActivation = true;
+            }
+            else
+            {
+                unactivatedScenes[options.SceneToLoad] = SceneManager.GetSceneByName(options.SceneToLoad);
+            }
+
+            onCompleted?.Invoke();
+            return;
+        }
+        
         public void UnloadScene(string name, Action onUnlLoadSceneCompleted = null)
         {
             try
             {
                 SceneManager.UnloadSceneAsync(name);
-            } catch (Exception e)
+            }
+            catch (Exception ex)
             {
-                Debug.LogError(e);
+                Debug.LogError(ex);
             }
         }
 
         public void ActivateScene(string name)
         {
-            SceneManager.SetActiveScene(SceneManager.GetSceneByName(name));
+            if (unactivatedScenes.ContainsKey(name))
+            {
+                SceneManager.SetActiveScene(unactivatedScenes[name]);
+                unactivatedScenes.Remove(name);
+            }
         }
 
         public class UnloadSceneOptions
@@ -220,21 +251,6 @@ namespace UZSG.Systems
         public void UnloadScene(UnloadSceneOptions options, Action onLoadSceneCompleted = null)
         {
             SceneManager.UnloadSceneAsync(options.Name);
-        }
-
-        IEnumerator LoadSceneCoroutine(LoadSceneOptions options, Action onLoadSceneCompleted)
-        {
-            this.onLoadSceneCompleted += onLoadSceneCompleted;
-
-            var asyncOp = SceneManager.LoadSceneAsync(options.SceneToLoad, options.Mode);
-            while (asyncOp.progress < 0.9f)
-            {
-                yield return null;
-            }
-            asyncOp.allowSceneActivation = true;
-
-            this.onLoadSceneCompleted?.Invoke();
-            this.onLoadSceneCompleted = null;
         }
 
         #endregion

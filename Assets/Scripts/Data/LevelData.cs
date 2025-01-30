@@ -15,6 +15,7 @@ namespace UZSG.Data
         public Vector2 DimensionsKilometers;
         public bool Enable = true;
         public Texture Image;
+        public string SceneName; /// Do not leave blank
         public AssetReference Scene;
     }
 }

@@ -199,7 +199,7 @@ namespace UZSG.Crafting
                 foreach (ItemSlot slot in input.Slots)
                 {
                     if (remainingCount <= 0 ) break;
-                    if (!material.CompareTo(slot.Item)) continue;
+                    if (!material.Is(slot.Item)) continue;
 
                     int comparator = slot.Item.Count - remainingCount;
 

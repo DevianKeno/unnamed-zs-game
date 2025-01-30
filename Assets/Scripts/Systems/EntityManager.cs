@@ -24,6 +24,17 @@ namespace UZSG.Systems
         /// </summary>
         Dictionary<string, EntityData> _entitiesDict = new();
 
+        int defaultLayer;
+        /// <summary>
+        /// Default layer for all entities.
+        /// </summary>
+        public int DEFAULT_LAYER => defaultLayer;
+        int outlinedLayer;
+        /// <summary>
+        /// Entities in this layer render screen space outlines.
+        /// </summary>
+        public int OUTLINED_LAYER => outlinedLayer;
+
         public event Action<EntityInfo> OnEntitySpawned;
         /// <summary>
         /// Subscribe to this event if you need to make last changes before the entity is removed from the universe.
@@ -41,6 +52,9 @@ namespace UZSG.Systems
             {
                 _entitiesDict[etty.Id] = etty;
             }
+            
+            defaultLayer = LayerMask.NameToLayer("Entities");
+            outlinedLayer = LayerMask.NameToLayer("Outline");
         }
         
         void OnEntityKilledInternal(Entity entity)
@@ -51,11 +65,6 @@ namespace UZSG.Systems
             });
         }
 
-        Transform GetTransformParent()
-        {
-            return Game.World.IsInWorld ? Game.World.CurrentWorld.entitiesContainer : transform;
-        }
-        
 
         #region Public methods
     
@@ -85,19 +94,17 @@ namespace UZSG.Systems
                     go.name = $"{ettyData.Name} (Entity)";
                     if (go.TryGetComponent(out Entity entity)) /// what do making entity without an entity component!!
                     {
+                        entity.OnSpawnInternal();
+                        entity.OnKilled += OnEntityKilledInternal;
+
                         var info = new EntityInfo()
                         {
                             Entity = entity
                         };
                         callback?.Invoke(info);
-                        entity.OnSpawnInternal();
-                        entity.OnKilled += OnEntityKilledInternal;
                         OnEntitySpawned?.Invoke(info);
 
-                        if (Game.Main.EnableDebugMode)
-                        {
-                            Game.Console.LogInfo($"Spawned entity {entityId} at ({position.x}, {position.y}, {position.z})");
-                        }
+                        Game.Console.LogDebug($"Spawned entity {entityId} at ({position.x}, {position.y}, {position.z})");
                         return;
                     }
                     Destroy(go);
@@ -130,22 +137,19 @@ namespace UZSG.Systems
                     go.name = $"{ettyData.Name} (Entity)";
                     if (go.TryGetComponent(out Entity entity))
                     {
-                        var info = new EntitySpawnedInfo<T>()
-                        {
-                            Entity = entity as T
-                        };
-                        onCompleted?.Invoke(info);
                         entity.OnSpawnInternal();
                         entity.OnKilled += OnEntityKilledInternal;
+                        
+                        onCompleted?.Invoke(new EntitySpawnedInfo<T>()
+                        {
+                            Entity = entity as T
+                        });
                         OnEntitySpawned?.Invoke(new()
                         {
                             Entity = entity
                         });
                         
-                        if (Game.Main.EnableDebugMode)
-                        {
-                            Game.Console.LogInfo($"Spawned entity {entityId} at ({position.x}, {position.y}, {position.z})");
-                        }
+                        Game.Console.LogDebug($"Spawned entity {entityId} at ({position.x}, {position.y}, {position.z})");
                         return;
                     }
                     Destroy(go);
@@ -176,10 +180,7 @@ namespace UZSG.Systems
                         itemEntity.OnSpawnInternal();
                         itemEntity.OnKilled += OnEntityKilledInternal;
                         
-                        if (Game.Main.EnableDebugMode)
-                        {
-                            Game.Console.LogDebug($"Spawned item {id} at ({position.x}, {position.y}, {position.z})");
-                        }
+                        Game.Console.LogDebug($"Spawned item {id} at ({position.x}, {position.y}, {position.z})");
                         return;
                     }
                     Destroy(go);
@@ -200,5 +201,11 @@ namespace UZSG.Systems
         }
 
         #endregion
+
+
+        Transform GetTransformParent()
+        {
+            return Game.World.IsInWorld ? Game.World.CurrentWorld.entitiesContainer : transform;
+        }
     }
 }

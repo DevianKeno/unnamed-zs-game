@@ -1,8 +1,10 @@
 {
+  "UID": "",
+  "DisplayName": "",
   "Inventory": {
-    "Bag": null,
-    "Hotbar": null,
-    "Equipment": null,
+    "Bag": [],
+    "Hotbar": [],
+    "Equipment": [],
     "Type": "InventorySaveData"
   },
   "KnownRecipes": [
@@ -10,9 +12,26 @@
     "workbench",
     "stone_axe"
   ],
+  "IsCreative": false,
   "InstanceId": 0,
   "Id": null,
-  "Transform": null,
+  "Transform": {
+    "Position": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "LocalScale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
   "Attributes": [
     {
       "Id": "health",

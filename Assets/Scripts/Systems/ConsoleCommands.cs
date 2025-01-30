@@ -16,7 +16,7 @@ namespace UZSG.Systems
     /// </summary>
     public sealed partial class Console : MonoBehaviour, IInitializeable
     {
-        Command CreateCommand(CreateCommandOptions options)
+        public Command CreateCommand(CreateCommandOptions options)
         {
             // Create a new command using the options
             Command newCommand = new()
@@ -151,11 +151,6 @@ namespace UZSG.Systems
                           "Toggles creative menu ability.")
                           .OnInvoke += CCreative;
 
-            CreateCommand("freecam",
-                          "Toggle Free Look Camera.",
-                          isDebugCommand: true)
-                          .OnInvoke += CFreecam;
-
             CreateCommand("craft <item_id>",
                           "Crafts item given the item_id",
                           isDebugCommand: true)
@@ -284,6 +279,7 @@ namespace UZSG.Systems
             if (_creativeIsOn)
             {
                 _creativeIsOn = false;
+                localPlayer.InventoryWindow.RemoveAppendedFrame(creativeWindow);
                 creativeWindow.Destruct();
                 LogInfo($"Disabled creative menu.");
             }
@@ -296,13 +292,7 @@ namespace UZSG.Systems
                 localPlayer.InventoryWindow.Append(creativeWindow);
                 LogInfo($"Enabled creative menu.");
             }
-
-            // }
-            // else
-            // {
-
-            // }
-        }       
+        }
 
         /// <summary>
         /// Spawns an entity.
@@ -356,14 +346,6 @@ namespace UZSG.Systems
         }
 
         /// <summary>
-        /// Clears the console messages.
-        /// </summary>
-        void CFreecam(object sender, string[] args)
-        {
-            
-        }
-        
-        /// <summary>
         /// Gives the player the item.
         /// </summary>
         void CGive(object sender, string[] args)
@@ -386,7 +368,7 @@ namespace UZSG.Systems
                 }
                 else /// target player Id
                 {
-                    throw new NotImplementedException();
+                    throw new InvalidCommandUsageException();
                 }
             }
         }
@@ -513,16 +495,34 @@ namespace UZSG.Systems
 
         void CTime(object sender, string[] args)
         {
-            if (args[0] == "set")
+            if (!Game.World.IsInWorld)
             {
-                if (int.TryParse(args[1], out int value))
+                Game.Console.LogInfo("/time command can only be performed within worlds.");
+                return;
+            }
+            
+            if (args.Length > 1 && args[0] == "set")
+            {
+                int hour, minute = 0;
+
+                if (int.TryParse(args[1], out hour))
                 {
-                    // Game.World.CurrentWorld.Time.SetTime(value);
+                    if (args.Length > 2 && int.TryParse(args[2], out int parsedMinute))
+                    {
+                        minute = parsedMinute;
+                    }
+                    
+                    Game.World.CurrentWorld.Time.SetTime(hour, minute);
+                    Game.Console.LogInfo($"Time set to {hour}:{minute:D2}");
                 }
                 else
                 {
-                    Game.Console.LogInfo("Time must be a positive integer value.");
+                    Game.Console.LogInfo("/time set arguments must be valid positive integers.");
                 }
+            }
+            else
+            {
+                Game.Console.LogInfo("Usage: /time set <hour> [minute]");
             }
         }
 

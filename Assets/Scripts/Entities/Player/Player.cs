@@ -4,25 +4,28 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Unity.Netcode;
+
 using MEC;
+using TMPro;
 
-using Epic.OnlineServices.UserInfo;
-
-using UZSG.Systems;
-using UZSG.Inventory;
-using UZSG.Interactions;
 using UZSG.Attributes;
-using UZSG.Players;
-using UZSG.FPP;
-using UZSG.UI.HUD;
-using UZSG.UI.Players;
-using UZSG.StatusEffects;
-using UZSG.Saves;
-using UZSG.UI.Objects;
-using UZSG.UI;
 using UZSG.Building;
 using UZSG.Data;
+using UZSG.EOS;
+using UZSG.FPP;
+using UZSG.Interactions;
+using UZSG.Inventory;
 using UZSG.Network;
+using UZSG.Players;
+using UZSG.Saves;
+using UZSG.StatusEffects;
+using UZSG.Systems;
+using UZSG.UI;
+using UZSG.UI.HUD;
+using UZSG.UI.Objects;
+using UZSG.UI.Players;
+using UZSG.Worlds;
+
 using static UZSG.Players.MoveStates;
 
 namespace UZSG.Entities
@@ -32,23 +35,32 @@ namespace UZSG.Entities
     /// </summary>
     public partial class Player : Entity, IPlayer
     {
-        public UserInfoData UserInfo { get; set; }
-        public string DisplayName => this.UserInfo.DisplayName ?? "Player";
+        public string DisplayName
+        {
+            get
+            {
+                return this.NetworkEntity.AccountInfo.DisplayName ?? "Player";
+            }
+            set
+            {
+                nametagText.text = value;
+            }
+        }
         public bool CanPickUpItems = true;
 
         public PlayerEntityData PlayerEntityData => (PlayerEntityData) entityData;
         public PlayerSaveData SaveData => (PlayerSaveData) saveData;
         
-        [SerializeField] InventoryHandler inventory;
-        public InventoryHandler Inventory => inventory;
+        [SerializeField] PlayerInventoryManager inventory;
+        public PlayerInventoryManager Inventory => inventory;
 
         // [SerializeField] PlayerCrafting crafter;
         // public PlayerCrafting Crafter => crafter;
-        [SerializeField] Players.PlayerCrafting crafting;
-        public Players.PlayerCrafting Crafting => crafting;
+        [SerializeField] PlayerCrafting crafting;
+        public PlayerCrafting Crafting => crafting;
 
-        [SerializeField] BuildingManager buildingManager;
-        public BuildingManager BuildManager => buildingManager;
+        [SerializeField] PlayerBuildingManager buildingManager;
+        public PlayerBuildingManager BuildManager => buildingManager;
 
         [SerializeField] StatusEffectCollection statusEffects;
         public StatusEffectCollection StatusEffects => statusEffects;
@@ -58,14 +70,6 @@ namespace UZSG.Entities
 
         [SerializeField] EntityHitboxController hitboxes;
         public EntityHitboxController Hitboxes => hitboxes;
-
-        #region Network
-        [SerializeField] NetworkObject networkObject;
-        public NetworkObject NetworkObject => networkObject;
-        [SerializeField] PlayerNetworkEntity networkEntity;
-        public PlayerNetworkEntity NetworkEntity => networkEntity;
-
-        #endregion
         
         bool _isInitialized = false;
         /// <summary>
@@ -142,10 +146,11 @@ namespace UZSG.Entities
 
 
         [field: Header("Components")]
+        [SerializeField] Camera mainCamera;
         /// <summary>
         /// Unity camera tagged "MainCamera"
         /// </summary>
-        public Camera MainCamera { get; private set; }
+        public Camera MainCamera => mainCamera;
         public PlayerControls Controls { get; private set; }
         public PlayerActions Actions { get; private set; }
         public MovementStateMachine MoveStateMachine { get; private set; }
@@ -153,12 +158,25 @@ namespace UZSG.Entities
         public FPPController FPP { get; private set; }
         public Rigidbody Rigidbody => Controls.Rigidbody;
 
+        [Space, Header("Network Components")]
+        [SerializeField] NetworkObject networkObject;
+        public NetworkObject NetworkObject => networkObject;
+        [SerializeField] PlayerNetworkEntity networkEntity;
+        public PlayerNetworkEntity NetworkEntity => networkEntity;
+
+        [SerializeField] GameObject nametagGameObject;
+        [SerializeField] TextMeshPro nametagText;
+        [SerializeField] List<GameObject> clientObjects = new();
+
 
         #region Initializing methods
 
         void Awake()
         {
-            MainCamera = Camera.main;
+            inventory = GetComponentInChildren<PlayerInventoryManager>();
+            crafting = GetComponentInChildren<PlayerCrafting>();
+            buildingManager = GetComponentInChildren<PlayerBuildingManager>();
+
             MoveStateMachine = GetComponent<MovementStateMachine>();
             ActionStateMachine = GetComponent<ActionStateMachine>();
             Controls = GetComponent<PlayerControls>();
@@ -168,73 +186,69 @@ namespace UZSG.Entities
 
         public override void OnSpawn()
         {
+            Initialize();
             // Game.Console.LogInfo("I, player, has been spawned!");
-            audioController.CreateAudioPool(8);
-            audioController.LoadAudioAssetsData(PlayerEntityData.AudioAssetsData); /// TODO: should be global player sounds only
         }
 
         /// <summary>
-        /// Initializing a player entity as client means to enable all client things associated with it
+        /// Initialize the player as a normal entity.
+        /// </summary>
+        public void Initialize()
+        {
+            /// Initialize all Player Entity components (order important)
+            audioController.CreateAudioPool(8);
+            audioController.LoadAudioAssetsData(PlayerEntityData.AudioAssetsData); /// TODO: should be global player sounds only
+
+            InitializeStateMachines();
+            InitializeAnimator();
+            InitializeHitboxes();
+        }
+
+        /// <summary>
+        /// Initializing a player entity as local player means to enable all client things associated with it
         /// (e.g., inputs, actions, camera renders, etc)
         /// </summary>
-        public void InitializeAsClient()
+        public void InitializeAsPlayer(PlayerSaveData saveData, bool isLocalPlayer)
         {
             if (_isInitialized) return;
             
-            /// Data handle
-            // if (saveData == null)
-            // {
-            //     LoadDefaultSaveData<PlayerSaveData>();
-            //     _isInitialized = true;
-            //     return;
-            // }
-            // else
-            // {
-            //     this.saveData = saveData;
-            // }
-            // this.ReadSaveData(this.saveData as PlayerSaveData);
-            
-            /// Components handle (order important)
-            InitializeAttributeEvents();
-            InitializeStateMachines();
-            InitializeHitboxes();
-            InitializeAnimator();
+            ReadSaveData(saveData as PlayerSaveData); 
+    
             InitializeInventoryUIs();
-            InitializeCrafter();     /// TODO: SAVEABLE
-            InitializeBuilding();
             InitializeHUDs();
-            InitializeEvents();
-            InitializeInputs();
 
-            Controls.Initialize();
-            Controls.Enable();
-            Actions.Initialize();
-            Actions.Enable();
-            FPP.Initialize();
-            FPP.OnHeldItemChanged += (heldItemData) =>
+            crafting.Initialize(this, isLocalPlayer);  /// TODO: SAVEABLE
+            buildingManager.Initialize(this, isLocalPlayer);
+
+            if (isLocalPlayer)
             {
-                HasHeldItem = heldItemData != null;
-                HeldItem = heldItemData;
-            };
-            ParentMainCameraToFPPController();
+                ActivateClientComponents();
+                InitializeAttributeEvents();
+                InitializeAnimatorAsClient();
+                InitializeClientEvents();
+                InitializeInputs();
 
-            this.Rigidbody.isKinematic = false;
+                Controls.Initialize();
+                Controls.Enable();
+                Actions.Initialize();
+                Actions.Enable();
+                FPP.Initialize();
+                FPP.OnHeldItemChanged += (heldItemData) =>
+                {
+                    HasHeldItem = heldItemData != null;
+                    HeldItem = heldItemData;
+                };
+                ParentMainCameraToFPPController();
+
+                this.Rigidbody.isKinematic = false;
+            }
+
             Game.Tick.OnTick += OnTick;
             _isInitialized = true;
             OnDoneInit?.Invoke(this);
         }
 
-        void InitializePostSaveDataRead()
-        {
-            
-        }
-
-        void InitializeInventory()
-        {
-            inventory.Initialize(this);
-        }
-
-        void InitializeEvents()
+        void InitializeClientEvents()
         {
             Game.World.OnExitWorld += OnExitWorld;
             Game.World.CurrentWorld.OnPause += OnPause;
@@ -303,16 +317,6 @@ namespace UZSG.Entities
             };
         }
 
-        void InitializeCrafter()
-        {
-            crafting.Initialize(this);
-        }
-
-        void InitializeBuilding()
-        {
-            buildingManager.Initialize(this);
-        }
-
         void InitializeInputs()
         {
             actionMap = Game.Main.GetActionMap("Player");
@@ -329,6 +333,18 @@ namespace UZSG.Entities
         {
             MainCamera.transform.SetParent(FPP.Camera.Holder, worldPositionStays: false);
             MainCamera.transform.localPosition = Vector3.zero;
+        }
+
+        /// <summary>
+        /// Client components are initially disabled.
+        /// </summary>
+        void ActivateClientComponents()
+        {
+            foreach (GameObject go in clientObjects)
+            {
+                go.SetActive(true);
+            }
+            MainCamera.gameObject.SetActive(true);
         }
 
         #endregion
@@ -507,13 +523,18 @@ namespace UZSG.Entities
             {
                 Game.Console.LogDebug($"Tried to load a save data for player but it was invalid. Loading defaults instead...");
                 LoadDefaultSaveData<PlayerSaveData>();
-                saveData = this.saveData as PlayerSaveData; /// override
+                saveData = this.saveData as PlayerSaveData; /// yes, override the parameter
             }
+            
+            this.saveData = saveData;
 
-            base.ReadSaveData(saveData); /// as Entity
-            /// Load inventory, etc. and whatever the fuck not related to the Player
-            this.inventory.Initialize(this);
-            this.inventory.ReadSaveData(saveData.Inventory);
+            ReadTransformSaveData(saveData.Transform);
+            
+            attributes = new();
+            attributes.ReadSaveData(saveData.Attributes);
+
+            inventory.Initialize(this);
+            inventory.ReadSaveData(saveData.Inventory);
         }
 
         /// stuff to save?
@@ -523,26 +544,31 @@ namespace UZSG.Entities
         public new PlayerSaveData WriteSaveData()
         {
             var esd = base.WriteSaveData();
-        
-            var userId = this.UserInfo.UserId;
+            
+            string uid = World.LOCAL_PLAYER_ID;
+            if (EOSSubManagers.Auth.IsLoggedIn)
+            {
+                uid = Game.EOS.GetLocalUserId().ToString();
+            }
+            
             var psd = new PlayerSaveData
             {
-                UID = userId != null ? userId.ToString() :  "localplayer",
+                UID = uid,
                 Id = esd.Id,
                 Transform = esd.Transform,
                 Attributes = attributes.WriteSaveData(),
                 Inventory = inventory.WriteSaveData()
             };
-            esd.Transform.Rotation = Utils.FromUnityVec3(FPP.Camera.LocalRotationEuler);
+            esd.Transform.Rotation = Utils.ToFloatArray(FPP.Camera.LocalRotationEuler);
 
             return psd;
         }
 
         protected override void ReadTransformSaveData(TransformSaveData data)
         {
-            this.Rigidbody.position = Utils.FromNumericVec3(data.Position);
-            this.FPP.Camera.LookRotation(Utils.FromNumericVec3(data.Rotation));
-            transform.localScale = Utils.FromNumericVec3(data.LocalScale);
+            Rigidbody.position = Utils.FromFloatArray(data.Position);
+            FPP.Camera.LookRotation(Utils.FromFloatArray(data.Rotation));
+            // transform.localScale = Utils.FromFloatArray(data.LocalScale);
         }
 
         #endregion
@@ -597,6 +623,11 @@ namespace UZSG.Entities
         {
             yield return Timing.WaitForSeconds(Attributes["stamina_regen_delay"].Value);
             _allowStaminaRegen = true;
+        }
+
+        public void SetNametagVisible(bool visible)
+        {
+            nametagGameObject.SetActive(visible);
         }
     }
 }

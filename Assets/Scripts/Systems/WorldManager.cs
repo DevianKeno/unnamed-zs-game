@@ -1,29 +1,32 @@
-using Newtonsoft.Json;
 using System;
+using System.Collections;
 using System.IO;
 using System.Threading.Tasks;
-using TMPro;
+
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.InputSystem;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.SceneManagement;
+
+using Newtonsoft.Json;
+using TMPro;
+
 using UZSG.Data;
 using UZSG.EOS;
 using UZSG.Saves;
 using UZSG.UI;
 using UZSG.Worlds;
 
-using System.Collections;
-
 namespace UZSG.Systems
 {
     public class WorldManager : MonoBehaviour, IInitializeable
     {
         public const string WORLDS_FOLDER = "Worlds";
-        public const string WORLD_SCREENSHOT_EXTENSION = ".jpg";
-        public const int WORLD_SCREENSHOT_JPG_QUALITY = 50;
+        public const string WORLD_SCREENSHOT_EXTENSION = ".png";
+        public const int WORLD_SCREENSHOT_WIDTH = 576;
+        public const int WORLD_SCREENSHOT_HEIGHT = 324;
 
         bool _isInitialized;
         public bool IsInitialized => _isInitialized;
@@ -403,27 +406,34 @@ namespace UZSG.Systems
         IEnumerator TakeScreenshotCoroutine()
         {
             var mainCamera = Camera.main;
-            // Create a temporary RenderTexture
-            RenderTexture rt = new(Screen.width, Screen.height, 24);
-            mainCamera.targetTexture = rt;
-            mainCamera.Render(); // Render the scene without UI
 
-            // Read pixels from RenderTexture
-            Texture2D screenshot = new(Screen.width, Screen.height, TextureFormat.RGB24, false);
-            RenderTexture.active = rt;
-            screenshot.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
+            // Create full resolution RenderTexture
+            RenderTexture fullResRT = new(Screen.width, Screen.height, 24);
+            RenderTexture downscaleRT = new(WORLD_SCREENSHOT_WIDTH, WORLD_SCREENSHOT_HEIGHT, 24);
+            
+            mainCamera.targetTexture = fullResRT;
+            mainCamera.Render();
+
+            // Downscale by blitting the fullResRT to downscaleRT
+            Graphics.Blit(fullResRT, downscaleRT);
+
+            // Read pixels from the downscaled RenderTexture
+            Texture2D screenshot = new(WORLD_SCREENSHOT_WIDTH, WORLD_SCREENSHOT_HEIGHT, TextureFormat.RGB24, false);
+            RenderTexture.active = downscaleRT;
+            screenshot.ReadPixels(new Rect(0, 0, WORLD_SCREENSHOT_WIDTH, WORLD_SCREENSHOT_HEIGHT), 0, 0);
             screenshot.Apply();
 
-            // Clean up
+            // Cleanup
             mainCamera.targetTexture = null;
             RenderTexture.active = null;
-            rt.Release();
-            Destroy(rt);
+            fullResRT.Release();
+            downscaleRT.Release();
+            Destroy(fullResRT);
+            Destroy(downscaleRT);
 
-            // Save the screenshot as a PNG
-            byte[] bytes = screenshot.EncodeToJPG(quality: WORLD_SCREENSHOT_JPG_QUALITY);
-            var screenshotPath = Path.Join(CurrentWorld.worldpath, $"world{WORLD_SCREENSHOT_EXTENSION}");
-            File.WriteAllBytes(screenshotPath, bytes);
+            // Save the screenshot
+            File.WriteAllBytes(Path.Join(CurrentWorld.worldpath, $"world{WORLD_SCREENSHOT_EXTENSION}"), screenshot.EncodeToPNG());
+            Destroy(screenshot);
 
             yield return null;
         }

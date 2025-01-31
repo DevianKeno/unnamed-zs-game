@@ -183,11 +183,10 @@ MonoBehaviour:
   item:
     itemData: {fileID: 0}
     count: 0
-    attributes:
-      attributesReadOnly: []
   Index: 0
   image: {fileID: 7226684566756821324}
   indexTMP: {fileID: 0}
+  displayNameTMP: {fileID: 0}
   itemDisplayUI: {fileID: 7520939431900211338}
   button: {fileID: 0}
 --- !u!1001 &6279018256620818243

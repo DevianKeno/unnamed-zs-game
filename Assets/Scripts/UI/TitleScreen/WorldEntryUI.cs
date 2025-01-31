@@ -55,7 +55,7 @@ namespace UZSG.UI.TitleScreen
             }
             
             var imageBytes = File.ReadAllBytes(imagePath);
-            var texture = new Texture2D(2, 2, TextureFormat.RGB24, false);
+            var texture = new Texture2D(2, 2);
             if (texture.LoadImage(imageBytes))
             {
                 return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.one * 0.5f);

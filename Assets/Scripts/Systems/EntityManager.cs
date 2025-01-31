@@ -159,11 +159,12 @@ namespace UZSG.Systems
             };
         }
         
-        public void SpawnItem(string id, int count = 1, Vector3 position = default)
-        {            
-            if (!_entitiesDict.ContainsKey("item")) /// this has a zero chance to fail >:(
+        public void SpawnItem(Item item, Vector3 position = default)
+        {
+            if (item.IsNone || item.Count <= 0)
             {
-                Game.Console.LogDebug($"Entity '{id}' does not exist!");
+                Game.Console.LogDebug($"Item to spawn is none item.");
+                Game.Console.Assert(item.Count <= 0, $"Item count is less than or equal to zero.");
                 return;
             }
 
@@ -173,14 +174,14 @@ namespace UZSG.Systems
                 if (a.Status == AsyncOperationStatus.Succeeded)
                 {
                     var go = Instantiate(a.Result, position, Quaternion.identity, GetTransformParent());
-                    go.name = $"Item '{id}' (Entity)";
+                    go.name = $"Item Entity (Entity)";
                     if (go.TryGetComponent(out ItemEntity itemEntity)) /// this has a zero chance to fail >:(
                     {
-                        itemEntity.Item = new Item(id, count);
+                        itemEntity.Item = item;
                         itemEntity.OnSpawnInternal();
                         itemEntity.OnKilled += OnEntityKilledInternal;
                         
-                        Game.Console.LogDebug($"Spawned item {id} at ({position.x}, {position.y}, {position.z})");
+                        Game.Console.LogDebug($"Spawned item {item.Data.DisplayName} at ({position.x}, {position.y}, {position.z})");
                         return;
                     }
                     Destroy(go);

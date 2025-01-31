@@ -35,6 +35,7 @@ namespace UZSG.Systems
         public ConsoleWindow Gui => gui;
         InputAction toggleUI;
         Player localPlayer;
+        LayerMask groundLayerMask;
 
         #region Events
         /// <summary>
@@ -54,6 +55,7 @@ namespace UZSG.Systems
             Game.Main.OnLateInit += OnLateInit;
             LogInfo("Initializing console...");
             InitializeCommands();
+            groundLayerMask = LayerMask.NameToLayer("Ground");
         }
 
         void InitializeInputs()

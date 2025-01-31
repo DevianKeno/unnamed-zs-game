@@ -173,6 +173,10 @@ namespace UZSG.Systems
                           isDebugCommand: true)
                           .OnInvoke += CHost;
 
+            CreateCommand("place <object>",
+                          "Places an object where the player is looking at.")
+                          .OnInvoke += CPlace;
+
             // CreateCommand("msg <username> <msg>",
             //               "Message a player (in the current lobby). Will only work when in a lobby.",
             //               isDebugCommand: true)
@@ -415,6 +419,29 @@ namespace UZSG.Systems
 
             var handler = FindAnyObjectByType<HostWorldHandler>();
             handler.CreateLobby();
+        }
+        
+        const float PLACE_RANGE = 50f;
+        /// <summary>
+        /// Places an object in the world, positioned on where the player is looking at.
+        /// </summary>
+        void CPlace(object sender, string[] args)
+        {
+            if (!Game.World.IsInWorld) return;
+
+            var player = Game.World.GetWorld().GetLocalPlayer();
+            if (player == null) return;
+
+            if (Physics.Raycast(player.EyeLevel, player.Forward, out RaycastHit hit, PLACE_RANGE, groundLayerMask))
+            {
+                // if (groundLayerMask.Includes(hit.collider.gameObject.layer))
+                // {
+                    Game.Objects.PlaceNew(args[0], position: hit.point, (info) =>
+                    {
+                        info.Object.Rotation = Quaternion.identity; /// some objects should placed facing the player :P
+                    });
+                // }
+            }
         }  
 
         /// <summary>
@@ -545,7 +572,7 @@ namespace UZSG.Systems
         }
 
         /// <summary>
-        /// World commands.
+        /// Set the current weather.
         /// </summary>
         void CWeather(object sender, string[] args)
         {

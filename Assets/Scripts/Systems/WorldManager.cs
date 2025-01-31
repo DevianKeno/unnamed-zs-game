@@ -311,7 +311,6 @@ namespace UZSG.Systems
         {
             if (!IsInWorld) return;
 
-            Game.Console.LogInfo("[World]: Exiting world...");
             pauseMenuWindow.Hide();
             
             StartCoroutine(TakeScreenshotCoroutine());
@@ -329,8 +328,7 @@ namespace UZSG.Systems
         {
             await Task.Yield();
             
-            currentWorld.Deinitialize();
-            currentWorld.SaveWorld();
+            currentWorld.ExitWorld();
             currentWorld = null;
             IsInWorld = false;
             pauseInput.Disable();

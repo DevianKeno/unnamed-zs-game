@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81bc2aaa978c22b40abc135224c57da0, type: 3}
   m_Name: stone_axe
   m_EditorClassIdentifier: 
-  SourceId: uzsg
+  Namespace: uzsg
   Id: stone_axe
   Tags: []
-  Name: Stone Axe
+  DisplayName: Stone Axe
   Description: Used to cut down small plants and trees. Can also be used as a weapon,
     however, degrades more quickly if utilized in this usecase.
-  Model:
+  EntityModel:
     m_AssetGUID: 01c0df8e7e2f48140b4f232722d918a7
     m_SubObjectName: 
     m_SubObjectType: 
@@ -29,7 +29,9 @@ MonoBehaviour:
   Weight: 1.2
   StackSize: 1
   IsFuel: 0
-  FuelDuration: 0
+  FuelDurationSeconds: 0
+  IsObject: 0
+  ObjectData: {fileID: 0}
   IsMaterial: 0
   IsCraftable: 1
   Recipes:
@@ -43,7 +45,7 @@ MonoBehaviour:
   SwingDirection: 2
   Attributes:
   - data: {fileID: 11400000, guid: dfa56112f40946a428ee64518c941476, type: 2}
-    value: 10
+    value: 150
     baseMaximum: 0
     multiplier: 1
     flatBonus: 0
@@ -70,6 +72,12 @@ MonoBehaviour:
     flatBonus: 0
     LimitOverflow: 0
     LimitUnderflow: 0
+  Category: 0
+  MeleeAttributes:
+    BaseDamage: 0
+    BaseCritStrike: 0
+    BaseCritDamage: 0
+    ComboCount: 0
   armsAnimations: {fileID: 9100000, guid: f5cdbb08b40400c43a5f923466fff658, type: 2}
   viewmodel:
     m_AssetGUID: edb001579d6d28941bf07b932487f05e

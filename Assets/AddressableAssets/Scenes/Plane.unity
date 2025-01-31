@@ -15,16 +15,16 @@ RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 9
   m_Fog: 1
-  m_FogColor: {r: 0.29150152, g: 0.37164336, b: 0.45605737, a: 1}
+  m_FogColor: {r: 0.30838376, g: 0.46168023, b: 0.6226415, a: 1}
   m_FogMode: 3
-  m_FogDensity: 0.0013067097
+  m_FogDensity: 0.0025
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
-  m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
+  m_AmbientSkyColor: {r: 0.19607843, g: 0.29803923, b: 0.5019608, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 1
-  m_AmbientMode: 0
+  m_AmbientMode: 3
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
   m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
   m_HaloStrength: 0.482
@@ -37,8 +37,8 @@ RenderSettings:
   m_ReflectionBounces: 1
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
-  m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18334822, g: 0.22716793, b: 0.29571363, a: 1}
+  m_Sun: {fileID: 665612459}
+  m_IndirectSpecularColor: {r: 0.15759969, g: 0.18113345, b: 0.19675033, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -133,11 +133,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 380872245321647108, guid: 045083471b927524cb2dc0f04bb61987, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.97920936
+      value: 0.99904823
       objectReference: {fileID: 0}
     - target: {fileID: 380872245321647108, guid: 045083471b927524cb2dc0f04bb61987, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.20285222
+      value: 0.043619387
       objectReference: {fileID: 0}
     - target: {fileID: 380872245321647108, guid: 045083471b927524cb2dc0f04bb61987, type: 3}
       propertyPath: m_LocalRotation.y
@@ -193,15 +193,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3304269742938537319, guid: 045083471b927524cb2dc0f04bb61987, type: 3}
       propertyPath: m_Color.b
-      value: 0.22181737
+      value: 0.5568628
       objectReference: {fileID: 0}
     - target: {fileID: 3304269742938537319, guid: 045083471b927524cb2dc0f04bb61987, type: 3}
       propertyPath: m_Color.g
-      value: 0.82345
+      value: 0.30980393
       objectReference: {fileID: 0}
     - target: {fileID: 3304269742938537319, guid: 045083471b927524cb2dc0f04bb61987, type: 3}
       propertyPath: m_Color.r
-      value: 1
+      value: 0.11764705
       objectReference: {fileID: 0}
     - target: {fileID: 3304269742938537319, guid: 045083471b927524cb2dc0f04bb61987, type: 3}
       propertyPath: m_Enabled
@@ -221,7 +221,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3392221486933040618, guid: 045083471b927524cb2dc0f04bb61987, type: 3}
       propertyPath: rawTime
-      value: 162.42
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3392221486933040618, guid: 045083471b927524cb2dc0f04bb61987, type: 3}
       propertyPath: dayFogAt
@@ -245,7 +245,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3392221486933040618, guid: 045083471b927524cb2dc0f04bb61987, type: 3}
       propertyPath: currentHour
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 3392221486933040618, guid: 045083471b927524cb2dc0f04bb61987, type: 3}
       propertyPath: currentTime
@@ -281,7 +281,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3392221486933040618, guid: 045083471b927524cb2dc0f04bb61987, type: 3}
       propertyPath: currentMinute
-      value: 17
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3392221486933040618, guid: 045083471b927524cb2dc0f04bb61987, type: 3}
+      propertyPath: currentSecond
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3392221486933040618, guid: 045083471b927524cb2dc0f04bb61987, type: 3}
       propertyPath: dayFogColor.b
@@ -1107,6 +1111,11 @@ PrefabInstance:
       addedObject: {fileID: 1948226127}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 045083471b927524cb2dc0f04bb61987, type: 3}
+--- !u!108 &665612459 stripped
+Light:
+  m_CorrespondingSourceObject: {fileID: 3304269742938537319, guid: 045083471b927524cb2dc0f04bb61987, type: 3}
+  m_PrefabInstance: {fileID: 665612458}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &665612461 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4703847520753651982, guid: 045083471b927524cb2dc0f04bb61987, type: 3}

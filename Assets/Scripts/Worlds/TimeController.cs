@@ -114,7 +114,7 @@ namespace UZSG.Worlds
 
 
         [Header("Colors")]
-        internal WeatherData WeatherPreset;
+        [SerializeField] internal WeatherData WeatherPreset;
 
 
         #region Events

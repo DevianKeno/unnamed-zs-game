@@ -91,11 +91,13 @@ namespace UZSG.Objects
             {
                 this.material = renderer.material;
             }
-        }
 
-        public virtual void Place()
-        {
-            Initialize();
+            if (objectData.HasAudio)
+            {
+                Game.Audio.LoadAudioAssets(objectData.AudioAssetsData);
+            }
+
+            OnPlace();
             this.IsPlaced = true;
         }
 
@@ -110,14 +112,6 @@ namespace UZSG.Objects
             }
         }
 
-        protected virtual void Initialize()
-        {
-            if (objectData.HasAudio)
-            {
-                Game.Audio.LoadAudioAssets(objectData.AudioAssetsData);
-            }
-        }
-        
         protected virtual void LoadGUIAsset(AssetReference guiAsset, Action<ObjectGUI> onLoadCompleted = null)
         {
             if (!guiAsset.IsSet())

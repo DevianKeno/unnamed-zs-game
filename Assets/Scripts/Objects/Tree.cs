@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
 
 using UnityEngine;
+
+using MEC;
 
 using UZSG.Attributes;
 using UZSG.Data;
@@ -22,28 +25,27 @@ namespace UZSG.Objects
         /// <summary>
         /// The angle of the tree when it gets chopped. 
         /// </summary>
-        public float ChopAngle = 8f; /// based on tree's size, hardness, mass?
-        /// <summary>
-        /// Tree falling animation curve when cut down.
-        /// </summary>
-        public AnimationCurve fallAnimationCurve;
-        public float FallDuration = 5f;
-        public float MaxFallingAngle = 85f;
+        [SerializeField] float chopAngle = 8f; /// based on tree's size, hardness, mass?
+        [SerializeField] float despawnSeconds = 15f;
 
         Quaternion _originalRotation;
-        [SerializeField] Transform treeModel;
+        Vector3 _lastHitAngle;
 
-        /// On load on world
-        protected override void Start()
+        [Space, Header("Components")]
+        [SerializeField] GameObject leaves0; /// lod0
+        [SerializeField] new Rigidbody rigidbody;
+        [SerializeField] LODGroup lodGroup;
+        
+        protected override void OnPlace()
         {
-            base.Start();
-            
+            base.OnPlace();
             _originalRotation = transform.rotation;
         }
 
         public override void HitBy(HitboxCollisionInfo info)
         {
             float damage = 0f;
+
             if (info.Source is HeldToolController tool)
             {
                 if (tool.Attributes.TryGet("efficiency", out var efficiency))
@@ -51,7 +53,7 @@ namespace UZSG.Objects
                     damage += efficiency.Value;
                 }
 
-                if (IsHarvestableBy(tool.ToolData))
+                if (this.IsHarvestableBy(tool.ToolData))
                 {
                     damage *= 1;
 
@@ -59,19 +61,7 @@ namespace UZSG.Objects
                     {
                         if (tool.Owner is Player player)
                         {
-                            var yield = new Item(ResourceData.Yield);
-
-                            if (player.Actions.PickUpItem(yield))
-                            {
-                                
-                            }
-                            else
-                            {
-                                Game.Entity.Spawn<ItemEntity>("item_entity", player.Position, onCompleted: (info) =>
-                                {
-                                    info.Entity.Item = yield;
-                                });
-                            }
+                            GiveYield(player);
                         }
                     }
                     
@@ -95,15 +85,18 @@ namespace UZSG.Objects
 
             if (IsChoppable && !IsFelled)
             {
-                Damage(damage);
+                if (info.Source is IDamageSource damageSource)
+                {
+                    TakeDamage(new DamageInfo(damageSource, damage));
+                }
             }
         }
         
-        public void Damage(float amount)
+        void TakeDamage(DamageInfo dmg)
         {
             if (Attributes.TryGet("health", out var health))
             {
-                health.Remove(amount);
+                health.Remove(dmg.Amount);
                 
                 if (health.Value <= 0)
                 {
@@ -112,51 +105,67 @@ namespace UZSG.Objects
             }
         }
 
+        void GiveYield(Player player)
+        {
+            var yield = new Item(ResourceData.Yield);
+
+            if (player.Actions.PickUpItem(yield))
+            {
+                
+            }
+            else
+            {
+                Game.Entity.SpawnItem(yield, player.Position);
+            }
+        }
+
         public void Cutdown()
+        {
+            Timing.RunCoroutine(_CutdownAnimationCoroutine());
+        }
+
+        IEnumerator<float> _CutdownAnimationCoroutine()
         {
             IsChoppable = false;
             IsFelled = true;
             AllowInteractions = false;
 
+            // lODGroup.enabled = false;
+            leaves0.transform.SetParent(rigidbody.transform); /// 
+            gameObject.isStatic = false;
+            rigidbody.isKinematic = false;
+            rigidbody.AddForce(_lastHitAngle * rigidbody.mass, ForceMode.Impulse);
             Game.Audio.PlayInWorld("tree_fell", Position);
-            
-            /// Tree falling animation GOOFY AS FK
-            LeanTween.value(0, 1, FallDuration)
-            .setOnUpdate((float i) =>
-            {
-                var t = fallAnimationCurve.Evaluate(i);
-                var x = Mathf.Lerp(Rotation.x, MaxFallingAngle, t);
-                Rotation = Quaternion.Euler(x, Rotation.y, Rotation.z);
-            })
-            .setOnComplete(() =>
-            {
-                DestroySelf();
-            });
+
+            yield return Timing.WaitForSeconds(despawnSeconds); /// despawn everything after
+            DestroySelf();
         }
 
         void AnimateChop(Vector3 swingDirection)
         {
-            LeanTween.cancel(treeModel.gameObject);
+            LeanTween.cancel(gameObject);
 
+            _lastHitAngle = swingDirection;
             var targetRotation = Vector3.zero;
-            targetRotation += swingDirection * ChopAngle;
+            targetRotation += swingDirection * chopAngle;
             targetRotation = Quaternion.Inverse(_originalRotation) * targetRotation;
-
-            LeanTween.rotate(treeModel.gameObject, targetRotation, 0f)
+            
+            LeanTween.rotate(gameObject, targetRotation, 0f)
             .setOnComplete(() =>
             {
                 ResetChopAngle();
-            });
+            }); 
         }
 
         void DestroySelf()
         {
             /// play some wood/bark explosion particles and stuff
+            Destruct();
         }
 
         void ResetChopAngle()
         {
-            LeanTween.rotate(treeModel.gameObject, Vector3.zero, 0.33f)
+            LeanTween.rotate(gameObject, Vector3.zero, 0.33f)
             .setEaseOutExpo();
         }
     }

@@ -2493,8 +2493,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08501839b4b61c146b3cc3003ef8d147, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Global: {fileID: 975574427}
-  audioSourcePrefab: {fileID: 7118763255187652531, guid: 7756f958643a80843af5ec5cc33f3d43, type: 3}
+  soundVolume: 1
+  musicVolume: 1
+  ambianceVolume: 0.2
+  allowTrackPolyphony: 0
+  trackLists:
+  - {fileID: 11400000, guid: 1a2026b0d3fd3be47a390de6b3b6ecbb, type: 2}
 --- !u!1 &293076887
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,11 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8cc029cec14b78e47bd523602bdd0778, type: 3}
-  m_Name: tree
+  m_Name: pine_tree_heart1
   m_EditorClassIdentifier: 
+  Namespace: uzsg
   Id: pine_tree_heart
-  Name: Pine Tree Heart
-  Model:
+  Tags: []
+  DisplayName: Pine Tree Heart
+  Object:
     m_AssetGUID: a0f64771363a92549ae07bec49eb859d
     m_SubObjectName: 
     m_SubObjectType: 
@@ -27,12 +29,19 @@ MonoBehaviour:
     flatBonus: 0
     LimitOverflow: 0
     LimitUnderflow: 0
+  CanBePickedUp: 0
+  PickupTimeSeconds: 0
   HasAudio: 1
   AudioAssetsData: {fileID: 11400000, guid: 4cd27413eab54914d9286d94b997c7bf, type: 2}
+  Mass: 1000
   ToolType: 0
+  HarvestType: 0
   Yield:
     itemData: {fileID: 11400000, guid: 28840410f2d8d0444ae7781a4c648d85, type: 2}
     count: 1
-    attributes:
-      attributesReadOnly: []
+  Yields: []
+  IsPickup: 0
+  PickupDuration: 0
+  MaxInteractDistance: 0
+  UseInstances: 0
   Instances: []

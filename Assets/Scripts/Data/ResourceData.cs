@@ -26,7 +26,9 @@ namespace UZSG.Data
     public class ResourceData : ObjectData
     {
         [Header("Resource")]
-        ///The best tool to harvest this resource.
+        /// <summary>
+        /// The best tool to harvest this resource.
+        /// </summary>
         public ToolType ToolType;
         public HarvestType HarvestType;
         /// <summary>

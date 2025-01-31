@@ -62,7 +62,6 @@ namespace UZSG.Systems
                         };
                         callback?.Invoke(info);
                         baseObject.PlaceInternal();
-                        baseObject.Place();
                         // entity.OnSpawnInternal();
                         // OnEntitySpawned?.Invoke(new()
                         // {
@@ -87,7 +86,7 @@ namespace UZSG.Systems
             public T Object { get; set; }
         }
 
-        public void Place<T>(string objectId, Vector3 position = default, OnObjectPlaceCompleted<T> callback = null) where T : BaseObject
+        public void PlaceNew<T>(string objectId, Vector3 position = default, OnObjectPlaceCompleted<T> callback = null) where T : BaseObject
         {
             if (!_objectsDict.ContainsKey(objectId))
             {

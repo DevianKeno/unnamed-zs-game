@@ -129,12 +129,12 @@ namespace UZSG.Worlds
 
                 InitializeLobbyEvents_ServerMethod();
             }
-            
             ReadSaveData(saveData);
-            SpawnPlayers();
-
             initializeTimer.Stop();
             Game.Console.LogInfo($"[World]: Done world loading took {initializeTimer.ElapsedMilliseconds} ms");
+
+            Game.Audio.PlayTrack("forest_ambiant_1", volume: Game.Audio.ambianceVolume, loop: true);
+            SpawnPlayers();
             
             onCompleted?.Invoke();
         }
@@ -275,7 +275,6 @@ namespace UZSG.Worlds
                 try
                 {
                     baseObject.PlaceInternal();
-                    baseObject.Place();
                 }
                 catch
                 {
@@ -597,6 +596,9 @@ namespace UZSG.Worlds
 
         public void ExitWorld(bool save = true)
         {
+            Game.Console.LogInfo("[World]: Exiting world...");
+            Game.Audio.StopTrack("forest_ambiant_1");
+
             DeinitializeEvents();
             Cleanup();
             

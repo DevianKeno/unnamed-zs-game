@@ -1,13 +1,8 @@
-using System;
 using System.Collections.Generic;
 
-using MEC;
-using UZSG.Attributes;
 using UZSG.Data;
 using UZSG.Interactions;
-using UZSG.Items.Tools;
 using UZSG.Saves;
-using UZSG.Systems;
 
 namespace UZSG.Objects
 {
@@ -30,9 +25,8 @@ namespace UZSG.Objects
 
         protected SaveData saveData;
 
-        protected override void Initialize()
+        protected override void OnPlace()
         {
-            base.Initialize();
             LoadDefaultAttributes();
         }
         
@@ -44,15 +38,17 @@ namespace UZSG.Objects
         
         public bool IsHarvestableBy(ToolData toolData)
         {
-            return ResourceData != null && toolData != null && toolData.ToolType == ResourceData.ToolType;
+            return this.ResourceData != null
+                && toolData != null
+                && toolData.ToolType == ResourceData.ToolType;
         }
 
-        public List<InteractAction> GetInteractActions()
+        public virtual List<InteractAction> GetInteractActions()
         {
             return new();
         }
 
-        public void Interact(InteractionContext context)
+        public virtual void Interact(InteractionContext context)
         {
             
         }

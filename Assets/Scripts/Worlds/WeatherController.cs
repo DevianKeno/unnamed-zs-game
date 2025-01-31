@@ -10,7 +10,7 @@ namespace UZSG.Worlds
         public World World { get; private set; }
 
         WeatherData defaultWeatherPreset;
-        WeatherData currentWeatherPreset;
+        [SerializeField] WeatherData currentWeatherPreset;
         
         float _timer;
 

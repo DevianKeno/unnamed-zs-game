@@ -1,9 +1,10 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.InputSystem;
+
+using MEC;
 
 using UZSG.Systems;
 using UZSG.Data;
@@ -11,15 +12,13 @@ using UZSG.Interactions;
 using UZSG.Entities;
 using UZSG.Players;
 using UZSG.Attacks;
-using MEC;
-using System.Linq;
 
 namespace UZSG.Items.Tools
 {
     /// <summary>
     /// Controller for held Tools.
     /// </summary>
-    public class HeldToolController : FPPItemController, ICollisionSource
+    public class HeldToolController : FPPItemController, ICollisionSource, IDamageSource
     {
         public static float COMBO_RESET_SECONDS = 1f;
 

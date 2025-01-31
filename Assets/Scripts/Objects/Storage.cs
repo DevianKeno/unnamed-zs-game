@@ -31,11 +31,8 @@ namespace UZSG.Objects
         StorageGUI gui;
         public StorageGUI GUI => gui;
                 
-        public override void Place()
+        protected override void OnPlace()
         {
-            if (IsPlaced) return;
-            IsPlaced = true;
-            
             container = new(StorageData.Size);
             
             LoadGUIAsset(StorageData.GUI, onLoadCompleted: (gui) =>

@@ -44,13 +44,8 @@ namespace UZSG.Objects
         protected event Action<ItemSlot.ItemChangedContext> onOutputSlotItemChanged;
         public bool EnableDebugging = false;
         
-        public override void Place()
+        protected override void OnPlace()
         {
-            if (IsPlaced) return;
-
-            base.Place();
-            Initialize();
-
             queueSlots = new(WorkstationData.QueueSize);
             outputContainer = new(WorkstationData.OutputSize);
             outputContainer.OnSlotItemChanged += OnOutputSlotItemChanged;
@@ -76,11 +71,6 @@ namespace UZSG.Objects
 
             AllowInteractions = true;
             IsPlaced = true;
-        }
-
-        protected override void Initialize()
-        {
-            base.Initialize();
         }
 
         void InitializeCrafter()

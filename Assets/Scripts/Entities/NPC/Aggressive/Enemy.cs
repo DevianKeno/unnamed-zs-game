@@ -11,24 +11,8 @@ using static UZSG.Entities.EnemyActionStates;
 
 namespace UZSG.Entities
 {
-    public interface IEnemy
-    {
-        public event Action<IEnemy> OnDeath;    
-    }
-
     public partial class Enemy : NonPlayerCharacter, IPlayerDetectable, IEnemy
     {
-        /// <summary>
-        /// Clear console messages.
-        /// </summary>
-        public static void Clear()
-        {
-            // This simply calls the Clear method in the Console window
-            var logEntries = System.Type.GetType("UnityEditor.LogEntries,UnityEditor.dll");
-            var clearMethod = logEntries.GetMethod("Clear", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
-            clearMethod.Invoke(null, null);
-        }
-
         [Header("Enemy Agent Information")]
         public LayerMask PlayerLayer; // Layers that the enemy chases
         public bool isInHorde;
@@ -103,7 +87,6 @@ namespace UZSG.Entities
         public override void OnSpawn()
         {
             base.OnSpawn();
-            Clear();
 
             // initialize the enemy before spawning
             RetrieveAttributes();

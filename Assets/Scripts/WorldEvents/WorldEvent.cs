@@ -16,23 +16,24 @@ namespace UZSG.Worlds.Events
         WorldEventData _eventData;
         public WorldEventData EventData { set => _eventData = value; }
         
-        public event Action<WorldEvent> OnSpawnEvent;
-        public event Action<WorldEvent> OnEndEvent;
+        public event Action<WorldEvent> OnEventSpawned;
+        public event Action<WorldEvent> OnEventEnded;
 
         List<object> _selectedEvents = new();
         public List<object> SelectedEvents => _selectedEvents;
 
         public void SpawnEvent()
         {
-            OnSpawnEvent?.Invoke(this);
+            OnEventSpawned?.Invoke(this);
         }
-        public object PrepareEvent()
+        
+        public List<object> PrepareEvent()
         {
             switch (_eventData.Type)
             {
-                case WorldEventType.Weather:
-                    SelectWeatherToOccur(_eventData);
-                    break;
+                // case WorldEventType.Weather:
+                //     SelectWeatherToOccur(_eventData);
+                //     break;
                 case WorldEventType.Raid:
                     SelectRaidToOccur(_eventData);
                     break;
@@ -43,27 +44,24 @@ namespace UZSG.Worlds.Events
             return _selectedEvents;
         }
 
-        void SelectWeatherToOccur(WorldEventData eventData)
-        {
-            List<WeatherEventInstance> selectedEvents = new();
+        // void SelectWeatherToOccur(WorldEventData eventData)
+        // {
+        //     List<Wea> selectedEvents = new();
             
-            int chance = UnityEngine.Random.Range(1, 100);
-            foreach (WeatherEventInstance weatherInstance in eventData.WeatherTypes)
-            {
-                if (weatherInstance.ChanceToOccur >= chance) selectedEvents.Add(weatherInstance);
-            }
-            if (selectedEvents.Count == 0)
-            {
-                Game.Console.LogInfo($"<color=#e8eb34>No weather event selected.</color>");
-                return;
-            }
-            else if (selectedEvents.Count > 1 && !eventData.AllowMultipleEvents)
-                selectedEvents = KeepOnlyAtIndex(selectedEvents, UnityEngine.Random.Range(0, selectedEvents.Count));
+        //     if (selectedEvents.Count == 0)
+        //     {
+        //         Game.Console.LogInfo($"<color=#e8eb34>No weather event selected.</color>");
+        //         return;
+        //     }
+        //     else if (selectedEvents.Count > 1 && !eventData.AllowMultipleEvents)
+        //     {
+        //         selectedEvents = KeepOnlyAtIndex(selectedEvents, UnityEngine.Random.Range(0, selectedEvents.Count));
+        //     }
             
-            Game.Console.LogInfo($"<color=#e8eb34>Event occured: {selectedEvents[0].Name}</color>");  
+        //     Game.Console.LogInfo($"<color=#e8eb34>Event occured: {selectedEvents[0].Name}</color>");  
 
-            _selectedEvents.Add(selectedEvents[0]);
-        }
+        //     _selectedEvents.Add(selectedEvents[0]);
+        // }
 
         void SelectRaidToOccur(WorldEventData eventData)
         {

@@ -1,17 +1,10 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 
-using UnityEditor.Rendering;
 using UnityEngine;
 
 using UZSG.Systems;
 using UZSG.Data;
-using UZSG.Worlds;
 using UZSG.Entities;
-using Unity.VisualScripting;
-using Microsoft.Win32;
-
 
 namespace UZSG.Worlds.Events.Raid
 {
@@ -23,8 +16,11 @@ namespace UZSG.Worlds.Events.Raid
         public int mobCount;
     }
 
-    public class RaidController : EventBehaviour
+    public class RaidController : MonoBehaviour
     {
+        public World World { get; private set; }
+
+        bool EventOngoing;
         RaidEventType _raidType;
         RaidFormation _raidFormation;
         RaidInstance _raidInstance;
@@ -36,6 +32,11 @@ namespace UZSG.Worlds.Events.Raid
         public int numberOfPlayers = 1;
         public float difficultyMultiplier = 0.3f;
         public int setEnemiesPerPlayer = 3;
+
+        void Awake()
+        {
+            World = GetComponentInParent<World>();
+        }
 
         void PerformRaidEventProcessing(List<RaidEventInstance> selectedEvents)
         {

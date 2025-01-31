@@ -47,7 +47,6 @@ namespace UZSG.Entities
                     }
                     if (transition.To == Die)
                     {
-                        Clear();
                         ActionDie();
                     }
                     if (transition.To == Horde)
@@ -60,7 +59,6 @@ namespace UZSG.Entities
                 {
                     if (transition.To == Die)
                     {
-                        Clear();
                         ActionDie();
                     }
                     if (transition.To == Idle)
@@ -73,7 +71,6 @@ namespace UZSG.Entities
                 {
                     if (transition.To == Die)
                     {
-                        Clear();
                         ActionDie();
                     }
                     if (transition.To == Idle)
@@ -86,7 +83,6 @@ namespace UZSG.Entities
                 {
                     if (transition.To == Die)
                     {
-                        Clear();
                         ActionDie();
                     }
                     if (transition.To == Attack)

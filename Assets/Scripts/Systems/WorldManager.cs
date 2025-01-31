@@ -287,6 +287,14 @@ namespace UZSG.Systems
 
         #region Public methods
 
+        /// <summary>
+        /// Gets the current world. <c>null</c> if no world is loaded yet.
+        /// </summary>
+        public World GetWorld()
+        {
+            return currentWorld;
+        }
+        
         public void PauseCurrentWorld()
         {
             currentWorld.Pause();

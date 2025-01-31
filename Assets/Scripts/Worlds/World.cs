@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -28,32 +29,36 @@ namespace UZSG.Worlds
         public const string LOCAL_PLAYER_ID = "localplayer";
         public const string LOCAL_PLAYER_NAME = "Player";
 
-        [SerializeField] bool readPlayerDataAsBytes = false;
-        [SerializeField] bool writePlayerDataAsBytes = false;
         public bool IsPaused { get; private set; }
         public bool IsPausable { get; private set; }
 
-        LevelData levelData;
         public LevelData LevelData => levelData;
 
         WorldAttributes worldAttributes;
         public WorldAttributes Attributes => worldAttributes;
+
         [SerializeField] TimeController timeController;
         public TimeController Time => timeController;
+
+        [SerializeField] WeatherController weatherController;
+        public WeatherController Weather => weatherController;
+
         [SerializeField] WorldEventController eventsController;
         public WorldEventController WorldEvents => eventsController;
 
+        [Space]
         [SerializeField] WorldNetwork worldNetwork;
         [SerializeField] NetworkObject networkObject;
 
         public ProductUserId OwnerPUID { get; private set; }
-        public WorldEventCollection Events { get; private set; } = new();
+
         bool _isInitialized; /// to prevent initializing the world twice :)
         bool _isActive;
         bool _hasValidSaveData;
-        string ownerId = "localhost";
+        internal string worldpath => Path.Join(Application.persistentDataPath, WorldManager.WORLDS_FOLDER, currentSaveData.WorldName); 
+        LevelData levelData;
         WorldSaveData currentSaveData;
-
+        Player localPlayer;
         List<PlayerSaveData> _playerSaves = new();
         /// <summary>
         /// <c>string</c> is player Id.
@@ -84,15 +89,22 @@ namespace UZSG.Worlds
         public event Action OnUnpause;
 
         #endregion
-        internal string filepath;
-        internal string worldpath => Path.Join(Application.persistentDataPath, WorldManager.WORLDS_FOLDER, currentSaveData.WorldName); 
+        
+        [Space]
         [SerializeField] internal Transform objectsContainer;
         [SerializeField] internal Transform entitiesContainer;
-        [Space]
         [SerializeField] GameObject worldNetworkPrefab;
+        [SerializeField] bool readPlayerDataAsBytes = false;
+        [SerializeField] bool writePlayerDataAsBytes = false;
+
+        void Awake()
+        {
+            timeController.GetComponentInChildren<TimeController>();
+            weatherController.GetComponentInChildren<WeatherController>();
+        }
+
 
         #region Initializing methods
-
 
         public delegate void OnInitializeCompletedCallback();
         public void Initialize(WorldSaveData saveData, OnInitializeCompletedCallback onCompleted = null)
@@ -172,11 +184,13 @@ namespace UZSG.Worlds
             {
                 /// Server handles time, clients are just synced
                 timeController.Initialize();
+                weatherController.Initialize();
                 eventsController.Initialize();
             }
             else /// we're offline
             {
                 timeController.Initialize();
+                weatherController.Initialize();
                 eventsController.Initialize();
             }
             // RegisterExistingInstances();
@@ -366,45 +380,23 @@ namespace UZSG.Worlds
         #endregion
 
 
-        Vector3 ValidateWorldSpawn(System.Numerics.Vector3 coords)
-        {
-            if (SaveData.FieldIsNull(coords)) coords = new(0f, 65f, 0f);
-            if (Physics.Raycast(new Vector3(coords.X, 300f, coords.Z), -Vector3.up, out var hit, 999f))
-                return new(coords.X, hit.point.y, coords.Z);
-            return Vector3Ext.FromNumerics(coords);
-        }
-
-        internal void SetOwnerId(string id)
-        {
-            this.ownerId = id;
-        }
-
-
         #region Event callbacks
 
         void OnTick(TickInfo t)
         {
+            float tickThreshold = Game.Tick.TPS / TickSystem.NormalTPS;
+            float secondsCalculation = Game.Tick.SecondsPerTick * (Game.Tick.CurrentTick / 32f) * tickThreshold;
+
+            Time.Tick(secondsCalculation);
+            Weather.Tick(secondsCalculation);
         }
 
         void OnPlayerJoined(Player player)
         {
-            // if (IsOwner(player))
-            // {
-            //     ownerPlayer = player;
-            // }
-            // else
-            // {
-
-            // }
         }
 
         void OnPlayerLeft(Player player)
         {
-            if (player == null) return;
-
-            var saveData = player.WriteSaveData();
-            // _saveData.PlayerSaves.Add(saveData);
-            // _saveData.PlayerIdSaves[player.UserInfo.UserId.ToString()] = player.WriteSaveData();
         }
 
         void OnObjectPlaced(ObjectsManager.ObjectPlacedInfo info)
@@ -419,7 +411,7 @@ namespace UZSG.Worlds
 
         void OnEntityKilled(EntityManager.EntityInfo info)
         {
-            UncacheEntityId(info.Entity);
+            UncacheEntity(info.Entity);
         }
 
         #endregion
@@ -436,7 +428,7 @@ namespace UZSG.Worlds
             list.Add(etty);
         }
 
-        void UncacheEntityId(Entity etty)
+        void UncacheEntity(Entity etty)
         {
             if (_cachedIdEntities.ContainsKey(etty.Id))
             {
@@ -463,7 +455,7 @@ namespace UZSG.Worlds
 
 
         #region Public methods
-        
+
         internal void Deinitialize()
         {
             eventsController.Deinitialize(); 
@@ -518,6 +510,7 @@ namespace UZSG.Worlds
                 player.DisplayName = displayName;
 
                 _playerEntities[uid] = player;
+                localPlayer = player;
                 OnPlayerJoined(player);
             });
 
@@ -525,7 +518,7 @@ namespace UZSG.Worlds
         }
 
         /// <summary>
-        /// Request to the server to spawn our player client.
+        /// Spawneth a player.
         /// This method should only be called on the server. 
         /// </summary>
         /// <param name="userId">User id of to be owner</param>
@@ -536,38 +529,19 @@ namespace UZSG.Worlds
                 var player = info.Entity;
                 var uid = userId.ToString();
                 
-                if (EOSSubManagers.Transport.GetEOSTransport().TryGetClientIdMapping(userId, out ulong ownerclientId))
+                if (EOSSubManagers.Transport.GetEOSTransport().TryGetClientIdMapping(userId, out ulong ownerClientId))
                 {
-                    player.NetworkObject.SpawnAsPlayerObject(ownerclientId);
+                    player.NetworkObject.SpawnAsPlayerObject(ownerClientId);
 
                     _playerEntities[uid] = player;
+                    if (ownerClientId == 0) /// host's player,
+                    {
+                        localPlayer = player;
+                    }
                     OnPlayerJoined(player);
                 }
             });
         }
-
-        // internal void JoinPlayerByExternalAccountInfo(ExternalAccountInfo accountInfo, PlayerSaveData saveData = null)
-        // {
-        //     Game.Entity.Spawn<Player>("player", ValidateWorldSpawn(_saveData.WorldSpawn), (info) =>
-        //     {
-        //         Player player = info.Entity;
-
-        //         var uid = accountInfo.ProductUserId.ToString();
-        //         PlayerSaveData psdToLoad;
-        //         if (saveData == null)
-        //         {
-        //             this._playerIdSaves.TryGetValue(uid, out psdToLoad);
-        //         }
-        //         else
-        //         {
-        //             psdToLoad = saveData;
-        //         }
-        //         player.InitializeAsClient();
-
-        //         _playerEntities[uid] = player;
-        //         OnPlayerJoined(player);
-        //     });
-        // }
 
         /// <summary>
         /// Returns the list of Entities of Id present in the World.
@@ -580,6 +554,11 @@ namespace UZSG.Worlds
                 return list;
             }
             return new();
+        }
+
+        public Player GetLocalPlayer()
+        {
+            return localPlayer;
         }
 
         public async void SaveWorldAsync()
@@ -772,6 +751,14 @@ namespace UZSG.Worlds
                 var psd = player.WriteSaveData();
                 _playerIdSaves[uid] = psd;
             }
+        }
+
+        Vector3 ValidateWorldSpawn(System.Numerics.Vector3 coords)
+        {
+            if (SaveData.FieldIsNull(coords)) coords = new(0f, 65f, 0f);
+            if (Physics.Raycast(new Vector3(coords.X, 300f, coords.Z), -Vector3.up, out var hit, 999f))
+                return new(coords.X, hit.point.y, coords.Z);
+            return Vector3Ext.FromNumerics(coords);
         }
     }
 }

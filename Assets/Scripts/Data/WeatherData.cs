@@ -1,36 +1,29 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
+using UZSG.Data;
 
 namespace UZSG.Data
 {
+    /// <summary>
+    /// Represents a particular type of weather.
+    /// </summary>
     [Serializable]
-    public struct WeatherAttributes
+    [CreateAssetMenu(fileName = "New Weather Data", menuName = "UZSG/Weather Datra")]
+    public class WeatherData : BaseData
     {
-        public string Name;
-        public int Strength;
-        public int DurationSeconds;
+        public string DisplayName;
+
+        [Space, Header("Colors")]
+        public Gradient DayColors;
+        public Gradient DayFogColor;
+        public AnimationCurve DayFogDensity;
+        public Gradient NightColors;
+        public Gradient NightFogColor;
+        public AnimationCurve NightFogDensity;
+
+        [Space]
+        public GameObject WeatherParticlesPrefab;
+        public Material Skybox;
     }
-
-    [Serializable]
-    public struct WeatherProperties
-    {
-        public Color DayFogColor;
-        public Color NightFogColor;
-        public float Temperature;
-    }
-
-
-    [CreateAssetMenu(fileName = "New Weather Data", menuName = "UZSG/Weather Data")]
-    [Serializable]
-    public class WeatherData : ScriptableObject
-    {
-        public GameObject Particles;
-        public ParticleSystem particleSystem;
-        public WeatherAttributes weatherAttributes;
-        public WeatherProperties weatherProperties;
-    }
-
 }
-

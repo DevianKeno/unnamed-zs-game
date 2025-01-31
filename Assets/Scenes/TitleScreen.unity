@@ -12296,7 +12296,6 @@ MonoBehaviour:
   frameController: {fileID: 1055205694}
   selectedWorldEntry: {fileID: 2087478870}
   startBtn: {fileID: 1687534205}
-  doNotLoadWorldUponHost: 0
 --- !u!1 &1377894681
 GameObject:
   m_ObjectHideFlags: 0
@@ -18158,8 +18157,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0c06e59d0631e74cba66ff290c24ae6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ServerUserIdToConnectToInput: 
-  ServerUserIDForCopying: 
 --- !u!114 &2117571812
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18174,7 +18171,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   NetworkConfig:
     ProtocolVersion: 0
-    NetworkTransport: {fileID: 2117571811}
+    NetworkTransport: {fileID: 0}
     PlayerPrefab: {fileID: 0}
     Prefabs:
       NetworkPrefabsLists:

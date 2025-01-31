@@ -203,6 +203,10 @@ namespace UZSG.Systems
                           isDebugCommand: true)
                           .OnInvoke += CWbcraft;
 
+            CreateCommand("weather <id> <durationSeconds>",
+                          "Set the current weather.")
+                          .OnInvoke += CWeather;
+
             CreateCommand("world <create|load|save> <world_name>",
                           "World commmands.")
                           .OnInvoke += CWorld;
@@ -538,6 +542,16 @@ namespace UZSG.Systems
             //     return;
             // }
             // wbcraft.WorkbenchCraftItem(_player, newItem.Data.Recipes[0]);
+        }
+
+        /// <summary>
+        /// World commands.
+        /// </summary>
+        void CWeather(object sender, string[] args)
+        {
+            /// TODO: add handling
+            Game.World.CurrentWorld.Weather.SetWeather(args[0], int.Parse(args[1]));
+            LogInfo($"Weather set to {args[0]}");
         }
 
         /// <summary>

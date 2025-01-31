@@ -1,25 +1,16 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 using UnityEngine;
 
 using UZSG.Systems;
 using UZSG.Data;
-using UZSG.Worlds;
-using UZSG.Worlds.Events.Weather;
 using UZSG.Worlds.Events.Raid;
-using System.Reflection;
 
 namespace UZSG.Worlds.Events
 {
     public class WorldEventController : MonoBehaviour
     {
-        public TimeController WorldTime => Game.World.CurrentWorld.Time;
-
-        [SerializeField] WeatherController weatherController;
-        public WeatherController Weather => weatherController;
+        public World World { get; private set; }
 
         [SerializeField] RaidController raidController;
         public RaidController Raid => raidController;
@@ -31,14 +22,22 @@ namespace UZSG.Worlds.Events
         int tempCount = 0;
         public List<WorldEventData> WorldEvents;
 
+        void Awake()
+        {
+            World = GetComponentInParent<World>();
+        }
+
         public void Initialize()
         {
-            InitializeControllers();
-            Game.Tick.OnTick += OnTick;
-            
             foreach (WorldEventData data in WorldEvents)
+            {
                 if (data.OccurEverySecond > _maxCountdown)
+                {
                     _maxCountdown = data.OccurEverySecond;
+                }
+            }
+
+            Game.Tick.OnTick += OnTick;
         }
         
         public void Deinitialize()
@@ -46,20 +45,8 @@ namespace UZSG.Worlds.Events
             Game.Tick.OnTick -= OnTick;
         }
 
-        void InitializeControllers()
-        {
-            weatherController.Initialize();
-        }
-
         void OnTick(TickInfo info)
         {
-            float tickThreshold = Game.Tick.TPS / 64f;
-            float secondsCalculation = Game.Tick.SecondsPerTick * (Game.Tick.CurrentTick / 32f) * tickThreshold;
-            _currentTime += secondsCalculation;
-
-            WorldTime.OnTick(secondsCalculation);
-            Weather.OnTick(secondsCalculation);
-
             if (Mathf.FloorToInt(_currentTime) > tempCount)
             {
                 tempCount = Mathf.FloorToInt(_currentTime);
@@ -111,10 +98,14 @@ namespace UZSG.Worlds.Events
         void SubscribeControllers(WorldEventData eventData, WorldEvent eventHandler)
         {
             if (eventData.Type == WorldEventType.Weather)
-                eventHandler.OnSpawnEvent += Weather.OnEventStart;
+            {
+                // eventHandler.OnSpawnEvent += Weather.OnEventStart;
+            }
             
             if (eventData.Type == WorldEventType.Raid)
-                eventHandler.OnSpawnEvent += Raid.OnEventStart;
+            {
+                eventHandler.OnEventSpawned += Raid.OnEventStart;
+            }
         }
     }
 }

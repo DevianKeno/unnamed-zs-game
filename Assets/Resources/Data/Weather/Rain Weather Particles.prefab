@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7503272732920571010}
   - component: {fileID: 3198578193322346050}
   m_Layer: 0
-  m_Name: Rain
+  m_Name: Rain Weather Particles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

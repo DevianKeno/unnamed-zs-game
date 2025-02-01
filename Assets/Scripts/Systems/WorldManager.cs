@@ -200,6 +200,7 @@ namespace UZSG.Systems
                 InvokeLoadLevelFailed();
                 return;
             }
+            Game.Console.Assert(!string.IsNullOrEmpty(data.SceneName), $"SceneName property for LevelData '{data.name}' is null or empty! Please set the scene name.");
 
             if (NetworkManager.Singleton.IsListening)
             {

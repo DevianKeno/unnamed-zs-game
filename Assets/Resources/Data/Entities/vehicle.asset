@@ -12,11 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cea627f23728654ba7f2d8e85166973, type: 3}
   m_Name: vehicle
   m_EditorClassIdentifier: 
+  Namespace: uzsg
   Id: vehicle
+  Tags: []
   AssetReference:
     m_AssetGUID: 45fbcb582516cc34e8ab1615ab38b43d
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  Name: Vehicle (Entity)
+  DisplayName: Vehicle
+  BaseAttributes: []
   AudioAssetsData: {fileID: 0}

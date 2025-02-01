@@ -321,7 +321,7 @@ namespace UZSG.Systems
         public void Assert(bool value, object message = null)
         {
             if (!value) LogError(message);
-            Debug.Assert(value);
+            Debug.Assert(value, message);
         }
 
         /// <summary>

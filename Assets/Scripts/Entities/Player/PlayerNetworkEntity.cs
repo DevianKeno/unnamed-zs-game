@@ -1,16 +1,17 @@
 using System;
+using System.Collections.Generic;
 
 using Unity.Netcode;
 using UnityEngine;
 
 using Epic.OnlineServices;
-using Epic.OnlineServices.UserInfo;
 using Epic.OnlineServices.Connect;
 
 using UZSG.EOS;
 using UZSG.Entities;
 using UZSG.Saves;
 using UZSG.Systems;
+using UZSG.Parties;
 
 namespace UZSG.Network
 {
@@ -18,14 +19,23 @@ namespace UZSG.Network
     /// Player entity network functionalities.
     /// </summary>
     [RequireComponent(typeof(Player))]
-    public class PlayerNetworkEntity : NetworkBehaviour
+    public partial class PlayerNetworkEntity : NetworkBehaviour
     {
-        [SerializeField] protected Player player;
-        public Player Player => player;
+        public Player Player { get; protected set; }
+        
+        public string DisplayName;
         ProductUserId productUserId;
         public ProductUserId ProductUserId => productUserId;
         ExternalAccountInfo accountInfo;
         public ExternalAccountInfo AccountInfo => accountInfo;
+        /// <summary>
+        /// The party this player is currently on. 
+        /// </summary>
+        public Party CurrentParty;
+        /// <summary>
+        /// List of parties created in the server. Includes those created by the host and by other players.
+        /// </summary>
+        List<Party> parties;
 
         [SerializeField] NetworkObject networkObject;
 
@@ -38,7 +48,7 @@ namespace UZSG.Network
 
         void Awake()
         {
-            this.player = GetComponent<Player>();
+            this.Player = GetComponent<Player>();
             this.networkObject = GetComponent<NetworkObject>();
         }
 
@@ -49,8 +59,8 @@ namespace UZSG.Network
 
             if (IsServer)
             {
-                nPosition.Value = player.Position;
-                nRotationEuler.Value = player.Rotation.eulerAngles;
+                nPosition.Value = Player.Position;
+                nRotationEuler.Value = Player.Rotation.eulerAngles;
             }
         }
 
@@ -61,11 +71,14 @@ namespace UZSG.Network
             if (IsServer)
             {
                 var psd = Game.World.CurrentWorld.GetPlayerSaveData(Game.EOS.GetProductUserId());
-                this.player.InitializeAsPlayer(psd, IsLocalPlayer);
+                this.Player.InitializeAsPlayer(psd, IsLocalPlayer);
+                /// Server spawned this player, which is already stored in cache
+                parties = new();
             }
             else
             {
                 EOSSubManagers.P2P.RequestPlayerSaveData(EOSSubManagers.Lobbies.CurrentLobby.OwnerProductUserId, onCompleted: OnRequestPlayerSaveDataCompleted);
+                Game.World.CurrentWorld.CachePlayer(this.Player, this.OwnerClientId);
             }
             
             InitializeNetworkVariableTrackings();
@@ -89,18 +102,18 @@ namespace UZSG.Network
 
             if (result == Epic.OnlineServices.Result.Success)
             {
-                this.player.InitializeAsPlayer(saveData, isLocalPlayer: true);
+                this.Player.InitializeAsPlayer(saveData, isLocalPlayer: true);
             }
         }
 
         void OnPositionChanged(Vector3 oldPos, Vector3 newPos)
         {
-            this.player.Position = newPos;
+            this.Player.Position = newPos;
         }
 
         void OnRotationChanged(Vector3 oldPos, Vector3 newPos)
         {
-            this.player.Rotation = Quaternion.Euler(newPos);
+            this.Player.Rotation = Quaternion.Euler(newPos);
         }
 
         [Rpc(SendTo.Server)]
@@ -122,9 +135,9 @@ namespace UZSG.Network
                         userId == puid)
                     {
                         this.accountInfo = userInfo;
-                        player.DisplayName = userInfo.DisplayName;
+                        Player.DisplayName = userInfo.DisplayName;
                         ReceiveUserInfoRpc(userInfo.DisplayName, RpcTarget.Single(rpcParams.Receive.SenderClientId, RpcTargetUse.Temp));
-                        player.SetNametagVisible(true);
+                        Player.SetNametagVisible(true);
                     }
                 }
             }
@@ -133,17 +146,16 @@ namespace UZSG.Network
         [Rpc(SendTo.SpecifiedInParams)]
         void ReceiveUserInfoRpc(string displayName, RpcParams rpcParams)
         {
-            player.DisplayName = displayName;
+            Player.DisplayName = displayName;
             if (!IsOwner)
             {
-                player.SetNametagVisible(true);
+                Player.SetNametagVisible(true);
             }
         }
 
         public override void OnNetworkDespawn()
         {
             _enableTracking = false;
-            
             nPosition.OnValueChanged -= OnPositionChanged;
             nRotationEuler.OnValueChanged -= OnRotationChanged;
         }

@@ -277,25 +277,6 @@ namespace UZSG.EOS.Lobbies
             MaxNumLobbyMembers = (uint) attributes.MaxPlayers;
         }
 
-        public bool FindMemberByDisplayName(string username, out LobbyMember lobbyMember)
-        {
-            lobbyMember = null;
-
-            foreach (var member in this.members)
-            {
-                if (member.TryGetAttribute(AttributeKeys.MEMBER_DISPLAY_NAME, out var displayName))
-                {
-                    if (username.Equals(displayName.AsString, StringComparison.OrdinalIgnoreCase))
-                    {
-                        lobbyMember = member;
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-
         void SetValuesFromLobbyDetailsInfo(LobbyDetailsInfo info)
         {
             Id = info.LobbyId;

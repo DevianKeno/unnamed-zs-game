@@ -2114,5 +2114,52 @@ namespace UZSG.EOS
         }
 
         #endregion
+
+        /// <summary>
+        /// Checks if the member Id already exists in the lobby
+        /// </summary>
+        public bool FindLobbyMember(ProductUserId productId, out LobbyMember lobbyMember)
+        {
+            lobbyMember = null;
+            if (!EOSSubManagers.Lobbies.IsInLobby)
+            {
+                Game.Console.LogDebug($"[LobbyManager/FindMemberByDisplayName()]: Unable to find lobby member. Not in a lobby.");
+                return false;
+            }
+            
+            lobbyMember = currentLobby.Members.Find((LobbyMember member) =>
+            {
+                return member.ProductUserId == productId;
+            });
+            return lobbyMember != null;
+        }
+
+        /// <summary>
+        /// Finds member in the current lobby.
+        /// Returns false if not present, or if not in a lobby.
+        /// </summary>
+        public bool FindMemberByDisplayName(string username, out LobbyMember lobbyMember)
+        {
+            lobbyMember = null;
+            if (!EOSSubManagers.Lobbies.IsInLobby)
+            {
+                Game.Console.LogDebug($"[LobbyManager/FindMemberByDisplayName()]: Unable to find lobby member. Not in a lobby.");
+                return false;
+            }
+
+            foreach (var member in currentLobby.Members)
+            {
+                if (member.TryGetAttribute(AttributeKeys.MEMBER_DISPLAY_NAME, out var displayName))
+                {
+                    if (username.Equals(displayName.AsString, StringComparison.OrdinalIgnoreCase))
+                    {
+                        lobbyMember = member;
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
     }
 }

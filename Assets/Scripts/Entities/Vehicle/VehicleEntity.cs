@@ -119,7 +119,7 @@ namespace UZSG.Entities
             {
                 Interactable = this,
                 ActionText = actionText,
-                InteractableText = this.entityData.Name,
+                InteractableText = this.entityData.DisplayName,
                 IsHold = true,
                 InputAction = Game.Input.InteractPrimary,
             });

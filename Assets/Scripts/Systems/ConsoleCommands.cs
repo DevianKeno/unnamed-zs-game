@@ -8,6 +8,8 @@ using UZSG.Items;
 using UZSG.UI.Players;
 using UZSG.TitleScreen;
 using UZSG.EOS;
+using Unity.Netcode;
+using UZSG.Parties;
 
 namespace UZSG.Systems
 {
@@ -172,6 +174,10 @@ namespace UZSG.Systems
                           "Host a lobby.",
                           isDebugCommand: true)
                           .OnInvoke += CHost;
+
+            CreateCommand("party <create|invite|leave>",
+                          "Party commands.")
+                          .OnInvoke += CParty;
 
             CreateCommand("place <object>",
                           "Places an object where the player is looking at.")
@@ -420,6 +426,85 @@ namespace UZSG.Systems
             var handler = FindAnyObjectByType<HostWorldHandler>();
             handler.CreateLobby();
         }
+        
+        /// <summary>
+        /// Create/Invite/Leave party. Only within worlds.
+        /// </summary>
+        void CParty(object sender, string[] args)
+        {
+            if (!Game.World.IsInWorld) return;
+
+            var player = Game.World.GetWorld().GetLocalPlayer();
+            if (player == null) return;
+
+            switch (args[0])
+            {
+                case "create":
+                {
+                    player.NetworkEntity.CreateParty();
+                    break;
+                }
+                case "invite":
+                {
+                    if (args.Length < 2)
+                    {
+                        Game.Console.LogInfo($"Usage: /party invite <username>");
+                        return;
+                    }
+
+                    player.NetworkEntity.InviteToParty(args[1]);
+                    break;
+                }
+                case "accept":
+                {
+                    if (args.Length < 2)
+                    {
+                        Game.Console.LogInfo($"Usage: /party accept <username>");
+                        return;
+                    }
+
+                    if (EOSSubManagers.Lobbies.FindMemberByDisplayName(args[1], out var member))
+                    {
+                        if (EOSSubManagers.Transport.GetEOSTransport().TryGetClientIdMapping(member.ProductUserId, out var clientId))
+                        {
+                            var parties = FindObjectsByType<Party>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+                            var party = Array.Find(parties, (p) => p.HostIs(clientId));
+                            if (party != null)
+                            {
+                                party.AcceptPartyInvite();
+                            }
+                            else
+                            {
+                                Game.Console.LogInfo($"Unable to join {args[1]}'s party.");
+                            }
+                        }
+                    }
+                    break;
+                }
+                case "leave":
+                {
+                    if (player.NetworkEntity.CurrentParty == null)
+                    {
+                        Game.Console.LogInfo($"You're not in a party to leave one!");
+                        return;
+                    }
+
+                    player.NetworkEntity.LeaveCurrentParty();
+                    break;
+                }
+                case "kick":
+                {
+                    if (args.Length < 2)
+                    {
+                        Game.Console.LogInfo($"Usage: /party accept <username>");
+                        return;
+                    }
+
+                    // player.NetworkEntity.KickFromParty(args[1]);
+                    break;
+                }
+            }
+        }  
         
         const float PLACE_RANGE = 50f;
         /// <summary>

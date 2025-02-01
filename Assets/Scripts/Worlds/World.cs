@@ -14,8 +14,8 @@ using Epic.OnlineServices;
 using Epic.OnlineServices.Lobby;
 
 using UZSG.Data;
-using UZSG.EOS;
 using UZSG.Entities;
+using UZSG.EOS;
 using UZSG.Network;
 using UZSG.Objects;
 using UZSG.Saves;
@@ -74,6 +74,11 @@ namespace UZSG.Worlds
         /// <c>string</c> is ProductUserId as string.
         /// </summary>
         Dictionary<string, Player> _playerEntities = new();
+        /// <summary>
+        /// List of online players. 
+        /// <c>ulong</c> is the ClientId of the player that owns it.
+        /// </summary>
+        Dictionary<ulong, Player> _playerEntitiesClientId = new();
         /// <summary>
         /// Key is Instance Id.
         /// </summary>
@@ -531,15 +536,60 @@ namespace UZSG.Worlds
                 if (EOSSubManagers.Transport.GetEOSTransport().TryGetClientIdMapping(userId, out ulong ownerClientId))
                 {
                     player.NetworkObject.SpawnAsPlayerObject(ownerClientId);
-
                     _playerEntities[uid] = player;
-                    if (ownerClientId == 0) /// host's player,
-                    {
-                        localPlayer = player;
-                    }
+
+                    CachePlayer(player, ownerClientId);
                     OnPlayerJoined(player);
                 }
             });
+        }
+
+        public void CachePlayer(Player player, ulong clientId)
+        {
+            _playerEntitiesClientId[clientId] = player;
+            if (clientId == NetworkManager.Singleton.LocalClientId)
+            {
+                localPlayer = player;
+            }
+        }
+
+        /// <summary>
+        /// Returns the player being controlled by the local client.
+        /// </summary>
+        public Player GetLocalPlayer()
+        {
+            return localPlayer;
+        }
+
+        /// <summary>
+        /// Get player by their ClientId.
+        /// </summary>
+        public bool GetPlayer(ulong clientId, out Player player)
+        {
+            if (_playerEntitiesClientId.TryGetValue(clientId, out player)) { };
+            return player != null;
+        }
+
+        /// <summary>
+        /// Get player by their ProductUserId.
+        /// </summary>
+        public bool GetPlayer(ProductUserId puid, out Player player)
+        {
+            if (_playerEntities.TryGetValue(puid.ToString(), out player)) { };
+            return player != null;
+        }
+
+        /// <summary>
+        /// Get player by their display name.
+        /// </summary>
+        public bool GetPlayer(string displayName, out Player player)
+        {
+            player = null;
+            if (EOSSubManagers.Lobbies.FindMemberByDisplayName(displayName, out var member))
+            {
+                return GetPlayer(puid: member.ProductUserId, out player);
+            }
+            return false;
         }
 
         /// <summary>
@@ -553,11 +603,6 @@ namespace UZSG.Worlds
                 return list;
             }
             return new();
-        }
-
-        public Player GetLocalPlayer()
-        {
-            return localPlayer;
         }
 
         public async void SaveWorldAsync()
@@ -606,6 +651,13 @@ namespace UZSG.Worlds
             {
                 SaveWorld();
             }
+        }
+
+        /// TODO: experimental
+        public bool FindPlayerByClientId(ulong clientId, out Player player)
+        {
+            player = null;
+            return player != null;
         }
 
         public void Pause()

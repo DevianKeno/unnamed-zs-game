@@ -334,7 +334,7 @@ namespace UZSG.EOS
 
         public void SendChatMessage(string username, string message)
         {
-            if (EOSSubManagers.Lobbies.CurrentLobby.FindMemberByDisplayName(username, out LobbyMember member))
+            if (EOSSubManagers.Lobbies.FindMemberByDisplayName(username, out LobbyMember member))
             {
                 var packet = new Packet()
                 {

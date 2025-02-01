@@ -629,5 +629,18 @@ namespace UZSG.Entities
         {
             nametagGameObject.SetActive(visible);
         }
+
+        public void AddExperience(int amount, bool shareWithPartyMembers = false)
+        {
+            if (attributes.TryGet("current_experience", out var exp))
+            {
+                exp.Add(amount);
+            }
+
+            if (shareWithPartyMembers)
+            {
+                throw new NotImplementedException();
+            }
+        }
     }
 }

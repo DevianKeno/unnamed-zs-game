@@ -261,7 +261,7 @@ namespace UZSG.UI.Objects
             {
                 //KMP Algorithm
                 int queryItr = 0;
-                foreach(char a in recipe.Name)
+                foreach(char a in recipe.DisplayName)
                 {
                     
                     if (Char.ToLower(a) != Char.ToLower(query[queryItr]))

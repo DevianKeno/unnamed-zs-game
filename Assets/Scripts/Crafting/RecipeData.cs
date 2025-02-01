@@ -10,7 +10,8 @@ namespace UZSG.Data
     [CreateAssetMenu(fileName = "New Recipe Data", menuName = "UZSG/Recipe Data")]
     public class RecipeData : BaseData
     {
-        public string Name;
+        [FormerlySerializedAs("Name")] public string DisplayName;
+        public string Description;
         public Item Output;
         public int Yield => Output.Count;
         public List<Item> Materials;

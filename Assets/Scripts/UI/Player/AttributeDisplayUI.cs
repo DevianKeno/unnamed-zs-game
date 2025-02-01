@@ -27,7 +27,7 @@ namespace UZSG.UI
 
         public void Refresh()
         {
-            nameText.text = attribute.Data.Name;
+            nameText.text = attribute.Data.DisplayName;
             valueText.text = $"{attribute.Value}";
 
             bar.Value = attribute.ValueMaxRatio;

@@ -69,7 +69,7 @@ namespace UZSG.UI
         {
             RecipeData = recipeData;
             image.sprite = recipeData.Output.Data.Sprite;
-            text.text = recipeData.Name;
+            text.text = recipeData.DisplayName;
             Rebuild();
         }
 

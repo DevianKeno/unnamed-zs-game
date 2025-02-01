@@ -1,6 +1,7 @@
 using System;
 
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace UZSG.Data
 {
@@ -9,7 +10,7 @@ namespace UZSG.Data
     public class AttributeData : BaseData
     {
         [Header("Attribute Data")]
-        public string Name;
+        [FormerlySerializedAs("Name")] public string DisplayName;
         public string Group;
         [TextArea] public string Description;
     }

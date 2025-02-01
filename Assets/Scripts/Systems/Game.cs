@@ -38,6 +38,8 @@ namespace UZSG.Systems
         public static InputManager Input => inputManager;
         static AudioManager audioManager;
         public static AudioManager Audio => audioManager;
+        static LocalizationManager localizationManager;
+        public static LocalizationManager Locale => localizationManager;
         /// <summary>
         /// EOS Interface singleton.
         /// Just a shortcut to 'EOSManager.Instance'
@@ -112,6 +114,7 @@ namespace UZSG.Systems
                 UIManager = GetComponentInChildren<UIManager>();
                 inputManager = GetComponentInChildren<InputManager>();
                 audioManager = GetComponentInChildren<AudioManager>();
+                localizationManager = GetComponentInChildren<LocalizationManager>();
                 timeManager = GetComponentInChildren<TimeManager>();
                 worldManager = GetComponentInChildren<WorldManager>();
                 
@@ -148,6 +151,7 @@ namespace UZSG.Systems
 
             UIManager.Initialize();
             audioManager.Initialize();
+            localizationManager.Initialize();
             worldManager.Initialize();
             EOSSubManagers.Initialize();
 

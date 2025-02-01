@@ -13,6 +13,8 @@ namespace UZSG.Data
     {
         [Header("Object Data")]
         [FormerlySerializedAs("Name")] public string DisplayName;
+        [FormerlySerializedAs("Name")]
+        [TextArea] public string Description;
         [FormerlySerializedAs("Model")] public AssetReference Object;
         public List<Attributes.Attribute> Attributes;
         public bool CanBePickedUp;

@@ -91,7 +91,7 @@ namespace UZSG.Systems
                 if (a.Status == AsyncOperationStatus.Succeeded)
                 {
                     var go = Instantiate(a.Result, position, Quaternion.identity, GetTransformParent());
-                    go.name = $"{ettyData.Name} (Entity)";
+                    go.name = $"{ettyData.DisplayName} (Entity)";
                     if (go.TryGetComponent(out Entity entity)) /// what do making entity without an entity component!!
                     {
                         entity.OnSpawnInternal();
@@ -134,7 +134,7 @@ namespace UZSG.Systems
                 if (a.Status == AsyncOperationStatus.Succeeded)
                 {
                     var go = Instantiate(a.Result, position, Quaternion.identity, GetTransformParent());
-                    go.name = $"{ettyData.Name} (Entity)";
+                    go.name = $"{ettyData.DisplayName} (Entity)";
                     if (go.TryGetComponent(out Entity entity))
                     {
                         entity.OnSpawnInternal();

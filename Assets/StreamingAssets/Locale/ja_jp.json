@@ -1,0 +1,977 @@
+{
+    "attribute": {
+      "accuracy": {
+        "name": "命中率",
+        "description": ""
+      },
+      "armor": {
+        "name": "アーマー",
+        "description": ""
+      },
+      "armor_penetration": {
+        "name": "アーマー貫通",
+        "description": ""
+      },
+      "attack_damage": {
+        "name": "攻撃力",
+        "description": ""
+      },
+      "attack_speed": {
+        "name": "攻撃速度",
+        "description": "1秒あたりの攻撃回数。"
+      },
+      "attack_weight": {
+        "name": "攻撃重量",
+        "description": ""
+      },
+      "bag_slots_count": {
+        "name": "バッグスロット数",
+        "description": "持ち運べるアイテムの数。"
+      },
+      "build_range": {
+        "name": "建築範囲",
+        "description": "建築範囲。"
+      },
+      "charisma": {
+        "name": "カリスマ",
+        "description": ""
+      },
+      "cold_resistance": {
+        "name": "寒冷耐性",
+        "description": ""
+      },
+      "critical_chance": {
+        "name": "クリティカル率",
+        "description": ""
+      },
+      "critical_damage": {
+        "name": "クリティカルダメージ",
+        "description": ""
+      },
+      "crouch_speed": {
+        "name": "しゃがみ速度",
+        "description": ""
+      },
+      "durability": {
+        "name": "耐久力",
+        "description": ""
+      },
+      "efficiency": {
+        "name": "効率",
+        "description": ""
+      },
+      "evasion": {
+        "name": "回避率",
+        "description": ""
+      },
+      "experience": {
+        "name": "経験値",
+        "description": ""
+      },
+      "explosion_resistance": {
+        "name": "爆発耐性",
+        "description": ""
+      },
+      "": {
+        "name": "",
+        "description": ""
+      },
+      "fuel_craft": {
+        "name": "残燃料",
+        "description": ""
+      },
+      "health": {
+        "name": "体力",
+        "description": ""
+      },
+      "health_regen_per_second": {
+        "name": "体力回復",
+        "description": "1秒あたりの体力回復量。"
+      },
+      "heat_resistance": {
+        "name": "耐熱性",
+        "description": ""
+      },
+      "hotbar_slots_count": {
+        "name": "ホットバースロット数",
+        "description": ""
+      },
+      "hunger": {
+        "name": "空腹",
+        "description": ""
+      },
+      "hydration": {
+        "name": "水分",
+        "description": ""
+      },
+      "innate_hunger": {
+        "name": "生来の空腹",
+        "description": ""
+      },
+      "innate_thirst": {
+        "name": "生来の喉の渇き",
+        "description": ""
+      },
+      "jump_hunger_cost": {
+        "name": "ジャンプ空腹コスト",
+        "description": ""
+      },
+      "jump_hydration_cost": {
+        "name": "ジャンプ水分コスト",
+        "description": ""
+      },
+      "jump_stamina_cost": {
+        "name": "ジャンプスタミナコスト",
+        "description": ""
+      },
+      "jump_velocity": {
+        "name": "ジャンプ速度",
+        "description": ""
+      },
+      "level": {
+        "name": "レベル",
+        "description": ""
+      },
+      "limb_penetration": {
+        "name": "四肢貫通",
+        "description": ""
+      },
+      "lunge_distance": {
+        "name": "ランジ距離",
+        "description": ""
+      },
+      "mana": {
+        "name": "マナ",
+        "description": ""
+      },
+      "melee_speed": {
+        "name": "近接攻撃速度",
+        "description": ""
+      },
+      "move_speed": {
+        "name": "移動速度",
+        "description": ""
+      },
+      "mutability": {
+        "name": "変異性",
+        "description": ""
+      },
+      "mutation": {
+        "name": "変異",
+        "description": ""
+      },
+      "perk_points": {
+        "name": "パークポイント",
+        "description": ""
+      },
+      "player_detection_radius": {
+        "name": "プレイヤー検知範囲",
+        "description": ""
+      },
+      "reload_speed": {
+        "name": "リロード速度",
+        "description": ""
+      },
+      "resistance": {
+        "name": "耐性",
+        "description": ""
+      },
+      "run_speed": {
+        "name": "走行速度",
+        "description": ""
+      },
+      "run_stamina_cost": {
+        "name": "走行スタミナコスト",
+        "description": ""
+      },
+      "shield_penetration": {
+        "name": "シールド貫通",
+        "description": ""
+      },
+      "stamina": {
+        "name": "スタミナ",
+        "description": ""
+      },
+      "stamina_cost": {
+        "name": "スタミナコスト",
+        "description": "スタミナを消費するすべてのアクティビティの一般的な属性。"
+      },
+      "stamina_regen_delay": {
+        "name": "スタミナ回復遅延",
+        "description": "スタミナが消費された後、再び回復し始めるまでの時間（秒）。"
+      },
+      "stamina_regen_per_tick": {
+        "name": "スタミナ回復",
+        "description": ""
+      },
+      "stealth": {
+        "name": "ステルス",
+        "description": ""
+      },
+      "stun_chance": {
+        "name": "スタン率",
+        "description": ""
+      },
+      "wait_max_time_roam_zombie": {
+        "name": "ゾンビ徘徊最大待機時間",
+        "description": "ゾンビが再び徘徊するまでの待機時間（最大）。"
+      },
+      "wait_min_time_roam_zombie": {
+        "name": "ゾンビ徘徊最小待機時間",
+        "description": "ゾンビが再び徘徊するまでの待機時間（最小）。"
+      },
+      "walk_speed": {
+        "name": "歩行速度",
+        "description": ""
+      },
+      "wildlife_roam_interval": {
+        "name": "野生生物徘徊間隔",
+        "description": ""
+      },
+      "wildlife_roam_radius": {
+        "name": "野生生物徘徊範囲",
+        "description": ""
+      },
+      "wildlife_site_radius": {
+        "name": "野生生物サイト範囲",
+        "description": "野生生物サイト範囲"
+      },
+      "zombie_attack_cooldown": {
+        "name": "ゾンビ攻撃クールダウン",
+        "description": ""
+      },
+      "zombie_attack_cooldown_time": {
+        "name": "ゾンビ攻撃クールダウン時間",
+        "description": "ゾンビが再び攻撃できるまでのクールダウン時間"
+      },
+      "zombie_attack_radius": {
+        "name": "ゾンビ攻撃範囲",
+        "description": ""
+      },
+      "zombie_roam_interval": {
+        "name": "ゾンビ徘徊間隔",
+        "description": ""
+      },
+      "zombie_roam_radius": {
+        "name": "ゾンビ徘徊範囲",
+        "description": ""
+      },
+      "zombie_rotation_threshold": {
+        "name": "ゾンビ回転閾値",
+        "description": "プレイヤーを攻撃する前にゾンビが回転する必要がある閾値。攻撃範囲内でプレイヤーを攻撃するために使用されます。"
+      },
+      "zombie_site_radius": {
+        "name": "ゾンビサイト範囲",
+        "description": "ゾンビサイト範囲"
+      }
+    },
+    "entity": {
+      "arrow": {
+        "name": "矢"
+      },
+      "bullet": {
+        "name": "弾丸"
+      },
+      "bunny": {
+        "name": "ウサギ"
+      },
+      "gun_item": {
+        "name": "銃アイテム"
+      },
+      "item": {
+        "name": "アイテム（エンティティ）"
+      },
+      "network_player": {
+        "name": "プレイヤー"
+      },
+      "object_ghost": {
+        "name": "オブジェクトゴースト"
+      },
+      "player": {
+        "name": "プレイヤー"
+      },
+      "silent_one": {
+        "name": "サイレントワン"
+      },
+      "skinwalker": {
+        "name": "スキンウォーカー"
+      },
+      "vehicle": {
+        "name": "車両"
+      },
+      "walker": {
+        "name": "ウォーカー"
+      }
+    },
+    "item": {
+      "medium_pouch": {
+        "name": "ミディアムポーチ",
+        "description": "2つのツールスロットを許可します。",
+        "source": ""
+      },
+      "toolbelt": {
+        "name": "ツールベルト",
+        "description": "刀。",
+        "source": ""
+      },
+      "ammo_9mm": {
+        "name": "9mm弾",
+        "description": "",
+        "source": ""
+      },
+      "ammo_45acp": {
+        "name": ".45 ACP弾",
+        "description": "",
+        "source": ""
+      },
+      "ammo_556": {
+        "name": "5.56mm弾",
+        "description": "",
+        "source": ""
+      },
+      "ammo_762": {
+        "name": "7.62mm弾",
+        "description": "",
+        "source": ""
+      },
+      "heavy_chestpiece": {
+        "name": "ヘビーチェストピース",
+        "description": "",
+        "source": ""
+      },
+      "heavy_footwear": {
+        "name": "ヘビーフットウェア",
+        "description": "",
+        "source": ""
+      },
+      "heavy_headgear": {
+        "name": "ヘビーヘッドギア",
+        "description": "",
+        "source": ""
+      },
+      "heavy_legwear": {
+        "name": "ヘビーレッグウェア",
+        "description": "",
+        "source": ""
+      },
+      "light_chestpiece": {
+        "name": "ライトチェストピース",
+        "description": "",
+        "source": ""
+      },
+      "light_footwear": {
+        "name": "ライトフットウェア",
+        "description": "",
+        "source": ""
+      },
+      "light_headgear": {
+        "name": "ライトヘッドギア",
+        "description": "",
+        "source": ""
+      },
+      "light_legwear": {
+        "name": "ライトレッグウェア",
+        "description": "",
+        "source": ""
+      },
+      "medium_chestpiece": {
+        "name": "ミディアムチェストピース",
+        "description": "",
+        "source": ""
+      },
+      "medium_footwear": {
+        "name": "ミディアムフットウェア",
+        "description": "",
+        "source": ""
+      },
+      "medium_headgear": {
+        "name": "ミディアムヘッドギア",
+        "description": "",
+        "source": ""
+      },
+      "medium_legwear": {
+        "name": "ミディアムレッグウェア",
+        "description": "",
+        "source": ""
+      },
+      "special_headgear": {
+        "name": "特殊ヘッドギア",
+        "description": "",
+        "source": ""
+      },
+      "special_legwear": {
+        "name": "特殊レッグウェア",
+        "description": "",
+        "source": ""
+      },
+      "coal": {
+        "name": "石炭",
+        "description": "火を燃やしたり、重要なツールをクラフトするために使用されます。木よりも長く、高温で燃えるため、料理、武器の鍛造、寒い夜の暖房に最適です。",
+        "source": "石炭は、ワールド内のチェストなどの貯蔵場所から入手できるか、洞窟の鉱床から採掘できます。"
+      },
+      "clean_water": {
+        "name": "清潔な水",
+        "description": "下痢や中毒のリスクのない水",
+        "source": ""
+      },
+      "antibacterial_ointment": {
+        "name": "抗菌軟膏",
+        "description": "",
+        "source": ""
+      },
+      "antibiotics": {
+        "name": "抗生物質",
+        "description": "",
+        "source": ""
+      },
+      "anstiseptic_wipes": {
+        "name": "消毒ワイプ",
+        "description": "",
+        "source": ""
+      },
+      "bandage": {
+        "name": "包帯",
+        "description": "出血を止めます。",
+        "source": ""
+      },
+      "burn_cream": {
+        "name": "火傷クリーム",
+        "description": "",
+        "source": ""
+      },
+      "cotton_balls": {
+        "name": "綿球",
+        "description": "",
+        "source": ""
+      },
+      "fermented_liquid": {
+        "name": "発酵液",
+        "description": "臭い",
+        "source": ""
+      },
+      "first_aid_kit": {
+        "name": "救急キット",
+        "description": "回復アイテム。",
+        "source": "クラフトで作成"
+      },
+      "medical_pack": {
+        "name": "医療パック",
+        "description": "より良い回復",
+        "source": ""
+      },
+      "medical_tape": {
+        "name": "医療テープ",
+        "description": "",
+        "source": ""
+      },
+      "painkillers": {
+        "name": "鎮痛剤",
+        "description": "",
+        "source": ""
+      },
+      "rubbing_alcohol": {
+        "name": "消毒用アルコール",
+        "description": "痛い",
+        "source": ""
+      },
+      "splint": {
+        "name": "副木",
+        "description": "",
+        "source": ""
+      },
+      "sterile_water": {
+        "name": "滅菌水",
+        "description": "",
+        "source": ""
+      },
+      "stim_syringe": {
+        "name": "刺激注射器",
+        "description": "",
+        "source": ""
+      },
+      "sutures": {
+        "name": "縫合糸",
+        "description": "",
+        "source": ""
+      },
+      "fabric": {
+        "name": "布地",
+        "description": "サバイバル環境、特に寒冷地での主要な燃料として使用されます。",
+        "source": "薪はクラフトで作成するか、ワールド内に散らばっているチェストなどの貯蔵場所から見つけることができます。"
+      },
+      "firewood": {
+        "name": "薪",
+        "description": "サバイバル環境、特に寒冷地での主要な燃料として使用されます。",
+        "source": "薪はクラフトで作成するか、ワールド内に散らばっているチェストなどの貯蔵場所から見つけることができます。"
+      },
+      "glass": {
+        "name": "ガラス",
+        "description": "シェルターに光を取り入れたり、液体を保存したり、食料を保存したり、視界を改善するツールをクラフトするために使用されます。",
+        "source": "ガラスは、砂を高温の炉で溶かして入手できるか、ワールド内の家にある貯蔵場所からランダムに見つけることができます。"
+      },
+      "iron_ingot": {
+        "name": "鉄インゴット",
+        "description": "クラフト、建設、修理に使用されます。耐久性のあるツールや武器を作るために不可欠です。",
+        "source": "鉄インゴットはクラフトで作成するか、ワールド内のチェストなどの貯蔵場所から見つけることができます。"
+      },
+      "iron_pickaxe_head": {
+        "name": "鉄のピッケルヘッド",
+        "description": "鉄のピッケルをクラフトするために使用されます。",
+        "source": "鉄のピッケルヘッドはレシピを使用してのみ入手できます。"
+      },
+      "cloth": {
+        "name": "布",
+        "description": "薄い布地。",
+        "source": ""
+      },
+      "fiber_cord": {
+        "name": "ファイバーコード",
+        "description": "植物繊維から作られた細い紐。",
+        "source": ""
+      },
+      "grass": {
+        "name": "草",
+        "description": "基本的なロープや結束材をクラフトするために有用で、食料が不足している場合には家畜に与えることもできます。",
+        "source": "草は屋外環境で拾うことができます。鎌を使用してアイテムを入手すると、収集量が増加します。"
+      },
+      "iron_ore": {
+        "name": "鉄鉱石",
+        "description": "採掘で得られる鉄鉱石。",
+        "source": "採掘で入手できます。"
+      },
+      "large_pouch": {
+        "name": "ラージポーチ",
+        "description": "3つのツールスロットを許可します！",
+        "source": ""
+      },
+      "leather": {
+        "name": "革",
+        "description": "さまざまなアイテムやギアをクラフトするために使用されます。",
+        "source": "革は環境から直接見つけることはできませんが、ゲームワールド内の貯蔵スペースから入手できます。さまざまな動物を狩ることで確実に革を入手できますが、スキンウォーカーからも革がドロップする可能性がありますが、保証はありません。"
+      },
+      "leaves": {
+        "name": "葉",
+        "description": "葉の山。",
+        "source": ""
+      },
+      "metal_scrap": {
+        "name": "金属スクラップ",
+        "description": "クラフト、修理、ツールや武器の即席作成に使用されます。",
+        "source": "金属スクラップは、ワールド内のチェストなどの貯蔵場所から入手できます。"
+      },
+      "small_pouch": {
+        "name": "スモールポーチ",
+        "description": "1つのツールスロットを許可します。",
+        "source": ""
+      },
+      "small_stone": {
+        "name": "小石",
+        "description": "比較的小さな石。",
+        "source": ""
+      },
+      "twig": {
+        "name": "小枝",
+        "description": "もろい棒。",
+        "source": ""
+      },
+      "wood": {
+        "name": "木材",
+        "description": "薄い布地。",
+        "source": ""
+      },
+      "pebble": {
+        "name": "小石",
+        "description": "簡単なツール、スリングショットの弾、または装飾的な造園に使用されます。",
+        "source": "小石はマップ内のさまざまな場所で地面から拾うことができます。"
+      },
+      "rock": {
+        "name": "岩",
+        "description": "基本的なシェルターの構築、防御バリアの作成、または緊急時の武器として使用されます。",
+        "source": "岩はさまざまな地形で豊富に見つかる天然素材で、ピッケルを使用して入手できます。"
+      },
+      "sand_stone": {
+        "name": "砂岩",
+        "description": "基本的な構造物の構築、アイテムのクラフト、強力なバリアの作成に使用されます。",
+        "source": "砂岩は砂粒が圧縮されて形成された耐久性のある岩石です。ピッケルを使用して砂岩層を破壊することで入手できます。"
+      },
+      "sewing_kit": {
+        "name": "裁縫キット",
+        "description": "さまざまな種類の着用可能なアイテムをクラフトし、衣服の寿命を延ばし、環境からの暴露を防ぎ、ギアを機能させるために使用されます。",
+        "source": "裁縫キットはクラフトで作成するか、ワールド内の家にある貯蔵場所からランダムに見つけることができます。"
+      },
+      "stone_shard": {
+        "name": "石の破片",
+        "description": "罠、ツールのクラフト、または即席の武器に使用されます。",
+        "source": "石の破片は環境から直接見つけることはできません。代わりに、手に持っている小石を地面に叩きつけることで入手できます。"
+      },
+      "string": {
+        "name": "紐",
+        "description": "シェルターの固定、登攀、武器やツールなどの材料の結束、または罠の作成に使用されます。",
+        "source": "紐は、つるや植物などの天然繊維からクラフトするか、環境内でランダムに見つけることができます。"
+      },
+      "campfire": {
+        "name": "キャンプファイア",
+        "description": "",
+        "source": ""
+      },
+      "foundation_block": {
+        "name": "基礎ブロック",
+        "description": "",
+        "source": ""
+      },
+      "workbench": {
+        "name": "作業台",
+        "description": "",
+        "source": ""
+      },
+      "fire_axe": {
+        "name": "消防斧",
+        "description": "これは何だ？ -JP",
+        "source": ""
+      },
+      "iron_axe": {
+        "name": "鉄の斧",
+        "description": "",
+        "source": ""
+      },
+      "stone_axe": {
+        "name": "石の斧",
+        "description": "小さな植物や木を切り倒すために使用されます。武器としても使用できますが、この用途で使用するとより早く劣化します。",
+        "source": "石の斧はレシピを使用して作成するか、家にある貯蔵スペースから見つけることができます。"
+      },
+      "lighter": {
+        "name": "ライター",
+        "description": "",
+        "source": ""
+      },
+      "carbon_pickaxe": {
+        "name": "カーボンピッケル",
+        "description": "",
+        "source": ""
+      },
+      "iron_pickaxe": {
+        "name": "鉄のピッケル",
+        "description": "鉱床を採掘して鉱物を入手するために使用されます。",
+        "source": "鉄のピッケルはクラフトで作成するか、洞窟内の貯蔵場所から見つけることができます。"
+      },
+      "steel_pickaxe": {
+        "name": "鋼のピッケル",
+        "description": "",
+        "source": ""
+      },
+      "stone_pickaxe": {
+        "name": "石のピッケル",
+        "description": "",
+        "source": ""
+      },
+      "": {
+        "name": "",
+        "description": "",
+        "source": ""
+      },
+      "stone_shovel": {
+        "name": "石のシャベル",
+        "description": "",
+        "source": ""
+      },
+      "tree_bark": {
+        "name": "樹皮",
+        "description": "燃料、マルチ、基本的なアイテムのクラフト、または即席の容器や断熱材として使用されます。",
+        "source": "樹皮はクラフトで作成するか、木を切り倒す際の副産物として入手できます。"
+      },
+      "tree_log": {
+        "name": "丸太",
+        "description": "重い建築や火の燃料として使用されます。",
+        "source": "丸太は、ワールド内に散らばっているチェストなどの貯蔵場所から見つけることができるか、木を切り倒す際の副産物として入手できます。"
+      },
+      "katana": {
+        "name": "刀",
+        "description": "",
+        "source": ""
+      },
+      "machete": {
+        "name": "マチェット",
+        "description": "",
+        "source": ""
+      },
+      "throwing_knife": {
+        "name": "投げナイフ",
+        "description": "",
+        "source": ""
+      },
+      "sledgehammer": {
+        "name": "スレッジハンマー",
+        "description": "",
+        "source": ""
+      },
+      "arms": {
+        "name": "腕",
+        "description": "",
+        "source": ""
+      },
+      "knuckle_claw": {
+        "name": "ナックルクロー",
+        "description": "",
+        "source": ""
+      },
+      "knuckle_dusters": {
+        "name": "ナックルダスター",
+        "description": "",
+        "source": ""
+      },
+      "auk": {
+        "name": "AUK",
+        "description": "",
+        "source": ""
+      },
+      "auk_7": {
+        "name": "AUK-7",
+        "description": "",
+        "source": ""
+      },
+      "m4ar": {
+        "name": "M4AR",
+        "description": "非標準のアサルトライフル。",
+        "source": ""
+      },
+      "compound_bow": {
+        "name": "コンパウンドボウ",
+        "description": "",
+        "source": ""
+      },
+      "crossbow": {
+        "name": "クロスボウ",
+        "description": "",
+        "source": ""
+      },
+      "longbow": {
+        "name": "ロングボウ",
+        "description": "",
+        "source": ""
+      },
+      "primal_bow": {
+        "name": "原始的な弓",
+        "description": "",
+        "source": ""
+      },
+      "saber_dr3": {
+        "name": "セイバーDR3",
+        "description": "",
+        "source": ""
+      },
+      "falcon": {
+        "name": "WLファルコン",
+        "description": "大きなピストル。",
+        "source": ""
+      },
+      "m2011": {
+        "name": "M2011",
+        "description": "",
+        "source": ""
+      },
+      "tac_hap": {
+        "name": "TAC-HAP",
+        "description": "",
+        "source": ""
+      },
+      "cbrmg": {
+        "name": "CBRMG",
+        "description": "カスタムビルドロータリーマシンガン",
+        "source": ""
+      },
+      "bm3": {
+        "name": "BM3",
+        "description": "",
+        "source": ""
+      },
+      "model_870": {
+        "name": "モデル870",
+        "description": "",
+        "source": ""
+      },
+      "pdw7a1": {
+        "name": "PDW7A1",
+        "description": "",
+        "source": ""
+      },
+      "smtp5": {
+        "name": "SMTP-5",
+        "description": "",
+        "source": ""
+      },
+      "imi_uzi": {
+        "name": "Uzi",
+        "description": "",
+        "source": ""
+      },
+      "amsr": {
+        "name": "AMSR",
+        "description": "対物狙撃銃",
+        "source": ""
+      },
+      "st204": {
+        "name": "ST 204",
+        "description": "",
+        "source": ""
+      },
+      "wooden_chips": {
+        "name": "木片",
+        "description": "燃料、地面のカバー用マルチ、またはさまざまな建築プロジェクトの充填材として使用されます。",
+        "source": "木片はクラフトで作成するか、ワールド内に散らばっているチェストなどの貯蔵場所から見つけることができます。"
+      },
+      "wooden_plank": {
+        "name": "木板",
+        "description": "基本的なバリケードからより複雑な建物まで、さまざまな構造物をクラフトするために使用されます。",
+        "source": "木板はクラフトで作成するか、ワールド内に散らばっているチェストなどの貯蔵場所から見つけることができます。"
+      },
+      "wooden_stick": {
+        "name": "木の棒",
+        "description": "シェルターの構築、火起こし、アンデッドに対する防御に使用されます。",
+        "source": "木の棒は地面からランダムに見つけることができるか、クラフトで作成するか、木を切り倒す際の副産物として入手できます。"
+      }
+    },
+    "object": {
+      "practice_dummy": {
+        "name": "練習用ダミー",
+        "description": "練習用ダミー"
+      },
+      "copper_deposit": {
+        "name": "銅鉱床",
+        "description": "銅鉱床"
+      },
+      "Grass": {
+        "name": "草",
+        "description": "草"
+      },
+      "iron_deposit": {
+        "name": "鉄鉱床",
+        "description": "鉄鉱床"
+      },
+      "pine_tree_heart": {
+        "name": "松の木の心",
+        "description": ""
+      },
+      "wooden_chest": {
+        "name": "木のチェスト",
+        "description": "木のチェスト"
+      },
+      "campfire": {
+        "name": "キャンプファイア",
+        "description": "キャンプファイア"
+      },
+      "furnace": {
+        "name": "炉",
+        "description": "炉"
+      },
+      "gunsmithing_table": {
+        "name": "銃工テーブル",
+        "description": "銃工テーブル"
+      },
+      "player_crafting": {
+        "name": "プレイヤークラフト",
+        "description": "プレイヤークラフト"
+      },
+      "workbench": {
+        "name": "作業台",
+        "description": ""
+      }
+    },
+    "recipe": {
+      "bandage_1": {
+        "name": "包帯",
+        "description": ""
+      },
+      "bandage_2": {
+        "name": "包帯",
+        "description": ""
+      },
+      "bandage": {
+        "name": "包帯",
+        "description": ""
+      },
+      "campfire": {
+        "name": "キャンプファイア",
+        "description": ""
+      },
+      "fiber_cord_1": {
+        "name": "ファイバーコード",
+        "description": ""
+      },
+      "fiber_cord": {
+        "name": "ファイバーコード",
+        "description": ""
+      },
+      "first_aid_kit-1": {
+        "name": "救急キット",
+        "description": ""
+      },
+      "first_aid_kit": {
+        "name": "救急キット",
+        "description": ""
+      },
+      "clean_water": {
+        "name": "清潔な水",
+        "description": ""
+      },
+      "fabric": {
+        "name": "布地",
+        "description": ""
+      },
+      "firewood": {
+        "name": "薪",
+        "description": ""
+      },
+      "glass": {
+        "name": "ガラス",
+        "description": ""
+      },
+      "iron_ingot": {
+        "name": "鉄インゴット",
+        "description": ""
+      },
+      "iron_pickaxe": {
+        "name": "鉄のピッケル",
+        "description": ""
+      },
+      "stone_axe": {
+        "name": "石の斧",
+        "description": ""
+      },
+      "stone_shard": {
+        "name": "石の破片",
+        "description": ""
+      },
+      "string": {
+        "name": "紐",
+        "description": ""
+      },
+      "tree_bark": {
+        "name": "樹皮",
+        "description": ""
+      },
+      "wooden_chips": {
+        "name": "木片",
+        "description": ""
+      },
+      "wooden_plank": {
+        "name": "木板",
+        "description": ""
+      },
+      "wooden_stick": {
+        "name": "木の棒",
+        "description": ""
+      },
+      "m4ar": {
+        "name": "M4AR",
+        "description": ""
+      },
+      "": {
+        "name": "",
+        "description": ""
+      },
+      "workbench": {
+        "name": "作業台",
+        "description": ""
+      }
+    }
+  }

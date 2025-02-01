@@ -1,0 +1,977 @@
+{
+  "attribute": {
+    "accuracy": {
+      "name": "Accuracy",
+      "description": ""
+    },
+    "armor": {
+      "name": "Armor",
+      "description": ""
+    },
+    "armor_penetration": {
+      "name": "Armor Penetration",
+      "description": ""
+    },
+    "attack_damage": {
+      "name": "Attack Damage",
+      "description": ""
+    },
+    "attack_speed": {
+      "name": "Attack Speed",
+      "description": "Number of attacks per second."
+    },
+    "attack_weight": {
+      "name": "Attack Weight",
+      "description": ""
+    },
+    "bag_slots_count": {
+      "name": "Bag Slots Count",
+      "description": "How many items you can carry."
+    },
+    "build_range": {
+      "name": "Build Range",
+      "description": "Build range."
+    },
+    "charisma": {
+      "name": "Charisma",
+      "description": ""
+    },
+    "cold_resistance": {
+      "name": "Cold Resistance",
+      "description": ""
+    },
+    "critical_chance": {
+      "name": "Critical Chance",
+      "description": ""
+    },
+    "critical_damage": {
+      "name": "Critical Damage",
+      "description": ""
+    },
+    "crouch_speed": {
+      "name": "Crouch Speed",
+      "description": ""
+    },
+    "durability": {
+      "name": "Durability",
+      "description": ""
+    },
+    "efficiency": {
+      "name": "Efficiency",
+      "description": ""
+    },
+    "evasion": {
+      "name": "Evasion",
+      "description": ""
+    },
+    "experience": {
+      "name": "Experience",
+      "description": ""
+    },
+    "explosion_resistance": {
+      "name": "Explosion Resistance",
+      "description": ""
+    },
+    "": {
+      "name": "",
+      "description": ""
+    },
+    "fuel_craft": {
+      "name": "Fuel Remaining",
+      "description": ""
+    },
+    "health": {
+      "name": "Health",
+      "description": ""
+    },
+    "health_regen_per_second": {
+      "name": "Health Regeneration",
+      "description": "Health regeneration per second."
+    },
+    "heat_resistance": {
+      "name": "Heat Resistance",
+      "description": ""
+    },
+    "hotbar_slots_count": {
+      "name": "Hotbar Slots Count",
+      "description": ""
+    },
+    "hunger": {
+      "name": "Hunger",
+      "description": ""
+    },
+    "hydration": {
+      "name": "Hydration",
+      "description": ""
+    },
+    "innate_hunger": {
+      "name": "Innate Hunger",
+      "description": ""
+    },
+    "innate_thirst": {
+      "name": "Innate Thirst",
+      "description": ""
+    },
+    "jump_hunger_cost": {
+      "name": "Jump Hunger Cost",
+      "description": ""
+    },
+    "jump_hydration_cost": {
+      "name": "Jump Hydration Cost",
+      "description": ""
+    },
+    "jump_stamina_cost": {
+      "name": "Jump Stamina Cost",
+      "description": ""
+    },
+    "jump_velocity": {
+      "name": "Jump Velocity",
+      "description": ""
+    },
+    "level": {
+      "name": "Level",
+      "description": ""
+    },
+    "limb_penetration": {
+      "name": "Limb Penetration",
+      "description": ""
+    },
+    "lunge_distance": {
+      "name": "Lunge Distance",
+      "description": ""
+    },
+    "mana": {
+      "name": "Mana",
+      "description": ""
+    },
+    "melee_speed": {
+      "name": "Melee Speed",
+      "description": ""
+    },
+    "move_speed": {
+      "name": "Move Speed",
+      "description": ""
+    },
+    "mutability": {
+      "name": "Mutability",
+      "description": ""
+    },
+    "mutation": {
+      "name": "Mutation",
+      "description": ""
+    },
+    "perk_points": {
+      "name": "Perk Points",
+      "description": ""
+    },
+    "player_detection_radius": {
+      "name": "Player Detection Radius",
+      "description": ""
+    },
+    "reload_speed": {
+      "name": "Reload Speed",
+      "description": ""
+    },
+    "resistance": {
+      "name": "Resistance",
+      "description": ""
+    },
+    "run_speed": {
+      "name": "Run Speed",
+      "description": ""
+    },
+    "run_stamina_cost": {
+      "name": "Run Stamina Cost",
+      "description": ""
+    },
+    "shield_penetration": {
+      "name": "Shield Penetration",
+      "description": ""
+    },
+    "stamina": {
+      "name": "Stamina",
+      "description": ""
+    },
+    "stamina_cost": {
+      "name": "Stamina Cost",
+      "description": "General attribute for all activities that cost Stamina."
+    },
+    "stamina_regen_delay": {
+      "name": "Stamina Regeneration Delay",
+      "description": "Time in seconds for the Stamina to start regenerating again after consuming."
+    },
+    "stamina_regen_per_tick": {
+      "name": "Stamina Regeneration",
+      "description": ""
+    },
+    "stealth": {
+      "name": "Stealth",
+      "description": ""
+    },
+    "stun_chance": {
+      "name": "Stun Chance",
+      "description": ""
+    },
+    "wait_max_time_roam_zombie": {
+      "name": "Wait Max Time Roam Zombie",
+      "description": "Zombie walking interval before roaming again (Maximum)"
+    },
+    "wait_min_time_roam_zombie": {
+      "name": "Wait Min Time Roam Zombie",
+      "description": "Zombie walking interval before roaming again (Minimum)"
+    },
+    "walk_speed": {
+      "name": "Walk Speed",
+      "description": ""
+    },
+    "wildlife_roam_interval": {
+      "name": "Wildlife Roam Interval",
+      "description": ""
+    },
+    "wildlife_roam_radius": {
+      "name": "Wildlife Roam Radius",
+      "description": ""
+    },
+    "wildlife_site_radius": {
+      "name": "Wildlife Site Radius",
+      "description": "Wildlife Site Radius"
+    },
+    "zombie_attack_cooldown": {
+      "name": "Zombie Attack Cooldown",
+      "description": ""
+    },
+    "zombie_attack_cooldown_time": {
+      "name": "Zombie Attack Cooldown Time",
+      "description": "cooldown attack of zombie before it can attack again"
+    },
+    "zombie_attack_radius": {
+      "name": "Zombie Attack Radius",
+      "description": ""
+    },
+    "zombie_roam_interval": {
+      "name": "Zombie Roam Interval",
+      "description": ""
+    },
+    "zombie_roam_radius": {
+      "name": "Zombie Roam Radius",
+      "description": ""
+    },
+    "zombie_rotation_threshold": {
+      "name": "Zombie Rotation Threshold",
+      "description": "rotation must be within threshold before attacking the player, used for attacking the player within attack range"
+    },
+    "zombie_site_radius": {
+      "name": "Zombie Site Radius",
+      "description": "Zombie site Radius"
+    }
+  },
+  "entity": {
+    "arrow": {
+      "name": "Arrow"
+    },
+    "bullet": {
+      "name": "Bullet"
+    },
+    "bunny": {
+      "name": "Bunny"
+    },
+    "gun_item": {
+      "name": "Gun Item"
+    },
+    "item": {
+      "name": "Item (Entity)"
+    },
+    "network_player": {
+      "name": "Player"
+    },
+    "object_ghost": {
+      "name": "Object Ghost"
+    },
+    "player": {
+      "name": "Player"
+    },
+    "silent_one": {
+      "name": "Silent One"
+    },
+    "skinwalker": {
+      "name": "Skinwalker"
+    },
+    "vehicle": {
+      "name": "Vehicle"
+    },
+    "walker": {
+      "name": "Walker"
+    }
+  },
+  "item": {
+    "medium_pouch": {
+      "name": "Medium Pouch",
+      "description": "Allows for two tool slots.",
+      "source": ""
+    },
+    "toolbelt": {
+      "name": "Toolbelt",
+      "description": "Katana.",
+      "source": ""
+    },
+    "ammo_9mm": {
+      "name": "9mm Rounds",
+      "description": "",
+      "source": ""
+    },
+    "ammo_45acp": {
+      "name": ".45 ACP Rounds",
+      "description": "",
+      "source": ""
+    },
+    "ammo_556": {
+      "name": "5.56mm Rounds",
+      "description": "",
+      "source": ""
+    },
+    "ammo_762": {
+      "name": "7.62mm Rounds",
+      "description": "",
+      "source": ""
+    },
+    "heavy_chestpiece": {
+      "name": "Heavy chestpiece",
+      "description": "",
+      "source": ""
+    },
+    "heavy_footwear": {
+      "name": "Heavy Footwear",
+      "description": "",
+      "source": ""
+    },
+    "heavy_headgear": {
+      "name": "Heavy Headgear",
+      "description": "",
+      "source": ""
+    },
+    "heavy_legwear": {
+      "name": "Heavy legwear",
+      "description": "",
+      "source": ""
+    },
+    "light_chestpiece": {
+      "name": "Light Chestpiece",
+      "description": "",
+      "source": ""
+    },
+    "light_footwear": {
+      "name": "Light Footwear",
+      "description": "",
+      "source": ""
+    },
+    "light_headgear": {
+      "name": "Light Headgear",
+      "description": "",
+      "source": ""
+    },
+    "light_legwear": {
+      "name": "Light Legwear",
+      "description": "",
+      "source": ""
+    },
+    "medium_chestpiece": {
+      "name": "Medium Chestpiece",
+      "description": "",
+      "source": ""
+    },
+    "medium_footwear": {
+      "name": "Medium footwear",
+      "description": "",
+      "source": ""
+    },
+    "medium_headgear": {
+      "name": "Medium Headgear",
+      "description": "",
+      "source": ""
+    },
+    "medium_legwear": {
+      "name": "Medium legwear",
+      "description": "",
+      "source": ""
+    },
+    "special_headgear": {
+      "name": "Specialized Headgear",
+      "description": "",
+      "source": ""
+    },
+    "special_legwear": {
+      "name": "Specialized Legwear",
+      "description": "",
+      "source": ""
+    },
+    "coal": {
+      "name": "Coal",
+      "description": "Used  for fueling fires and crafting essential tools. It burns longer and hotter than wood, making it perfect for cooking food, forging weapons, and staying warm during cold nights.",
+      "source": "Coal can be acquired from storage locations such as chests found in the world or mined from deposits in caves."
+    },
+    "clean_water": {
+      "name": "Clean Water",
+      "description": "water without risk of diarhea or poisoning",
+      "source": ""
+    },
+    "antibacterial_ointment": {
+      "name": "Antibacterial Ointment",
+      "description": "",
+      "source": ""
+    },
+    "antibiotics": {
+      "name": "Antibiotics",
+      "description": "",
+      "source": ""
+    },
+    "anstiseptic_wipes": {
+      "name": "Antiseptic Wipes",
+      "description": "",
+      "source": ""
+    },
+    "bandage": {
+      "name": "Bandage",
+      "description": "Stops bleeding.",
+      "source": ""
+    },
+    "burn_cream": {
+      "name": "Burn Cream",
+      "description": "",
+      "source": ""
+    },
+    "cotton_balls": {
+      "name": "Cotton Balls",
+      "description": "",
+      "source": ""
+    },
+    "fermented_liquid": {
+      "name": "Fermented Liquid",
+      "description": "stinky",
+      "source": ""
+    },
+    "first_aid_kit": {
+      "name": "First Aid Kit",
+      "description": "Healing item.",
+      "source": "Crafter using "
+    },
+    "medical_pack": {
+      "name": "Medical Pack",
+      "description": "Better healing",
+      "source": ""
+    },
+    "medical_tape": {
+      "name": "Medical Tape",
+      "description": "",
+      "source": ""
+    },
+    "painkillers": {
+      "name": "Painkillers",
+      "description": "",
+      "source": ""
+    },
+    "rubbing_alcohol": {
+      "name": "Rubbing Alcohol",
+      "description": "yeeeeoooouucchhh",
+      "source": ""
+    },
+    "splint": {
+      "name": "Splints",
+      "description": "",
+      "source": ""
+    },
+    "sterile_water": {
+      "name": "Sterile Wter",
+      "description": "",
+      "source": ""
+    },
+    "stim_syringe": {
+      "name": "Stim Syringe",
+      "description": "",
+      "source": ""
+    },
+    "sutures": {
+      "name": "Sutures",
+      "description": "",
+      "source": ""
+    },
+    "fabric": {
+      "name": "Fabric",
+      "description": "Used as a primary source of fuel in a survival setting, especially in colder climates.",
+      "source": "Firewood can be obtained by crafting or by being found in storage locations such as chests scattered throughout the world."
+    },
+    "firewood": {
+      "name": "Fire Wood",
+      "description": "Used as a primary source of fuel in a survival setting, especially in colder climates.",
+      "source": "Firewood can be obtained by crafting or by being found in storage locations such as chests scattered throughout the world."
+    },
+    "glass": {
+      "name": "Glass",
+      "description": "Used  for letting light into shelters, storing liquids, preserving food, and crafting tools that improves visibility",
+      "source": "Glass can be obtained by melting sand in a high-heat furnace, it can also be found randomly across the world, more specifically, in storages present in houses."
+    },
+    "iron_ingot": {
+      "name": "Iron Ingot",
+      "description": "Used in crafting, construction, and repairs. Essential for making durable tools and weapons.",
+      "source": "Iron ingots can be acquired from crafting or be found in storage locations such as chests found in the world."
+    },
+    "iron_pickaxe_head": {
+      "name": "Iron Pickaxe Head",
+      "description": "Used used for crafting an Iron Pickaxe. ",
+      "source": "Iron Pickaxe Head can only be acquired using recipes."
+    },
+    "cloth": {
+      "name": "Cloth",
+      "description": "Manipis na tela.",
+      "source": ""
+    },
+    "fiber_cord": {
+      "name": "Fiber Cord",
+      "description": "Thin string made from plant fiber.",
+      "source": ""
+    },
+    "grass": {
+      "name": "Grass",
+      "description": "Useful for crafting basic ropes or binding materials, and it can be fed to livestock if food sources are scarce.",
+      "source": "Grass can be pickup in outdoor environments. Using a sickle to obtain the item increases the yield of its collection."
+    },
+    "iron_ore": {
+      "name": "Iron Ore",
+      "description": "Iron ore obtained from mining.",
+      "source": "Obtained from mining."
+    },
+    "large_pouch": {
+      "name": "Large Pouch",
+      "description": "Allows for three tool slots!",
+      "source": ""
+    },
+    "leather": {
+      "name": "Leather",
+      "description": "used for crafting various items and gear.",
+      "source": "Leather cannot be found directly in the environment but can be obtained from storage spaces within the game world. It can be reliably acquired by hunting various animals, as they guarantee a leather drop. Skinwalkers, on the other hand, also has the chance to drop leather, but this is not guaranteed."
+    },
+    "leaves": {
+      "name": "Leaves",
+      "description": "Pile of leaves.",
+      "source": ""
+    },
+    "metal_scrap": {
+      "name": "Metal Scrap",
+      "description": "Used for crafting, repairs, and improvising tools and weapons.",
+      "source": "Metal scraps can be acquired from storage locations such as chests found in the world."
+    },
+    "small_pouch": {
+      "name": "Small Pouch",
+      "description": "Allows for one tool slot.",
+      "source": ""
+    },
+    "small_stone": {
+      "name": "Small Stone",
+      "description": "A relatively small stone.",
+      "source": ""
+    },
+    "twig": {
+      "name": "Twig",
+      "description": "Brittle stick.",
+      "source": ""
+    },
+    "wood": {
+      "name": "Wood",
+      "description": "Manipis na tela.",
+      "source": ""
+    },
+    "pebble": {
+      "name": "Pebble",
+      "description": "Used for simple tools, as slingshot ammunition, or in decorative landscaping.",
+      "source": "Pebbles can be picked up from the ground in various locations around the map.\t"
+    },
+    "rock": {
+      "name": "Rock",
+      "description": "Used for constructing rudimentary shelters, creating defensive barriers, and as weapons in a pinch.",
+      "source": "Rocks are abundant natural materials found in various terrains, can be obtained using a pickaxe."
+    },
+    "sand_stone": {
+      "name": "Sand Stone",
+      "description": "Used for building basic structures, crafting items, and creating strong barriers.",
+      "source": "Sandstone is a durable rock formed from compacted sand grains. It can be obtained by breaking down sandstone formations with a pickaxe."
+    },
+    "sewing_kit": {
+      "name": "Sewing Kit",
+      "description": "Used for crafting different types of wearable items, prolonging the life of clothing, preventing exposure to the elements, and keeping gear functional.",
+      "source": "Sewing kits can be obtained through crafting or be found randomly across the world, more specifically, in storages present in houses."
+    },
+    "stone_shard": {
+      "name": "Stone Shard",
+      "description": "Used in traps, for crafting tools, or as makeshift weapons.",
+      "source": "Stone Shards cannot be found directly in the environment. Instead, they can be obtained by smashing a Pebble on your on-hand slot to the ground."
+    },
+    "string": {
+      "name": "String",
+      "description": "Used for securing shelters, climbing, binding materials such as weapons, tools, and other materials or creating traps.",
+      "source": "Strings can be crafted from natural fibers like vines and plants or be found randomly across the environment."
+    },
+    "campfire": {
+      "name": "Campfire",
+      "description": "",
+      "source": ""
+    },
+    "foundation_block": {
+      "name": "Foundation Block",
+      "description": "",
+      "source": ""
+    },
+    "workbench": {
+      "name": "Workbench",
+      "description": "",
+      "source": ""
+    },
+    "fire_axe": {
+      "name": "Fire Axe",
+      "description": "tf is this -JP",
+      "source": ""
+    },
+    "iron_axe": {
+      "name": "Iron Axe",
+      "description": "",
+      "source": ""
+    },
+    "stone_axe": {
+      "name": "Stone Axe",
+      "description": "Used to cut down small plants and trees. Can also be used as a weapon, however, degrades more quickly if utilized in this usecase.",
+      "source": "Stone axes can be acquired through recipes or be found in storage spaces present in houses."
+    },
+    "lighter": {
+      "name": "lighter",
+      "description": "",
+      "source": ""
+    },
+    "carbon_pickaxe": {
+      "name": "Carbon Pickaxe",
+      "description": "",
+      "source": ""
+    },
+    "iron_pickaxe": {
+      "name": "Iron Pickaxe",
+      "description": "Used to mine resource deposits to acquire minerals.",
+      "source": "Iron Pickaxes can be acquired either by crafting or from storages present in caves."
+    },
+    "steel_pickaxe": {
+      "name": "Steel Pickaxe",
+      "description": "",
+      "source": ""
+    },
+    "stone_pickaxe": {
+      "name": "Stone Pickaxe",
+      "description": "",
+      "source": ""
+    },
+    "": {
+      "name": "",
+      "description": "",
+      "source": ""
+    },
+    "stone_shovel": {
+      "name": "Stone Shovel",
+      "description": "",
+      "source": ""
+    },
+    "tree_bark": {
+      "name": "Tree Bark",
+      "description": "Used as fuel, mulch for kindling, crafting basic items, or even as a makeshift container or material for insulation.",
+      "source": "Tree barks can be obtained by crafting or as a byproduct from chopping down trees."
+    },
+    "tree_log": {
+      "name": "Tree Log",
+      "description": "Used in heavy construction and as fuel for fires. ",
+      "source": "Tree logs can be found in storage locations such as chests scattered throughout the world, it can also obtained as a byproduct from chopping down trees."
+    },
+    "katana": {
+      "name": "Katana",
+      "description": "",
+      "source": ""
+    },
+    "machete": {
+      "name": "Machete",
+      "description": "",
+      "source": ""
+    },
+    "throwing_knife": {
+      "name": "Throwing Knife",
+      "description": "",
+      "source": ""
+    },
+    "sledgehammer": {
+      "name": "Sledgehammer",
+      "description": "",
+      "source": ""
+    },
+    "arms": {
+      "name": "Arms",
+      "description": "",
+      "source": ""
+    },
+    "knuckle_claw": {
+      "name": "Knuckle Claw",
+      "description": "",
+      "source": ""
+    },
+    "knuckle_dusters": {
+      "name": "Knuckle Dusters",
+      "description": "",
+      "source": ""
+    },
+    "auk": {
+      "name": "AUK",
+      "description": "",
+      "source": ""
+    },
+    "auk_7": {
+      "name": "AUK-7",
+      "description": "",
+      "source": ""
+    },
+    "m4ar": {
+      "name": "M4AR",
+      "description": "Non-standard assault rifle.",
+      "source": ""
+    },
+    "compound_bow": {
+      "name": "Compound Bow",
+      "description": "",
+      "source": ""
+    },
+    "crossbow": {
+      "name": "Crossbow",
+      "description": "",
+      "source": ""
+    },
+    "longbow": {
+      "name": "Longbow",
+      "description": "",
+      "source": ""
+    },
+    "primal_bow": {
+      "name": "Primal Bow",
+      "description": "",
+      "source": ""
+    },
+    "saber_dr3": {
+      "name": "Saber DR3",
+      "description": "",
+      "source": ""
+    },
+    "falcon": {
+      "name": "WL Falcon",
+      "description": "Big pistol.",
+      "source": ""
+    },
+    "m2011": {
+      "name": "M2011",
+      "description": "",
+      "source": ""
+    },
+    "tac_hap": {
+      "name": "TAC-HAP",
+      "description": "",
+      "source": ""
+    },
+    "cbrmg": {
+      "name": "CBRMG",
+      "description": "Custom Built Rotary Machine Gun",
+      "source": ""
+    },
+    "bm3": {
+      "name": "BM3",
+      "description": "",
+      "source": ""
+    },
+    "model_870": {
+      "name": "Model 870",
+      "description": "",
+      "source": ""
+    },
+    "pdw7a1": {
+      "name": "PDW7A1",
+      "description": "",
+      "source": ""
+    },
+    "smtp5": {
+      "name": "SMTP-5",
+      "description": "",
+      "source": ""
+    },
+    "imi_uzi": {
+      "name": "Uzi",
+      "description": "",
+      "source": ""
+    },
+    "amsr": {
+      "name": "AMSR",
+      "description": "Anti-Materiel Sniper Rifle",
+      "source": ""
+    },
+    "st204": {
+      "name": "ST 204",
+      "description": "",
+      "source": ""
+    },
+    "wooden_chips": {
+      "name": "Wooden Chips",
+      "description": "Used as fuel, mulch for ground cover, or filler material in various construction projects.",
+      "source": "Wooden chips can be obtained by crafting or found in storage locations such as chests scattered throughout the world."
+    },
+    "wooden_plank": {
+      "name": "Wooden Plank",
+      "description": "Used for crafting a variety of structures, from basic barricades to more complex buildings.",
+      "source": "Wooden planks can be obtained by crafting or found in storage locations such as chests scattered throughout the world."
+    },
+    "wooden_stick": {
+      "name": "Wooden Stick",
+      "description": "Used for building shelters, starting fires, and defending against the undead.",
+      "source": "Wooden sticks can be found randomly on the ground or obtained by crafting or as a byproduct from chopping down trees."
+    }
+  },
+  "object": {
+    "practice_dummy": {
+      "name": "Practice Dummy",
+      "description": "Practice Dummy"
+    },
+    "copper_deposit": {
+      "name": "Copper Deposit",
+      "description": "Copper Deposit"
+    },
+    "Grass": {
+      "name": "Grass",
+      "description": "Grass"
+    },
+    "iron_deposit": {
+      "name": "Iron Deposit",
+      "description": "Iron Deposit"
+    },
+    "pine_tree_heart": {
+      "name": "Pine Tree Heart",
+      "description": ""
+    },
+    "wooden_chest": {
+      "name": "Wooden Chest",
+      "description": "Wooden Chest"
+    },
+    "campfire": {
+      "name": "Campfire",
+      "description": "Campfire"
+    },
+    "furnace": {
+      "name": "Furnace",
+      "description": "Furnace"
+    },
+    "gunsmithing_table": {
+      "name": "Gunsmithing Table",
+      "description": "Gunsmithing Table"
+    },
+    "player_crafting": {
+      "name": "Player Crafting",
+      "description": "Player Crafting"
+    },
+    "workbench": {
+      "name": "Workbench",
+      "description": ""
+    }
+  },
+  "recipe": {
+    "bandage_1": {
+      "name": "Bandage",
+      "description": ""
+    },
+    "bandage_2": {
+      "name": "Bandage",
+      "description": ""
+    },
+    "bandage": {
+      "name": "Bandage",
+      "description": ""
+    },
+    "campfire": {
+      "name": "Campfire",
+      "description": ""
+    },
+    "fiber_cord_1": {
+      "name": "Fiber Cord",
+      "description": ""
+    },
+    "fiber_cord": {
+      "name": "Fiber Cord",
+      "description": ""
+    },
+    "first_aid_kit-1": {
+      "name": "First Aid Kit",
+      "description": ""
+    },
+    "first_aid_kit": {
+      "name": "First Aid Kit",
+      "description": ""
+    },
+    "clean_water": {
+      "name": "Clean water",
+      "description": ""
+    },
+    "fabric": {
+      "name": "Fabric",
+      "description": ""
+    },
+    "firewood": {
+      "name": "Firewood",
+      "description": ""
+    },
+    "glass": {
+      "name": "Glass",
+      "description": ""
+    },
+    "iron_ingot": {
+      "name": "Iron Ingot",
+      "description": ""
+    },
+    "iron_pickaxe": {
+      "name": "Iron Pickaxe",
+      "description": ""
+    },
+    "stone_axe": {
+      "name": "Stone Axe",
+      "description": ""
+    },
+    "stone_shard": {
+      "name": "Stone Shard",
+      "description": ""
+    },
+    "string": {
+      "name": "String",
+      "description": ""
+    },
+    "tree_bark": {
+      "name": "Tree Bark",
+      "description": ""
+    },
+    "wooden_chips": {
+      "name": "Wooden Chips",
+      "description": ""
+    },
+    "wooden_plank": {
+      "name": "Wooden Plank",
+      "description": ""
+    },
+    "wooden_stick": {
+      "name": "Wooden Stick",
+      "description": ""
+    },
+    "m4ar": {
+      "name": "M4AR",
+      "description": ""
+    },
+    "": {
+      "name": "",
+      "description": ""
+    },
+    "workbench": {
+      "name": "Workbench",
+      "description": ""
+    }
+  }
+}

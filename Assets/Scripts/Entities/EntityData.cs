@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using UZSG.Systems;
 using UZSG.Saves;
 using UZSG.Attributes;
+using UnityEngine.Serialization;
 
 namespace UZSG.Data
 {
@@ -20,7 +21,7 @@ namespace UZSG.Data
 
         [Header("Entity Data")]
         public AssetReference AssetReference;
-        public string Name;
+        [FormerlySerializedAs("Name")] public string DisplayName;
         public List<Attributes.Attribute> BaseAttributes;
         
         [Header("Audio Data")]

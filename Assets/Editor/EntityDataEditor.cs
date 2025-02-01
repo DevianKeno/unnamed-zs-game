@@ -9,7 +9,7 @@ namespace UZSG.UnityEditor
     public class EntityDataEditor : BaseDataEditor
     {
         SerializedProperty assetReference,
-            nameProperty,
+            displayNameProperty,
             baseAttributes,
             audioAssetsData;
 
@@ -18,7 +18,7 @@ namespace UZSG.UnityEditor
             base.OnEnable();
             
             assetReference = serializedObject.FindProperty("AssetReference");
-            nameProperty = serializedObject.FindProperty("Name");
+            displayNameProperty = serializedObject.FindProperty("DisplayName");
             baseAttributes = serializedObject.FindProperty("BaseAttributes");
             audioAssetsData = serializedObject.FindProperty("AudioAssetsData");
         }
@@ -30,7 +30,7 @@ namespace UZSG.UnityEditor
             EntityData data = (EntityData) target;
             
             EditorGUILayout.PropertyField(assetReference);
-            EditorGUILayout.PropertyField(nameProperty);
+            EditorGUILayout.PropertyField(displayNameProperty);
             EditorGUILayout.PropertyField(baseAttributes);
             
             if (GUILayout.Button("Save to Defaults Json"))

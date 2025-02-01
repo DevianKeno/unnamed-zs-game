@@ -9,7 +9,7 @@ namespace UZSG.UnityEditor
     [CustomEditor(typeof(AttributeData))]
     public class AttributeDataEditor : BaseDataEditor
     {
-        SerializedProperty nameProperty,
+        SerializedProperty displayNameProperty,
             group,
             description;
 
@@ -17,7 +17,7 @@ namespace UZSG.UnityEditor
         {
             base.OnEnable();
 
-            nameProperty = serializedObject.FindProperty("Name");
+            displayNameProperty = serializedObject.FindProperty("DisplayName");
             description = serializedObject.FindProperty("Description");
         }
 
@@ -28,7 +28,7 @@ namespace UZSG.UnityEditor
             AttributeData attributeData = (AttributeData) target;
             
             EditorGUILayout.Space();
-            EditorGUILayout.PropertyField(nameProperty);
+            EditorGUILayout.PropertyField(displayNameProperty);
             EditorGUILayout.PropertyField(description);
             
             serializedObject.ApplyModifiedProperties();

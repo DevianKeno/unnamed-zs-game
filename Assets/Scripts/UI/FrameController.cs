@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -41,11 +41,12 @@ namespace UZSG.UI
         /// </summary>
         public event Action<SwitchFrameContext> OnSwitchFrame;
 
+        [SerializeField] TextMeshProUGUI headingTmp;
 
 #region Editor
+        [Header("Editor Controls")]
         [SerializeField] string switchTo;
 #endregion
-
 
         void Start()
         {
@@ -118,8 +119,8 @@ namespace UZSG.UI
                 {
                     currentFrame = frame;
                     currentFrame.transform.SetAsLastSibling();
+                    SetHeadingText(currentFrame.DisplayName);
                     IsTransitioning = false;
-
                     context.Status = SwitchStatus.Finished;
                     OnSwitchFrame?.Invoke(context);
                 }));
@@ -132,10 +133,19 @@ namespace UZSG.UI
                 frame.Rect.anchoredPosition = Vector2.zero; /// Show new frame
                 currentFrame = frame;
                 currentFrame.transform.SetAsLastSibling();
+                SetHeadingText(currentFrame.DisplayName);
                 LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
                 IsTransitioning = false;
                 context.Status = SwitchStatus.Finished;
                 OnSwitchFrame?.Invoke(context);
+            }
+        }
+
+        public void SetHeadingText(string text)
+        {
+            if (headingTmp != null)
+            {
+                headingTmp.text = text;
             }
         }
 
@@ -206,6 +216,7 @@ namespace UZSG.UI
             frame.Rect.anchoredPosition = Vector2.zero; /// Show new frame
             frame.transform.SetAsLastSibling();
             currentFrame = frame;
+            SetHeadingText(currentFrame.DisplayName);
             LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
         }
 

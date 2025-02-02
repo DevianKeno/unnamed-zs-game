@@ -973,5 +973,95 @@
       "name": "Workbench",
       "description": ""
     }
+  },
+  "setting": {
+    "ambiance_volume": {
+      "name": "Ambiance Volume",
+      "description": "No description."
+    },
+    "ambient_occlusion": {
+      "name": "Ambient Occlusion",
+      "description": "Lacks description!"
+    },
+    "audio_profile": {
+      "name": "Audio Profile",
+      "description": "No description."
+    },
+    "colorblind_mode": {
+      "name": "Colorblind Mode",
+      "description": "Colorblind mode accessibility option."
+    },
+    "framerate_cap": {
+      "name": "Framerate Cap",
+      "description": "No description."
+    },
+    "graphics_profile": {
+      "name": "Graphics Profile",
+      "description": "Global graphics settings."
+    },
+    "language": {
+      "name": "Shadows Quality",
+      "description": "Lacks description!"
+    },
+    "master_volume": {
+      "name": "Master Volume",
+      "description": "No description."
+    },
+    "max_shadow_distance": {
+      "name": "Max Shadow Distance",
+      "description": "Lacks description!"
+    },
+    "monitor": {
+      "name": "Monitor",
+      "description": "Monitor to display to."
+    },
+    "music_volume": {
+      "name": "Music Volume",
+      "description": "No description."
+    },
+    "render_scale": {
+      "name": "Render Scale",
+      "description": "No description."
+    },
+    "resolution": {
+      "name": "Resolution",
+      "description": "Lacks description!"
+    },
+    "shadows_quality": {
+      "name": "Shadows Quality",
+      "description": "Lacks description!"
+    },
+    "shadows_resolution": {
+      "name": "Shadows Resolution",
+      "description": "Lacks description!"
+    },
+    "shadows_settings": {
+      "name": "Shadow Settings",
+      "description": "Divider text."
+    },
+    "sound_volume": {
+      "name": "Sound Volume",
+      "description": "No description."
+    },
+    "texture_quality": {
+      "name": "Texture Quality",
+      "description": "No description."
+    },
+    "upscaling_filter": {
+      "name": "Upscaling Filter",
+      "description": "No description."
+    },
+    "upscaling_sharpness": {
+      "name": "Sharpness",
+      "description": "Lacks description!"
+    },
+    "v_sync": {
+      "name": "V-Sync",
+      "description": "Lacks description!"
+    },
+    "window_mode": {
+      "name": "Window Mode",
+      "description": "Lacks description!"
+    }
   }
 }

@@ -2,45 +2,68 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Newtonsoft.Json;
+using System.Text.RegularExpressions;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 using UnityEngine;
+using Newtonsoft.Json;
 
 using UZSG.Data;
+using UZSG.Systems;
 
 namespace UZSG
 {
-    public enum LocaleKeys {
-        EN_US, JA_JP, 
-    }
-
     public class LocalizationManager : MonoBehaviour
     {
         const string MISSING_KEY = "Missing_Locale_Key";
 
+        [SerializeField] LocalizationData currentLocale;
+        public LocalizationData CurrentLocale => currentLocale;
+
+        List<LocalizationData> availableLocales = new();
+        public List<LocalizationData> AvailableLocales => new(availableLocales);
         Dictionary<string, string> translationKeys = new();
 
         internal void Initialize()
         {
             /// once we replace all magic strings with these, there's no going back :P
+            foreach (var localization in Resources.LoadAll<LocalizationData>("Locale"))
+            {
+                availableLocales.Add(localization);
+            }
         }
         
-        public void SetLocalization(LocaleKeys localeKey)
+        public void SetLocalization(string localeKey)
         {
-            LoadLocalizationFile(localeKey.ToString().Trim().ToLower());
+            LoadLocalizationFile(localeKey.Trim().ToLower());
         }
 
-        public string GetKey(string key)
+        public string Translatable(string key)
+        {
+            if (translationKeys.TryGetValue(key, out var translation))
+            {
+                return translation;
+            }
+            else
+            {
+                return MISSING_KEY + $":{currentLocale.LocaleKey}" + $":{key}";
+            }
+        }
+        
+        /// <summary>
+        /// idk what do to with this
+        /// </summary>
+        public string TranslatableFormat(string format, params object[] args)
         {
             return MISSING_KEY;
         }
 
         void LoadLocalizationFile(string localeString)
         {
-            string filePath = Path.Combine(Application.streamingAssetsPath, $"Localization/{localeString}.json");
+            string filePath = Path.Combine(Application.streamingAssetsPath, $"Locale/{localeString}.json");
             if (File.Exists(filePath))
             {
                 string contents = File.ReadAllText(filePath);
@@ -101,6 +124,31 @@ namespace UZSG
                 translationKeys[$"recipe.{kv.Key}.name"] = recipe.name;
                 translationKeys[$"recipe.{kv.Key}.description"] = recipe.description;
             }
+
+            /// Settings
+            /// - Qualities
+            foreach (var q in Enum.GetValues(typeof(SettingsQualityFlags)))
+            {
+                translationKeys[$"setting.{q.ToString().ToLower()}"] = EnumToReadable(q.ToString());
+            }
+            /// - Setting Entries
+            foreach (var kv in locale.setting)
+            {
+                LocalizationJson.SettingsEntry setting = kv.Value;
+
+                translationKeys[$"setting.{kv.Key}.name"] = setting.name;
+                translationKeys[$"setting.{kv.Key}.description"] = setting.description;
+            }
+        }
+
+        string EnumToReadable(string  value)
+        {
+            if (string.IsNullOrEmpty(value)) return string.Empty;
+
+            string formatted = value.Replace("_", " ");
+            formatted = Regex.Replace(formatted, @"\b[a-z]", match => match.Value.ToUpper());
+
+            return formatted;
         }
 
 #if UNITY_EDITOR
@@ -109,11 +157,11 @@ namespace UZSG
         {
             Debug.Log("Creating default locale (en_us), this may take a while...");
 
-            var localeKey = LocaleKeys.EN_US.ToString().ToLower();
+            var localeKey = "en_us";
             var newLocale = new LocalizationJson(); 
 
-            string[] categories = { "Attributes", "Entities", "Items", "Objects", "Recipes" };
-            string[] dataTypes = { "AttributeData", "EntityData", "ItemData", "ObjectData", "RecipeData" };
+            string[] categories = { "Attributes", "Entities", "Items", "Objects", "Recipes", "Settings" };
+            string[] dataTypes = { "AttributeData", "EntityData", "ItemData", "ObjectData", "RecipeData", "SettingsEntryData" };
 
             for (int i = 0; i < categories.Length; i++)
             {
@@ -193,6 +241,17 @@ namespace UZSG
                             };
                             break;
                         }
+                        case "Settings":
+                        {
+                            var settingData = (SettingsEntryData) assetData;
+                            Debug.Assert(!string.IsNullOrEmpty(settingData.description), $"{category} '{settingData.name}' has empty Description!");
+                            newLocale.setting[settingData.Id] = new LocalizationJson.SettingsEntry()
+                            {
+                                name = settingData.displayName,
+                                description = settingData.description,
+                            };
+                            break;
+                        }
                     }
                 }
                 Debug.Log($"Finished writing {category} localization.");
@@ -206,6 +265,7 @@ namespace UZSG
                 item = newLocale.item.OrderBy(kv => kv.Key).ToDictionary(kv => kv.Key, kv => kv.Value),
                 @object = newLocale.@object.OrderBy(kv => kv.Key).ToDictionary(kv => kv.Key, kv => kv.Value),
                 recipe = newLocale.recipe.OrderBy(kv => kv.Key).ToDictionary(kv => kv.Key, kv => kv.Value),
+                setting = newLocale.setting.OrderBy(kv => kv.Key).ToDictionary(kv => kv.Key, kv => kv.Value),
             };
 
             /// Save json

@@ -11,6 +11,7 @@ namespace UZSG
         public Dictionary<string, ItemEntry> item = new();
         public Dictionary<string, ObjectEntry> @object = new();
         public Dictionary<string, RecipeEntry> recipe = new();
+        public Dictionary<string, SettingsEntry> setting = new();
         
         public class AttributeEntry
         {
@@ -45,6 +46,12 @@ namespace UZSG
         {
             public string name = string.Empty;
             public string description = string.Empty;
-        }   
+        }
+        
+        public class SettingsEntry
+        {
+            public string name = string.Empty;
+            public string description = string.Empty;
+        }
     }
 }

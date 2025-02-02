@@ -32,14 +32,16 @@ namespace UZSG.Systems
 
         static Console console;
         public static Console Console => console;
+        static LocalizationManager localizationManager;
+        public static LocalizationManager Locale => localizationManager;
+        static SettingsManager settingsManager;
+        public static SettingsManager Settings => settingsManager;
         static UIManager UIManager;
         public static UIManager UI => UIManager;
         static InputManager inputManager;
         public static InputManager Input => inputManager;
         static AudioManager audioManager;
         public static AudioManager Audio => audioManager;
-        static LocalizationManager localizationManager;
-        public static LocalizationManager Locale => localizationManager;
         /// <summary>
         /// EOS Interface singleton.
         /// Just a shortcut to 'EOSManager.Instance'
@@ -110,11 +112,12 @@ namespace UZSG.Systems
             {
                 Main = this;
 
-                console = GetComponentInChildren<Console>();                
+                console = GetComponentInChildren<Console>();
+                localizationManager = GetComponentInChildren<LocalizationManager>();
+                settingsManager = GetComponentInChildren<SettingsManager>();         
                 UIManager = GetComponentInChildren<UIManager>();
                 inputManager = GetComponentInChildren<InputManager>();
                 audioManager = GetComponentInChildren<AudioManager>();
-                localizationManager = GetComponentInChildren<LocalizationManager>();
                 timeManager = GetComponentInChildren<TimeManager>();
                 worldManager = GetComponentInChildren<WorldManager>();
                 
@@ -148,10 +151,10 @@ namespace UZSG.Systems
         {
             /// The console is initialized first thing
             console.Initialize();
-
+            localizationManager.Initialize();
+            settingsManager.Initialize();
             UIManager.Initialize();
             audioManager.Initialize();
-            localizationManager.Initialize();
             worldManager.Initialize();
             EOSSubManagers.Initialize();
 

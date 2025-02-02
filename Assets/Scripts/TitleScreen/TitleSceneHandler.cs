@@ -1,17 +1,24 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+
+using UZSG.Systems;
 
 namespace UZSG.Scenes
 {
     public class TitleSceneHandler : MonoBehaviour
     {
+        [SerializeField] Button settingsButton;
         [SerializeField] Button exitButton;
 
         void Start()
         {
-            exitButton?.onClick.AddListener(ExitGame);
+            settingsButton.onClick.AddListener(OpenSettings);
+            exitButton.onClick.AddListener(ExitGame);
+        }
+
+        void OpenSettings()
+        {
+            Game.Settings.ShowGlobalInterface();
         }
 
         void ExitGame()

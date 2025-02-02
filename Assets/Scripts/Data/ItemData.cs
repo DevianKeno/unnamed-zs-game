@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Serialization;
+using UZSG.Systems;
 
 namespace UZSG.Data
 {
@@ -21,6 +22,10 @@ namespace UZSG.Data
         [Header("Item Data")]
         [FormerlySerializedAs("Name")]
         public string DisplayName;
+        public string Name
+        {
+            get => Game.Locale.Translatable($"item.{Id}.name");
+        }
         [TextArea] public string Description;
         [FormerlySerializedAs("Model")] public AssetReference EntityModel;
         public Sprite Sprite;

@@ -76,7 +76,7 @@ namespace UZSG.Worlds.Events
 
         Player GetRandomPlayer()
         {
-            var index = UnityEngine.Random.Range(0, Game.World.CurrentWorld.Players.Count - 1);
+            var index = UnityEngine.Random.Range(0, Game.World.CurrentWorld.PlayerCount - 1);
             return Game.World.CurrentWorld.Players[index];
         }
 

@@ -19,8 +19,8 @@ namespace UZSG.Data
     [Serializable]
     public class WorldEventData : ScriptableObject
     {
-        public WorldEventType Type;
         public bool Enabled;
+        public WorldEventType Type;
         public bool AllowMultipleEvents;
         public float ChanceToOccur;
         public int OccurEverySecond;

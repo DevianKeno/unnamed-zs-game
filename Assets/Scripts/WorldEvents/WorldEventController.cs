@@ -13,6 +13,8 @@ namespace UZSG.Worlds.Events
 
         List<WorldEventBase> ongoingEvents = new();
         List<WorldEventBase> eventsToRemove = new();
+
+        NaturalEnemySpawnEvent naturalEnemySpawnEvent;
         
         void Awake()
         {
@@ -89,14 +91,6 @@ namespace UZSG.Worlds.Events
             }
         }
 
-        /// TEST:
-        internal void SpawnEvent()
-        {
-            var newEvent = new NaturalEnemySpawnEvent();
-            newEvent.StartEvent();
-            ongoingEvents.Add(newEvent);
-        }
-
         WorldEvent CreateEvent(WorldEventData eventData)
         {
             if(eventData.ChanceToOccur < UnityEngine.Random.Range(1, 100))
@@ -117,7 +111,6 @@ namespace UZSG.Worlds.Events
             return worldEvent;
         }
 
-
         void SubscribeControllers(WorldEventData eventData, WorldEvent eventHandler)
         {
             if (eventData.Type == WorldEventType.Weather)
@@ -129,6 +122,13 @@ namespace UZSG.Worlds.Events
             {
                 // eventHandler.OnEventSpawned += Raid.OnEventStart;
             }
+        }
+        
+        internal void BeginDefaultEvents()
+        {
+            /// This event is indefinite
+            naturalEnemySpawnEvent = new NaturalEnemySpawnEvent();
+            naturalEnemySpawnEvent.StartEvent();
         }
     }
 }

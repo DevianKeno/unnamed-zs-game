@@ -32,6 +32,7 @@ namespace UZSG.Worlds
         public bool IsPaused { get; private set; }
         public bool IsPausable { get; private set; }
 
+        LevelData levelData;
         public LevelData LevelData => levelData;
 
         WorldAttributes worldAttributes;
@@ -56,30 +57,36 @@ namespace UZSG.Worlds
         bool _isActive;
         bool _hasValidSaveData;
         internal string worldpath => Path.Join(Application.persistentDataPath, WorldManager.WORLDS_FOLDER, currentSaveData.WorldName); 
-        LevelData levelData;
         WorldSaveData currentSaveData;
+
+        #region Players
+        /// <summary>
+        /// The player we're controlling on our local machine.
+        /// </summary>
         Player localPlayer;
-        List<PlayerSaveData> _playerSaves = new();
         /// <summary>
         /// <c>string</c> is player Id.
         /// </summary>
         Dictionary<string, PlayerSaveData> _playerIdSaves = new();
-        Player ownerPlayer;
         /// <summary>
         /// Key is EntityData Id; Value is list of Entity instances of that Id.
         /// </summary>
         Dictionary<string, List<Entity>> _cachedIdEntities = new();
         /// <summary>
-        /// List of online players. 
+        /// List of players in this world.
         /// <c>string</c> is ProductUserId as string.
         /// </summary>
         Dictionary<string, Player> _playerEntities = new();
         public List<Player> Players => _playerEntities.Values.ToList();
+        public int PlayerCount => _playerEntities.Count;
         /// <summary>
-        /// List of online players. 
+        /// List of networked players in this world.
         /// <c>ulong</c> is the ClientId of the player that owns it.
         /// </summary>
         Dictionary<ulong, Player> _playerEntitiesClientId = new();
+
+        #endregion
+        
         /// <summary>
         /// Key is Instance Id.
         /// </summary>
@@ -143,12 +150,17 @@ namespace UZSG.Worlds
 
             Game.Audio.PlayTrack("forest_ambiant_1", volume: Game.Audio.ambianceVolume, loop: true);
             SpawnPlayers();
-
-            WorldEvents.SpawnEvent(); /// TEST:
+            
+            InitializeWorldEvents();
             
             onCompleted?.Invoke();
         }
-        
+
+        private void InitializeWorldEvents()
+        {
+            WorldEvents.BeginDefaultEvents();
+        }
+
         void InitializeLobbyEvents_ServerMethod()
         {
             if (!EOSSubManagers.Lobbies.IsInLobby) return;

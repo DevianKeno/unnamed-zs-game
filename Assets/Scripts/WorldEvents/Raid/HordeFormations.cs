@@ -4,7 +4,6 @@ using UnityEngine;
 
 using UZSG.Entities;
 using UZSG.Systems;
-using UZSG.Worlds.Events;
 
 namespace UZSG.Worlds.Events
 {
@@ -27,7 +26,7 @@ namespace UZSG.Worlds.Events
             player = selectedPlayer;
             _raidInstance = raidInstance;
 
-            switch(_raidInstance.raidFormation)
+            switch(_raidInstance.RaidFormation)
             {
                 case RaidFormation.Blob:
                     SpawnAsBlob();
@@ -44,9 +43,9 @@ namespace UZSG.Worlds.Events
         void SpawnAsBlob()
         {
             GetRandomPositionAroundPlayer();
-            float spreadRadius = _raidInstance.mobCount * spread;
+            float spreadRadius = _raidInstance.MobCount * spread;
 
-            for (int i = 0; i < _raidInstance.mobCount; i++)
+            for (int i = 0; i < _raidInstance.MobCount; i++)
             {
                 Vector2 randomSpread = Random.insideUnitCircle * spreadRadius;
                 Vector3 position = _selectedPoint + new Vector3(randomSpread.x, 0, randomSpread.y);
@@ -63,7 +62,7 @@ namespace UZSG.Worlds.Events
             Vector3 lineStart = _selectedPoint;
             Vector3 lineDirection = (player.transform.position - lineStart).normalized;
 
-            for (int i = 0; i < _raidInstance.mobCount; i++)
+            for (int i = 0; i < _raidInstance.MobCount; i++)
             {
                 float distanceAlongLine = i * spread;
                 Vector3 linePosition = lineStart + lineDirection * distanceAlongLine;
@@ -98,7 +97,7 @@ namespace UZSG.Worlds.Events
 
         void SpawnZombie(Vector3 position)
         {
-            Game.Entity.Spawn<Walker>(_raidInstance.enemyId, position, onCompleted: (info) => {
+            Game.Entity.Spawn<Walker>(_raidInstance.EnemyId, position, onCompleted: (info) => {
                 _hordeZombies.Add(info.Entity);
                 FaceTowardsPlayer(info.Entity);
                 info.Entity.isInHorde = true;

@@ -1,3 +1,5 @@
+using System;
+
 using UnityEngine;
 
 using UZSG.Data;
@@ -18,6 +20,9 @@ namespace UZSG.Worlds.Events
                 SetDuration(value);
             }
         }
+
+        public event Action OnEventStarted;
+        public event Action OnEventEnded;
 
         public WorldEventBase(float duration)
         {
@@ -40,11 +45,13 @@ namespace UZSG.Worlds.Events
         public void StartEvent()
         {
             OnStart();
+            OnEventStarted?.Invoke();
         }
 
         public void EndEvent()
         {
             OnEnd();
+            OnEventEnded?.Invoke();
         }
 
         public virtual void OnStart() { }

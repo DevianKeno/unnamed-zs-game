@@ -11,7 +11,6 @@ namespace UZSG.Worlds.Events
 {
     public class RaidEvent : WorldEventBase
     {
-        public event Action<RaidEvent> OnEndEvent;
         public bool allDead;
         HordeFormations hordeFormations;
         public HordeFormations HordeFormations 
@@ -19,123 +18,44 @@ namespace UZSG.Worlds.Events
             get => hordeFormations;
             set => hordeFormations = value;
         }
+        RaidInstance raidInstance;
+        public RaidInstance RaidInstance
+        {
+            get => raidInstance;
+            set => raidInstance = value;
+        }
+        
         [SerializeField] List<Enemy> hordeZombies;
+        public int RemainingZombies => hordeZombies.Count;
 
-        RaidInstance _raidInstance;
+        bool isOngoing;
+        RaidEventType raidType;
+        RaidFormation raidFormation;
+
+        [SerializeField] GameObject raidEventPrefab;
+
+        /// TEMPORARY VALUES THAT WILL BE REPLACED WHEN A MORE SOPHISTICATED SYSTEM IS IMPLEMENTED
+        public float difficultyMultiplier = 0.3f;
+        public int setEnemiesPerPlayer = 3;
 
         public RaidEvent(float duration) : base(duration)
         {
         }
 
-        public RaidInstance RaidInstance
-        {
-            get => _raidInstance;
-            set => _raidInstance = value;
-        }
-        public int RemainingZombies => hordeZombies.Count;
-
-        bool EventOngoing;
-        RaidEventType _raidType;
-        RaidFormation _raidFormation;
-        [SerializeField] GameObject raidEventPrefab;
-
-
-        /// TEMPORARY VALUES THAT WILL BE REPLACED WHEN A MORE SOPHISTICATED SYSTEM IS IMPLEMENTED
-        public int worldDifficulty = 1;
-        public int numberOfPlayers = 1;
-        public float difficultyMultiplier = 0.3f;
-        public int setEnemiesPerPlayer = 3;
-
-        void OnRaidEnd(RaidEvent raidInstance)
-        {
-            bool allDead = raidInstance.allDead;
-
-            if (allDead)
-            {
-                Game.Console.LogInfo($"<color=#ad0909>Raid event ended. All enemies were slain</color>");
-            }
-            else
-            {
-                Game.Console.LogInfo($"<color=#ad0909>Raid event ended. Not all enemies were slain</color>");
-            }
-
-            raidInstance.OnEndEvent -= OnRaidEnd;
-            // Destroy(raidInstance.transform.gameObject);
-
-            EventOngoing = false;
-        }
-
-        Player GetRandomPlayer()
-        {
-            var index = UnityEngine.Random.Range(0, Game.World.CurrentWorld.Players.Count - 1);
-            return Game.World.CurrentWorld.Players[index];
-        }
-
-        void SpawnHorde(Player selectedPlayer)
-        {
-            if (selectedPlayer == null) return;
-
-            RaidInstance newRaidInstance = DetermineRaid();
-
-            HordeFormations hordeFormation = new();
-            {
-                hordeFormation.HandlePrerequisites(newRaidInstance, selectedPlayer);
-            }
-        }
-
-        RaidInstance DetermineRaid()
-        {
-            float enemiesPerPlayer = numberOfPlayers * setEnemiesPerPlayer;
-            float enemyMultiplier = enemiesPerPlayer * (worldDifficulty * difficultyMultiplier);
-            int totalEnemies = Mathf.FloorToInt(enemiesPerPlayer + enemyMultiplier);
-
-            switch (UnityEngine.Random.Range(0, 2))
-            {
-                case 0:
-                {
-                    Game.Console.LogInfo($"<color=#ad0909>Spawning blob formation.</color>");
-                    _raidFormation = RaidFormation.Blob;
-                    break;
-                }
-                case 1:
-                {
-                    Game.Console.LogInfo($"<color=#ad0909>Spawning line formation.</color>");
-                    _raidFormation = RaidFormation.Line;
-                    break;
-                }
-            }
-
-            RaidInstance newRaidInstance = new()
-            {
-                enemyId = _raidInstance.enemyId,
-                raidType = _raidType,
-                raidFormation = _raidFormation,
-                mobCount = totalEnemies
-            };
-
-            return newRaidInstance;
-        }
-
         public override void OnStart()
         {
-            // if (worldEvent == null || EventOngoing)
-            // {
-            //     Game.Console.LogInfo($"<color=#ad0909>Event is null or ongoing.</color>");
-            //     return;
-            // }
-            
             if (Game.World.CurrentWorld.Players.Count <= 0)
             {
                 Game.Console.LogInfo($"<color=#ad0909>No players found.</color>");
                 return;
             }
 
-            _durationTimer = _raidInstance.mobCount * 10f;
+            _durationTimer = raidInstance.MobCount * 10f;
             _durationTimer = Mathf.Clamp(_durationTimer, 60f, 600f);
             hordeZombies = HordeFormations.HordeZombies;
 
             Game.Console.LogInfo($"<color=#ad0909>Raid event started.</color>");
-            EventOngoing = true;
+            isOngoing = true;
             List<RaidEventInstance> selectedEvents = new();
             
             PerformRaidEventProcessing(selectedEvents);
@@ -151,7 +71,19 @@ namespace UZSG.Worlds.Events
         public override void OnEnd()
         {
             Game.Tick.OnTick -= OnTick;
-            OnEndEvent?.Invoke(this);
+            
+            if (allDead)
+            {
+                Game.Console.LogInfo($"<color=#ad0909>Raid event ended. All enemies were slain</color>");
+            }
+            else
+            {
+                Game.Console.LogInfo($"<color=#ad0909>Raid event ended. Not all enemies were slain</color>");
+            }
+
+            // Destroy(raidInstance.transform.gameObject);
+
+            isOngoing = false;
         }
 
         void OnTick(TickInfo info)
@@ -185,11 +117,57 @@ namespace UZSG.Worlds.Events
         {
             foreach (RaidEventInstance raidEvent in selectedEvents)
             {
-                _raidInstance.enemyId = raidEvent.EnemyData.Id;
+                raidInstance.EnemyId = raidEvent.EnemyData.Id;
                 SpawnHorde(GetRandomPlayer());
                 
                 // if (raidInstance == null || raidInstance.HordeFormations == null || raidInstance.RemainingZombies == 0) continue;
             }
         }
+
+        Player GetRandomPlayer()
+        {
+            var index = UnityEngine.Random.Range(0, Game.World.CurrentWorld.Players.Count - 1);
+            return Game.World.CurrentWorld.Players[index];
+        }
+
+        void SpawnHorde(Player selectedPlayer)
+        {
+            if (selectedPlayer == null) return;
+
+            RaidInstance newRaidInstance = DetermineRaid();
+
+            HordeFormations hordeFormation = new();
+            {
+                hordeFormation.HandlePrerequisites(newRaidInstance, selectedPlayer);
+            }
+        }
+
+        RaidInstance DetermineRaid()
+        {
+            var currentWorld = Game.World.GetWorld();
+            float enemiesPerPlayer = currentWorld.PlayerCount * setEnemiesPerPlayer;
+            float enemyMultiplier = enemiesPerPlayer * (currentWorld.Attributes.DifficultyLevel * difficultyMultiplier);
+            int totalEnemies = Mathf.FloorToInt(enemiesPerPlayer + enemyMultiplier);
+
+            var formation = UnityEngine.Random.Range(0, 2);
+            switch (formation)
+            {
+                case 0:
+                {
+                    Game.Console.LogInfo($"<color=#ad0909>Spawning blob formation.</color>");
+                    raidFormation = RaidFormation.Blob;
+                    break;
+                }
+                case 1:
+                {
+                    Game.Console.LogInfo($"<color=#ad0909>Spawning line formation.</color>");
+                    raidFormation = RaidFormation.Line;
+                    break;
+                }
+            }
+
+            return raidInstance;
+        }
+
     }
 }

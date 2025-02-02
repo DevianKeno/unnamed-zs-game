@@ -11,10 +11,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/LoadingScreen.unity
     guid: 11044f83fa611ae4581da25b80c40b30
-  - enabled: 1
+  - enabled: 0
     path: Assets/AddressableAssets/Scenes/AlphaWorld.unity
     guid: 694cbdc736a3bd047bf5c2213a731dce
-  - enabled: 1
+  - enabled: 0
     path: Assets/AddressableAssets/Scenes/Plane.unity
     guid: 795e237b0b69232468c517930ff9367b
   m_configObjects:

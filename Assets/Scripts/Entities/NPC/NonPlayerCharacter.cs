@@ -30,7 +30,14 @@ namespace UZSG.Entities
 
         void Awake()
         {
+            /// Store in arrays and variables all the NPC's collider, rigid body, and animator.
+            /// Get components of ragdoll
             rb = GetComponent<Rigidbody>();
+            _ragdollColliders = ragdollBody.GetComponentsInChildren<Collider>();
+            _rigidBodyParts = ragdollBody.GetComponentsInChildren<Rigidbody>();
+            ragdollCollider = GetComponent<BoxCollider>();
+            ragdollAnimator = GetComponentInChildren<Animator>();
+            ragdollRigidbody = GetComponent<Rigidbody>();
         }
 
         public override void OnSpawn()
@@ -40,7 +47,6 @@ namespace UZSG.Entities
             InitializeHitboxes();
             LoadDefaultSaveData<EntitySaveData>();
             ReadSaveData(saveData);
-            GetRagdollParts();
             IsAlive = true;
         }
 

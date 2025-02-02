@@ -121,18 +121,16 @@ namespace UZSG.Entities
         {
             float x = Controls.FrameInput.Move.x;
             float y = Controls.FrameInput.Move.y;
-            _targetX = Mathf.Lerp(Animator.GetFloat("x"), x, Damping * Time.deltaTime);
-            _targetY = Mathf.Lerp(Animator.GetFloat("y"), y, Damping * Time.deltaTime);
 
             if (_enableModelAnimations)
             {
-                animator.SetFloat("x", _targetX);
-                animator.SetFloat("y", _targetY);
+                animator.SetFloat("x", x);
+                animator.SetFloat("y", y);
             }
             if (_enableClientAnimations)
             {
-                animatorFPP.SetFloat("x", _targetX);
-                animatorFPP.SetFloat("y", _targetY);
+                animatorFPP.SetFloat("x", x);
+                animatorFPP.SetFloat("y", y);
             }
         }
         

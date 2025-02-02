@@ -74,6 +74,7 @@ namespace UZSG.Worlds
         /// <c>string</c> is ProductUserId as string.
         /// </summary>
         Dictionary<string, Player> _playerEntities = new();
+        public List<Player> Players => _playerEntities.Values.ToList();
         /// <summary>
         /// List of online players. 
         /// <c>ulong</c> is the ClientId of the player that owns it.
@@ -90,6 +91,8 @@ namespace UZSG.Worlds
 
         #region Events
 
+        public event Action<Player> OnPlayerJoined;
+        public event Action<Player> OnPlayerLeft;
         public event Action OnPause;
         public event Action OnUnpause;
 
@@ -140,6 +143,8 @@ namespace UZSG.Worlds
 
             Game.Audio.PlayTrack("forest_ambiant_1", volume: Game.Audio.ambianceVolume, loop: true);
             SpawnPlayers();
+
+            WorldEvents.SpawnEvent(); /// TEST:
             
             onCompleted?.Invoke();
         }
@@ -391,16 +396,19 @@ namespace UZSG.Worlds
             float tickThreshold = Game.Tick.TPS / TickSystem.NormalTPS;
             float secondsCalculation = Game.Tick.SecondsPerTick * (Game.Tick.CurrentTick / 32f) * tickThreshold;
 
-            Time.Tick(secondsCalculation);
-            Weather.Tick(secondsCalculation);
+            this.Time.Tick(secondsCalculation);
+            this.Weather.Tick(secondsCalculation);
+            this.WorldEvents.Tick(secondsCalculation);
         }
 
-        void OnPlayerJoined(Player player)
+        internal void OnNetworkPlayerJoined(Player player)
         {
+            OnPlayerJoined?.Invoke(player);
         }
 
-        void OnPlayerLeft(Player player)
+        internal void OnNetworkPlayerLeft(Player player)
         {
+            OnPlayerLeft?.Invoke(player);
         }
 
         void OnObjectPlaced(ObjectsManager.ObjectPlacedInfo info)
@@ -515,7 +523,6 @@ namespace UZSG.Worlds
 
                 _playerEntities[uid] = player;
                 localPlayer = player;
-                OnPlayerJoined(player);
             });
 
             Game.Console.LogInfo($"[World]: {displayName} has entered the world");
@@ -539,7 +546,6 @@ namespace UZSG.Worlds
                     _playerEntities[uid] = player;
 
                     CachePlayer(player, ownerClientId);
-                    OnPlayerJoined(player);
                 }
             });
         }
@@ -568,6 +574,14 @@ namespace UZSG.Worlds
         {
             if (_playerEntitiesClientId.TryGetValue(clientId, out player)) { };
             return player != null;
+        }
+
+        /// <summary>
+        /// Gets all players in the world. Returns a new list with references.
+        /// </summary>
+        public List<Player> GetPlayers()
+        {
+            return _playerEntities.Values.ToList();
         }
 
         /// <summary>

@@ -90,6 +90,7 @@ namespace UZSG.Entities
         /// You can modify the entity's attributes before this calls.
         /// </summary>
         public virtual void OnSpawn() { }
+        protected virtual void OnKill() { }
 
         #endregion
         
@@ -149,7 +150,5 @@ namespace UZSG.Entities
         }
 
         #endregion
-
-        protected virtual void OnKill() { }
     }
 }

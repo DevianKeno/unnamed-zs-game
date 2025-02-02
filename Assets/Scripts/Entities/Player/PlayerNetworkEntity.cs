@@ -82,10 +82,20 @@ namespace UZSG.Network
             }
             
             InitializeNetworkVariableTrackings();
+            Game.World.CurrentWorld.OnNetworkPlayerJoined(this.Player);
 
             Game.Console.LogInfo($"[World]: {this.accountInfo.DisplayName} has entered the world");
         }
 
+        public override void OnNetworkDespawn()
+        {
+            Game.World.CurrentWorld.OnNetworkPlayerLeft(this.Player);
+
+            _enableTracking = false;
+            nPosition.OnValueChanged -= OnPositionChanged;
+            nRotationEuler.OnValueChanged -= OnRotationChanged;
+        }
+        
         void InitializeNetworkVariableTrackings()
         {
             if (!IsOwner)
@@ -151,13 +161,6 @@ namespace UZSG.Network
             {
                 Player.SetNametagVisible(true);
             }
-        }
-
-        public override void OnNetworkDespawn()
-        {
-            _enableTracking = false;
-            nPosition.OnValueChanged -= OnPositionChanged;
-            nRotationEuler.OnValueChanged -= OnRotationChanged;
         }
     }
 }

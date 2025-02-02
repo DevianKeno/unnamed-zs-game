@@ -1,19 +1,21 @@
 using System.Collections.Generic;
-using Epic.OnlineServices.Presence;
+
 using UnityEngine;
+
 using UZSG.Entities;
 using UZSG.Systems;
+using UZSG.Worlds.Events;
 
-namespace UZSG.Worlds.Events.Raid
+namespace UZSG.Worlds.Events
 {
     public class HordeFormations
     {
         Player player;
-        List<IEnemy> _hordeZombies = new();
-        public List<IEnemy> HordeZombies => _hordeZombies;
+        List<Enemy> _hordeZombies = new();
+        public List<Enemy> HordeZombies => _hordeZombies;
         RaidInstance _raidInstance;
-        Quaternion? _facingDirection = null;
-        Vector3? _selectedPoint = null;
+        Quaternion _facingDirection = default;
+        Vector3 _selectedPoint = default;
 
         /// Temporary values
         float minRadius = 30f;
@@ -47,18 +49,18 @@ namespace UZSG.Worlds.Events.Raid
             for (int i = 0; i < _raidInstance.mobCount; i++)
             {
                 Vector2 randomSpread = Random.insideUnitCircle * spreadRadius;
-                Vector3 position = _selectedPoint.Value + new Vector3(randomSpread.x, 0, randomSpread.y);
+                Vector3 position = _selectedPoint + new Vector3(randomSpread.x, 0, randomSpread.y);
                 SpawnZombie(position);
             }
 
-            _facingDirection = null;
-            _selectedPoint = null;
+            _facingDirection = default;
+            _selectedPoint = default;
         }
 
         void SpawnAsLine()
         {
             GetRandomPositionAroundPlayer();
-            Vector3 lineStart = _selectedPoint.Value;
+            Vector3 lineStart = _selectedPoint;
             Vector3 lineDirection = (player.transform.position - lineStart).normalized;
 
             for (int i = 0; i < _raidInstance.mobCount; i++)
@@ -72,8 +74,8 @@ namespace UZSG.Worlds.Events.Raid
                 SpawnZombie(spawnPosition);
             }
 
-            _facingDirection = null;
-            _selectedPoint = null;
+            _facingDirection = default;
+            _selectedPoint = default;
         }
 
         void SpawnInWaves()

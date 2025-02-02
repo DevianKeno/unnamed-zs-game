@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3868715684083950852}
-  - component: {fileID: 6827552192385186166}
   m_Layer: 0
   m_Name: RAID
   m_TagString: Untagged
@@ -32,21 +31,3 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6827552192385186166
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5746366188786712973}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 610690e3ef5a67c4cac3a359720f9b24, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  EventOngoing: 0
-  worldDifficulty: 1
-  numberOfPlayers: 1
-  difficultyMultiplier: 0.3
-  setEnemiesPerPlayer: 3
-  raidInstance: {fileID: 1433144291944121671, guid: 2c68af293eae1a7428fe7cd54c07db40, type: 3}

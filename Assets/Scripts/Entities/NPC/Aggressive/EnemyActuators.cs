@@ -36,7 +36,7 @@ namespace UZSG.Entities
                     if (transition.To == Attack)
                     {
                         // if player in range prepare attack, else zombie is at idle state
-                        if (_hasTargetInAttackRange && !attackOnCooldown && !IsDead)
+                        if (_hasTargetInAttackRange && !_isAttackOnCooldown && !IsDead)
                         {  
                             ActionAttack();
                         }
@@ -131,7 +131,7 @@ namespace UZSG.Entities
         {
             navMeshAgent.isStopped = false;
             /// Check if the enemy has reached its destination and is actively moving, else continue roaming
-            bool _inPlace = Vector3.Distance(transform.position, _randomDestination) <= distanceThreshold && CurrentActionState != Idle;
+            bool _inPlace = Vector3.Distance(transform.position, _randomDestination) <= _distanceThreshold && CurrentActionState != Idle;
 
             // check if in place and has a path
             if (_inPlace && navMeshAgent.hasPath)
@@ -183,11 +183,11 @@ namespace UZSG.Entities
         void ActionAttack()
         {
             // if attack not on cd, do animation and set physics to attacking
-            if (!attackOnCooldown)
+            if (!_isAttackOnCooldown)
             {
                 if (targetEntity.TryGetComponent<IPlayerBeingDamage>(out var damageToPlayer))
                 {
-                    damageToPlayer.DamagePlayer(attackDamage);
+                    damageToPlayer.DamagePlayer(_attackDamage);
                 }
                 StartCoroutine(AttackCounterDownTimer());
 

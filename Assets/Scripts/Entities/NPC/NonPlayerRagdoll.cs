@@ -13,34 +13,21 @@ namespace UZSG.Entities
     public partial class NonPlayerCharacter : Entity
     {
         [Header("NPC Ragdoll Components")]
-        public BoxCollider NonPlayerCollider;
-        public GameObject NonPlayerBody;
-        public Animator NonPlayerAnimator;
-        public Rigidbody NonPlayerRigidbody;
+        [SerializeField] BoxCollider ragdollCollider;
+        [SerializeField] GameObject ragdollBody;
+        [SerializeField] Animator ragdollAnimator;
+        [SerializeField] Rigidbody ragdollRigidbody;
         Collider[] _ragdollColliders;
         Rigidbody[] _rigidBodyParts;
-
-        /// <summary>
-        /// Store in arrays and variables all the NPC's collider, rigid body, and animator.
-        /// </summary>
-        void GetRagdollParts()
-        {
-            // Get components of ragdoll
-            _ragdollColliders = NonPlayerBody.GetComponentsInChildren<Collider>();
-            _rigidBodyParts = NonPlayerBody.GetComponentsInChildren<Rigidbody>();
-            NonPlayerCollider = GetComponent<BoxCollider>();
-            NonPlayerAnimator = GetComponentInChildren<Animator>();
-            NonPlayerRigidbody = GetComponent<Rigidbody>();
-        }
 
         /// <summary>
         /// Enable physics ragdoll for Entity.
         /// </summary>
         public void EnableRagdoll()
         {
-            NonPlayerAnimator.enabled = false;
-            NonPlayerCollider.enabled = false;
-            NonPlayerRigidbody.isKinematic = true;
+            ragdollAnimator.enabled = false;
+            ragdollCollider.enabled = false;
+            ragdollRigidbody.isKinematic = true;
 
             foreach (var hitbox in hitboxController.Hitboxes)
             {
@@ -54,9 +41,9 @@ namespace UZSG.Entities
         /// </summary>
         public void DisableRagdoll()
         {
-            NonPlayerAnimator.enabled = true;
-            NonPlayerCollider.enabled = true;
-            NonPlayerRigidbody.isKinematic = false;
+            ragdollAnimator.enabled = true;
+            ragdollCollider.enabled = true;
+            ragdollRigidbody.isKinematic = false;
 
             foreach (var hitbox in hitboxController.Hitboxes)
             {

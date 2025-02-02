@@ -1,8 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace UZSG.Worlds.Events.Raid
+namespace UZSG.Worlds.Events
 {
     public enum RaidEventType
     {
@@ -11,6 +7,7 @@ namespace UZSG.Worlds.Events.Raid
         Human,
     
     }
+
     public enum RaidFormation
     {
         None,

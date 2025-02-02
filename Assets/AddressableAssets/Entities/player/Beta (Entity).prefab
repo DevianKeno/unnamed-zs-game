@@ -63,8 +63,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectData: {fileID: 11400000, guid: c174ea636f733d54ba86c9f1c8225992, type: 2}
-  attributes:
-    attributesReadOnly: []
   animator: {fileID: 0}
   crafter: {fileID: 6457100291753886462}
   EnableDebugging: 0
@@ -1518,8 +1516,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   instanceId: 0
   entityData: {fileID: 11400000, guid: 49cc9582dd61df247ab5d3da96dd2cf1, type: 2}
-  attributes:
-    attributesReadOnly: []
   CanPickUpItems: 1
   inventory: {fileID: 6573940630714393000}
   crafting: {fileID: 2880011488093977876}
@@ -1669,7 +1665,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 53316931
+  GlobalObjectIdHash: 1830595807
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -1690,7 +1686,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 141f4ff22b565c34fad027a5cdf5990f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 8107631895800867322}
+  DisplayName: 
+  CurrentParty: {fileID: 0}
   networkObject: {fileID: 4074435136900750905}
 --- !u!114 &6920012200784151675
 MonoBehaviour:

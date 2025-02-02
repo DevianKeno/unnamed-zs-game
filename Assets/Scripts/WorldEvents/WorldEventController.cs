@@ -4,24 +4,16 @@ using UnityEngine;
 
 using UZSG.Systems;
 using UZSG.Data;
-using UZSG.Worlds.Events.Raid;
 
 namespace UZSG.Worlds.Events
 {
-    public class WorldEventController : MonoBehaviour
+    public class WorldEventController : MonoBehaviour//, ISaveDataReadWrite<WorldEventSaveData>
     {
         public World World { get; private set; }
 
-        [SerializeField] RaidController raidController;
-        public RaidController Raid => raidController;
+        List<WorldEventBase> ongoingEvents = new();
+        List<WorldEventBase> eventsToRemove = new();
         
-        float _currentTime = 0;
-        public int InternalClock = 0;
-        [SerializeField] int _countdown = 0;
-        int _maxCountdown = 0;
-        int tempCount = 0;
-        public List<WorldEventData> WorldEvents;
-
         void Awake()
         {
             World = GetComponentInParent<World>();
@@ -29,49 +21,80 @@ namespace UZSG.Worlds.Events
 
         public void Initialize()
         {
-            foreach (WorldEventData data in WorldEvents)
-            {
-                if (data.OccurEverySecond > _maxCountdown)
-                {
-                    _maxCountdown = data.OccurEverySecond;
-                }
-            }
-
-            Game.Tick.OnTick += OnTick;
+            // Game.Tick.OnTick += OnTick;
+            Game.Tick.OnSecond += OnSecond;
         }
-        
+
         public void Deinitialize()
         {
-            Game.Tick.OnTick -= OnTick;
+            ongoingEvents.Clear();
+            eventsToRemove.Clear();
+            // Game.Tick.OnTick -= OnTick;
+            Game.Tick.OnSecond -= OnSecond;
         }
 
-        void OnTick(TickInfo info)
+        internal void Tick(float deltaTime)
         {
-            if (Mathf.FloorToInt(_currentTime) > tempCount)
-            {
-                tempCount = Mathf.FloorToInt(_currentTime);
-                InternalClock++;
-                if (_countdown >= _maxCountdown) 
-                    _countdown = 1;
-                else 
-                    _countdown++;
+            // foreach (WorldEventBase we in ongoingEvents)
+            // {
+            //     we.OnTick();
+            //     we._durationTimer -= deltaTime;
+
+            //     if (we._durationTimer < 0)
+            //     {
+            //         we.EndEvent();
+            //         eventsToRemove.Add(we);
+            //     }
+            // }
+
+            // if (Mathf.FloorToInt(_currentTime) > tempCount)
+            // {
+            //     tempCount = Mathf.FloorToInt(_currentTime);
+            //     InternalClock++;
+            //     if (_countdown >= _maxCountdown) 
+            //         _countdown = 1;
+            //     else 
+            //         _countdown++;
                 
-                HandleEvents();
+            //     HandleEventTick();
+            // }
+        }
+
+        void OnSecond(SecondInfo info)
+        {
+            HandleEventSecond();
+        }
+
+        void HandleEventTick()
+        {
+            // foreach (WorldEventData data in WorldEvents)
+            // {
+                // if (data.Enabled && _countdown % data.OccurEverySecond == 0)
+                // {
+                //     WorldEvent worldEvent = CreateEvent(data);
+                    
+                //     if (worldEvent == null) return;
+
+                //     SubscribeControllers(data, worldEvent);
+                //     worldEvent.SpawnEvent();
+                // }
+            // }
+        }
+
+        void HandleEventSecond()
+        {
+            foreach (WorldEventBase we in ongoingEvents)
+            {
+                we.OnSecond();
             }
         }
 
-        void HandleEvents()
+        /// TEST:
+        internal void SpawnEvent()
         {
-            foreach (WorldEventData data in WorldEvents)
-                if (data.Enabled && _countdown % data.OccurEverySecond == 0)
-                {
-                    WorldEvent worldEvent = CreateEvent(data);
-                    
-                    if (worldEvent == null) return;
-
-                    SubscribeControllers(data, worldEvent);
-                    worldEvent.SpawnEvent();
-                }
+            var newEvent = new NaturalEnemySpawnEvent();
+            newEvent.StartEvent();
+            ongoingEvents.Add(newEvent);
         }
 
         WorldEvent CreateEvent(WorldEventData eventData)
@@ -104,7 +127,7 @@ namespace UZSG.Worlds.Events
             
             if (eventData.Type == WorldEventType.Raid)
             {
-                eventHandler.OnEventSpawned += Raid.OnEventStart;
+                // eventHandler.OnEventSpawned += Raid.OnEventStart;
             }
         }
     }

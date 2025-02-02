@@ -4,6 +4,6 @@ namespace UZSG.Entities
 {
     public interface IEnemy
     {
-        public event Action<IEnemy> OnDeath;    
+        public event Action<Enemy> OnDeath;    
     }
 }

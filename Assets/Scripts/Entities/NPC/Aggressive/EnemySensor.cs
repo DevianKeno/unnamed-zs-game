@@ -39,7 +39,7 @@ namespace UZSG.Entities
 
         public void AttackPlayer(Entity etty)
         {
-            if (isAttacking)
+            if (_isAttacking)
             {
                 return;
             }
@@ -53,14 +53,14 @@ namespace UZSG.Entities
                 float angle = Vector3.Angle(transform.forward, directionToTarget);
 
                 // if facing player attack, else rotate
-                if (angle < rotationThreshold) // Adjust the threshold (e.g., 1 degree) as needed
+                if (angle < _rotationThreshold) // Adjust the threshold (e.g., 1 degree) as needed
                 {   
                     moveStateMachine.ToState(EnemyMoveStates.Idle);
                     actionStateMachine.ToState(Attack);
                 }
                 else
                 {
-                    if (!isAlreadyRotating)
+                    if (!_isAlreadyRotating)
                     {
                         StartCoroutine(Rotate());
                     }
@@ -127,16 +127,16 @@ namespace UZSG.Entities
 
         IEnumerator Rotate()
         {
-            isAlreadyRotating = true;
+            _isAlreadyRotating = true;
             /// Rotate towards the player
             Quaternion targetRotation = Quaternion.LookRotation(targetEntity.Position - transform.position);
-            while (Quaternion.Angle(transform.rotation, targetRotation) > rotationThreshold)
+            while (Quaternion.Angle(transform.rotation, targetRotation) > _rotationThreshold)
             {
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * RotationDamping);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationDamping);
                 yield return null;
             }
 
-            isAlreadyRotating = false;
+            _isAlreadyRotating = false;
         }
 
         IEnumerator IdleThenRoam()
@@ -148,20 +148,20 @@ namespace UZSG.Entities
 
         IEnumerator AttackCounterDownTimer()
         {
-            attackOnCooldown = true;
-            isAttacking = true;
-            float cooldownHolder = attackCooldown;
+            _isAttackOnCooldown = true;
+            _isAttacking = true;
+            float cooldownHolder = _attackCooldown;
 
-            while (attackCooldown > 0)
+            while (_attackCooldown > 0)
             {
-                attackCooldown -= Time.deltaTime; // Reduce cooldown over time
+                _attackCooldown -= Time.deltaTime; // Reduce cooldown over time
                 yield return null;
             }
 
             // Reset values
-            attackOnCooldown = false;
-            attackCooldown = cooldownHolder;
-            isAttacking = false;
+            _isAttackOnCooldown = false;
+            _attackCooldown = cooldownHolder;
+            _isAttacking = false;
             // if there is a target in range idle, else if not in range chase
             if (_hasTargetInAttackRange)
             {

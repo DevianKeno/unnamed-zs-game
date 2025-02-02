@@ -1,20 +1,22 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
-using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 
 using UZSG.Data;
-using UZSG.Entities;
 using UZSG.Systems;
 
 namespace UZSG.Worlds.Events
 {
     public class WorldEvent
     {
-        WorldEventData _eventData;
-        public WorldEventData EventData { set => _eventData = value; }
+        [FormerlySerializedAs("_eventData"), SerializeField] WorldEventData eventData;
+        public WorldEventData EventData
+        {
+            get => eventData;
+            set => eventData = value;
+        }
         
         public event Action<WorldEvent> OnEventSpawned;
         public event Action<WorldEvent> OnEventEnded;
@@ -29,13 +31,13 @@ namespace UZSG.Worlds.Events
         
         public List<object> PrepareEvent()
         {
-            switch (_eventData.Type)
+            switch (eventData.Type)
             {
                 // case WorldEventType.Weather:
                 //     SelectWeatherToOccur(_eventData);
                 //     break;
                 case WorldEventType.Raid:
-                    SelectRaidToOccur(_eventData);
+                    SelectRaidToOccur(eventData);
                     break;
                 default:
                     return null;

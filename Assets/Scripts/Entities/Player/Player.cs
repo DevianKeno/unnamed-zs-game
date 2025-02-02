@@ -566,6 +566,7 @@ namespace UZSG.Entities
 
         protected override void ReadTransformSaveData(TransformSaveData data)
         {
+            data ??= new();
             Rigidbody.position = Utils.FromFloatArray(data.Position);
             FPP.Camera.LookRotation(Utils.FromFloatArray(data.Rotation));
             // transform.localScale = Utils.FromFloatArray(data.LocalScale);

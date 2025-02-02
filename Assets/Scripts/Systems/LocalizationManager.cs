@@ -220,6 +220,6 @@ namespace UZSG
             File.WriteAllText(localePath, contents);
             Debug.Log($"Finished creation of default locale (en_us). Saved at '{localePath}'");
         }
-    }
 #endif
+    }
 }

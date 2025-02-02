@@ -198,8 +198,11 @@ namespace UZSG.UI
                 frame = GetFrame(switchTo);
             }
             if (frame == null) return;
-            
-            currentFrame.Rect.anchoredPosition = InactiveFramePosition; /// Hide current frame
+
+            if (currentFrame != null)
+            {
+                currentFrame.Rect.anchoredPosition = InactiveFramePosition; /// Hide current frame
+            }         
             frame.Rect.anchoredPosition = Vector2.zero; /// Show new frame
             frame.transform.SetAsLastSibling();
             currentFrame = frame;

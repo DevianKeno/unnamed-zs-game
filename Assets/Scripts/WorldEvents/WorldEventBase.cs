@@ -55,8 +55,6 @@ namespace UZSG.Worlds.Events
         }
 
         public virtual void OnStart() { }
-        public virtual void OnTick() { }
-        public virtual void OnSecond() { }
         public virtual void OnEnd() { }
     }
 }

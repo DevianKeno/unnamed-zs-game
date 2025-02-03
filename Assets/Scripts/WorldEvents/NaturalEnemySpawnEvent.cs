@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -12,15 +13,15 @@ namespace UZSG.Worlds.Events
     /// </summary>
     public class NaturalEnemySpawnEvent : WorldEventBase
     {
-        const int MAX_NATURAL_ENEMY_SPAWN_COUNT = 16;
+        const int MAX_NATURAL_ENEMY_SPAWN_COUNT = 16; /// TODO: scale with world difficulty
         /// <summary>
         /// Around the player 
         /// </summary>.
-        const float MIN_SPAWN_RADIUS = 24; /// TODO: arbitrary value, change by gameplay design
+        const float MIN_SPAWN_RADIUS = 48; /// TODO: arbitrary value, change by gameplay design
         /// <summary>
         /// Around the player 
         /// </summary>.
-        const float MAX_SPAWN_RADIUS = 64; /// TODO: arbitrary value, change by gameplay design
+        const float MAX_SPAWN_RADIUS = 96; /// TODO: arbitrary value, change by gameplay design
         /// <summary>
         /// Chance to spawn every second. Value between 0 - 100%.
         /// </summary>
@@ -28,7 +29,7 @@ namespace UZSG.Worlds.Events
         readonly string[] enemyIds = { "walker" };
 
         bool allowNaturalSpawning = true;
-        List<Enemy> spawnedEnemies = new();
+        internal List<Enemy> spawnedEnemies = new();
         public int CurrentEnemyCount => spawnedEnemies.Count; 
 
         public NaturalEnemySpawnEvent() : base(0) /// this event is indefinite
@@ -37,9 +38,10 @@ namespace UZSG.Worlds.Events
 
         public override void OnStart()
         {
+            Game.Tick.OnSecond += OnSecond;
         }
 
-        public override void OnSecond()
+        public void OnSecond(SecondInfo s)
         {
             if (!allowNaturalSpawning) return;
             if (CurrentEnemyCount > MAX_NATURAL_ENEMY_SPAWN_COUNT) return;
@@ -88,10 +90,37 @@ namespace UZSG.Worlds.Events
         
         Vector3 GetRandomPositionAroundPlayer(Player player)
         {
-            float randomAngle = UnityEngine.Random.Range(0f, 360f);
+            var angleRadius = 90f;
+            // Define the angle range behind the player
+            float playerForwardAngle = Mathf.Atan2(player.Forward.z, player.Forward.x) * Mathf.Rad2Deg;
+            float minAngle = playerForwardAngle - 180f - angleRadius / 2f; // Behind the player
+            float maxAngle = playerForwardAngle - 180f + angleRadius / 2f;
+
+            // Generate a random angle within the defined range
+            float randomAngle = UnityEngine.Random.Range(minAngle, maxAngle);
             float randomRadius = UnityEngine.Random.Range(MIN_SPAWN_RADIUS, MAX_SPAWN_RADIUS);
-            Vector2 randomPointAroundPlayer = new Vector2(Mathf.Cos(randomAngle), Mathf.Sin(randomAngle)) * randomRadius;
-            return player.transform.position + new Vector3(randomPointAroundPlayer.x, 0, randomPointAroundPlayer.y);
+
+            // Convert the angle to a direction
+            Vector2 direction = new(Mathf.Cos(randomAngle * Mathf.Deg2Rad), Mathf.Sin(randomAngle * Mathf.Deg2Rad));
+            Vector2 point = direction * randomRadius;
+
+            // Terrain cast to find the ground height
+            if (Physics.Raycast(new Vector3(point.x, 300f, point.y), -Vector3.up, out var hit, 999f))
+            {
+                return new Vector3(point.x, hit.point.y, point.y);
+            }
+            else
+            {
+                return player.transform.position + new Vector3(point.x, 0, point.y);
+            }
+        }
+
+        internal void IncludeSpawned(Enemy enemy)
+        {
+            if (enemy._isNaturallySpawned)
+            {
+                spawnedEnemies.Add(enemy);
+            }
         }
     }
 }

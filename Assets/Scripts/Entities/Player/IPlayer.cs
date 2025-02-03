@@ -7,7 +7,12 @@ namespace UZSG.Entities
     /// <summary>
     /// Interface collection for Player Entity.
     /// </summary>
-    public interface IPlayer : IAttributable, IInteractActor, IMeleeWeaponActor, ISaveDataReadWrite<PlayerSaveData>
+    public interface IPlayer :
+        IAttributable,
+        IDamageable,
+        IInteractActor,
+        IMeleeWeaponActor,
+        ISaveDataReadWrite<PlayerSaveData>
     {
     }
 }

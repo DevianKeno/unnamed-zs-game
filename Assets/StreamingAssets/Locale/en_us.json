@@ -995,6 +995,10 @@
       "name": "Framerate Cap",
       "description": "No description."
     },
+    "fullscreen_mode": {
+      "name": "Fullscreen Mode",
+      "description": "Lacks description!"
+    },
     "graphics_profile": {
       "name": "Graphics Profile",
       "description": "Global graphics settings."
@@ -1057,10 +1061,6 @@
     },
     "v_sync": {
       "name": "V-Sync",
-      "description": "Lacks description!"
-    },
-    "window_mode": {
-      "name": "Window Mode",
       "description": "Lacks description!"
     }
   }

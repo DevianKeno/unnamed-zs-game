@@ -8,6 +8,7 @@ namespace UZSG.Interactions
     /// </summary>
     public interface IPlayerDetectable
     {
+        public Transform transform { get; }
         public Vector3 Position { get; }
         public float PlayerDetectionRadius { get; }
         public float PlayerAttackableRadius { get; }

@@ -15,6 +15,7 @@ MonoBehaviour:
   Namespace: uzsg
   Id: graphics_profile
   Tags: []
+  Category: 2
   displayName: Graphics Profile
   description: Global graphics settings.
   PerformanceImpact: 64

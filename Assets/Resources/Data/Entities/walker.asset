@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6379a2b7d91791945abf1dc8c29cd406, type: 3}
   m_Name: walker
   m_EditorClassIdentifier: 
-  SourceId: uzsg
+  Namespace: uzsg
   Id: walker
   Tags: []
   AssetReference:
@@ -20,7 +20,7 @@ MonoBehaviour:
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  Name: Walker
+  DisplayName: Walker
   BaseAttributes:
   - data: {fileID: 11400000, guid: e1db9201565269c4caebcb12298f0665, type: 2}
     value: 100
@@ -30,8 +30,15 @@ MonoBehaviour:
     LimitOverflow: 1
     LimitUnderflow: 1
   - data: {fileID: 11400000, guid: fe9f66b79d95e7948a4dfcb4512568c7, type: 2}
-    value: 2
+    value: 3
     baseMaximum: 1000
+    multiplier: 1
+    flatBonus: 0
+    LimitOverflow: 1
+    LimitUnderflow: 1
+  - data: {fileID: 11400000, guid: 65ed971fe2fc7f5499ba1d36dfa93e58, type: 2}
+    value: 1
+    baseMaximum: 100
     multiplier: 1
     flatBonus: 0
     LimitOverflow: 1
@@ -51,6 +58,13 @@ MonoBehaviour:
     LimitOverflow: 1
     LimitUnderflow: 1
   - data: {fileID: 11400000, guid: 5e71af7286d194c4c9bf489e08b9c33f, type: 2}
+    value: 10
+    baseMaximum: 1000
+    multiplier: 1
+    flatBonus: 0
+    LimitOverflow: 1
+    LimitUnderflow: 1
+  - data: {fileID: 11400000, guid: 16ecf6c81c5a7dc4b871fc7d9602a1b6, type: 2}
     value: 10
     baseMaximum: 1000
     multiplier: 1

@@ -10,6 +10,7 @@ namespace UZSG.Saves
     [JsonConverter(typeof(JsonSubtypes), "Type")]
     [JsonSubtypes.KnownSubType(typeof(PlayerSaveData), "PlayerSaveData")]
     [JsonSubtypes.KnownSubType(typeof(PlayerSaveData), "NPCSaveData")]
+    [JsonSubtypes.KnownSubType(typeof(EnemySaveData), "EnemySaveData")]
     [JsonSubtypes.KnownSubType(typeof(ItemEntitySaveData), "ItemEntitySaveData")]
     public class EntitySaveData : SaveData
     {

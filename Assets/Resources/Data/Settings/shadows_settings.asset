@@ -15,6 +15,8 @@ MonoBehaviour:
   Namespace: uzsg
   Id: shadows_settings
   Tags: []
+  Category: 2
   displayName: Shadow Settings
   description: Divider text.
+  PerformanceImpact: 0
   Images: []

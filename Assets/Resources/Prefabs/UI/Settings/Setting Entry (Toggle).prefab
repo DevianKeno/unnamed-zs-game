@@ -156,6 +156,7 @@ MonoBehaviour:
   rect: {fileID: 9070745857461661231}
   settingsEntryData: {fileID: 0}
   spacerWidth: 312.4
+  background: {fileID: 7293300732917217335}
   spacer: {fileID: 5832994672923469193}
 --- !u!1 &7947020066997619779
 GameObject:

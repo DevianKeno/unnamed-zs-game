@@ -15,6 +15,7 @@ MonoBehaviour:
   Namespace: uzsg
   Id: ambient_occlusion
   Tags: []
+  Category: 2
   displayName: Ambient Occlusion
   description: Lacks description!
   PerformanceImpact: 16

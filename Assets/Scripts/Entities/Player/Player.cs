@@ -70,7 +70,9 @@ namespace UZSG.Entities
 
         [SerializeField] EntityHitboxController hitboxes;
         public EntityHitboxController Hitboxes => hitboxes;
-        
+
+        PlayerAbsoluteTerritory at;
+                
         bool _isInitialized = false;
         /// <summary>
         /// List of UI elements that are attached to the Player.
@@ -176,7 +178,7 @@ namespace UZSG.Entities
             inventory = GetComponentInChildren<PlayerInventoryManager>();
             crafting = GetComponentInChildren<PlayerCrafting>();
             buildingManager = GetComponentInChildren<PlayerBuildingManager>();
-
+            at = GetComponentInChildren<PlayerAbsoluteTerritory>();
             MoveStateMachine = GetComponent<MovementStateMachine>();
             ActionStateMachine = GetComponent<ActionStateMachine>();
             Controls = GetComponent<PlayerControls>();
@@ -264,7 +266,6 @@ namespace UZSG.Entities
         void InitializeAttributeEvents()
         {
             attributes["stamina"].OnValueModified += OnAttrStaminaModified;
-            currentHealth = Attributes.Get("health").Value;
         }
 
         void InitializeStateMachines()
@@ -351,6 +352,12 @@ namespace UZSG.Entities
 
 
         #region Event callbacks
+
+        void Update()
+        {
+            UpdateAnimator();
+
+        }
 
         void OnConsoleGuiOpened()
         {
@@ -575,6 +582,14 @@ namespace UZSG.Entities
         #endregion
 
 
+        public void TakeDamage(DamageInfo damageInfo)
+        {
+            if (attributes.TryGet("health", out var health))
+            {
+                health.Value -= damageInfo.Amount;
+            }
+        }
+
         public void UseObjectGUI(ObjectGUI gui)
         {
             invUI.AppendObjectGUI(gui, 1);
@@ -629,6 +644,26 @@ namespace UZSG.Entities
         public void SetNametagVisible(bool visible)
         {
             nametagGameObject.SetActive(visible);
+        }
+
+        /// <summary>
+        /// Check if the player can see the given entity.
+        /// </summary>
+        public bool CanSee(Entity entity)
+        {
+            Vector3 direction = (this.Position - this.MainCamera.transform.position).normalized;
+            float distance = Vector3.Distance(this.Position, entity.Position);
+
+            if (Physics.Raycast(this.EyeLevel, direction, out var hit, distance))
+            {
+                if (hit.collider.TryGetComponent<Entity>(out var detected) &&
+                    detected == entity) /// check if same entity
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public void AddExperience(int amount, bool shareWithPartyMembers = false)

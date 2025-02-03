@@ -14,7 +14,7 @@ namespace UZSG.Worlds.Events
         List<WorldEventBase> ongoingEvents = new();
         List<WorldEventBase> eventsToRemove = new();
 
-        NaturalEnemySpawnEvent naturalEnemySpawnEvent;
+        internal NaturalEnemySpawnEvent naturalEnemySpawnEvent;
         
         void Awake()
         {
@@ -23,16 +23,12 @@ namespace UZSG.Worlds.Events
 
         public void Initialize()
         {
-            // Game.Tick.OnTick += OnTick;
-            Game.Tick.OnSecond += OnSecond;
         }
 
         public void Deinitialize()
         {
             ongoingEvents.Clear();
             eventsToRemove.Clear();
-            // Game.Tick.OnTick -= OnTick;
-            Game.Tick.OnSecond -= OnSecond;
         }
 
         internal void Tick(float deltaTime)
@@ -62,11 +58,6 @@ namespace UZSG.Worlds.Events
             // }
         }
 
-        void OnSecond(SecondInfo info)
-        {
-            HandleEventSecond();
-        }
-
         void HandleEventTick()
         {
             // foreach (WorldEventData data in WorldEvents)
@@ -81,14 +72,6 @@ namespace UZSG.Worlds.Events
                 //     worldEvent.SpawnEvent();
                 // }
             // }
-        }
-
-        void HandleEventSecond()
-        {
-            foreach (WorldEventBase we in ongoingEvents)
-            {
-                we.OnSecond();
-            }
         }
 
         WorldEvent CreateEvent(WorldEventData eventData)

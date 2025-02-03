@@ -38,9 +38,8 @@ namespace UZSG.UI
 
         void OnOptionsBtnClick()
         {
-            throw new NotImplementedException();
+            Game.Settings.ShowGlobalInterface();
         }
-
 
         void OnExitBtnClick()
         {

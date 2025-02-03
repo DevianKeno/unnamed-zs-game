@@ -117,7 +117,7 @@ namespace UZSG.Entities
             AnimateTogether($"{animId}", CrossfadeTransitionDuration);
         }
 
-        void Update()
+        void UpdateAnimator()
         {
             float x = Controls.FrameInput.Move.x;
             float y = Controls.FrameInput.Move.y;

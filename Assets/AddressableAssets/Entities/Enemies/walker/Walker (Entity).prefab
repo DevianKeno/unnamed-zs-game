@@ -38,6 +38,7 @@ Transform:
   m_Children:
   - {fileID: 4619130899390222130}
   - {fileID: 6988199063132129131}
+  - {fileID: 1227509893885739461}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!114 &7999740600900502716
@@ -54,44 +55,44 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   instanceId: 0
   entityData: {fileID: 11400000, guid: 733a73e5d945f434eafdbde123704a59, type: 2}
-  attributes:
-    attributesReadOnly: []
   targetEntity: {fileID: 0}
   HasHitboxes: 0
-  NonPlayerCollider: {fileID: 0}
-  NonPlayerBody: {fileID: 2753225580948477414}
-  NonPlayerAnimator: {fileID: 0}
-  NonPlayerRigidbody: {fileID: 0}
-  PlayerLayer:
-    serializedVersion: 2
-    m_Bits: 256
-  isInHorde: 0
-  _hordeTransform: {fileID: 0}
-  _hasAlreadyScreamed: 0
-  attackOnCooldown: 0
-  isAttacking: 0
-  isAlreadyRotating: 0
-  _isInHordeMode: 0
-  _hasTargetInSight: 0
-  _hasTargetInAttackRange: 0
-  attackCooldown: 0
-  attackDamage: 0
-  _distanceFromPlayer: 0
-  rotationThreshold: 15
-  distanceThreshold: 0.9
-  _moveSpeed: 0
-  _siteRadius: 0
-  _attackRadius: 0
-  _randomDestination: {x: 0, y: 0, z: 0}
-  RotationDamping: 9
+  healthBar: {fileID: 7120508875776730786}
+  ragdollCollider: {fileID: 7116651654386742079}
+  ragdollBody: {fileID: 4923420121152070468}
+  ragdollAnimator: {fileID: 6509039278937967366}
+  ragdollRigidbody: {fileID: 6583129931448410585}
+  rotationDamping: 9
   _roamTime: 12
   _roamRadius: 15
   _roamInterval: 12
   animator: {fileID: 6509039278937967366}
   moveStateMachine: {fileID: 8327613411202617107}
   actionStateMachine: {fileID: 2224819950650519137}
+  head: {fileID: 2564845842545323282}
   navMeshAgent: {fileID: 5002864878521246475}
   hordeTransform: {fileID: 0}
+  PlayerLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  isInHorde: 0
+  _hordeTransform: {fileID: 0}
+  _hasAlreadyScreamed: 0
+  _isAttackOnCooldown: 0
+  _isAttacking: 0
+  _isAlreadyRotating: 0
+  _isInHordeMode: 0
+  _hasTargetInSight: 0
+  _hasTargetInAttackRange: 0
+  _attackCooldown: 0
+  _attackDamage: 0
+  _distanceFromPlayer: 0
+  _rotationThreshold: 0
+  _distanceThreshold: 0
+  _moveSpeed: 0
+  _siteRadius: 0
+  _attackRadius: 0
+  _randomDestination: {x: 0, y: 0, z: 0}
 --- !u!114 &8327613411202617107
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -215,7 +216,7 @@ NavMeshAgent:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4923420121152070468}
   m_Enabled: 1
-  m_AgentTypeID: -1923039037
+  m_AgentTypeID: -1372625422
   m_Radius: 0.44
   m_Speed: 3.5
   m_Acceleration: 8
@@ -274,6 +275,51 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   AudioAssetsData: {fileID: 0}
+--- !u!1 &8806507085135440072
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1227509893885739461}
+  - component: {fileID: 7120508875776730786}
+  m_Layer: 14
+  m_Name: Entity Health Bar
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1227509893885739461
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8806507085135440072}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 2.522, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6786324724403839604}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7120508875776730786
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8806507085135440072}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a42d87409831155449a896d8f82d86e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healthBarUI: {fileID: 0}
 --- !u!1001 &5156844125987940569
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -862,9 +908,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Part: 3
   HasJoint: 1
---- !u!1 &2753225580948477414 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7036213049465896255, guid: 98a5113de4d60b34c82352ab039a6e25, type: 3}
+--- !u!4 &2564845842545323282 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7208261743932278219, guid: 98a5113de4d60b34c82352ab039a6e25, type: 3}
   m_PrefabInstance: {fileID: 5156844125987940569}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &4157636056497707913 stripped

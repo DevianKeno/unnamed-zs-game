@@ -134,6 +134,7 @@ namespace UZSG.Worlds
             InitializeInternal();
             InitializeAttributes(saveData);
             InitializeEvents();
+            InitializeWorldEvents();
 
             if (NetworkManager.Singleton.IsListening && NetworkManager.Singleton.IsServer)
             {
@@ -151,7 +152,6 @@ namespace UZSG.Worlds
             Game.Audio.PlayTrack("forest_ambiant_1", volume: Game.Audio.ambianceVolume, loop: true);
             SpawnPlayers();
             
-            InitializeWorldEvents();
             
             onCompleted?.Invoke();
         }
@@ -355,6 +355,10 @@ namespace UZSG.Worlds
                 }
                 else
                 {
+                    if (etty is Enemy enemy)
+                    {
+                        WorldEvents.naturalEnemySpawnEvent.IncludeSpawned(enemy);
+                    }
                     Game.Entity.Spawn(sd.Id, callback: (info) =>
                     {
                         info.Entity.ReadSaveData(sd);

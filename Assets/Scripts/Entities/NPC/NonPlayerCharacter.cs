@@ -4,6 +4,7 @@ using UZSG.Systems;
 using UZSG.Interactions;
 using UZSG.Attributes;
 using UZSG.Saves;
+using UZSG.UI;
 
 namespace UZSG.Entities
 {
@@ -24,7 +25,9 @@ namespace UZSG.Entities
         protected EntityHitboxController hitboxController;
         protected Rigidbody rb;
         public Rigidbody Rigidbody => rb;
-
+        [SerializeField] EntityHealthBar healthBar;
+        public EntityHealthBar HealthBar => healthBar;
+        
 
         #region Initializing methods
 

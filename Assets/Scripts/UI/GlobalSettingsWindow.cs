@@ -36,14 +36,13 @@ namespace UZSG.Systems
 
         void OnSettingEntryMouseDown(object sender, PointerEventData click)
         {
-            var settingEntryUI = (SettingEntryUI) sender;
+            var settingEntry = (SettingEntryUI) sender;
 
-            settingInformationDisplay.SetSettingData(settingEntryUI.Data);
+            settingInformationDisplay.SetSettingData(settingEntry.Data);
         }
 
-        void OnSettingValueChanged(object sender, PointerEventData e)
-        {
-            var settingEntryUI = (SettingEntryUI) sender;            
+        void OnSettingValueChanged(SettingEntryUI settingEntry)
+        {        
         }
 
         #endregion

@@ -15,6 +15,7 @@ MonoBehaviour:
   Namespace: uzsg
   Id: shadows_resolution
   Tags: []
+  Category: 2
   displayName: Shadows Resolution
   description: Lacks description!
   PerformanceImpact: 32

@@ -7,7 +7,6 @@ using TMPro;
 
 using UZSG.Data;
 using UZSG.UI;
-using UZSG.UI.Colors;
 
 namespace UZSG.TitleScreen
 {

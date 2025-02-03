@@ -10,7 +10,6 @@ namespace UZSG.UI
     public class Selector : UIElement
     {
         public bool EnableAnimations { get; set; } = true;
-        public float AnimationFactor = 0.1f;
         public LeanTweenType TweenType;
 
         RectTransform _target;
@@ -40,13 +39,13 @@ namespace UZSG.UI
             if (EnableAnimations && Game.UI.EnableScreenAnimations)
             {
                 LeanTween.cancel(gameObject);
-                LeanTween.value(gameObject, rect.position, target.position, AnimationFactor)
+                LeanTween.value(gameObject, rect.position, target.position, Game.UI.GlobalAnimationFactor / 5f)
                 .setOnUpdate((Vector3 i) =>
                 {
                     rect.position = i;
                 })
                 .setEase(TweenType);
-                LeanTween.size(rect, target.sizeDelta, AnimationFactor)
+                LeanTween.size(rect, target.sizeDelta, Game.UI.GlobalAnimationFactor / 5f)
                 .setEase(TweenType);
             }
             else

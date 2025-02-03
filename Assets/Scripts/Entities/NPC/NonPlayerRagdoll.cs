@@ -10,7 +10,7 @@ namespace UZSG.Entities
     /// <summary>
     /// Represents non-player Entities which may or may not have Hitboxes.
     /// </summary>
-    public partial class NonPlayerCharacter : Entity
+    public partial class NonPlayerCharacter : Entity, IHasHealthBar
     {
         [Header("NPC Ragdoll Components")]
         [SerializeField] BoxCollider ragdollCollider;

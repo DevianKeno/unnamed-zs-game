@@ -15,6 +15,7 @@ MonoBehaviour:
   Namespace: uzsg
   Id: framerate_cap
   Tags: []
+  Category: 1
   displayName: Framerate Cap
   description: No description.
   PerformanceImpact: 0

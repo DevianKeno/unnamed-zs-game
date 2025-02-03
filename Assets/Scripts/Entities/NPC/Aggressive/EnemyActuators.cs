@@ -6,7 +6,7 @@ using static UZSG.Entities.EnemyActionStates;
 
 namespace UZSG.Entities
 {
-    public partial class Enemy : NonPlayerCharacter
+    public partial class Enemy : NonPlayerCharacter, IDamageSource
     {
         #region Action state handlers
 
@@ -131,10 +131,11 @@ namespace UZSG.Entities
         {
             navMeshAgent.isStopped = false;
             /// Check if the enemy has reached its destination and is actively moving, else continue roaming
-            bool _inPlace = Vector3.Distance(transform.position, _randomDestination) <= _distanceThreshold && CurrentActionState != Idle;
+            bool inPlace = Vector3.Distance(transform.position, _randomDestination) <= _distanceThreshold && 
+                ActionStateMachine.CurrentState.Key != Idle;
 
             // check if in place and has a path
-            if (_inPlace && navMeshAgent.hasPath)
+            if (inPlace && navMeshAgent.hasPath)
             {
                 navMeshAgent.isStopped = true;
                 navMeshAgent.updateRotation = false;
@@ -183,21 +184,19 @@ namespace UZSG.Entities
         void ActionAttack()
         {
             // if attack not on cd, do animation and set physics to attacking
-            if (!_isAttackOnCooldown)
+            if (_isAttackOnCooldown) return;
+        
+            if (targetEntity is IDamageable damageable)
             {
-                if (targetEntity.TryGetComponent<IPlayerBeingDamage>(out var damageToPlayer))
-                {
-                    damageToPlayer.DamagePlayer(_attackDamage);
-                }
-                StartCoroutine(AttackCounterDownTimer());
-
-                /// set the rigid body of the enemy to kinematic
-                rb.isKinematic = true;
-
-                /// prevent the enemy from moving when in attack range
-                navMeshAgent.isStopped = true;
-                navMeshAgent.updateRotation = false;
+                damageable.TakeDamage(new DamageInfo(source: this, amount: _attackDamage));
             }
+
+            StartCoroutine(AttackCounterDownTimer());
+            /// set the rigid body of the enemy to kinematic
+            rb.isKinematic = true;
+            /// prevent the enemy from moving when in attack range
+            navMeshAgent.isStopped = true;
+            navMeshAgent.updateRotation = false;
         }
 
         void ActionDie()

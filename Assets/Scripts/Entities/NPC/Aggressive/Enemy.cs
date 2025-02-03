@@ -4,33 +4,34 @@ using UnityEngine;
 using UnityEngine.AI;
 
 using UZSG.Data;
-using UZSG.Systems;
 using UZSG.Interactions;
-
+using UZSG.Systems;
+using UZSG.Saves;
 using static UZSG.Entities.EnemyActionStates;
 
 namespace UZSG.Entities
 {
-    public partial class Enemy : NonPlayerCharacter, IPlayerDetectable
+    public interface IHasHealthBar
+    {
+        public EntityHealthBar HealthBar { get; }
+    }
+
+    public partial class Enemy : NonPlayerCharacter, IPlayerDetectable, IHasHealthBar
     {
         public EnemyData EnemyData => entityData as EnemyData;
 
 
         #region Properties
-
-        public EnemyActionStates CurrentActionState
+        
+        public float MoveSpeed
         {
-            get => actionStateMachine.CurrentState.Key;
-        }
-        public EnemyMoveStates CurrentMoveState
-        {
-            get => moveStateMachine.CurrentState.Key;
+            get => navMeshAgent.speed;
+            set => navMeshAgent.speed = value;
         }
         public float PlayerDetectionRadius
         {
             get => _siteRadius;
         }
-
         public float PlayerAttackableRadius
         {
             get => _attackRadius;
@@ -58,6 +59,8 @@ namespace UZSG.Entities
         public EnemyMoveStateMachine MoveStateMachine => moveStateMachine;
         [SerializeField] protected EnemyActionStateMachine actionStateMachine;
         public EnemyActionStateMachine ActionStateMachine => actionStateMachine;
+        [SerializeField] Transform head;
+        public Transform Head => head;
         
         [SerializeField] NavMeshAgent navMeshAgent;
         [SerializeField] Transform hordeTransform;
@@ -96,6 +99,8 @@ namespace UZSG.Entities
             InitializeActuators();
             InitializeAgent();
             DisableRagdoll();
+            
+            HealthBar.Initialize();
 
             Game.Tick.OnSecond += OnSecond;
         }
@@ -105,17 +110,38 @@ namespace UZSG.Entities
             OnDeath?.Invoke(this);
         }
 
+        public override void ReadSaveData(EntitySaveData saveData)
+        {
+            base.ReadSaveData(saveData);
+
+
+        }
+        
         /// <summary>
         /// Retrieve attribute values and cache
         /// </summary>
         void RetrieveAttributes()
         {
-            navMeshAgent.speed = Attributes.Get("move_speed").Value;
-            _moveSpeed = Attributes.Get("move_speed").Value;
-            _siteRadius = Attributes.Get("zombie_site_radius").Value;
-            _attackRadius = Attributes.Get("zombie_attack_radius").Value;
-            _attackCooldown = Attributes.Get("zombie_attack_cooldown_time").Value;
-            _attackDamage = Attributes.Get("attack_damage").Value;
+            if (Attributes.TryGet("move_speed", out var moveSpeed))
+            {
+                this.MoveSpeed = moveSpeed.Value;
+            }
+            if (Attributes.TryGet("attack_range", out var atkRange))
+            {
+                this._siteRadius = atkRange.Value;
+            }
+            if (Attributes.TryGet("attack_radius", out var atkRadius))
+            {
+                this._attackRadius = atkRadius.Value;
+            }
+            if (Attributes.TryGet("attack_damage", out var atkDmg))
+            {
+                this._attackDamage = atkDmg.Value;
+            }
+            if (Attributes.TryGet("attack_speed", out var atkSpeed))
+            {
+
+            }
         }
 
         void InitializeAgent()
@@ -134,11 +160,6 @@ namespace UZSG.Entities
 
         #endregion
 
-
-        protected virtual void FixedUpdate()
-        {
-
-        }
 
         void OnSecond(SecondInfo s)
         {

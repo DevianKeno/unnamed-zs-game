@@ -15,6 +15,7 @@ MonoBehaviour:
   Namespace: uzsg
   Id: resolution
   Tags: []
+  Category: 1
   displayName: Resolution
   description: Lacks description!
   PerformanceImpact: 0

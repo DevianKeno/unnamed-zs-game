@@ -35,6 +35,7 @@ namespace UZSG.UI
         }
 
         public bool EnableScreenAnimations = true;
+        public float GlobalAnimationFactor = 0.5f;
 
         [SerializeField] SceneTransitionOptions sceneTransitionOptions;
         public SceneTransitionOptions SceneTransitionOptions => sceneTransitionOptions;
@@ -59,6 +60,9 @@ namespace UZSG.UI
 
         [SerializeField] Canvas canvas;
         public Canvas Canvas => canvas;
+
+        [SerializeField] Canvas healthBarCanvas;
+        public Canvas HealthBarCanvas => healthBarCanvas;
 
         bool _isCursorVisible;
         public bool IsCursorVisible => _isCursorVisible;
@@ -283,6 +287,27 @@ namespace UZSG.UI
             }
 
             var msg = $"Unable to create UI element, it does not exist";
+            Game.Console.LogInfo(msg);
+            Debug.LogWarning(msg);
+            return default;
+        }
+
+        public T Create<T>(GameObject prefab, bool show = true) where T : UIElement
+        {
+            var go = Instantiate(prefab, Canvas.transform);
+            if (go.TryGetComponent(out T element))
+            {
+                if (element is Window window)
+                {
+                    window.OnOpened += () => { OnAnyWindowOpened?.Invoke(window); };
+                    window.OnClosed += () => { OnAnyWindowClosed?.Invoke(window); };
+                }
+                if (!show) element.Hide();
+                return element;
+            }
+
+            var msg = $"Unable to instantiate UI element, it does not exist";
+            Destroy(go);
             Game.Console.LogInfo(msg);
             Debug.LogWarning(msg);
             return default;

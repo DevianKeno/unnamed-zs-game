@@ -15,6 +15,7 @@ MonoBehaviour:
   Namespace: uzsg
   Id: max_shadow_distance
   Tags: []
+  Category: 2
   displayName: Max Shadow Distance
   description: Lacks description!
   PerformanceImpact: 16

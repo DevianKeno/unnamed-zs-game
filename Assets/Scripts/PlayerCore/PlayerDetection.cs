@@ -1,22 +1,95 @@
-using System;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
+using UZSG.Attributes;
 using UZSG.Entities;
 using UZSG.Interactions;
+using UZSG.UI;
 
 namespace UZSG.Players
 {
     public class PlayerDetection : MonoBehaviour 
     {
         [SerializeField] Player player;
-        public LayerMask Layers;
-        public float PlayerDetectionRange, PlayerAttackableRange;
 
+        [SerializeField] internal float _healthBarScanRadius = 10f;
+
+        public float PlayerDetectionRange;
+        public float PlayerAttackableRange;
+        public LayerMask Layers;
+
+        List<IAttributable> _trackedHealthBars = new();
+        
         void FixedUpdate()
         {
             CastDetectionSphere();
         }
 
+        Collider[] _detectedCollidersResults = new Collider[10];
+        Collider[] _attackableCollidersResults = new Collider[10];
+        public void CastDetectionSphere()
+        {
+            int dCount = Physics.OverlapSphereNonAlloc(transform.position, PlayerDetectionRange, _detectedCollidersResults, Layers);
+            int aCount = Physics.OverlapSphereNonAlloc(transform.position, PlayerAttackableRange, _attackableCollidersResults, Layers);
+            
+            for (int i = 0; i < dCount; i++)
+            {
+                var collider = _detectedCollidersResults[i];
+                if (!collider.TryGetComponent<IPlayerDetectable>(out var detected)) continue;
+
+                var ettyDistance = Vector3.Distance(detected.Position, player.Position);
+                if (ettyDistance <= detected.PlayerDetectionRadius) /// inverse detection, respect skill values
+                {
+                    detected.DetectPlayer(player);
+                }
+                
+                if (detected is IHasHealthBar ihhb)
+                {
+                    if (ettyDistance <= _healthBarScanRadius)
+                        // IsVisible(player, detected))
+                    {
+                        ihhb.HealthBar.Player = player;
+                        ihhb.HealthBar.Show();
+                    }
+                    else
+                    {
+                        ihhb.HealthBar.Hide();
+                    }
+                }
+            }
+
+            for (int i = 0; i < aCount; i++)
+            {
+                var collider = _attackableCollidersResults[i];
+
+                if (!collider.TryGetComponent<IPlayerDetectable>(out var detectable)) return;
+                
+                if (Vector3.Distance(detectable.Position, player.Position) <= detectable.PlayerAttackableRadius)
+                {
+                    detectable.AttackPlayer(player);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Check whether the detectable is visible from the Player's camera perspective.
+        /// </summary>
+        bool IsVisible(Player player, IPlayerDetectable detectable)
+        {
+            Vector3 direction = (detectable.Position - player.MainCamera.transform.position).normalized;
+            float distance = Vector3.Distance(player.Position, detectable.Position);
+
+            if (Physics.Raycast(player.EyeLevel, direction, out var hit, distance))
+            {
+                if (hit.collider.TryGetComponent<IPlayerDetectable>(out var detected) &&
+                    detected == detectable) /// check if same entity
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+                
         void OnDrawGizmos()
         {
             Gizmos.color = Color.red;
@@ -26,33 +99,6 @@ namespace UZSG.Players
             Gizmos.DrawWireSphere(transform.position, 2);
         }
 
-        public void CastDetectionSphere()
-        {
-            Collider[] detectedColliders = Physics.OverlapSphere(transform.position, PlayerDetectionRange, Layers);
-            Collider[] attackableColliders = Physics.OverlapSphere(transform.position, PlayerAttackableRange, Layers);
-            
-            foreach (var collider in detectedColliders)
-            {
-                if (collider.TryGetComponent<IPlayerDetectable>(out var detectable))
-                {
-                    if (Vector3.Distance(detectable.Position, player.Position) <= detectable.PlayerDetectionRadius)
-                    {
-                        detectable.DetectPlayer(player);
-                    }
-                }
-            }
-
-            foreach (var collider in attackableColliders)
-            {
-                if (collider.TryGetComponent<IPlayerDetectable>(out var detectable))
-                {
-                    if (Vector3.Distance(detectable.Position, player.Position) <= detectable.PlayerAttackableRadius)
-                    {
-                        detectable.AttackPlayer(player);
-                    }
-                }
-            }
-        }
         /*public LayerMask 
             EnemyLayer,
             WildlifeLayer; // Layers that the enemy chases

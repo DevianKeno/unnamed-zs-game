@@ -15,6 +15,7 @@ MonoBehaviour:
   Namespace: uzsg
   Id: upscaling_sharpness
   Tags: []
+  Category: 2
   displayName: Sharpness
   description: Lacks description!
   PerformanceImpact: 32

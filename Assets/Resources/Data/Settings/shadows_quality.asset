@@ -15,6 +15,7 @@ MonoBehaviour:
   Namespace: uzsg
   Id: shadows_quality
   Tags: []
+  Category: 2
   displayName: Shadows Quality
   description: Lacks description!
   PerformanceImpact: 0

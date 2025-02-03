@@ -99,7 +99,7 @@ namespace UZSG.UI
                 if (currentFrame != null && currentFrame.Id != frame.Id)
                 {
                     /// Move current frame out of the way
-                    LeanTween.move(currentFrame.Rect, new Vector2(-1920, 0f), AnimationFactor)
+                    LeanTween.move(currentFrame.Rect, new Vector2(-1920, 0f), Game.UI.GlobalAnimationFactor * AnimationFactor)
                     .setEase(Ease)
                     .setOnComplete(() =>
                     {
@@ -113,7 +113,7 @@ namespace UZSG.UI
                 }
 
                 /// Move new frame into view
-                LeanTween.move(frame.Rect, Vector2.zero, AnimationFactor)
+                LeanTween.move(frame.Rect, Vector2.zero, Game.UI.GlobalAnimationFactor * AnimationFactor)
                 .setEase(Ease)
                 .setOnComplete((() =>
                 {

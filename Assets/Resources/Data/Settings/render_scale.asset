@@ -15,6 +15,7 @@ MonoBehaviour:
   Namespace: uzsg
   Id: render_scale
   Tags: []
+  Category: 2
   displayName: Render Scale
   description: No description.
   PerformanceImpact: 32

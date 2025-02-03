@@ -1,15 +1,18 @@
+using System;
+
 using UnityEngine;
 using UnityEngine.UI;
+
 using TMPro;
+
 using UZSG.Items;
-using System;
+using UZSG.Systems;
 
 namespace UZSG.UI
 {
     public class PickupItemEntryUI : Window
     {
         public Item Item;
-        public float AnimationFactor = 0.5f;
         public float LifetimeDuration;
 
         [Header("Animation Settings")]
@@ -65,18 +68,18 @@ namespace UZSG.UI
 
         void AnimateEntry()
         {
-            bgImage.CrossFadeColor(Color.black, AnimationFactor, false, true);
-            bgImage.CrossFadeAlpha(1f, AnimationFactor, false);
+            bgImage.CrossFadeColor(Color.black, Game.UI.GlobalAnimationFactor, false, true);
+            bgImage.CrossFadeAlpha(1f, Game.UI.GlobalAnimationFactor, false);
 
-            itemImage.CrossFadeAlpha(1f, AnimationFactor, true);
-            LeanTween.scale(itemImage.rectTransform, Vector3.one, AnimationFactor)
+            itemImage.CrossFadeAlpha(1f, Game.UI.GlobalAnimationFactor, true);
+            LeanTween.scale(itemImage.rectTransform, Vector3.one, Game.UI.GlobalAnimationFactor)
             .setEase(IconEase);
 
             itemNameTMP.CrossFadeAlpha(1f, 0f, false);
-            LeanTween.moveX(itemNameTMP.rectTransform, itemNameTMP.rectTransform.anchoredPosition.x - xDistance, AnimationFactor)
+            LeanTween.moveX(itemNameTMP.rectTransform, itemNameTMP.rectTransform.anchoredPosition.x - xDistance, Game.UI.GlobalAnimationFactor)
             .setEase(NameEase);
 
-            countTMP.CrossFadeAlpha(1f, AnimationFactor, false);
+            countTMP.CrossFadeAlpha(1f, Game.UI.GlobalAnimationFactor, false);
         }
 
         void AnimateExit()

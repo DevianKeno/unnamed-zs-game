@@ -7,10 +7,15 @@ using UZSG.Systems;
 
 namespace UZSG.Data
 {
+    public enum SettingCategory {
+        Audio, Video, Graphics, Controls, Accessibility,
+    }
+
     [Serializable]
     [CreateAssetMenu(fileName = "New Setting Entry Data", menuName = "UZSG/Setting Entry Data")]
     public class SettingsEntryData : BaseData
     {
+        public SettingCategory Category;
         [SerializeField] internal string displayName;
         public string DisplayName
         {

@@ -15,6 +15,7 @@ MonoBehaviour:
   Namespace: uzsg
   Id: colorblind_mode
   Tags: []
+  Category: 4
   displayName: Colorblind Mode
   description: Colorblind mode accessibility option.
   PerformanceImpact: 0

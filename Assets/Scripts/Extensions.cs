@@ -15,9 +15,20 @@ namespace UZSG
 
     public static class Extensions
     {
+        public static string ToReadable(this System.Enum @enum)
+        {
+            string formatted =  @enum.ToString().Replace("_", " ");
+            return System.Text.RegularExpressions.Regex.Replace(formatted, @"\b[a-z]", match => match.Value.ToUpper());
+        }
+
         public static bool IsValidIndex<T>(this System.Collections.Generic.List<T> list, int index)
         {
             return !(index < 0 || index >= list.Count);
+        }
+
+        public static bool IsValidIndex(this System.Array array, int index)
+        {
+            return !(index < 0 || index >= array.Length);
         }
 
         public static bool IsSet(this UnityEngine.AddressableAssets.AssetReference assetReference)

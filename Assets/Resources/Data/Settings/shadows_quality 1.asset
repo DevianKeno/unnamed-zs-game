@@ -15,6 +15,7 @@ MonoBehaviour:
   Namespace: uzsg
   Id: language
   Tags: []
+  Category: 2
   displayName: Shadows Quality
   description: Lacks description!
   PerformanceImpact: 0

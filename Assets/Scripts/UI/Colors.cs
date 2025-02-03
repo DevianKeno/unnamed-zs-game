@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace UZSG.UI.Colors
+namespace UZSG.UI
 {
     public class Colors
     {

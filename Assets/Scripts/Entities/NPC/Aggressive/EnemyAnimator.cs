@@ -9,6 +9,11 @@ namespace UZSG.Entities
 {
     public partial class Enemy : NonPlayerCharacter, IPlayerDetectable
     {
+        /// <summary>
+        /// Whether if this enemy is spawned from the NaturalEnemySpawnEvent.
+        /// </summary>
+        internal bool _isNaturallySpawned;
+
         void InitializeAnimator()
         {
             moveStateMachine.OnTransition += OnMoveStateChanged;

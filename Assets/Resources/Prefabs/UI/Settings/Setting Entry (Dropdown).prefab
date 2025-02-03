@@ -303,6 +303,7 @@ MonoBehaviour:
   rect: {fileID: 4040821285731498449}
   settingsEntryData: {fileID: 0}
   spacerWidth: 180
+  background: {fileID: 3272903678216543617}
   spacer: {fileID: 8443048750976660850}
   dropdown: {fileID: 4597622235001329445}
 --- !u!1001 &9099078896854093397
@@ -409,21 +410,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dropdown
       objectReference: {fileID: 0}
-    - target: {fileID: 4722135382220396912, guid: df13281c9834eeb4a9a639c59302f6a2, type: 3}
-      propertyPath: m_Value
+    - target: {fileID: 3198763997258476162, guid: df13281c9834eeb4a9a639c59302f6a2, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 250
+      objectReference: {fileID: 0}
+    - target: {fileID: 3198763997258476162, guid: df13281c9834eeb4a9a639c59302f6a2, type: 3}
+      propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4722135382220396912, guid: df13281c9834eeb4a9a639c59302f6a2, type: 3}
-      propertyPath: m_Options.m_Options.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 4722135382220396912, guid: df13281c9834eeb4a9a639c59302f6a2, type: 3}
-      propertyPath: m_Options.m_Options.Array.data[0].m_Text
-      value: Option A
-      objectReference: {fileID: 0}
-    - target: {fileID: 4722135382220396912, guid: df13281c9834eeb4a9a639c59302f6a2, type: 3}
-      propertyPath: m_Options.m_Options.Array.data[1].m_Text
-      value: Option B
+      propertyPath: m_Value
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:

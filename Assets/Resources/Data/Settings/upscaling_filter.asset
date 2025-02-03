@@ -15,6 +15,7 @@ MonoBehaviour:
   Namespace: uzsg
   Id: upscaling_filter
   Tags: []
+  Category: 2
   displayName: Upscaling Filter
   description: No description.
   PerformanceImpact: 32

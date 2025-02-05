@@ -6,12 +6,14 @@ namespace UZSG
     [Serializable]
     public class LocalizationJson
     {
+        /// These are json entries, hence their casing
         public Dictionary<string, AttributeEntry> attribute = new();
         public Dictionary<string, EntityEntry> entity = new();
         public Dictionary<string, ItemEntry> item = new();
         public Dictionary<string, ObjectEntry> @object = new();
         public Dictionary<string, RecipeEntry> recipe = new();
         public Dictionary<string, SettingsEntry> setting = new();
+        public Dictionary<string, StatusEffectEntry> status_effect = new();
         
         public class AttributeEntry
         {
@@ -49,6 +51,12 @@ namespace UZSG
         }
         
         public class SettingsEntry
+        {
+            public string name = string.Empty;
+            public string description = string.Empty;
+        }
+
+        public class StatusEffectEntry
         {
             public string name = string.Empty;
             public string description = string.Empty;

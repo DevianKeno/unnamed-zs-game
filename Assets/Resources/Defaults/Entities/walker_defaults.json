@@ -1,23 +1,7 @@
 {
   "InstanceId": 0,
-  "Id": null,
-  "Transform": {
-    "Position": [
-      0.0,
-      0.0,
-      0.0
-    ],
-    "Rotation": [
-      0.0,
-      0.0,
-      0.0
-    ],
-    "LocalScale": [
-      1.0,
-      1.0,
-      1.0
-    ]
-  },
+  "Id": "walker",
+  "Transform": null,
   "Attributes": [
     {
       "Id": "health",
@@ -32,40 +16,7 @@
     },
     {
       "Id": "move_speed",
-      "Value": 3.0,
-      "Minimum": 0.0,
-      "BaseMaximum": 1000.0,
-      "Multiplier": 1.0,
-      "FlatBonus": 0.0,
-      "LimitOverflow": true,
-      "LimitUnderflow": true,
-      "Type": "AttributeSaveData"
-    },
-    {
-      "Id": "level",
-      "Value": 1.0,
-      "Minimum": 0.0,
-      "BaseMaximum": 100.0,
-      "Multiplier": 1.0,
-      "FlatBonus": 0.0,
-      "LimitOverflow": true,
-      "LimitUnderflow": true,
-      "Type": "AttributeSaveData"
-    },
-    {
-      "Id": "zombie_attack_radius",
-      "Value": 2.5,
-      "Minimum": 0.0,
-      "BaseMaximum": 1000.0,
-      "Multiplier": 1.0,
-      "FlatBonus": 0.0,
-      "LimitOverflow": true,
-      "LimitUnderflow": true,
-      "Type": "AttributeSaveData"
-    },
-    {
-      "Id": "zombie_site_radius",
-      "Value": 22.0,
+      "Value": 2.0,
       "Minimum": 0.0,
       "BaseMaximum": 1000.0,
       "Multiplier": 1.0,
@@ -86,10 +37,32 @@
       "Type": "AttributeSaveData"
     },
     {
-      "Id": "zombie_attack_cooldown_time",
-      "Value": 10.0,
+      "Id": "attack_speed",
+      "Value": 1.0,
       "Minimum": 0.0,
-      "BaseMaximum": 1000.0,
+      "BaseMaximum": 100.0,
+      "Multiplier": 1.0,
+      "FlatBonus": 0.0,
+      "LimitOverflow": true,
+      "LimitUnderflow": true,
+      "Type": "AttributeSaveData"
+    },
+    {
+      "Id": "player_vision_range",
+      "Value": 32.0,
+      "Minimum": 0.0,
+      "BaseMaximum": 100.0,
+      "Multiplier": 1.0,
+      "FlatBonus": 0.0,
+      "LimitOverflow": true,
+      "LimitUnderflow": true,
+      "Type": "AttributeSaveData"
+    },
+    {
+      "Id": "level",
+      "Value": 1.0,
+      "Minimum": 0.0,
+      "BaseMaximum": 100.0,
       "Multiplier": 1.0,
       "FlatBonus": 0.0,
       "LimitOverflow": true,

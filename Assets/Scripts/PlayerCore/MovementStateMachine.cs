@@ -5,7 +5,7 @@ using UZSG.Systems;
 namespace UZSG.Players
 {
     public enum MoveStates {
-        Jog, Idle, Walk, Run, Jump, Crouch, Turn, InVehicle
+        Idle, Jog, Walk, Run, Jump, Crouch, Turn, InVehicle
     }
 
     public enum StrafeDirection {

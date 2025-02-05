@@ -31,8 +31,8 @@ namespace UZSG.UnityEditor
             base.OnEnable();
 
             assetReference = serializedObject.FindProperty("EntityModel");
-            displayNameProperty = serializedObject.FindProperty("DisplayName");
-            description = serializedObject.FindProperty("Description");
+            displayNameProperty = serializedObject.FindProperty("displayName");
+            description = serializedObject.FindProperty("description");
             sprite = serializedObject.FindProperty("Sprite");
             stackSize = serializedObject.FindProperty("StackSize");
             type = serializedObject.FindProperty("Type");
@@ -45,7 +45,7 @@ namespace UZSG.UnityEditor
             objectData = serializedObject.FindProperty("ObjectData");
             recipes = serializedObject.FindProperty("Recipes");
             weight = serializedObject.FindProperty("Weight");
-            sourceDesc = serializedObject.FindProperty("SourceDescription");
+            sourceDesc = serializedObject.FindProperty("sourceDescription");
             audioAssetsData = serializedObject.FindProperty("AudioAssetsData");
         }
 

@@ -709,7 +709,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1250119625730274266}
   - component: {fileID: 3975213700561276740}
-  m_Layer: 8
+  m_Layer: 2
   m_Name: Wall Checker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -952,7 +952,7 @@ GameObject:
   - component: {fileID: 1807161492040155152}
   - component: {fileID: 1504893056223954484}
   - component: {fileID: 6313547803532779528}
-  m_Layer: 8
+  m_Layer: 2
   m_Name: Ground Checker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1441,12 +1441,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b363c6981a7273b429d2011edad97652, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 8107631895800867322}
+  detectionRange: 32
+  attackableRange: 0
+  healthBarScanRadius: 16
   Layers:
     serializedVersion: 2
-    m_Bits: 81920
-  PlayerDetectionRange: 24
-  PlayerAttackableRange: 2
+    m_Bits: 1081344
 --- !u!1 &9031321928697203625
 GameObject:
   m_ObjectHideFlags: 0
@@ -1538,7 +1538,6 @@ MonoBehaviour:
   _targetY: 0
   animator: {fileID: 7075778538306087425}
   animatorFPP: {fileID: 5015365794703407780}
-  currentHealth: 0
 --- !u!114 &7617903866874250683
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1631,10 +1630,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f3b41504a21b1f4d8b35856426cbb02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  InitialState: 0
+  currentState: 0
   _lockedUntil: 0
   _isTransitioning: 0
   AllowReentry: 0
-  InState: 0
   DebugMode: 0
 --- !u!114 &2848331815560721266
 MonoBehaviour:
@@ -1648,10 +1648,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4c6c995010bb934fa18bc754605726a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  InitialState: 0
+  currentState: 0
   _lockedUntil: 0
   _isTransitioning: 0
   AllowReentry: 0
-  InState: 0
   DebugMode: 0
 --- !u!114 &4074435136900750905
 MonoBehaviour:
@@ -1665,7 +1666,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1830595807
+  GlobalObjectIdHash: 53316931
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1

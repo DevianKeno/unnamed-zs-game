@@ -8,6 +8,7 @@ namespace UZSG.Saves
     {
         public string WorldName;
         public string LevelId;
+        public int Seed;
         public string CreatedDate;
         public string LastPlayedDate;
         public string OwnerId;

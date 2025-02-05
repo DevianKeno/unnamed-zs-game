@@ -31,20 +31,14 @@ using static UZSG.Players.MoveStates;
 namespace UZSG.Entities
 {
     /// <summary>
-    /// Player entity. (client)
+    /// Player entity.
     /// </summary>
     public partial class Player : Entity, IPlayer
     {
         public string DisplayName
         {
-            get
-            {
-                return this.NetworkEntity.AccountInfo.DisplayName ?? "Player";
-            }
-            set
-            {
-                nametagText.text = value;
-            }
+            get => this.NetworkEntity.AccountInfo.DisplayName ?? "Player";
+            set => nametagText.text = value;
         }
         public bool CanPickUpItems = true;
 
@@ -64,7 +58,7 @@ namespace UZSG.Entities
 
         [SerializeField] StatusEffectCollection statusEffects;
         public StatusEffectCollection StatusEffects => statusEffects;
-
+        
         [SerializeField] PlayerAudioSourceController audioController;
         public PlayerAudioSourceController Audio => audioController;
 
@@ -74,6 +68,8 @@ namespace UZSG.Entities
         PlayerAbsoluteTerritory at;
                 
         bool _isInitialized = false;
+        bool _inGodMode = false;
+        public bool InGodMode => _inGodMode;
         /// <summary>
         /// List of UI elements that are attached to the Player.
         /// </summary>
@@ -128,8 +124,9 @@ namespace UZSG.Entities
         {
             get
             {
-                if (Attributes != null && Attributes.TryGet("stamina", out var stamina))
-                if (Attributes.TryGet("jump_stamina_cost", out var jumpStaminaCost))
+                if (Attributes != null &&
+                    Attributes.TryGet(AttributeId.Stamina, out var stamina) &&
+                    Attributes.TryGet(AttributeId.JumpStaminaCost, out var jumpStaminaCost))
                 {
                     return stamina.Value >= jumpStaminaCost.Value;
                 }
@@ -270,8 +267,6 @@ namespace UZSG.Entities
 
         void InitializeStateMachines()
         {
-            MoveStateMachine.InitialState = MoveStateMachine.States[Idle];
-
             MoveStateMachine.OnTransition += TransitionAnimator;
             MoveStateMachine.OnTransition += MoveTransitionCallback;
         }
@@ -392,7 +387,7 @@ namespace UZSG.Entities
             Game.Console.Gui.OnClosed -= OnConsoleGuiClosed;
             inputs["Inventory"].performed -= OnPerformInventory;
             DestroyAllUIElements();
-            Kill(notify: false);
+            Despawn(notify: false);
         }
 
         void OnPause()
@@ -458,19 +453,19 @@ namespace UZSG.Entities
         void ConsumeStatsBecauseJump() /// HAHAHA
         {
             /// Consume Stamina on jump
-            if (Attributes.TryGet("stamina", out var stamina))
+            if (Attributes.TryGet(AttributeId.Stamina, out var stamina))
             {
                 float jumpStaminaCost = Attributes.Get("jump_stamina_cost").Value;
                 stamina.Remove(jumpStaminaCost);
             }
             /// Consume Hunger on jump
-            if (Attributes.TryGet("hunger", out var hunger))
+            if (Attributes.TryGet(AttributeId.Hunger, out var hunger))
             {
                 float jumpHungerCost = Attributes.Get("jump_hunger_cost").Value;
                 hunger.Remove(jumpHungerCost);
             }
             /// Consume Hydration on jump
-            if (Attributes.TryGet("hydration", out var hydration))
+            if (Attributes.TryGet(AttributeId.Hydration, out var hydration))
             {
                 float jumpHydrationCost = Attributes.Get("jump_hydration_cost").Value;
                 hydration.Remove(jumpHydrationCost);
@@ -584,7 +579,7 @@ namespace UZSG.Entities
 
         public void TakeDamage(DamageInfo damageInfo)
         {
-            if (attributes.TryGet("health", out var health))
+            if (attributes.TryGet(AttributeId.Health, out var health))
             {
                 health.Value -= damageInfo.Amount;
             }
@@ -646,16 +641,21 @@ namespace UZSG.Entities
             nametagGameObject.SetActive(visible);
         }
 
+        RaycastHit[] raycastHits = new RaycastHit[8];
         /// <summary>
-        /// Check if the player can see the given entity.
-        /// </summary>
-        public bool CanSee(Entity entity)
+        /// Check if the player can see the given entity from their FPP camera.
+        /// /// </summary>
+        public override bool CanSee(Entity entity)
         {
-            Vector3 direction = (this.Position - this.MainCamera.transform.position).normalized;
+            /// TODO: does not work lol 
+            Vector3 direction = (this.Position - this.EyeLevel).normalized;
             float distance = Vector3.Distance(this.Position, entity.Position);
 
-            if (Physics.Raycast(this.EyeLevel, direction, out var hit, distance))
+            var origin = this.EyeLevel + Forward.normalized * 0.25f; /// a little bit forward so it does not hit the Player itself; it still hits it, not too far or bug
+            int count = Physics.RaycastNonAlloc(origin, direction, raycastHits, distance);
+            for (int i = 1; i < count; i++) /// starting 1 skips the player T-T
             {
+                var hit = raycastHits[i];
                 if (hit.collider.TryGetComponent<Entity>(out var detected) &&
                     detected == entity) /// check if same entity
                 {
@@ -677,6 +677,11 @@ namespace UZSG.Entities
             {
                 throw new NotImplementedException();
             }
+        }
+
+        public void SetGodMode(bool enabled)
+        {
+            _inGodMode = enabled;
         }
     }
 }

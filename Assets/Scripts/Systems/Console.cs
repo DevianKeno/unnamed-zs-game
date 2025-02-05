@@ -69,6 +69,7 @@ namespace UZSG.Systems
         {
             Game.Entity.OnEntitySpawned += OnEntitySpawned;
             _creativeIsOn = false; /// TODO: save to player
+            _godIsOn = false; /// TODO: save to player
         }
 
         void InitializeWorldEvents()

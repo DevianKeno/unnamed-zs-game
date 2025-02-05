@@ -30,28 +30,7 @@ MonoBehaviour:
     LimitOverflow: 1
     LimitUnderflow: 1
   - data: {fileID: 11400000, guid: fe9f66b79d95e7948a4dfcb4512568c7, type: 2}
-    value: 3
-    baseMaximum: 1000
-    multiplier: 1
-    flatBonus: 0
-    LimitOverflow: 1
-    LimitUnderflow: 1
-  - data: {fileID: 11400000, guid: 65ed971fe2fc7f5499ba1d36dfa93e58, type: 2}
-    value: 1
-    baseMaximum: 100
-    multiplier: 1
-    flatBonus: 0
-    LimitOverflow: 1
-    LimitUnderflow: 1
-  - data: {fileID: 11400000, guid: e4ab3b3473a8d02419d401c83e60f203, type: 2}
-    value: 2.5
-    baseMaximum: 1000
-    multiplier: 1
-    flatBonus: 0
-    LimitOverflow: 1
-    LimitUnderflow: 1
-  - data: {fileID: 11400000, guid: daadff2edc464ee419de068690807275, type: 2}
-    value: 22
+    value: 2
     baseMaximum: 1000
     multiplier: 1
     flatBonus: 0
@@ -64,9 +43,23 @@ MonoBehaviour:
     flatBonus: 0
     LimitOverflow: 1
     LimitUnderflow: 1
-  - data: {fileID: 11400000, guid: 16ecf6c81c5a7dc4b871fc7d9602a1b6, type: 2}
-    value: 10
-    baseMaximum: 1000
+  - data: {fileID: 11400000, guid: 4657969845031b54996716d3851a3f8e, type: 2}
+    value: 1
+    baseMaximum: 100
+    multiplier: 1
+    flatBonus: 0
+    LimitOverflow: 1
+    LimitUnderflow: 1
+  - data: {fileID: 11400000, guid: 54363688d0684be44991cfca8a6e672d, type: 2}
+    value: 32
+    baseMaximum: 100
+    multiplier: 1
+    flatBonus: 0
+    LimitOverflow: 1
+    LimitUnderflow: 1
+  - data: {fileID: 11400000, guid: 65ed971fe2fc7f5499ba1d36dfa93e58, type: 2}
+    value: 1
+    baseMaximum: 100
     multiplier: 1
     flatBonus: 0
     LimitOverflow: 1

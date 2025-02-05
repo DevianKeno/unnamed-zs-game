@@ -67,6 +67,8 @@ namespace UZSG.Attributes
         #endregion
 
 
+        #region Public methods
+
         public void Add(Attribute attribute)
         {
             if (!attribute.IsValid) return;
@@ -178,6 +180,9 @@ namespace UZSG.Attributes
         {
             return _attrsDict.Values.ToList();
         }
+
+        #endregion
+        
 
         public IEnumerator<Attribute> GetEnumerator()
         {

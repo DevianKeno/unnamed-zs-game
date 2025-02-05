@@ -50,6 +50,11 @@ namespace UZSG
         {
             QualitySettings.vSyncCount = Enable ? 1 : 0;
         }
+
+        public override void Save()
+        {
+            PlayerPrefs.SetInt("v_sync", Enable ? 1 : 0);
+        }
     }
 
     public class FramerateCapSetting : SettingEntry
@@ -76,7 +81,7 @@ namespace UZSG
 
         public override void Save()
         {
-            PlayerPrefs.SetInt("framerate_cap", 1);
+            PlayerPrefs.SetInt("framerate_cap", Application.targetFrameRate);
         }
     }
 

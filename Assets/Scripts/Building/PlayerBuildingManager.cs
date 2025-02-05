@@ -335,7 +335,7 @@ namespace UZSG.Building
         {
             if (_isObjectGhostEntitySpawned)
             {
-                objectGhost.Kill();
+                objectGhost.Despawn();
                 _showObjectGhost = false;
                 _isObjectGhostEntitySpawned = false;
             }

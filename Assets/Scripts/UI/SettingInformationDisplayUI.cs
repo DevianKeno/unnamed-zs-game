@@ -23,9 +23,9 @@ namespace UZSG.Systems
                 return;
             }
 
-            settingNameTmp.text = setting.DisplayName;
+            settingNameTmp.text = setting.DisplayNameTranslatable;
             impactTmp.text = $"Performance Impact: " + setting.PerformanceImpact.ToString(); /// TODO: make translatable
-            descriptionTmp.text = setting.Description;
+            descriptionTmp.text = setting.DescriptionTranslatable;
         }
     }
 }

@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+using UZSG;
 using UZSG.Entities;
 using UZSG.Systems;
 

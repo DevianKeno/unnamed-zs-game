@@ -126,6 +126,7 @@ namespace UZSG.Systems
             var saveData = new WorldSaveData
             {
                 WorldName = options.WorldName,
+                Seed = options.Seed,
                 CreatedDate = options.CreatedDate.ToShortDateString(),
                 LastPlayedDate = options.LastModifiedDate.ToShortDateString(),
                 LevelId = options.MapId,

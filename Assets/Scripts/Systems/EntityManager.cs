@@ -24,12 +24,12 @@ namespace UZSG.Systems
         /// </summary>
         Dictionary<string, EntityData> _entitiesDict = new();
 
-        int defaultLayer;
+        [SerializeField] LayerMask defaultLayer;
         /// <summary>
         /// Default layer for all entities.
         /// </summary>
         public int DEFAULT_LAYER => defaultLayer;
-        int outlinedLayer;
+        [SerializeField] LayerMask outlinedLayer;
         /// <summary>
         /// Entities in this layer render screen space outlines.
         /// </summary>
@@ -39,7 +39,7 @@ namespace UZSG.Systems
         /// <summary>
         /// Subscribe to this event if you need to make last changes before the entity is removed from the universe.
         /// </summary>
-        public event Action<EntityInfo> OnEntityKilled;
+        public event Action<EntityInfo> OnEntityDespawned;
                 
         internal void Initialize()
         {
@@ -52,14 +52,11 @@ namespace UZSG.Systems
             {
                 _entitiesDict[etty.Id] = etty;
             }
-            
-            defaultLayer = LayerMask.NameToLayer("Entities");
-            outlinedLayer = LayerMask.NameToLayer("Outline");
         }
         
-        void OnEntityKilledInternal(Entity entity)
+        void OnEntityDespawnInternal(Entity entity)
         {
-            OnEntityKilled?.Invoke(new()
+            OnEntityDespawned?.Invoke(new()
             {
                 Entity = entity
             });
@@ -85,17 +82,24 @@ namespace UZSG.Systems
                 return;
             }
 
-            var ettyData = _entitiesDict[entityId];
-            Addressables.LoadAssetAsync<GameObject>(ettyData.AssetReference).Completed += (a) =>
+            try
             {
-                if (a.Status == AsyncOperationStatus.Succeeded)
+                var ettyData = _entitiesDict[entityId];
+                Addressables.LoadAssetAsync<GameObject>(ettyData.AssetReference).Completed += (a) =>
                 {
-                    var go = Instantiate(a.Result, position, Quaternion.identity, GetTransformParent());
-                    go.name = $"{ettyData.DisplayName} (Entity)";
-                    if (go.TryGetComponent(out Entity entity)) /// what do making entity without an entity component!!
+                    if (a.Status == AsyncOperationStatus.Succeeded)
                     {
+                        var go = Instantiate(a.Result, position, Quaternion.identity, GetTransformParent());
+                        go.name = $"{ettyData.DisplayName} (Entity)";
+                        if (!go.TryGetComponent(out Entity entity)) /// what do making entity without an entity component!!
+                        {
+                            Destroy(go);
+                            return;
+                        }
+
                         entity.OnSpawnInternal();
-                        entity.OnKilled += OnEntityKilledInternal;
+                        entity.OnDespawned += OnEntityDespawnInternal;
+                        go.transform.position = position;
 
                         var info = new EntityInfo()
                         {
@@ -107,11 +111,15 @@ namespace UZSG.Systems
                         Game.Console.LogDebug($"Spawned entity {entityId} at ({position.x}, {position.y}, {position.z})");
                         return;
                     }
-                    Destroy(go);
-                }
 
-                Game.Console.LogDebug($"Tried to spawn entity {entityId}, but failed miserably");
-            };
+                    Game.Console.LogDebug($"Tried to spawn entity {entityId}, but failed miserably");
+                };
+            }
+            catch (Exception ex)
+            {
+                Game.Console.LogError($"An internal error occured when trying to spawn entity {entityId}.");
+                Debug.LogException(ex);
+            }
         }
 
         public delegate void OnSpawnCallback<T>(EntitySpawnedInfo<T> info);
@@ -128,17 +136,24 @@ namespace UZSG.Systems
                 return;
             }
 
-            var ettyData = _entitiesDict[entityId];
-            Addressables.LoadAssetAsync<GameObject>(ettyData.AssetReference).Completed += (a) =>
+            try
             {
-                if (a.Status == AsyncOperationStatus.Succeeded)
+                var ettyData = _entitiesDict[entityId];
+                Addressables.LoadAssetAsync<GameObject>(ettyData.AssetReference).Completed += (a) =>
                 {
-                    var go = Instantiate(a.Result, position, Quaternion.identity, GetTransformParent());
-                    go.name = $"{ettyData.DisplayName} (Entity)";
-                    if (go.TryGetComponent(out Entity entity))
+                    if (a.Status == AsyncOperationStatus.Succeeded)
                     {
+                        var go = Instantiate(a.Result, position, Quaternion.identity, GetTransformParent());
+                        go.name = $"{ettyData.DisplayName} (Entity)";
+                        if (!go.TryGetComponent(out Entity entity))
+                        {
+                            Destroy(go);
+                            return;
+                        }
+
                         entity.OnSpawnInternal();
-                        entity.OnKilled += OnEntityKilledInternal;
+                        entity.OnDespawned += OnEntityDespawnInternal;
+                        go.transform.position = position;
                         
                         onCompleted?.Invoke(new EntitySpawnedInfo<T>()
                         {
@@ -152,11 +167,15 @@ namespace UZSG.Systems
                         Game.Console.LogDebug($"Spawned entity {entityId} at ({position.x}, {position.y}, {position.z})");
                         return;
                     }
-                    Destroy(go);
-                }
 
-                Game.Console.LogDebug($"Tried to spawn entity {entityId}, but failed miserably");
-            };
+                    Game.Console.LogDebug($"Tried to spawn entity {entityId}, but failed miserably");
+                };
+            }
+            catch (Exception ex)
+            {
+                Game.Console.LogError($"An internal error occured when trying to spawn entity {entityId}.");
+                Debug.LogException(ex);
+            }
         }
         
         public void SpawnItem(Item item, Vector3 position = default)
@@ -168,32 +187,43 @@ namespace UZSG.Systems
                 return;
             }
 
-            var ettyData = _entitiesDict["item"];
-            Addressables.LoadAssetAsync<GameObject>(ettyData.AssetReference).Completed += (a) =>
+            try
             {
-                if (a.Status == AsyncOperationStatus.Succeeded)
+                var ettyData = _entitiesDict["item"];
+                Addressables.LoadAssetAsync<GameObject>(ettyData.AssetReference).Completed += (a) =>
                 {
-                    var go = Instantiate(a.Result, position, Quaternion.identity, GetTransformParent());
-                    go.name = $"Item Entity (Entity)";
-                    if (go.TryGetComponent(out ItemEntity itemEntity)) /// this has a zero chance to fail >:(
+                    if (a.Status == AsyncOperationStatus.Succeeded)
                     {
+                        var go = Instantiate(a.Result, position, Quaternion.identity, GetTransformParent());
+                        go.name = $"Item Entity (Entity)";
+                        if (!go.TryGetComponent(out ItemEntity itemEntity)) /// this has a zero chance to fail >:(
+                        {
+                            Destroy(go);
+                            return;
+                        }
+                        
                         itemEntity.Item = item;
                         itemEntity.OnSpawnInternal();
-                        itemEntity.OnKilled += OnEntityKilledInternal;
+                        itemEntity.OnDespawned += OnEntityDespawnInternal;
+                        go.transform.position = position;
                         
                         Game.Console.LogDebug($"Spawned item {item.Data.DisplayName} at ({position.x}, {position.y}, {position.z})");
                         return;
                     }
-                    Destroy(go);
-                }
-            };
+                };
+            }
+            catch (Exception ex)
+            {
+                Game.Console.LogError($"An internal error occured when trying to spawn item.");
+                Debug.LogException(ex);
+            }
         }
 
         public void Kill(Entity entity)
         {
             if (entity == null) return;
 
-            entity.Kill();
+            entity.Despawn();
         }
 
         public bool IsValidId(string id)

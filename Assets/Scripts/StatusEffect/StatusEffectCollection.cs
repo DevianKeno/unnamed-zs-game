@@ -1,22 +1,21 @@
 using System.Collections.Generic;
 using System.Linq;
-using UZSG.Entities;
 
-namespace UZSG.StatusEffects
+using UZSG.Entities;
+using UZSG.StatusEffects;
+
+namespace UZSG
 {
     public class StatusEffectCollection
     {
-        public Entity Entity;
+        public IStatusEffectAfflictable Afflicted;
         
         Dictionary<string, StatusEffect> statusEffectsDict = new();
 
-        public bool Any
-        {
-            get
-            {
-                return statusEffectsDict.Any();
-            }
-        }
+        /// <summary>
+        /// Whether if this collection contains any status effects.
+        /// </summary>
+        public bool Any => statusEffectsDict.Any();
         
         /// <summary>
         /// Check if afflicted with status effect.

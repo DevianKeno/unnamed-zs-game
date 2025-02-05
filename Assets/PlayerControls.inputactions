@@ -837,6 +837,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Toggle Flight",
+                    "type": "Button",
+                    "id": "9acfcbde-ab1f-4604-911d-e791c0640531",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -1244,6 +1253,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Toggle Walk",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5aae3c59-4aaf-40a8-b5d6-ee2e14fbed15",
+                    "path": "<Keyboard>/u",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Toggle Flight",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

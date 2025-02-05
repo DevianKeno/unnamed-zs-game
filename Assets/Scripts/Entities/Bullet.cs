@@ -35,7 +35,7 @@ namespace UZSG.Entities
     /// </summary>
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(BoxCollider))]
-    public class Bullet : Entity, IProjectile, ICollisionSource
+    public class Bullet : Entity, IProjectile, ICollisionSource, IDamageSource
     {
         public const float DefaultBulletScale = 0.08f;
         public const float LifetimeSeconds = 3f;

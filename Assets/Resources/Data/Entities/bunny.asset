@@ -12,13 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d590b1c703370b4ebddac5a5286d02c, type: 3}
   m_Name: bunny
   m_EditorClassIdentifier: 
+  Namespace: uzsg
   Id: bunny
+  Tags: []
   AssetReference:
     m_AssetGUID: 733a8ab4091f8aa49b12022116dde02a
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  Name: Bunny
+  DisplayName: Bunny
   BaseAttributes:
   - data: {fileID: 11400000, guid: e1db9201565269c4caebcb12298f0665, type: 2}
     value: 40
@@ -35,21 +37,7 @@ MonoBehaviour:
     LimitOverflow: 0
     LimitUnderflow: 0
   - data: {fileID: 11400000, guid: 54363688d0684be44991cfca8a6e672d, type: 2}
-    value: 20
-    baseMaximum: 0
-    multiplier: 0
-    flatBonus: 0
-    LimitOverflow: 0
-    LimitUnderflow: 0
-  - data: {fileID: 11400000, guid: 6cf70c03178f592458bb4c1a7a4a623e, type: 2}
-    value: 20
-    baseMaximum: 0
-    multiplier: 0
-    flatBonus: 0
-    LimitOverflow: 0
-    LimitUnderflow: 0
-  - data: {fileID: 11400000, guid: 8ff906a8d80da88418a6f539369b93b2, type: 2}
-    value: 20
+    value: 16
     baseMaximum: 0
     multiplier: 0
     flatBonus: 0

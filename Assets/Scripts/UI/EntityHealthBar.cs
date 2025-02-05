@@ -8,8 +8,17 @@ namespace UZSG
 {
     public class EntityHealthBar : MonoBehaviour
     {
+        /// <summary>
+        /// Health bars are visible to the Player, hence referenced.
+        /// </summary>
         public Player Player { get; set; }
+        /// <summary>
+        /// The entity this HealthBar is attached to.
+        /// </summary>
         Entity target;
+        /// <summary>
+        /// The actual Health Bar UI component.
+        /// </summary>
         [SerializeField] EntityHealthBarUI healthBarUI;
 
         void Awake()

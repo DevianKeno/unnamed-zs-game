@@ -167,6 +167,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0567bf2f5ceffad418d015459d090495, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  defaultLayer:
+    serializedVersion: 2
+    m_Bits: 1048576
+  outlinedLayer:
+    serializedVersion: 2
+    m_Bits: 4096
 --- !u!1 &12521208
 GameObject:
   m_ObjectHideFlags: 0

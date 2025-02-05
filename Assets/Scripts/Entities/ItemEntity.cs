@@ -120,7 +120,7 @@ namespace UZSG.Entities
             Game.Tick.OnSecond += OnSecond;
         }
 
-        protected override void OnKill()
+        protected override void OnDespawn()
         {
             Game.Tick.OnSecond -= OnSecond;
         }
@@ -130,7 +130,7 @@ namespace UZSG.Entities
             Age -= 1;
             if (Age < 0)
             {
-                Kill();
+                Despawn();
             }
         }
 
@@ -223,7 +223,7 @@ namespace UZSG.Entities
             if (saveData is not ItemEntitySaveData isd) return;
 
             base.ReadSaveData(saveData);
-            if (isd.Item.Id == "none") Kill();
+            if (isd.Item.Id == "none") Despawn();
 
             var item = new Item(isd.Item.Id, isd.Item.Count);
             this.Item = item;
@@ -275,7 +275,7 @@ namespace UZSG.Entities
 
             if (player.Actions.PickUpItem(this))
             {
-                Kill();
+                Despawn();
             }
         }
 
@@ -291,7 +291,7 @@ namespace UZSG.Entities
         {
             if (this.item.IsNone)
             {
-                Kill(notify: false);
+                Despawn(notify: false);
             }
         }
 

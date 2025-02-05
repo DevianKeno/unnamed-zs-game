@@ -100,7 +100,7 @@ namespace UZSG.Worlds.Events
             Game.Entity.Spawn<Walker>(_raidInstance.EnemyId, position, onCompleted: (info) => {
                 _hordeZombies.Add(info.Entity);
                 FaceTowardsPlayer(info.Entity);
-                info.Entity.isInHorde = true;
+                // info.Entity.isInHorde = true;
             });
         }
 

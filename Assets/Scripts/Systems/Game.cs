@@ -12,8 +12,9 @@ using UZSG.UI;
 using UZSG.EOS;
 using Epic.OnlineServices.Connect;
 using System.Threading.Tasks;
+using UZSG.Systems;
 
-namespace UZSG.Systems
+namespace UZSG
 {
     public class Game : MonoBehaviour, IConnectInterfaceEventListener
     {
@@ -30,8 +31,8 @@ namespace UZSG.Systems
 
         #region Core
 
-        static Console console;
-        public static Console Console => console;
+        static Systems.Console console;
+        public static Systems.Console Console => console;
         static LocalizationManager localizationManager;
         public static LocalizationManager Locale => localizationManager;
         static SettingsManager settingsManager;
@@ -112,7 +113,7 @@ namespace UZSG.Systems
             {
                 Main = this;
 
-                console = GetComponentInChildren<Console>();
+                console = GetComponentInChildren<Systems.Console>();
                 localizationManager = GetComponentInChildren<LocalizationManager>();
                 settingsManager = GetComponentInChildren<SettingsManager>();         
                 UIManager = GetComponentInChildren<UIManager>();

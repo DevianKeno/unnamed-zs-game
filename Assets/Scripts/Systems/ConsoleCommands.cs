@@ -165,6 +165,11 @@ namespace UZSG.Systems
             CreateCommand("give <player|me> <item_id> [amount]",
                           "Gives the target player or self the item.")
                           .OnInvoke += CGive;
+
+            CreateCommand("god",
+                          "Allows creative freedom.",
+                          isDebugCommand: true)
+                          .OnInvoke += CGod;
             
             CreateCommand("help",
                           "Prints help message.")
@@ -387,6 +392,33 @@ namespace UZSG.Systems
             }
         }
 
+        bool _godIsOn = false;
+        /// <summary>
+        /// Allows creative freedom.
+        /// </summary>
+        void CGod(object sender, string[] args)
+        {
+            if (!Game.World.IsInWorld)
+            {
+                LogInfo($"/teleport can only be used within a world.");
+                return;
+            }
+
+            var player = Game.World.CurrentWorld.GetLocalPlayer();
+            if (player == null) return;
+
+            if (_godIsOn)
+            {
+                player.SetGodMode(false);
+                LogInfo($"Disabled god mode.");
+            }
+            else
+            {
+                player.SetGodMode(true);
+                LogInfo($"Enabled god mode.");
+            }
+        }
+
         /// <summary>
         /// Prints the help message to the console.
         /// </summary>
@@ -574,17 +606,59 @@ namespace UZSG.Systems
             }
         }
 
+        const char OFFSET = '~';
         /// <summary>
         /// Spawns an entity.
         /// </summary>
         void CTeleport(object sender, string[] args)
         {
-            if (int.TryParse(args[1], out int x))
-            if (int.TryParse(args[2], out int y))
-            if (int.TryParse(args[3], out int z))
+            if (!Game.World.IsInWorld)
             {
-                
+                LogInfo($"/teleport can only be used within a world.");
+                return;
             }
+
+            if (int.TryParse(args[1], out int x) || args[1].StartsWith(OFFSET))
+            if (int.TryParse(args[2], out int y) || args[1].StartsWith(OFFSET))
+            if (int.TryParse(args[3], out int z) || args[1].StartsWith(OFFSET))
+            {
+                var player = Game.World.CurrentWorld.GetLocalPlayer();
+                if (player != null)
+                {
+                    float dx = x;
+                    float dy = y;
+                    float dz = z;
+
+                    if (args[1].StartsWith(OFFSET))
+                    {
+                        if (float.TryParse(args[1][1..], out var fx))
+                        {
+                            dy = player.Position.y + fx;
+                        }
+                        else throw new InvalidCommandUsageException();
+                    }
+                    if (args[1].StartsWith(OFFSET))
+                    {
+                        if (float.TryParse(args[2][1..], out var fy))
+                        {
+                            dy = player.Position.y + fy;
+                        }
+                        else throw new InvalidCommandUsageException();
+                    }
+                    if (args[1].StartsWith(OFFSET))
+                    {
+                        if (float.TryParse(args[3][1..], out var fz))
+                        {
+                            dy = player.Position.y + fz;
+                        }
+                        else throw new InvalidCommandUsageException();
+                    }
+                    
+                    player.Position = new(dx, dy, dz);
+                }
+            }
+
+            throw new InvalidCommandUsageException();
         }
 
         /// <summary>

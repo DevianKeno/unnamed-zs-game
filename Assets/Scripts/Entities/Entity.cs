@@ -23,15 +23,15 @@ namespace UZSG.Entities
         /// <summary>
         /// Shorthand to get EntityData Id.
         /// </summary>
-        public string Id => entityData.Id;
+        public virtual string Id => entityData.Id;
         protected EntitySaveData saveData;
         bool _hasAlreadySpawned = false;
 
         [SerializeField] protected AttributeCollection attributes;
-        public AttributeCollection Attributes => attributes;
+        public virtual AttributeCollection Attributes => attributes;
 
         /// <summary>
-        /// The transform position of this Entity. 
+        /// The transform position of this Entity in world space.
         /// </summary>
         public virtual Vector3 Position
         {
@@ -50,7 +50,7 @@ namespace UZSG.Entities
 
         #region Entity events
 
-        public event Action<Entity> OnKilled;
+        public event Action<Entity> OnDespawned;
 
         #endregion
 
@@ -90,7 +90,7 @@ namespace UZSG.Entities
         /// You can modify the entity's attributes before this calls.
         /// </summary>
         public virtual void OnSpawn() { }
-        protected virtual void OnKill() { }
+        protected virtual void OnDespawn() { }
 
         #endregion
         
@@ -142,13 +142,43 @@ namespace UZSG.Entities
         /// <summary>
         /// Kill this entity.
         /// </summary>
-        public void Kill(bool notify = true)
+        public void Despawn(bool notify = true)
         {
-            OnKill();
-            if (notify) OnKilled?.Invoke(this);
+            OnDespawn();
+            if (notify) OnDespawned?.Invoke(this);
             MonoBehaviour.Destroy(gameObject);
         }
 
         #endregion
+
+        /// <summary>
+        /// Check whether this entity is within the radius with the given position as center.
+        /// </summary>
+        public virtual bool InRangeOf(Vector3 center, float radius)
+        {
+            var distance = Vector3.Distance(transform.position, center);
+            return distance <= radius; 
+        }
+
+        /// <summary>
+        /// Check whether this Entity can "see" the given Entity.
+        /// </summary>
+        public virtual bool CanSee(Entity etty)
+        {
+            Vector3 direction = (etty.Position - this.Position).normalized;
+            float distance = Vector3.Distance(this.Position, etty.Position);
+
+            /// TODO: the `this.Position` below should be EyeLevel
+            if (Physics.Raycast(this.Position, direction, out var hit, distance))
+            {
+                if (hit.collider.TryGetComponent<Entity>(out var detected) &&
+                    detected == etty) /// check if same entity
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }

@@ -47,37 +47,45 @@ namespace UZSG.Systems
                 return;
             }
 
-            var objData = _objectsDict[objectId];
-            Addressables.LoadAssetAsync<GameObject>(objData.Object).Completed += (a) =>
+            try
             {
-                if (a.Status == AsyncOperationStatus.Succeeded)
+                var objData = _objectsDict[objectId];
+                Addressables.LoadAssetAsync<GameObject>(objData.Object).Completed += (a) =>
                 {
-                    var go = Instantiate(a.Result, position, Quaternion.identity, transform);
-                    go.name = $"{objData.DisplayName} (Object)";
-                    if (go.TryGetComponent(out BaseObject baseObject))
+                    if (a.Status == AsyncOperationStatus.Succeeded)
                     {
-                        var info = new ObjectPlacedInfo()
+                        var go = Instantiate(a.Result, position, Quaternion.identity, transform);
+                        go.name = $"{objData.DisplayName} (Object)";
+                        if (go.TryGetComponent(out BaseObject baseObject))
                         {
-                            Object = baseObject
-                        };
-                        callback?.Invoke(info);
-                        baseObject.PlaceInternal();
-                        // entity.OnSpawnInternal();
-                        // OnEntitySpawned?.Invoke(new()
-                        // {
-                        //     Entity = entity
-                        // });
-                        if (Game.Main.EnableDebugMode)
-                        {
-                            Game.Console.LogDebug($"Placed object '{objectId}' at ({position.x}, {position.y}, {position.z})");
+                            var info = new ObjectPlacedInfo()
+                            {
+                                Object = baseObject
+                            };
+                            callback?.Invoke(info);
+                            baseObject.PlaceInternal();
+                            // entity.OnSpawnInternal();
+                            // OnEntitySpawned?.Invoke(new()
+                            // {
+                            //     Entity = entity
+                            // });
+                            if (Game.Main.EnableDebugMode)
+                            {
+                                Game.Console.LogDebug($"Placed object '{objectId}' at ({position.x}, {position.y}, {position.z})");
+                            }
+                            return;
                         }
-                        return;
+                        Destroy(go);
                     }
-                    Destroy(go);
-                }
 
-                Game.Console.LogDebug($"Tried to place Object '{objectId}', but failed miserably");
-            };
+                    Game.Console.LogDebug($"Tried to place Object '{objectId}', but failed miserably");
+                };
+            }
+            catch (Exception ex)
+            {
+                Game.Console.LogError($"An internal error occured when trying to place object {objectId}.");
+                Debug.LogException(ex);
+            }
         }
         
         public delegate void OnObjectPlaceCompleted<T>(ObjectPlacedInfo<T> info);
@@ -93,37 +101,45 @@ namespace UZSG.Systems
                 Game.Console.LogDebug($"Object '{objectId}' does not exist!");
                 return;
             }
-
-            var objData = _objectsDict[objectId];
-            Addressables.LoadAssetAsync<GameObject>(objData.Object).Completed += (a) =>
+            
+            try
             {
-                if (a.Status == AsyncOperationStatus.Succeeded)
+                var objData = _objectsDict[objectId];
+                Addressables.LoadAssetAsync<GameObject>(objData.Object).Completed += (a) =>
                 {
-                    var go = Instantiate(a.Result, position, Quaternion.identity, transform);
-                    go.name = $"{objData.DisplayName} (Object)";
-                    if (go.TryGetComponent(out BaseObject baseObject))
+                    if (a.Status == AsyncOperationStatus.Succeeded)
                     {
-                        var info = new ObjectPlacedInfo<T>()
+                        var go = Instantiate(a.Result, position, Quaternion.identity, transform);
+                        go.name = $"{objData.DisplayName} (Object)";
+                        if (go.TryGetComponent(out BaseObject baseObject))
                         {
-                            Object = baseObject as T
-                        };
-                        callback?.Invoke(info);
-                        // entity.OnSpawnInternal();
-                        // OnEntitySpawned?.Invoke(new()
-                        // {
-                        //     Entity = entity
-                        // });
-                        if (Game.Main.EnableDebugMode)
-                        {
-                            Game.Console.LogInfo($"Placed object '{objectId}' at ({position.x}, {position.y}, {position.z})");
+                            var info = new ObjectPlacedInfo<T>()
+                            {
+                                Object = baseObject as T
+                            };
+                            callback?.Invoke(info);
+                            // entity.OnSpawnInternal();
+                            // OnEntitySpawned?.Invoke(new()
+                            // {
+                            //     Entity = entity
+                            // });
+                            if (Game.Main.EnableDebugMode)
+                            {
+                                Game.Console.LogInfo($"Placed object '{objectId}' at ({position.x}, {position.y}, {position.z})");
+                            }
+                            return;
                         }
-                        return;
+                        Destroy(go);
                     }
-                    Destroy(go);
-                }
 
-                Game.Console.LogDebug($"Tried to place Object '{objectId}', but failed miserably");
-            };
+                    Game.Console.LogDebug($"Tried to place Object '{objectId}', but failed miserably");
+                };
+            }
+            catch (Exception ex)
+            {
+                Game.Console.LogError($"An internal error occured when trying to place object {objectId}.");
+                Debug.LogException(ex);
+            }
         }
         
         /// <summary>
@@ -137,36 +153,28 @@ namespace UZSG.Systems
                 Game.Console.LogWarn($"Object '{id}' is already loaded in memory.");
                 return true;
             }
-
-            if (_objectsDict.ContainsKey(id))
-            {
-                var objData = _objectsDict[id];
-
-                if (objData.Object != null)
-                {
-                    /// Load model
-                    Addressables.LoadAssetAsync<GameObject>(objData.Object).Completed += (a) =>
-                    {
-                        if (a.Status == AsyncOperationStatus.Succeeded)
-                        {
-                            _cachedObjectModels[id] = a.Result;
-                            // OnDoneLoadModel?.Invoke(this, objData.Id);
-                        }
-                    };
-                    
-                    return true;
-                }
-                else
-                {
-                    Game.Console.LogWarn($"There is no Addressable Asset assigned to Object '{id}'.");
-                    return false;
-                }
-            }
-            else
+            if (!_objectsDict.TryGetValue(id, out var objData))
             {
                 Game.Console.LogInfo($"Failed to load Object '{id}' as it does not exists.");
                 return false;
-            }            
+            }
+            if (objData.Object == null)
+            {
+                Game.Console.LogWarn($"There is no Addressable Asset assigned to Object '{id}'.");
+                return false;
+            }
+
+            /// Load model
+            Addressables.LoadAssetAsync<GameObject>(objData.Object).Completed += (a) =>
+            {
+                if (a.Status == AsyncOperationStatus.Succeeded)
+                {
+                    _cachedObjectModels[id] = a.Result;
+                    // OnDoneLoadModel?.Invoke(this, objData.Id);
+                }
+            };
+            
+            return true;
         }
         
         public ObjectData GetData(string id)

@@ -129,7 +129,7 @@ namespace UZSG
             /// - Qualities
             foreach (var q in Enum.GetValues(typeof(SettingsQualityFlags)))
             {
-                translationKeys[$"setting.{q.ToString().ToLower()}"] = EnumToReadable(q.ToString());
+                translationKeys[$"setting.{q.ToString().ToLower()}"] = ((Enum) q).ToReadable();
             }
             /// - Setting Entries
             foreach (var kv in locale.setting)
@@ -139,16 +139,15 @@ namespace UZSG
                 translationKeys[$"setting.{kv.Key}.name"] = setting.name;
                 translationKeys[$"setting.{kv.Key}.description"] = setting.description;
             }
-        }
 
-        string EnumToReadable(string  value)
-        {
-            if (string.IsNullOrEmpty(value)) return string.Empty;
+            /// Status Effects
+            foreach (var kv in locale.status_effect)
+            {
+                LocalizationJson.StatusEffectEntry statusEffect = kv.Value;
 
-            string formatted = value.Replace("_", " ");
-            formatted = Regex.Replace(formatted, @"\b[a-z]", match => match.Value.ToUpper());
-
-            return formatted;
+                translationKeys[$"status_effect.{kv.Key}.name"] = statusEffect.name;
+                translationKeys[$"status_effect.{kv.Key}.description"] = statusEffect.description;
+            }
         }
 
 #if UNITY_EDITOR
@@ -249,6 +248,17 @@ namespace UZSG
                             {
                                 name = settingData.displayName,
                                 description = settingData.description,
+                            };
+                            break;
+                        }
+                        case "StatusEffect":
+                        {
+                            var settingData = (StatusEffectData) assetData;
+                            Debug.Assert(!string.IsNullOrEmpty(settingData.Description), $"{category} '{settingData.name}' has empty Description!");
+                            newLocale.status_effect[settingData.Id] = new LocalizationJson.StatusEffectEntry()
+                            {
+                                name = settingData.DisplayName,
+                                description = settingData.Description,
                             };
                             break;
                         }

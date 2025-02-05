@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace UZSG.Systems
@@ -18,27 +19,28 @@ namespace UZSG.Systems
             public E To { get; set; }
         }
 
-        Dictionary<E, State<E>> _states = new();
+        protected Dictionary<E, State<E>> _states = new();
         public Dictionary<E, State<E>> States => _states;
-        public State<E> InitialState;
-        [SerializeField] State<E> _currentState;
-        public State<E> CurrentState => _currentState;
+        public E InitialState;
+        [SerializeField] protected E currentState;
+        /// <summary>
+        /// The current State of this StateMachine. [Read Only]
+        /// </summary>
+        public E CurrentState => currentState;
         [SerializeField] protected float _lockedUntil;
         public float LockedUntil => _lockedUntil;
         [SerializeField] protected bool _isTransitioning = false;
         public bool IsTransitioning => _isTransitioning;
         /// <summary>
-        /// Whether to allow reentry-ing the state.
+        /// Whether to allow reentry-ing the same state.
+        /// If false, transitioning to the same state will do nothing, not even calling the events.
+        /// It true, proceed to transition as normal even if towards the same state.
         /// </summary>
         public bool AllowReentry = false;
-        /// <summary>
-        /// The current State of this StateMachine. [Read Only]
-        /// </summary>
-        public E InState;
         public bool DebugMode = false;
         
         /// <summary>
-        /// Called everytime before the State changes.
+        /// Called everytime after the State changes.
         /// Use this if you want to the events of the State Machine itself.
         /// </summary>
         public event Action<TransitionContext> OnTransition;
@@ -51,44 +53,29 @@ namespace UZSG.Systems
             }
         }
 
-        void Awake()
+        protected virtual void Awake()
         {
             foreach (E state in Enum.GetValues(typeof(E)))
             {
                 _states[state] = new State<E>(state);
             }
-
-            /// Set InitialState to the first enum value if it's not manually set
-            InitialState ??= _states[(E)Enum.GetValues(typeof(E)).GetValue(0)];
+            InitialState = _states.Values.First().Key;
         }
 
-        void Start()
+        protected virtual void Update()
         {
-            /// If InitialState is not null, set _currentState to it
-            if (InitialState != null)
-            {
-                _currentState = InitialState;
-            }
-            else
-            {
-                Game.Console.LogWithUnity("InitialState is not set, StateMachine will not start with a valid state.");
-            }
+            // if (_currentState.EnableUpdateCall)
+            // {
+                _states[currentState].Update();
+            // }
         }
 
-        void Update()
+        protected virtual void FixedUpdate()
         {
-            if (_currentState.EnableUpdateCall)
-            {
-                _currentState.Update();
-            }
-        }
-
-        void FixedUpdate()
-        {
-            if (_currentState.EnableFixedUpdateCall)
-            {
-                _currentState.FixedUpdate();
-            }
+            // if (_currentState.EnableFixedUpdateCall)
+            // {
+                _states[currentState].FixedUpdate();
+            // }
         }
 
         #region Public methods
@@ -96,7 +83,7 @@ namespace UZSG.Systems
         /// <summary>
         /// Transition to state. Pass lockForSeconds to lock this state, preventing transitions to other states for a certain amount of seconds.
         /// </summary>
-        public void ToState(E state, float lockForSeconds = 0f)
+        public virtual void ToState(E state, float lockForSeconds = 0f)
         {
             if (!_states.ContainsKey(state)) return;
             
@@ -106,7 +93,7 @@ namespace UZSG.Systems
         /// <summary>
         /// Lock the current state for a seconds.
         /// </summary>
-        public void LockForSeconds(float seconds)
+        public virtual void LockForSeconds(float seconds)
         {
             _lockedUntil = Time.realtimeSinceStartup + seconds;
         }
@@ -114,17 +101,33 @@ namespace UZSG.Systems
         /// <summary>
         /// Lock the current state for a seconds.
         /// </summary>
-        public void Unlock()
+        public virtual void Unlock()
         {
             _lockedUntil = Time.realtimeSinceStartup - 1f;
         }
 
+        /// <summary>
+        /// Get the state given the key.
+        /// </summary>
+        public virtual State<E> GetState(E key)
+        {
+            return _states[key];
+        }
+
+        /// <summary>
+        /// Check if the current state is the given State.
+        /// </summary>
+        public virtual bool InState(E key)
+        {
+            return currentState.Equals(key);
+        }
+
         #endregion
 
-        void ToStateE(State<E> state, float lockForSeconds)
+        protected virtual void ToStateE(State<E> state, float lockForSeconds)
         {
             /// Return if same state transition and does not allow re-entrying 
-            if (state.Key.Equals(_currentState.Key) && !AllowReentry) return;
+            if (state.Key.Equals(currentState) && !AllowReentry) return;
 
             if (!TrySwitchState(state, lockForSeconds))
             {
@@ -135,7 +138,7 @@ namespace UZSG.Systems
             }
         }
 
-        bool TrySwitchState(State<E> state, float lockForSeconds = 0f)
+        protected virtual bool TrySwitchState(State<E> state, float lockForSeconds = 0f)
         {
             if (Time.realtimeSinceStartup < _lockedUntil)
             {
@@ -149,18 +152,19 @@ namespace UZSG.Systems
             _isTransitioning = true;
             _lockedUntil = Time.realtimeSinceStartup + lockForSeconds;
 
+            var previousState = currentState;
             var context = new TransitionContext()
             {
-                From = _currentState.Key,
+                From = previousState,
                 To = state.Key
             };
-            OnTransition?.Invoke(context);
-            
-            _currentState.Exit(context);
-            _currentState = state;
-            InState = state.Key;
-            _currentState.Enter(context);
+
+            _states[currentState].Exit(context);
+            currentState = state.Key;
+            _states[currentState].Enter(context);
             _isTransitioning = false;
+
+            OnTransition?.Invoke(context);
 
             if (DebugMode) 
             {

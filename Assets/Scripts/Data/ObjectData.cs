@@ -13,8 +13,9 @@ namespace UZSG.Data
     {
         [Header("Object Data")]
         [FormerlySerializedAs("Name")] public string DisplayName;
-        [FormerlySerializedAs("Name")]
+        public string DisplayNameTranslatable => Game.Locale.Translatable($"item.{Id}.name");
         [TextArea] public string Description;
+        public string DescriptionTranslatable => Game.Locale.Translatable($"item.{Id}.description");
         [FormerlySerializedAs("Model")] public AssetReference Object;
         public List<Attributes.Attribute> Attributes;
         public bool CanBePickedUp;

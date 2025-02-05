@@ -54,6 +54,7 @@ namespace UZSG.TitleScreen
             {
                 WorldName = worldnameInput.text,
                 MapId = mapEntry.LevelData.Id,
+                Seed = 12345,
                 CreatedDate = DateTime.Now,
                 LastModifiedDate = DateTime.Now,
             };

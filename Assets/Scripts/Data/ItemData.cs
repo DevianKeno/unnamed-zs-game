@@ -22,11 +22,9 @@ namespace UZSG.Data
         [Header("Item Data")]
         [FormerlySerializedAs("Name")]
         public string DisplayName;
-        public string Name
-        {
-            get => Game.Locale.Translatable($"item.{Id}.name");
-        }
+        public string DisplayNameTranslatable => Game.Locale.Translatable($"item.{Id}.name");
         [TextArea] public string Description;
+        public string DescriptionTranslatable => Game.Locale.Translatable($"item.{Id}.description");
         [FormerlySerializedAs("Model")] public AssetReference EntityModel;
         public Sprite Sprite;
         public ItemType Type;
@@ -48,6 +46,7 @@ namespace UZSG.Data
         public bool IsCraftable;
         public List<RecipeData> Recipes;
         [TextArea] public string SourceDescription;
+        public string SourceDescriptionTranslatable => Game.Locale.Translatable($"item.{Id}.source");
 
         [Header("Audio Data")]
         public AudioAssetsData AudioAssetsData;

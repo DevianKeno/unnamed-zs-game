@@ -136,26 +136,18 @@ namespace UZSG.Systems
 
         void SaveGraphicsSettings()
         {
-             
         }
 
         void SaveControlsSettings()
         {
-            
         }
 
         void SaveAudioSettings()
         {
-            
         }
 
         void SaveAccessibilitySettings()
         {
-            PlayerPrefs.SetString("language", Game.Locale.CurrentLocale.LocaleKey);
-            if (TryGetEntryUI("language", out var ui))
-            {
-                ((SettingEntryDropdownUI) ui).SetSelected(3); /// TODO:
-            }
         }
 
 
@@ -236,6 +228,8 @@ namespace UZSG.Systems
             if (!TryGetEntryUI("v_sync", out var ui)) return;
 
             ui.Setting = new VSyncSetting(); 
+            var toggle = (ui as SettingEntryToggleUI).Toggle;
+            toggle.isOn = QualitySettings.vSyncCount > 0;
         }
 
         void GetFramerateCapOptions()
@@ -246,6 +240,7 @@ namespace UZSG.Systems
             var slider = (ui as SettingEntrySliderUI).Slider;
             slider.minValue = Mathf.FloorToInt((float) FramerateCapSetting.MIN_FPS);
             slider.maxValue = Mathf.FloorToInt((float) Screen.currentResolution.refreshRateRatio.value) + 1; /// +1 for no cyap 
+            slider.value = Application.targetFrameRate < 0 ? slider.maxValue : slider.value;
         }
 
         #endregion
@@ -253,7 +248,7 @@ namespace UZSG.Systems
 
         #region Graphics Settings
 
-        void SetAmbientOcclusionOptions()
+        void GetAmbientOcclusionOptions()
         {
             if (!TryGetEntryUI("ambient_occlusion", out var ui)) return;
 
@@ -270,7 +265,7 @@ namespace UZSG.Systems
             dropdown.AddOptions(options);
         }
 
-        void SetShadowResolutionOptions()
+        void GetShadowResolutionOptions()
         {
             if (!TryGetEntryUI("shadow_resolution", out var ui)) return;
 
@@ -307,6 +302,7 @@ namespace UZSG.Systems
 
             dropdown.ClearOptions();
             dropdown.AddOptions(options);
+            dropdown.value = Game.Locale.AvailableLocales.IndexOf(Game.Locale.CurrentLocale);
         }
 
         #endregion

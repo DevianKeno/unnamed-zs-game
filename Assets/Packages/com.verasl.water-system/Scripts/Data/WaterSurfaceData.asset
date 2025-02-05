@@ -45,7 +45,7 @@ MonoBehaviour:
     m_NumAlphaKeys: 2
   _scatterRamp:
     serializedVersion: 2
-    key0: {r: 0, g: 0, b: 0, a: 1}
+    key0: {r: 0.5214489, g: 0.56627834, b: 0.5849056, a: 1}
     key1: {r: 0.14578141, g: 0.2622074, b: 0.33962262, a: 1}
     key2: {r: 0.0746262, g: 0.18128017, b: 0.3679245, a: 0}
     key3: {r: 0.007831969, g: 0.095929876, b: 0.1509434, a: 0}

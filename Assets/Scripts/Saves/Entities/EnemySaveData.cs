@@ -8,6 +8,6 @@ namespace UZSG.Saves
     {
         public static readonly EnemySaveData Empty = new();
 
-        public bool IsNaturallySpawned = false;
+        public int IsNaturallySpawned = 0;
     }
 }

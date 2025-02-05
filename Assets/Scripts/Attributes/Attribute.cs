@@ -185,23 +185,23 @@ namespace UZSG.Attributes
         /// Fired everytime ONLY IF the value of this attribute is CHANGED.
         /// Meaning that if the value is modified, but is still the same, it is not called.
         /// </summary>
-        public event EventHandler<AttributeValueChangedContext> OnValueChanged;
+        public event Action<Attribute, AttributeValueChangedContext> OnValueChanged;
         /// <summary>
         /// Fired everytime the Add() or Remove() methods are called.
         /// </summary>
-        public event EventHandler<AttributeValueChangedContext> OnValueModified;
+        public event Action<Attribute, AttributeValueChangedContext> OnValueModified;
         /// <summary>
         /// Called once everytime the value reaches its current maximum value.
         /// </summary>
-        public event EventHandler<AttributeValueChangedContext> OnReachMaximum;
+        public event Action<Attribute, AttributeValueChangedContext> OnReachMaximum;
         /// <summary>
         /// Called once everytime the value reaches its minimum value.
         /// </summary>
-        public event EventHandler<AttributeValueChangedContext> OnReachMinimum;
+        public event Action<Attribute, AttributeValueChangedContext> OnReachMinimum;
         /// <summary>
         /// Called once everytime the value reaches or passes zero.
         /// </summary>
-        public event EventHandler<AttributeValueChangedContext> OnReachZero;
+        public event Action<Attribute, AttributeValueChangedContext> OnReachZero;
 
         #endregion
 

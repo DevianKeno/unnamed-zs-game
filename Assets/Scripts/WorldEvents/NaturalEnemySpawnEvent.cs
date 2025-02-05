@@ -90,28 +90,30 @@ namespace UZSG.Worlds.Events
         
         Vector3 GetRandomPositionAroundPlayer(Player player)
         {
-            var angleRadius = 90f;
-            // Define the angle range behind the player
-            float playerForwardAngle = Mathf.Atan2(player.Forward.z, player.Forward.x) * Mathf.Rad2Deg;
-            float minAngle = playerForwardAngle - 180f - angleRadius / 2f; // Behind the player
-            float maxAngle = playerForwardAngle - 180f + angleRadius / 2f;
-
-            // Generate a random angle within the defined range
-            float randomAngle = UnityEngine.Random.Range(minAngle, maxAngle);
+            // Generate a random point in a 2D circle
+            Vector2 randomPoint = UnityEngine.Random.insideUnitCircle.normalized; // Normalize to ensure consistent distance
             float randomRadius = UnityEngine.Random.Range(MIN_SPAWN_RADIUS, MAX_SPAWN_RADIUS);
+            randomPoint *= randomRadius;
 
-            // Convert the angle to a direction
-            Vector2 direction = new(Mathf.Cos(randomAngle * Mathf.Deg2Rad), Mathf.Sin(randomAngle * Mathf.Deg2Rad));
-            Vector2 point = direction * randomRadius;
+            // Offset the point relative to the player's position
+            Vector3 positionAround = player.Position + new Vector3(randomPoint.x, 0, randomPoint.y);
+
+            // Ensure the point is behind the player
+            Vector3 directionToPlayer = (positionAround - player.Position).normalized;
+            if (Vector3.Dot(directionToPlayer, player.Forward) > 0)
+            {
+                // If the point is in front of the player, flip it to the opposite side
+                positionAround = player.Position - new Vector3(randomPoint.x, 0, randomPoint.y);
+            }
 
             // Terrain cast to find the ground height
-            if (Physics.Raycast(new Vector3(point.x, 300f, point.y), -Vector3.up, out var hit, 999f))
+            if (Physics.Raycast(new Vector3(positionAround.x, 300f, positionAround.z), -Vector3.up, out var hit, 999f))
             {
-                return new Vector3(point.x, hit.point.y, point.y);
+                return hit.point; // Return the point on the terrain
             }
             else
             {
-                return player.transform.position + new Vector3(point.x, 0, point.y);
+                return positionAround; // Fallback to the calculated position
             }
         }
 

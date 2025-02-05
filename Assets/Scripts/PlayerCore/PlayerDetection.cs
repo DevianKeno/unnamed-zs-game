@@ -1,103 +1,91 @@
 using System.Collections.Generic;
+
 using UnityEngine;
+
 using UZSG.Attributes;
 using UZSG.Entities;
 using UZSG.Interactions;
+using UZSG.Systems;
 using UZSG.UI;
 
 namespace UZSG.Players
 {
     public class PlayerDetection : MonoBehaviour 
     {
-        [SerializeField] Player player;
+        public Player Player { get; private set; }
 
-        [SerializeField] internal float _healthBarScanRadius = 10f;
-
-        public float PlayerDetectionRange;
-        public float PlayerAttackableRange;
-        public LayerMask Layers;
-
-        List<IAttributable> _trackedHealthBars = new();
+        [SerializeField] float detectionRange; /// set in Inspector
+        [SerializeField] float attackableRange; /// set in Inspector /// TODO: subject to be moved to another script
+        /// <summary>
+        /// Minimum distance to display health bars.
+        /// </summary>
+        [SerializeField] float healthBarScanRadius; /// set in Inspector
+        [SerializeField] LayerMask Layers; /// set in Inspector
         
+        void Awake()
+        {
+            Player = GetComponentInParent<Player>();
+        }
+
         void FixedUpdate()
         {
             CastDetectionSphere();
         }
 
         Collider[] _detectedCollidersResults = new Collider[10];
-        Collider[] _attackableCollidersResults = new Collider[10];
+        // Collider[] _attackableCollidersResults = new Collider[10];
         public void CastDetectionSphere()
         {
-            int dCount = Physics.OverlapSphereNonAlloc(transform.position, PlayerDetectionRange, _detectedCollidersResults, Layers);
-            int aCount = Physics.OverlapSphereNonAlloc(transform.position, PlayerAttackableRange, _attackableCollidersResults, Layers);
-            
+            int dCount = Physics.OverlapSphereNonAlloc(transform.position, detectionRange, _detectedCollidersResults, Layers);
             for (int i = 0; i < dCount; i++)
             {
                 var collider = _detectedCollidersResults[i];
-                if (!collider.TryGetComponent<IPlayerDetectable>(out var detected)) continue;
+                if (!collider.TryGetComponent<Entity>(out var etty)) continue;
 
-                var ettyDistance = Vector3.Distance(detected.Position, player.Position);
-                if (ettyDistance <= detected.PlayerDetectionRadius) /// inverse detection, respect skill values
+                if (etty is IPlayerDetectable detectable)
                 {
-                    detected.DetectPlayer(player);
-                }
-                
-                if (detected is IHasHealthBar ihhb)
-                {
-                    if (ettyDistance <= _healthBarScanRadius)
-                        // IsVisible(player, detected))
+                    if (!detectable.IsAlive) continue;
+
+                    detectable.NotifyDetection(Player);/// inverse detection, should respect skill values
+                    
+                    if (etty is IHasHealthBar ihhb)
                     {
-                        ihhb.HealthBar.Player = player;
-                        ihhb.HealthBar.Show();
+                        if (this.Player.InRangeOf(etty.Position, healthBarScanRadius))// &&
+                            // this.Player.CanSee(etty))
+                        {
+                            ihhb.HealthBar.Player = Player;
+                            ihhb.HealthBar.Show();
+                        }
+                        else
+                        {
+                            ihhb.HealthBar.Hide();
+                        }
                     }
-                    else
-                    {
-                        ihhb.HealthBar.Hide();
-                    }
                 }
             }
 
-            for (int i = 0; i < aCount; i++)
-            {
-                var collider = _attackableCollidersResults[i];
+            // int aCount = Physics.OverlapSphereNonAlloc(transform.position, PlayerAttackableRange, _attackableCollidersResults, Layers);
+            // for (int i = 0; i < aCount; i++)
+            // {
+            //     var collider = _attackableCollidersResults[i];
 
-                if (!collider.TryGetComponent<IPlayerDetectable>(out var detectable)) return;
+            //     if (!collider.TryGetComponent<IPlayerDetectable>(out var detectable)) return;
                 
-                if (Vector3.Distance(detectable.Position, player.Position) <= detectable.PlayerAttackableRadius)
-                {
-                    detectable.AttackPlayer(player);
-                }
-            }
+            //     if (Vector3.Distance(detectable.Position, player.Position) <= detectable.PlayerAttackableRadius)
+            //     {
+            //         detectable.AttackPlayer(player);
+            //     }
+            // }
         }
+        
+        // void OnDrawGizmos()
+        // {
+        //     Gizmos.color = Color.red;
+        //     Gizmos.DrawWireSphere(transform.position, 20);
 
-        /// <summary>
-        /// Check whether the detectable is visible from the Player's camera perspective.
-        /// </summary>
-        bool IsVisible(Player player, IPlayerDetectable detectable)
-        {
-            Vector3 direction = (detectable.Position - player.MainCamera.transform.position).normalized;
-            float distance = Vector3.Distance(player.Position, detectable.Position);
-
-            if (Physics.Raycast(player.EyeLevel, direction, out var hit, distance))
-            {
-                if (hit.collider.TryGetComponent<IPlayerDetectable>(out var detected) &&
-                    detected == detectable) /// check if same entity
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-                
-        void OnDrawGizmos()
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(transform.position, 20);
-
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(transform.position, 2);
-        }
+        //     Gizmos.color = Color.green;
+        //     Gizmos.DrawWireSphere(transform.position, 2);
+        // }
 
         /*public LayerMask 
             EnemyLayer,

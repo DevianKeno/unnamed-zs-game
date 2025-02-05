@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 6583129931448410585}
   - component: {fileID: 7116651654386742079}
   - component: {fileID: 5002864878521246475}
-  m_Layer: 14
+  m_Layer: 20
   m_Name: Walker (Entity)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -32,9 +32,9 @@ Transform:
   m_GameObject: {fileID: 4923420121152070468}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 5.813, y: 66.3, z: 29.362}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 1
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4619130899390222130}
   - {fileID: 6988199063132129131}
@@ -56,43 +56,27 @@ MonoBehaviour:
   instanceId: 0
   entityData: {fileID: 11400000, guid: 733a73e5d945f434eafdbde123704a59, type: 2}
   targetEntity: {fileID: 0}
-  HasHitboxes: 0
-  healthBar: {fileID: 7120508875776730786}
-  ragdollCollider: {fileID: 7116651654386742079}
-  ragdollBody: {fileID: 4923420121152070468}
-  ragdollAnimator: {fileID: 6509039278937967366}
-  ragdollRigidbody: {fileID: 6583129931448410585}
-  rotationDamping: 9
-  _roamTime: 12
-  _roamRadius: 15
-  _roamInterval: 12
-  animator: {fileID: 6509039278937967366}
-  moveStateMachine: {fileID: 8327613411202617107}
-  actionStateMachine: {fileID: 2224819950650519137}
-  head: {fileID: 2564845842545323282}
-  navMeshAgent: {fileID: 5002864878521246475}
   hordeTransform: {fileID: 0}
-  PlayerLayer:
-    serializedVersion: 2
-    m_Bits: 256
-  isInHorde: 0
-  _hordeTransform: {fileID: 0}
-  _hasAlreadyScreamed: 0
   _isAttackOnCooldown: 0
   _isAttacking: 0
   _isAlreadyRotating: 0
-  _isInHordeMode: 0
-  _hasTargetInSight: 0
   _hasTargetInAttackRange: 0
+  _hasTargetInSight: 0
   _attackCooldown: 0
-  _attackDamage: 0
-  _distanceFromPlayer: 0
+  _roamRadius: 15
+  _roamTimer: 0
+  _roamInterval: 12
+  _rotationDamping: 9
   _rotationThreshold: 0
-  _distanceThreshold: 0
-  _moveSpeed: 0
-  _siteRadius: 0
-  _attackRadius: 0
-  _randomDestination: {x: 0, y: 0, z: 0}
+  _attackDamage: 0
+  _attackRange: 0
+  _attackSpeed: 0
+  _playerVisionRange: 0
+  chaseMoveSpeedMultiplier: 1.5
+  minIdleTime: 0
+  maxIdleTime: 5
+  scanRadius: 32
+  scanIntervalSeconds: 5
 --- !u!114 &8327613411202617107
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -105,10 +89,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80ba3c08b2872bc429e0dc4caed0a649, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  InitialState: 0
+  currentState: 0
   _lockedUntil: 0
   _isTransitioning: 0
   AllowReentry: 0
-  InState: 0
   DebugMode: 0
 --- !u!114 &2224819950650519137
 MonoBehaviour:
@@ -122,10 +107,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da0e82213e7b49c4d8f8a97a92775a53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  InitialState: 0
+  currentState: 0
   _lockedUntil: 0
   _isTransitioning: 0
   AllowReentry: 0
-  InState: 0
   DebugMode: 0
 --- !u!114 &5579209754329764711
 MonoBehaviour:
@@ -168,7 +154,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4923420121152070468}
   serializedVersion: 4
-  m_Mass: 75
+  m_Mass: 1000
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -183,7 +169,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 0
@@ -218,13 +204,13 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: -1372625422
   m_Radius: 0.44
-  m_Speed: 3.5
+  m_Speed: 3
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
-  m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
+  m_StoppingDistance: 0.1
+  m_AutoTraverseOffMeshLink: 0
+  m_AutoBraking: 0
   m_AutoRepath: 1
   m_Height: 2.3
   m_BaseOffset: 0
@@ -301,7 +287,7 @@ Transform:
   m_GameObject: {fileID: 8806507085135440072}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.522, z: 0}
+  m_LocalPosition: {x: 0, y: 2.431, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -908,11 +894,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Part: 3
   HasJoint: 1
---- !u!4 &2564845842545323282 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7208261743932278219, guid: 98a5113de4d60b34c82352ab039a6e25, type: 3}
-  m_PrefabInstance: {fileID: 5156844125987940569}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &4157636056497707913 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 9088872756827976528, guid: 98a5113de4d60b34c82352ab039a6e25, type: 3}
@@ -1342,7 +1323,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: f91721a913f0c15429d80c6f82fc6e7e, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
-  m_ApplyRootMotion: 0
+  m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_WarningMessage: 

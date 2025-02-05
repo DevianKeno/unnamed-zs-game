@@ -114,7 +114,7 @@ namespace UZSG.Systems
                     return;
                 }
                 
-                var source = PlayClipAsNewSource(clip, !loop);
+                var source = PlayClipAsNewSource(clip, loop);
                 source.transform.SetParent(transform);
                 source.loop = loop;
                 source.volume = Mathf.Clamp01(volume);
@@ -131,7 +131,7 @@ namespace UZSG.Systems
                     return;
                 }
                 
-                var source = PlayClipAsNewSource(clip, !loop);
+                var source = PlayClipAsNewSource(clip, loop);
                 source.transform.SetParent(transform);
                 source.volume = musicVolume;
                 _playingTrackSources[id] = source;

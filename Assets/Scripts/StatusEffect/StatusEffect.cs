@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+
 using UZSG.Attributes;
 using UZSG.Data;
 using UZSG.Entities;
+using UZSG.Systems;
 
 namespace UZSG.StatusEffects
 {
@@ -31,7 +33,22 @@ namespace UZSG.StatusEffects
         }
     }
 
-    public class Weakened : StatusEffect
+    public class Slowed : StatusEffect
     {
+        float _durationTimer;
+
+        protected override void OnAfflict()
+        {
+            Game.Tick.OnTick += OnTick;
+        }
+
+        void OnTick(TickInfo info)
+        {
+            _durationTimer -= info.DeltaTime;
+            if (_durationTimer <= 0)
+            {
+                Expire();
+            }
+        }
     }
 }

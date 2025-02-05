@@ -44,9 +44,14 @@ namespace UZSG.Worlds
         [SerializeField] WeatherController weatherController;
         public WeatherController Weather => weatherController;
 
-        [SerializeField] WorldEventController eventsController;
-        public WorldEventController WorldEvents => eventsController;
+        [SerializeField] WorldEventController worldEventsController;
+        public WorldEventController WorldEvents => worldEventsController;
 
+        [SerializeField] ResourceChunkManager resourceChunkManager;
+        public ResourceChunkManager ResourceChunkManager => resourceChunkManager;
+
+        public event Action OnInitializeDone;
+    
         [Space]
         [SerializeField] WorldNetwork worldNetwork;
         [SerializeField] NetworkObject networkObject;
@@ -58,6 +63,8 @@ namespace UZSG.Worlds
         bool _hasValidSaveData;
         internal string worldpath => Path.Join(Application.persistentDataPath, WorldManager.WORLDS_FOLDER, currentSaveData.WorldName); 
         WorldSaveData currentSaveData;
+        [SerializeField] int seed;
+
 
         #region Players
         /// <summary>
@@ -114,8 +121,10 @@ namespace UZSG.Worlds
 
         void Awake()
         {
-            timeController.GetComponentInChildren<TimeController>();
-            weatherController.GetComponentInChildren<WeatherController>();
+            Time.GetComponentInChildren<TimeController>();
+            Weather.GetComponentInChildren<WeatherController>();
+            WorldEvents.GetComponentInChildren<WorldEventController>();
+            ResourceChunkManager.GetComponent<ResourceChunkManager>();
         }
 
 
@@ -152,7 +161,7 @@ namespace UZSG.Worlds
             Game.Audio.PlayTrack("forest_ambiant_1", volume: Game.Audio.ambianceVolume, loop: true);
             SpawnPlayers();
             
-            
+            OnInitializeDone?.Invoke();
             onCompleted?.Invoke();
         }
 
@@ -202,26 +211,22 @@ namespace UZSG.Worlds
 
         void InitializeInternal()
         {
-            if (NetworkManager.Singleton.IsListening && NetworkManager.Singleton.IsServer)
+            if (!NetworkManager.Singleton.IsListening || NetworkManager.Singleton.IsServer)
             {
                 /// Server handles time, clients are just synced
                 timeController.Initialize();
                 weatherController.Initialize();
-                eventsController.Initialize();
+                worldEventsController.Initialize();
+                resourceChunkManager.Initialize();
             }
-            else /// we're offline
-            {
-                timeController.Initialize();
-                weatherController.Initialize();
-                eventsController.Initialize();
-            }
+            
             // RegisterExistingInstances();
         }
 
         void InitializeEvents()
         {
             Game.Entity.OnEntitySpawned += OnEntitySpawned;
-            Game.Entity.OnEntityKilled += OnEntityKilled;
+            Game.Entity.OnEntityDespawned += OnEntityKilled;
             Game.Objects.OnObjectPlaced += OnObjectPlaced;
             Game.Tick.OnTick += OnTick;
         }
@@ -396,7 +401,7 @@ namespace UZSG.Worlds
         void DeinitializeEvents()
         {
             Game.Entity.OnEntitySpawned -= OnEntitySpawned;
-            Game.Entity.OnEntityKilled -= OnEntityKilled;
+            Game.Entity.OnEntityDespawned -= OnEntityKilled;
 
             Game.Objects.OnObjectPlaced -= OnObjectPlaced;
             Game.Tick.OnTick -= OnTick;
@@ -486,7 +491,7 @@ namespace UZSG.Worlds
 
         internal void Deinitialize()
         {
-            eventsController.Deinitialize(); 
+            WorldEvents.Deinitialize(); 
             EOSSubManagers.Lobbies.RemoveNotifyMemberStatusReceived(OnMemberStatusReceived);
         }
         
@@ -512,6 +517,11 @@ namespace UZSG.Worlds
             var filepath = Path.Join(this.worldpath, "playerdata", $"{uid}.dat");
             var contents = ReadPlayerDataFile(filepath);
             return Encoding.UTF8.GetBytes(contents);
+        }
+
+        public int GetSeed()
+        {
+            return 12345; /// TEST:
         }
 
         /// <summary>
@@ -712,7 +722,7 @@ namespace UZSG.Worlds
             
             this.currentSaveData = saveData;
             _hasValidSaveData = true;
-            timeController.InitializeFromSave(saveData);
+            Time.InitializeFromSave(saveData);
             ReadPlayerData();
             LoadObjects();
             LoadEntities();

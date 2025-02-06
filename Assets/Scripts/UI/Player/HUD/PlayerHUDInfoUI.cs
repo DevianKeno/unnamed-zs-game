@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-using UZSG.Systems;
+
 using UZSG.Entities;
 using UZSG.Objects;
 using UZSG.Inventory;

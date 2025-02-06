@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using TMPro;
 
 using UZSG.Items;
-using UZSG.Systems;
+
 
 namespace UZSG.UI
 {

@@ -9,7 +9,7 @@ using UZSG.Data;
 using UZSG.Entities;
 using UZSG.Items;
 
-namespace UZSG.Systems
+namespace UZSG
 {
     /// <summary>
     /// The entities should be only initialized upon entering a world.

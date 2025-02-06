@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using UnityEngine;
 
-namespace UZSG.Systems
+namespace UZSG
 {
     /// <summary>
     /// Base class for State Machines.

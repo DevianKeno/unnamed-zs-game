@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
 
-using UZSG.Systems;
+
 using UZSG.Data;
 using UZSG.Worlds;
 

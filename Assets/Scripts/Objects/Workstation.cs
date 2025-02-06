@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-using UZSG.Systems;
+
 using UZSG.Entities;
 using UZSG.Interactions;
 using UZSG.Crafting;

@@ -2,7 +2,7 @@ using System;
 using TMPro;
 using UnityEngine;
 using UZSG.Entities;
-using UZSG.Systems;
+
 using UZSG.UI;
 
 namespace UZSG.Players

@@ -2,7 +2,7 @@ using System;
 
 using UnityEngine;
 
-namespace UZSG.Systems
+namespace UZSG.Particles
 {
     public class Particle : MonoBehaviour
     {

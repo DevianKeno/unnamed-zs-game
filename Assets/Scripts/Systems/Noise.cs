@@ -1,3 +1,4 @@
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace UZSG
@@ -5,6 +6,36 @@ namespace UZSG
     public static class Noise
     {
         public static float MIN_SCALE = 0.0001f;
+
+        public static float[,] generate2DRandom01(int seed, int width, int height, float2 offset, float density01, float scale)
+        {
+            float[,] noiseMap = new float[width, height];
+            var rand = new System.Random(seed);
+            var seedOffset = new float2(
+                rand.Next(int.MinValue, int.MaxValue),
+                rand.Next(int.MinValue, int.MaxValue)
+            );
+            float2 finalOffset = seedOffset + offset;
+            density01 = math.clamp(density01, 0, 1);
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    int sampleX = (int) math.floor(x + finalOffset.x);
+                    int sampleY = (int) math.floor(y + finalOffset.y);
+
+                    /// what the fuck is this chat
+                    int hash = (sampleX * 73856093) ^ (sampleY * 19349663) ^ seed;
+                    var cellRand = new System.Random(hash);
+                    int randomValue = cellRand.Next(0, 100);
+
+                    noiseMap[x, y] = randomValue < (density01 * 100) ? 1 : 0;
+                }
+            }
+
+            return noiseMap;
+        }
 
         public static float[,] Generate2DRandom01(int seed, int width, int height, float density01, Vector2 offset)
         {
@@ -24,6 +55,7 @@ namespace UZSG
                     int sampleX = Mathf.FloorToInt(x + finalOffset.x);
                     int sampleY = Mathf.FloorToInt(y + finalOffset.y);
 
+                    /// what the fuck is this chat
                     int hash = (sampleX * 73856093) ^ (sampleY * 19349663) ^ seed;
                     var cellRand = new System.Random(hash);
                     int randomValue = cellRand.Next(0, 100);

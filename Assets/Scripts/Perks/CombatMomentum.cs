@@ -1,6 +1,6 @@
 using UnityEngine;
 
-using UZSG.Systems;
+
 using UZSG.Attributes;
 using UZSG.Data.Perks;
 using UZSG.Entities;

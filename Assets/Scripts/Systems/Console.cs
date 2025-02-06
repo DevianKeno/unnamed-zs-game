@@ -9,7 +9,7 @@ using UZSG.EOS;
 using UZSG.UI;
 using UZSG.UI.Players;
 
-namespace UZSG.Systems
+namespace UZSG
 {
     public enum LogMessageType {
         Info, Warn, Error, Fatal
@@ -22,6 +22,8 @@ namespace UZSG.Systems
 
     public sealed partial class Console : MonoBehaviour
     {
+        public const char COMMAND_PREFIX = '/';
+
         bool _isInitialized;
         public bool IsInitialized => _isInitialized;
         [SerializeField] bool enableDebugCommands = true;
@@ -135,7 +137,7 @@ namespace UZSG.Systems
         public void RunCommand(string input)
         {
             if (string.IsNullOrEmpty(input)) return;
-            if (input.StartsWith("/")) input = input[1..]; /// Removes '/' if present
+            if (input.StartsWith(COMMAND_PREFIX)) input = input[1..]; /// Removes '/' if present
 
             input = input.ToLower();
             int splitAt = input.IndexOf(' ');
@@ -150,7 +152,6 @@ namespace UZSG.Systems
             {
                 ExecuteCommand(input, string.Empty);
             }
-
         }
 
         void ExecuteCommand(string command, string args)

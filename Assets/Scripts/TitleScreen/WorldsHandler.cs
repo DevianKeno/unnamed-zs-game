@@ -12,11 +12,10 @@ using Newtonsoft.Json;
 using TMPro;
 
 using UZSG.Saves;
-using UZSG.Systems;
+
 using UZSG.UI;
 using UZSG.UI.TitleScreen;
 using UZSG.Worlds;
-using static UZSG.Systems.Result;
 
 namespace UZSG.TitleScreen
 {
@@ -176,7 +175,7 @@ namespace UZSG.TitleScreen
 
         void OnLoadWorldCompleted(WorldManager.LoadWorldResult result)
         {
-            if (result.Result == Success)
+            if (result.Result == Result_u.Success)
             {
                 selector.Hide();
                 Game.World.InitializeWorld();
@@ -184,7 +183,7 @@ namespace UZSG.TitleScreen
                 Game.Main.UnloadScene("TitleScreen");
                 Game.Main.UnloadScene("LoadingScreen");
             }
-            else if (result.Result == Failed)
+            else if (result.Result == Result_u.Failed)
             {
                 Game.Main.LoadSceneAsync(
                     new(){

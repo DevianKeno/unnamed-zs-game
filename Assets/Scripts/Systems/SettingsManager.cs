@@ -8,7 +8,7 @@ using TMPro;
 using UZSG.UI;
 using UZSG.Data;
 
-namespace UZSG.Systems
+namespace UZSG
 {
     public class SettingsManager : MonoBehaviour
     {

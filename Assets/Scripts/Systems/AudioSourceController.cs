@@ -7,7 +7,7 @@ using UnityEngine;
 
 using UZSG.Data;
 
-namespace UZSG.Systems
+namespace UZSG
 {
     /// <summary>
     /// Audio sources pool.

@@ -11,7 +11,7 @@ using UZSG.EOS;
 using Unity.Netcode;
 using UZSG.Parties;
 
-namespace UZSG.Systems
+namespace UZSG
 {
     /// <summary>
     /// Developer console for invoking system commands.

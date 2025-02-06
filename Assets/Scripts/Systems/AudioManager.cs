@@ -8,7 +8,7 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 using UZSG.Data;
 
-namespace UZSG.Systems
+namespace UZSG
 {
     public class AudioManager : MonoBehaviour, IInitializeable
     {

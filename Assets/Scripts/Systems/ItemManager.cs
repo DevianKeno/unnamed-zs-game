@@ -8,7 +8,7 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 using UZSG.Data;
 using UZSG.Items;
 
-namespace UZSG.Systems
+namespace UZSG
 {
     public class ItemManager : MonoBehaviour, IInitializeable
     {

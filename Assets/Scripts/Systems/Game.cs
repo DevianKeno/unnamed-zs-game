@@ -12,7 +12,7 @@ using UZSG.UI;
 using UZSG.EOS;
 using Epic.OnlineServices.Connect;
 using System.Threading.Tasks;
-using UZSG.Systems;
+
 
 namespace UZSG
 {
@@ -31,8 +31,8 @@ namespace UZSG
 
         #region Core
 
-        static Systems.Console console;
-        public static Systems.Console Console => console;
+        static Console console;
+        public static Console Console => console;
         static LocalizationManager localizationManager;
         public static LocalizationManager Locale => localizationManager;
         static SettingsManager settingsManager;
@@ -113,7 +113,7 @@ namespace UZSG
             {
                 Main = this;
 
-                console = GetComponentInChildren<Systems.Console>();
+                console = GetComponentInChildren<Console>();
                 localizationManager = GetComponentInChildren<LocalizationManager>();
                 settingsManager = GetComponentInChildren<SettingsManager>();         
                 UIManager = GetComponentInChildren<UIManager>();

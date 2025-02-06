@@ -2,9 +2,8 @@ using System;
 
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UZSG.Systems;
 
-namespace UZSG.Systems
+namespace UZSG
 {
     /// <summary>
     /// Input manager for UZSG.

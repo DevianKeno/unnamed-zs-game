@@ -1,8 +1,9 @@
 using System;
+
 using UnityEngine;
+
 using UZSG.Interactions;
 using UZSG.Items.Weapons;
-using UZSG.Systems;
 
 namespace UZSG.Attacks
 {

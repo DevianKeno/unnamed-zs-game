@@ -10,7 +10,7 @@ using Epic.OnlineServices.Lobby;
 using UZSG.Data;
 using UZSG.EOS;
 using UZSG.EOS.Lobbies;
-using UZSG.Systems;
+
 using UZSG.UI;
 using UZSG.UI.TitleScreen;
 using UZSG.Worlds;
@@ -242,14 +242,14 @@ namespace UZSG.TitleScreen
 
         void OnLoadWorldCompleted(WorldManager.LoadWorldResult result)
         {
-            if (result.Result == Systems.Result.Success)
+            if (result.Result == Result_u.Success)
             {
                 Game.World.InitializeWorld();
 
                 Game.Main.UnloadScene("TitleScreen");
                 Game.Main.UnloadScene("LoadingScreen");
             }
-            else if (result.Result == Systems.Result.Failed)
+            else if (result.Result == Result_u.Failed)
             {
                 BackToTitleScreen();
                 startBtn.interactable = true;

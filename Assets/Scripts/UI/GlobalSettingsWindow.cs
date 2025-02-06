@@ -4,9 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using static UnityEngine.EventSystems.PointerEventData.InputButton;
 
-using UZSG.UI;
-
-namespace UZSG.Systems
+namespace UZSG.UI
 {
     public class GlobalSettingsWindow : Window
     {

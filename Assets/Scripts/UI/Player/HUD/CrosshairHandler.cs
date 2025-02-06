@@ -2,7 +2,7 @@ using System;
 
 using UnityEngine;
 
-using UZSG.Systems;
+
 using UZSG.Entities;
 using UZSG.FPP;
 using UZSG.Items;

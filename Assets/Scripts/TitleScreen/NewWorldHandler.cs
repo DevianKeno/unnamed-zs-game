@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
 
-using UZSG.Systems;
+using UZSG.Worlds;
 
 namespace UZSG.TitleScreen
 {
@@ -81,7 +81,7 @@ namespace UZSG.TitleScreen
 
         void OnCreateWorldCompleted(WorldManager.CreateWorldResult result)
         {
-            if (result.Result == Result.Success)
+            if (result.Result == Result_u.Success)
             {
                 var options = new Game.LoadSceneOptions()
                 {
@@ -94,7 +94,7 @@ namespace UZSG.TitleScreen
                     OnLoadingScreenLoaded(result.FilePath);
                 });
             }
-            else if (result.Result == Result.Failed)
+            else if (result.Result == Result_u.Failed)
             {
                 Debug.LogError("Unexpected error occured when creating world");
                 createBtn.interactable = true;
@@ -108,14 +108,14 @@ namespace UZSG.TitleScreen
 
         void OnLoadWorldCompleted(WorldManager.LoadWorldResult result)
         {
-            if (result.Result == Result.Success)
+            if (result.Result == Result_u.Success)
             {
                 Game.World.InitializeWorld();
                 
                 Game.Main.UnloadScene("TitleScreen");
                 Game.Main.UnloadScene("LoadingScreen");
             }
-            else if (result.Result == Result.Failed)
+            else if (result.Result == Result_u.Failed)
             {
                 Game.Main.LoadSceneAsync(
                     new(){

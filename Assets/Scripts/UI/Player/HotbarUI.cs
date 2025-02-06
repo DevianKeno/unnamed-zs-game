@@ -4,7 +4,7 @@ using UnityEngine;
 using UZSG.Data;
 using UZSG.Entities;
 using UZSG.Inventory;
-using UZSG.Systems;
+
 using UZSG.UI.Players;
 
 using static UZSG.Data.ItemType;

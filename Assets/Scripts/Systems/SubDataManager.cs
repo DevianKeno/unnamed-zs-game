@@ -2,7 +2,7 @@
 // using System.Collections.Generic;
 // using UnityEngine;
 
-// namespace UZSG.Systems
+// namespace UZSG
 // {
 //     public interface ISubDataManager<T>
 //     {

@@ -19,7 +19,7 @@ using UZSG.Network;
 using UZSG.Players;
 using UZSG.Saves;
 using UZSG.StatusEffects;
-using UZSG.Systems;
+
 using UZSG.UI;
 using UZSG.UI.HUD;
 using UZSG.UI.Objects;
@@ -258,6 +258,7 @@ namespace UZSG.Entities
 
             Game.UI.OnAnyWindowOpened += OnAnyWindowOpened;
             Game.UI.OnAnyWindowClosed += OnAnyWindowClosed;
+
         }
 
         void InitializeAttributeEvents()

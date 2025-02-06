@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 
 using TMPro;
 
-using UZSG.Systems;
+
 using UnityEngine.UI;
 
 namespace UZSG.UI

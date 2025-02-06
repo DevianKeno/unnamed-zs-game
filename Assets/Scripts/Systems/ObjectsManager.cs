@@ -9,7 +9,7 @@ using UZSG.Data;
 using UZSG.Items;
 using UZSG.Objects;
 
-namespace UZSG.Systems
+namespace UZSG
 {
     public class ObjectsManager : MonoBehaviour
     {

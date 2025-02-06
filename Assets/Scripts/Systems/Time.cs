@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace UZSG.Systems
+namespace UZSG
 {
     public class TimeManager : MonoBehaviour
     {

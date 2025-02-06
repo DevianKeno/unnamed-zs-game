@@ -4,9 +4,8 @@ using UnityEngine.UI;
 using TMPro;
 
 using UZSG.Data;
-using UZSG.UI;
 
-namespace UZSG.Systems
+namespace UZSG.UI
 {
     public class SettingInformationDisplayUI : UIElement
     {

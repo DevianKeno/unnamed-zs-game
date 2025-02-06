@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-using UZSG.Systems;
+
 using UZSG.Data;
 using UZSG.Attributes;
 using UZSG.Objects;

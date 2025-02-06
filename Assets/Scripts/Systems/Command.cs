@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace UZSG.Systems
+namespace UZSG
 {
     public enum CommandPermissionLevel {
         Anybody, OperatorOnly, Administrator

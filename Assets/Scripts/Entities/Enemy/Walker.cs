@@ -7,7 +7,7 @@ using UZSG.Attributes;
 using UZSG.Interactions;
 using UZSG.Items.Weapons;
 using UZSG.Saves;
-using UZSG.Systems;
+
 using static UZSG.Entities.EnemyActionStates;
 
 namespace UZSG.Entities

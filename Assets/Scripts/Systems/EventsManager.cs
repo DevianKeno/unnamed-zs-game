@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace UZSG.Systems
+namespace UZSG
 {
     public class EventsManager : MonoBehaviour
     {

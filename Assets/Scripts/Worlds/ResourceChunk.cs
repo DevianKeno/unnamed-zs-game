@@ -1,6 +1,11 @@
 using System;
 using System.Collections.Generic;
 
+using Unity.Burst;
+using Unity.Collections;
+using Unity.Jobs;
+using Unity.Mathematics;
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -15,113 +20,102 @@ namespace UZSG.Worlds
     public class ResourceChunk : MonoBehaviour, ISaveDataReadWrite<ResourceChunkSaveData>
     {
         public Vector3Int Coord;
-        public int Seed;
+        [SerializeField] int seed;
         [SerializeField] NoiseParameters treeNoiseParams;
         [SerializeField] NoiseParameters pickupsNoiseParams;
+        [SerializeField] GenerateResourceChunkSettings settings;
 
         int chunkSize;
         RaycastHit hit;
+        /// <summary>
+        /// List of resources populating this chunk.
+        /// </summary>e
         [SerializeField] List<Resource> resources = new();
-
-        public void SetTreeNoiseParameters(NoiseParameters p)
-        {
-            treeNoiseParams.SetValues(p);
-        }
-
-        public void SetPickupNoiseParameters(NoiseParameters p)
-        {
-            pickupsNoiseParams.SetValues(p);
-        }
-
-        public void SetSeed(int seed)
-        {
-            this.Seed = seed;
-        }
-        
-        public void ReadSaveData(ResourceChunkSaveData saveData)
-        {
-            
-        }
-
-        public ResourceChunkSaveData WriteSaveData()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Regenerate()
-        {
-
-        }
 
         /// <summary>
         /// The terrain this chunk is in.
         /// </summary>
         Terrain terrain;
+        bool _isProcessing;
+        JobHandle _currentJob;
+        NativeArray<float> _noiseMap;
+
+        void Update()
+        {
+            if (_isProcessing && _currentJob.IsCompleted)
+            {
+                _currentJob.Complete();
+                PopulateChunk(_noiseMap);
+            }
+        }
 
         public void GenerateResources(int chunkSize, Vector3Int chunkCoord, GenerateResourceChunkSettings settings)
         {
+            if (_isProcessing) return;
+
+            _isProcessing = true;
             this.chunkSize = chunkSize;
             int groundLayerMask = LayerMask.NameToLayer("Ground");
-            float[,] treeNoiseMap = Noise.Generate2DRandom01(
-                seed: Seed,
-                width: chunkSize, height: chunkSize,
-                offset: new (chunkCoord.x, chunkCoord.z), /// 2D chunk offset
-                density01: settings.TreeDensity
-            );
 
-            float[,] pickupNoiseMap = Noise.Generate2DRandom01(
-                seed: Seed,
-                width: chunkSize, height: chunkSize,
-                offset: new (chunkCoord.x, chunkCoord.z), /// 2D chunk offset
-                density01: settings.PickupsDensity
-            );
-
-            var worldPos = new Vector3(this.transform.position.x, 8000f, this.transform.position.z);
-            var ray = new Ray(worldPos, -Vector3.up);
-
-            Debug.DrawRay(ray.origin, ray.direction, Color.red, 0.5f);
-
-            if (!Physics.Raycast(ray, out hit, Mathf.Infinity, groundLayerMask))
+            _noiseMap = new(chunkSize * chunkSize * chunkSize, Allocator.TempJob);
+            CalculateNoiseRandom_Job calculateNoiseJob = new()
             {
-                Debug.LogWarning($"No terrain found for chunk ({chunkCoord.x}, {chunkCoord.y}, {chunkCoord.z})");
-                return;
-            }
-            if (!hit.collider.TryGetComponent<Terrain>(out terrain))
-            {
-                Debug.LogWarning($"No Terrain component attached? Maybe an object hit?");
-                return;
+                Seed = this.seed,
+                Width = chunkSize,
+                Height = chunkSize,
+                Offset = new(chunkCoord.x, chunkCoord.y, chunkCoord.z),
+                Density = settings.TreeDensity,
+                Scale = 1f, /// TEST:
+                NoiseMap = _noiseMap
             };
 
+            _currentJob = calculateNoiseJob.Schedule(_noiseMap.Length, 8);
+        }
+
+        void PopulateChunk(NativeArray<float> noiseMap)
+        {
+            var groundLayerMask = LayerMask.NameToLayer("Ground");
+            var worldPos = new Vector3(this.transform.position.x, 1000f, this.transform.position.z);
             Vector3 samplePoint;
-            /// NOTE: For loop assumes that all noise map lengths are the same :)
-            for (int z = 0; z < treeNoiseMap.GetLength(1); z++)
+            for (int i = 0; i < noiseMap.Length; i++)
             {
-                for (int x = 0; x < treeNoiseMap.GetLength(0); x++)
+                int x = i % this.chunkSize;
+                int y = (i / this.chunkSize) % this.chunkSize;
+                int z = i / (this.chunkSize * this.chunkSize);
+                float val = noiseMap[i];
+
+                if (val > this.settings.TreeDensity &&
+                    val > this.settings.PickupsDensity)
                 {
-                    samplePoint = new Vector3(
-                        x + this.transform.position.x,
-                        0f,
-                        z + this.transform.position.x
-                    );
-                    var y = terrain.SampleHeight(samplePoint);
-                    samplePoint.y = y;
+                    continue;
+                }
+                /// sample world position relative to chunk
+                samplePoint = new Vector3(
+                    x + this.transform.position.x,
+                    0f,
+                    z + this.transform.position.x
+                );
 
-                    Handles.DrawWireCube(samplePoint, size: Vector3.one);
+                // samplePoint.y = terrain.SampleHeight(samplePoint);
+                // Handles.DrawWireCube(samplePoint, size: Vector3.one);
+                // var layer = GetTerrainLayerFromPoint(terrain, samplePoint);
 
-                    var layer = GetTerrainLayerFromPoint(terrain, hit.point);
+                if (val > settings.TreeDensity &&
+                    settings.PlaceTrees)
+                {
+                    Debug.DrawRay(samplePoint, Vector3.up, Color.red, 1f);
+                    // TryPlaceTree(layer, samplePoint);
+                }
 
-                    if (treeNoiseMap[x, z] > settings.TreeDensity &&
-                        settings.PlaceTrees)
-                    {
-                        TryPlaceTree(layer, hit.point);
-                    }
-                    if (pickupNoiseMap[x, z] > settings.PickupsDensity &&
-                        settings.PlacePickups)
-                    {
-                        TryPlacePickup(layer, hit.point);
-                    }
+                if (val > settings.PickupsDensity &&
+                    settings.PlacePickups)
+                {
+                    Debug.DrawRay(samplePoint, Vector3.up, Color.red, 1f);
+                    // TryPlacePickup(layer, samplePoint);
                 }
             }
+
+            _noiseMap.Dispose();
         }
 
         /// <summary>
@@ -149,6 +143,36 @@ namespace UZSG.Worlds
         /// Tries to place a Resource Pickup at position given the terrain layer.
         /// </summary>
         void TryPlacePickup(TerrainLayer layer, Vector3 position)
+        {
+
+        }
+
+        public void SetTreeNoiseParameters(NoiseParameters p)
+        {
+            treeNoiseParams.SetValues(p);
+        }
+
+        public void SetPickupNoiseParameters(NoiseParameters p)
+        {
+            pickupsNoiseParams.SetValues(p);
+        }
+
+        public void SetSeed(int seed)
+        {
+            this.seed = seed;
+        }
+        
+        public void ReadSaveData(ResourceChunkSaveData saveData)
+        {
+            
+        }
+
+        public ResourceChunkSaveData WriteSaveData()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Regenerate()
         {
 
         }
@@ -209,4 +233,36 @@ namespace UZSG.Worlds
         }
 #endif
     }
+    
+    [BurstCompile]
+    public struct CalculateNoiseRandom_Job : IJobParallelFor
+    {
+        [ReadOnly] public int ChunkSize;
+        [ReadOnly] public int Seed;
+        [ReadOnly] public int Width;
+        [ReadOnly] public int Height;
+        [ReadOnly] public int3 Offset;
+        [ReadOnly] public float Density;
+        [ReadOnly] public float Scale;
+
+        public NativeArray<float> NoiseMap;
+
+        public void Execute(int index)
+        {
+            var rand = Unity.Mathematics.Random.CreateFromIndex((uint)index);
+            rand.state = (uint)math.abs(Seed);
+            var density01 = math.clamp(Density, 0, 1);
+            
+            int x = index % ChunkSize;
+            int y = (index / ChunkSize) % ChunkSize;
+            int z = index / (ChunkSize * ChunkSize);
+            
+            float sx = (x + Offset.x) * Scale;
+            float sy = (y + Offset.y) * Scale;
+            float sz = (z + Offset.z) * Scale;
+
+            NoiseMap[index] = noise.snoise(new float3(sx, sy, sz)); /// 3D simplex
+        }
+    }
+
 }

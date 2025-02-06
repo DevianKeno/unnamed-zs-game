@@ -1,8 +1,7 @@
 using UnityEngine;
-using Cinemachine;
-using UZSG.Systems;
 using UnityEngine.InputSystem;
-using System;
+
+using Cinemachine;
 
 namespace UZSG
 {

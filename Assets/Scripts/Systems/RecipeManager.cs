@@ -4,7 +4,7 @@ using UnityEngine.AddressableAssets;
 using UZSG.Crafting;
 using UZSG.Data;
 
-namespace UZSG.Systems
+namespace UZSG
 {
     public class RecipeManager : MonoBehaviour, IInitializeable
     {

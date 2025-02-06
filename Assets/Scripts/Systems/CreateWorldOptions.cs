@@ -1,6 +1,6 @@
 using System;
 
-namespace UZSG.Systems
+namespace UZSG.Worlds
 {
     public struct CreateWorldOptions
     {

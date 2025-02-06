@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
-using UZSG.Systems;
+
 using UZSG.Data;
 using UZSG.Interactions;
 using UZSG.Items;

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering.Universal;
 
-using UZSG.Systems;
+
 using UZSG.Entities;
 using UZSG.Items.Weapons;
 using System;

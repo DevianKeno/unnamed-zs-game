@@ -7,7 +7,7 @@
 // using UZSG.Crafting;
 
 /// THIS IS TOO MUCH CUMBERSOME
-// namespace UZSG.Systems
+// namespace UZSG
 // {
 //     public class DataManager : MonoBehaviour, IInitializeable
 //     {

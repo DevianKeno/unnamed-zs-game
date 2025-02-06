@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &1839575761864172583
+--- !u!1 &227617897040668492
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,74 +8,44 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4703847520753651982}
-  - component: {fileID: 5357546713876505897}
-  - component: {fileID: 1177727107971506801}
+  - component: {fileID: 2264068026159860873}
+  - component: {fileID: 626271515164900290}
   m_Layer: 0
-  m_Name: WORLD
-  m_TagString: World
+  m_Name: Resource Chunk Manager
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4703847520753651982
+--- !u!4 &2264068026159860873
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1839575761864172583}
+  m_GameObject: {fileID: 227617897040668492}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 2740809496562152626}
-  - {fileID: 6194034509867146637}
-  - {fileID: 353497468767634863}
-  - {fileID: 6914072609335877631}
-  - {fileID: 3943697356474365655}
   - {fileID: 8022718985425029606}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 4703847520753651982}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5357546713876505897
+--- !u!114 &626271515164900290
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1839575761864172583}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 730284244e024ae46a32862e31c1cbfb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  timeController: {fileID: 3392221486933040618}
-  weatherController: {fileID: 748351840908937241}
-  worldEventsController: {fileID: 5668126680943736175}
-  resourceChunkManager: {fileID: 1177727107971506801}
-  worldNetwork: {fileID: 0}
-  networkObject: {fileID: 0}
-  seed: 0
-  objectsContainer: {fileID: 6914072609335877631}
-  entitiesContainer: {fileID: 3943697356474365655}
-  worldNetworkPrefab: {fileID: 7553167909741662072, guid: 9c4c204f412d19b42bd8d08780c8c239, type: 3}
-  readPlayerDataAsBytes: 0
-  writePlayerDataAsBytes: 0
---- !u!114 &1177727107971506801
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1839575761864172583}
+  m_GameObject: {fileID: 227617897040668492}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 441e73aa908c2054982cc71a35dbf1c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  renderDistance: 4
+  renderDistance: 6
   EnableLoadingChunks: 0
   chunkSize: 32
   terrain: {fileID: 0}
@@ -102,9 +72,69 @@ MonoBehaviour:
     Threshold: 0
   PlacePickups: 1
   PickupsDensity: 0.5
+  chunksLoaded: 0
   chunksContainer: {fileID: 8022718985425029606}
   chunkOpacity: 0.5
   enableLODChunking: 0
+--- !u!1 &1839575761864172583
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4703847520753651982}
+  - component: {fileID: 5357546713876505897}
+  m_Layer: 0
+  m_Name: WORLD
+  m_TagString: World
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4703847520753651982
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1839575761864172583}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2740809496562152626}
+  - {fileID: 6194034509867146637}
+  - {fileID: 353497468767634863}
+  - {fileID: 6914072609335877631}
+  - {fileID: 3943697356474365655}
+  - {fileID: 2264068026159860873}
+  - {fileID: 6362037838610728980}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5357546713876505897
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1839575761864172583}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 730284244e024ae46a32862e31c1cbfb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  worldNetwork: {fileID: 0}
+  networkObject: {fileID: 0}
+  seed: 0
+  objectsContainer: {fileID: 6914072609335877631}
+  entitiesContainer: {fileID: 3943697356474365655}
+  worldNetworkPrefab: {fileID: 7553167909741662072, guid: 9c4c204f412d19b42bd8d08780c8c239, type: 3}
+  readPlayerDataAsBytes: 0
+  writePlayerDataAsBytes: 0
 --- !u!1 &3294744197836459953
 GameObject:
   m_ObjectHideFlags: 0
@@ -311,6 +341,50 @@ MonoBehaviour:
   currentSecond: 0
   currentDay: 0
   WeatherPreset: {fileID: 11400000, guid: c7476f3fd253a2945b7facfc5b8acddd, type: 2}
+--- !u!1 &4170276337354895309
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6362037838610728980}
+  - component: {fileID: 3316125988968337934}
+  m_Layer: 0
+  m_Name: Chat Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6362037838610728980
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4170276337354895309}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4703847520753651982}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3316125988968337934
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4170276337354895309}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11ba8174b0c7e489d6e2be30cfcf6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4811350032732938366
 GameObject:
   m_ObjectHideFlags: 0
@@ -321,7 +395,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8022718985425029606}
   m_Layer: 0
-  m_Name: CHUNKS
+  m_Name: Loaded Chunks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -335,12 +409,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4811350032732938366}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4703847520753651982}
+  m_Father: {fileID: 2264068026159860873}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5933016743309004554
 GameObject:

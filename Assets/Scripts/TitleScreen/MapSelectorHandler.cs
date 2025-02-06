@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using UZSG.Data;
-using UZSG.Systems;
+
 using UZSG.UI;
 
 namespace UZSG.TitleScreen

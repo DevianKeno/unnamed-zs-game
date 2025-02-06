@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-using UZSG.Systems;
+
 using UZSG.Data;
 
 namespace UZSG.Worlds.Events

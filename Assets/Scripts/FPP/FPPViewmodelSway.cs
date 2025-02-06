@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-using UZSG.Systems;
+
 using UZSG.Entities;
 
 namespace UZSG.FPP

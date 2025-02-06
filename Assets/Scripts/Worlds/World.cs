@@ -19,7 +19,6 @@ using UZSG.EOS;
 using UZSG.Network;
 using UZSG.Objects;
 using UZSG.Saves;
-using UZSG.Systems;
 using UZSG.Worlds.Events;
 
 namespace UZSG.Worlds
@@ -38,17 +37,11 @@ namespace UZSG.Worlds
         WorldAttributes worldAttributes;
         public WorldAttributes Attributes => worldAttributes;
 
-        [SerializeField] TimeController timeController;
-        public TimeController Time => timeController;
-
-        [SerializeField] WeatherController weatherController;
-        public WeatherController Weather => weatherController;
-
-        [SerializeField] WorldEventController worldEventsController;
-        public WorldEventController WorldEvents => worldEventsController;
-
-        [SerializeField] ResourceChunkManager resourceChunkManager;
-        public ResourceChunkManager ResourceChunkManager => resourceChunkManager;
+        public ResourceChunkManager ResourceChunkManager { get; private set; }
+        public TimeController Time { get; private set; }
+        public WeatherController Weather { get; private set; }
+        public WorldEventController WorldEvents { get; private set; }
+        public ChatManager Chat { get; private set; }
 
         public event Action OnInitializeDone;
     
@@ -121,10 +114,11 @@ namespace UZSG.Worlds
 
         void Awake()
         {
-            Time.GetComponentInChildren<TimeController>();
-            Weather.GetComponentInChildren<WeatherController>();
-            WorldEvents.GetComponentInChildren<WorldEventController>();
-            ResourceChunkManager.GetComponent<ResourceChunkManager>();
+            Time = GetComponentInChildren<TimeController>();
+            Weather = GetComponentInChildren<WeatherController>();
+            WorldEvents = GetComponentInChildren<WorldEventController>();
+            Chat = GetComponentInChildren<ChatManager>();
+            ResourceChunkManager = GetComponentInChildren<ResourceChunkManager>();
         }
 
 
@@ -213,11 +207,13 @@ namespace UZSG.Worlds
         {
             if (!NetworkManager.Singleton.IsListening || NetworkManager.Singleton.IsServer)
             {
+                ResourceChunkManager.Initialize();
+
                 /// Server handles time, clients are just synced
-                timeController.Initialize();
-                weatherController.Initialize();
-                worldEventsController.Initialize();
-                resourceChunkManager.Initialize();
+                Time.Initialize();
+                Weather.Initialize();
+                WorldEvents.Initialize();
+                Chat.Initialize();
             }
             
             // RegisterExistingInstances();

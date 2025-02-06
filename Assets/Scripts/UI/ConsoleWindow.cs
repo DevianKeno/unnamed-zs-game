@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
 
-using UZSG.Systems;
+
 using UnityEngine.EventSystems;
 
 namespace UZSG.UI
@@ -76,7 +76,7 @@ namespace UZSG.UI
         protected override void OnShow()
         {
             Game.UI.SetCursorVisible(true);
-            EventSystem.current.SetSelectedGameObject(inputField.gameObject);
+            inputField.ActivateInputField();
         }
 
         protected override void OnHide()
@@ -99,7 +99,8 @@ namespace UZSG.UI
             _inputBuffer = string.Empty;
             _navigatingIndex = 0;
             inputField.text = string.Empty;
-            EventSystem.current.SetSelectedGameObject(inputField.gameObject);
+            inputField.ActivateInputField();
+            
             Game.Console.RunCommand(input);
         }
     }

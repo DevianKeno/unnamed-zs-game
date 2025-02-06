@@ -3,7 +3,7 @@ using UnityEngine.AI;
 
 using UZSG.Attributes;
 using UZSG.Interactions;
-using UZSG.Systems;
+
 
 namespace UZSG.Entities
 {

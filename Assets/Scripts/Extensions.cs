@@ -42,5 +42,15 @@ namespace UZSG
         {
             return (layerMask.value & (1 << layer)) != 0;
         }
+
+        public static System.Threading.Tasks.Task ToTask(this Unity.Jobs.JobHandle jobHandle)
+        {
+            return System.Threading.Tasks.Task.Run(() => jobHandle.Complete());
+        }
+
+        public static UnityEngine.Color SetAlpha(this UnityEngine.Color color, float a)
+        {
+            return new UnityEngine.Color(color.r, color.g, color.b, a);
+        }
     }
 }

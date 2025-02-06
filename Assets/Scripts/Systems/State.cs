@@ -1,6 +1,6 @@
 using System;
 
-namespace UZSG.Systems
+namespace UZSG
 {
     /// <summary>
     /// Base state representation.

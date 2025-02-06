@@ -3,7 +3,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-using UZSG.Systems;
+
 
 namespace UZSG.UI
 {
@@ -37,6 +37,7 @@ namespace UZSG.UI
         public override void Show()
         {
             Game.UI.AddToActiveWindows(this);
+
             base.Show();
             OnOpened?.Invoke();
         }
@@ -49,6 +50,7 @@ namespace UZSG.UI
         public override void Hide()
         {
             Game.UI.RemoveFromActiveWindows(this);
+
             OnClosed?.Invoke();
             base.Hide();
         }

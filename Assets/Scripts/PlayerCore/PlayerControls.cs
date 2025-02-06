@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-using UZSG.Systems;
 using UZSG.Entities;
 
 namespace UZSG.Players
@@ -241,12 +240,13 @@ namespace UZSG.Players
 
             if (enable)
             {
-                Rigidbody.isKinematic = true;
+                Rigidbody.useGravity = false;
+                Rigidbody.velocity = Vector3.zero;
                 Game.Console.LogInfo($"Enabled flight.");
             }
             else
             {
-                Rigidbody.isKinematic = false;
+                Rigidbody.useGravity = true;
                 Game.Console.LogInfo($"Disabled flight.");
             }
         }
@@ -262,11 +262,11 @@ namespace UZSG.Players
             /// Attributes to cache
             string[] attrIds = new[]
             {
-                "walk_speed",
-                "move_speed",
-                "run_speed",
-                "crouch_speed",
-                "jump_velocity",
+                AttributeId.WalkSpeed,
+                AttributeId.MoveSpeed,
+                AttributeId.RunSpeed,
+                AttributeId.CrouchSpeed,
+                AttributeId.JumpVelocity
             };
 
             foreach (string id in attrIds)
@@ -469,7 +469,7 @@ namespace UZSG.Players
 
             if (_isFlying)
             {
-                rb.position = new(rb.position.x, rb.position.y + _targetMoveSpeed, rb.position.x);
+                _frameVelocity.y += 10f;
             }
             else
             {
@@ -477,12 +477,10 @@ namespace UZSG.Players
                 float apexTime = jumpTime / 2f; /// time required to reach the highest point of the jump
                 float initialJumpVelocity = (2f * jumpHeight) / apexTime; /// the initial speed of the upward motion of the player's jump
 
-                Vector3 jumpingVelocity = rb.velocity;
-                jumpingVelocity.y = initialJumpVelocity;
-                rb.velocity = jumpingVelocity;
-            }
+                rb.velocity = new(rb.velocity.x, initialJumpVelocity, rb.velocity.y);
 
-            Player.MoveStateMachine.ToState(MoveStates.Jump);
+                Player.MoveStateMachine.ToState(MoveStates.Jump);
+            }
         }
 
         void HandleDirection()
@@ -570,14 +568,7 @@ namespace UZSG.Players
             /// No acceleration
             // rb.velocity = targetVelocity * TimeScale;
             /// With acceleration
-            if (_isFlying)
-            {
-                rb.position = Vector3.Lerp(rb.position, rb.position + targetVelocity, MoveAcceleration * Time.fixedDeltaTime);
-            }
-            else
-            {
-                rb.velocity = Vector3.Lerp(rb.velocity, targetVelocity, MoveAcceleration * Time.fixedDeltaTime);
-            }
+            rb.velocity = Vector3.Lerp(rb.velocity, targetVelocity, MoveAcceleration * Time.fixedDeltaTime);
         }
 
         void ToggleCrouch(bool crouch)

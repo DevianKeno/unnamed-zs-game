@@ -9,7 +9,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-using UZSG.Systems;
+
 
 namespace UZSG.UI
 {
@@ -54,6 +54,9 @@ namespace UZSG.UI
 
         bool _isInitialized;
         List<Window> _activeWindows = new();
+        /// <summary>
+        /// Returns true if any UI element that derives from the <c>Window</c> class is currently opened.
+        /// </summary>
         public bool HasActiveWindow => _activeWindows.Count > 0;
         Window _currentWindow;
         Dictionary<string, Sprite> _icons = new();

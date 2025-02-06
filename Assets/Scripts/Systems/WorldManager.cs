@@ -19,7 +19,7 @@ using UZSG.Saves;
 using UZSG.UI;
 using UZSG.Worlds;
 
-namespace UZSG.Systems
+namespace UZSG
 {
     public class WorldManager : MonoBehaviour, IInitializeable
     {
@@ -105,7 +105,7 @@ namespace UZSG.Systems
         public struct CreateWorldResult
         {
             public string FilePath { get; set; }
-            public Result Result { get; set; }
+            public Result_u Result { get; set; }
         }
         public delegate void OnCreateWorldCompletedCallback(CreateWorldResult result);
         public void CreateWorld(ref CreateWorldOptions options, OnCreateWorldCompletedCallback onCompleted = null)
@@ -138,7 +138,7 @@ namespace UZSG.Systems
             onCompleted(new()
             {
                 FilePath = datPath,
-                Result = Result.Success,
+                Result = Result_u.Success,
             });
         }
 
@@ -155,7 +155,7 @@ namespace UZSG.Systems
         public struct LoadWorldResult
         {
             public World World { get; set; }
-            public Result Result { get; set; }
+            public Result_u Result { get; set; }
         }
 
         public async void LoadWorldFromFilepathAsync(string filepath, OnLoadWorldCompletedCallback onCompleted)
@@ -169,7 +169,7 @@ namespace UZSG.Systems
             onLoadWorldCompleted -= onCompleted;
             onLoadWorldCompleted += onCompleted;
 
-            var resultFailed = new LoadWorldResult() { Result = Result.Failed };
+            var resultFailed = new LoadWorldResult() { Result = Result_u.Failed };
 
             if (!Directory.Exists(Path.GetDirectoryName(filepath)))
             {
@@ -253,7 +253,7 @@ namespace UZSG.Systems
             onLoadWorldCompleted?.Invoke(new LoadWorldResult()
             {
                 World = this.currentWorld,
-                Result = Result.Success,
+                Result = Result_u.Success,
             });
             onLoadWorldCompleted = null;
         }

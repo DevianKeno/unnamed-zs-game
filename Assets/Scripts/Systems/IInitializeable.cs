@@ -1,4 +1,4 @@
-namespace UZSG.Systems
+namespace UZSG
 {
     public interface IInitializeable
     {

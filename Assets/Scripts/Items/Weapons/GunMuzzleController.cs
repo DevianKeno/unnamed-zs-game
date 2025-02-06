@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-namespace UZSG.Systems
+namespace UZSG
 {
     public class GunMuzzleController : MonoBehaviour
     {

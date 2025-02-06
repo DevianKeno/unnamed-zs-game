@@ -8,8 +8,9 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 using UZSG.Data;
 using UZSG.Items;
+using UZSG.Particles;
 
-namespace UZSG.Systems
+namespace UZSG
 {
     public class ParticleManager : MonoBehaviour, IInitializeable
     {

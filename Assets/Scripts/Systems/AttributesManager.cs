@@ -6,7 +6,7 @@ using UnityEngine.AddressableAssets;
 using UZSG.Data;
 using UZSG.Attributes;
 
-namespace UZSG.Systems
+namespace UZSG
 {
     public class AttributesManager : MonoBehaviour, IInitializeable
     {

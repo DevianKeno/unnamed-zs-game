@@ -8,7 +8,7 @@ using TMPro;
 
 using Epic.OnlineServices.Lobby;
 
-using UZSG.Systems;
+
 using UZSG.EOS;
 using UZSG.EOS.Lobbies;
 
@@ -185,14 +185,14 @@ namespace UZSG.UI.Lobbies
 
         void OnLoadWorldCompleted(WorldManager.LoadWorldResult result)
         {
-            if (result.Result == Result.Success)
+            if (result.Result == Result_u.Success)
             {
                 Game.World.InitializeWorld();
 
                 Game.Main.UnloadScene("TitleScreen");
                 Game.Main.UnloadScene("LoadingScreen");
             }
-            else if (result.Result == Result.Failed)
+            else if (result.Result == Result_u.Failed)
             {
                 BackToTitleScreen();
             }

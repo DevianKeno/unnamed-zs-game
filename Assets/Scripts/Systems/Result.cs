@@ -1,4 +1,4 @@
-namespace UZSG.Systems
+namespace UZSG
 {
-    public enum Result { Success, Failed }
+    public enum Result_u { Success, Failed }
 }

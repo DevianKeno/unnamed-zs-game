@@ -33,7 +33,7 @@ using Epic.OnlineServices.UserInfo;
 using Epic.OnlineServices.UI;
 using PlayEveryWare.EpicOnlineServices;
 
-using UZSG.Systems;
+
 using UZSG.EOS.Friends;
 
 namespace UZSG.EOS

@@ -70,8 +70,8 @@ namespace UZSG
                 rand.NextFloat(MIN_RAND, MAX_RAND),
                 rand.NextFloat(MIN_RAND, MAX_RAND));
             scale = math.clamp(scale, MIN_SCALE, scale);
-            float minnest = float.MinValue;
-            float maxxest = float.MaxValue;
+            float minnest = 0f;
+            float maxxest = 0f;
 
             for (int y = 0; y < height; y++)
             {
@@ -83,8 +83,8 @@ namespace UZSG
 
                     for (int oct = 0; oct < octaves; oct++)
                     {
-                        float sampleX = (x + offset.x + seedOffset.x) / scale * frequency;
-                        float sampleZ = (y + offset.y + seedOffset.y) / scale * frequency;
+                        float sampleX = (x + offset.x + seedOffset.x) / (scale * frequency);
+                        float sampleZ = (y + offset.y + seedOffset.y) / (scale * frequency);
 
                         var p = Mathf.PerlinNoise(sampleX, sampleZ) * 2 - 1;
                         val += p * amplitude;
@@ -99,12 +99,13 @@ namespace UZSG
                 }
             }
 
-            /// normalization
+            // normalization
             for (int y = 0; y < height; y++)
             {
                 for (int x = 0; x < width; x++)
                 {
-                    noiseMap [x, y] = 1 - math.lerp(minnest, maxxest, noiseMap[x, y]);
+                    var invlerp = (noiseMap[x, y] - minnest) / (maxxest - minnest);
+                    noiseMap [x, y] = math.clamp(invlerp, 0, 1);
                 }
             }
 

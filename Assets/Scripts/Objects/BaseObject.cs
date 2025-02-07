@@ -203,6 +203,10 @@ namespace UZSG.Objects
 
         #endregion
 
+        public virtual void MarkDirty()
+        {
+            this.IsDirty = true;
+        }
 
         void InitializeTransform(TransformSaveData data)
         {

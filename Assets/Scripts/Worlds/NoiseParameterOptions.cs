@@ -6,14 +6,14 @@ namespace UZSG.Worlds
     [Serializable]
     public struct NoiseParameters
     {
-        public NoiseType Type;
+        public NoiseType NoiseType;
         public int Seed;
         public Vector2 Offset;
         public int Octaves;
-        public float Persistence;
+        [Range(0, 1)] public float Persistence;
         public float Lacunarity;
-        public float NoiseScale;
-        public float Threshold;
+        public float Scale;
+        [Range(0, 1)] public float Density;
 
         public void SetValues(NoiseParameters p)
         {
@@ -22,8 +22,8 @@ namespace UZSG.Worlds
             this.Octaves = p.Octaves;
             this.Persistence = p.Persistence;
             this.Lacunarity = p.Lacunarity;
-            this.NoiseScale = p.NoiseScale;
-            this.Threshold = p.Threshold;
+            this.Scale = p.Scale;
+            this.Density = p.Density;
         }
     }
 }

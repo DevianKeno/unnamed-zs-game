@@ -1,5 +1,78 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &689751440003486877
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1316335490180631352}
+  - component: {fileID: 7716627776621565399}
+  m_Layer: 15
+  m_Name: LOD Group
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1316335490180631352
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 689751440003486877}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.24, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 4082943164788287777}
+  - {fileID: 9019042867507608031}
+  - {fileID: 676345802551585208}
+  - {fileID: 4850086559075626516}
+  - {fileID: 5696464422340731167}
+  - {fileID: 7775965328277716068}
+  - {fileID: 1947540307460856328}
+  m_Father: {fileID: 4734211055726018466}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!205 &7716627776621565399
+LODGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 689751440003486877}
+  serializedVersion: 2
+  m_LocalReferencePoint: {x: 0, y: 11.826324, z: -0.17956352}
+  m_Size: 35.354317
+  m_FadeMode: 1
+  m_AnimateCrossFading: 1
+  m_LastLODIsBillboard: 0
+  m_LODs:
+  - screenRelativeHeight: 0.7013583
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 6498879959272335203}
+    - renderer: {fileID: 8208323139834125508}
+  - screenRelativeHeight: 0.44850934
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 4413792622184539857}
+    - renderer: {fileID: 2823572623727673635}
+  - screenRelativeHeight: 0.249
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 3887854796877502010}
+    - renderer: {fileID: 4882914905515271838}
+  - screenRelativeHeight: 0.10205559
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 1225001840959274511}
+  m_Enabled: 1
 --- !u!1 &966035578862626431
 GameObject:
   m_ObjectHideFlags: 0
@@ -31,7 +104,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4734211055726018466}
+  m_Father: {fileID: 1316335490180631352}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &2188056447260674324
 MeshFilter:
@@ -68,7 +141,7 @@ MeshRenderer:
   m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 0.06143142
+  m_ScaleInLightmap: 0.14736763
   m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
@@ -114,7 +187,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4734211055726018466}
+  m_Father: {fileID: 1316335490180631352}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: -0.6}
 --- !u!33 &2198784739219649443
 MeshFilter:
@@ -151,7 +224,7 @@ MeshRenderer:
   m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 0.06143142
+  m_ScaleInLightmap: 0.14736763
   m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
@@ -193,11 +266,11 @@ Transform:
   m_GameObject: {fileID: 1285031987634198235}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 11, z: 0}
+  m_LocalPosition: {x: 0, y: 11.34, z: 0}
   m_LocalScale: {x: 29.449999, y: 24.54167, z: 24.54167}
   m_ConstrainProportionsScale: 1
   m_Children: []
-  m_Father: {fileID: 4734211055726018466}
+  m_Father: {fileID: 1316335490180631352}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &3778707117710796737
 MeshFilter:
@@ -234,7 +307,7 @@ MeshRenderer:
   m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 0.08224704
+  m_ScaleInLightmap: 0.05285065
   m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
@@ -282,7 +355,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4734211055726018466}
+  m_Father: {fileID: 1316335490180631352}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &3322368603807593430
 MeshFilter:
@@ -414,7 +487,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4734211055726018466}
+  m_Father: {fileID: 1316335490180631352}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &5064460183832618449
 MeshFilter:
@@ -497,7 +570,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4734211055726018466}
+  m_Father: {fileID: 1316335490180631352}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &8284953781531498164
 MeshFilter:
@@ -534,7 +607,7 @@ MeshRenderer:
   m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1.998
+  m_ScaleInLightmap: 0.29676563
   m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
@@ -559,7 +632,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4734211055726018466}
   - component: {fileID: 4769905854740593563}
-  - component: {fileID: 9090100060184212582}
   m_Layer: 15
   m_Name: Pine Tree Heart (Resource)
   m_TagString: Untagged
@@ -580,13 +652,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 4082943164788287777}
-  - {fileID: 9019042867507608031}
-  - {fileID: 676345802551585208}
-  - {fileID: 4850086559075626516}
-  - {fileID: 5696464422340731167}
-  - {fileID: 7775965328277716068}
-  - {fileID: 1947540307460856328}
+  - {fileID: 1316335490180631352}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4769905854740593563
@@ -607,41 +673,7 @@ MonoBehaviour:
   despawnSeconds: 6000
   leaves0: {fileID: 3027236015247902707}
   rigidbody: {fileID: 4556757779194130757}
-  lodGroup: {fileID: 9090100060184212582}
---- !u!205 &9090100060184212582
-LODGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5402238674860959000}
-  serializedVersion: 2
-  m_LocalReferencePoint: {x: 0, y: 11, z: -0.17956352}
-  m_Size: 29.450003
-  m_FadeMode: 1
-  m_AnimateCrossFading: 1
-  m_LastLODIsBillboard: 0
-  m_LODs:
-  - screenRelativeHeight: 0.29676563
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 6498879959272335203}
-    - renderer: {fileID: 8208323139834125508}
-  - screenRelativeHeight: 0.14736763
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 4413792622184539857}
-    - renderer: {fileID: 2823572623727673635}
-  - screenRelativeHeight: 0.05285065
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 3887854796877502010}
-    - renderer: {fileID: 4882914905515271838}
-  - screenRelativeHeight: 0.017595042
-    fadeTransitionWidth: 0
-    renderers:
-    - renderer: {fileID: 1225001840959274511}
-  m_Enabled: 1
+  lodGroup: {fileID: 7716627776621565399}
 --- !u!1 &8482922072524671653
 GameObject:
   m_ObjectHideFlags: 0
@@ -673,7 +705,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4734211055726018466}
+  m_Father: {fileID: 1316335490180631352}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &3804257797948143121
 MeshFilter:
@@ -710,7 +742,7 @@ MeshRenderer:
   m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1.998
+  m_ScaleInLightmap: 0.29676563
   m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0

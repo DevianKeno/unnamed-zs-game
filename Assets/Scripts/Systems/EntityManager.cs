@@ -73,8 +73,9 @@ namespace UZSG
 
         /// <summary>
         /// Spawn an entity in the game world.
+        /// Should only be called when within a world.
         /// </summary>
-        public void Spawn(string entityId, Vector3 position = default, OnEntitySpawnComplete callback = null)
+        public async void Spawn(string entityId, Vector3 position = default, OnEntitySpawnComplete callback = null)
         {
             if (!_entitiesDict.ContainsKey(entityId))
             {
@@ -85,35 +86,36 @@ namespace UZSG
             try
             {
                 var ettyData = _entitiesDict[entityId];
-                Addressables.LoadAssetAsync<GameObject>(ettyData.AssetReference).Completed += (a) =>
+                var asyncOp = Addressables.LoadAssetAsync<GameObject>(ettyData.AssetReference);
+                await asyncOp.Task;
+
+                if (asyncOp.Status == AsyncOperationStatus.Succeeded)
                 {
-                    if (a.Status == AsyncOperationStatus.Succeeded)
+                    var go = Instantiate(asyncOp.Result, position, Quaternion.identity, Game.World.CurrentWorld.entitiesContainer);
+                    go.name = $"{ettyData.DisplayName} (Entity)";
+                    if (!go.TryGetComponent(out Entity entity)) /// what do making entity without an entity component!!
                     {
-                        var go = Instantiate(a.Result, position, Quaternion.identity, GetTransformParent());
-                        go.name = $"{ettyData.DisplayName} (Entity)";
-                        if (!go.TryGetComponent(out Entity entity)) /// what do making entity without an entity component!!
-                        {
-                            Destroy(go);
-                            return;
-                        }
-
-                        entity.OnSpawnInternal();
-                        entity.OnDespawned += OnEntityDespawnInternal;
-                        go.transform.position = position;
-
-                        var info = new EntityInfo()
-                        {
-                            Entity = entity
-                        };
-                        callback?.Invoke(info);
-                        OnEntitySpawned?.Invoke(info);
-
-                        Game.Console.LogDebug($"Spawned entity {entityId} at ({position.x}, {position.y}, {position.z})");
+                        Destroy(go);
                         return;
                     }
 
-                    Game.Console.LogDebug($"Tried to spawn entity {entityId}, but failed miserably");
-                };
+                    entity.OnSpawnInternal();
+                    entity.OnDespawned += OnEntityDespawnInternal;
+                    go.transform.position = position;
+
+                    var info = new EntityInfo()
+                    {
+                        Entity = entity
+                    };
+                    callback?.Invoke(info);
+                    OnEntitySpawned?.Invoke(info);
+
+                    // Game.Console.LogDebug($"Spawned entity {entityId} at ({position.x}, {position.y}, {position.z})");
+                    Addressables.Release(asyncOp);
+                    return;
+                }
+
+                Game.Console.LogDebug($"Tried to spawn entity {entityId}, but failed miserably");
             }
             catch (Exception ex)
             {
@@ -128,7 +130,11 @@ namespace UZSG
             public T Entity { get; set; }
         }
 
-        public void Spawn<T>(string entityId, Vector3 position = default, OnSpawnCallback<T> onCompleted = null) where T : Entity
+        /// <summary>
+        /// Spawn an entity in the game world.
+        /// Should only be called when within a world.
+        /// </summary>
+        public async void Spawn<T>(string entityId, Vector3 position = default, OnSpawnCallback<T> onCompleted = null) where T : Entity
         {
             if (!_entitiesDict.ContainsKey(entityId))
             {
@@ -139,37 +145,38 @@ namespace UZSG
             try
             {
                 var ettyData = _entitiesDict[entityId];
-                Addressables.LoadAssetAsync<GameObject>(ettyData.AssetReference).Completed += (a) =>
-                {
-                    if (a.Status == AsyncOperationStatus.Succeeded)
-                    {
-                        var go = Instantiate(a.Result, position, Quaternion.identity, GetTransformParent());
-                        go.name = $"{ettyData.DisplayName} (Entity)";
-                        if (!go.TryGetComponent(out Entity entity))
-                        {
-                            Destroy(go);
-                            return;
-                        }
+                var asyncOp = Addressables.LoadAssetAsync<GameObject>(ettyData.AssetReference);
+                await asyncOp.Task;
 
-                        entity.OnSpawnInternal();
-                        entity.OnDespawned += OnEntityDespawnInternal;
-                        go.transform.position = position;
-                        
-                        onCompleted?.Invoke(new EntitySpawnedInfo<T>()
-                        {
-                            Entity = entity as T
-                        });
-                        OnEntitySpawned?.Invoke(new()
-                        {
-                            Entity = entity
-                        });
-                        
-                        Game.Console.LogDebug($"Spawned entity {entityId} at ({position.x}, {position.y}, {position.z})");
+                if (asyncOp.Status == AsyncOperationStatus.Succeeded)
+                {
+                    var go = Instantiate(asyncOp.Result, position, Quaternion.identity, Game.World.CurrentWorld.entitiesContainer);
+                    go.name = $"{ettyData.DisplayName} (Entity)";
+                    if (!go.TryGetComponent(out Entity entity))
+                    {
+                        Destroy(go);
                         return;
                     }
 
-                    Game.Console.LogDebug($"Tried to spawn entity {entityId}, but failed miserably");
-                };
+                    entity.OnSpawnInternal();
+                    entity.OnDespawned += OnEntityDespawnInternal;
+                    go.transform.position = position;
+                    
+                    onCompleted?.Invoke(new EntitySpawnedInfo<T>()
+                    {
+                        Entity = entity as T
+                    });
+                    OnEntitySpawned?.Invoke(new()
+                    {
+                        Entity = entity
+                    });
+                    
+                    // Game.Console.LogDebug($"Spawned entity {entityId} at ({position.x}, {position.y}, {position.z})");
+                    Addressables.Release(asyncOp);
+                    return;
+                }
+
+                Game.Console.LogDebug($"Tried to spawn entity {entityId}, but failed miserably");
             }
             catch (Exception ex)
             {
@@ -178,7 +185,11 @@ namespace UZSG
             }
         }
         
-        public void SpawnItem(Item item, Vector3 position = default)
+        /// <summary>
+        /// Spawn an Item entity given an item in the game world.
+        /// Should only be called when within a world.
+        /// </summary>
+        public async void SpawnItem(Item item, Vector3 position = default)
         {
             if (item.IsNone || item.Count <= 0)
             {
@@ -190,27 +201,28 @@ namespace UZSG
             try
             {
                 var ettyData = _entitiesDict["item"];
-                Addressables.LoadAssetAsync<GameObject>(ettyData.AssetReference).Completed += (a) =>
+                var asyncOp = Addressables.LoadAssetAsync<GameObject>(ettyData.AssetReference);
+                await asyncOp.Task;
+
+                if (asyncOp.Status == AsyncOperationStatus.Succeeded)
                 {
-                    if (a.Status == AsyncOperationStatus.Succeeded)
+                    var go = Instantiate(asyncOp.Result, position, Quaternion.identity, Game.World.CurrentWorld.entitiesContainer);
+                    go.name = $"Item Entity (Entity)";
+                    if (!go.TryGetComponent(out ItemEntity itemEntity)) /// this has a zero chance to fail >:(
                     {
-                        var go = Instantiate(a.Result, position, Quaternion.identity, GetTransformParent());
-                        go.name = $"Item Entity (Entity)";
-                        if (!go.TryGetComponent(out ItemEntity itemEntity)) /// this has a zero chance to fail >:(
-                        {
-                            Destroy(go);
-                            return;
-                        }
-                        
-                        itemEntity.Item = item;
-                        itemEntity.OnSpawnInternal();
-                        itemEntity.OnDespawned += OnEntityDespawnInternal;
-                        go.transform.position = position;
-                        
-                        Game.Console.LogDebug($"Spawned item {item.Data.DisplayName} at ({position.x}, {position.y}, {position.z})");
+                        Destroy(go);
                         return;
                     }
-                };
+                    
+                    itemEntity.Item = item;
+                    itemEntity.OnSpawnInternal();
+                    itemEntity.OnDespawned += OnEntityDespawnInternal;
+                    go.transform.position = position;
+                    
+                    // Game.Console.LogDebug($"Spawned item {item.Data.DisplayName} at ({position.x}, {position.y}, {position.z})");
+                    Addressables.Release(asyncOp);
+                    return;
+                }
             }
             catch (Exception ex)
             {
@@ -232,11 +244,5 @@ namespace UZSG
         }
 
         #endregion
-
-
-        Transform GetTransformParent()
-        {
-            return Game.World.IsInWorld ? Game.World.CurrentWorld.entitiesContainer : transform;
-        }
     }
 }

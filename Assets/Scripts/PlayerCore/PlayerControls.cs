@@ -18,10 +18,11 @@ namespace UZSG.Players
         public bool AllowMovement;
 
         [Header("Parameters")]
+        public float MoveSpeedFactor = 1f;
         public float MoveAcceleration = 10f;
         public float RotationDamping = 6f;
         public float TurningAngle = 120f;
-        public float FlightSpeed = 1f;
+        public float FlightSpeed = 10f;
         public bool RunIsToggle = false;
         public bool CrouchIsToggle = true;
 
@@ -89,7 +90,7 @@ namespace UZSG.Players
         }
         public bool IsGrounded
         {
-            get => groundChecker.IsGrounded;
+            get => groundChecker.IsGrounded && !_isFlying;
         }
         public bool IsFalling
         {
@@ -242,18 +243,18 @@ namespace UZSG.Players
             {
                 Rigidbody.useGravity = false;
                 Rigidbody.velocity = Vector3.zero;
-                Game.Console.LogInfo($"Enabled flight.");
+                Player.World.Chat.SendMessageRaw($"Enabled flight.");
             }
             else
             {
                 Rigidbody.useGravity = true;
-                Game.Console.LogInfo($"Disabled flight.");
+                Player.World.Chat.SendMessageRaw($"Disabled flight.");
             }
         }
 
         /// <summary>
         /// Cached values of the Player's attributes.
-        /// Key is Attribute Id, Value is the Value of that Attribute.
+        /// Key is AttributeId, Value is the Value of that Attribute.
         /// </summary>
         Dictionary<string, float> _cachedAttributeValues = new();
 
@@ -283,7 +284,7 @@ namespace UZSG.Players
             }
             
             /// Initialize move speed
-            _targetMoveSpeed = _cachedAttributeValues["move_speed"];
+            _targetMoveSpeed = _cachedAttributeValues[AttributeId.MoveSpeed];
         }
 
         #endregion
@@ -292,6 +293,11 @@ namespace UZSG.Players
         void FixedUpdate()
         {
             if (!_enable) return;
+
+            if (_isFlying)
+            {
+                rb.velocity = Vector3.zero;
+            }
 
             HandleDirection();
             HandleTurning();
@@ -563,8 +569,12 @@ namespace UZSG.Players
 
         void ApplyMovement()
         {
-            var targetVelocity = _frameVelocity * (_targetMoveSpeed * Time.fixedDeltaTime);
+            var targetVelocity = _frameVelocity * (_targetMoveSpeed * MoveSpeedFactor * Time.fixedDeltaTime);
             targetVelocity.y = rb.velocity.y;
+            if (_isFlying)
+            {
+                targetVelocity *= MoveSpeedFactor * FlightSpeed;
+            }
             /// No acceleration
             // rb.velocity = targetVelocity * TimeScale;
             /// With acceleration

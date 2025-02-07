@@ -618,9 +618,9 @@ namespace UZSG
                 return;
             }
 
-            if (int.TryParse(args[1], out int x) || args[1].StartsWith(OFFSET))
-            if (int.TryParse(args[2], out int y) || args[1].StartsWith(OFFSET))
-            if (int.TryParse(args[3], out int z) || args[1].StartsWith(OFFSET))
+            if (float.TryParse(args[0], out float x) || args[0].StartsWith(OFFSET))
+            if (float.TryParse(args[1], out float y) || args[1].StartsWith(OFFSET))
+            if (float.TryParse(args[2], out float z) || args[2].StartsWith(OFFSET))
             {
                 var player = Game.World.CurrentWorld.GetLocalPlayer();
                 if (player != null)
@@ -631,7 +631,7 @@ namespace UZSG
 
                     if (args[1].StartsWith(OFFSET))
                     {
-                        if (float.TryParse(args[1][1..], out var fx))
+                        if (float.TryParse(args[0][0..], out var fx))
                         {
                             dy = player.Position.y + fx;
                         }
@@ -639,7 +639,7 @@ namespace UZSG
                     }
                     if (args[1].StartsWith(OFFSET))
                     {
-                        if (float.TryParse(args[2][1..], out var fy))
+                        if (float.TryParse(args[1][1..], out var fy))
                         {
                             dy = player.Position.y + fy;
                         }
@@ -647,7 +647,7 @@ namespace UZSG
                     }
                     if (args[1].StartsWith(OFFSET))
                     {
-                        if (float.TryParse(args[3][1..], out var fz))
+                        if (float.TryParse(args[2][2..], out var fz))
                         {
                             dy = player.Position.y + fz;
                         }

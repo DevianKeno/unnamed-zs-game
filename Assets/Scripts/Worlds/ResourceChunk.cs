@@ -5,27 +5,42 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
-
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
+using MEC;
+
 using UZSG.Objects;
 using UZSG.Saves;
+using System.Linq;
 
 namespace UZSG.Worlds
 {
     public class ResourceChunk : MonoBehaviour, ISaveDataReadWrite<ResourceChunkSaveData>
     {
+        public const float MAX_TREE_DENSITY = 0.5f;
+        const int JOB_BATCH_SIZE = 64;
+
+        public int ChunkSize;
         public Vector3Int Coord;
+        /// <summary>
+        /// Takes the world position of the chunk, and offsets it by half towards 0.
+        /// </summary>
+        public Vector3 PositionOffset
+        {
+            get => new(
+                transform.position.x - ChunkSize / 2,
+                transform.position.y - ChunkSize / 2,
+                transform.position.z - ChunkSize / 2);
+        }
         [SerializeField] int seed;
         [SerializeField] NoiseParameters treeNoiseParams;
         [SerializeField] NoiseParameters pickupsNoiseParams;
         [SerializeField] GenerateResourceChunkSettings settings;
 
-        int chunkSize;
         RaycastHit hit;
         /// <summary>
         /// List of resources populating this chunk.
@@ -38,99 +53,90 @@ namespace UZSG.Worlds
         Terrain terrain;
         bool _isProcessing;
         JobHandle _currentJob;
-        NativeArray<float> _noiseMap;
+        NativeList<int2> _treeCoords;
+        CoroutineHandle _pollJobHandle;
 
-        void Update()
-        {
-            if (_isProcessing && _currentJob.IsCompleted)
-            {
-                _currentJob.Complete();
-                PopulateChunk(_noiseMap);
-            }
-        }
-
-        public void GenerateResources(int chunkSize, Vector3Int chunkCoord, GenerateResourceChunkSettings settings)
+        /// <summary>
+        /// Populates t
+        /// </summary>
+        public void GenerateResources()
         {
             if (_isProcessing) return;
 
             _isProcessing = true;
-            this.chunkSize = chunkSize;
-            int groundLayerMask = LayerMask.NameToLayer("Ground");
-
-            _noiseMap = new(chunkSize * chunkSize * chunkSize, Allocator.TempJob);
-            CalculateNoiseRandom_Job calculateNoiseJob = new()
+            /// ^2 only, take into account only 2 dimensions since these are trees
+            /// idk about the job tho
+            int totalLength = ChunkSize * ChunkSize;
+            int estimatedCapacity = Mathf.CeilToInt(totalLength * treeNoiseParams.Density * 1.5f); /// 50% extra capacity :( was 1%, then 5%, then 10% :(
+            _treeCoords = new(estimatedCapacity, Allocator.TempJob);
+            CalculateTreePlacementsJob calculateTreePlacementsJob = new()
             {
-                Seed = this.seed,
-                Width = chunkSize,
-                Height = chunkSize,
-                Offset = new(chunkCoord.x, chunkCoord.y, chunkCoord.z),
-                Density = settings.TreeDensity,
-                Scale = 1f, /// TEST:
-                NoiseMap = _noiseMap
+                ChunkSize = ChunkSize,
+                Seed = treeNoiseParams.Seed,
+                Offset = new(Coord.x, Coord.z),
+                Density = Mathf.Clamp(treeNoiseParams.Density, 0, MAX_TREE_DENSITY),
+                TreeCoords = _treeCoords.AsParallelWriter(),
             };
-
-            _currentJob = calculateNoiseJob.Schedule(_noiseMap.Length, 8);
+            _currentJob = calculateTreePlacementsJob.Schedule(totalLength, JOB_BATCH_SIZE);
+            _pollJobHandle = Timing.RunCoroutine(_PollJobRoutine());
         }
-
-        void PopulateChunk(NativeArray<float> noiseMap)
+        
+        IEnumerator<float> _PollJobRoutine()
         {
-            var groundLayerMask = LayerMask.NameToLayer("Ground");
-            var worldPos = new Vector3(this.transform.position.x, 1000f, this.transform.position.z);
-            Vector3 samplePoint;
-            for (int i = 0; i < noiseMap.Length; i++)
+            while (!_currentJob.IsCompleted)  // Keep waiting until the job is finished
             {
-                int x = i % this.chunkSize;
-                int y = (i / this.chunkSize) % this.chunkSize;
-                int z = i / (this.chunkSize * this.chunkSize);
-                float val = noiseMap[i];
-
-                if (val > this.settings.TreeDensity &&
-                    val > this.settings.PickupsDensity)
-                {
-                    continue;
-                }
-                /// sample world position relative to chunk
-                samplePoint = new Vector3(
-                    x + this.transform.position.x,
-                    0f,
-                    z + this.transform.position.x
-                );
-
-                // samplePoint.y = terrain.SampleHeight(samplePoint);
-                // Handles.DrawWireCube(samplePoint, size: Vector3.one);
-                // var layer = GetTerrainLayerFromPoint(terrain, samplePoint);
-
-                if (val > settings.TreeDensity &&
-                    settings.PlaceTrees)
-                {
-                    Debug.DrawRay(samplePoint, Vector3.up, Color.red, 1f);
-                    // TryPlaceTree(layer, samplePoint);
-                }
-
-                if (val > settings.PickupsDensity &&
-                    settings.PlacePickups)
-                {
-                    Debug.DrawRay(samplePoint, Vector3.up, Color.red, 1f);
-                    // TryPlacePickup(layer, samplePoint);
-                }
+                yield return Timing.WaitForOneFrame; // Wait for the next frame before checking again
             }
 
-            _noiseMap.Dispose();
+            _currentJob.Complete();
+            PopulateTrees(_treeCoords);
+            _treeCoords.Dispose();
+            // PopulatePickups(_pickupsCoords);
+            // _pickupsCoords.Dispose();
+            _isProcessing = false;
+        }
+
+        void PopulateTrees(NativeList<int2> treeCoords)
+        {
+            if (!settings.PlaceTrees) return;
+
+            Vector3 samplePoint;
+            int x, z;
+            for (int i = 0; i < treeCoords.Length; i++)
+            {
+                x = treeCoords[i].x;
+                z = treeCoords[i].y;
+                samplePoint = PositionOffset + new Vector3(x, 0f, z);
+                
+                if (settings.PlaceTrees)
+                {
+                    TryPlaceTree(samplePoint);
+                    // TryPlaceTree(layer, samplePoint);
+                }
+            }
         }
 
         /// <summary>
         /// Tries to place a Tree (Resource) at position given the terrain layer.
         /// </summary>
-        void TryPlaceTree(TerrainLayer layer, Vector3 position)
+        void TryPlaceTree(Vector3 position)
         {
-            if (layer.diffuseTexture.name.Equals("grass", StringComparison.OrdinalIgnoreCase))
+            if (!Physics.Raycast(new(position.x, 256f, position.z), -Vector3.up, out hit, 500f)) return;
+            if (!hit.collider.TryGetComponent(out terrain)) return;
+
+            Game.Objects.PlaceNew<Objects.Tree>("pine_tree_heart", hit.point, (info) =>
             {
-                Debug.DrawRay(position, Vector3.up, Color.green, 1f);
-            }
-            else
-            {
-                Debug.DrawRay(position, Vector3.up, Color.red, 1f);
-            }
+                resources.Add(info.Object);
+            });
+            // var layer = GetTerrainLayerFromPoint(terrain, hit.point);
+            // if (layer.diffuseTexture.name.Equals("grass", StringComparison.OrdinalIgnoreCase))
+            // {
+                
+            // }
+            // else
+            // {
+                
+            // }
 // #if UNITY_EDITOR
 //                         PrefabUtility.InstantiatePrefab(null);
 //                         // continue;
@@ -139,12 +145,37 @@ namespace UZSG.Worlds
                 // Game.Objects.PlaceNew();
         }
 
+        void PopulatePickups(NativeList<int2> pickupsCoords)
+        {
+            if (!settings.PlacePickups) return;
+            
+            Vector3 samplePoint;
+            int x, z;
+            for (int i = 0; i < pickupsCoords.Length; i++)
+            {
+                x = pickupsCoords[i].x;
+                z = pickupsCoords[i].y;
+                samplePoint = PositionOffset + new Vector3(x, 0f, z);
+                
+                if (settings.PlacePickups)
+                {
+                    Debug.DrawRay(samplePoint, Vector3.up * 10f, Color.red, 1f);
+                    // TryPlacePickup(layer, samplePoint);
+                }
+            }
+        }
+
         /// <summary>
         /// Tries to place a Resource Pickup at position given the terrain layer.
         /// </summary>
         void TryPlacePickup(TerrainLayer layer, Vector3 position)
         {
 
+        }
+
+        public void SetGenerationSettings(GenerateResourceChunkSettings settings)
+        {
+            this.settings = settings;
         }
 
         public void SetTreeNoiseParameters(NoiseParameters p)
@@ -183,9 +214,14 @@ namespace UZSG.Worlds
             {
                 if (resource.IsDirty)
                 {
-                    resource.WriteSaveData();
-                    /// continue writing
+                    // resource.WriteSaveData();
+                    // continue writing
                 }
+#if UNITY_EDITOR
+                DestroyImmediate(resource.gameObject);
+#else
+                Destroy(resource.gameObject);
+#endif
             }
 #if UNITY_EDITOR
             DestroyImmediate(this.gameObject);
@@ -222,47 +258,79 @@ namespace UZSG.Worlds
             return terrain.terrainData.terrainLayers[maxIndex]; // Returns the index of the dominant texture
         }
 
-#if UNITY_EDITOR 
         void OnDrawGizmosSelected()
         {
-            if (gameObject.activeInHierarchy)
-            {
-                Gizmos.color = Color.green;
-                Gizmos.DrawWireCube(this.transform.position, Vector3.one * this.chunkSize);
-            }
+            if (!gameObject.activeInHierarchy) return;
+            
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireCube(this.transform.position, Vector3.one * ChunkSize);
         }
-#endif
     }
     
+    /// <summary>
+    /// Calculates the coordinates of trees in 2D space with random noise.
+    /// </summary>
     [BurstCompile]
-    public struct CalculateNoiseRandom_Job : IJobParallelFor
+    public struct CalculateTreePlacementsJob : IJobParallelFor
     {
         [ReadOnly] public int ChunkSize;
         [ReadOnly] public int Seed;
-        [ReadOnly] public int Width;
-        [ReadOnly] public int Height;
-        [ReadOnly] public int3 Offset;
+        [ReadOnly] public int2 Offset;
         [ReadOnly] public float Density;
-        [ReadOnly] public float Scale;
-
-        public NativeArray<float> NoiseMap;
+        /// <summary>
+        /// The coordinates where resources are placed.
+        /// </summary>
+        public NativeList<int2>.ParallelWriter TreeCoords;
 
         public void Execute(int index)
         {
-            var rand = Unity.Mathematics.Random.CreateFromIndex((uint)index);
-            rand.state = (uint)math.abs(Seed);
-            var density01 = math.clamp(Density, 0, 1);
-            
+            var rand = Unity.Mathematics.Random.CreateFromIndex((uint)(Seed + index));
+            var seedOffset = new float2(
+                rand.NextFloat(Noise.MIN_RAND, Noise.MAX_RAND),
+                rand.NextFloat(Noise.MIN_RAND, Noise.MAX_RAND));
             int x = index % ChunkSize;
             int y = (index / ChunkSize) % ChunkSize;
-            int z = index / (ChunkSize * ChunkSize);
-            
-            float sx = (x + Offset.x) * Scale;
-            float sy = (y + Offset.y) * Scale;
-            float sz = (z + Offset.z) * Scale;
 
-            NoiseMap[index] = noise.snoise(new float3(sx, sy, sz)); /// 3D simplex
+            var samplePos = new float2(x, y) + (seedOffset + Offset);
+            uint hash = math.asuint(samplePos.x * 73856093 + samplePos.y * 19349663 + Seed);
+            var cellRand = Unity.Mathematics.Random.CreateFromIndex(hash);
+            float randomValue = cellRand.NextFloat(0f, 1f);
+        
+            if (randomValue < Density)
+            {
+                TreeCoords.AddNoResize(new int2(x, y));
+            }
         }
     }
+        
+    [BurstCompile]
+    public struct CalculateNoiseSimplex_Job : IJobParallelFor
+    {
+        // [ReadOnly] public int ChunkSize;
+        // [ReadOnly] public int Seed;
+        // [ReadOnly] public int3 Offset;
+        // [ReadOnly] public float Density;
 
+        // public NativeArray<float> NoiseMap;
+
+        public void Execute(int index)
+        {
+        //     var rand = Unity.Mathematics.Random.CreateFromIndex(math.hash(new int2(Seed, index)));
+        //     var seedOffset = new float3(
+        //         rand.NextFloat(float.MinValue, float.MaxValue),
+        //         rand.NextFloat(float.MinValue, float.MaxValue),
+        //         rand.NextFloat(float.MinValue, float.MaxValue));
+
+        //     int x = index % ChunkSize;
+        //     int y = (index / ChunkSize) % ChunkSize;
+        //     int z = index / (ChunkSize * ChunkSize);
+        //     float scale = math.clamp(Scale, 0.0001f, Scale);
+            
+        //     float sx = (x + Offset.x + seedOffset.x) * scale;
+        //     float sy = (y + Offset.y + seedOffset.y) * scale;
+        //     float sz = (z + Offset.z + seedOffset.z) * scale;
+
+        //     NoiseMap[index] = noise.snoise(new float3(sx, sy, sz));
+        }
+    }
 }

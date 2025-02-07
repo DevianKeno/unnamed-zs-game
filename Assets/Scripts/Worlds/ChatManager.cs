@@ -79,6 +79,21 @@ namespace UZSG.Worlds
             }
         }
 
+        public void SendMessageRaw(object message)
+        {
+            /// Try to invoke command if it's one
+            if (message is string str && str.StartsWith(Console.COMMAND_PREFIX))
+            {
+                Game.Console.RunCommand(str);
+                return;
+            }
+            else /// just a chat message
+            {
+                ui.AddMessage($"{message}\n");
+            }
+            OnSendMessage?.Invoke(message.ToString());
+        }
+
         public void SendMessage(object message)
         {
             /// Try to invoke command if it's one

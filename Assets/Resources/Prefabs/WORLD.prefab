@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2264068026159860873}
   - component: {fileID: 626271515164900290}
   m_Layer: 0
-  m_Name: Resource Chunk Manager
+  m_Name: CHUNKS
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29,8 +29,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 8022718985425029606}
+  m_Children: []
   m_Father: {fileID: 4703847520753651982}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &626271515164900290
@@ -51,29 +50,28 @@ MonoBehaviour:
   terrain: {fileID: 0}
   Seed: 12345
   treeNoiseParameters:
-    Type: 0
+    NoiseType: 0
     Seed: 12345
     Offset: {x: 0, y: 0}
     Octaves: 0
     Persistence: 0
     Lacunarity: 0
-    NoiseScale: 0
-    Threshold: 0
+    Scale: 1
+    Density: 0.02
   PlaceTrees: 1
-  TreeDensity: 0.5
+  TreeDensity: 0.05
   pickupNoiseParameters:
-    Type: 0
+    NoiseType: 0
     Seed: 12345
     Offset: {x: 0, y: 0}
     Octaves: 0
     Persistence: 0
     Lacunarity: 0
-    NoiseScale: 0
-    Threshold: 0
+    Scale: 0
+    Density: 0
   PlacePickups: 1
   PickupsDensity: 0.5
   chunksLoaded: 0
-  chunksContainer: {fileID: 8022718985425029606}
   chunkOpacity: 0.5
   enableLODChunking: 0
 --- !u!1 &1839575761864172583
@@ -161,13 +159,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3294744197836459953}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.6087614, y: -0, z: -0, w: -0.7933533}
+  m_LocalRotation: {x: 0.60876137, y: 0, z: 0, w: 0.7933534}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2740809496562152626}
-  m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+  m_LocalEulerAnglesHint: {x: 75, y: 0, z: 0}
 --- !u!108 &7563140517493066066
 Light:
   m_ObjectHideFlags: 0
@@ -223,8 +221,8 @@ Light:
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
-  m_ColorTemperature: 6570
-  m_UseColorTemperature: 0
+  m_ColorTemperature: 8000
+  m_UseColorTemperature: 1
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
@@ -335,11 +333,11 @@ MonoBehaviour:
   moonLight: {fileID: 7563140517493066066}
   MoonlightIntensity: 1
   zeroTimeStartsAtDay: 1
-  rawTime: 0
-  currentHour: 6
-  currentMinute: 0
-  currentSecond: 0
-  currentDay: 0
+  rawTime: 558
+  currentHour: 10
+  currentMinute: 27
+  currentSecond: 50
+  currentDay: -5
   WeatherPreset: {fileID: 11400000, guid: c7476f3fd253a2945b7facfc5b8acddd, type: 2}
 --- !u!1 &4170276337354895309
 GameObject:
@@ -352,7 +350,7 @@ GameObject:
   - component: {fileID: 6362037838610728980}
   - component: {fileID: 3316125988968337934}
   m_Layer: 0
-  m_Name: Chat Manager
+  m_Name: CHAT
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -385,37 +383,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b11ba8174b0c7e489d6e2be30cfcf6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &4811350032732938366
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8022718985425029606}
-  m_Layer: 0
-  m_Name: Loaded Chunks
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8022718985425029606
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4811350032732938366}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 2264068026159860873}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5933016743309004554
 GameObject:
   m_ObjectHideFlags: 0
@@ -532,13 +499,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6093328137344702639}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.043619387, y: -0, z: -0, w: 0.99904823}
+  m_LocalRotation: {x: 0.560928, y: -0, z: -0, w: 0.8278646}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2740809496562152626}
-  m_LocalEulerAnglesHint: {x: -205.88, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 10, y: 0, z: 0}
 --- !u!108 &3304269742938537319
 Light:
   m_ObjectHideFlags: 0
@@ -550,7 +517,7 @@ Light:
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
-  m_Color: {r: 0.11764705, g: 0.30980393, b: 0.5568628, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 3
   m_Range: 10
   m_SpotAngle: 30
@@ -594,8 +561,8 @@ Light:
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
-  m_ColorTemperature: 6570
-  m_UseColorTemperature: 0
+  m_ColorTemperature: 4000
+  m_UseColorTemperature: 1
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1

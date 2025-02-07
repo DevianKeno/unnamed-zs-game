@@ -96,6 +96,7 @@ namespace UZSG.Objects
         {
             if (Attributes.TryGet("health", out var health))
             {
+                MarkDirty();
                 health.Remove(dmg.Amount);
                 
                 if (health.Value <= 0)

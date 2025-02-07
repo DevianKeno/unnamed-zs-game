@@ -66,7 +66,10 @@ namespace UZSG.Entities
         public EntityHitboxController Hitboxes => hitboxes;
 
         PlayerAbsoluteTerritory at;
-                
+        /// <summary>
+        /// The world this player is currently in.
+        /// </summary>
+        public World World { get; private set; }
         bool _isInitialized = false;
         bool _inGodMode = false;
         public bool InGodMode => _inGodMode;
@@ -201,6 +204,7 @@ namespace UZSG.Entities
             InitializeStateMachines();
             InitializeAnimator();
             InitializeHitboxes();
+            World = Game.World.CurrentWorld;
         }
 
         /// <summary>

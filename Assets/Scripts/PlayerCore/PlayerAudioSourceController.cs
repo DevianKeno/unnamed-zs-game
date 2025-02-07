@@ -20,7 +20,7 @@ namespace UZSG.Players
 
         void PlayFootsteps()
         {
-            if(IsMoving && Player.Controls.IsGrounded && Player.Controls.Velocity.magnitude != 0f)
+            if (IsMoving && Player.Controls.IsGrounded && Player.Controls.Velocity.magnitude != 0f)
             {
 
                 // 2f is arbitrary, a number kinda feels right based on player magnitude

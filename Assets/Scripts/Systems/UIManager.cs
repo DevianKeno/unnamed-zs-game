@@ -8,6 +8,7 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.UI;
 
 
 
@@ -54,21 +55,27 @@ namespace UZSG.UI
 
         bool _isInitialized;
         List<Window> _activeWindows = new();
+        Window _currentWindow;
+        Dictionary<string, Sprite> _icons = new();
         /// <summary>
         /// Returns true if any UI element that derives from the <c>Window</c> class is currently opened.
         /// </summary>
         public bool HasActiveWindow => _activeWindows.Count > 0;
-        Window _currentWindow;
-        Dictionary<string, Sprite> _icons = new();
-
-        [SerializeField] Canvas canvas;
-        public Canvas Canvas => canvas;
-
-        [SerializeField] Canvas healthBarCanvas;
-        public Canvas HealthBarCanvas => healthBarCanvas;
-
         bool _isCursorVisible;
         public bool IsCursorVisible => _isCursorVisible;
+        [SerializeField] Canvas canvas;
+        /// <summary>
+        /// General canvas for all UI elements.
+        /// </summary>
+        public Canvas Canvas => canvas;
+        [SerializeField] Canvas healthBarCanvas;
+        /// <summary>
+        /// Canvas specifically for entity health bars.
+        /// </summary>
+        public Canvas HealthBarCanvas => healthBarCanvas;
+
+        [SerializeField] Image screenBlack;
+
 
 
         #region UI Events
@@ -152,6 +159,16 @@ namespace UZSG.UI
         
         #region Public methods
         
+        public void Dim(float duration)
+        {
+            screenBlack.CrossFadeAlpha(0.25f, duration, false);
+        }
+
+        public void Undim(float duration)
+        {
+            screenBlack.CrossFadeAlpha(0f, duration, false);
+        }
+
         public void CloseTopmostWindow()
         {
             if (_activeWindows.Count == 0) return;

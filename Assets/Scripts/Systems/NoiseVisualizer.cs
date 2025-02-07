@@ -1,36 +1,24 @@
-#if UNITY_EDITOR
 using System;
+#if UNITY_EDITOR
 using UnityEditor;
 #endif
 using UnityEngine;
+using UnityEngine.UI;
 using UZSG.Worlds;
 
 namespace UZSG
 {
     public enum NoiseType {
-        Random, Perlin
+        Random, Simplex, Perlin
     }
     
     [ExecuteAlways]
     public class NoiseVisualizer : MonoBehaviour
     {
-        public NoiseType NoiseType = NoiseType.Perlin;
-        public int Seed;
-        [Range(0, 1)] public float Density;
-        [Header("Noise Settings")]
-        public NoiseParameters noiseParameters;
         public Vector2Int Size = new(100, 100);
-        public float Scale = 10f;
-        public Vector2 Offset;
-
-        bool needsUpdate = true;
-        Texture2D noiseTexture;
+        public NoiseParameters noiseParams;
         
-        [Header("Visualization Settings")]
-        [SerializeField] float distanceFromCamera = 2f;
-
-        [SerializeField] MeshFilter meshFilter;
-        [SerializeField] MeshRenderer meshRenderer;
+        [SerializeField] Image image;
 
         void OnEnable()
         {
@@ -40,42 +28,32 @@ namespace UZSG
         void OnValidate()
         {
             GenerateTexture();
-            if (SceneView.lastActiveSceneView != null)
-            {
-                PositionVisualizer(SceneView.lastActiveSceneView.camera.transform);
-            }
         }
-
-    //     void Update()
-    //     {
-    //         if (!Application.isPlaying)
-    //         {
-    // #if UNITY_EDITOR
-    //             if (SceneView.lastActiveSceneView != null)
-    //             {
-    //             }
-    // #endif
-    //             if (needsUpdate)
-    //             {
-    //                 needsUpdate = false;
-    //             }
-    //         }
-    //     }
 
         void GenerateTexture()
         {
-            float[,] noiseMap = NoiseType switch
+            float[,] noiseMap = noiseParams.NoiseType switch
             {
-                NoiseType.Random => Noise.Generate2DRandom01(Seed, width: Size.x, height: Size.y, density01: Density / 100, Offset),
-                NoiseType.Perlin => Noise.Generate2DPerlin(Seed, width: Size.x, height: Size.y, Offset,
-                    octaves: noiseParameters.Octaves,
-                    persistence: noiseParameters.Lacunarity,
-                    lacunarity: noiseParameters.Lacunarity,
-                    scale: noiseParameters.NoiseScale),
+                NoiseType.Random => Noise.generate2DRandom01(noiseParams.Seed, width: Size.x, height: Size.y,
+                    offset: new Unity.Mathematics.float2(noiseParams.Offset.x, noiseParams.Offset.y),
+                    density01: noiseParams.Density,
+                    scale: noiseParams.Scale),
+
+                NoiseType.Simplex => Noise.generate2DSimplex(noiseParams.Seed, width: Size.x, height: Size.y,
+                    offset: new Unity.Mathematics.float2(noiseParams.Offset.x, noiseParams.Offset.y),
+                    scale: noiseParams.Scale),
+
+                NoiseType.Perlin => Noise.generate2DPerlin(noiseParams.Seed, width: Size.x, height: Size.y,
+                    offset: noiseParams.Offset,
+                    octaves: noiseParams.Octaves,
+                    persistence: noiseParams.Lacunarity,
+                    lacunarity: noiseParams.Lacunarity,
+                    scale: noiseParams.Scale),
+
                 _ => throw new NotImplementedException(),
             };
 
-            noiseTexture = new Texture2D(width: Size.x, height: Size.y);
+            var noiseTexture = new Texture2D(width: Size.x, height: Size.y);
     
             for (int y = 0; y < noiseMap.GetLength(1); y++)
             {
@@ -86,39 +64,8 @@ namespace UZSG
                     noiseTexture.SetPixel(x, y, color);
                 }
             }
-
             noiseTexture.Apply();
-            meshFilter.mesh = CreateQuad();
-            meshRenderer.sharedMaterial.SetTexture("_MainTex", noiseTexture);
-        }
-
-        Mesh CreateQuad()
-        {
-            Mesh mesh = new Mesh();
-            mesh.vertices = new Vector3[]
-            {
-                new Vector3(-1, -1, 0), new Vector3(1, -1, 0),
-                new Vector3(-1, 1, 0), new Vector3(1, 1, 0)
-            };
-            mesh.uv = new Vector2[]
-            {
-                new Vector2(0, 0), new Vector2(1, 0),
-                new Vector2(0, 1), new Vector2(1, 1)
-            };
-            mesh.triangles = new int[] { 0, 2, 1, 2, 3, 1 };
-            mesh.RecalculateNormals();
-            return mesh;
-        }
-
-        void PositionVisualizer(Transform cameraTransform)
-        {
-            transform.position = cameraTransform.position + cameraTransform.forward * distanceFromCamera;
-            transform.rotation = Quaternion.LookRotation(cameraTransform.forward);
-        }
-
-        public void MarkDirty()
-        {
-            needsUpdate = true;
+            image.sprite = Sprite.Create(noiseTexture, new Rect(0, 0, Size.x,  Size.y), Vector2.one * 0.5f);
         }
     }
 }

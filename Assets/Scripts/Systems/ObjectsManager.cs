@@ -6,7 +6,6 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
 using UZSG.Data;
-using UZSG.Items;
 using UZSG.Objects;
 
 namespace UZSG
@@ -39,7 +38,11 @@ namespace UZSG
             public BaseObject Object { get; set; }
         }
 
-        public void PlaceNew(string objectId, Vector3 position = default, OnObjectPlaceCompleted callback = null)
+        /// <summary>
+        /// Place a new Object at position.
+        /// Should only be called when within a world.
+        /// </summary>
+        public async void PlaceNew(string objectId, Vector3 position = default, OnObjectPlaceCompleted callback = null)
         {
             if (!_objectsDict.ContainsKey(objectId))
             {
@@ -50,36 +53,36 @@ namespace UZSG
             try
             {
                 var objData = _objectsDict[objectId];
-                Addressables.LoadAssetAsync<GameObject>(objData.Object).Completed += (a) =>
-                {
-                    if (a.Status == AsyncOperationStatus.Succeeded)
-                    {
-                        var go = Instantiate(a.Result, position, Quaternion.identity, transform);
-                        go.name = $"{objData.DisplayName} (Object)";
-                        if (go.TryGetComponent(out BaseObject baseObject))
-                        {
-                            var info = new ObjectPlacedInfo()
-                            {
-                                Object = baseObject
-                            };
-                            callback?.Invoke(info);
-                            baseObject.PlaceInternal();
-                            // entity.OnSpawnInternal();
-                            // OnEntitySpawned?.Invoke(new()
-                            // {
-                            //     Entity = entity
-                            // });
-                            if (Game.Main.EnableDebugMode)
-                            {
-                                Game.Console.LogDebug($"Placed object '{objectId}' at ({position.x}, {position.y}, {position.z})");
-                            }
-                            return;
-                        }
-                        Destroy(go);
-                    }
+                var asyncOp = Addressables.LoadAssetAsync<GameObject>(objData.Object);
+                await asyncOp.Task;
 
-                    Game.Console.LogDebug($"Tried to place Object '{objectId}', but failed miserably");
-                };
+                if (asyncOp.Status == AsyncOperationStatus.Succeeded)
+                {
+                    var go = Instantiate(asyncOp.Result, position, Quaternion.identity, Game.World.CurrentWorld.objectsContainer);
+                    go.name = $"{objData.DisplayName} (Object)";
+                    if (go.TryGetComponent(out BaseObject baseObject))
+                    {
+                        var info = new ObjectPlacedInfo()
+                        {
+                            Object = baseObject
+                        };
+                        callback?.Invoke(info);
+                        baseObject.PlaceInternal();
+                        // entity.OnSpawnInternal();
+                        // OnEntitySpawned?.Invoke(new()
+                        // {
+                        //     Entity = entity
+                        // });
+                        
+                        // Game.Console.LogDebug($"Placed object '{objectId}' at ({position.x}, {position.y}, {position.z})");
+                        Addressables.Release(asyncOp);
+                        return;
+                    }
+                    Destroy(go);
+                }
+
+                Game.Console.LogDebug($"Tried to place Object '{objectId}', but failed miserably");
+                
             }
             catch (Exception ex)
             {
@@ -94,7 +97,11 @@ namespace UZSG
             public T Object { get; set; }
         }
 
-        public void PlaceNew<T>(string objectId, Vector3 position = default, OnObjectPlaceCompleted<T> callback = null) where T : BaseObject
+        /// <summary>
+        /// Place a new Object at position.
+        /// Should only be called when within a world.
+        /// </summary>
+        public async void PlaceNew<T>(string objectId, Vector3 position = default, OnObjectPlaceCompleted<T> callback = null) where T : BaseObject
         {
             if (!_objectsDict.ContainsKey(objectId))
             {
@@ -105,35 +112,34 @@ namespace UZSG
             try
             {
                 var objData = _objectsDict[objectId];
-                Addressables.LoadAssetAsync<GameObject>(objData.Object).Completed += (a) =>
+                var asyncOp = Addressables.LoadAssetAsync<GameObject>(objData.Object);
+                await asyncOp.Task;
+                
+                if (asyncOp.Status == AsyncOperationStatus.Succeeded)
                 {
-                    if (a.Status == AsyncOperationStatus.Succeeded)
+                    var go = Instantiate(asyncOp.Result, position, Quaternion.identity, Game.World.CurrentWorld.objectsContainer);
+                    go.name = $"{objData.DisplayName} (Object)";
+                    if (go.TryGetComponent(out BaseObject baseObject))
                     {
-                        var go = Instantiate(a.Result, position, Quaternion.identity, transform);
-                        go.name = $"{objData.DisplayName} (Object)";
-                        if (go.TryGetComponent(out BaseObject baseObject))
+                        var info = new ObjectPlacedInfo<T>()
                         {
-                            var info = new ObjectPlacedInfo<T>()
-                            {
-                                Object = baseObject as T
-                            };
-                            callback?.Invoke(info);
-                            // entity.OnSpawnInternal();
-                            // OnEntitySpawned?.Invoke(new()
-                            // {
-                            //     Entity = entity
-                            // });
-                            if (Game.Main.EnableDebugMode)
-                            {
-                                Game.Console.LogInfo($"Placed object '{objectId}' at ({position.x}, {position.y}, {position.z})");
-                            }
-                            return;
-                        }
-                        Destroy(go);
-                    }
+                            Object = baseObject as T
+                        };
+                        callback?.Invoke(info);
+                        // entity.OnSpawnInternal();
+                        // OnEntitySpawned?.Invoke(new()
+                        // {
+                        //     Entity = entity
+                        // });
 
-                    Game.Console.LogDebug($"Tried to place Object '{objectId}', but failed miserably");
-                };
+                        // Game.Console.LogDebug($"Placed object '{objectId}' at ({position.x}, {position.y}, {position.z})");
+                        Addressables.Release(asyncOp);
+                        return;
+                    }
+                    Destroy(go);
+                }
+
+                Game.Console.LogDebug($"Tried to place Object '{objectId}', but failed miserably");
             }
             catch (Exception ex)
             {

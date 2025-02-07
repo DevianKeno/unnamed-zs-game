@@ -2348,17 +2348,6 @@
                 },
                 {
                     "name": "",
-                    "id": "853ee43f-fa08-4ebe-b71e-b5289aa18143",
-                    "path": "<Keyboard>/backquote",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Hide/Show",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "7138293c-378c-47d4-a3f0-45081265c874",
                     "path": "<Keyboard>/z",
                     "interactions": "",

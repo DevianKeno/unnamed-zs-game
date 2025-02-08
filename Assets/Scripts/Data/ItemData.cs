@@ -5,7 +5,6 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Serialization;
 
-
 namespace UZSG.Data
 {
     public enum ItemType { 
@@ -20,33 +19,54 @@ namespace UZSG.Data
     public class ItemData : BaseData
     {
         [Header("Item Data")]
-        [FormerlySerializedAs("Name")]
-        public string DisplayName;
+        [FormerlySerializedAs("Name")] public string DisplayName;
         public string DisplayNameTranslatable => Game.Locale.Translatable($"item.{Id}.name");
+
         [TextArea] public string Description;
         public string DescriptionTranslatable => Game.Locale.Translatable($"item.{Id}.description");
-        [FormerlySerializedAs("Model")] public AssetReference EntityModel;
+
+        public AssetReference EntityModel;
         public Sprite Sprite;
         public ItemType Type;
         public ItemSubtype Subtype;
         public float Weight;
         public bool IsStackable => StackSize > 1;
         public int StackSize = 1;
+        /// <summary>
+        /// Whether this item can be used as a fuel source.
+        /// </summary>
         public bool IsFuel;
-        [FormerlySerializedAs("FuelDuration")]
-        public int FuelDurationSeconds;
+        [FormerlySerializedAs("FuelDuration")] public int FuelDurationSeconds;
+
         /// <summary>
         /// If this Item is a placeable Object.
         /// </summary>
         public bool IsObject;
+        /// <summary>
+        /// The object that this item represents.
+        /// </summary>
         public ObjectData ObjectData;
-
-        /// Crafting
+        
+        [Header("Crafting")]
+        /// <summary>
+        /// Whether this item is used to craft other items.
+        /// </summary>
         public bool IsMaterial;
+        /// <summary>
+        /// Whether this item is can be crafted.
+        /// </summary>
         public bool IsCraftable;
+        /// <summary>
+        /// List of recipes that outputs this item.
+        /// </summary>
         public List<RecipeData> Recipes;
+
+        /// <summary>
+        /// About where this item can be gathered/taken from.
+        /// </summary>
         [TextArea] public string SourceDescription;
         public string SourceDescriptionTranslatable => Game.Locale.Translatable($"item.{Id}.source");
+        
 
         [Header("Audio Data")]
         public AudioAssetsData AudioAssetsData;

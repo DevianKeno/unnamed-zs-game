@@ -31,8 +31,8 @@ namespace UZSG.UnityEditor
             base.OnEnable();
 
             assetReference = serializedObject.FindProperty("EntityModel");
-            displayNameProperty = serializedObject.FindProperty("displayName");
-            description = serializedObject.FindProperty("description");
+            displayNameProperty = serializedObject.FindProperty("DisplayName");
+            description = serializedObject.FindProperty("Description");
             sprite = serializedObject.FindProperty("Sprite");
             stackSize = serializedObject.FindProperty("StackSize");
             type = serializedObject.FindProperty("Type");
@@ -40,12 +40,12 @@ namespace UZSG.UnityEditor
             isMaterial = serializedObject.FindProperty("IsMaterial");
             isCraftable = serializedObject.FindProperty("IsCraftable");
             isFuel = serializedObject.FindProperty("IsFuel");
-            fuelDuration = serializedObject.FindProperty("FuelDuration");
+            fuelDuration = serializedObject.FindProperty("FuelDurationSeconds");
             isObject = serializedObject.FindProperty("IsObject");
             objectData = serializedObject.FindProperty("ObjectData");
             recipes = serializedObject.FindProperty("Recipes");
             weight = serializedObject.FindProperty("Weight");
-            sourceDesc = serializedObject.FindProperty("sourceDescription");
+            sourceDesc = serializedObject.FindProperty("SourceDescription");
             audioAssetsData = serializedObject.FindProperty("AudioAssetsData");
         }
 
@@ -67,7 +67,6 @@ namespace UZSG.UnityEditor
             EditorGUILayout.PropertyField(sourceDesc);
 
             EditorGUILayout.Space();
-            EditorGUILayout.LabelField("Crafting", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(isMaterial);
             EditorGUILayout.PropertyField(isCraftable);
             if (itemData.IsCraftable)

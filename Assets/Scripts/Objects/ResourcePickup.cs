@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+
 using UnityEngine.UIElements;
+
 using UZSG.Data;
 using UZSG.Entities;
 using UZSG.Interactions;
 using UZSG.Items;
 using UZSG.Players;
-
 
 namespace UZSG.Objects
 {
@@ -16,8 +17,6 @@ namespace UZSG.Objects
         public string ActionText => "Pick Up";
         public string DisplayName => ResourceData.DisplayName;
         public bool AllowInteractions { get; set; } = true;
-
-        Player _actor;
 
         protected override void Start()
         {

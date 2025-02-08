@@ -58,7 +58,7 @@ namespace UZSG
 
                 if (asyncOp.Status == AsyncOperationStatus.Succeeded)
                 {
-                    var go = Instantiate(asyncOp.Result, position, Quaternion.identity, Game.World.CurrentWorld.objectsContainer);
+                    var go = Instantiate(asyncOp.Result, position, Quaternion.identity/*, Game.World.CurrentWorld.objectsContainer*/);
                     go.name = $"{objData.DisplayName} (Object)";
                     if (go.TryGetComponent(out BaseObject baseObject))
                     {
@@ -117,7 +117,7 @@ namespace UZSG
                 
                 if (asyncOp.Status == AsyncOperationStatus.Succeeded)
                 {
-                    var go = Instantiate(asyncOp.Result, position, Quaternion.identity, Game.World.CurrentWorld.objectsContainer);
+                    var go = Instantiate(asyncOp.Result, position, Quaternion.identity/*, Game.World.CurrentWorld.objectsContainer*/);
                     go.name = $"{objData.DisplayName} (Object)";
                     if (go.TryGetComponent(out BaseObject baseObject))
                     {

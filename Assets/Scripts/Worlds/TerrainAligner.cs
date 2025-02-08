@@ -5,7 +5,7 @@ namespace UZSG.Worlds
 {
     public class TerrainAligner : MonoBehaviour
     {
-        public Vector3 SizeOverride = new(512, 1024, 512);
+        public Vector3 SizeOverride = new(512, 1536, 512);
         public List<Terrain> terrains = new();
         
         [ContextMenu("Collect Terrains")]

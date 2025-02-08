@@ -96,6 +96,10 @@ namespace UZSG.Players
         {
             get => rb.velocity.y < 0f;
         }
+        public bool IsSwimming
+        {
+            get => false;
+        }
         public bool CanRun
         {
             get => !_isMovingBackwards && !_isMovingSideways && IsGrounded;

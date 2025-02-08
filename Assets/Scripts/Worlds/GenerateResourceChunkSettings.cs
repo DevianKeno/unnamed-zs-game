@@ -7,5 +7,6 @@ namespace UZSG.Worlds
     {
         public bool PlaceTrees { get; set; }
         public bool PlacePickups { get; set; }
+        public bool PlaceOreDeposits { get; set; }
     }
 }

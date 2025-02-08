@@ -9,6 +9,7 @@ using UnityEditor;
 #endif
 using UnityEngine;
 
+using UZSG.Data;
 using UZSG.Entities;
 using UZSG.Saves;
 
@@ -41,20 +42,25 @@ namespace UZSG.Worlds
         
         [SerializeField] ChunkSizes chunkSize = ChunkSizes.Full;
         int chunkSizeInt => (int) chunkSize;
-        [SerializeField] Terrain terrain;
+        [SerializeField] internal bool enableLoadingChunks = false;
 
         [Header("Generation Settings")]
         [Header("Trees")]
         public int Seed = 12345;
-        [SerializeField] NoiseParameters treeNoiseParameters = new();
         public bool PlaceTrees = true;
+        [SerializeField] NoiseData treesNoiseData;
 
         [Header("Pickups")]
-        [SerializeField] NoiseParameters pickupNoiseParameters = new();
         public bool PlacePickups = true;
+        [SerializeField] NoiseData pickupsNoiseData;
+
+        [Header("Ore Deposits")]
+        public bool PlaceOreDeposits = true;
+        [SerializeField] NoiseData oreDepositsNoiseData;
+
+        [Header("Status")]
         [SerializeField] int chunksLoaded;
-        
-        [SerializeField] internal bool enableLoadingChunks = false;
+
         /// <summary>
         /// The chunk coordinate the player is currently in.
         /// </summary>
@@ -114,11 +120,6 @@ namespace UZSG.Worlds
             enableLoadingChunks = true;
         }
 
-        void OnValidate()
-        {
-            treeNoiseParameters.Seed = this.Seed;
-            pickupNoiseParameters.Seed = this.Seed;
-        }
 
         void Update()
         {
@@ -262,8 +263,9 @@ namespace UZSG.Worlds
 #else
             chunk.SetSeed(World.GetSeed());
 #endif
-            chunk.SetTreeNoiseParameters(treeNoiseParameters); /// TODO: read from world aatributes
-            chunk.SetPickupNoiseParameters(pickupNoiseParameters); /// TODO: read from world aatributes
+            chunk.treesNoiseData = treesNoiseData; /// TODO: read from world aatributes
+            chunk.pickupsNoiseData = pickupsNoiseData; /// TODO: read from world aatributes
+            chunk.oreDepositsNoiseData = oreDepositsNoiseData; /// TODO: read from world aatributes
 
             var generationSettings = new GenerateResourceChunkSettings()
             {

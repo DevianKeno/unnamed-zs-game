@@ -1,22 +1,17 @@
 using System;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
+
 using UnityEngine;
 using UnityEngine.UI;
-using UZSG.Worlds;
+
+using UZSG.Data;
 
 namespace UZSG
 {
-    public enum NoiseType {
-        Random, Simplex, Perlin
-    }
-    
     [ExecuteAlways]
     public class NoiseVisualizer : MonoBehaviour
     {
         public Vector2Int Size = new(100, 100);
-        public NoiseParameters noiseParams;
+        public NoiseLayer noiseLayer;
         
         [SerializeField] Image image;
 
@@ -32,23 +27,23 @@ namespace UZSG
 
         void GenerateTexture()
         {
-            float[,] noiseMap = noiseParams.NoiseType switch
+            float[,] noiseMap = noiseLayer.NoiseType switch
             {
-                NoiseType.Random => Noise.generate2DRandom01(noiseParams.Seed, width: Size.x, height: Size.y,
-                    offset: new Unity.Mathematics.float2(noiseParams.Offset.x, noiseParams.Offset.y),
-                    density01: noiseParams.Density,
-                    scale: noiseParams.Scale),
+                NoiseType.Random => Noise.generate2DRandom01(noiseLayer.Seed, width: Size.x, height: Size.y,
+                    offset: new Unity.Mathematics.float2(noiseLayer.Offset.x, noiseLayer.Offset.y),
+                    density01: noiseLayer.Density,
+                    scale: noiseLayer.Scale),
 
-                NoiseType.Simplex => Noise.generate2DSimplex(noiseParams.Seed, width: Size.x, height: Size.y,
-                    offset: new Unity.Mathematics.float2(noiseParams.Offset.x, noiseParams.Offset.y),
-                    scale: noiseParams.Scale),
+                NoiseType.Simplex => Noise.generate2DSimplex(noiseLayer.Seed, width: Size.x, height: Size.y,
+                    offset: new Unity.Mathematics.float2(noiseLayer.Offset.x, noiseLayer.Offset.y),
+                    scale: noiseLayer.Scale),
 
-                NoiseType.Perlin => Noise.generate2DPerlin(noiseParams.Seed, width: Size.x, height: Size.y,
-                    offset: noiseParams.Offset,
-                    octaves: noiseParams.Octaves,
-                    persistence: noiseParams.Lacunarity,
-                    lacunarity: noiseParams.Lacunarity,
-                    scale: noiseParams.Scale),
+                NoiseType.Perlin => Noise.generate2DPerlin(noiseLayer.Seed, width: Size.x, height: Size.y,
+                    offset: noiseLayer.Offset,
+                    octaves: noiseLayer.Octaves,
+                    persistence: noiseLayer.Lacunarity,
+                    lacunarity: noiseLayer.Lacunarity,
+                    scale: noiseLayer.Scale),
 
                 _ => throw new NotImplementedException(),
             };

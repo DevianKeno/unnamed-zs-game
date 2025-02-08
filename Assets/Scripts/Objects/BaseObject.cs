@@ -4,15 +4,13 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
-
-using UZSG.Data;
 using UZSG.Attributes;
-using UZSG.UI.Objects;
-using UZSG.Interactions;
-using UZSG.Saves;
+using UZSG.Data;
 using UZSG.Entities;
+using UZSG.Interactions;
 using UZSG.Items;
-using UZSG.Players;
+using UZSG.Saves;
+using UZSG.UI.Objects;
 
 namespace UZSG.Objects
 {
@@ -68,7 +66,7 @@ namespace UZSG.Objects
         }
         
         public event EventHandler<HitboxCollisionInfo> OnCollision;
-        public event Action<BaseObject> OnDestroyed;
+        public event Action<BaseObject> OnDestructed;
         
         Material material;
 
@@ -179,10 +177,10 @@ namespace UZSG.Objects
         /// <i>Destroys</i> this object in accordance with UZSG laws.
         /// <c>Destruct</c> because <c>Destroy</c> is reserved for UnityEngine's method.
         /// </summary>
-        public virtual void Destruct(bool notify = true)
+        public virtual void Destruct()
         {
-            OnDestroy();
-            if (notify) OnDestroyed?.Invoke(this);
+            OnDestruct();
+            OnDestructed?.Invoke(this);
             MonoBehaviour.Destroy(gameObject);
         }
         public virtual void HitBy(HitboxCollisionInfo info)
@@ -199,7 +197,7 @@ namespace UZSG.Objects
         }
 
         protected virtual void OnPlace() { }
-        protected virtual void OnDestroy() { }
+        protected virtual void OnDestruct() { }
 
         #endregion
 

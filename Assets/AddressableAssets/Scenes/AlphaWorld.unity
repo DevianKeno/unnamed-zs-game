@@ -170,24 +170,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 4, y: 0, z: -2}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &14429818
 GameObject:
   m_ObjectHideFlags: 0
@@ -284,24 +269,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -1, y: 0, z: -8}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &34893672
 GameObject:
   m_ObjectHideFlags: 0
@@ -456,24 +426,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 1, y: 0, z: -6}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!43 &48773556
 Mesh:
   m_ObjectHideFlags: 0
@@ -686,24 +641,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -2, y: 0, z: -3}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!134 &64564428
 PhysicMaterial:
   m_ObjectHideFlags: 0
@@ -763,24 +703,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 1, y: 0, z: -7}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &91212634
 GameObject:
   m_ObjectHideFlags: 0
@@ -935,24 +860,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -3, y: 0, z: 1}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &93525584
 GameObject:
   m_ObjectHideFlags: 0
@@ -1000,24 +910,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 2, y: 0, z: -8}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &104052414
 GameObject:
   m_ObjectHideFlags: 0
@@ -2381,24 +2276,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 4, y: 0, z: 3}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!43 &109571089
 Mesh:
   m_ObjectHideFlags: 0
@@ -2611,24 +2491,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -1, y: 0, z: -2}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &121750708
 GameObject:
   m_ObjectHideFlags: 0
@@ -2676,24 +2541,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -1, y: 0, z: -3}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &137443454
 GameObject:
   m_ObjectHideFlags: 0
@@ -2741,24 +2591,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 0, y: 0, z: -2}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &140176175
 GameObject:
   m_ObjectHideFlags: 0
@@ -2806,24 +2641,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 4, y: 0, z: -6}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &143882112
 GameObject:
   m_ObjectHideFlags: 0
@@ -2871,24 +2691,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 3, y: 0, z: 0}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!43 &146746343
 Mesh:
   m_ObjectHideFlags: 0
@@ -3299,24 +3104,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 7, y: 0, z: 3}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &191072623
 GameObject:
   m_ObjectHideFlags: 0
@@ -3364,24 +3154,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 2, y: 0, z: -7}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &196566123
 GameObject:
   m_ObjectHideFlags: 0
@@ -3536,24 +3311,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 7, y: 0, z: -2}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &203083060
 GameObject:
   m_ObjectHideFlags: 0
@@ -3831,24 +3591,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 5, y: 0, z: -5}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &230024132
 GameObject:
   m_ObjectHideFlags: 0
@@ -4120,24 +3865,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 6, y: 0, z: -5}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &255838986
 GameObject:
   m_ObjectHideFlags: 0
@@ -4185,24 +3915,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 5, y: 0, z: -7}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &258883896
 GameObject:
   m_ObjectHideFlags: 0
@@ -4367,24 +4082,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 3, y: 0, z: -7}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &273086844
 GameObject:
   m_ObjectHideFlags: 0
@@ -4432,24 +4132,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 4, y: 0, z: -1}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &279109411
 GameObject:
   m_ObjectHideFlags: 0
@@ -4497,24 +4182,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 1, y: 0, z: -1}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &305535022
 GameObject:
   m_ObjectHideFlags: 0
@@ -4562,24 +4232,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -3, y: 0, z: -8}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &308970799
 GameObject:
   m_ObjectHideFlags: 0
@@ -4627,24 +4282,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 2, y: 0, z: 1}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &336904863
 GameObject:
   m_ObjectHideFlags: 0
@@ -4692,24 +4332,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -3, y: 0, z: -1}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &339170665
 GameObject:
   m_ObjectHideFlags: 0
@@ -4841,24 +4466,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 3, y: 0, z: 3}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!134 &346446329
 PhysicMaterial:
   m_ObjectHideFlags: 0
@@ -4918,24 +4528,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 6, y: 0, z: 2}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &353262185
 GameObject:
   m_ObjectHideFlags: 0
@@ -4983,24 +4578,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 2, y: 0, z: 0}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &355966109
 GameObject:
   m_ObjectHideFlags: 0
@@ -5048,24 +4628,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 7, y: 0, z: -4}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &356147579
 GameObject:
   m_ObjectHideFlags: 0
@@ -5113,24 +4678,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -1, y: 0, z: -4}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &356557355
 GameObject:
   m_ObjectHideFlags: 0
@@ -5178,24 +4728,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 4, y: 0, z: 2}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!43 &358088296
 Mesh:
   m_ObjectHideFlags: 0
@@ -5408,24 +4943,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 4, y: 0, z: -4}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &369440136
 GameObject:
   m_ObjectHideFlags: 0
@@ -5473,24 +4993,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 2, y: 0, z: -3}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &376917576
 GameObject:
   m_ObjectHideFlags: 0
@@ -5538,24 +5043,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -3, y: 0, z: -2}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &379128577
 GameObject:
   m_ObjectHideFlags: 0
@@ -5875,24 +5365,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -4, y: 0, z: -7}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!43 &461796528
 Mesh:
   m_ObjectHideFlags: 0
@@ -6307,24 +5782,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 5, y: 0, z: -4}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &520597714
 GameObject:
   m_ObjectHideFlags: 0
@@ -6489,24 +5949,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -4, y: 0, z: -8}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &531957398
 GameObject:
   m_ObjectHideFlags: 0
@@ -6554,24 +5999,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 7, y: 0, z: -6}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &532477639
 GameObject:
   m_ObjectHideFlags: 0
@@ -6727,24 +6157,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 5, y: 0, z: -8}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!134 &546290857
 PhysicMaterial:
   m_ObjectHideFlags: 0
@@ -6804,24 +6219,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 5, y: 0, z: 1}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &554760398
 GameObject:
   m_ObjectHideFlags: 0
@@ -6869,24 +6269,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -2, y: 0, z: 1}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &554866120
 GameObject:
   m_ObjectHideFlags: 0
@@ -6934,24 +6319,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 0, y: 0, z: 2}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!43 &563484981
 Mesh:
   m_ObjectHideFlags: 0
@@ -7164,24 +6534,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 3, y: 0, z: 1}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &578267368
 GameObject:
   m_ObjectHideFlags: 0
@@ -7313,24 +6668,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 6, y: 0, z: 3}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &621209262
 GameObject:
   m_ObjectHideFlags: 0
@@ -7485,24 +6825,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -2, y: 0, z: -2}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &637384728
 GameObject:
   m_ObjectHideFlags: 0
@@ -7550,24 +6875,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 5, y: 0, z: 0}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &645307299
 GameObject:
   m_ObjectHideFlags: 0
@@ -7615,24 +6925,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 5, y: 0, z: 3}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &646120367
 GameObject:
   m_ObjectHideFlags: 0
@@ -7787,24 +7082,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 1, y: 0, z: 2}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &689387069
 GameObject:
   m_ObjectHideFlags: 0
@@ -7852,24 +7132,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -3, y: 0, z: -3}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!43 &698337180
 Mesh:
   m_ObjectHideFlags: 0
@@ -8483,24 +7748,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 1, y: 0, z: -2}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &729031152
 GameObject:
   m_ObjectHideFlags: 0
@@ -8923,24 +8173,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 0, y: 0, z: -7}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &754949135
 GameObject:
   m_ObjectHideFlags: 0
@@ -9202,24 +8437,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 1, y: 0, z: 0}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!43 &770422789
 Mesh:
   m_ObjectHideFlags: 0
@@ -9432,24 +8652,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -2, y: 0, z: 0}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &780141605
 GameObject:
   m_ObjectHideFlags: 0
@@ -9581,24 +8786,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 0, y: 0, z: -4}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!134 &811005283
 PhysicMaterial:
   m_ObjectHideFlags: 0
@@ -9658,24 +8848,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 1, y: 0, z: 1}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &833464792
 GameObject:
   m_ObjectHideFlags: 0
@@ -10041,24 +9216,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 4, y: 0, z: -5}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &855489539
 GameObject:
   m_ObjectHideFlags: 0
@@ -10106,24 +9266,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -4, y: 0, z: -4}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &861308581
 GameObject:
   m_ObjectHideFlags: 0
@@ -10171,24 +9316,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 3, y: 0, z: -8}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &862268534
 GameObject:
   m_ObjectHideFlags: 0
@@ -10236,24 +9366,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 3, y: 0, z: -2}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!28 &867894958
 Texture2D:
   m_ObjectHideFlags: 0
@@ -10679,24 +9794,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 2, y: 0, z: -6}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &907533216
 GameObject:
   m_ObjectHideFlags: 0
@@ -10852,24 +9952,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 7, y: 0, z: -3}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &915661502
 GameObject:
   m_ObjectHideFlags: 0
@@ -10917,24 +10002,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 4, y: 0, z: -8}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &923594566
 GameObject:
   m_ObjectHideFlags: 0
@@ -11231,24 +10301,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 5, y: 0, z: -1}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &941870442
 GameObject:
   m_ObjectHideFlags: 0
@@ -11548,24 +10603,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 1, y: 0, z: 3}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &958875015
 GameObject:
   m_ObjectHideFlags: 0
@@ -11828,24 +10868,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 0, y: 0, z: 0}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1009630562
 GameObject:
   m_ObjectHideFlags: 0
@@ -11893,24 +10918,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -3, y: 0, z: 3}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1014830361
 GameObject:
   m_ObjectHideFlags: 0
@@ -11958,24 +10968,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 5, y: 0, z: 2}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1017324857
 GameObject:
   m_ObjectHideFlags: 0
@@ -12023,24 +11018,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -4, y: 0, z: -2}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!134 &1018992058
 PhysicMaterial:
   m_ObjectHideFlags: 0
@@ -12100,24 +11080,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 7, y: 0, z: 1}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1035486932
 GameObject:
   m_ObjectHideFlags: 0
@@ -12165,24 +11130,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 0, y: 0, z: -1}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1042747072
 GameObject:
   m_ObjectHideFlags: 0
@@ -12264,24 +11214,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 7, y: 0, z: 0}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1082076144
 GameObject:
   m_ObjectHideFlags: 0
@@ -12412,24 +11347,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -2, y: 0, z: 3}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1096960185
 GameObject:
   m_ObjectHideFlags: 0
@@ -12477,24 +11397,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 2, y: 0, z: 3}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!43 &1099713889
 Mesh:
   m_ObjectHideFlags: 0
@@ -12707,24 +11612,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -1, y: 0, z: 2}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1107875473
 GameObject:
   m_ObjectHideFlags: 0
@@ -12889,24 +11779,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -2, y: 0, z: -5}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1113204347
 GameObject:
   m_ObjectHideFlags: 0
@@ -12954,24 +11829,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 5, y: 0, z: -6}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1118424964
 GameObject:
   m_ObjectHideFlags: 0
@@ -13019,24 +11879,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 3, y: 0, z: -6}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!134 &1122032335
 PhysicMaterial:
   m_ObjectHideFlags: 0
@@ -13096,24 +11941,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 6, y: 0, z: -4}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1139911251
 GameObject:
   m_ObjectHideFlags: 0
@@ -13161,24 +11991,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -3, y: 0, z: -5}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1157870064
 GameObject:
   m_ObjectHideFlags: 0
@@ -13226,24 +12041,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -3, y: 0, z: 0}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1171994899
 GameObject:
   m_ObjectHideFlags: 0
@@ -13291,24 +12091,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 6, y: 0, z: -7}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1181256037
 GameObject:
   m_ObjectHideFlags: 0
@@ -13356,24 +12141,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -4, y: 0, z: -8}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1182461937
 GameObject:
   m_ObjectHideFlags: 0
@@ -13421,24 +12191,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 2, y: 0, z: -1}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1190347947
 GameObject:
   m_ObjectHideFlags: 0
@@ -13486,24 +12241,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 7, y: 0, z: 2}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1191222680
 GameObject:
   m_ObjectHideFlags: 0
@@ -13551,24 +12291,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 4, y: 0, z: 0}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1192503840
 GameObject:
   m_ObjectHideFlags: 0
@@ -13616,24 +12341,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 0, y: 0, z: 1}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1197771209
 GameObject:
   m_ObjectHideFlags: 0
@@ -13789,24 +12499,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -1, y: 0, z: -7}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!134 &1201404002
 PhysicMaterial:
   m_ObjectHideFlags: 0
@@ -13866,24 +12561,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 7, y: 0, z: -5}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!43 &1208540510
 Mesh:
   m_ObjectHideFlags: 0
@@ -14179,24 +12859,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 6, y: 0, z: -6}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1237959527
 GameObject:
   m_ObjectHideFlags: 0
@@ -14244,24 +12909,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -4, y: 0, z: -6}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1261624836
 GameObject:
   m_ObjectHideFlags: 0
@@ -14309,24 +12959,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 3, y: 0, z: 2}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1270957225
 GameObject:
   m_ObjectHideFlags: 0
@@ -14374,24 +13009,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -1, y: 0, z: -5}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1295743742
 GameObject:
   m_ObjectHideFlags: 0
@@ -14439,24 +13059,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 2, y: 0, z: 2}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1324048278
 GameObject:
   m_ObjectHideFlags: 0
@@ -14504,24 +13109,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -1, y: 0, z: -6}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1326039343
 GameObject:
   m_ObjectHideFlags: 0
@@ -14569,24 +13159,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -1, y: 0, z: 1}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1332886263
 GameObject:
   m_ObjectHideFlags: 0
@@ -14634,24 +13209,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -1, y: 0, z: -1}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1335867420
 GameObject:
   m_ObjectHideFlags: 0
@@ -14699,24 +13259,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -2, y: 0, z: -1}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1350603082
 GameObject:
   m_ObjectHideFlags: 0
@@ -14764,24 +13309,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 2, y: 0, z: -2}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1352216574
 GameObject:
   m_ObjectHideFlags: 0
@@ -14829,24 +13359,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 0, y: 0, z: -6}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1365905253
 GameObject:
   m_ObjectHideFlags: 0
@@ -14894,24 +13409,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 0, y: 0, z: -5}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1369818328
 GameObject:
   m_ObjectHideFlags: 0
@@ -14959,24 +13459,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 1, y: 0, z: -4}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1370575309
 GameObject:
   m_ObjectHideFlags: 0
@@ -15462,24 +13947,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 7, y: 0, z: -7}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1393342142
 GameObject:
   m_ObjectHideFlags: 0
@@ -15655,24 +14125,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -2, y: 0, z: 2}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1424688851
 GameObject:
   m_ObjectHideFlags: 0
@@ -15720,24 +14175,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 6, y: 0, z: -3}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1430209198
 GameObject:
   m_ObjectHideFlags: 0
@@ -16053,24 +14493,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 5, y: 0, z: -3}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1457990267
 GameObject:
   m_ObjectHideFlags: 0
@@ -16118,24 +14543,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 4, y: 0, z: -3}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1467002586
 GameObject:
   m_ObjectHideFlags: 0
@@ -16183,24 +14593,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 7, y: 0, z: -1}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1475887624
 GameObject:
   m_ObjectHideFlags: 0
@@ -16248,24 +14643,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 1, y: 0, z: -5}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1479419762
 GameObject:
   m_ObjectHideFlags: 0
@@ -16313,24 +14693,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -1, y: 0, z: 3}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1479892584
 GameObject:
   m_ObjectHideFlags: 0
@@ -16378,24 +14743,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 3, y: 0, z: -5}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!43 &1489013974
 Mesh:
   m_ObjectHideFlags: 0
@@ -16608,24 +14958,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 0, y: 0, z: -8}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!43 &1510303919
 Mesh:
   m_ObjectHideFlags: 0
@@ -16921,24 +15256,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -4, y: 0, z: 3}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1563459253
 GameObject:
   m_ObjectHideFlags: 0
@@ -16986,24 +15306,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -4, y: 0, z: -1}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1563637209
 GameObject:
   m_ObjectHideFlags: 0
@@ -17051,24 +15356,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -4, y: 0, z: 0}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1564868394
 GameObject:
   m_ObjectHideFlags: 0
@@ -17364,24 +15654,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 6, y: 0, z: -1}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1613464706
 GameObject:
   m_ObjectHideFlags: 0
@@ -17429,24 +15704,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 2, y: 0, z: -5}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!134 &1624586531
 PhysicMaterial:
   m_ObjectHideFlags: 0
@@ -17683,24 +15943,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 5, y: 0, z: -2}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1671184314
 GameObject:
   m_ObjectHideFlags: 0
@@ -17748,24 +15993,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -3, y: 0, z: 2}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1691765778
 GameObject:
   m_ObjectHideFlags: 0
@@ -17813,24 +16043,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 4, y: 0, z: 1}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1706511142
 GameObject:
   m_ObjectHideFlags: 0
@@ -17878,24 +16093,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -2, y: 0, z: -6}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1714737168
 GameObject:
   m_ObjectHideFlags: 0
@@ -17943,24 +16143,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -2, y: 0, z: -8}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1721456509
 GameObject:
   m_ObjectHideFlags: 0
@@ -18008,24 +16193,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 3, y: 0, z: -4}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!134 &1721570871
 PhysicMaterial:
   m_ObjectHideFlags: 0
@@ -18085,24 +16255,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -1, y: 0, z: 0}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1724914604
 GameObject:
   m_ObjectHideFlags: 0
@@ -18150,24 +16305,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -2, y: 0, z: -7}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1728167085
 GameObject:
   m_ObjectHideFlags: 0
@@ -18215,24 +16355,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 4, y: 0, z: -7}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1729687241
 GameObject:
   m_ObjectHideFlags: 0
@@ -18387,24 +16512,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 6, y: 0, z: 0}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!43 &1812628825
 Mesh:
   m_ObjectHideFlags: 0
@@ -18617,24 +16727,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -4, y: 0, z: -5}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!43 &1822040496
 Mesh:
   m_ObjectHideFlags: 0
@@ -18847,24 +16942,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 6, y: 0, z: -2}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1853698488
 GameObject:
   m_ObjectHideFlags: 0
@@ -18912,24 +16992,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 0, y: 0, z: 3}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1855080050
 GameObject:
   m_ObjectHideFlags: 0
@@ -18977,24 +17042,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 0, y: 0, z: -3}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1861881171
 GameObject:
   m_ObjectHideFlags: 0
@@ -19042,24 +17092,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 3, y: 0, z: -1}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1862522969
 GameObject:
   m_ObjectHideFlags: 0
@@ -19191,24 +17226,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -3, y: 0, z: -6}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!43 &1869037758
 Mesh:
   m_ObjectHideFlags: 0
@@ -19421,24 +17441,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -2, y: 0, z: -4}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1900017715
 GameObject:
   m_ObjectHideFlags: 0
@@ -19486,24 +17491,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 2, y: 0, z: -4}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1900256990
 GameObject:
   m_ObjectHideFlags: 0
@@ -19551,24 +17541,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -3, y: 0, z: -4}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!43 &1918913426
 Mesh:
   m_ObjectHideFlags: 0
@@ -20054,24 +18029,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 3, y: 0, z: -3}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!134 &1969571909
 PhysicMaterial:
   m_ObjectHideFlags: 0
@@ -20449,24 +18409,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -4, y: 0, z: -3}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &1994584600
 GameObject:
   m_ObjectHideFlags: 0
@@ -20514,24 +18459,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -4, y: 0, z: 2}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!134 &2000712718
 PhysicMaterial:
   m_ObjectHideFlags: 0
@@ -20839,24 +18769,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 6, y: 0, z: -8}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &2031014832
 GameObject:
   m_ObjectHideFlags: 0
@@ -21011,24 +18926,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 1, y: 0, z: -3}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &2068694002
 GameObject:
   m_ObjectHideFlags: 0
@@ -21076,24 +18976,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 7, y: 0, z: -8}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &2072036546
 GameObject:
   m_ObjectHideFlags: 0
@@ -21141,24 +19026,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 1, y: 0, z: -8}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &2084014833
 GameObject:
   m_ObjectHideFlags: 0
@@ -21312,24 +19182,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: 6, y: 0, z: 1}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!43 &2127375165
 Mesh:
   m_ObjectHideFlags: 0
@@ -21542,24 +19397,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -4, y: 0, z: 1}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!1 &2146356323
 GameObject:
   m_ObjectHideFlags: 0
@@ -21607,24 +19447,9 @@ MonoBehaviour:
   ChunkSize: 32
   Coord: {x: -3, y: 0, z: -7}
   seed: 12345
-  treeNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  pickupsNoiseParams:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
+  treesNoiseData: {fileID: 0}
+  pickupsNoiseData: {fileID: 0}
+  oreDepositsNoiseData: {fileID: 0}
 --- !u!218 &95522970263944224
 Terrain:
   m_ObjectHideFlags: 0

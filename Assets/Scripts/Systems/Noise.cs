@@ -70,8 +70,8 @@ namespace UZSG
                 rand.NextFloat(MIN_RAND, MAX_RAND),
                 rand.NextFloat(MIN_RAND, MAX_RAND));
             scale = math.clamp(scale, MIN_SCALE, scale);
-            float minnest = 0f;
-            float maxxest = 0f;
+            float minnest = float.MaxValue;
+            float maxxest = float.MinValue;
 
             for (int y = 0; y < height; y++)
             {
@@ -86,7 +86,7 @@ namespace UZSG
                         float sampleX = (x + offset.x + seedOffset.x) / (scale * frequency);
                         float sampleZ = (y + offset.y + seedOffset.y) / (scale * frequency);
 
-                        var p = Mathf.PerlinNoise(sampleX, sampleZ) * 2 - 1;
+                        var p = noise.cnoise(new float2(sampleX, sampleZ)) * 2 - 1;
                         val += p * amplitude;
 
                         amplitude *= persistence;
@@ -95,20 +95,23 @@ namespace UZSG
 
                     minnest = math.min(minnest, val);
                     maxxest = math.max(maxxest, val);
-                    noiseMap[x, y] = val *= amplitude;
+                    noiseMap[x, y] = val;
                 }
             }
 
             // normalization
-            for (int y = 0; y < height; y++)
+            float range = maxxest - minnest;
+            if (range > 0)
             {
-                for (int x = 0; x < width; x++)
+                for (int y = 0; y < height; y++)
                 {
-                    var invlerp = (noiseMap[x, y] - minnest) / (maxxest - minnest);
-                    noiseMap [x, y] = math.clamp(invlerp, 0, 1);
+                    for (int x = 0; x < width; x++)
+                    {
+                        /// inverse lerp
+                        noiseMap [x, y] = math.clamp((noiseMap[x, y] - minnest) / range, 0, 1);
+                    }
                 }
             }
-
             return noiseMap;
         }
     }

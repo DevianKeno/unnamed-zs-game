@@ -27,6 +27,8 @@ using UZSG.UI.Players;
 using UZSG.Worlds;
 
 using static UZSG.Players.MoveStates;
+using Unity.VisualScripting;
+using UnityEngine.UI;
 
 namespace UZSG.Entities
 {
@@ -356,6 +358,37 @@ namespace UZSG.Entities
         void Update()
         {
             UpdateAnimator();
+
+        }
+
+        public void OnTriggerEnter(Collider other)
+        {
+            switch (other.gameObject.tag)
+            {
+                case Tags.WATER:
+                {
+                    print("enter swim mode");
+                    ToggleSwim(true);
+                    break;
+                }
+            }
+        }
+
+        public void OnTriggerExit(Collider other)
+        {
+            switch (other.gameObject.tag)
+            {
+                case Tags.WATER:
+                {
+                    print("exit swim mode");
+                    ToggleSwim(false);
+                    break;
+                }
+            }
+        }
+
+        void ToggleSwim(bool enable)
+        {
 
         }
 

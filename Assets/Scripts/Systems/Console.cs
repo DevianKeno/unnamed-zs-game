@@ -123,6 +123,8 @@ namespace UZSG
 
         void OnInputToggleUI(InputAction.CallbackContext context)
         {
+            if (Game.UI.HasActiveWindow) return;
+            
             if (gui.IsVisible)
                 gui.Hide();
             else

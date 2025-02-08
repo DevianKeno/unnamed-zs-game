@@ -46,30 +46,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   renderDistance: 6
   chunkSize: 32
-  terrain: {fileID: 0}
-  Seed: 12345
-  treeNoiseParameters:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 1
-    Density: 0.01
-  PlaceTrees: 1
-  pickupNoiseParameters:
-    NoiseType: 0
-    Seed: 12345
-    Offset: {x: 0, y: 0}
-    Octaves: 0
-    Persistence: 0
-    Lacunarity: 0
-    Scale: 0
-    Density: 0
-  PlacePickups: 1
-  chunksLoaded: 0
   enableLoadingChunks: 0
+  Seed: 12345
+  PlaceTrees: 1
+  treesNoiseData: {fileID: 11400000, guid: 9dafe3937ca5cc543992e32cbc4aaeb2, type: 2}
+  PlacePickups: 1
+  pickupsNoiseData: {fileID: 11400000, guid: 8501c5622ace3d44ba148d62ce9c1e67, type: 2}
+  PlaceOreDeposits: 1
+  oreDepositsNoiseData: {fileID: 11400000, guid: ff95a58e6c5c15249acc19400920d757, type: 2}
+  chunksLoaded: 0
   chunkOpacity: 0.5
   enableLODChunking: 0
 --- !u!1 &1839575761864172583

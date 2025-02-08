@@ -23,6 +23,10 @@ namespace UZSG.Objects
         /// </summary>
         public bool IsFelled { get; private set; } = false;
         /// <summary>
+        /// Whether the tree is generated via resource chunks.
+        /// </summary>
+        bool isNaturallyGenerated;
+        /// <summary>
         /// The angle of the tree when it gets chopped. 
         /// </summary>
         [SerializeField] float chopAngle = 8f; /// based on tree's size, hardness, mass?

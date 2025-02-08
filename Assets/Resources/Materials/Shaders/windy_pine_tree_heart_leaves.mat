@@ -58,14 +58,14 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Alpha_Clipping_Threshold: 0.88
+    - _Alpha_Clipping_Threshold: 0.857
     - _QueueControl: 0
     - _QueueOffset: 0
     - _Smoothness: 0
     - _Wind_Speed: 1.2
     - _Wind_Strength: 0.5
     m_Colors:
-    - _Color: {r: 0.6792453, g: 0.6760413, b: 0.6760413, a: 0}
+    - _Color: {r: 0.45768064, g: 0.5188679, b: 0.45768064, a: 0}
     - _Specular_Color: {r: 0, g: 0, b: 0, a: 0}
     - _Wind_Direction: {r: 1, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []

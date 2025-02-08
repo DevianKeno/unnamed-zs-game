@@ -16,11 +16,6 @@ using UnityEngine.Serialization;
 
 namespace UZSG.Players
 {
-    public class Tags
-    {
-        public const string INTERACTABLE = "Interactable";
-    }
-
     /// <summary>
     /// Handles the different actions the Player can do.
     /// </summary>

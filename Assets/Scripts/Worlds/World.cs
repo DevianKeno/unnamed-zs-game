@@ -37,7 +37,7 @@ namespace UZSG.Worlds
         WorldAttributes worldAttributes;
         public WorldAttributes Attributes => worldAttributes;
 
-        public ResourceChunkManager ResourceChunkManager { get; private set; }
+        public ChunkManager ChunkManager { get; private set; }
         public TimeController Time { get; private set; }
         public WeatherController Weather { get; private set; }
         public WorldEventController WorldEvents { get; private set; }
@@ -114,11 +114,11 @@ namespace UZSG.Worlds
 
         void Awake()
         {
+            ChunkManager = GetComponentInChildren<ChunkManager>();
             Time = GetComponentInChildren<TimeController>();
             Weather = GetComponentInChildren<WeatherController>();
             WorldEvents = GetComponentInChildren<WorldEventController>();
             Chat = GetComponentInChildren<ChatManager>();
-            ResourceChunkManager = GetComponentInChildren<ResourceChunkManager>();
         }
 
 
@@ -207,7 +207,7 @@ namespace UZSG.Worlds
         {
             if (!NetworkManager.Singleton.IsListening || NetworkManager.Singleton.IsServer)
             {
-                ResourceChunkManager.Initialize();
+                ChunkManager.Initialize();
 
                 /// Server handles time, clients are just synced
                 Time.Initialize();
@@ -267,6 +267,14 @@ namespace UZSG.Worlds
                 objectSaves.Add(baseObject.WriteSaveData());
             }
             currentSaveData.Objects = objectSaves;
+        }
+
+        void LoadChunks()
+        {
+            if (currentSaveData.Chunks == null) return;
+
+            ChunkManager.ReadChunks(currentSaveData.Chunks);
+            ChunkManager.enableLoadingChunks = true;
         }
         
         void LoadObjects()
@@ -535,7 +543,9 @@ namespace UZSG.Worlds
                 displayName = EOSSubManagers.UserInfo.LocalUserDisplayName;
             }
 
-            Game.Entity.Spawn<Player>("player", ValidateWorldSpawn(currentSaveData.WorldSpawn), (info) =>
+            var spawnPosition = ValidateWorldSpawn(currentSaveData.WorldSpawn);
+
+            Game.Entity.Spawn<Player>("player", spawnPosition, (info) =>
             {
                 Player player = info.Entity;
 
@@ -557,7 +567,8 @@ namespace UZSG.Worlds
         /// <param name="userId">User id of to be owner</param>
         internal void SpawnPlayer_ServerMethod(ProductUserId userId)
         {
-            Game.Entity.Spawn<Player>("player", position: ValidateWorldSpawn(currentSaveData.WorldSpawn), onCompleted: (info) =>
+            var spawnPosition = ValidateWorldSpawn(currentSaveData.WorldSpawn);
+            Game.Entity.Spawn<Player>("player", position: spawnPosition, onCompleted: (info) =>
             {
                 var player = info.Entity;
                 var uid = userId.ToString();
@@ -718,10 +729,12 @@ namespace UZSG.Worlds
             
             this.currentSaveData = saveData;
             _hasValidSaveData = true;
-            Time.InitializeFromSave(saveData);
-            ReadPlayerData();
-            LoadObjects();
+            
+            LoadChunks();
+            // LoadObjects();
             LoadEntities();
+            ReadPlayerData();
+            Time.InitializeFromSave(saveData);
         }
 
         public WorldSaveData WriteSaveData()
@@ -737,9 +750,12 @@ namespace UZSG.Worlds
                 currentSaveData.OwnerId = LOCAL_PLAYER_ID;
             }
 
+            Game.Console.LogInfo($"[World]: Saving chunks...");
+            currentSaveData.Chunks = ChunkManager.SaveChunks();
+
             SaveTimeState();
-            SavePlayerData();
-            SaveObjects();
+            SavePlayerDatas();
+            // SaveObjects();
             SaveEntities();
 
             return currentSaveData;
@@ -803,7 +819,7 @@ namespace UZSG.Worlds
             currentSaveData.Second = Time.Second;
         }
 
-        void SavePlayerData()
+        void SavePlayerDatas()
         {
             foreach (var kv in _playerEntities)
             {
@@ -845,10 +861,21 @@ namespace UZSG.Worlds
 
         Vector3 ValidateWorldSpawn(System.Numerics.Vector3 coords)
         {
-            if (SaveData.FieldIsNull(coords)) coords = new(0f, 65f, 0f);
-            if (Physics.Raycast(new Vector3(coords.X, 300f, coords.Z), -Vector3.up, out var hit, 999f))
-                return new(coords.X, hit.point.y, coords.Z);
-            return Vector3Ext.FromNumerics(coords);
+            if (SaveData.FieldIsNull(coords)) coords = new(0f, 64f, 0f);
+
+            var spawnPosition = Vector3Ext.FromNumerics(coords);
+            if (Physics.Raycast(new(spawnPosition.x, 1000f, spawnPosition.z), -Vector3.up, out var hit, Mathf.Infinity, LayerMask.NameToLayer("Ground")))
+            {
+                if (hit.collider.TryGetComponent(out Terrain terrain))
+                {
+                    if (spawnPosition.y < hit.point.y) /// spawn point is under terrain
+                    {
+                        spawnPosition.y = hit.point.y + 0.5f;
+                    }
+                }
+            }
+
+            return spawnPosition;
         }
     }
 }

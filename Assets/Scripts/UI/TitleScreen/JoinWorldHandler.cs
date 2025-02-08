@@ -187,6 +187,7 @@ namespace UZSG.UI.Lobbies
         {
             if (result.Result == Result_u.Success)
             {
+                Game.World.CurrentWorld.OnInitializeDone += OnWorldInitializeDone;
                 Game.World.InitializeWorld();
 
                 Game.Main.UnloadScene("TitleScreen");
@@ -196,6 +197,12 @@ namespace UZSG.UI.Lobbies
             {
                 BackToTitleScreen();
             }
+        }
+
+        void OnWorldInitializeDone()
+        {
+            Game.World.CurrentWorld.OnInitializeDone -= OnWorldInitializeDone;
+            Game.Main.UnloadScene("LoadingScreen");
         }
 
         void BackToTitleScreen(bool leaveCurrentLobby = true)

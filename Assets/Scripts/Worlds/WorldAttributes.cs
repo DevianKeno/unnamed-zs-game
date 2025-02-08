@@ -22,26 +22,43 @@ namespace UZSG.Worlds
         public const int MIN_NIGHT_LENGTH = 300; /// 5 minutes
         public const int MAX_NIGHT_LENGTH = 1800; /// 30 minutes
 
+
+        #region Generation Settings
+
+        public const float TREE_DENSITY = 1f;
+
+        #endregion
+
         public string LevelId;
         public string WorldName;
 
+
         #region World
+
         public int DayLengthSeconds;
         public int NightLengthSeconds;
         public bool LootRespawns;
+
         #endregion
+
 
         #region Gameplay
+
         public bool DropItemsOnDeath;
         public int DifficultyLevel;
+
         #endregion
 
+
         #region Multiplayer
+
         public int MaxPlayers;
         public string Password;
         public bool IsMultiplayer;
         public WorldMultiplayerType WorldMultiplayerType;
+
         #endregion
+        
 
         public static void Validate(ref WorldAttributes attributes)
         {

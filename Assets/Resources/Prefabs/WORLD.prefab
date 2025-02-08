@@ -45,7 +45,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   renderDistance: 6
-  EnableLoadingChunks: 0
   chunkSize: 32
   terrain: {fileID: 0}
   Seed: 12345
@@ -57,9 +56,8 @@ MonoBehaviour:
     Persistence: 0
     Lacunarity: 0
     Scale: 1
-    Density: 0.02
+    Density: 0.01
   PlaceTrees: 1
-  TreeDensity: 0.05
   pickupNoiseParameters:
     NoiseType: 0
     Seed: 12345
@@ -70,8 +68,8 @@ MonoBehaviour:
     Scale: 0
     Density: 0
   PlacePickups: 1
-  PickupsDensity: 0.5
   chunksLoaded: 0
+  enableLoadingChunks: 0
   chunkOpacity: 0.5
   enableLODChunking: 0
 --- !u!1 &1839575761864172583

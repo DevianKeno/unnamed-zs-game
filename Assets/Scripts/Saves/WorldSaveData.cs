@@ -24,5 +24,6 @@ namespace UZSG.Saves
         
         public List<ObjectSaveData> Objects = new();
         public List<EntitySaveData> EntitySaves = new();
+        public List<ChunkSaveData> Chunks = new();
     }
 }

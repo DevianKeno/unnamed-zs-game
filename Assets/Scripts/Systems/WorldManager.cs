@@ -171,13 +171,14 @@ namespace UZSG
 
             var resultFailed = new LoadWorldResult() { Result = Result_u.Failed };
 
-            if (!Directory.Exists(Path.GetDirectoryName(filepath)))
+            if (!File.Exists(filepath))
             {
-                Debug.LogError($"World in path '{filepath}' does not exist");
+                Debug.LogError($"The 'level.dat' for world in path '{filepath}' is missing does not exist");
+                /// TODO: fall back to manifest
                 InvokeLoadLevelFailed();
                 return;
             }
-            
+                
             currentSaveData = JsonConvert.DeserializeObject<WorldSaveData>(File.ReadAllText(filepath));
             if (currentSaveData == null)
             {

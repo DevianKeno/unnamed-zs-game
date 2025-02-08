@@ -14,6 +14,7 @@ using UZSG.EOS.Lobbies;
 using UZSG.UI;
 using UZSG.UI.TitleScreen;
 using UZSG.Worlds;
+using System;
 
 namespace UZSG.TitleScreen
 {
@@ -244,16 +245,22 @@ namespace UZSG.TitleScreen
         {
             if (result.Result == Result_u.Success)
             {
+                Game.World.CurrentWorld.OnInitializeDone += OnWorldInitializeDone;
                 Game.World.InitializeWorld();
 
                 Game.Main.UnloadScene("TitleScreen");
-                Game.Main.UnloadScene("LoadingScreen");
             }
             else if (result.Result == Result_u.Failed)
             {
                 BackToTitleScreen();
                 startBtn.interactable = true;
             }
+        }
+
+        void OnWorldInitializeDone()
+        {
+            Game.World.CurrentWorld.OnInitializeDone -= OnWorldInitializeDone;
+            Game.Main.UnloadScene("LoadingScreen");
         }
 
         void BackToTitleScreen(bool leaveCurrentLobby = true)

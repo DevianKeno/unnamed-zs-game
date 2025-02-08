@@ -16,8 +16,8 @@ MonoBehaviour:
   _absorptionRamp:
     serializedVersion: 2
     key0: {r: 1, g: 1, b: 1, a: 1}
-    key1: {r: 0.047036298, g: 0.061815176, b: 0.066037714, a: 1}
-    key2: {r: 0, g: 0.09241294, b: 0.122641504, a: 0}
+    key1: {r: 0.0038714937, g: 0.65985364, b: 0.8207547, a: 1}
+    key2: {r: 0.2460395, g: 0.60615027, b: 0.9150943, a: 0}
     key3: {r: 0.095007114, g: 0.2125979, b: 0.3301887, a: 0}
     key4: {r: 0.095007114, g: 0.2125979, b: 0.3301887, a: 0}
     key5: {r: 0, g: 0, b: 0, a: 0}
@@ -25,7 +25,7 @@ MonoBehaviour:
     key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 0
     ctime1: 28527
-    ctime2: 65535
+    ctime2: 64764
     ctime3: 65535
     ctime4: 65535
     ctime5: 65535
@@ -45,7 +45,7 @@ MonoBehaviour:
     m_NumAlphaKeys: 2
   _scatterRamp:
     serializedVersion: 2
-    key0: {r: 0.5214489, g: 0.56627834, b: 0.5849056, a: 1}
+    key0: {r: 0.1051531, g: 0.15036935, b: 0.16037738, a: 1}
     key1: {r: 0.14578141, g: 0.2622074, b: 0.33962262, a: 1}
     key2: {r: 0.0746262, g: 0.18128017, b: 0.3679245, a: 0}
     key3: {r: 0.007831969, g: 0.095929876, b: 0.1509434, a: 0}
@@ -117,11 +117,11 @@ MonoBehaviour:
       y: 0
     onmiDir: 0
   _customWaves: 0
-  randomSeed: 891
+  randomSeed: 61875
   _basicWaveSettings:
     numWaves: 6
     amplitude: 0.6
-    direction: -159
+    direction: 46
     wavelength: 8
   _foamSettings:
     foamType: 1
@@ -138,8 +138,8 @@ MonoBehaviour:
         inWeight: 0
         outWeight: 0.15316528
       - serializedVersion: 3
-        time: 0.6247411
-        value: 0.39698213
+        time: 0.58473253
+        value: 0.8419284
         inSlope: 1.2551872
         outSlope: 1.2551872
         tangentMode: 0
@@ -147,8 +147,8 @@ MonoBehaviour:
         inWeight: 0.33333334
         outWeight: 0.28785437
       - serializedVersion: 3
-        time: 0.8523668
-        value: 0.81129223
+        time: 0.728557
+        value: 0.95120007
         inSlope: 1.9929253
         outSlope: 1.9929253
         tangentMode: 0
@@ -158,11 +158,11 @@ MonoBehaviour:
       - serializedVersion: 3
         time: 1
         value: 1
-        inSlope: 0.6611113
-        outSlope: 0.6611113
+        inSlope: -0.12304963
+        outSlope: -0.12304963
         tangentMode: 0
         weightedMode: 0
-        inWeight: 0.55429333
+        inWeight: 1
         outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2

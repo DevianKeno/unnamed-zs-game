@@ -110,19 +110,25 @@ namespace UZSG.TitleScreen
         {
             if (result.Result == Result_u.Success)
             {
+                Game.World.CurrentWorld.OnInitializeDone += OnWorldInitializeDone;
                 Game.World.InitializeWorld();
                 
-                Game.Main.UnloadScene("TitleScreen");
-                Game.Main.UnloadScene("LoadingScreen");
+                Game.Main.UnloadScene(SceneNames.TitleScreen);
             }
             else if (result.Result == Result_u.Failed)
             {
                 Game.Main.LoadSceneAsync(
                     new(){
-                        SceneToLoad = "TitleScreen",
+                        SceneToLoad = SceneNames.TitleScreen,
                         Mode = LoadSceneMode.Single
                     });
             }
+        }
+
+        void OnWorldInitializeDone()
+        {
+            Game.World.CurrentWorld.OnInitializeDone -= OnWorldInitializeDone;
+            Game.Main.UnloadScene(SceneNames.LoadingScreen);
         }
 
         public void LoadWorld(string path)

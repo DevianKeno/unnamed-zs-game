@@ -275,8 +275,8 @@ Material:
     - _1st_ShadeColor: {r: 1, g: 1, b: 1, a: 1}
     - _2nd_ShadeColor: {r: 1, g: 1, b: 1, a: 1}
     - _Ap_RimLightColor: {r: 1, g: 1, b: 1, a: 1}
-    - _BaseColor: {r: 0, g: 0.1194968, b: 0.2735849, a: 0.8509804}
-    - _Color: {r: 0, g: 0.11949677, b: 0.27358484, a: 0.8509804}
+    - _BaseColor: {r: 0.019607842, g: 0.2526632, b: 0.35686275, a: 0.89411765}
+    - _Color: {r: 0.019607842, g: 0.25266317, b: 0.35686272, a: 0.89411765}
     - _ColorShift: {r: 0, g: 0, b: 0, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Emissive_Color: {r: 0, g: 0, b: 0, a: 1}

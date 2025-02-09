@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8cc029cec14b78e47bd523602bdd0778, type: 3}
+  m_Name: wild_grass
+  m_EditorClassIdentifier: 
+  Namespace: uzsg
+  Id: wild_grass
+  Tags: []
+  DisplayName: Wild Grass
+  Description: 
+  Object:
+    m_AssetGUID: ebf497d975a37754c94de9848b636eee
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  Attributes: []
+  CanBePickedUp: 0
+  PickupTimeSeconds: 0
+  HasAudio: 1
+  AudioAssetsData: {fileID: 11400000, guid: 6cf4ae24c234f1f44a0eec1ea6f4b459, type: 2}
+  ToolType: 0
+  HarvestType: 0
+  Yield:
+    itemData: {fileID: 11400000, guid: fe31e13f437bd6d429adfd67ab6ba40b, type: 2}
+    count: 1
+  Yields: []
+  IsPickup: 0
+  PickupDuration: 1
+  MaxInteractDistance: 3
+  UseInstances: 0
+  Instances: []

@@ -1,7 +1,10 @@
 using System;
-using TMPro;
+
 using UnityEngine;
 using UnityEngine.InputSystem;
+
+using TMPro;
+
 using UZSG.Interactions;
 
 namespace UZSG.UI
@@ -48,12 +51,7 @@ namespace UZSG.UI
             {
                 if (interactAction != null) return; /// cannot be used twice lol
 
-                this.interactAction = value;
-                this.ActionText = interactAction.ActionText;
-                this.InteractableText = interactAction.InteractableText;
-                this.InputAction = interactAction.InputAction;
-                _enableUpdate = true;
-                ListenToInputs();
+                SetInteractAction(value);
             }
         }
         public InputAction InputAction { get; set; }
@@ -113,7 +111,7 @@ namespace UZSG.UI
                 {
                     interactAction.Perform(new InteractionContext()
                     {
-                        Action = interactAction.ActionText,
+                        Type = interactAction.Type,
                         Interactable = interactAction.Interactable,
                     });
                 }
@@ -140,7 +138,7 @@ namespace UZSG.UI
 
                     interactAction.Perform(new InteractionContext()
                     {
-                        Action = interactAction.ActionText,
+                        Type = interactAction.Type,
                         Interactable = interactAction.Interactable,
                     });
                 }
@@ -160,6 +158,16 @@ namespace UZSG.UI
                     }
                 }
             }
+        }
+
+        public void SetInteractAction(InteractAction value)
+        {
+            interactAction = value;
+            ActionText = InteractAction.Translatable(interactAction.Type);
+            InteractableText = interactAction.Interactable.DisplayName;
+            InputAction = interactAction.InputAction;
+            _enableUpdate = true;
+            ListenToInputs();
         }
     }
 }

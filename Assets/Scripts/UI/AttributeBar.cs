@@ -1,3 +1,4 @@
+// AttributeBar.cs
 using UnityEngine;
 using UZSG.Attributes;
 
@@ -13,7 +14,6 @@ namespace UZSG.UI
         public LeanTweenType BufferEase = LeanTweenType.linear;
 
         bool _isAlreadyBuffering;
-
         [SerializeField] protected RectTransform bufferRect;
 
         public virtual void BindAttribute(Attribute attr)
@@ -22,7 +22,7 @@ namespace UZSG.UI
 
             attribute = attr;
             attribute.OnValueChanged += OnValueChanged;
-            Value = attribute.ValueMaxRatio * BarMax;
+            Value = attribute.ValueMaxRatio; // Remove *100
             RefreshBuffer();
             Rebuild();
         }
@@ -34,7 +34,7 @@ namespace UZSG.UI
 
         public void RefreshFromAttributeContext(AttributeValueChangedContext ctx)
         {
-            Value = attribute.ValueMaxRatio * BarMax;
+            Value = attribute.ValueMaxRatio; // Remove *100
 
             if (IsBuffered && ctx.ValueChangedType == Attribute.ValueChangeType.Decreased)
             {
@@ -49,39 +49,39 @@ namespace UZSG.UI
         void AnimateBuffer(AttributeValueChangedContext ctx)
         {
             float start;
-            if (_isAlreadyBuffering) /// refresh buffer end point
+            float end;
+            
+            if (_isAlreadyBuffering)
             {
                 start = Mathf.Abs(bufferRect.offsetMax.x);
+                end = barRect.rect.width * (1 - attribute.ValueMaxRatio);
             }
-            else /// new buffer
+            else
             {
-                start = Mathf.Lerp(barRect.rect.width, BarMin, ctx.Previous / BarMax);
+                start = barRect.rect.width * (1 - (ctx.Previous / attribute.CurrentMaximum));
+                end = barRect.rect.width * (1 - (ctx.New / attribute.CurrentMaximum));
             }
-            float end = Mathf.Lerp(barRect.rect.width, BarMin, ctx.New / BarMax);
 
             _isAlreadyBuffering = true;
             LeanTween.cancel(gameObject);
             LeanTween.value(gameObject, start, end, BufferDuration)
-            .setEase(BufferEase)
-            .setOnUpdate((float x) =>
-            {
-                bufferRect.offsetMax = new Vector2(-x, bufferRect.offsetMax.y);
-            })
-            .setOnComplete(() =>
-            {
-                _isAlreadyBuffering = false;
-            });
+                .setEase(BufferEase)
+                .setOnUpdate(x =>
+                {
+                    bufferRect.offsetMax = new Vector2(-x, bufferRect.offsetMax.y);
+                })
+                .setOnComplete(() => _isAlreadyBuffering = false);
         }
 
         public void RefreshBuffer()
         {
-            float x = Mathf.Lerp(barRect.rect.width, BarMin, Value / BarMax);
+            float x = barRect.rect.width * (1 - Value);
             bufferRect.offsetMax = new Vector2(-x, bufferRect.offsetMax.y);
         }
 
         public void Flash()
         {
-            /// flash bar indicating something?
+            // Flash implementation remains the same
         }
     }
 }

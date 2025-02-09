@@ -217,7 +217,7 @@ namespace UZSG.UI.HUD
 
             options.Pivot = UI.Pivot.BottomRight;
             options.Position = Vector2.zero;
-            options.Label = slot.Item.Data.DisplayName;
+            options.Label = slot.Item.Data.DisplayNameTranslatable;
             
             options.AddChoice("Unequip")
             .AddCallback(() =>
@@ -312,7 +312,10 @@ namespace UZSG.UI.HUD
         {
             if (context.Status == FrameController.SwitchStatus.Started)
             {
-                ToggleEquipmentHudVisibility(context.Next == "equipment");
+                if (Player.InventoryWindow.IsVisible)
+                {
+                    ToggleEquipmentHudVisibility(context.NextId == "equipment");
+                }
             }
         }
 

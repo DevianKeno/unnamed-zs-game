@@ -1063,5 +1063,17 @@
             "name": "ウィンドウモード",
             "description": "説明がありません！"
         }
+    },
+    "status_effect": {},
+    "translatable": {
+        "action.close": "閉じる",
+        "action.drive": "運転",
+        "action.enter": "入る",
+        "action.equip": "装備",
+        "action.exit": "出る",
+        "action.interact": "操作",
+        "action.open": "開く",
+        "action.pick_up": "拾う",
+        "action.use": "使用"
     }
 }

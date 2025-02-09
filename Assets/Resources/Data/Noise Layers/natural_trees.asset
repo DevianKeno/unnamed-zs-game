@@ -23,7 +23,7 @@ MonoBehaviour:
     Persistence: 0
     Lacunarity: 0
     Scale: 0
-    Density: 0.075
+    Density: 0.0066
   TerrainLayerConstrained: 1
   TerrainLayers:
   - {fileID: 8574412962073106934, guid: 180d6999212ef4b47885bbf5cfbd5e88, type: 2}

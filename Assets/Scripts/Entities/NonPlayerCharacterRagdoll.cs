@@ -1,10 +1,3 @@
-using UnityEngine;
-
-
-using UZSG.Interactions;
-using UZSG.Attributes;
-using UZSG.Saves;
-
 namespace UZSG.Entities
 {
     /// <summary>

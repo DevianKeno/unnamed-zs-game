@@ -19,7 +19,7 @@ namespace UZSG.Worlds
 {
     public class Chunk : MonoBehaviour, ISaveDataReadWrite<ChunkSaveData>
     {
-        public const float DEFAULT_TREE_DENSITY = 0.075f;
+        public const float DEFAULT_TREE_DENSITY = 0.0066f;
         public const float MAX_TREE_DENSITY = 0.5f;
         public const float DEFAULT_PICKUPS_DENSITY = 0.03f;
         public const float MAX_PICKUPS_DENSITY = 0.5f;
@@ -39,6 +39,9 @@ namespace UZSG.Worlds
                 transform.position.y - ChunkSize / 2,
                 transform.position.z - ChunkSize / 2);
         }
+        /// <summary>
+        /// Whether to save this chunk on world exit.
+        /// </summary>
         public bool IsDirty { get; private set; }
         [SerializeField] int seed;
         [SerializeField] internal NoiseData treesNoiseData;
@@ -46,14 +49,15 @@ namespace UZSG.Worlds
         [SerializeField] internal NoiseData oreDepositsNoiseData;
         
         [SerializeField] GenerateResourceChunkSettings settings;
-        [SerializeField] List<BaseObject> _objects = new();
-
-        RaycastHit hit;
+        /// <summary>
+        /// List of objects placed in this chunk.
+        /// </summary>
+        List<BaseObject> _objects = new();
         /// <summary>
         /// List of resources populating this chunk.
-        /// </summary>e
-        Dictionary<Vector3Int, BaseObject> population = new();
-
+        /// </summary>
+        Dictionary<Vector3Int, BaseObject> _population = new();
+        RaycastHit hit;
         /// <summary>
         /// The terrain this chunk is in.
         /// </summary>
@@ -69,7 +73,7 @@ namespace UZSG.Worlds
         /// <summary>
         /// Populates the chunk with resources.
         /// </summary>
-        public void GenerateResources()
+        internal void GenerateResources()
         {
             if (_isProcessing) return;
 
@@ -202,7 +206,7 @@ namespace UZSG.Worlds
         /// <param name="position">The position to place this object in world space</param>
         void TryPlaceTree(Vector3Int coord, Vector3 position)
         {
-            if (population.ContainsKey(coord)) return;
+            if (_population.ContainsKey(coord)) return;
             
             if (!Physics.Raycast(new(position.x, 256f, position.z), -Vector3.up, out hit, 500f)) return;
             if (!hit.collider.TryGetComponent(out terrain)) return;
@@ -212,7 +216,7 @@ namespace UZSG.Worlds
             if (layer.diffuseTexture.name.Equals("grass", StringComparison.OrdinalIgnoreCase) &&
                 value >= 1f) /// only layers with full grass influence
             {
-                population[coord] = null; /// mark/pre-populate, to prevent problems later
+                _population[coord] = null; /// mark/pre-populate, to prevent problems later
                 Game.Objects.PlaceNew<Objects.Tree>("pine_tree_heart", hit.point, (info) =>
                 {
                     info.Object.OnDestructed += OnObjectDestructed;
@@ -220,7 +224,7 @@ namespace UZSG.Worlds
                     var randomRotation = info.Object.Rotation.eulerAngles;
                     randomRotation.y = 360f * Mathf.PerlinNoise(coord.x, coord.z);
                     info.Object.Rotation = Quaternion.Euler(randomRotation);
-                    population[coord] = info.Object;
+                    _population[coord] = info.Object;
                 });
             }
             else
@@ -255,7 +259,7 @@ namespace UZSG.Worlds
         /// </summary>
         void TryPlacePickup(Vector3Int coord, Vector3 position)
         {
-            if (population.ContainsKey(coord)) return;
+            if (_population.ContainsKey(coord)) return;
             
             if (!Physics.Raycast(new(position.x, 256f, position.z), -Vector3.up, out hit, 500f)) return;
             if (!hit.collider.TryGetComponent(out terrain)) return;
@@ -264,14 +268,14 @@ namespace UZSG.Worlds
             if (layer.diffuseTexture.name.Equals("grass", StringComparison.OrdinalIgnoreCase) &&
                 value >= 1f)
             {
-                population[coord] = null; /// mark/pre-populate, to prevent problems later
+                _population[coord] = null; /// mark/pre-populate, to prevent problems later
                 Game.Objects.PlaceNew<ResourcePickup>("wild_grass", hit.point, (info) =>
                 {
                     info.Object.transform.SetParent(transform);
                     var randomRotation = info.Object.Rotation.eulerAngles;
                     randomRotation.y = 360f * Mathf.PerlinNoise(coord.x, coord.z);
                     info.Object.Rotation = Quaternion.Euler(randomRotation);
-                    population[coord] = info.Object;
+                    _population[coord] = info.Object;
                 });
             }
             else
@@ -308,7 +312,7 @@ namespace UZSG.Worlds
         /// <param name="position">The position to place this object in world space</param>
         void TryPlaceOreDeposit(Vector3Int coord, Vector3 position)
         {
-            if (population.ContainsKey(coord)) return;
+            if (_population.ContainsKey(coord)) return;
             
             if (!Physics.Raycast(new(position.x, 256f, position.z), -Vector3.up, out hit, 500f)) return;
             if (!hit.collider.TryGetComponent(out terrain)) return;
@@ -317,14 +321,14 @@ namespace UZSG.Worlds
             if (layer.diffuseTexture.name.Equals("grass", StringComparison.OrdinalIgnoreCase) &&
                 value >= 1f)
             {
-                population[coord] = null; /// mark/pre-populate, to prevent problems later
+                _population[coord] = null; /// mark/pre-populate, to prevent problems later
                 Game.Objects.PlaceNew<Objects.Tree>("iron_deposit", hit.point, (info) =>
                 {
                     info.Object.transform.SetParent(transform);
                     var randomRotation = info.Object.Rotation.eulerAngles;
                     randomRotation.y = 360f * Mathf.PerlinNoise(coord.x, coord.z);
                     info.Object.Rotation = Quaternion.Euler(randomRotation);
-                    population[coord] = info.Object;
+                    _population[coord] = info.Object;
                 });
             }
             else
@@ -365,15 +369,27 @@ namespace UZSG.Worlds
         {
             var csd = new ChunkSaveData
             {
-                Coord = new int[3] { Coord.x, Coord.y, Coord.z }
+                Coord = new int[3]{ Coord.x, Coord.y, Coord.z }
             };
-            var objects = new List<ObjectSaveData>();
-            foreach (var resource in population.Values)
+            
+            List<ObjectSaveData> objects = new();
+            foreach (var obj in _objects)
+            {
+                objects.Add(obj.WriteSaveData());
+            }
+            foreach (var resource in _population.Values)
             {
                 objects.Add(resource.WriteSaveData());
-            } 
+            }
             csd.Objects = objects;
+
             return csd;
+        }
+
+        internal void RegisterObject(BaseObject baseObject)
+        {
+            _objects.Add(baseObject);
+            MarkDirty();
         }
 
         internal void Regenerate()
@@ -383,7 +399,7 @@ namespace UZSG.Worlds
 
         internal void Unload()
         {
-            foreach (var resource in population.Values)
+            foreach (var resource in _population.Values)
             {
                 if (resource.IsDirty)
                 {
@@ -409,6 +425,11 @@ namespace UZSG.Worlds
         public void SetSeed(int seed)
         {
             this.seed = seed;
+        }
+
+        public void MarkDirty()
+        {
+            IsDirty = true;
         }
 
         #endregion

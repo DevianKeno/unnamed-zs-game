@@ -4,12 +4,9 @@ using UnityEngine.InputSystem;
 
 namespace UZSG.Interactions
 {
-    public enum InteractActionType {
-        InteractWith, PickUp, Use, Equip
-    }
-
     public class InteractAction
     {
+        public InteractType Type { get; set; }
         /// <summary>
         /// The object to perform the interaction with.
         /// </summary>
@@ -19,15 +16,7 @@ namespace UZSG.Interactions
         /// </summary>
         public IInteractActor Actor { get; set; }
         /// <summary>
-        /// The action text that may be displayed when looking at the Interactable.
-        /// </summary>
-        public string ActionText { get; set; }
-        /// <summary>
-        /// The name of the interactable to be displayed.
-        /// </summary>
-        public string InteractableText { get; set; }
-        /// <summary>
-        /// Whether if the input requires holding down the key.
+        /// Whether if the input requires holding down the input key.
         /// </summary>
         public bool IsHold { get; set; }
         public float HoldDurationSeconds { get; set; }
@@ -37,9 +26,24 @@ namespace UZSG.Interactions
         /// </summary>
         public event Action<InteractionContext> OnPerformed;
 
-        public void Perform(InteractionContext context)
+        public virtual void Perform(InteractionContext context)
         {
             OnPerformed?.Invoke(context);
+        }
+
+        public static string Translatable(InteractType type)
+        {
+            return type switch
+            {
+                InteractType.Interact => Game.Locale.Translatable("action.interact"),
+                InteractType.Use => Game.Locale.Translatable("action.use"),
+                InteractType.PickUp => Game.Locale.Translatable("action.pick_up"),
+                InteractType.Open => Game.Locale.Translatable("action.open"),
+                InteractType.Close => Game.Locale.Translatable("action.close"),
+                InteractType.Enter => Game.Locale.Translatable("action.enter"),
+                InteractType.Exit => Game.Locale.Translatable("action.exit"),
+                _ => "Interact",
+            };
         }
     }
 }

@@ -7,6 +7,7 @@ namespace UZSG.Data
 {
     /// <summary>
     /// Represents a particular type of weather.
+    /// Values are set in Inspector; <b>Do not write</b>.
     /// </summary>
     [Serializable]
     [CreateAssetMenu(fileName = "New Weather Data", menuName = "UZSG/Weather Datra")]

@@ -49,6 +49,9 @@ namespace UZSG
                 return FreeSlotsCount == 0;
             }
         }
+        /// <summary>
+        /// Whether the container has any items or not.
+        /// </summary>
         public bool HasAny
         {
             get
@@ -212,7 +215,7 @@ namespace UZSG
 
         /// <summary>
         /// Extends this Container with another Container.
-        /// This is irreversible.
+        /// <b>This is irreversible!</b>
         /// </summary>
         public void Extend(Container other)
         {

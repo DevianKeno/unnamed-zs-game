@@ -24,6 +24,9 @@ namespace UZSG.Saves
         
         public List<ObjectSaveData> Objects = new();
         public List<EntitySaveData> EntitySaves = new();
+        /// <summary>
+        /// <c>int[3]</c> is the chunk's coordinate.
+        /// </summary>
         public List<ChunkSaveData> Chunks = new();
     }
 }

@@ -61,13 +61,12 @@ namespace UZSG
         public static RecipeManager Recipes => recipeManager;
         static ObjectsManager objectsManager;
         public static ObjectsManager Objects => objectsManager;
-        static TimeManager timeManager;
-        public static TimeManager Time => timeManager;
 
         #endregion
 
 
         #region World-entry
+
         static TickSystem tickSystem;
         public static TickSystem Tick => tickSystem;
         static ParticleManager particleManager;
@@ -119,7 +118,6 @@ namespace UZSG
                 UIManager = GetComponentInChildren<UIManager>();
                 inputManager = GetComponentInChildren<InputManager>();
                 audioManager = GetComponentInChildren<AudioManager>();
-                timeManager = GetComponentInChildren<TimeManager>();
                 worldManager = GetComponentInChildren<WorldManager>();
                 
                 tickSystem = GetComponentInChildren<TickSystem>();

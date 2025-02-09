@@ -75,11 +75,11 @@ namespace UZSG.Worlds
         /// Currently loaded chunks.
         /// <c>Vector3Int</c> is the chunk coordinate.
         /// </summary>
-        Dictionary<Vector3Int, Chunk> currentChunks = new();
+        Dictionary<Vector3Int, Chunk> currentLoadedChunks = new();
         /// <summary>
-        /// Chunks that are saved in memory.
+        /// Chunks that are saved in memory, but is not loaded.
         /// </summary>
-        Dictionary<Vector3Int, ChunkSaveData> loadedChunks = new();
+        Dictionary<Vector3Int, ChunkSaveData> saveDataChunks = new();
 
         [Header("Debugging")]
         [Range(0, 1f)] public float chunkOpacity = 0.5f;
@@ -102,8 +102,13 @@ namespace UZSG.Worlds
             }
             
             Game.Entity.OnEntitySpawned += OnEntitySpawned;
-            currentChunks.Clear();
-            loadedChunks.Clear();
+            currentLoadedChunks.Clear();
+            saveDataChunks.Clear();
+        }
+
+        internal void Deinitialize()
+        {
+            enableLoadingChunks = false;
         }
 
         void OnEntitySpawned(EntityManager.EntityInfo info)
@@ -153,7 +158,7 @@ namespace UZSG.Worlds
 
         public bool ChunkExistsAt(Vector3Int coord)
         {
-            return currentChunks.ContainsKey(coord);
+            return currentLoadedChunks.ContainsKey(coord);
         }
 
         /// <summary>
@@ -168,35 +173,53 @@ namespace UZSG.Worlds
             );
         }
 
+        public Chunk GetChunkAt(Vector3Int chunkCoord)
+        {
+            currentLoadedChunks.TryGetValue(chunkCoord, out var chunk);
+            return chunk;
+        }
+
         /// <summary>
         /// Takes an array of three int values to chunk coordinates.
         /// </summary>
-        public Vector3Int ToChunkCoord(int[] values)
+        public static Vector3Int ToChunkCoord(int[] values)
         {
             return new(values[0], values[1], values[2]);
         }
 
         internal List<ChunkSaveData> SaveChunks()
         {
-            var chunks = new List<ChunkSaveData>();
-            foreach (var chunk in currentChunks.Values)
+            List<ChunkSaveData> chunkSaves = new();
+            List<Vector3Int> alreadyWritten = new();
+            
+            /// save currently loaded chunks
+            foreach (var chunk in currentLoadedChunks.Values)
             {
                 if (!chunk.IsDirty) continue;
                 
-                chunks.Add(chunk.WriteSaveData());
+                chunkSaves.Add(chunk.WriteSaveData());
+                alreadyWritten.Add(chunk.Coord);
             }
-            return chunks;
+            /// save the remaining chunks that were loaded in memory
+            foreach (var chunkSave in saveDataChunks.Values)
+            {
+                if (alreadyWritten.Contains(ToChunkCoord(chunkSave.Coord))) continue;                
+                chunkSaves.Add(chunkSave);
+            }
+            
+            alreadyWritten.Clear();
+            return chunkSaves;
         }
 
         /// <summary>
         /// Reads the saved chunks and loads it into memory.
         /// </summary>
-        internal void ReadChunks(List<ChunkSaveData> chunks)
+        internal void ReadChunks(List<ChunkSaveData> chunkSaves)
         {
-            foreach (var chunkSave in chunks)
+            foreach (var chunkSave in chunkSaves)
             {
                 var coord = ToChunkCoord(chunkSave.Coord); /// from int[3]                
-                loadedChunks[coord] = chunkSave;
+                saveDataChunks[coord] = chunkSave;
             }
         }
 
@@ -208,7 +231,7 @@ namespace UZSG.Worlds
 #endif
 
             /// Unload chunks outside the render distance
-            foreach (var kv in currentChunks.ToList())
+            foreach (var kv in currentLoadedChunks.ToList())
             {
                 var chunk = kv.Value;
 
@@ -216,8 +239,12 @@ namespace UZSG.Worlds
                     // Mathf.Abs(chunk.Coord.y - currentCoord.y) > renderDistance ||
                     Mathf.Abs(chunk.Coord.z - currentCoord.z) > renderDistance)
                 {
+                    if (chunk.IsDirty)
+                    {
+                        saveDataChunks[chunk.Coord] = chunk.WriteSaveData();
+                    }
                     chunk.Unload();
-                    currentChunks.Remove(kv.Key);
+                    currentLoadedChunks.Remove(kv.Key);
                     print($"Unloaded resource chunk ({chunk.Coord.x}, {chunk.Coord.z})");
                 }
             }
@@ -235,24 +262,25 @@ namespace UZSG.Worlds
                             currentCoord.z + z
                         );
                 
-                        if (currentChunks.ContainsKey(chunkCoord)) continue; /// chunk is already present
+                        if (currentLoadedChunks.ContainsKey(chunkCoord)) continue; /// chunk is already present
                         
-                        if (loadedChunks.TryGetValue(chunkCoord, out ChunkSaveData chunkSave)) /// chunk was already generated before
+                        if (saveDataChunks.TryGetValue(chunkCoord, out ChunkSaveData chunkSave)) /// chunk was already generated before
                         {
                             var chunk = CreateEmptyChunk(chunkCoord);
+                            currentLoadedChunks[chunkCoord] = chunk;
+
                             chunk.SetSeed(World.GetSeed());
                             chunk.ReadSaveData(chunkSave);
-                            currentChunks[chunkCoord] = chunk;
                         }
                         else /// new generated chunk
                         {
-                            currentChunks[chunkCoord] = CreateNewChunkWithResources(chunkCoord);
+                            currentLoadedChunks[chunkCoord] = CreateNewChunkWithResources(chunkCoord);
                         }
                     // }
                 }
             }
             
-            chunksLoaded = currentChunks.Count;
+            chunksLoaded = currentLoadedChunks.Count;
         }
 
         Chunk CreateNewChunkWithResources(Vector3Int coord)
@@ -420,9 +448,9 @@ namespace UZSG.Worlds
 
         public void RefreshChunks()
         {
-            loadedChunks.Clear();
+            saveDataChunks.Clear();
         }
 #endif
-#endregion
+        #endregion
     }
 }

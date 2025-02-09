@@ -52,7 +52,6 @@ namespace UZSG.Worlds
         public ProductUserId OwnerPUID { get; private set; }
 
         bool _isInitialized; /// to prevent initializing the world twice :)
-        bool _isActive;
         bool _hasValidSaveData;
         internal string worldpath => Path.Join(Application.persistentDataPath, WorldManager.WORLDS_FOLDER, currentSaveData.WorldName); 
         WorldSaveData currentSaveData;
@@ -159,7 +158,7 @@ namespace UZSG.Worlds
             onCompleted?.Invoke();
         }
 
-        private void InitializeWorldEvents()
+        void InitializeWorldEvents()
         {
             WorldEvents.BeginDefaultEvents();
         }
@@ -215,8 +214,6 @@ namespace UZSG.Worlds
                 WorldEvents.Initialize();
                 Chat.Initialize();
             }
-            
-            // RegisterExistingInstances();
         }
 
         void InitializeEvents()
@@ -227,96 +224,13 @@ namespace UZSG.Worlds
             Game.Tick.OnTick += OnTick;
         }
 
-        /// <summary>
-        /// IMPORTANT NOTE: as it turns out, every time the level is loaded the instance id is differnet 
-        /// Register object/entity instances from the scene to avoid duplicates.
-        /// 
-        /// </summary>
-        void RegisterExistingInstances()
-        {
-            /// Objects
-            foreach (Transform c in objectsContainer)
-            {
-                if (c.TryGetComponent<BaseObject>(out var obj))
-                {
-                    _objectInstanceIds[obj.GetInstanceID()] = obj;
-                }
-            }
-
-            /// Entities
-            foreach (Transform c in entitiesContainer)
-            {
-                if (c.TryGetComponent<Entity>(out var etty))
-                {
-                    _entityInstanceIds[etty.GetInstanceID()] = etty;
-                    CacheEntity(etty);
-                }
-            }
-        }
-        
-        void SaveObjects()
-        {
-            Game.Console.LogInfo("[World]: Saving objects...");
-
-            var objectSaves = new List<ObjectSaveData>();
-            foreach (Transform child in objectsContainer)
-            {
-                if (!child.TryGetComponent(out BaseObject baseObject)) continue;
-                // if (!baseObject.IsDirty) continue;
-
-                objectSaves.Add(baseObject.WriteSaveData());
-            }
-            currentSaveData.Objects = objectSaves;
-        }
-
         void LoadChunks()
         {
             if (currentSaveData.Chunks == null) return;
 
             ChunkManager.ReadChunks(currentSaveData.Chunks);
-            ChunkManager.enableLoadingChunks = true;
         }
         
-        void LoadObjects()
-        {
-            Game.Console.LogInfo("[World]: Loading objects...");
-            if (currentSaveData.Objects == null) return;
-            
-            foreach (var objectSaveData in currentSaveData.Objects)
-            {
-                if (_objectInstanceIds.TryGetValue(objectSaveData.InstanceId, out BaseObject baseObject))
-                {
-                    PlaceExistingAsNew(baseObject);
-                }
-                else
-                {
-                    /// construct the object and initialize
-                    var position = Utils.FromFloatArray(objectSaveData.Transform.Position);
-                    Game.Objects.PlaceNew(objectSaveData.Id, position: position, callback: (info) =>
-                    {
-                        info.Object.ReadSaveData(objectSaveData);
-                    });
-                }
-            }
-
-            static void PlaceExistingAsNew(BaseObject baseObject)
-            {
-                if (baseObject.IsPlaced) return;
-
-                try
-                {
-                    baseObject.PlaceInternal();
-                }
-                catch
-                {
-                    if (baseObject.ObjectData != null)
-                    {
-                        Game.Console.LogWarn($"An error occured when loading object '{baseObject.ObjectData.Id}'! Skipping.");
-                    }
-                }
-            }
-        }
-
         void SaveEntities()
         {
             Game.Console.LogInfo("[World]: Saving entities...");
@@ -364,10 +278,6 @@ namespace UZSG.Worlds
                 }
                 else
                 {
-                    if (etty is Enemy enemy)
-                    {
-                        WorldEvents.naturalEnemySpawnEvent.IncludeSpawned(enemy);
-                    }
                     Game.Entity.Spawn(sd.Id, callback: (info) =>
                     {
                         info.Entity.ReadSaveData(sd);
@@ -423,7 +333,7 @@ namespace UZSG.Worlds
 
             this.Time.Tick(secondsCalculation);
             this.Weather.Tick(secondsCalculation);
-            this.WorldEvents.Tick(secondsCalculation);
+            // this.WorldEvents.Tick(secondsCalculation);
         }
 
         internal void OnNetworkPlayerJoined(Player player)
@@ -495,7 +405,9 @@ namespace UZSG.Worlds
 
         internal void Deinitialize()
         {
-            WorldEvents.Deinitialize(); 
+            ChunkManager.Deinitialize();
+            WorldEvents.Deinitialize();
+            DeinitializeEvents();
             EOSSubManagers.Lobbies.RemoveNotifyMemberStatusReceived(OnMemberStatusReceived);
         }
         
@@ -691,7 +603,7 @@ namespace UZSG.Worlds
             Game.Console.LogInfo("[World]: Exiting world...");
             Game.Audio.StopTrack("forest_ambiant_1");
 
-            DeinitializeEvents();
+            Deinitialize();
             Cleanup();
             
             if (save)
@@ -731,7 +643,6 @@ namespace UZSG.Worlds
             _hasValidSaveData = true;
             
             LoadChunks();
-            // LoadObjects();
             LoadEntities();
             ReadPlayerData();
             Time.InitializeFromSave(saveData);
@@ -752,11 +663,9 @@ namespace UZSG.Worlds
 
             Game.Console.LogInfo($"[World]: Saving chunks...");
             currentSaveData.Chunks = ChunkManager.SaveChunks();
-
+            SaveEntities();
             SaveTimeState();
             SavePlayerDatas();
-            // SaveObjects();
-            SaveEntities();
 
             return currentSaveData;
         }
@@ -876,6 +785,20 @@ namespace UZSG.Worlds
             }
 
             return spawnPosition;
+        }
+
+        internal Chunk GetChunkBy(Vector3 worldPosition)
+        {
+            /// TEST: 
+            var chunkCoord = ChunkManager.ToChunkCoord(worldPosition);
+            chunkCoord.y = 0;
+            /// TEST: 
+            return ChunkManager.GetChunkAt(chunkCoord);
+        }
+
+        internal Chunk GetChunkBy(Vector3Int chunkCoord)
+        {
+            return ChunkManager.GetChunkAt(chunkCoord);
         }
     }
 }

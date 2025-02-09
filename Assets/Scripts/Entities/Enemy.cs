@@ -8,11 +8,12 @@ using UZSG.Data;
 using UZSG.Interactions;
 
 using UZSG.Saves;
+using UZSG.Worlds;
 using static UZSG.Entities.EnemyActionStates;
 
 namespace UZSG.Entities
 {
-    public partial class Enemy : NonPlayerCharacter, IPlayerDetectable, IDamageSource
+    public partial class Enemy : NonPlayerCharacter, IPlayerDetectable, IDamageSource, IWorldCleanupable
     {
         public EnemyData EnemyData => entityData as EnemyData;
 
@@ -20,6 +21,10 @@ namespace UZSG.Entities
         /// Whether if this enemy is spawned from the NaturalEnemySpawnEvent.
         /// </summary>
         internal bool _isNaturallySpawned;
+        /// <summary>
+        /// Whether to allow this entity to naturally despawn or be world cleaned up.
+        /// </summary>
+        internal bool _isPersistent;
         protected bool _hasAlreadyScreamed;
 
         public float MoveSpeed
@@ -111,5 +116,13 @@ namespace UZSG.Entities
 
 
         public virtual void NotifyDetection(Player player) { }
+
+        public void Cleanup()
+        {
+            if (_isNaturallySpawned && !_isPersistent)
+            {
+                Despawn();
+            }
+        }
     }
 }

@@ -8,9 +8,8 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.UI;
-
-
 
 namespace UZSG.UI
 {
@@ -73,9 +72,7 @@ namespace UZSG.UI
         /// Canvas specifically for entity health bars.
         /// </summary>
         public Canvas HealthBarCanvas => healthBarCanvas;
-
         [SerializeField] Image screenBlack;
-
 
 
         #region UI Events
@@ -105,14 +102,15 @@ namespace UZSG.UI
         #endregion
 
         Dictionary<string, GameObject> prefabsDict = new();
-
+        Dictionary<string, AssetReference> addressableGuis = new();
+        
         internal void Initialize()
         {
             if (_isInitialized) return;
             _isInitialized = true;
             
             Game.Console.LogInfo("Initializing UI...");
-            InitializeUIPrefabs();
+            LoadUIResources();
             InitializeIcons();
 
             input = Game.Main.MainInput;
@@ -128,7 +126,7 @@ namespace UZSG.UI
             Game.Main.GetActionMap("Global").Enable();
         }
 
-        void InitializeUIPrefabs()
+        void LoadUIResources()
         {
             Game.Console.LogInfo("Loading UI Prefabs...");
             foreach (GameObject element in Resources.LoadAll<GameObject>("Prefabs/UI"))
@@ -202,10 +200,14 @@ namespace UZSG.UI
 
         public void SetCursorVisible(bool visible)
         {
-            if (visible)            
+            if (visible)
+            {
                 Cursor.lockState = CursorLockMode.None;
-            else            
-                Cursor.lockState = CursorLockMode.Locked;            
+            }
+            else
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+            }      
             
             _isCursorVisible = visible;
             Cursor.visible = visible;
@@ -243,17 +245,51 @@ namespace UZSG.UI
 
         GameObject Create(string prefabName, bool inSafeArea = true)
         {
-            if (prefabsDict.ContainsKey(prefabName))
+            if (false == prefabsDict.ContainsKey(prefabName))
             {
-                var go = Instantiate(prefabsDict[prefabName], Canvas.transform);
-                go.name = prefabName;
-                return go;
+                Game.Console.LogWarn($"UI Prefab '{prefabName}' does not exist!", true);
+                return null;
             }
 
-            var msg = $"UI Prefab '{prefabName}' does not exist.";
-            Game.Console.LogInfo(msg);
-            Debug.LogWarning(msg);
-            return null;
+            var go = Instantiate(prefabsDict[prefabName], Canvas.transform);
+            go.name = prefabName;
+            return go;
+        }
+        
+        public delegate void OnLoadAddressableElementCompleted<T>(T element);
+        /// <summary>
+        /// Create an instance of a UI prefab from an AssetReference.
+        /// </summary>
+        /// <typeparam name="T">Window script attach to the root.</typeparam>
+        public async void CreateFromAddressableAsync<T>(AssetReference assetReference, bool show = true, OnLoadAddressableElementCompleted<T> callback = null) where T : UIElement
+        {
+            var handle = Addressables.LoadAssetAsync<GameObject>(assetReference);
+            await handle.Task;
+
+            if (handle.Status != AsyncOperationStatus.Succeeded)
+            {
+                var msg = $"Unable to instantiate UI element, it does not exist";
+                Game.Console.LogWarn(msg, true);
+                return;
+            }
+
+            var go = Instantiate(handle.Result, Canvas.transform);
+            if (false == go.TryGetComponent(out T element))
+            {
+                Game.Console.LogWarn($"'{assetReference.SubObjectName}' does not have a UIElement component! Discarding...", true);
+                Destroy(go);
+                return;
+            }
+
+            if (element is Window window)
+            {
+                window.OnOpened += () => { OnAnyWindowOpened?.Invoke(window); };
+                window.OnClosed += () => { OnAnyWindowClosed?.Invoke(window); };
+            }
+            if (!show) element.Hide();
+
+            callback?.Invoke(element);
+            return;
         }
 
         /// <summary>
@@ -261,76 +297,73 @@ namespace UZSG.UI
         /// </summary>
         /// <typeparam name="T">Window script attach to the root.</typeparam>
         public T Create<T>(string prefabName, bool show = true) where T : UIElement
-        {            
-            if (prefabsDict.ContainsKey(prefabName))
+        {
+            if (false == prefabsDict.ContainsKey(prefabName))
             {
-                var go = Instantiate(prefabsDict[prefabName], Canvas.transform);
-                go.name = prefabName;
-
-                if (go.TryGetComponent(out T element))
-                {
-                    if (element is Window window)
-                    {
-                        window.OnOpened += () => { OnAnyWindowOpened?.Invoke(window); };
-                        window.OnClosed += () => { OnAnyWindowClosed?.Invoke(window); };
-                    }
-                    if (!show) element.Hide();
-                    return element;
-                }
+                Game.Console.LogWarn($"Unable to create UI element, it does not exist!", true);
                 return default;
             }
 
-            var msg = $"Unable to create UI element, it does not exist";
-            Game.Console.LogInfo(msg);
-            Debug.LogWarning(msg);
-            return default;
+            var go = Instantiate(prefabsDict[prefabName], Canvas.transform);
+            if (false == go.TryGetComponent(out T element))
+            {
+                Game.Console.LogWarn($"'{prefabName}' does not have a UIElement component! Discarding...", true);
+                Destroy(go);
+                return default;
+            }
+
+            go.name = prefabName;
+            if (element is Window window)
+            {
+                window.OnOpened += () => { OnAnyWindowOpened?.Invoke(window); };
+                window.OnClosed += () => { OnAnyWindowClosed?.Invoke(window); };
+            }
+            if (!show) element.Hide();
+            return element;
         }
 
         public T Create<T>(string prefabName, Transform parent, bool show = true) where T : UIElement
         {            
-            if (prefabsDict.ContainsKey(prefabName))
+            if (false == prefabsDict.ContainsKey(prefabName))
             {
-                var go = Instantiate(prefabsDict[prefabName], parent);
-                go.name = prefabName;
-
-                if (go.TryGetComponent(out T element))
-                {
-                    if (element is Window window)
-                    {
-                        window.OnOpened += () => { OnAnyWindowOpened?.Invoke(window); };
-                        window.OnClosed += () => { OnAnyWindowClosed?.Invoke(window); };
-                    }
-                    if (!show) element.Hide();
-                    return element;
-                }
+                Game.Console.LogWarn($"Unable to create UI element '{prefabName}', it does not exist!", true);
                 return default;
             }
 
-            var msg = $"Unable to create UI element, it does not exist";
-            Game.Console.LogInfo(msg);
-            Debug.LogWarning(msg);
-            return default;
+            var go = Instantiate(prefabsDict[prefabName], parent);
+
+            if (false == go.TryGetComponent(out T element))
+            {
+                Game.Console.LogWarn($"'{prefabName}' does not have a UIElement component! Discarding...", true);
+                return default;
+            }
+
+            go.name = prefabName;
+            if (element is Window window)
+            {
+                window.OnOpened += () => { OnAnyWindowOpened?.Invoke(window); };
+                window.OnClosed += () => { OnAnyWindowClosed?.Invoke(window); };
+            }
+            if (!show) element.Hide();
+            return element;
         }
 
         public T Create<T>(GameObject prefab, bool show = true) where T : UIElement
         {
             var go = Instantiate(prefab, Canvas.transform);
-            if (go.TryGetComponent(out T element))
+            if (false == go.TryGetComponent(out T element))
             {
-                if (element is Window window)
-                {
-                    window.OnOpened += () => { OnAnyWindowOpened?.Invoke(window); };
-                    window.OnClosed += () => { OnAnyWindowClosed?.Invoke(window); };
-                }
-                if (!show) element.Hide();
-                return element;
+                Game.Console.LogWarn($"'{prefab.name}' does not have a UIElement component! Discarding...", true);
+                return default;
             }
 
-            var msg = $"Unable to instantiate UI element, it does not exist";
-            Destroy(go);
-            Game.Console.LogInfo(msg);
-            Debug.LogWarning(msg);
-            return default;
+            if (element is Window window)
+            {
+                window.OnOpened += () => { OnAnyWindowOpened?.Invoke(window); };
+                window.OnClosed += () => { OnAnyWindowClosed?.Invoke(window); };
+            }
+            if (!show) element.Hide();
+            return element;
         }
 
         /// <summary>

@@ -3,18 +3,13 @@ using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.UI;
+
 using TMPro;
 
-
-using UZSG.Entities;
-using UZSG.Objects;
-using UZSG.Inventory;
-using UZSG.Items;
-using UZSG.Items.Weapons;
-using UZSG.Interactions;
-using UZSG.Data;
-using UZSG.Players;
 using UZSG.Attributes;
+using UZSG.Entities;
+using UZSG.Items;
+using UZSG.Interactions;
 
 namespace UZSG.UI.HUD
 {

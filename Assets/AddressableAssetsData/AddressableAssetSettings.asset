@@ -15,7 +15,7 @@ MonoBehaviour:
   m_DefaultGroup: 4df500ee1f95bb542be6e196e4ad9a8d
   m_currentHash:
     serializedVersion: 2
-    Hash: 94ee0b64e3833b58e99054edb2df20c2
+    Hash: 33a182699c3dcca5abda864b71bbfcc6
   m_OptimizeCatalogSize: 0
   m_BuildRemoteCatalog: 0
   m_BundleLocalCatalog: 0
@@ -53,6 +53,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 5aedd21488abbce40a217428a57a702c, type: 2}
   - {fileID: 11400000, guid: e77d7672a0ae5894096cacdf42b57626, type: 2}
   - {fileID: 11400000, guid: 5ad0df25419093948b8a167e228a7c3b, type: 2}
+  - {fileID: 11400000, guid: 57b016cc440f6944b9137e1df85664fc, type: 2}
   m_BuildSettings:
     m_CompileScriptsInVirtualMode: 0
     m_CleanupStreamingAssetsAfterBuilds: 1
@@ -101,6 +102,7 @@ MonoBehaviour:
     - weapon
     - player_audio
     - GIANTEST
+    - guis
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: 4a6fdce26f389fb4d8d9a70a3414d3f2, type: 2}

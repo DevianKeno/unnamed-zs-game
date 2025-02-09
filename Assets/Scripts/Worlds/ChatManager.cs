@@ -47,6 +47,7 @@ namespace UZSG.Worlds
         void OnDestroy()
         {
             Game.UI.OnAnyWindowOpened -= OnAnyWindowOpened;
+            ui.Destruct();
         }
 
         void OnKeyDownEnter(InputAction.CallbackContext context)

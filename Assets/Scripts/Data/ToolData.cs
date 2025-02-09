@@ -19,6 +19,7 @@ namespace UZSG.Data
 
     /// <summary>
     /// Represents the various data a Tool has.
+    /// Values are set in Inspector; <b>Do not write</b>.
     /// </summary>
     [Serializable]
     [CreateAssetMenu(fileName = "New Tool Data", menuName = "UZSG/Items/Tool Data")]

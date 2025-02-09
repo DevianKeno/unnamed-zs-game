@@ -106,11 +106,11 @@ namespace UZSG.Network
             _enableTracking = true;
         }
 
-        void OnRequestPlayerSaveDataCompleted(PlayerSaveData saveData, Epic.OnlineServices.Result result)
+        void OnRequestPlayerSaveDataCompleted(PlayerSaveData saveData, Result result)
         {
             if (!IsOwner) return;
 
-            if (result == Epic.OnlineServices.Result.Success)
+            if (result == Result.Success)
             {
                 this.Player.InitializeAsPlayer(saveData, isLocalPlayer: true);
             }

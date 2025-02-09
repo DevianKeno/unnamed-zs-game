@@ -178,6 +178,7 @@ namespace UZSG.TitleScreen
             if (result.Result == Result_u.Success)
             {
                 selector.Hide();
+                Game.World.CurrentWorld.OnInitializeDone += OnWorldInitializeDone;
                 Game.World.InitializeWorld();
                 
                 Game.Main.UnloadScene("TitleScreen");
@@ -192,6 +193,12 @@ namespace UZSG.TitleScreen
                     });
                 playBtn.interactable = true;
             }
+        }
+
+        void OnWorldInitializeDone()
+        {
+            Game.World.CurrentWorld.OnInitializeDone -= OnWorldInitializeDone;
+            Game.Main.UnloadScene("LoadingScreen");
         }
 
         void OnDeleteBtnClick()

@@ -1,7 +1,9 @@
 using System;
+
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+
 using TMPro;
 
 using UZSG.Data;
@@ -69,7 +71,7 @@ namespace UZSG.UI
         {
             RecipeData = recipeData;
             image.sprite = recipeData.Output.Data.Sprite;
-            text.text = recipeData.DisplayName;
+            text.text = recipeData.DisplayNameTranslatable;
             Rebuild();
         }
 

@@ -34,6 +34,7 @@ namespace UZSG
             {
                 availableLocales.Add(localization);
             }
+            SetLocalization(currentLocale.LocaleKey);
         }
         
         public void SetLocalization(string localeKey)
@@ -148,6 +149,12 @@ namespace UZSG
                 translationKeys[$"status_effect.{kv.Key}.name"] = statusEffect.name;
                 translationKeys[$"status_effect.{kv.Key}.description"] = statusEffect.description;
             }
+
+            /// [Other] Translatables
+            foreach (var kv in locale.translatable)
+            {
+                translationKeys[$"{kv.Key}"] = kv.Value;
+            }
         }
 
 #if UNITY_EDITOR
@@ -159,8 +166,8 @@ namespace UZSG
             var localeKey = "en_us";
             var newLocale = new LocalizationJson(); 
 
-            string[] categories = { "Attributes", "Entities", "Items", "Objects", "Recipes", "Settings" };
-            string[] dataTypes = { "AttributeData", "EntityData", "ItemData", "ObjectData", "RecipeData", "SettingsEntryData" };
+            string[] categories = { "Attributes", "Entities", "Items", "Objects", "Recipes", "Settings", "Translatable"};
+            string[] dataTypes = { "AttributeData", "EntityData", "ItemData", "ObjectData", "RecipeData", "SettingsEntryData", "TranslatableKey"};
 
             for (int i = 0; i < categories.Length; i++)
             {
@@ -260,6 +267,13 @@ namespace UZSG
                                 name = settingData.DisplayName,
                                 description = settingData.Description,
                             };
+                            break;
+                        }
+                        case "Translatable":
+                        {
+                            var translatable = (TranslatableKey) assetData;
+                            Debug.Assert(!string.IsNullOrEmpty(translatable.DefaultText), $"{category} '{translatable.name}' has empty default text!");
+                            newLocale.translatable[translatable.Key] = translatable.DefaultText;
                             break;
                         }
                     }

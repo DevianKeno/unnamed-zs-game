@@ -53,11 +53,11 @@ namespace UZSG
 
         #region Events
         /// <summary>
-        /// Fired every tick, (TPS) times every second.
+        /// Raised every tick, (TPS) times every second.
         /// </summary>
         public event Action<TickInfo> OnTick;
         /// <summary>
-        /// Fired every in game second relative to the game's tick.
+        /// Raised every in game second relative to the game's tick.
         /// </summary>
         public event Action<SecondInfo> OnSecond;
         #endregion

@@ -1,5 +1,5 @@
 using System;
-
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -24,12 +24,24 @@ namespace UZSG.UI
         [SerializeField] float spacerWidth;
 
         [SerializeField] Image background;
+        [SerializeField] TextMeshProUGUI labelTmp;
         [SerializeField] RectTransform spacer;
 
         protected override void Awake()
         {
             base.Awake();
             OnValueChanged += MarkDirty;
+        }
+
+        void Start()
+        {
+            labelTmp = transform.Find("Label (TMP)").GetComponent<TextMeshProUGUI>();
+            labelTmp.text = settingsEntryData.DisplayNameTranslatable;
+        }
+
+        protected override void OnShow()
+        {
+            labelTmp.text = settingsEntryData.DisplayNameTranslatable;
         }
 
         protected void MarkDirty(SettingEntryUI sender)

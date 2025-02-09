@@ -104,7 +104,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 817ff1558a8f94f46bed7a8aa689ff3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _value: 50
+  rect: {fileID: 0}
+  value: 0
   barRect: {fileID: 4311033346984278034}
   fillRect: {fileID: 2760803089409279687}
   attribute:
@@ -115,9 +116,8 @@ MonoBehaviour:
     flatBonus: 0
     LimitOverflow: 0
     LimitUnderflow: 0
-  BufferOnDecreaseValue: 0
   BufferDuration: 0.2
-  TweenType: 1
+  BufferEase: 1
   bufferRect: {fileID: 7945647152897745870}
 --- !u!1 &464622792171929392
 GameObject:
@@ -336,6 +336,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fea5bc89f33fdd7468d0cc6c4377d80b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Player: {fileID: 0}
+  slotsContainer: {fileID: 0}
 --- !u!1 &2216749953957324396
 GameObject:
   m_ObjectHideFlags: 0
@@ -388,6 +390,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fea5bc89f33fdd7468d0cc6c4377d80b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Player: {fileID: 0}
+  slotsContainer: {fileID: 0}
 --- !u!114 &1107370032779974630
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -845,6 +849,7 @@ MonoBehaviour:
   clipAmmoText: {fileID: 348492340105863038}
   reserveAmmoText: {fileID: 7448529923652464288}
   firingModeText: {fileID: 3653120287113379125}
+  cartridgeText: {fileID: 0}
 --- !u!1 &6478721122352780109
 GameObject:
   m_ObjectHideFlags: 0
@@ -1275,8 +1280,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -61.329983, y: 0}
-  m_SizeDelta: {x: -122.659935, y: 0}
+  m_AnchoredPosition: {x: -122.65996, y: 0}
+  m_SizeDelta: {x: -245.31989, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5420094096101095999
 CanvasRenderer:
@@ -1387,11 +1392,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rect: {fileID: 4842610381706415447}
-  FadeDuration: 0.3
-  Player: {fileID: 0}
   hotbar: {fileID: 1279766023132119920}
+  AmmoCounter: {fileID: 0}
+  equipment: {fileID: 0}
+  equippedItemTMP: {fileID: 0}
+  weaponDetails: {fileID: 0}
   HealthBar: {fileID: 0}
-  StaminaBar: {fileID: 6441483392727630303}
+  StaminaBar: {fileID: 0}
   HungerBar: {fileID: 15068807644706991}
   HydrationBar: {fileID: 2537953012572525295}
   XPBar: {fileID: 874241769277646276}
@@ -2343,11 +2350,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1468061552080109571, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
       propertyPath: m_SizeDelta.x
-      value: -175.49776
+      value: -350.9955
       objectReference: {fileID: 0}
     - target: {fileID: 1468061552080109571, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -87.74888
+      value: -175.49776
       objectReference: {fileID: 0}
     - target: {fileID: 2924971406887224336, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
       propertyPath: _value
@@ -2487,17 +2494,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 8963817805981456813, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
   m_PrefabInstance: {fileID: 4468751204951620223}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &6441483392727630303 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7449110528680967072, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
-  m_PrefabInstance: {fileID: 4468751204951620223}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 817ff1558a8f94f46bed7a8aa689ff3a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &4609189987534445683
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2614,11 +2610,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1468061552080109571, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
       propertyPath: m_SizeDelta.x
-      value: -84.57
+      value: -169.14
       objectReference: {fileID: 0}
     - target: {fileID: 1468061552080109571, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -42.285
+      value: -84.57
       objectReference: {fileID: 0}
     - target: {fileID: 2924971406887224336, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
       propertyPath: _value
@@ -3421,11 +3417,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1468061552080109571, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
       propertyPath: m_SizeDelta.x
-      value: -85.02295
+      value: -170.0459
       objectReference: {fileID: 0}
     - target: {fileID: 1468061552080109571, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -42.511475
+      value: -85.02295
       objectReference: {fileID: 0}
     - target: {fileID: 1468061552080109571, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -4195,11 +4191,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7192716735276185911, guid: 064a69cbd4536964b9a8be5101b7b770, type: 3}
       propertyPath: m_SizeDelta.x
-      value: -124.95824
+      value: -249.91649
       objectReference: {fileID: 0}
     - target: {fileID: 7192716735276185911, guid: 064a69cbd4536964b9a8be5101b7b770, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -62.479134
+      value: -124.95826
       objectReference: {fileID: 0}
     - target: {fileID: 7209979227544774230, guid: 064a69cbd4536964b9a8be5101b7b770, type: 3}
       propertyPath: m_Name

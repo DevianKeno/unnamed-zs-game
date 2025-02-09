@@ -11,8 +11,9 @@ namespace UZSG.Saves
         public string UID = string.Empty;
         public string DisplayName = string.Empty;
         public InventorySaveData Inventory = new();
-        public List<string> KnownRecipes = new();
+        public List<string> KnownRecipeIds = new();
         public bool IsCreative = false;
+        public bool IsGodMode = false;
 
         public static bool IsEmpty(PlayerSaveData psd)
         {

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 
 using UnityEngine;
-using UZSG.Worlds;
+
 using UZSG.Worlds.Events;
 
 namespace UZSG.Data
@@ -24,7 +24,7 @@ namespace UZSG.Data
         public bool AllowMultipleEvents;
         public float ChanceToOccur;
         public int OccurEverySecond;
-        public List<WeatherEventInstance> WeatherTypes;
+        // public List<WeatherEventInstance> WeatherTypes;
         public List<RaidEventInstance> RaidTypes;
     }
 }

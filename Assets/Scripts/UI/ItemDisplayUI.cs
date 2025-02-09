@@ -106,7 +106,7 @@ namespace UZSG.UI
                 {
                     image.color = ItemSlotUI.Transparent;
                     altText.enabled = true;
-                    altText.text = item.Data.DisplayName;
+                    altText.text = item.Data.DisplayName; /// alternate text fallback to default string
                 }
                 image.sprite = item.Data.Sprite;
 

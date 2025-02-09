@@ -45,8 +45,8 @@ namespace UZSG.UI
             }
             else
             {
-                nameText.text = item.Data.DisplayName;
-                descriptionText.text = item.Data.Description;
+                nameText.text = item.Data.DisplayNameTranslatable;
+                descriptionText.text = item.Data.DescriptionTranslatable;
                 
                 if (item.Attributes != null)
                 {

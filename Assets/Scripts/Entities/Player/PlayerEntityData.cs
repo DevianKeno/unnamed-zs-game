@@ -6,7 +6,6 @@ using System.Linq;
 using UnityEngine;
 using Newtonsoft.Json;
 
-
 using UZSG.Data;
 using UZSG.Saves;
 using UZSG.Attributes;
@@ -36,7 +35,7 @@ namespace UZSG.Entities
 
             /// Recipes
             KnownRecipes.Clear();
-            foreach (var id in defaults.KnownRecipes)
+            foreach (var id in defaults.KnownRecipeIds)
             {
                 var recipeData = Resources.Load<RecipeData>($"Data/Recipes/{id}");
                 if (recipeData != null)
@@ -63,7 +62,7 @@ namespace UZSG.Entities
             /// 
             
             /// Recipes
-            saveData.KnownRecipes.AddRange(KnownRecipes.Select(recipe => recipe.Id));
+            saveData.KnownRecipeIds.AddRange(KnownRecipes.Select(recipe => recipe.Id));
 
             WriteToFile(saveData);
         }

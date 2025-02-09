@@ -11,6 +11,10 @@ namespace UZSG.Data
         Audio, Video, Graphics, Controls, Accessibility,
     }
 
+    /// <summary>
+    /// Settings entry data.
+    /// Values are set in Inspector; <b>Do not write</b>.
+    /// </summary>
     [Serializable]
     [CreateAssetMenu(fileName = "New Setting Entry Data", menuName = "UZSG/Setting Entry Data")]
     public class SettingsEntryData : BaseData

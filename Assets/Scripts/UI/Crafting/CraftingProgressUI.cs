@@ -10,12 +10,7 @@ namespace UZSG.UI
 {
     public class CraftingProgressUI : RadialProgressUI
     {
-        [Space]
-        public float TimeSingle;
-        public float TimeElapsedSingle;
-
-        [Range(0, 1)]
-        [SerializeField] protected float progressSingle;
+        [SerializeField, Range(0, 1)] protected float progressSingle;
         public float ProgressSingle
         {
             get
@@ -24,20 +19,26 @@ namespace UZSG.UI
             }
             set
             {
-                progressSingle = Mathf.Clamp(value, 0, 1);
+                progressSingle = Mathf.Clamp(value, 0f, 1f);
                 RefreshSingle();
             }
         }
-
+        CraftingRoutine routine;
         [SerializeField] protected ItemDisplayUI itemDisplayUI;
         [SerializeField] protected Image fillSingle;
-        
         
         protected override void OnValidate()
         {
             base.OnValidate();
-
             RefreshSingle();
+        }
+
+        void Update()
+        {
+            if (!IsVisible) return;
+                        
+            Progress = routine.Progress;
+            ProgressSingle = routine.ProgressSingle;
         }
 
         public void RefreshSingle()
@@ -47,8 +48,9 @@ namespace UZSG.UI
 
         public void SetCraftingRoutine(CraftingRoutine routine)
         {
-            itemDisplayUI.SetDisplayedItem(routine.Recipe.Output);
-            TotalTime = routine.Recipe.CraftingTimeSeconds * routine.TotalYield;
+            this.routine = routine;
+            itemDisplayUI.SetDisplayedItem(routine.RecipeData.Output);
+            TotalTime = routine.RecipeData.CraftingTimeSeconds * routine.TotalYield;
             Progress = routine.Progress;
             ProgressSingle = routine.ProgressSingle;
         }

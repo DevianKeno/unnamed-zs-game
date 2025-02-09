@@ -52,6 +52,9 @@ namespace UZSG
             {
                 _entitiesDict[etty.Id] = etty;
             }
+
+            defaultLayer = LayerMask.NameToLayer("Entities");
+            outlinedLayer = LayerMask.NameToLayer("Outline");
         }
         
         void OnEntityDespawnInternal(Entity entity)

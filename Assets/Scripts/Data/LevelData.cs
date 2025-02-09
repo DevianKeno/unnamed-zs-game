@@ -6,6 +6,10 @@ using UnityEngine.Serialization;
 
 namespace UZSG.Data
 {
+    /// <summary>
+    /// Level data.
+    /// Values are set in Inspector; <b>Do not write</b>.
+    /// </summary>
     [Serializable]
     [CreateAssetMenu(fileName = "New Level Data", menuName = "UZSG/Level Data")]
     public class LevelData : BaseData

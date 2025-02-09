@@ -10,7 +10,7 @@ using UZSG.Entities;
 using UZSG.Interactions;
 using UZSG.Items;
 using UZSG.Saves;
-using UZSG.UI.Objects;
+using UZSG.UI;
 
 namespace UZSG.Objects
 {
@@ -76,7 +76,6 @@ namespace UZSG.Objects
 
         internal void PlaceInternal()
         {
-            transform.SetParent(Game.World.CurrentWorld.objectsContainer, worldPositionStays: true);
             if (this is IInteractable)
             {
                 foreach (var coll in GetComponentsInChildren<Collider>())
@@ -93,6 +92,13 @@ namespace UZSG.Objects
             if (objectData.HasAudio)
             {
                 Game.Audio.LoadAudioAssets(objectData.AudioAssetsData);
+            }
+
+            var chunk = Game.World.CurrentWorld.GetChunkBy(worldPosition: this.Position);
+            if (chunk != null)
+            {
+                chunk.RegisterObject(this);
+                transform.SetParent(chunk.transform, worldPositionStays: true);
             }
 
             OnPlace();
@@ -148,7 +154,7 @@ namespace UZSG.Objects
                 {
                     Position = Utils.ToFloatArray(transform.position),
                     Rotation = Utils.ToFloatArray(transform.rotation.eulerAngles),
-                    LocalScale = Utils.ToFloatArray(transform.localScale),
+                    // LocalScale = Utils.ToFloatArray(transform.localScale),
                 }
             };
 
@@ -160,6 +166,11 @@ namespace UZSG.Objects
 
         #region Public methods
 
+        /// <summary>
+        /// Returns the Item representation of this object (if any).
+        /// Returns <c>Item.None</c> if not represented.
+        /// </summary>
+        /// <returns></returns>
         public virtual Item AsItem()
         {
             if (Game.Items.TryGetData(objectData.Id, out var itemData))
@@ -168,7 +179,7 @@ namespace UZSG.Objects
             }
             else
             {
-                Game.Console.LogWarn($"BaseObject/AsItem() Object '{objectData.Id}' does not have an Item counterpart.");
+                Game.Console.LogDebug($"[BaseObject/AsItem()]: Object '{objectData.Id}' does not have an Item counterpart.");
                 return Item.None;
             }
         }
@@ -183,6 +194,7 @@ namespace UZSG.Objects
             OnDestructed?.Invoke(this);
             MonoBehaviour.Destroy(gameObject);
         }
+
         public virtual void HitBy(HitboxCollisionInfo info)
         {
             Game.Particles.Create<MaterialBreak>(Game.Particles.GetParticleData("material_break"), info.ContactPoint, onSpawn: (particle) =>
@@ -192,7 +204,7 @@ namespace UZSG.Objects
 
             if (IsDamageable)
             {
-
+                //TODO:
             }
         }
 

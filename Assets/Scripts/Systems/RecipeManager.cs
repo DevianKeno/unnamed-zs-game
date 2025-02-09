@@ -44,7 +44,7 @@ namespace UZSG
                 return _recipeDict[id];
             }
 
-            Game.Console?.LogInfo("Invalid recipe id");
+            Game.Console.LogInfo("Invalid recipe id");
             return null;
         }
 
@@ -56,7 +56,7 @@ namespace UZSG
                 return true;
             }
 
-            Game.Console?.LogInfo("Invalid recipe id");
+            Game.Console.LogInfo("Invalid recipe id");
             recipeData = null;
             return false;
         }

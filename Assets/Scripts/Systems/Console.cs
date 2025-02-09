@@ -123,12 +123,14 @@ namespace UZSG
 
         void OnInputToggleUI(InputAction.CallbackContext context)
         {
-            if (Game.UI.HasActiveWindow) return;
-            
             if (gui.IsVisible)
+            {
                 gui.Hide();
-            else
+            }
+            else if (!Game.UI.HasActiveWindow)
+            {
                 gui.Show();
+            }
         }
 
         #endregion
@@ -277,6 +279,18 @@ namespace UZSG
         public void LogWarn(object message)
         {
             LogInfo($"<b><color=\"yellow\">[WARN]:</b> {message}</color>");
+        }
+
+        /// <summary>
+        /// Log a yellow warning message into the game's console.
+        /// </summary>
+        public void LogWarn(object message, bool logWithUnity)
+        {
+            LogInfo($"<b><color=\"yellow\">[WARN]:</b> {message}</color>");
+            if (logWithUnity)
+            {
+                Debug.LogWarning(message);
+            }
         }
 
         /// <summary>

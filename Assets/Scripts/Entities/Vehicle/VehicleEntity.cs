@@ -1,14 +1,10 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 using UZSG.Data;
 using UZSG.Entities.Vehicles;
 using UZSG.Interactions;
-
 
 namespace UZSG.Entities
 {
@@ -62,18 +58,7 @@ namespace UZSG.Entities
         [Header("Vehicle Wheel Meshes")]
         public List<GameObject> WheelMeshes;
 
-        public string DisplayName => vehicleData.Name;
-
-        public string ActionText => "Drive";
-        // {
-        //     get
-        //     {
-        //         if (!HasDriver) return "Drive";
-        //         return "Enter"
-        //     }
-        // }
-
-        int _originalLayer;
+        public string DisplayName => vehicleData.DisplayName;
 
         protected virtual void Awake()
         {
@@ -84,14 +69,13 @@ namespace UZSG.Entities
             AudioManager = gameObject.GetComponent<VehicleAudioManager>();
             CameraManager = gameObject.GetComponent<VehicleCameraManager>();
             Model = transform.Find("Vehicle Body").gameObject;
-            _originalLayer = Model.layer;
         }
 
         public void OnLookEnter()
         {
             if (Model != null && SeatManager.Driver == null)
             {
-                Model.layer = LayerMask.NameToLayer("Outline");
+                Model.layer = Game.Entity.OUTLINED_LAYER;
             }
         }
 
@@ -99,27 +83,26 @@ namespace UZSG.Entities
         {
             if (Model != null)
             {
-                Model.layer = _originalLayer;
+                Model.layer = Game.Entity.DEFAULT_LAYER;
             }
         }
 
         public List<InteractAction> GetInteractActions()
         {
             var actions = new List<InteractAction>();
-            string actionText;
+            InteractType interactType;
             if (SeatManager.Driver == null)
             {
-                actionText = "Drive";
+                interactType = InteractType.Drive;
             }
             else
             {
-                actionText = "Enter";
+                interactType = InteractType.Enter;
             }
             actions.Add(new()
             {
+                Type = interactType,
                 Interactable = this,
-                ActionText = actionText,
-                InteractableText = this.entityData.DisplayName,
                 IsHold = true,
                 InputAction = Game.Input.InteractPrimary,
             });

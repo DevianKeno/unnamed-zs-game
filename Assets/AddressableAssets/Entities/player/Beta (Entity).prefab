@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7266182500231018910}
-  - component: {fileID: 6457100291753886462}
-  - component: {fileID: 2880011488093977876}
+  - component: {fileID: 672768386928049658}
+  - component: {fileID: 6650996690644701504}
   m_Layer: 8
   m_Name: Crafter
   m_TagString: Untagged
@@ -33,7 +33,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 7699380848211720457}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6457100291753886462
+--- !u!114 &672768386928049658
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -42,15 +42,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 875597890616857745}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fddc5f8f127c5a84ea5730a18ec74560, type: 3}
+  m_Script: {fileID: 11500000, guid: 9ddf594ea1efd5f4299ebdfbbf3cbe75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerEntity: {fileID: 8107631895800867322}
-  OutputContainer:
-    _slots: []
-  InputContainer:
-    _slots: []
---- !u!114 &2880011488093977876
+  simultaneousCrafting: 0
+  maxSimultaneousCrafts: 1
+  autoCraftNext: 1
+  availableCraftSlots: 0
+  routines: []
+--- !u!114 &6650996690644701504
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -62,10 +62,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bac9027ac7b91d0478e4643f446e8bfa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectData: {fileID: 11400000, guid: c174ea636f733d54ba86c9f1c8225992, type: 2}
-  animator: {fileID: 0}
-  crafter: {fileID: 6457100291753886462}
-  EnableDebugging: 0
 --- !u!1 &1484341540429224017
 GameObject:
   m_ObjectHideFlags: 0
@@ -1518,7 +1514,7 @@ MonoBehaviour:
   entityData: {fileID: 11400000, guid: 49cc9582dd61df247ab5d3da96dd2cf1, type: 2}
   CanPickUpItems: 1
   inventory: {fileID: 6573940630714393000}
-  crafting: {fileID: 2880011488093977876}
+  crafting: {fileID: 0}
   buildingManager: {fileID: 950595445824118707}
   audioController: {fileID: 5583044567273583744}
   hitboxes: {fileID: 4176212794605248286}

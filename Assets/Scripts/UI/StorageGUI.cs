@@ -27,7 +27,7 @@ namespace UZSG.UI.Objects
             set
             {
                 storage = value;
-                baseObject = value;
+                BaseObject = value;
             }
         }
 
@@ -83,22 +83,22 @@ namespace UZSG.UI.Objects
                     return;
                 }
 
-                if (player.InventoryWindow.IsHoldingItem)
+                if (Player.InventoryWindow.IsHoldingItem)
                 {
-                    var heldItem = player.InventoryWindow.HeldItem;
+                    var heldItem = Player.InventoryWindow.HeldItem;
 
                     if (slot.IsEmpty || slot.Item.Is(heldItem))
                     {
-                        slot.TryStack(player.InventoryWindow.TakeHeldItem(), out var excess);
+                        slot.TryStack(Player.InventoryWindow.TakeHeldItem(), out var excess);
                         if (!excess.IsNone)
                         {
-                            player.InventoryWindow.HoldItem(excess);
+                            Player.InventoryWindow.HoldItem(excess);
                         }
                     }
                     else /// item diff, swap
                     {
                         var tookItem = slot.TakeAll();
-                        var prevHeld = player.InventoryWindow.SwapHeldWith(tookItem);
+                        var prevHeld = Player.InventoryWindow.SwapHeldWith(tookItem);
                         slot.Put(prevHeld);
                     }
                 }
@@ -106,15 +106,15 @@ namespace UZSG.UI.Objects
                 {
                     if (slot.IsEmpty) return;
 
-                    player.InventoryWindow.HoldItem(slot.TakeAll());
+                    Player.InventoryWindow.HoldItem(slot.TakeAll());
                     _lastSelectedSlot = slot;
                 }
             }
             else if (ctx.Button == Right)
             {
-                if (player.InventoryWindow.IsHoldingItem) /// put 1 to target slot
+                if (Player.InventoryWindow.IsHoldingItem) /// put 1 to target slot
                 {
-                    var heldItem = player.InventoryWindow.HeldItem;
+                    var heldItem = Player.InventoryWindow.HeldItem;
 
                     if (slot.IsEmpty)
                     {
@@ -145,7 +145,7 @@ namespace UZSG.UI.Objects
         {
             var slot = (ItemSlotUI) sender;
 
-            if (player.InventoryWindow.IsVisible)
+            if (Player.InventoryWindow.IsVisible)
             {
                 // player.InventoryGUI.Selector.Select(slot.Rect);
             }
@@ -156,7 +156,7 @@ namespace UZSG.UI.Objects
             // player.Inventory.Bag.OnExcessItem += PutBackExcess;
 
             var item = slot.TakeAll();
-            player.Inventory.Bag.TryPutNearest(item);
+            Player.Inventory.Bag.TryPutNearest(item);
 
             // void PutBackExcess(Item excess)
             // {
@@ -168,9 +168,9 @@ namespace UZSG.UI.Objects
 
         void PutBackHeldItem()
         {
-            if (!player.InventoryWindow.IsHoldingItem) return;
+            if (!Player.InventoryWindow.IsHoldingItem) return;
 
-            player.Inventory.DropItem(player.InventoryWindow.TakeHeldItem());
+            Player.Inventory.DropItem(Player.InventoryWindow.TakeHeldItem());
         }
     }
 }

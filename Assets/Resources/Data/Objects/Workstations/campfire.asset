@@ -15,7 +15,8 @@ MonoBehaviour:
   Namespace: uzsg
   Id: campfire
   Tags: []
-  Name: Campfire
+  DisplayName: Campfire
+  Description: 
   Object:
     m_AssetGUID: 17e3f806c62ae814fa68b33e3d4745ef
     m_SubObjectName: 
@@ -29,16 +30,12 @@ MonoBehaviour:
     flatBonus: 0
     LimitOverflow: 0
     LimitUnderflow: 0
-  BuildableLayers:
-    serializedVersion: 2
-    m_Bits: 512
-  UnbuildableLayers:
-    serializedVersion: 2
-    m_Bits: 114944
+  CanBePickedUp: 0
+  PickupTimeSeconds: 0
   HasAudio: 1
   AudioAssetsData: {fileID: 0}
   WorkstationName: Campfire
-  GUI:
+  GUIAsset:
     m_AssetGUID: 2d126a726edf1e347a3e81b23e50c5b7
     m_SubObjectName: 
     m_SubObjectType: 
@@ -47,7 +44,8 @@ MonoBehaviour:
   QueueSize: 3
   OutputSize: 3
   RequiresFuel: 1
-  FuelSlotsSize: 0
+  FuelSlotsSize: 1
+  UsesFuelWhenIdle: 1
   IncludedRecipes:
   - {fileID: 11400000, guid: 5527385847a6728408c0db1670bc1d50, type: 2}
   - {fileID: 11400000, guid: 18d69b088ebf87d4b8fec53e07daf871, type: 2}

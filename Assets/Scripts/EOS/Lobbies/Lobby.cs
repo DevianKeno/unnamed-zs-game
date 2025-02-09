@@ -1,17 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using UnityEngine;
 
 using Epic.OnlineServices;
 using Epic.OnlineServices.Lobby;
+using static Epic.OnlineServices.Result;
 using PlayEveryWare.EpicOnlineServices;
 
-
 using UZSG.Worlds;
-using System.Linq;
 
-using static Epic.OnlineServices.Result;
 
 namespace UZSG.EOS.Lobbies
 {

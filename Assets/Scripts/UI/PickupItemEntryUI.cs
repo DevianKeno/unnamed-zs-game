@@ -104,7 +104,7 @@ namespace UZSG.UI
             
             this.Item = new(item);
             itemImage.sprite = item.Data.Sprite;
-            itemNameTMP.text = item.Data.DisplayName;
+            itemNameTMP.text = item.Data.DisplayNameTranslatable;
             countTMP.text = item.Count.ToString();
             Rebuild();
         }

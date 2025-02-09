@@ -304,6 +304,7 @@ MonoBehaviour:
   settingsEntryData: {fileID: 0}
   spacerWidth: 180
   background: {fileID: 2961947027688802019}
+  labelTmp: {fileID: 5708101678756262940}
   spacer: {fileID: 8436308585118353017}
   slider: {fileID: 4913274100651895165}
   valueTextTmp: {fileID: 422183124685643847}

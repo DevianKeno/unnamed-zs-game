@@ -14,6 +14,10 @@ namespace UZSG.Data
         None, Useable, Food, Consumable, Tool, Weapon, Equipable, Accessory
     }
 
+    /// <summary>
+    /// Item data.
+    /// Values are set in Inspector; <b>Do not write</b>.
+    /// </summary>
     [Serializable]
     [CreateAssetMenu(fileName = "New Item Data", menuName = "UZSG/Items/Item Data")]
     public class ItemData : BaseData

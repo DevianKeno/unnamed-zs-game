@@ -1,26 +1,24 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-using UZSG;
 using UZSG.Entities;
 
-
-public class PlayerReference : MonoBehaviour
+namespace UZSG
 {
-    public Player PlayerEntity;
-
-    private void Start()
+    public class PlayerReference : MonoBehaviour
     {
-        Game.Entity.OnEntitySpawned += OnSpawn;
-    }
+        public Player PlayerEntity;
 
-    private void OnSpawn(EntityManager.EntityInfo info)
-    {
-        if(info.Entity is Player player)
+        void Start()
         {
-            PlayerEntity = player;
+            Game.Entity.OnEntitySpawned += OnSpawn;
+        }
+
+        void OnSpawn(EntityManager.EntityInfo info)
+        {
+            if(info.Entity is Player player)
+            {
+                PlayerEntity = player;
+            }
         }
     }
 }

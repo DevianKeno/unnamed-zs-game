@@ -1,8 +1,9 @@
 using System;
 
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
+
 using TMPro;
 
 using UZSG.Items;
@@ -10,7 +11,7 @@ using UZSG.Inventory;
 
 namespace UZSG.UI
 {
-    public class ItemSlotUI : UIElement, ISelectable, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
+    public class ItemSlotUI : UIElement, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
     {
         public static Color Opaque => new(1f, 1f, 1f, 1f);
         public static Color Transparent => new(1f, 1f, 1f, 0f);

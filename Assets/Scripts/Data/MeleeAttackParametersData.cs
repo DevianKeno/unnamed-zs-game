@@ -5,6 +5,9 @@ using UZSG.Attacks;
 
 namespace UZSG.Data
 {
+    /// <summary>
+    /// Values are set in Inspector; <b>Do not write</b>.
+    /// </summary>
     [Serializable]
     [CreateAssetMenu(fileName = "New Melee Attack Parameters", menuName = "UZSG/Attacks/Melee Attack")]
     public class MeleeAttackParametersData : BaseData

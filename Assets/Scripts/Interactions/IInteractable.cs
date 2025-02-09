@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace UZSG.Interactions
@@ -8,27 +7,20 @@ namespace UZSG.Interactions
     /// </summary>
     public interface IInteractable
     {
-        /// <summary>
-        /// The action text that may be displayed when looking at the Interactable.
-        /// </summary>
-        public abstract string ActionText { get; }
-        /// <summary>
-        /// The name that may be displayed when looking at the Interactable.
-        /// </summary>
-        public abstract string DisplayName { get; }
+        public string DisplayName { get; }
         /// <summary>
         /// Whether to allow interactions for the Interactable.
         /// </summary>
-        public bool AllowInteractions { get; set; }
-
+        public bool AllowInteractions { get; }
         /// <summary>
         /// Get all actions from this Interactable.
         /// </summary>
-        public List<InteractAction> GetInteractActions();
+        public virtual List<InteractAction> GetInteractActions() { return new(); }
         /// <summary>
         /// Called when an Actor interacts with the Interactable.
         /// </summary>
         public void Interact(InteractionContext context);
+
         public virtual void OnLookEnter() { }
         public virtual void OnLookExit() { }
     }

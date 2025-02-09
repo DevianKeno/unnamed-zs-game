@@ -21,7 +21,11 @@ namespace UZSG.Data
         public bool IsBurnt;
         public bool CanSpoil;
     }
-
+    
+    /// <summary>
+    /// Food data.
+    /// Values are set in Inspector; <b>Do not write</b>.
+    /// </summary>
     [CreateAssetMenu(fileName = "New Food Data", menuName = "UZSG/Food Data")]
     [Serializable]
     public class FoodData : ItemData

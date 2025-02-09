@@ -271,7 +271,7 @@ namespace UZSG
                     EOSSubManagers.Auth.StartDevAuthLogin(args[1], args[2]);
                 }
 
-                var authUi = GameObject.FindFirstObjectByType<AuthUserDisplay>();
+                var authUi = GameObject.FindFirstObjectByType<AuthUserDisplayUI>();
                 authUi.SetUIFakeLogin();
             }
         }        

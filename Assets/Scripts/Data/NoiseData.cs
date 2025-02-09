@@ -4,6 +4,10 @@ using UnityEngine;
 
 namespace UZSG.Data
 {
+    /// <summary>
+    /// Noise data for procedural randomness.
+    /// Values are set in Inspector; <b>Do not write</b>.
+    /// </summary>
     [Serializable]
     [CreateAssetMenu(fileName = "New Noise Data", menuName = "UZSG/Noise Data")]
     public class NoiseData : BaseData

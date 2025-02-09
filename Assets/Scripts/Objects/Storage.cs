@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 
-
 using UZSG.Entities;
 using UZSG.Interactions;
 using UZSG.Data;
@@ -14,8 +13,8 @@ namespace UZSG.Objects
     public class Storage : BaseObject, IInteractable, IPlaceable, IPickupable, ISaveDataReadWrite<ObjectSaveData>
     {
         public StorageData StorageData => objectData as StorageData;
-        public string ActionText => "Open";
-        public string DisplayName => objectData.DisplayName;
+        public string ActionText => Game.Locale.Translatable("action.open");
+        public string DisplayName => objectData.DisplayNameTranslatable;
         public bool AllowInteractions { get; set; } = true;
         public override bool CanBePickedUp
         {
@@ -59,9 +58,8 @@ namespace UZSG.Objects
 
             actions.Add(new()
             {
+                Type = InteractType.Open,
                 Interactable = this,
-                ActionText = "Open",
-                InteractableText = this.objectData.DisplayName,
                 InputAction = Game.Input.InteractPrimary,
             });
 

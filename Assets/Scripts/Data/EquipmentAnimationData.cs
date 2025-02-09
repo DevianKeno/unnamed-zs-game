@@ -8,6 +8,7 @@ namespace UZSG.Data
 {
     /// <summary>
     /// List of possible animations an FPP model have.
+    /// Values are set in Inspector; <b>Do not write</b>.
     /// </summary>
     [Serializable]
     public struct EquipmentAnimationData : IEnumerable

@@ -2,7 +2,6 @@ using System;
 
 using UnityEngine;
 
-
 using UZSG.Data;
 using UZSG.Saves;
 using UZSG.Attributes;
@@ -120,7 +119,7 @@ namespace UZSG.Entities
                 {
                     Position = Utils.ToFloatArray(transform.position),
                     Rotation = Utils.ToFloatArray(transform.rotation.eulerAngles),
-                    LocalScale = Utils.ToFloatArray(transform.localScale),
+                    // LocalScale = Utils.ToFloatArray(transform.localScale),
                 }
             };
 
@@ -150,6 +149,7 @@ namespace UZSG.Entities
         }
 
         #endregion
+
 
         /// <summary>
         /// Check whether this entity is within the radius with the given position as center.

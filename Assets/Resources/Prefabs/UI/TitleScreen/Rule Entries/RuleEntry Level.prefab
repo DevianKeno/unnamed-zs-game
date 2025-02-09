@@ -386,7 +386,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
-    m_Left: 16
+    m_Left: 4
     m_Right: 0
     m_Top: 4
     m_Bottom: 4
@@ -412,8 +412,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rect: {fileID: 3049158002751748882}
-  FadeDuration: 0.3
   Id: 
+  Rule: 0
+  ValueType: 0
+  spacerWidth: 180
+  spacer: {fileID: 8857340294344680527}
   LevelData: {fileID: 0}
   image: {fileID: 7734308327242883659}
   labelTmp: {fileID: 8623796030664067777}
@@ -524,7 +527,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: 0}
+  m_SizeDelta: {x: 180, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &6503140569168543546
 GameObject:

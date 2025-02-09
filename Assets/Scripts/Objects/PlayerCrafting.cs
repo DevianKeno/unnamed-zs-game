@@ -1,37 +1,90 @@
-using UZSG.Data;
+using System;
+using System.Collections.Generic;
+
+using UnityEngine;
+
+using UZSG.Crafting;
 using UZSG.Entities;
-using UZSG.Objects;
+using UZSG.Inventory;
+using UZSG.UI;
 
 namespace UZSG.Players
 {
-    public class PlayerCrafting : Workstation
+    [RequireComponent(typeof(Crafter))]
+    public class PlayerCrafting : MonoBehaviour
     {
-        protected override void Start()
+        public Player Player { get; set; }
+        
+        public Crafter Crafter { get; protected set; }
+        public Container InputContainer { get; protected set; }
+        public Container OutputContainer { get; protected set; }
+        public List<ItemSlot> QueueSlots { get; protected set; }
+        public CraftingGUI GUI { get; protected set; }
+        /// <summary>
+        /// Called when this workstation has crafted, either single or complete.
+        /// </summary>
+        public event Action<CraftingRoutine> OnCraft;
+
+        void Awake()
         {
-            /// override, don't call
+            Crafter = GetComponent<Crafter>();
         }
 
         internal void Initialize(Player player, bool isLocalPlayer)
         {
-            this.player = player;
+            this.Player = player;
 
-            queueSlots = new(WorkstationData.QueueSize);
-            outputContainer = new(WorkstationData.OutputSize);
-            outputContainer.OnSlotItemChanged += OnOutputSlotItemChanged;
+            QueueSlots = new(1);
+            OutputContainer = new(1);
+            InputContainer = new Container();
+            // OutputContainer.OnSlotItemChanged += OnOutputSlotItemChanged;
 
-            crafter.Initialize(this);
-            crafter.OnRoutineNotify += OnRoutineEventCall;
-            crafter.OnRoutineSecond += OnRoutineSecond;
+            // Crafter.Initialize(this);
+            Crafter.OnRoutineNotify += OnCraftingRoutineNotify;
 
             if (isLocalPlayer)
             {
-                this.gui = player.InventoryWindow.PlayerCraftingGUI;
-                this.gui.LinkWorkstation(this);
-                this.gui.SetPlayer(player);
-                this.gui.Show();
+                GUI = player.InventoryWindow.PlayerCraftingGUI;
+                GUI.SetPlayer(Player);
+                GUI.Show();
             }
 
-            AddInputContainer(player.Inventory.Bag);
+            InputContainer.Extend(player.Inventory.Bag);
+        }
+
+        void OnCraftingRoutineNotify(CraftingRoutine routine)
+        {
+            switch (routine.Status)
+            {
+                case CraftingRoutineStatus.Ongoing:
+                {
+                    
+                    break;
+                }
+            }
+        }
+
+        public CraftingRoutine TryCraft(ref CraftItemOptions options)
+        {
+            if (Crafter.IsQueueFull)
+            {
+                return null;
+            }
+
+            var totalMaterials = CraftingUtils.CalculateTotalMaterials(options);
+            if (false == this.Player.Inventory.Bag.ContainsAll(totalMaterials))
+            {
+                if (GUI.IsVisible) CraftingUtils.PlayNoMaterialsSound();
+                return null;
+            }
+
+            _ = InputContainer.TakeItems(totalMaterials);
+            return Crafter.CraftNewItem(ref options);
+        }
+
+        protected virtual void OnCraftEvent(CraftingRoutine routine)
+        {
+            OnCraft?.Invoke(routine);
         }
     }
 }

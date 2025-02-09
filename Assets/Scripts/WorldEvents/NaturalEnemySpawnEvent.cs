@@ -41,6 +41,11 @@ namespace UZSG.Worlds.Events
             Game.Tick.OnSecond += OnSecond;
         }
 
+        public override void OnEnd()
+        {
+            Game.Tick.OnSecond -= OnSecond;
+        }
+
         public void OnSecond(SecondInfo s)
         {
             if (!allowNaturalSpawning) return;

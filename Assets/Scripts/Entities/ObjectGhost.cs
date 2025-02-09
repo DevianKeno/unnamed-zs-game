@@ -1,15 +1,12 @@
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
+
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
 using UZSG.Data;
-using UZSG.Interactions;
-using UZSG.Items.Weapons;
 using UZSG.Objects;
-
 
 namespace UZSG.Entities
 {

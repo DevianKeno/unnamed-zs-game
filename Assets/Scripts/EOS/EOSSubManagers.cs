@@ -1,7 +1,5 @@
 using UnityEngine;
 
-
-
 namespace UZSG.EOS
 {
     /// <summary>

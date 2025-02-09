@@ -21,6 +21,10 @@ namespace UZSG.Data
         PerAction, OnDestroy
     }
 
+    /// <summary>
+    /// Resource data.
+    /// Values are set in Inspector; <b>Do not write</b>.
+    /// </summary>
     [Serializable]
     [CreateAssetMenu(fileName = "New Resource Object Data", menuName = "UZSG/Objects/Resource Object Data")]
     public class ResourceData : ObjectData
@@ -35,7 +39,7 @@ namespace UZSG.Data
         /// Items given to the Player harvesting this resource. Will depend on the HarvestType.
         /// </summary>
         public Item Yield;
-        public List<Item> Yields; /// lmao
+        public LootTableData LootTable; /// lmao
         public bool IsPickup;
         public float PickupDuration;
         public float MaxInteractDistance;

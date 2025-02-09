@@ -1,8 +1,3 @@
-using System;
-using UnityEngine;
-
-using UZSG.Players;
-
 namespace UZSG.Entities
 {
     public enum WildlifeActionStates {

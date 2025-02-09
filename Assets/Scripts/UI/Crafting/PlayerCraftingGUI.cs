@@ -1,12 +1,12 @@
 namespace UZSG.UI.Objects
 {
-    public class PlayerCraftingGUI : WorkstationGUI
+    public class PlayerCraftingGUI : CraftingGUI
     {
         protected override void OnHide()
         {
-            if (workstation != null)
+            if (CraftingStation != null)
             {
-                workstation.OnCraft -= OnWorkstationCraft;
+                CraftingStation.OnCraft -= OnWorkstationCraft;
             }
             
             foreach (var ui in _routineUIs.Values)

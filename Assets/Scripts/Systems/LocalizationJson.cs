@@ -14,7 +14,8 @@ namespace UZSG
         public Dictionary<string, RecipeEntry> recipe = new();
         public Dictionary<string, SettingsEntry> setting = new();
         public Dictionary<string, StatusEffectEntry> status_effect = new();
-        
+        public Dictionary<string, string> translatable = new();
+
         public class AttributeEntry
         {
             public string name = string.Empty;

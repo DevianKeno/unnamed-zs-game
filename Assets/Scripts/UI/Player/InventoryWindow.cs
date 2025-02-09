@@ -2,20 +2,14 @@ using System;
 using System.Collections.Generic;
 
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using TMPro;
-
+using static UnityEngine.EventSystems.PointerEventData.InputButton;
 
 using UZSG.Data;
 using UZSG.Inventory;
 using UZSG.Items;
 using UZSG.Entities;
-
-using static UnityEngine.EventSystems.PointerEventData.InputButton;
 using static UZSG.UI.ItemSlotUI.ClickType;
-using UZSG.UI.HUD;
 
 namespace UZSG.UI.Players
 {
@@ -92,7 +86,12 @@ namespace UZSG.UI.Players
             frameController.SwitchToFrame("bag", force: true);
             frameController.OnSwitchFrame += (context) =>
             {
-                if (context.Next != "bag" && EnableSelector) selector?.Hide();
+                if (context.NextId != "bag" &&
+                    IsVisible &&
+                    EnableSelector)
+                {
+                    selector?.Hide();
+                }
             };
             InitializeInputs();
             closeButton.onClick.AddListener(Hide);
@@ -147,7 +146,7 @@ namespace UZSG.UI.Players
                 var slotUI = Game.UI.Create<ItemSlotUI>("Item Slot", parent: bag.transform);
                 slotUI.name = $"Slot ({i})";
                 slotUI.Link(Inventory.Bag[i]);
-                slotUI.OnMouseDown += OnBagSlotClicked;
+                slotUI.OnMouseDown += OnItemSlotClicked;
                 _bagSlotUIs.Add(i, slotUI);
                 slotUI.Show();
             }
@@ -159,11 +158,6 @@ namespace UZSG.UI.Players
             {
                 
             }
-        }
-
-        void InitializeCraftingGUI()
-        {
-            playerCraftingGUI.SetPlayer(Player);   
         }
 
         void InitializeInputs()
@@ -282,7 +276,7 @@ namespace UZSG.UI.Players
             
         }
 
-        void OnBagSlotClicked(object sender, ItemSlotUI.ClickedContext click)
+        public void OnItemSlotClicked(object sender, ItemSlotUI.ClickedContext click)
         {
             _selectedSlotUI = (ItemSlotUI) sender;
             _selectedSlot = _selectedSlotUI.Slot;
@@ -401,7 +395,7 @@ namespace UZSG.UI.Players
         {
             itemOptions = Game.UI.Create<ChoiceWindow>("Choice Window");
             itemOptions.Position = _selectedSlotUI.Rect.position;
-            itemOptions.Label = _selectedSlot.Item.Data.DisplayName;
+            itemOptions.Label = _selectedSlot.Item.Data.DisplayNameTranslatable;
             Game.UI.CreateBlocker(itemOptions, onClick: () =>
             {
                 DestroyItemOptions();

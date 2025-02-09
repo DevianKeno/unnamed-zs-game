@@ -8,6 +8,10 @@ namespace UZSG.Data.Perks
         Basic, Epic, Unique
     }
 
+    /// <summary>
+    /// Particle data.
+    /// Values are set in Inspector; <b>Do not write</b>.
+    /// </summary>
     [Serializable]
     [CreateAssetMenu(fileName = "New Perk Data", menuName = "UZSG/Perk Data")]
     public class PerkData : BaseData

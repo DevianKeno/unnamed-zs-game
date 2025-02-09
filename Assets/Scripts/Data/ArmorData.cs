@@ -12,6 +12,7 @@ namespace UZSG.Data
 
     /// <summary>
     /// Represents the various data an Armor has.
+    /// Values are set in Inspector; <b>Do not write</b>.
     /// </summary>
     [Serializable]
     [CreateAssetMenu(fileName = "New Armor Data", menuName = "UZSG/Items/Armor Data")]

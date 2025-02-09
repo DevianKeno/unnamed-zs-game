@@ -1,8 +1,5 @@
 using UnityEngine;
 
-using UZSG.Interactions;
-
-
 namespace UZSG.Entities
 {
     /// Walker, Animator part.

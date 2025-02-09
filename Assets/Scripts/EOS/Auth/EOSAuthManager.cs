@@ -8,8 +8,6 @@ using Epic.OnlineServices.Auth;
 using Epic.OnlineServices.Connect;
 using PlayEveryWare.EpicOnlineServices;
 
-
-
 namespace UZSG.EOS
 {
     public class EOSAuthManager : IEOSSubManager

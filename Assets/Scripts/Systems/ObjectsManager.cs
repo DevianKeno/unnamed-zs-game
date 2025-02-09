@@ -56,33 +56,31 @@ namespace UZSG
                 var asyncOp = Addressables.LoadAssetAsync<GameObject>(objData.Object);
                 await asyncOp.Task;
 
-                if (asyncOp.Status == AsyncOperationStatus.Succeeded)
+                if (asyncOp.Status != AsyncOperationStatus.Succeeded)
                 {
-                    var go = Instantiate(asyncOp.Result, position, Quaternion.identity/*, Game.World.CurrentWorld.objectsContainer*/);
-                    go.name = $"{objData.DisplayName} (Object)";
-                    if (go.TryGetComponent(out BaseObject baseObject))
-                    {
-                        var info = new ObjectPlacedInfo()
-                        {
-                            Object = baseObject
-                        };
-                        callback?.Invoke(info);
-                        baseObject.PlaceInternal();
-                        // entity.OnSpawnInternal();
-                        // OnEntitySpawned?.Invoke(new()
-                        // {
-                        //     Entity = entity
-                        // });
-                        
-                        // Game.Console.LogDebug($"Placed object '{objectId}' at ({position.x}, {position.y}, {position.z})");
-                        Addressables.Release(asyncOp);
-                        return;
-                    }
-                    Destroy(go);
+                    Game.Console.LogWarn($"Tried to place Object '{objectId}', but failed miserably", true);
+                    return;
                 }
 
-                Game.Console.LogDebug($"Tried to place Object '{objectId}', but failed miserably");
+                var go = Instantiate(asyncOp.Result, position, Quaternion.identity/*, Game.World.CurrentWorld.objectsContainer*/);
+                go.name = $"{objData.DisplayName} (Object)";
+                if (false == go.TryGetComponent(out BaseObject baseObject))
+                {
+                    Game.Console.LogWarn($"'{objectId}' does not have a BaseObject component! Discarding...", true);
+                    Destroy(go);
+                    return;
+                }
+
+                var info = new ObjectPlacedInfo()
+                {
+                    Object = baseObject
+                };
+                callback?.Invoke(info);
+                baseObject.PlaceInternal();
                 
+                // Game.Console.LogDebug($"Placed object '{objectId}' at ({position.x}, {position.y}, {position.z})");
+                Addressables.Release(asyncOp);
+                return;
             }
             catch (Exception ex)
             {
@@ -115,31 +113,30 @@ namespace UZSG
                 var asyncOp = Addressables.LoadAssetAsync<GameObject>(objData.Object);
                 await asyncOp.Task;
                 
-                if (asyncOp.Status == AsyncOperationStatus.Succeeded)
+                if (asyncOp.Status != AsyncOperationStatus.Succeeded)
                 {
-                    var go = Instantiate(asyncOp.Result, position, Quaternion.identity/*, Game.World.CurrentWorld.objectsContainer*/);
-                    go.name = $"{objData.DisplayName} (Object)";
-                    if (go.TryGetComponent(out BaseObject baseObject))
-                    {
-                        var info = new ObjectPlacedInfo<T>()
-                        {
-                            Object = baseObject as T
-                        };
-                        callback?.Invoke(info);
-                        // entity.OnSpawnInternal();
-                        // OnEntitySpawned?.Invoke(new()
-                        // {
-                        //     Entity = entity
-                        // });
-
-                        // Game.Console.LogDebug($"Placed object '{objectId}' at ({position.x}, {position.y}, {position.z})");
-                        Addressables.Release(asyncOp);
-                        return;
-                    }
-                    Destroy(go);
+                    Game.Console.LogWarn($"Tried to place Object '{objectId}', but failed miserably", true);
+                    return;
                 }
 
-                Game.Console.LogDebug($"Tried to place Object '{objectId}', but failed miserably");
+                var go = Instantiate(asyncOp.Result, position, Quaternion.identity/*, Game.World.CurrentWorld.objectsContainer*/);
+                go.name = $"{objData.DisplayName} (Object)";
+                if (false == go.TryGetComponent(out BaseObject baseObject))
+                {
+                    Game.Console.LogWarn($"'{objectId}' does not have a BaseObject component! Discarding...", true);
+                    Destroy(go);
+                    return;
+                }
+
+                var info = new ObjectPlacedInfo<T>()
+                {
+                    Object = baseObject as T
+                };
+                callback?.Invoke(info);
+
+                // Game.Console.LogDebug($"Placed object '{objectId}' at ({position.x}, {position.y}, {position.z})");
+                Addressables.Release(asyncOp);
+                return;
             }
             catch (Exception ex)
             {

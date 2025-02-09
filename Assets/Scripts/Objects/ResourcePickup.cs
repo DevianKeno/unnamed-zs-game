@@ -14,8 +14,7 @@ namespace UZSG.Objects
     public class ResourcePickup : BaseObject, IInteractable
     {
         public ResourceData ResourceData => objectData as ResourceData;
-        public string ActionText => "Pick Up";
-        public string DisplayName => ResourceData.DisplayName;
+        public string DisplayName => ResourceData.DisplayNameTranslatable;
         public bool AllowInteractions { get; set; } = true;
 
         protected override void Start()
@@ -29,9 +28,8 @@ namespace UZSG.Objects
 
             actions.Add(new()
             {
+                Type = InteractType.PickUp,
                 Interactable = this,
-                ActionText = this.ActionText,
-                InteractableText = this.DisplayName,
                 InputAction = Game.Input.InteractPrimary,
             });
 

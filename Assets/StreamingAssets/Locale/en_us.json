@@ -168,6 +168,10 @@
       "name": "Player Detection Radius",
       "description": ""
     },
+    "player_vision_range": {
+      "name": "Player Vision Range",
+      "description": "The range of which this entity can see players."
+    },
     "reload_speed": {
       "name": "Reload Speed",
       "description": ""
@@ -231,10 +235,6 @@
     "wildlife_roam_radius": {
       "name": "Wildlife Roam Radius",
       "description": ""
-    },
-    "wildlife_site_radius": {
-      "name": "Wildlife Site Radius",
-      "description": "Wildlife Site Radius"
     },
     "zombie_attack_cooldown": {
       "name": "Zombie Attack Cooldown",
@@ -529,11 +529,6 @@
       "description": "Thin string made from plant fiber.",
       "source": ""
     },
-    "grass": {
-      "name": "Grass",
-      "description": "Useful for crafting basic ropes or binding materials, and it can be fed to livestock if food sources are scarce.",
-      "source": "Grass can be pickup in outdoor environments. Using a sickle to obtain the item increases the yield of its collection."
-    },
     "iron_ore": {
       "name": "Iron Ore",
       "description": "Iron ore obtained from mining.",
@@ -573,6 +568,11 @@
       "name": "Twig",
       "description": "Brittle stick.",
       "source": ""
+    },
+    "wild_grass": {
+      "name": "Wild Grass",
+      "description": "Useful for crafting basic ropes or binding materials, and it can be fed to livestock if food sources are scarce.",
+      "source": "Grass can be pickup in outdoor environments. Using a sickle to obtain the item increases the yield of its collection."
     },
     "wood": {
       "name": "Wood",
@@ -833,43 +833,43 @@
   "object": {
     "practice_dummy": {
       "name": "Practice Dummy",
-      "description": "Practice Dummy"
+      "description": ""
     },
     "copper_deposit": {
       "name": "Copper Deposit",
-      "description": "Copper Deposit"
-    },
-    "Grass": {
-      "name": "Grass",
-      "description": "Grass"
+      "description": ""
     },
     "iron_deposit": {
       "name": "Iron Deposit",
-      "description": "Iron Deposit"
+      "description": ""
     },
     "pine_tree_heart": {
       "name": "Pine Tree Heart",
       "description": ""
     },
+    "wild_grass": {
+      "name": "Wild Grass",
+      "description": ""
+    },
     "wooden_chest": {
       "name": "Wooden Chest",
-      "description": "Wooden Chest"
+      "description": ""
     },
     "campfire": {
       "name": "Campfire",
-      "description": "Campfire"
+      "description": ""
     },
     "furnace": {
       "name": "Furnace",
-      "description": "Furnace"
+      "description": ""
     },
     "gunsmithing_table": {
       "name": "Gunsmithing Table",
-      "description": "Gunsmithing Table"
+      "description": ""
     },
     "player_crafting": {
       "name": "Player Crafting",
-      "description": "Player Crafting"
+      "description": ""
     },
     "workbench": {
       "name": "Workbench",
@@ -1031,6 +1031,10 @@
       "name": "Resolution",
       "description": "Lacks description!"
     },
+    "screen_animations": {
+      "name": "Enable Screen Animations",
+      "description": "Toggle user interface animations. Disabling this might improve frames a litlle bit."
+    },
     "shadows_quality": {
       "name": "Shadows Quality",
       "description": "Lacks description!"
@@ -1063,5 +1067,17 @@
       "name": "V-Sync",
       "description": "Lacks description!"
     }
+  },
+  "status_effect": {},
+  "translatable": {
+    "action.close": "Close",
+    "action.drive": "Drive",
+    "action.enter": "Enter",
+    "action.equip": "Equip",
+    "action.exit": "Exit",
+    "action.interact": "Interact",
+    "action.open": "Open",
+    "action.pick_up": "Pick Up",
+    "action.use": "Use"
   }
 }

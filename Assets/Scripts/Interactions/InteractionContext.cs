@@ -2,7 +2,7 @@ namespace UZSG.Interactions
 {
     public struct InteractionContext
     {
-        public string Action { get; set; }
+        public InteractType Type { get; set; }
         /// <summary>
         /// The object to perform the interaction with.
         /// </summary>

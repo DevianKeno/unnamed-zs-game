@@ -4,7 +4,6 @@ using UnityEngine.AI;
 using UZSG.Attributes;
 using UZSG.Interactions;
 
-
 namespace UZSG.Entities
 {
     public class Wildlife : Entity, IPlayerDetectable, IHasHealthBar, IDamageable

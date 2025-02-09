@@ -21,8 +21,8 @@ namespace UZSG.UI
             /// The frame to switch to.
             /// </summary>
             public Frame Frame { get; set; }
-            public string Previous { get; set; }
-            public string Next { get; set; }
+            public string PreviousId { get; set; }
+            public string NextId { get; set; }
         }
 
         public Vector2 FrameSize;
@@ -89,8 +89,8 @@ namespace UZSG.UI
             {
                 Status = SwitchStatus.Started,
                 Frame = frame,
-                Previous = _previousFrame,
-                Next = name,
+                PreviousId = _previousFrame,
+                NextId = name,
             };
             OnSwitchFrame?.Invoke(context);
 

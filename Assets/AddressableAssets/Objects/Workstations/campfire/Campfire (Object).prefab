@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 792286213992806736}
-  - component: {fileID: 4561094476231483192}
-  - component: {fileID: 4317794303918389214}
+  - component: {fileID: 7676250625928089574}
+  - component: {fileID: 6900531646128027691}
   - component: {fileID: 3167046383361489516}
   - component: {fileID: 4846236603650076117}
   m_Layer: 15
@@ -38,7 +38,7 @@ Transform:
   - {fileID: 3690151295141338184}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4561094476231483192
+--- !u!114 &7676250625928089574
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -47,32 +47,30 @@ MonoBehaviour:
   m_GameObject: {fileID: 2931395029122073337}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3d5ec34d822217546a588114b36f7017, type: 3}
+  m_Script: {fileID: 11500000, guid: 9ddf594ea1efd5f4299ebdfbbf3cbe75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  simultaneousCrafting: 0
+  maxSimultaneousCrafts: 1
+  autoCraftNext: 1
+  availableCraftSlots: 0
+  routines: []
+--- !u!114 &6900531646128027691
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2931395029122073337}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e24a044514b50044ad57c22c40da063, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   objectData: {fileID: 11400000, guid: c8dba431012e0a7428ea3d0a7cea2ba1, type: 2}
-  attributes:
-    attributesReadOnly: []
   animator: {fileID: 0}
-  crafter: {fileID: 4317794303918389214}
-  EnableDebugging: 0
---- !u!114 &4317794303918389214
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2931395029122073337}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b9b7828819afa94d83ab7831b1bea1e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  InputContainer:
-    _slots: []
-  FuelRemaining: 0
-  FuelContainer:
-    _slots: []
+  flameParticles: {fileID: 8993548594260779734}
+  spotLight: {fileID: 207766077286353138}
 --- !u!54 &3167046383361489516
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -410,6 +408,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bb98861c48ad2024ca93498c7dd93a6c, type: 3}
+--- !u!198 &8993548594260779734 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 198663536934198432, guid: bb98861c48ad2024ca93498c7dd93a6c, type: 3}
+  m_PrefabInstance: {fileID: 9083280669486464630}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &9079809885079254218 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4430340635691708, guid: bb98861c48ad2024ca93498c7dd93a6c, type: 3}

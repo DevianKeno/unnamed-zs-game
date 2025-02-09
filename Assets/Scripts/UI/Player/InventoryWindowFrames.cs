@@ -2,8 +2,8 @@ using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
+using TMPro;
 
 using UZSG.UI.Objects;
 
@@ -57,7 +57,7 @@ namespace UZSG.UI.Players
             }
             else if (context.Status == FrameController.SwitchStatus.Finished)
             {
-                if (context.Next == "bag")
+                if (context.NextId == "bag")
                 {
                     if (EnableSelector)
                     {
@@ -119,7 +119,7 @@ namespace UZSG.UI.Players
                 return;
             }
             
-            if (gui is WorkstationGUI)
+            if (gui is CraftingGUI)
             {
                 HidePlayerCraftingGUI();
             }
@@ -130,7 +130,7 @@ namespace UZSG.UI.Players
                 _hasExternalContainerOpen = true;
             }
 
-            var btn = CreateFrameButton(gui.BaseObject.ObjectData.DisplayName, order);
+            var btn = CreateFrameButton(gui.BaseObject.ObjectData.DisplayNameTranslatable, order);
             btn.onClick.AddListener(() => 
             {
                 frameController.SwitchToFrame(gui.Frame.DisplayName);
@@ -139,7 +139,7 @@ namespace UZSG.UI.Players
             _appendedFrameButtons[gui] = btn;
             
             /// Set the title text to the workstation's name
-            frameText.text = gui.BaseObject.ObjectData.DisplayName;
+            frameText.text = gui.BaseObject.ObjectData.DisplayNameTranslatable;
             gui.Show();
         }
 
@@ -158,7 +158,7 @@ namespace UZSG.UI.Players
 
         public void RemoveObjectGUI(ObjectGUI gui)
         {
-            if (gui is WorkstationGUI)
+            if (gui is CraftingGUI)
             {
                 ShowPlayerCraftingGUI();
             }

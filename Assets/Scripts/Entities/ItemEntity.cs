@@ -53,30 +53,14 @@ namespace UZSG.Entities
         {
             get
             {
-                if (this.itemData.IsStackable)
+                if (this.Count > 1)
                 {
-                    return $"{Count} {this.itemData.DisplayName}";
+                    return $"{Count} {this.itemData.DisplayNameTranslatable}";
                 }
                 else
                 {
-                    return $"{this.itemData.DisplayName}";
+                    return $"{this.itemData.DisplayNameTranslatable}";
                 }
-            }
-        }
-        public string ActionText
-        {
-            get
-            {
-                return this.itemData.Type switch
-                {
-                    ItemType.Item or
-                    ItemType.Tool or
-                    ItemType.Equipment or
-                    ItemType.Tile or
-                    ItemType.Accessory => "Pick Up",
-                    ItemType.Weapon => "Equip",
-                    _ => "Interact with",
-                };
             }
         }
         public bool AllowInteractions { get; set; } = true;
@@ -250,6 +234,19 @@ namespace UZSG.Entities
             return saveData;
         }
 
+        InteractType GetInteractType()
+        {
+            return this.itemData.Type switch
+            {
+                ItemType.Item or
+                ItemType.Tool or
+                ItemType.Equipment or
+                ItemType.Tile or
+                ItemType.Accessory => InteractType.PickUp,
+                ItemType.Weapon => InteractType.Equip,
+                _ => InteractType.Interact,
+            };
+        }
 
         #region Public methods
 
@@ -259,9 +256,8 @@ namespace UZSG.Entities
         
             actions.Add(new()
             {
+                Type = GetInteractType(),
                 Interactable = this,
-                ActionText = this.ActionText,
-                InteractableText = this.DisplayName,
                 InputAction = Game.Input.InteractPrimary,
             });
 

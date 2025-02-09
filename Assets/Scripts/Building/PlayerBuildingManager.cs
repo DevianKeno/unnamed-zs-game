@@ -18,9 +18,9 @@ namespace UZSG.Building
 {
     public class PlayerBuildingManager : MonoBehaviour
     {
-        [SerializeField] Player player;
-        [Space]
+        public Player Player { get; protected set; }
 
+        [Space]
         [SerializeField] LayerMask BuildableLayers;
         [SerializeField] float HorizontalSurfaceThreshold = 0.75f;
 
@@ -60,9 +60,14 @@ namespace UZSG.Building
 
         #region Initializing methods
 
+        void Awake()
+        {
+            // Player = GetComponentInParent<Player>();
+        }
+
         internal void Initialize(Player player, bool isLocalPlayer)
         {
-            this.player = player;
+            this.Player = player;
             
             if (isLocalPlayer)
             {
@@ -89,7 +94,7 @@ namespace UZSG.Building
 
         void InitializeAttributes()
         {
-            if (player.Attributes.TryGet("build_range", out var buildRange))
+            if (Player.Attributes.TryGet("build_range", out var buildRange))
             {
                 this._buildRange = buildRange.Value;
                 buildRange.OnValueChanged += OnBuildRangeUpdated;
@@ -107,8 +112,8 @@ namespace UZSG.Building
         
         void InitializeEvents()
         {
-            player.Actions.OnInteract += OnPlayerInteract;
-            player.FPP.OnHeldItemChanged += OnHeldItemChanged;
+            Player.Actions.OnInteract += OnPlayerInteract;
+            Player.FPP.OnHeldItemChanged += OnHeldItemChanged;
             Game.UI.OnAnyWindowOpened += OnWindowOpened;
             Game.UI.OnAnyWindowClosed += OnWindowClosed;
             Game.World.CurrentWorld.OnPause += OnPause;
@@ -181,16 +186,16 @@ namespace UZSG.Building
                 {
                     var heldItem = new Item(_heldItem, 0);
 
-                    player.Inventory.Hotbar.TakeItem(new(heldItem, 1));
-                    if (!player.Inventory.Hotbar.Contains(heldItem))
+                    Player.Inventory.Hotbar.TakeItem(new(heldItem, 1));
+                    if (!Player.Inventory.Hotbar.Contains(heldItem))
                     {
                         /// Check for similar items in Bag /// TODO: does not work
-                        if (player.Inventory.Bag.Contains(heldItem))
+                        if (Player.Inventory.Bag.Contains(heldItem))
                         {
-                            var tookItem = player.Inventory.Bag.TakeItem(new(heldItem, heldItem.Data.StackSize));
-                            if (!player.Inventory.Hotbar.TryPutAt(player.FPP.SelectedHotbarIndex, tookItem))
+                            var tookItem = Player.Inventory.Bag.TakeItem(new(heldItem, heldItem.Data.StackSize));
+                            if (!Player.Inventory.Hotbar.TryPutAt(Player.FPP.SelectedHotbarIndex, tookItem))
                             {
-                                player.Inventory.Bag.TryPutNearest(tookItem);
+                                Player.Inventory.Bag.TryPutNearest(tookItem);
                             }
                         }
                         else
@@ -288,7 +293,7 @@ namespace UZSG.Building
         {
             if (_showObjectGhost && _isObjectGhostEntitySpawned)
             {
-                if (Physics.Raycast(player.EyeLevel, player.Forward, out var hit, _buildRange, BuildableLayers))
+                if (Physics.Raycast(Player.EyeLevel, Player.Forward, out var hit, _buildRange, BuildableLayers))
                 {
                     if (Vector3.Dot(hit.normal, Vector3.up) >= HorizontalSurfaceThreshold)
                     {

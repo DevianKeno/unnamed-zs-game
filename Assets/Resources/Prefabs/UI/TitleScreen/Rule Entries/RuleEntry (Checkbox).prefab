@@ -82,6 +82,8 @@ MonoBehaviour:
   Id: 
   Rule: 0
   ValueType: 0
+  spacerWidth: 0
+  spacer: {fileID: 6912805701582736925}
 --- !u!1 &4205518516479680047
 GameObject:
   m_ObjectHideFlags: 0
@@ -116,7 +118,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28.756674, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &457591261004031880
 MonoBehaviour:

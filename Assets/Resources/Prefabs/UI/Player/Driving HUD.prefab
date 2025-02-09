@@ -1560,12 +1560,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rect: {fileID: 4842610381706415447}
-  FadeDuration: 0.3
-  Player: {fileID: 0}
   hotbar: {fileID: 1279766023132119920}
   AmmoCounter: {fileID: 0}
   equipment: {fileID: 0}
-  equippedWeaponTMP: {fileID: 0}
+  equippedItemTMP: {fileID: 0}
   weaponDetails: {fileID: 0}
   HealthBar: {fileID: 2856991915052659230}
   StaminaBar: {fileID: 0}
@@ -2214,11 +2212,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1468061552080109571, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
       propertyPath: m_SizeDelta.x
-      value: -84.57
+      value: -169.14
       objectReference: {fileID: 0}
     - target: {fileID: 1468061552080109571, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -42.285
+      value: -84.57
       objectReference: {fileID: 0}
     - target: {fileID: 2924971406887224336, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
       propertyPath: _value
@@ -2510,11 +2508,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1468061552080109571, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
       propertyPath: m_SizeDelta.x
-      value: -85.02295
+      value: -170.0459
       objectReference: {fileID: 0}
     - target: {fileID: 1468061552080109571, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -42.511475
+      value: -85.02295
       objectReference: {fileID: 0}
     - target: {fileID: 1468061552080109571, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -2816,11 +2814,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1468061552080109571, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
       propertyPath: m_SizeDelta.x
-      value: -152.51036
+      value: -305.0257
       objectReference: {fileID: 0}
     - target: {fileID: 1468061552080109571, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -76.26018
+      value: -152.51785
       objectReference: {fileID: 0}
     - target: {fileID: 4464040806379643172, guid: 47703eb8f7e31d64fa6c4fb2d9067b9d, type: 3}
       propertyPath: m_SizeDelta.x
@@ -3066,11 +3064,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7192716735276185911, guid: 064a69cbd4536964b9a8be5101b7b770, type: 3}
       propertyPath: m_SizeDelta.x
-      value: -133.50089
+      value: -267.0009
       objectReference: {fileID: 0}
     - target: {fileID: 7192716735276185911, guid: 064a69cbd4536964b9a8be5101b7b770, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -66.749565
+      value: -133.49957
       objectReference: {fileID: 0}
     - target: {fileID: 7209979227544774230, guid: 064a69cbd4536964b9a8be5101b7b770, type: 3}
       propertyPath: m_Name

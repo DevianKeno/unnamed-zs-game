@@ -18,6 +18,7 @@ namespace UZSG.Data
 
     /// <summary>
     /// Represents the various data a Weapon has.
+    /// Values are set in Inspector; <b>Do not write</b>.
     /// </summary>
     [Serializable]
     [CreateAssetMenu(fileName = "New Weapon Data", menuName = "UZSG/Items/Weapon Data")]

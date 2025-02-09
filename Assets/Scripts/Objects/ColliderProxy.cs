@@ -16,17 +16,17 @@ namespace UZSG.Objects
         public event Action<Collider> OnTriggerStayed;
         public event Action<Collider> OnTriggerExited;
 
-        void OnTriggerEnter(Collider other)
+        protected virtual void OnTriggerEnter(Collider other)
         {
             OnTriggerEntered?.Invoke(other);
         }
 
-        void OnTriggerStay(Collider other)
+        protected virtual void OnTriggerStay(Collider other)
         {
             OnTriggerStayed?.Invoke(other);
         }
 
-        void OnTriggerExit(Collider other)
+        protected virtual void OnTriggerExit(Collider other)
         {
             OnTriggerExited?.Invoke(other);
         }

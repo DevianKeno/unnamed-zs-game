@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.Serialization;
 using UZSG.Attributes;
 using UZSG.Entities;
 
@@ -12,13 +13,19 @@ namespace UZSG.Data
 {
     public enum VehicleType { NonFuel, Fuel }
 
+    /// <summary>
+    /// Vehicle data.
+    /// Values are set in Inspector; <b>Do not write</b>.
+    /// </summary>
     [Serializable]
     [CreateAssetMenu(fileName = "New Vehicle Data", menuName = "UZSG/Vehicle Data")]
     public class VehicleData : BaseData
     {
         [Header("Vehicle Data")]
-        public string Name;
+        [FormerlySerializedAs("Name")] public string DisplayName;
+        public string DisplayNameTranslatable => Game.Locale.Translatable($"vehicle.{Id}.name");
         [TextArea] public string Description;
+        public string DescriptionTranslatable => Game.Locale.Translatable($"vehicle.{Id}.description");
         public AssetReference Model;
         public VehicleType Type;
 

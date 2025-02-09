@@ -20,7 +20,8 @@ MonoBehaviour:
   - m_GUID: c9dad82ad54450641ba90ad44e5b219f
     m_Address: Assets/AddressableAssets
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - guis
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4febe2ca4a4827147a5a0e3d173ce0b4
     m_Address: Assets/AddressableAssets/Entities/player/audio

@@ -304,6 +304,7 @@ MonoBehaviour:
   settingsEntryData: {fileID: 0}
   spacerWidth: 180
   background: {fileID: 3272903678216543617}
+  labelTmp: {fileID: 2205367966427881172}
   spacer: {fileID: 8443048750976660850}
   dropdown: {fileID: 4597622235001329445}
 --- !u!1001 &9099078896854093397
@@ -422,6 +423,10 @@ PrefabInstance:
       propertyPath: m_Value
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4722135382220396912, guid: df13281c9834eeb4a9a639c59302f6a2, type: 3}
+      propertyPath: dropdownRect
+      value: 
+      objectReference: {fileID: 5918335621715429936}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 3198763996756081490, guid: df13281c9834eeb4a9a639c59302f6a2, type: 3}

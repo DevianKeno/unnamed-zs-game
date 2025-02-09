@@ -13,6 +13,10 @@ using UnityEngine.Serialization;
 
 namespace UZSG.Data
 {
+    /// <summary>
+    /// Entity data.
+    /// Values are set in Inspector; <b>Do not write</b>.
+    /// </summary>
     [Serializable]
     [CreateAssetMenu(fileName = "New Entity Data", menuName = "UZSG/Entity/Entity Data")]
     public class EntityData : BaseData
@@ -21,14 +25,17 @@ namespace UZSG.Data
 
         [Header("Entity Data")]
         public AssetReference AssetReference;
+
         [FormerlySerializedAs("Name")] public string DisplayName;
+        public string DisplayNameTranslatable => Game.Locale.Translatable($"entity.{Id}.name");
+        
         public List<Attributes.Attribute> BaseAttributes;
         
         [Header("Audio Data")]
         public AudioAssetsData AudioAssetsData;
        
         /// <summary>
-        /// Retrieves the default parameters set in Unity by developers for this Entity.
+        /// Retrieves the default parameters set in Unity by developers for this Entity. [Data, Do Not Write]
         /// </summary>
         public virtual T GetDefaultSaveData<T>() where T : EntitySaveData
         {

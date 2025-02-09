@@ -12,7 +12,7 @@ namespace UZSG.Objects
         public bool AllowInteractions { get; set; } = true;
 
         public string ActionText => "";
-        public string DisplayName => ResourceData.DisplayName;
+        public string DisplayName => ResourceData.DisplayNameTranslatable;
 
         public bool IsDamaged
         {

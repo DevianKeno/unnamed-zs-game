@@ -16,6 +16,7 @@ MonoBehaviour:
   Id: workbench
   Tags: []
   DisplayName: Workbench
+  Description: 
   Object:
     m_AssetGUID: e62ad66bf73460c459e7933267696b6f
     m_SubObjectName: 
@@ -34,7 +35,7 @@ MonoBehaviour:
   HasAudio: 1
   AudioAssetsData: {fileID: 11400000, guid: 999945983bd1d22429c85c8adece7628, type: 2}
   WorkstationName: Workbench
-  GUI:
+  GUIAsset:
     m_AssetGUID: 8b9076dfe34b2c54c8bdb46a2f702503
     m_SubObjectName: 
     m_SubObjectType: 

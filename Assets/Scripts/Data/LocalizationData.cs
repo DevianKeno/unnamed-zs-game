@@ -5,6 +5,10 @@ using UnityEngine;
 
 namespace UZSG.Data
 {
+    /// <summary>
+    /// Localization data for locales.
+    /// Values are set in Inspector; <b>Do not write</b>.
+    /// </summary>
     [Serializable]
     [CreateAssetMenu(fileName = "New Localization Data", menuName = "Localization Data")]
     public class LocalizationData : BaseData

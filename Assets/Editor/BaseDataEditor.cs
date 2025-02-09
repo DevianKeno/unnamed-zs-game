@@ -14,9 +14,9 @@ namespace UZSG.UnityEditor
         
         protected virtual void OnEnable()
         {
-            sourceId = serializedObject.FindProperty("namespace");
-            id = serializedObject.FindProperty("id");
-            tags = serializedObject.FindProperty("tags");
+            sourceId = serializedObject.FindProperty("Namespace");
+            id = serializedObject.FindProperty("Id");
+            tags = serializedObject.FindProperty("Tags");
         }
 
         public override void OnInspectorGUI()

@@ -1,11 +1,13 @@
 using System;
-using TMPro;
+
 using UnityEngine;
+
+using TMPro;
 
 namespace UZSG.UI
 {
     public enum RuleTypeEnum {
-        DaytimeLength, NighttimeLength, MaxPlayers, LootRespawns, DropItemsOnDeath,
+        Seed, DaytimeLength, NighttimeLength, MaxPlayers, LootRespawns, DropItemsOnDeath,
     }
 
     public enum RuleValueType {
@@ -17,8 +19,16 @@ namespace UZSG.UI
         public string Id;
         public RuleTypeEnum Rule;
         public RuleValueType ValueType;
+        [SerializeField] float spacerWidth;
         public event Action<RuleEntryUI, object> OnValueChanged;
-    
+        [SerializeField] RectTransform spacer;
+        
+        protected override void OnValidate()
+        {
+            base.OnValidate();
+            if (spacer != null) spacer.sizeDelta = new(spacerWidth, spacer.sizeDelta.y);
+        }
+
         protected virtual void Start()
         {
             if (ValueType == RuleValueType.Input)

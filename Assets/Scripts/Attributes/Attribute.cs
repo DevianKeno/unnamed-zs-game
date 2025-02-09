@@ -2,7 +2,6 @@ using System;
 
 using UnityEngine;
 
-
 using UZSG.Data;
 using UZSG.Saves;
 
@@ -182,24 +181,24 @@ namespace UZSG.Attributes
         #region Events        
 
         /// <summary>
-        /// Fired everytime ONLY IF the value of this attribute is CHANGED.
-        /// Meaning that if the value is modified, but is still the same, it is not called.
+        /// Raised everytime ONLY IF the value of this attribute is CHANGED.
+        /// Meaning that if the value is modified, but is still the same, it is not raised.
         /// </summary>
         public event Action<Attribute, AttributeValueChangedContext> OnValueChanged;
         /// <summary>
-        /// Fired everytime the Add() or Remove() methods are called.
+        /// Raised everytime the Add() or Remove() methods are raised.
         /// </summary>
         public event Action<Attribute, AttributeValueChangedContext> OnValueModified;
         /// <summary>
-        /// Called once everytime the value reaches its current maximum value.
+        /// Raised once everytime the value reaches its current maximum value.
         /// </summary>
         public event Action<Attribute, AttributeValueChangedContext> OnReachMaximum;
         /// <summary>
-        /// Called once everytime the value reaches its minimum value.
+        /// Raised once everytime the value reaches its minimum value.
         /// </summary>
         public event Action<Attribute, AttributeValueChangedContext> OnReachMinimum;
         /// <summary>
-        /// Called once everytime the value reaches or passes zero.
+        /// Raised once everytime the value reaches or passes zero.
         /// </summary>
         public event Action<Attribute, AttributeValueChangedContext> OnReachZero;
 

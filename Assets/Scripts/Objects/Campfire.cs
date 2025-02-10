@@ -21,9 +21,7 @@ namespace UZSG.Objects
         {
             base.OnPlace();
 
-            Crafter.OnRoutineNotify += OnCraftingRoutineNotify;
             OutputContainer.OnSlotItemChanged += OnOutputSlotItemChanged;
-
             AllowInteractions = true;
         }
 
@@ -190,7 +188,7 @@ namespace UZSG.Objects
                     routine.Finish();
                     OnCraftEvent(routine);
 
-                    if (!Crafter.Routines.Any())
+                    if (!IsFueled)
                     {
                         SetParticlesVisible(false);
                     }
@@ -236,7 +234,7 @@ namespace UZSG.Objects
             
             if (base.OutputContainer.TryPutNearest(outputItem))
             {
-                if (GUI.IsVisible) CraftingUtils.PlayCraftSound();
+                CraftingUtils.PlayCraftSound(this);
                 OnCraftEvent(routine);
                 return;
             }
@@ -250,7 +248,7 @@ namespace UZSG.Objects
                 
                 onOutputSlotItemChanged -= PutItemWhenOutputSlotIsEmpty;
                 slotInfo.ItemSlot.Put(outputItem);
-                if (GUI.IsVisible) CraftingUtils.PlayCraftSound();
+                CraftingUtils.PlayCraftSound(this);
                 OnCraftEvent(routine);
             };
         }

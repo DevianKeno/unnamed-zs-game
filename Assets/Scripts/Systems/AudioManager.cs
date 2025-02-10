@@ -92,6 +92,14 @@ namespace UZSG
             }
         }
 
+        public void PlayInUI(string name)
+        {
+            if (_audioClipsDict.TryGetValue(name, out var clip))
+            {
+                PlayClipAsNewSource(clip);
+            }
+        }
+
         public void PlayInWorld(string name, Vector3 position)
         {
             if (_audioClipsDict.TryGetValue(name, out var clip))

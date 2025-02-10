@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 
 using UZSG.Items;
+using UZSG.Objects;
 
 namespace UZSG.Crafting
 {
@@ -24,14 +25,20 @@ namespace UZSG.Crafting
             return list;
         }
 
-        public static void PlayCraftSound()
+        public static void PlayCraftSound(CraftingStation source)
         {
-            Game.Audio.Play("craft");
+            if (source.GUI != null && source.GUI.IsVisible)
+            {
+                Game.Audio.PlayInUI("craft");
+            }
         }
 
-        public static void PlayNoMaterialsSound()
+        public static void PlayNoMaterialsSound(CraftingStation source)
         {
-            Game.Audio.Play("insufficient_materials");
+            if (source.GUI != null && source.GUI.IsVisible)
+            {
+                Game.Audio.PlayInUI("insufficient_materials");
+            }
         }
     }
 }

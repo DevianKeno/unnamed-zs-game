@@ -47,7 +47,7 @@ namespace UZSG.UI
         /// <summary>
         /// Key is the Crafting Routine; Value is the UI element.
         /// </summary>
-        protected Dictionary<CraftingRoutine, CraftingProgressUI> _routineUIs = new();
+        protected Dictionary<CraftingRoutine, CraftingProgressUI> routineUIs = new();
 
         [Header("CraftingGUI Elements")]
         [SerializeField] protected CraftedItemDisplayUI craftedItemDisplay;
@@ -84,19 +84,37 @@ namespace UZSG.UI
         public virtual void ReadWorkstation(CraftingStation workstation)
         {
             CraftingStation = workstation;
-            CreateOutputSlotUIs(workstation.WorkstationData.OutputSize);
             CreateQueueSlotUIs(workstation.WorkstationData.QueueSize);
+            CreateOutputSlotUIs(workstation.WorkstationData.OutputSize);
+
+            CraftingStation.OnCraft += OnWorkstationCraft;
+        }
+
+        protected virtual void OnDestroy()
+        {
+            CraftingStation.OnCraft -= OnWorkstationCraft;
         }
 
         public void IncrementAmountToCraft()
         {
+            if (SelectedRecipe == null)
+            {
+                return;
+            }
+
             AmountToCraft++;
+            int maxTimes = Mathf.FloorToInt(SelectedRecipe.Output.Data.StackSize / SelectedRecipe.Yield);
+            AmountToCraft = Math.Clamp(AmountToCraft, 1, maxTimes);
             ClearMaterialSlots();
             DisplayMaterials(SelectedRecipe);
         }
 
         public void DecrementAmountToCraft()
         {
+            if (SelectedRecipe == null)
+            {
+                return;
+            }
             if (AmountToCraft - 1 < 1)
             {
                 // print("You reached the minimum amount of number to craft");
@@ -136,8 +154,6 @@ namespace UZSG.UI
             {
                 AddRecipesById(Player.SaveData.KnownRecipeIds); /// by raw Recipe Id. ID!!!!!!
             }
-            CraftingStation.OnCraft -= OnWorkstationCraft;
-            CraftingStation.OnCraft += OnWorkstationCraft;
 
             /// Retrieve crafting routines
             foreach (var r in CraftingStation.Crafter.Routines)
@@ -159,11 +175,11 @@ namespace UZSG.UI
                 CraftingStation.OnCraft -= OnWorkstationCraft;
             }
 
-            foreach (var ui in _routineUIs.Values)
+            foreach (var ui in routineUIs.Values)
             {
                 Destroy(ui.gameObject);
             }
-            _routineUIs.Clear();
+            routineUIs.Clear();
         }
 
         #endregion
@@ -195,7 +211,7 @@ namespace UZSG.UI
 
         #region Workstation callbacks
 
-        protected void OnWorkstationCraft(CraftingRoutine routine)
+        protected virtual void OnWorkstationCraft(CraftingRoutine routine)
         {
             switch (routine.Status)
             {
@@ -224,9 +240,7 @@ namespace UZSG.UI
 
                 case Finished:
                 {
-                    var ui = _routineUIs[routine];
-                    _routineUIs.Remove(routine);
-                    Destroy(ui.gameObject);
+                    FinishCraftingRoutine(routine);
                     break;
                 }
 
@@ -235,6 +249,13 @@ namespace UZSG.UI
                     break;
                 }
             }
+        }
+
+        protected virtual void FinishCraftingRoutine(CraftingRoutine routine)
+        {
+            var ui = routineUIs[routine];
+            routineUIs.Remove(routine);
+            ui.Destruct();
         }
 
         /// <summary>
@@ -257,8 +278,8 @@ namespace UZSG.UI
                 AddRecipes(CraftingStation.WorkstationData.IncludedRecipes);
                 return;
             }
-            List<RecipeData> queriedRecipes = new();
 
+            List<RecipeData> queriedRecipes = new();
             foreach (var recipe in CraftingStation.WorkstationData.IncludedRecipes)
             {
                 /// KMP Algorithm
@@ -278,12 +299,11 @@ namespace UZSG.UI
                 }
             }
 
-            if (queriedRecipes.Count < 1)
+            if (queriedRecipes.Count > 0)
             {
-                return;
+                AddRecipes(queriedRecipes);
             }
 
-            AddRecipes(queriedRecipes);
             return;
         }
 
@@ -330,11 +350,11 @@ namespace UZSG.UI
             AddRecipes(filteredList);
         }
 
-        void CreateRoutineProgressUI(CraftingRoutine routine)
+        protected virtual void CreateRoutineProgressUI(CraftingRoutine routine)
         {
             var routineUI = Game.UI.Create<CraftingProgressUI>("Craft Progress UI", parent: progressContainer);
             routineUI.SetCraftingRoutine(routine);
-            _routineUIs[routine] = routineUI;
+            routineUIs[routine] = routineUI;
         }
         
         #endregion
@@ -349,13 +369,8 @@ namespace UZSG.UI
             {
                 return;
             }
-            
-            #region TODO: inhibit negative values in the ui
-            #endregion
-
             if (SelectedRecipe.Output.Count < 0)
             {
-                print("invalid recipe count");
                 return;
             }
 
@@ -436,11 +451,11 @@ namespace UZSG.UI
             {
                 if (Player.Inventory.Bag.IdItemCount.TryGetValue(matSlot.Item.Id, out int count))
                 {
-                    matSlot.Present = count;
+                    matSlot.PresentItemsCount = count;
                 }
                 else
                 {
-                    matSlot.Present = 0;
+                    matSlot.PresentItemsCount = 0;
                 }
             }
         }
@@ -537,15 +552,10 @@ namespace UZSG.UI
         {
             var matSlot = Game.UI.Create<MaterialCountUI>("Material Count", materialSlotsHolder);
             matSlot.SetDisplayedItem(material);
-            matSlot.Needed = material.Count * AmountToCraft;
-
+            matSlot.NeededItemsCount = material.Count * AmountToCraft;
             /// Retrieve cached count for Item of Id
-            if (Player.Inventory.Bag.IdItemCount.TryGetValue(material.Id, out var count))
-            {
-                /// Can also change colors here if you want
-                matSlot.Present = count;
-            }
-
+            /// Can also change colors here if you want
+            matSlot.PresentItemsCount = Player.Inventory.Bag.CountItem(material.Id);
             materialSlotUIs.Add(matSlot);
         }        
 

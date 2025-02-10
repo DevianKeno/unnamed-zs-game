@@ -71,7 +71,7 @@ namespace UZSG
         #region Events
 
         /// <summary>
-        /// Called whenever the Item of a Slot is changed.
+        /// Raised whenever the Item of a Slot is changed.
         /// </summary>
         public event EventHandler<ItemSlot.ItemChangedContext> OnSlotItemChanged;
 

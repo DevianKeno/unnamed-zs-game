@@ -34,11 +34,7 @@ namespace UZSG.Objects
         /// Called when this workstation has crafted, either single or complete.
         /// </summary>
         public event Action<CraftingRoutine> OnCraft;
-        protected virtual void OnCraftEvent(CraftingRoutine routine)
-        {
-            OnCraft?.Invoke(routine);
-        }
-
+        
         protected virtual void Awake()
         {
             Crafter = GetComponent<Crafter>();
@@ -65,7 +61,7 @@ namespace UZSG.Objects
             var totalMaterials = CraftingUtils.CalculateTotalMaterials(options);
             if (!player.Inventory.Bag.ContainsAll(totalMaterials))
             {
-                if (GUI.IsVisible) CraftingUtils.PlayNoMaterialsSound();
+                CraftingUtils.PlayNoMaterialsSound(this);
                 return false;
             }
 
@@ -97,6 +93,11 @@ namespace UZSG.Objects
         public void CancelCraft(CraftingRoutine routine)
         {
             throw new NotImplementedException();
+        }
+
+        protected virtual void OnCraftEvent(CraftingRoutine routine)
+        {
+            OnCraft?.Invoke(routine);
         }
     }
 }

@@ -20,8 +20,9 @@ namespace UZSG.UI
             FueledWorkstation.OnFuelUpdate += OnFuelUpdate;
         }
 
-        void OnDestroy()
+        protected override void OnDestroy()
         {
+            base.OnDestroy();
             FueledWorkstation.OnFuelUpdate -= OnFuelUpdate;
         }
 

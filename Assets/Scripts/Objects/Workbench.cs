@@ -187,7 +187,7 @@ namespace UZSG.Objects
             
             if (OutputContainer.TryPutNearest(outputItem))
             {
-                if (GUI.IsVisible) CraftingUtils.PlayCraftSound();
+                CraftingUtils.PlayCraftSound(this);
                 OnCraftEvent(routine);
                 return;
             }
@@ -201,7 +201,7 @@ namespace UZSG.Objects
                 
                 onOutputSlotItemChanged -= PutItemWhenOutputSlotIsEmpty;
                 context.ItemSlot.Put(outputItem);
-                if (GUI.IsVisible) CraftingUtils.PlayCraftSound();
+                CraftingUtils.PlayCraftSound(this);
                 routine.Finish();
                 OnCraftEvent(routine);
             };

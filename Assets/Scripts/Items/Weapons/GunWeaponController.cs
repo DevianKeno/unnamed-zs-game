@@ -54,7 +54,7 @@ namespace UZSG.Items.Weapons
             {
                 if (_hasValidAmmoData)
                 {
-                    return Player.Inventory.Bag.CountId(RangedAttributes.Ammo.Id);
+                    return Player.Inventory.Bag.CountItem(RangedAttributes.Ammo.Id);
                 }
                 else
                 {

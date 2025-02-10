@@ -74,7 +74,10 @@ namespace UZSG.Players
             var totalMaterials = CraftingUtils.CalculateTotalMaterials(options);
             if (false == this.Player.Inventory.Bag.ContainsAll(totalMaterials))
             {
-                if (GUI.IsVisible) CraftingUtils.PlayNoMaterialsSound();
+                if (GUI.IsVisible) 
+                {
+                    Game.Audio.PlayInUI("insufficient_materials");
+                }
                 return null;
             }
 

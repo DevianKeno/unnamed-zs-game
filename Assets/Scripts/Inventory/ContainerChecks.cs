@@ -134,9 +134,9 @@ namespace UZSG
         /// <summary>
         /// Counts the Item present in this container.
         /// </summary>
-        public int CountId(string itemId)
+        public int CountItem(string id)
         {
-            if (_cachedIdItemCount.TryGetValue(itemId, out var count))
+            if (_cachedIdItemCount.TryGetValue(id, out var count))
             {
                 return count;
             }

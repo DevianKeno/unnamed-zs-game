@@ -68,7 +68,7 @@ namespace UZSG.Objects
         {
             base.OnPlace();
             FuelContainer = new Container(WorkstationData.FuelSlotsSize);
-            
+
             Crafter.OnRoutineNotify += OnCraftingRoutineNotify;
             FuelContainer.OnSlotItemChanged += OnFuelSlotChanged;
         }
@@ -101,7 +101,7 @@ namespace UZSG.Objects
             var totalMaterials = CraftingUtils.CalculateTotalMaterials(options);
             if (!Player.Inventory.Bag.ContainsAll(totalMaterials))
             {
-                if (GUI.IsVisible) CraftingUtils.PlayNoMaterialsSound();
+                CraftingUtils.PlayNoMaterialsSound(this);
                 Game.Console.LogDebug($"Tried to craft '{options.Recipe.Output.Id}' but had insufficient materials.");
                 return false;
             }

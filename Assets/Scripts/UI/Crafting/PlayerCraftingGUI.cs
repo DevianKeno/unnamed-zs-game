@@ -9,11 +9,11 @@ namespace UZSG.UI.Objects
                 CraftingStation.OnCraft -= OnWorkstationCraft;
             }
             
-            foreach (var ui in _routineUIs.Values)
+            foreach (var ui in routineUIs.Values)
             {
                 Destroy(ui.gameObject);
             }
-            _routineUIs.Clear();
+            routineUIs.Clear();
         }
     }
 }

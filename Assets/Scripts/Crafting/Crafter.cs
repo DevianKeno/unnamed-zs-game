@@ -36,11 +36,11 @@ namespace UZSG.Crafting
         #region Events
 
         /// <summary>
-        /// Called everytime the crafting routine notifies.
-        /// </summary>C
+        /// Raise once everytime a crafting routine notifies (raises its own event).
+        /// </summary>
         public event Action<CraftingRoutine> OnRoutineNotify;
         /// <summary>
-        /// Called every frame while the crafter crafts an Item.
+        /// Raise every frame while a a crafting routine crafts an Item.
         /// </summary>
         public event Action<CraftingRoutine> OnRoutineUpdate;
 
@@ -52,6 +52,12 @@ namespace UZSG.Crafting
             availableCraftSlots = maxSimultaneousCrafts;
         }
 
+        /// <summary>
+        /// Crafts a new item using the provided options.
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="begin"></param>
+        /// <returns></returns>
         public virtual CraftingRoutine CraftNewItem(ref CraftItemOptions options, bool begin = true)
         {
             var routine = new CraftingRoutine(options);

@@ -10,7 +10,7 @@ namespace UZSG.UI
         /// <summary>
         /// The left hand side of the count.
         /// </summary>
-        public int Present
+        public int PresentItemsCount
         {
             get
             {
@@ -19,15 +19,14 @@ namespace UZSG.UI
             set
             {
                 present = value;
-                if (present < needed) countText.text = $"<color=\"red\">{present}</color>/{needed}";
-                else countText.text = $"{present}/{needed}";
+                UpdateText();
             }
         }
         /// <summary>
         /// The right hand side of the count.
         /// </summary>
         [SerializeField] int needed;
-        public int Needed
+        public int NeededItemsCount
         {
             get
             {
@@ -36,8 +35,7 @@ namespace UZSG.UI
             set
             {
                 needed = value;
-                if (present < needed) countText.text = $"<color=\"red\">{present}</color>/{needed}";
-                else countText.text = $"{present}/{needed}";
+                UpdateText();
             }
         }
 
@@ -54,6 +52,18 @@ namespace UZSG.UI
             base.OnValidate();
 
             countText.text = $"{present}/{needed}";
+        }
+
+        void UpdateText()
+        {
+            if (present < needed)
+            {
+                countText.text = $"<color=\"red\">{present}</color>/{needed}";
+            }
+            else
+            {
+                countText.text = $"{present}/{needed}";
+            }
         }
     }
 }

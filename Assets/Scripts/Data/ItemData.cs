@@ -5,15 +5,10 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Serialization;
 
+using UZSG.Items;
+
 namespace UZSG.Data
 {
-    public enum ItemType { 
-        Item, Weapon, Tool, Equipment, Armor, Accessory, Tile
-    }
-    public enum ItemSubtype {
-        None, Useable, Food, Consumable, Tool, Weapon, Equipable, Accessory
-    }
-
     /// <summary>
     /// Item data.
     /// Values are set in Inspector; <b>Do not write</b>.
@@ -30,10 +25,16 @@ namespace UZSG.Data
         public string DescriptionTranslatable => Game.Locale.Translatable($"item.{Id}.description");
 
         public AssetReference EntityModel;
+        /// <summary>
+        /// Sprite displayed when in item slots.
+        /// </summary>
         public Sprite Sprite;
         public ItemType Type;
         public ItemSubtype Subtype;
-        public float Weight;
+        /// <summary>
+        /// Literal weight; how much this item weighs.
+        /// </summary>
+        public float WeightKg;
         public bool IsStackable => StackSize > 1;
         public int StackSize = 1;
         /// <summary>

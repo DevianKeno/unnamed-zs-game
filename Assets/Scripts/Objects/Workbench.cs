@@ -14,9 +14,9 @@ namespace UZSG.Objects
 {
     public class Workbench : CraftingStation
     {
-        protected override void OnPlace()
+        protected override void OnPlaceEvent()
         {
-            base.OnPlace();
+            base.OnPlaceEvent();
 
             Crafter.OnRoutineNotify += OnCraftingRoutineNotify;
             Crafter.OnRoutineUpdate += OnCraftingRoutineUpdate;
@@ -25,7 +25,7 @@ namespace UZSG.Objects
             AllowInteractions = true;
         }
 
-        void Use(Player player)
+        protected virtual void Use(Player player)
         {
             if (!WorkstationData.GUIAsset.IsSet())
             {
@@ -54,7 +54,7 @@ namespace UZSG.Objects
             });
         }
 
-        protected override void OnDestruct()
+        protected override void OnDestructEvent()
         {
             if (Player != null)
             {

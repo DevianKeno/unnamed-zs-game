@@ -26,9 +26,9 @@ namespace UZSG.Entities
         float _scanTimer;
         float _targetMoveSpeed;
 
-        public override void OnSpawn()
+        public override void OnSpawnEvent()
         {
-            base.OnSpawn();
+            base.OnSpawnEvent();
 
             LoadDefaultSaveData<EnemySaveData>();
             /// Read attributes()

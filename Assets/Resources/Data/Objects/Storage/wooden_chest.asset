@@ -12,9 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d15470dc0fc93d48b7a8370fbc920fb, type: 3}
   m_Name: wooden_chest
   m_EditorClassIdentifier: 
+  Namespace: uzsg
   Id: wooden_chest
-  Name: Wooden Chest
-  Model:
+  Tags: []
+  DisplayName: Wooden Chest
+  Description: 
+  Object:
     m_AssetGUID: 258f08eb6b252104cae885b143c533d2
     m_SubObjectName: 
     m_SubObjectType: 
@@ -27,12 +30,14 @@ MonoBehaviour:
     flatBonus: 0
     LimitOverflow: 0
     LimitUnderflow: 0
+  CanBePickedUp: 0
+  PickupTimeSeconds: 0
   HasAudio: 0
   AudioAssetsData: {fileID: 0}
   StorageName: Wooden Crate
-  GUI:
+  Size: 18
+  GUIAsset:
     m_AssetGUID: db88c232d26b07541aeec11b32166a6e
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  Size: 18

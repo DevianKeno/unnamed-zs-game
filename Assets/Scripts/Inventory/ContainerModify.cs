@@ -22,7 +22,7 @@ namespace UZSG
             if (item.IsNone) return true;
 
             /// Check first the cached ItemSlots containing the same Item
-            if (_cachedIdSlots.TryGetValue(item.Data.Id, out var slots))
+            if (cachedIdSlots.TryGetValue(item.Data.Id, out var slots))
             {
                 var nextItem = item;
                 foreach (ItemSlot slot in slots)
@@ -69,7 +69,7 @@ namespace UZSG
             if (item.IsNone) return true;
 
             /// Check first the cached ItemSlots containing the same Item
-            if (_cachedIdSlots.TryGetValue(item.Data.Id, out var slots))
+            if (cachedIdSlots.TryGetValue(item.Data.Id, out var slots))
             {
                 var nextItem = item;
                 foreach (ItemSlot slot in slots)

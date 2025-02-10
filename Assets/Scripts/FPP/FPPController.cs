@@ -68,7 +68,7 @@ namespace UZSG.FPP
         }
         public bool IsHoldingTile
         {
-            get => fppItemController != null && fppItemController.ItemData.Type == ItemType.Tile;
+            get => fppItemController != null && fppItemController.ItemData.Type == ItemType.Object;
         }
         bool _hasArmsAnimations;
         bool _hasViewmodelAnimations;

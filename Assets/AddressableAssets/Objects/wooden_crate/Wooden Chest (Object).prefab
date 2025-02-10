@@ -9,12 +9,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3012995363377038606}
-  - component: {fileID: 6864586598018738335}
+  - component: {fileID: -5153705840757319960}
   - component: {fileID: 8423147837577233067}
   - component: {fileID: 9172405830326156784}
   - component: {fileID: 6575479197564667539}
   m_Layer: 15
-  m_Name: Wooden Crate (Object)
+  m_Name: Wooden Chest (Object)
   m_TagString: Interactable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -36,7 +36,7 @@ Transform:
   - {fileID: 6542477070609574406}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6864586598018738335
+--- !u!114 &-5153705840757319960
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -45,12 +45,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 2762491895021070887}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ca3d74babea673d4d9ed716242290e46, type: 3}
+  m_Script: {fileID: 11500000, guid: e0cb7e0c34403d54886ef6adfd802a42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   objectData: {fileID: 11400000, guid: aeb0d1f6c6894d046842f37c84fb7e23, type: 2}
-  attributes:
-    attributesReadOnly: []
   animator: {fileID: 705833881487890239}
 --- !u!54 &8423147837577233067
 Rigidbody:

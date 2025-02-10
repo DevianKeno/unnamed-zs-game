@@ -17,9 +17,9 @@ namespace UZSG.Objects
         [SerializeField] ParticleSystem flameParticles;
         [SerializeField] Light spotLight;
 
-        protected override void OnPlace()
+        protected override void OnPlaceEvent()
         {
-            base.OnPlace();
+            base.OnPlaceEvent();
 
             OutputContainer.OnSlotItemChanged += OnOutputSlotItemChanged;
             AllowInteractions = true;
@@ -54,7 +54,7 @@ namespace UZSG.Objects
             });
         }
 
-        protected override void OnDestruct()
+        protected override void OnDestructEvent()
         {
             if (Player != null)
             {

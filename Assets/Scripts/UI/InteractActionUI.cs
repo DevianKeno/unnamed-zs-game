@@ -109,7 +109,7 @@ namespace UZSG.UI
             {
                 if (!interactAction.IsHold)
                 {
-                    interactAction.Perform(new InteractionContext()
+                    interactAction.PerformAction(new InteractionContext()
                     {
                         Type = interactAction.Type,
                         Interactable = interactAction.Interactable,
@@ -136,7 +136,7 @@ namespace UZSG.UI
                     _progress = 1;
                     _isActivated = true;
 
-                    interactAction.Perform(new InteractionContext()
+                    interactAction.PerformAction(new InteractionContext()
                     {
                         Type = interactAction.Type,
                         Interactable = interactAction.Interactable,

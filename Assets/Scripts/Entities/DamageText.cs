@@ -36,7 +36,7 @@ namespace UZSG.Entities
         [SerializeField] TextMeshPro textTMP;
         [SerializeField] Rigidbody rb;
 
-        public override void OnSpawn()
+        public override void OnSpawnEvent()
         {
             ShootUp(Vector3.up, Force);
             Destroy(gameObject, 2f);

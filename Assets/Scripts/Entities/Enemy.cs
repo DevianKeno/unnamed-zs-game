@@ -76,9 +76,9 @@ namespace UZSG.Entities
             NavMeshAgent = GetComponent<NavMeshAgent>();
         }
 
-        public override void OnSpawn()
+        public override void OnSpawnEvent()
         {
-            base.OnSpawn();
+            base.OnSpawnEvent();
         }
 
         public override void Kill()

@@ -466,7 +466,7 @@ namespace UZSG.Players
 
         public void LookAt(IInteractable interactable)
         {
-            if (interactable != null)
+            if (interactable != null && interactable.AllowInteractions)
             {
                 _lookingAt?.OnLookExit();
                 _lookingAt = interactable;

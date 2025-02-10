@@ -12,21 +12,17 @@ namespace UZSG.Interactions
         /// </summary>
         public IInteractable Interactable { get; set; }
         /// <summary>
-        /// The entity who performs the interaction.
-        /// </summary>
-        public IInteractActor Actor { get; set; }
-        /// <summary>
         /// Whether if the input requires holding down the input key.
         /// </summary>
         public bool IsHold { get; set; }
         public float HoldDurationSeconds { get; set; }
         public InputAction InputAction { get; set;}
         /// <summary>
-        /// Called when the Interact Action is performed.
+        /// Raised when this Interact Action is performed.
         /// </summary>
         public event Action<InteractionContext> OnPerformed;
 
-        public virtual void Perform(InteractionContext context)
+        public virtual void PerformAction(InteractionContext context)
         {
             OnPerformed?.Invoke(context);
         }

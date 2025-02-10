@@ -183,7 +183,7 @@ namespace UZSG.Entities
             FPP = GetComponent<FPPController>();
         }
 
-        public override void OnSpawn()
+        public override void OnSpawnEvent()
         {
             Initialize();
             // Game.Console.LogInfo("I, player, has been spawned!");
@@ -594,7 +594,7 @@ namespace UZSG.Entities
                 Attributes = attributes.WriteSaveData(),
                 Inventory = inventory.WriteSaveData()
             };
-            esd.Transform.Rotation = Utils.ToFloatArray(FPP.Camera.LocalRotationEuler);
+            psd.Transform.Rotation = Utils.ToFloatArray(FPP.Camera.LocalRotationEuler);
 
             return psd;
         }

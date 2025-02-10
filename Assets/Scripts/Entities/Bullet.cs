@@ -56,9 +56,9 @@ namespace UZSG.Entities
         [SerializeField] MeshRenderer meshRenderer;
         [SerializeField] TrailRenderer trailRenderer;
         
-        public override void OnSpawn()
+        public override void OnSpawnEvent()
         {
-            base.OnSpawn();
+            base.OnSpawnEvent();
 
             Destroy(gameObject, LifetimeSeconds); /// Despawn after 5 seconds
         }

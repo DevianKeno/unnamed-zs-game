@@ -9,10 +9,7 @@ using UZSG.Data;
 using UZSG.Entities;
 using UZSG.Interactions;
 using UZSG.Items;
-using UZSG.Objects;
-
 using UZSG.UI;
-using static UZSG.Data.ItemType;
 
 namespace UZSG.Building
 {

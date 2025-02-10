@@ -92,9 +92,9 @@ namespace UZSG.Entities
         }
 #endif
 
-        public override void OnSpawn()
+        public override void OnSpawnEvent()
         {
-            base.OnSpawn();
+            base.OnSpawnEvent();
             
             LoadModelAsset();
             Age = DESPAWN_TIME_SECONDS;
@@ -103,7 +103,7 @@ namespace UZSG.Entities
             Game.Tick.OnSecond += OnSecond;
         }
 
-        protected override void OnDespawn()
+        protected override void OnDespawnEvent()
         {
             Game.Tick.OnSecond -= OnSecond;
         }
@@ -224,7 +224,6 @@ namespace UZSG.Entities
             
             var saveData = new ItemEntitySaveData()
             {
-                InstanceId = sd.InstanceId,
                 Id = entityData.Id,
                 Transform = sd.Transform,
                 Item = this.item.WriteSaveData(),
@@ -241,7 +240,7 @@ namespace UZSG.Entities
                 ItemType.Item or
                 ItemType.Tool or
                 ItemType.Equipment or
-                ItemType.Tile or
+                ItemType.Object or
                 ItemType.Accessory => InteractType.PickUp,
                 ItemType.Weapon => InteractType.Equip,
                 _ => InteractType.Interact,

@@ -272,17 +272,11 @@ namespace UZSG.Worlds
             foreach (var sd in currentSaveData.EntitySaves)
             {
                 if (sd.Id == LOCAL_PLAYER_ID) continue; /// salt
-                if (_entityInstanceIds.TryGetValue(sd.InstanceId, out Entity etty))
+                
+                Game.Entity.Spawn(sd.Id, callback: (info) =>
                 {
-                    etty.OnSpawn();
-                }
-                else
-                {
-                    Game.Entity.Spawn(sd.Id, callback: (info) =>
-                    {
-                        info.Entity.ReadSaveData(sd);
-                    });
-                }
+                    info.Entity.ReadSaveData(sd);
+                });
             }
         }
 

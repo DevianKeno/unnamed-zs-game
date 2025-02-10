@@ -11,7 +11,7 @@ namespace UZSG.Interactions
         /// <summary>
         /// Whether to allow interactions for the Interactable.
         /// </summary>
-        public bool AllowInteractions { get; }
+        public bool AllowInteractions { get; set; }
         /// <summary>
         /// Get all actions from this Interactable.
         /// </summary>

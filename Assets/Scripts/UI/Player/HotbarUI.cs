@@ -1,13 +1,8 @@
-using System;
 using UnityEngine;
 
-using UZSG.Data;
 using UZSG.Entities;
 using UZSG.Inventory;
-
-using UZSG.UI.Players;
-
-using static UZSG.Data.ItemType;
+using static UZSG.Items.ItemType;
 
 namespace UZSG.UI
 {

@@ -25,7 +25,7 @@ namespace UZSG.Objects
 
         protected SaveData saveData;
 
-        protected override void OnPlace()
+        protected override void OnPlaceEvent()
         {
             LoadDefaultAttributes();
         }

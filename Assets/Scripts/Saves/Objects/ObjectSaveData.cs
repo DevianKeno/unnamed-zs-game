@@ -11,7 +11,6 @@ namespace UZSG.Saves
     [JsonSubtypes.KnownSubType(typeof(WorkstationObjectSaveData), "WorkstationObjectSaveData")]
     public class ObjectSaveData : SaveData
     {
-        public int InstanceId;
         public string Id;
         public TransformSaveData Transform;
     }

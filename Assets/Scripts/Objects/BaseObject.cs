@@ -11,6 +11,7 @@ using UZSG.Interactions;
 using UZSG.Items;
 using UZSG.Saves;
 using UZSG.UI;
+using UZSG.Worlds;
 
 namespace UZSG.Objects
 {
@@ -18,12 +19,16 @@ namespace UZSG.Objects
     {
         [SerializeField] protected ObjectData objectData;
         public ObjectData ObjectData => objectData;
+        
+        public string DisplayName => objectData.DisplayNameTranslatable;
 
         [SerializeField] protected AttributeCollection attributes;
         public AttributeCollection Attributes => attributes;
         
         [SerializeField] protected Animator animator;
         public Animator Animator => animator;
+
+        protected Chunk chunk;
 
         public virtual bool IsPlaced { get; protected set; } = false;
         public virtual bool IsDamageable { get; protected set; } = true;
@@ -94,14 +99,14 @@ namespace UZSG.Objects
                 Game.Audio.LoadAudioAssets(objectData.AudioAssetsData);
             }
 
-            var chunk = Game.World.CurrentWorld.GetChunkBy(worldPosition: this.Position);
+            chunk = Game.World.CurrentWorld.GetChunkBy(worldPosition: this.Position);
             if (chunk != null)
             {
                 chunk.RegisterObject(this);
                 transform.SetParent(chunk.transform, worldPositionStays: true);
             }
 
-            OnPlace();
+            OnPlaceEvent();
             this.IsPlaced = true;
         }
 
@@ -148,7 +153,6 @@ namespace UZSG.Objects
         {
             var saveData = new ObjectSaveData()
             {
-                InstanceId = GetInstanceID(),
                 Id = objectData.Id,
                 Transform = new()
                 {
@@ -184,13 +188,19 @@ namespace UZSG.Objects
             }
         }
 
+        public void MarkDirty()
+        {
+            this.IsDirty = true;
+            chunk.MarkDirty();
+        }
+
         /// <summary>
         /// <i>Destroys</i> this object in accordance with UZSG laws.
         /// <c>Destruct</c> because <c>Destroy</c> is reserved for UnityEngine's method.
         /// </summary>
         public virtual void Destruct()
         {
-            OnDestruct();
+            OnDestructEvent();
             OnDestructed?.Invoke(this);
             MonoBehaviour.Destroy(gameObject);
         }
@@ -208,15 +218,17 @@ namespace UZSG.Objects
             }
         }
 
-        protected virtual void OnPlace() { }
-        protected virtual void OnDestruct() { }
+        /// <summary>
+        /// Raised once when this object is placed/built.
+        /// </summary>
+        protected virtual void OnPlaceEvent() { }
+        /// <summary>
+        /// Raised once when this object is destructed (broken, pick up, taken away from the world, etc.).
+        /// </summary>
+        protected virtual void OnDestructEvent() { }
 
         #endregion
 
-        public virtual void MarkDirty()
-        {
-            this.IsDirty = true;
-        }
 
         void InitializeTransform(TransformSaveData data)
         {

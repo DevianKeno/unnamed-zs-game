@@ -16,7 +16,7 @@ namespace UZSG.Data
     {
         [Header("Workstation Data")]
         public string WorkstationName;
-        public string WorkstationNameTranslatable => Game.Locale.Translatable($"workstation.{Id}.name");
+        public string WorkstationNameTranslatable => Game.Locale.Translatable($"object.{Id}.name");
         public AssetReference GUIAsset;
         public bool IncludePlayerRecipes;
         public int QueueSize;

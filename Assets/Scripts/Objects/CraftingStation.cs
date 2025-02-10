@@ -21,7 +21,6 @@ namespace UZSG.Objects
         public WorkstationData WorkstationData => objectData as WorkstationData;
         
         public Player Player { get; set; }
-        public string DisplayName => objectData.DisplayNameTranslatable;
         public bool AllowInteractions { get; set; } = false;
         
         public Crafter Crafter { get; protected set; }
@@ -40,7 +39,7 @@ namespace UZSG.Objects
             Crafter = GetComponent<Crafter>();
         }
 
-        protected override void OnPlace()
+        protected override void OnPlaceEvent()
         {
             QueueSlots = new List<ItemSlot>(WorkstationData.QueueSize);
             OutputContainer = new Container(WorkstationData.OutputSize);

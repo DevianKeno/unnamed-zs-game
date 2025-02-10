@@ -21,7 +21,7 @@ namespace UZSG
         {
             if (item.IsNone) return false;
 
-            if (_cachedIdItemCount.TryGetValue(item.Id, out var count))
+            if (cachedIdItemCount.TryGetValue(item.Id, out var count))
             {
                 return count >= item.Count;
             }
@@ -50,7 +50,7 @@ namespace UZSG
         /// </summary>
         public List<ItemSlot> FindItem(string id)
         {
-            if (_cachedIdSlots.TryGetValue(id, out var slots))
+            if (cachedIdSlots.TryGetValue(id, out var slots))
             {
                 return slots.ToList(); 
             }
@@ -76,7 +76,7 @@ namespace UZSG
             if (item.IsNone) return true;
 
             /// Check first the cached ItemSlots containing the same Item
-            if (_cachedIdSlots.TryGetValue(item.Data.Id, out var slots))
+            if (cachedIdSlots.TryGetValue(item.Data.Id, out var slots))
             {
                 int nextCount = item.Count;
                 foreach (ItemSlot slot in slots)
@@ -136,7 +136,7 @@ namespace UZSG
         /// </summary>
         public int CountItem(string id)
         {
-            if (_cachedIdItemCount.TryGetValue(id, out var count))
+            if (cachedIdItemCount.TryGetValue(id, out var count))
             {
                 return count;
             }
@@ -149,7 +149,7 @@ namespace UZSG
         /// </summary>
         public int CountItem(Item item)
         {
-            if (_cachedIdItemCount.TryGetValue(item.Id, out var count))
+            if (cachedIdItemCount.TryGetValue(item.Id, out var count))
             {
                 return count;
             }

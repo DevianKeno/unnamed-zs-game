@@ -43,7 +43,7 @@ namespace UZSG.Entities
             // ragdollRigidbody = GetComponent<Rigidbody>();
         }
 
-        public override void OnSpawn()
+        public override void OnSpawnEvent()
         {
             // HealthBar.Initialize();
             InitializeHitboxes();

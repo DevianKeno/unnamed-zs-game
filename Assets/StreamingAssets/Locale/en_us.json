@@ -579,6 +579,26 @@
       "description": "Manipis na tela.",
       "source": ""
     },
+    "campfire": {
+      "name": "Campfire",
+      "description": "",
+      "source": ""
+    },
+    "foundation_block": {
+      "name": "Foundation Block",
+      "description": "",
+      "source": ""
+    },
+    "wooden_chest": {
+      "name": "Wooden Chest",
+      "description": "",
+      "source": ""
+    },
+    "workbench": {
+      "name": "Workbench",
+      "description": "",
+      "source": ""
+    },
     "pebble": {
       "name": "Pebble",
       "description": "Used for simple tools, as slingshot ammunition, or in decorative landscaping.",
@@ -608,21 +628,6 @@
       "name": "String",
       "description": "Used for securing shelters, climbing, binding materials such as weapons, tools, and other materials or creating traps.",
       "source": "Strings can be crafted from natural fibers like vines and plants or be found randomly across the environment."
-    },
-    "campfire": {
-      "name": "Campfire",
-      "description": "",
-      "source": ""
-    },
-    "foundation_block": {
-      "name": "Foundation Block",
-      "description": "",
-      "source": ""
-    },
-    "workbench": {
-      "name": "Workbench",
-      "description": "",
-      "source": ""
     },
     "fire_axe": {
       "name": "Fire Axe",

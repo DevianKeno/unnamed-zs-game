@@ -1,32 +1,20 @@
 using UnityEngine;
-using UnityEngine.EventSystems;
-
 
 using UZSG.Objects;
-using UZSG.Items;
 using UZSG.Inventory;
 
-using static UnityEngine.EventSystems.PointerEventData.InputButton;
-using static UZSG.UI.ItemSlotUI.ClickType;
-using System;
-
-namespace UZSG.UI.Objects
+namespace UZSG.UI
 {
     public class StorageGUI : ObjectGUI
     {
-        protected Storage storage;
         /// <summary>
         /// The Storage tied to this Storage GUI.
         /// </summary>The 
-        public Storage Storage
+        public StorageObject Storage
         {
-            get
-            {
-                return storage;
-            }
+            get => (StorageObject) BaseObject;
             set
             {
-                storage = value;
                 BaseObject = value;
             }
         }
@@ -48,10 +36,9 @@ namespace UZSG.UI.Objects
             PutBackHeldItem();
         }
                 
-        public void LinkStorage(Storage storage)
+        public void ReadStorage(StorageObject storage)
         {
-            Storage = storage;
-
+            this.Storage = storage;
             CreateSlotUIs(storage.StorageData.Size);
         }
         
@@ -60,85 +47,20 @@ namespace UZSG.UI.Objects
             for (int i = 0; i < size; i++)
             {
                 var slotUI = Game.UI.Create<ItemSlotUI>("Item Slot");
-                slotUI.name = $"Output Slot ({i})";
+                slotUI.name = $"Storage Slot ({i})";
                 slotUI.transform.SetParent(slotsHolder);
-                // slotUI.Index = i;
-                slotUI.Link(storage.Container[i]);
+                slotUI.Link(Storage.Container[i]);
+
                 slotUI.OnMouseDown += OnSlotClick;
                 slotUI.OnHoverStart += OnSlotHoverStart;
-
                 slotUI.Show();
             }
         }
 
         void OnSlotClick(object sender, ItemSlotUI.ClickedContext ctx)
         {
-            var slot = ((ItemSlotUI) sender).Slot;
-
-            if (ctx.Button == Left)
-            {
-                if (ctx.ClickType == ShiftClick)
-                {
-                    FastDepositToBag(slot);
-                    return;
-                }
-
-                if (Player.InventoryWindow.IsHoldingItem)
-                {
-                    var heldItem = Player.InventoryWindow.HeldItem;
-
-                    if (slot.IsEmpty || slot.Item.Is(heldItem))
-                    {
-                        slot.TryStack(Player.InventoryWindow.TakeHeldItem(), out var excess);
-                        if (!excess.IsNone)
-                        {
-                            Player.InventoryWindow.HoldItem(excess);
-                        }
-                    }
-                    else /// item diff, swap
-                    {
-                        var tookItem = slot.TakeAll();
-                        var prevHeld = Player.InventoryWindow.SwapHeldWith(tookItem);
-                        slot.Put(prevHeld);
-                    }
-                }
-                else
-                {
-                    if (slot.IsEmpty) return;
-
-                    Player.InventoryWindow.HoldItem(slot.TakeAll());
-                    _lastSelectedSlot = slot;
-                }
-            }
-            else if (ctx.Button == Right)
-            {
-                if (Player.InventoryWindow.IsHoldingItem) /// put 1 to target slot
-                {
-                    var heldItem = Player.InventoryWindow.HeldItem;
-
-                    if (slot.IsEmpty)
-                    {
-                        _isPutting = true;
-                        _isGetting = false;
-
-                        slot.Put(heldItem.Take(1));
-                    }
-                    else
-                    {
-                        var toPut = new Item(heldItem, 1);
-                        if (slot.Item.CanStackWith(toPut))
-                        {
-                            slot.TryStack(toPut, out _);
-                            heldItem.Take(1);
-                        }
-                    }
-                }
-                else /// take 1
-                {
-                    _isPutting = false;
-                    _isGetting = true;
-                }
-            }
+            Storage.Player.InventoryWindow.OnItemSlotClicked(sender, ctx);
+            return;
         }
 
         void OnSlotHoverStart(object sender, ItemSlotUI.ClickedContext e)

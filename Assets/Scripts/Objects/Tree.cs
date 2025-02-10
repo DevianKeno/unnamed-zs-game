@@ -40,9 +40,9 @@ namespace UZSG.Objects
         [SerializeField] new Rigidbody rigidbody;
         [SerializeField] LODGroup lodGroup;
         
-        protected override void OnPlace()
+        protected override void OnPlaceEvent()
         {
-            base.OnPlace();
+            base.OnPlaceEvent();
             _originalRotation = transform.rotation;
         }
 

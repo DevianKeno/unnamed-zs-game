@@ -52,9 +52,9 @@ namespace UZSG.Entities
             NavMeshAgent = GetComponent<NavMeshAgent>();
         }
 
-        public override void OnSpawn()
+        public override void OnSpawnEvent()
         {
-            base.OnSpawn();
+            base.OnSpawnEvent();
 
             RetrieveAttributes();
             InitializeHitboxes();
@@ -65,7 +65,7 @@ namespace UZSG.Entities
             Game.Tick.OnSecond += OnSecond;
         }
 
-        protected override void OnDespawn()
+        protected override void OnDespawnEvent()
         {
             Game.Tick.OnSecond -= OnSecond;
         }

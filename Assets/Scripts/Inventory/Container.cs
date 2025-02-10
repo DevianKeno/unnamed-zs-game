@@ -8,8 +8,6 @@ using UZSG.Saves;
 using UZSG.Inventory;
 using UZSG.Items;
 
-using Unity.Mathematics;
-
 namespace UZSG
 {
     /// <summary>
@@ -18,27 +16,27 @@ namespace UZSG
     [Serializable]
     public partial class Container : ISaveDataReadWrite<List<ItemSlotSaveData>>
     {
-        public const int MAX_CONTAINER_SIZE = 32767;
+        public const int MAX_CONTAINER_SIZE = short.MaxValue;
 
-        protected int _slotCount;
+        protected int slotCount;
         public int SlotCount
         {
-            get => _slotCount;
+            get => slotCount;
         }
-        [SerializeField] protected List<ItemSlot> _slots = new();
-        public List<ItemSlot> Slots => _slots;
-        Dictionary<string, HashSet<ItemSlot>> _cachedIdSlots = new();
+        [SerializeField] protected List<ItemSlot> slots = new();
+        public List<ItemSlot> Slots => slots;
+        Dictionary<string, HashSet<ItemSlot>> cachedIdSlots = new();
         /// <summary>
         /// Cached list of ItemSlots of a particular Item present in this Container.
         /// Key is Item Id; Value is all ItemSlots that contains the Item with the same Id.
         /// </summary>
-        public Dictionary<string, HashSet<ItemSlot>> IdSlots => _cachedIdSlots;
-        Dictionary<string, int> _cachedIdItemCount = new();
+        public Dictionary<string, HashSet<ItemSlot>> IdSlots => cachedIdSlots;
+        Dictionary<string, int> cachedIdItemCount = new();
         /// <summary>
         /// Cached total count per Item of Id.
         /// Key is Item Id; Value is total count of that Item in this Container.
         /// </summary>
-        public Dictionary<string, int> IdItemCount => _cachedIdItemCount;
+        public Dictionary<string, int> IdItemCount => cachedIdItemCount;
         /// <summary>
         /// TODO: was planning to implement "caching" on this since this still just loops over all the slots
         /// </summary>
@@ -52,18 +50,18 @@ namespace UZSG
         /// <summary>
         /// Whether the container has any items or not.
         /// </summary>
-        public bool HasAny
+        public bool HasAnyItem
         {
             get
             {
-                return _cachedIdSlots.Any();
+                return cachedIdSlots.Any();
             }
         }
         public int FreeSlotsCount
         {
             get
             {
-                return _slots.Count(slot => slot.IsEmpty);
+                return slots.Count(slot => slot.IsEmpty);
             }
         }
     
@@ -83,19 +81,19 @@ namespace UZSG
             get
             {
                 if (!Slots.IsValidIndex(i)) return null;
-                return _slots[i];
+                return slots[i];
             }
         }
 
         public Container(int slotsCount = 0)
         {
-            this._slotCount = Math.Clamp(slotsCount, 0, MAX_CONTAINER_SIZE);
+            this.slotCount = Math.Clamp(slotsCount, 0, MAX_CONTAINER_SIZE);
             
             for (int i = 0; i < SlotCount; i++)
             {
                 var newSlot = new ItemSlot(i, ItemSlotType.All);
                 newSlot.OnItemChangedInternal += SlotContentChangedInternal;
-                _slots.Add(newSlot);
+                slots.Add(newSlot);
             }
         }
 
@@ -105,13 +103,13 @@ namespace UZSG
         public void AddSlots(int count)
         {
             int addedSlotCount = Math.Clamp(count, 0, MAX_CONTAINER_SIZE - SlotCount);
-            this._slotCount += addedSlotCount;
+            this.slotCount += addedSlotCount;
             
             for (int i = 0; i < addedSlotCount; i++)
             {
                 var newSlot = new ItemSlot(i, ItemSlotType.All);
                 newSlot.OnItemChangedInternal += SlotContentChangedInternal;
-                _slots.Add(newSlot);
+                slots.Add(newSlot);
             }
         }
 
@@ -145,44 +143,44 @@ namespace UZSG
         {
             if (item.IsNone) return;
             
-            if (!_cachedIdSlots.TryGetValue(item.Id, out var hashset))
+            if (!cachedIdSlots.TryGetValue(item.Id, out var hashset))
             {
                 hashset = new();
-                _cachedIdSlots[item.Data.Id] = hashset;
+                cachedIdSlots[item.Data.Id] = hashset;
             }
             hashset.Add(slot);
 
-            if (!_cachedIdItemCount.TryGetValue(item.Id, out var count))
+            if (!cachedIdItemCount.TryGetValue(item.Id, out var count))
             {
                 count = 0;
             }
             count += item.Count;
-            _cachedIdItemCount[item.Id] = count;
+            cachedIdItemCount[item.Id] = count;
         }
 
         void UncacheItem(Item item, ItemSlot slot)
         {
             if (item.IsNone) return;
 
-            if (_cachedIdSlots.TryGetValue(item.Id, out var hashset))
+            if (cachedIdSlots.TryGetValue(item.Id, out var hashset))
             {
                 hashset.Remove(slot);
                 if (hashset.Count == 0)
                 {
-                    _cachedIdSlots.Remove(item.Id);
+                    cachedIdSlots.Remove(item.Id);
                 }
             }
 
-            if (_cachedIdItemCount.TryGetValue(item.Id, out var count))
+            if (cachedIdItemCount.TryGetValue(item.Id, out var count))
             {
                 count -= item.Count;
                 if (count <= 0)
                 {
-                    _cachedIdItemCount.Remove(item.Id);
+                    cachedIdItemCount.Remove(item.Id);
                 }
                 else
                 {
-                    _cachedIdItemCount[item.Id] = count;
+                    cachedIdItemCount[item.Id] = count;
                 }
             }
         }
@@ -229,7 +227,7 @@ namespace UZSG
             }
 
             slots.AddRange(other.Slots); /// OGs are already subscribed :)
-            _slots = slots;
+            this.slots = slots;
         }
 
         public void ReadSaveData(List<ItemSlotSaveData> saveData)
@@ -254,7 +252,7 @@ namespace UZSG
         {
             var saveData = new List<ItemSlotSaveData>();
 
-            foreach (var s in _slots)
+            foreach (var s in slots)
             {
                 if (s.IsEmpty) continue; /// don't save empty slots
                 

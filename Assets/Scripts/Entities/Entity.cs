@@ -72,7 +72,7 @@ namespace UZSG.Entities
             catch { }
             _hasAlreadySpawned = true;
             instanceId = GetInstanceID();
-            OnSpawn();
+            OnSpawnEvent();
         }
 
         /// <summary>
@@ -85,11 +85,14 @@ namespace UZSG.Entities
         }
 
         /// <summary>
-        /// Called after the EntityManager spawned callback.
+        /// Raised once when this entity is spawned.
         /// You can modify the entity's attributes before this calls.
         /// </summary>
-        public virtual void OnSpawn() { }
-        protected virtual void OnDespawn() { }
+        public virtual void OnSpawnEvent() { }
+        /// <summary>
+        /// Raised once before this entity despawns (die, natural despawn, taken away from the world, etc.).
+        /// </summary>
+        protected virtual void OnDespawnEvent() { }
 
         #endregion
         
@@ -113,7 +116,6 @@ namespace UZSG.Entities
         {
             var saveData = new EntitySaveData()
             {
-                InstanceId = GetInstanceID(),
                 Id = entityData.Id,
                 Transform = new()
                 {
@@ -134,22 +136,6 @@ namespace UZSG.Entities
             transform.SetPositionAndRotation(position, Quaternion.Euler(rotation));
             // transform.localScale = scale;
         }
-
-
-        #region Public methods
-
-        /// <summary>
-        /// Kill this entity.
-        /// </summary>
-        public void Despawn(bool notify = true)
-        {
-            OnDespawn();
-            if (notify) OnDespawned?.Invoke(this);
-            MonoBehaviour.Destroy(gameObject);
-        }
-
-        #endregion
-
 
         /// <summary>
         /// Check whether this entity is within the radius with the given position as center.
@@ -180,5 +166,20 @@ namespace UZSG.Entities
 
             return false;
         }
+        
+
+        #region Public methods
+
+        /// <summary>
+        /// Kill this entity.
+        /// </summary>
+        public void Despawn(bool notify = true)
+        {
+            OnDespawnEvent();
+            if (notify) OnDespawned?.Invoke(this);
+            MonoBehaviour.Destroy(gameObject);
+        }
+
+        #endregion
     }
 }

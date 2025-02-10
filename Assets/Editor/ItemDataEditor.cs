@@ -44,7 +44,7 @@ namespace UZSG.UnityEditor
             isObject = serializedObject.FindProperty("IsObject");
             objectData = serializedObject.FindProperty("ObjectData");
             recipes = serializedObject.FindProperty("Recipes");
-            weight = serializedObject.FindProperty("Weight");
+            weight = serializedObject.FindProperty("WeightKg");
             sourceDesc = serializedObject.FindProperty("SourceDescription");
             audioAssetsData = serializedObject.FindProperty("AudioAssetsData");
         }

@@ -44,7 +44,7 @@ namespace UZSG.Objects
         /// </summary>
         public bool HasFuelItem
         {
-            get => FuelContainer.HasAny;
+            get => FuelContainer.HasAnyItem;
         }
         protected bool isCooking;
         public bool IsCooking => isCooking;
@@ -64,9 +64,9 @@ namespace UZSG.Objects
         /// </summary>
         public event Action OnFuelDepleted;
 
-        protected override void OnPlace()
+        protected override void OnPlaceEvent()
         {
-            base.OnPlace();
+            base.OnPlaceEvent();
             FuelContainer = new Container(WorkstationData.FuelSlotsSize);
 
             Crafter.OnRoutineNotify += OnCraftingRoutineNotify;

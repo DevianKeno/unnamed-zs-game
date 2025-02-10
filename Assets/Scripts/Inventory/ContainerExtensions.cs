@@ -14,9 +14,9 @@ namespace UZSG
         {
             item = Item.None;
 
-            if (_cachedIdSlots.Count > 0)
+            if (cachedIdSlots.Count > 0)
             {
-                var slots = _cachedIdSlots.First();
+                var slots = cachedIdSlots.First();
                 var slot = slots.Value.First();
                 if (slot.Item.Data.IsFuel)
                 {

@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -15,7 +15,8 @@ namespace UZSG.Data
     {
         [Header("Storage Data")]
         public string StorageName;
-        public AssetReference GUI;
+        public string StorageNameTranslatable => Game.Locale.Translatable($"object.{Id}.name");
         public int Size;
+        public AssetReference GUIAsset;
     }
 }

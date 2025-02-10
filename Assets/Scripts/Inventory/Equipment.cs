@@ -61,7 +61,7 @@ namespace UZSG.Inventory
             feet = new(OffhandIndex, ItemSlotType.Equipment);
             feet.OnItemChangedInternal += SlotContentChangedInternal;
 
-            _slots = new()
+            slots = new()
             {
                 _hands,
                 _mainhand,

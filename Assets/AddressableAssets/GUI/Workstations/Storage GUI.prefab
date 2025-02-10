@@ -167,8 +167,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rect: {fileID: 2396010862542012106}
-  FadeDuration: 0.3
-  frame: {fileID: 5466748011133458982}
   slotsHolder: {fileID: 5338717135141451478}
 --- !u!114 &5466748011133458982
 MonoBehaviour:
@@ -182,8 +180,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 035203bfb8dab6240951a6ede70b12f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Id: storage
-  Name: storage
+  id: storage
+  displayName: storage
   rect: {fileID: 2396010862542012106}
 --- !u!1 &3818137765088527906
 GameObject:
@@ -238,7 +236,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2819397606647841104
 RectTransform:
   m_ObjectHideFlags: 0

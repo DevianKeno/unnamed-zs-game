@@ -84,7 +84,6 @@ namespace UZSG.Data
         {
             var saveData = new EntitySaveData()
             {
-                InstanceId = default,
                 Id = Id,
                 Transform = null,
             };

@@ -6,6 +6,7 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
 using UZSG.Data;
+using UZSG.Interactions;
 using UZSG.Objects;
 
 namespace UZSG.Entities
@@ -29,9 +30,7 @@ namespace UZSG.Entities
         GameObject validGhost;
         GameObject invalidGhost;
         ObjectData objectData;
-        BaseObject actualObject;
         GameObject _objectModel;
-        List<Material> ghostMaterials;
         ColliderProxy _colliderProxy;
         /// <summary>
         /// int is InstanceId.
@@ -130,7 +129,11 @@ namespace UZSG.Entities
         void CreateGhosts()
         {
             validGhost = Instantiate(_objectModel, Position, Quaternion.identity, transform);
-            validGhost.name = $"{objectData.DisplayName} (Object Ghost)";
+            if (validGhost.TryGetComponent(out BaseObject baseObj))
+            {
+                baseObj.enabled = false; /// to prevent interactions since this is just a copy
+            }
+            validGhost.name = $"Object Ghost:[{objectData.DisplayName}] (Valid)";
             ApplyMaterialAll(validGhost, validBuildMaterial);            
             var colliders = validGhost.GetComponentsInChildren<Collider>();
             foreach (var c in colliders)
@@ -144,7 +147,11 @@ namespace UZSG.Entities
             AddCollisionProxy(validGhost);
             
             invalidGhost = Instantiate(_objectModel, Position, Quaternion.identity, transform);
-            invalidGhost.name = $"{objectData.DisplayName} (Object Ghost)";
+            if (invalidGhost.TryGetComponent(out baseObj))
+            {
+                baseObj.enabled = false; /// to prevent interactions since this is just a copy
+            }
+            invalidGhost.name = $"Object Ghost:[{objectData.DisplayName}] (Invalid)";
             ApplyMaterialAll(invalidGhost, invalidBuildMaterial);
             colliders = invalidGhost.GetComponentsInChildren<Collider>();
             foreach (var c in colliders)
@@ -248,8 +255,7 @@ namespace UZSG.Entities
         
         void ApplyMaterialAll(GameObject gameObject, Material material)
         {
-            var meshRenderers = gameObject.GetComponentsInChildren<MeshRenderer>();
-            foreach (var meshRenderer in meshRenderers)
+            foreach (var meshRenderer in gameObject.GetComponentsInChildren<Renderer>())
             {
                 var materials = meshRenderer.materials;
                 for (int i = 0; i < materials.Length; i++)

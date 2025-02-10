@@ -10,6 +10,7 @@ using TMPro;
 
 using UZSG.Attributes;
 using UZSG.Building;
+using UZSG.Crafting;
 using UZSG.Data;
 using UZSG.EOS;
 using UZSG.FPP;

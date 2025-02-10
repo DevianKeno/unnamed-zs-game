@@ -9,7 +9,7 @@ namespace UZSG.Saves
     [JsonConverter(typeof(JsonSubtypes), "Type")]
     [JsonSubtypes.KnownSubType(typeof(StorageObjectSaveData), "StorageObjectSaveData")]
     [JsonSubtypes.KnownSubType(typeof(WorkstationObjectSaveData), "WorkstationObjectSaveData")]
-    public class ObjectSaveData : SaveData
+    public class BaseObjectSaveData : SaveData
     {
         public string Id;
         public TransformSaveData Transform;

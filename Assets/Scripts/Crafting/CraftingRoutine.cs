@@ -6,11 +6,12 @@ using UnityEngine;
 using MEC;
 
 using UZSG.Data;
+using UZSG.Saves;
 
 namespace UZSG.Crafting 
 {
     [Serializable]
-    public class CraftingRoutine
+    public class CraftingRoutine : ISaveDataReadWrite<CraftingRoutineSaveData>
     {
         protected RecipeData recipeData;
         public RecipeData RecipeData => recipeData;
@@ -19,8 +20,8 @@ namespace UZSG.Crafting
         public CraftItemOptions Options => options;
 
         public CraftingRoutineStatus Status { get; protected set; }
-        public float StartTime { get; protected set;}
-        public float EndTime { get; protected set;}
+        public float StartTime { get; protected set; }
+        public float EndTime { get; protected set; }
         /// <summary>
         /// Seconds elapsed for the entire Crafting Routine.
         /// </summary>
@@ -174,6 +175,16 @@ namespace UZSG.Crafting
             Status = CraftingRoutineStatus.Completed;
             OnNotify?.Invoke(this);
             IsCompleted = true;
+        }
+
+        public void ReadSaveData(CraftingRoutineSaveData saveData)
+        {
+            throw new NotImplementedException();
+        }
+
+        public CraftingRoutineSaveData WriteSaveData()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -36,7 +36,7 @@ MonoBehaviour:
   AudioAssetsData: {fileID: 0}
   WorkstationName: Campfire
   GUIAsset:
-    m_AssetGUID: 2d126a726edf1e347a3e81b23e50c5b7
+    m_AssetGUID: 8b9076dfe34b2c54c8bdb46a2f702503
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0

@@ -5,8 +5,6 @@ using UnityEngine.UI;
 
 using TMPro;
 
-using UZSG.UI.Objects;
-
 namespace UZSG.UI.Players
 {
     public partial class InventoryWindow : Window, IInitializeable
@@ -18,7 +16,7 @@ namespace UZSG.UI.Players
         [SerializeField] FrameController frameController;
         public FrameController FrameController => frameController;
         [SerializeField] PlayerCraftingGUI playerCraftingGUI;
-        public PlayerCraftingGUI PlayerCraftingGUI => playerCraftingGUI;
+        public PlayerCraftingGUI CraftingGUI => playerCraftingGUI;
 
         [Header("Elements")]
         /// <summary>

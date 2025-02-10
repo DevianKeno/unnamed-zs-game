@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace UZSG.Saves
 {
     [Serializable]
-    public class StorageObjectSaveData : ObjectSaveData
+    public class StorageObjectSaveData : BaseObjectSaveData
     {
         public List<ItemSlotSaveData> Slots;
     }

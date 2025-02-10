@@ -7,6 +7,6 @@ namespace UZSG.Saves
     public class ChunkSaveData : SaveData
     {
         public int[] Coord = new int[] { 0, 0, 0 };
-        public List<ObjectSaveData> Objects = new();
+        public List<BaseObjectSaveData> Objects = new();
     }
 }

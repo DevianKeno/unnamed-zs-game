@@ -3,56 +3,43 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-using UZSG.Crafting;
 using UZSG.Entities;
 using UZSG.Inventory;
+using UZSG.Objects;
 using UZSG.UI;
 
-namespace UZSG.Players
+namespace UZSG.Crafting
 {
     [RequireComponent(typeof(Crafter))]
-    public class PlayerCrafting : MonoBehaviour
+    public class PlayerCrafting : CraftingStation
     {
-        public Player Player { get; set; }
-        
-        public Crafter Crafter { get; protected set; }
-        public Container InputContainer { get; protected set; }
-        public Container OutputContainer { get; protected set; }
-        public List<ItemSlot> QueueSlots { get; protected set; }
-        public CraftingGUI GUI { get; protected set; }
-        /// <summary>
-        /// Called when this workstation has crafted, either single or complete.
-        /// </summary>
-        public event Action<CraftingRoutine> OnCraft;
+        public PlayerCraftingGUI PlayerCraftingGUI => (PlayerCraftingGUI) base.GUI;
 
-        void Awake()
+        protected override void Awake()
         {
-            Crafter = GetComponent<Crafter>();
+            base.Awake();
         }
 
         internal void Initialize(Player player, bool isLocalPlayer)
         {
             this.Player = player;
 
-            QueueSlots = new(1);
-            OutputContainer = new(1);
+            QueueSlots = new List<ItemSlot>(6);
+            OutputContainer = new Container(6);
             InputContainer = new Container();
-            // OutputContainer.OnSlotItemChanged += OnOutputSlotItemChanged;
-
-            // Crafter.Initialize(this);
+            
             Crafter.OnRoutineNotify += OnCraftingRoutineNotify;
 
             if (isLocalPlayer)
             {
-                GUI = player.InventoryWindow.PlayerCraftingGUI;
-                GUI.SetPlayer(Player);
-                GUI.Show();
+                GUI = player.InventoryWindow.CraftingGUI;
+                PlayerCraftingGUI.SetPlayer(Player, this);
             }
 
             InputContainer.Extend(player.Inventory.Bag);
         }
 
-        void OnCraftingRoutineNotify(CraftingRoutine routine)
+        protected virtual void OnCraftingRoutineNotify(CraftingRoutine routine)
         {
             switch (routine.Status)
             {
@@ -62,32 +49,6 @@ namespace UZSG.Players
                     break;
                 }
             }
-        }
-
-        public CraftingRoutine TryCraft(ref CraftItemOptions options)
-        {
-            if (Crafter.IsQueueFull)
-            {
-                return null;
-            }
-
-            var totalMaterials = CraftingUtils.CalculateTotalMaterials(options);
-            if (false == this.Player.Inventory.Bag.ContainsAll(totalMaterials))
-            {
-                if (GUI.IsVisible) 
-                {
-                    Game.Audio.PlayInUI("insufficient_materials");
-                }
-                return null;
-            }
-
-            _ = InputContainer.TakeItems(totalMaterials);
-            return Crafter.CraftNewItem(ref options);
-        }
-
-        protected virtual void OnCraftEvent(CraftingRoutine routine)
-        {
-            OnCraft?.Invoke(routine);
         }
     }
 }

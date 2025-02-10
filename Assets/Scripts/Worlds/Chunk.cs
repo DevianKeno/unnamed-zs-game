@@ -360,7 +360,7 @@ namespace UZSG.Worlds
                 var position = Utils.FromFloatArray(objectSave.Transform.Position);
                 Game.Objects.PlaceNew(objectSave.Id, position: position, callback: (info) =>
                 {
-                    info.Object.ReadSaveData(objectSave);
+                    Game.Saves.ReadAsBaseObject(info.Object, objectSave);
                 });
             }
         }
@@ -372,14 +372,16 @@ namespace UZSG.Worlds
                 Coord = new int[3]{ Coord.x, Coord.y, Coord.z }
             };
             
-            List<ObjectSaveData> objects = new();
+            List<BaseObjectSaveData> objects = new();
             foreach (var obj in _objects)
             {
-                objects.Add(obj.WriteSaveData());
+                var saveData = Game.Saves.WriteAsBaseObject(obj);
+                objects.Add(saveData);
             }
             foreach (var resource in _population.Values)
             {
-                objects.Add(resource.WriteSaveData());
+                var saveData = Game.Saves.WriteAsBaseObject(resource);
+                objects.Add(saveData);
             }
             csd.Objects = objects;
 

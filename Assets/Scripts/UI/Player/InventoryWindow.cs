@@ -308,7 +308,7 @@ namespace UZSG.UI.Players
                         var heldItem = TakeHeldItem();
                         if (_selectedSlot.TryStack(heldItem, out var excess))
                         {
-                            if (!excess.IsNone) HoldItem(excess);
+                            if (!excess.IsNone) HeldItem.Stack(excess);
                         }
                         else /// swap items
                         {
@@ -346,7 +346,7 @@ namespace UZSG.UI.Players
                         Item ofOne = TakeHeldItemSingle();
                         if (_selectedSlot.TryStack(ofOne, out var excess))
                         {
-                            if (!excess.IsNone) HoldItem(excess);
+                            if (!excess.IsNone) HeldItem.Stack(excess);
                         } 
                         else /// swap items
                         {

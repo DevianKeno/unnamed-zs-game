@@ -193,7 +193,7 @@ namespace UZSG.Items
         /// Immediately stacks the Item if possible, does nothing otherwise.
         /// If you just want to just check use <c>CanStackWith()</c> instead.
         /// </summary>
-        public bool TryStack(Item other, out Item excess, bool useMaxStackSize = false)
+        public bool TryStack(Item other, out Item excess)
         {
             excess = Item.None;
             if (!CanStackWith(other)) return false;
@@ -216,9 +216,25 @@ namespace UZSG.Items
 
         /// <summary>
         /// Checks if this Item can be stacked with the other Item.
+        /// Returns <c>false</c> if the total of the combined Items exceeds the Item's stack size.
+        /// </summary>
+        public bool CanStackWith(Item other)
+        {
+            if (this.IsNone || other.IsNone) return true; /// either Item is empty, can stack
+            
+            if (!this.Equals(other)) return false; /// not the same items
+            if (this.HasAttributes || other.HasAttributes) return false; /// items with attributes cannot be stacked :P
+            
+            if ((count + other.Count) > Math.Max(this.StackSize, other.StackSize)) return false;
+
+            return true;
+        }
+
+        /// <summary>
+        /// Checks if this Item can be stacked with the other Item.
         /// If is limited to stack size, returns false if the total of the combined Items exceeds the Item's stack size.
         /// </summary>
-        public bool CanStackWith(Item other, bool limitToStackSize = false)
+        public bool CanStackWith(Item other, bool limitToStackSize)
         {
             if (this.IsNone || other.IsNone) return true; /// either Item is empty, can stack
             

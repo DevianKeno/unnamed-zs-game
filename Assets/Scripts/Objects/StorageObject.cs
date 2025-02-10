@@ -28,12 +28,13 @@ namespace UZSG.Objects
         }
 
         public Container Container { get; protected set; }   
-        public StorageGUI GUI { get; protected set; }    
-
+        public StorageGUI GUI { get; protected set; }
+        
         protected override void OnPlaceEvent()
         {
             Container = new Container(StorageData.Size);
             Container.OnSlotItemChanged += OnContainerItemChanged;
+            
             AllowInteractions = true;
         }
 
@@ -126,18 +127,20 @@ namespace UZSG.Objects
 
         public virtual void ReadSaveData(StorageObjectSaveData saveData)
         {
+            base.ReadSaveData(saveData);
             this.Container = new(StorageData.Size);
             this.Container.ReadSaveData(saveData.Slots);
         }
 
-        public virtual new StorageObjectSaveData WriteSaveData()
+        public new StorageObjectSaveData WriteSaveData()
         {
-            var osd = base.WriteSaveData();
-            var sosd = (StorageObjectSaveData) osd;
-
-            sosd.Slots = Container.WriteSaveData();
-
-            return sosd;
+            var objectSave = base.WriteSaveData();
+            return new StorageObjectSaveData()
+            {
+                Id = objectSave.Id,
+                Transform = objectSave.Transform,
+                Slots = Container.WriteSaveData(),
+            };
         }
 
         #endregion

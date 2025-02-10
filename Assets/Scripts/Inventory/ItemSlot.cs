@@ -185,10 +185,10 @@ namespace UZSG.Inventory
         /// If possible, it stacks the Items as much the stack size* allows, on which the excess is outed.
         /// Returns false and does not stack if not possible.
         /// </summary>
-        public bool TryStack(Item other, out Item excess, bool useMaxStackSize = false)
+        public bool TryStack(Item other, out Item excess)
         {
             var previousItem = new Item(this.item);
-            if (item.TryStack(other, out excess, useMaxStackSize))
+            if (item.TryStack(other, out excess))
             {
                 _previousItem = previousItem;
                 ItemChangedInternal(); 

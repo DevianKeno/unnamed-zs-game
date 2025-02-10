@@ -13,7 +13,6 @@ using UZSG.EOS;
 using Epic.OnlineServices.Connect;
 using System.Threading.Tasks;
 
-
 namespace UZSG
 {
     public class Game : MonoBehaviour, IConnectInterfaceEventListener
@@ -49,6 +48,8 @@ namespace UZSG
         /// </summary>
         public static EOSManager.EOSSingleton EOS => EOSManager.Instance;
         public static EOSSubManagers EOSManagers { get; private set; }
+        static SavesManager savesManager;
+        public static SavesManager Saves => savesManager;
         static WorldManager worldManager;
         public static WorldManager World => worldManager;
         static AttributesManager attrManager;
@@ -119,6 +120,7 @@ namespace UZSG
                 inputManager = GetComponentInChildren<InputManager>();
                 audioManager = GetComponentInChildren<AudioManager>();
                 worldManager = GetComponentInChildren<WorldManager>();
+                savesManager = GetComponentInChildren<SavesManager>();
                 
                 tickSystem = GetComponentInChildren<TickSystem>();
                 attrManager = GetComponentInChildren<AttributesManager>();

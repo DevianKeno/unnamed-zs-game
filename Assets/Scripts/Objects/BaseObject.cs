@@ -15,7 +15,7 @@ using UZSG.Worlds;
 
 namespace UZSG.Objects
 {
-    public abstract class BaseObject : MonoBehaviour, IAttributable, IPlaceable, IPickupable, ICollisionTarget
+    public abstract class BaseObject : MonoBehaviour, IAttributable, IPlaceable, IPickupable, ICollisionTarget, ISaveDataReadWrite<BaseObjectSaveData>
     {
         [SerializeField] protected ObjectData objectData;
         public ObjectData ObjectData => objectData;
@@ -144,14 +144,14 @@ namespace UZSG.Objects
             };
         }
 
-        public void ReadSaveData(ObjectSaveData saveData)
+        public void ReadSaveData(BaseObjectSaveData saveData)
         {
             InitializeTransform(saveData.Transform);
         }
 
-        public virtual ObjectSaveData WriteSaveData()
+        public virtual BaseObjectSaveData WriteSaveData()
         {
-            var saveData = new ObjectSaveData()
+            var saveData = new BaseObjectSaveData()
             {
                 Id = objectData.Id,
                 Transform = new()
@@ -191,7 +191,10 @@ namespace UZSG.Objects
         public void MarkDirty()
         {
             this.IsDirty = true;
-            chunk.MarkDirty();
+            if (chunk != null)
+            {
+                chunk.MarkDirty();
+            }
         }
 
         /// <summary>

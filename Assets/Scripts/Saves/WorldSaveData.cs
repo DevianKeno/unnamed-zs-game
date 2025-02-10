@@ -22,7 +22,7 @@ namespace UZSG.Saves
         public int Second;
         public System.Numerics.Vector3 WorldSpawn = new(0, 64, 0);
         
-        public List<ObjectSaveData> Objects = new();
+        public List<BaseObjectSaveData> Objects = new();
         public List<EntitySaveData> EntitySaves = new();
         /// <summary>
         /// <c>int[3]</c> is the chunk's coordinate.

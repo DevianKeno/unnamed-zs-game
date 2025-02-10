@@ -36,7 +36,7 @@ MonoBehaviour:
   AudioAssetsData: {fileID: 11400000, guid: 999945983bd1d22429c85c8adece7628, type: 2}
   WorkstationName: Workbench
   GUIAsset:
-    m_AssetGUID: 8b9076dfe34b2c54c8bdb46a2f702503
+    m_AssetGUID: 7adb053ee142fbd459e2a08b4399f12c
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
@@ -45,6 +45,7 @@ MonoBehaviour:
   OutputSize: 6
   RequiresFuel: 0
   FuelSlotsSize: 0
+  UsesFuelWhenIdle: 0
   IncludedRecipes:
   - {fileID: 11400000, guid: a6ad1acf0659dc74a8cc15a9f0cfcec7, type: 2}
   - {fileID: 11400000, guid: 8a2caab26e568b149a5031a4dac26bfb, type: 2}

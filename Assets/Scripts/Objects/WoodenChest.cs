@@ -1,11 +1,21 @@
+using UnityEngine;
+using UnityEngine.AddressableAssets;
+
 using UZSG.Data;
 using UZSG.Entities;
+using UZSG.Saves;
 using UZSG.UI;
 
 namespace UZSG.Objects
 {
-    public class WoodenChest : StorageObject
+    public class WoodenChest : StorageObject, ISaveDataReadWrite<WoodenChestSaveData>
     {
+        protected override void OnPlaceEvent()
+        {
+            base.OnPlaceEvent();
+            Addressables.LoadAssetAsync<GameObject>(StorageData.GUIAsset);
+        }
+
         protected override void Open(Player player)
         {
             if (!StorageData.GUIAsset.IsSet())
@@ -48,6 +58,16 @@ namespace UZSG.Objects
             Player.Controls.Enable();
             Player.FPP.ToggleControls(true);
             Player = null;
+        }
+
+        public void ReadSaveData(WoodenChestSaveData saveData)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        WoodenChestSaveData ISaveDataWriteable<WoodenChestSaveData>.WriteSaveData()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

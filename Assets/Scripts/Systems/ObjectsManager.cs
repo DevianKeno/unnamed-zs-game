@@ -75,8 +75,8 @@ namespace UZSG
                 {
                     Object = baseObject
                 };
-                callback?.Invoke(info);
                 baseObject.PlaceInternal();
+                callback?.Invoke(info);
                 
                 // Game.Console.LogDebug($"Placed object '{objectId}' at ({position.x}, {position.y}, {position.z})");
                 Addressables.Release(asyncOp);
@@ -132,6 +132,7 @@ namespace UZSG
                 {
                     Object = baseObject as T
                 };
+                baseObject.PlaceInternal();
                 callback?.Invoke(info);
 
                 // Game.Console.LogDebug($"Placed object '{objectId}' at ({position.x}, {position.y}, {position.z})");

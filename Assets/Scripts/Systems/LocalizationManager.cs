@@ -2,17 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
-
 
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 using UnityEngine;
+
 using Newtonsoft.Json;
 
 using UZSG.Data;
-
 
 namespace UZSG
 {
@@ -29,7 +27,6 @@ namespace UZSG
 
         internal void Initialize()
         {
-            /// once we replace all magic strings with these, there's no going back :P
             foreach (var localization in Resources.LoadAll<LocalizationData>("Locale"))
             {
                 availableLocales.Add(localization);
@@ -158,6 +155,9 @@ namespace UZSG
         }
 
 #if UNITY_EDITOR
+        /// <summary>
+        /// Create the default en_us locale json file.
+        /// </summary>
         [ContextMenu("Create EN_US Locale")]
         public void CreateDefaults()
         {

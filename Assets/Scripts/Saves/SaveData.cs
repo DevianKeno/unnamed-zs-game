@@ -1,5 +1,3 @@
-using System;
-
 namespace UZSG.Saves
 {
     public class SaveData

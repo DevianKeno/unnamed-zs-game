@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using static UnityEngine.EventSystems.PointerEventData.InputButton;
 
 using TMPro;
 
@@ -21,7 +22,7 @@ namespace UZSG.UI
     {
         /// <summary>
         /// The Workstation tied to this Workstation GUI.
-        /// </summary>The 
+        /// </summary> 
         public CraftingStation CraftingStation
         {
             get => (CraftingStation) BaseObject;
@@ -410,7 +411,7 @@ namespace UZSG.UI
         {
             var slot = ((ItemSlotUI) sender).Slot;
 
-            if (ctx.Pointer.button == PointerEventData.InputButton.Left)
+            if (ctx.Pointer.button == Left)
             {
                 if (slot.IsEmpty) return;
 
@@ -422,7 +423,7 @@ namespace UZSG.UI
         {
             var slot = ((ItemSlotUI) sender).Slot;
 
-            if (ctx.Pointer.button == PointerEventData.InputButton.Left)
+            if (ctx.Pointer.button == Left)
             {
                 if (slot.IsEmpty) return;
                 if (Player.InventoryWindow.IsHoldingItem) return;

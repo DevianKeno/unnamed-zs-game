@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 using UZSG.Crafting;
 using UZSG.Data;
@@ -7,17 +9,18 @@ using UZSG.Entities;
 using UZSG.Interactions;
 using UZSG.Inventory;
 using UZSG.Items;
+using UZSG.Saves;
 using UZSG.UI;
 using static UZSG.Crafting.CraftingRoutineStatus;
 
 namespace UZSG.Objects
 {
-    public class Workbench : CraftingStation
+    public class Workbench : CraftingStation, ISaveDataReadWrite<WorkbenchSaveData>
     {
         protected override void OnPlaceEvent()
         {
             base.OnPlaceEvent();
-
+            Addressables.LoadAssetAsync<GameObject>(WorkstationData.GUIAsset);
             Crafter.OnRoutineNotify += OnCraftingRoutineNotify;
             Crafter.OnRoutineUpdate += OnCraftingRoutineUpdate;
             OutputContainer.OnSlotItemChanged += OnOutputSlotItemChanged;
@@ -69,6 +72,16 @@ namespace UZSG.Objects
         public override bool TryCraft(ref CraftItemOptions options)
         {
             return base.TryCraft(ref options);
+        }
+
+        public void ReadSaveData(WorkbenchSaveData saveData)
+        {
+            throw new NotImplementedException();
+        }
+
+        public new WorkbenchSaveData WriteSaveData()
+        {
+            throw new NotImplementedException();
         }
 
         #region IInteractable
@@ -180,44 +193,9 @@ namespace UZSG.Objects
             
         }
 
-        protected event Action<ItemSlot.ItemChangedContext> onOutputSlotItemChanged;
-        void OnCraftSingle(CraftingRoutine routine)
-        {
-            var outputItem = new Item(routine.RecipeData.Output);
-            
-            if (OutputContainer.TryPutNearest(outputItem))
-            {
-                CraftingUtils.PlayCraftSound(this);
-                OnCraftEvent(routine);
-                return;
-            }
-
-            /// output slot is full wtf?? what do lmao
-            onOutputSlotItemChanged += PutItemWhenOutputSlotIsEmpty;
-            void PutItemWhenOutputSlotIsEmpty(ItemSlot.ItemChangedContext context)
-            {
-                /// look for empty space
-                if (!context.NewItem.Is(Item.None)) return;
-                
-                onOutputSlotItemChanged -= PutItemWhenOutputSlotIsEmpty;
-                context.ItemSlot.Put(outputItem);
-                CraftingUtils.PlayCraftSound(this);
-                routine.Finish();
-                OnCraftEvent(routine);
-            };
-        }
-
         protected void OnRoutineSecond(CraftingRoutine routine, float timeElapsed)
         {
             
-        }
-
-        /// <summary>
-        /// Listens to all output slots when their Item is changed.
-        /// </summary>
-        protected void OnOutputSlotItemChanged(object sender, ItemSlot.ItemChangedContext e)
-        {
-            onOutputSlotItemChanged?.Invoke(e);
         }
 
         protected void OnCloseInventory()
@@ -240,7 +218,7 @@ namespace UZSG.Objects
                 GUI.Destruct();
             }
         }
-        
+
         #endregion
     }
 }

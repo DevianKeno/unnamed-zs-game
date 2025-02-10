@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 
 using UnityEngine;
-
+using UnityEngine.AddressableAssets;
 using UZSG.Crafting;
 using UZSG.Inventory;
 using UZSG.Items;

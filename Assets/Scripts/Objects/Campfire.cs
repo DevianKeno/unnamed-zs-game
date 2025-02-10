@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+
 using UZSG.Crafting;
 using UZSG.Entities;
 using UZSG.Interactions;
@@ -20,7 +22,7 @@ namespace UZSG.Objects
         protected override void OnPlaceEvent()
         {
             base.OnPlaceEvent();
-
+            Addressables.LoadAssetAsync<GameObject>(WorkstationData.GUIAsset);
             OutputContainer.OnSlotItemChanged += OnOutputSlotItemChanged;
             AllowInteractions = true;
         }

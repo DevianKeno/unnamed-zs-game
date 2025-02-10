@@ -183,9 +183,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 3202697333713348707}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 83b2531b89cd4be4c82c2bfa8870fe99, type: 3}
+  m_Script: {fileID: 11500000, guid: 6747295cddd616e4a9ea75dd7371f316, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  signInOnStart: 0
   signInBtn: {fileID: 6354092579581515318}
   signOutBtn: {fileID: 1603046452278856652}
   usernameTMP: {fileID: 5496038201286132598}

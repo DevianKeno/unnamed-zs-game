@@ -324,7 +324,7 @@ namespace UZSG
                 Mode = LoadSceneMode.Additive,
                 ActivateOnLoad = true,
             };
-            Game.Main.LoadSceneAsync(loadOptions, onCompleted: OnLoadingScreenLoaded);
+            Game.Main.LoadScene(loadOptions, onCompleted: OnLoadingScreenLoaded);
         }
 
         async void OnLoadingScreenLoaded()
@@ -348,7 +348,7 @@ namespace UZSG
                 Mode = LoadSceneMode.Single,
                 ActivateOnLoad = true,
             };
-            Game.Main.LoadSceneAsync(loadOptions);
+            Game.Main.LoadScene(loadOptions);
         }
 
         public string GetLocalUserId()

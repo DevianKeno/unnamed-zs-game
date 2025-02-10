@@ -1,8 +1,10 @@
 using System;
-using TMPro;
+
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+
+using TMPro;
 
 using UZSG.Data;
 
@@ -13,15 +15,16 @@ namespace UZSG.UI
         readonly Color HoveredColor = new(1f, 1f, 1f, 0.025f);
         readonly Color NormalColor = Colors.Transparent;
 
-        internal bool _isDirty;
-
         [SerializeField] SettingsEntryData settingsEntryData;
         public SettingsEntryData Data => settingsEntryData;
-        public SettingEntry Setting;
-        public virtual object Value { get; }
-        public event EventHandler<PointerEventData> OnClicked;
-        public virtual event Action<SettingEntryUI> OnValueChanged;
+        public SettingEntry Setting { get; set; }
+        public bool IsDirty { get; set; }
+        public object Value { get; }
+
         [SerializeField] float spacerWidth;
+
+        public event EventHandler<PointerEventData> OnMouseDown;
+        public event Action OnValueChanged;
 
         [SerializeField] Image background;
         [SerializeField] TextMeshProUGUI labelTmp;
@@ -30,23 +33,18 @@ namespace UZSG.UI
         protected override void Awake()
         {
             base.Awake();
+            labelTmp = transform.Find("Label (TMP)").GetComponent<TextMeshProUGUI>();
             OnValueChanged += MarkDirty;
+        }
+
+        protected virtual void OnValueChangedEvent()
+        {
+            OnValueChanged?.Invoke();
         }
 
         void Start()
         {
-            labelTmp = transform.Find("Label (TMP)").GetComponent<TextMeshProUGUI>();
             labelTmp.text = settingsEntryData.DisplayNameTranslatable;
-        }
-
-        protected override void OnShow()
-        {
-            labelTmp.text = settingsEntryData.DisplayNameTranslatable;
-        }
-
-        protected void MarkDirty(SettingEntryUI sender)
-        {
-            _isDirty = true;
         }
 
 #if UNITY_EDITOR
@@ -56,6 +54,16 @@ namespace UZSG.UI
             spacer.sizeDelta = new(spacerWidth, spacer.sizeDelta.y);
         }
 #endif
+
+        protected override void OnShow()
+        {
+            labelTmp.text = settingsEntryData.DisplayNameTranslatable;
+        }
+
+        public void MarkDirty()
+        {
+            IsDirty = true;
+        }
 
         public void OnPointerEnter(PointerEventData eventData)
         {
@@ -69,12 +77,7 @@ namespace UZSG.UI
 
         public void OnPointerDown(PointerEventData eventData)
         {
-            OnClicked?.Invoke(this, eventData);
+            OnMouseDown?.Invoke(this, eventData);
         }
-
-        public virtual void Refresh()
-        {
-        }
-
     }
 }

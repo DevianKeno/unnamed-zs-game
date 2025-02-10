@@ -15,14 +15,13 @@ namespace UZSG
         bool _isInitialized;
         public bool IsInitialized => _isInitialized;
 
-        [Range(0, 1), SerializeField] float soundVolume = 1f;
-        public float SoundVolume
+        [Range(0, 1), SerializeField] float masterVolume = 15f;
+        public float MasterVolume
         {
-            get => soundVolume;
+            get => masterVolume;
             set
             {
-                soundVolume = Mathf.Clamp01(value);
-                SetSoundVolume(soundVolume);
+                masterVolume = Mathf.Clamp01(value);
             }
         }
         [Range(0, 1), SerializeField] float musicVolume = 15f;
@@ -32,10 +31,29 @@ namespace UZSG
             set
             {
                 musicVolume = Mathf.Clamp01(value);
-                SetMusicVolume(value);
+                UpdateMusicVolume(value);
+            }
+        }
+        [Range(0, 1), SerializeField] float soundVolume = 1f;
+        public float SoundVolume
+        {
+            get => soundVolume;
+            set
+            {
+                soundVolume = Mathf.Clamp01(value);
+                UpdateSoundVolume(soundVolume);
             }
         }
         [Range(0, 1)] public float ambianceVolume = 1f;
+        public float AmbianceVolume
+        {
+            get => ambianceVolume;
+            set
+            {
+                ambianceVolume = Mathf.Clamp01(value);
+                // UpdateSoundVolume(ambianceVolume);
+            }
+        }
         [SerializeField] bool allowTrackPolyphony = false;
 
         Dictionary<string, AudioClip> _audioClipsDict = new();
@@ -56,8 +74,8 @@ namespace UZSG
 
         void OnValidate()
         {
-            SetMusicVolume(musicVolume);
-            SetSoundVolume(musicVolume);
+            UpdateMusicVolume(musicVolume);
+            UpdateSoundVolume(musicVolume);
         }
 #endif
 
@@ -193,7 +211,7 @@ namespace UZSG
             return source;
         }
 
-        public void SetMusicVolume(float value)
+        public void UpdateMusicVolume(float value)
         {
             foreach (AudioSource source in _playingTrackSources.Values)
             {
@@ -201,34 +219,13 @@ namespace UZSG
             }
         }
 
-        public void SetSoundVolume(float value)
+        public void UpdateSoundVolume(float value)
         {
             foreach (AudioSource source in _playingAudioSources)
             {
                 source.volume = Mathf.Clamp01(value);
             }
         }
-
-        // public struct LoadAudioAssetContext
-        // {
-        //     public AudioClip AudioClip { get; set; }
-        // }
-
-        // public delegate void OnLoadAudioAssetCompleted(LoadAudioAssetContext context);
-
-        // public void LoadAudioAsset(AssetReference assetReference, OnLoadAudioAssetCompleted completed = null)
-        // {
-        //     Addressables.LoadAssetAsync<AudioClip>(assetReference).Completed += (a) =>
-        //     {
-        //         if (a.Status == AsyncOperationStatus.Succeeded)
-        //         {
-        //             completed?.Invoke(new()
-        //             {
-        //                 AudioClip = a.Result,
-        //             });
-        //         }
-        //     };
-        // }
 
         public async void LoadAudioAssets(AudioAssetsData data)
         {

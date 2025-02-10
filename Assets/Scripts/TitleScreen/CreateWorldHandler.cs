@@ -1,22 +1,29 @@
 using System;
+using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+
 using TMPro;
 
 using UZSG.Worlds;
+using UZSG.UI;
 
 namespace UZSG.TitleScreen
 {
-    public class NewWorldHandler : MonoBehaviour
+    public class CreateWorldHandler : MonoBehaviour
     {
         [SerializeField] MapSelectorHandler mapSelector;
 
         [Header("Entries")]
         [SerializeField] MapEntryUI mapEntry;
+        Dictionary<RuleTypeEnum, RuleEntryInputFieldUI> ruleEntriesInputField = new();
+        Dictionary<RuleTypeEnum, RuleEntryToggleUI> ruleEntriesToggle = new();
 
         [Header("Components")]
+        [SerializeField] FrameController parentFrameController;
+        [SerializeField] Frame frame;
         [SerializeField] TextMeshProUGUI messageTmp;
         [SerializeField] TMP_InputField worldnameInput;
         [SerializeField] Button createBtn;
@@ -24,6 +31,14 @@ namespace UZSG.TitleScreen
         void Awake()
         {
             createBtn.onClick.AddListener(CreateWorld);
+
+            parentFrameController.OnSwitchFrame += (ctx) =>
+            {
+                if (ctx.NextId.Equals(this.frame.Id, StringComparison.OrdinalIgnoreCase))
+                {
+                    SetRandomSeed();
+                }
+            };
         }
 
         void Start()
@@ -31,6 +46,15 @@ namespace UZSG.TitleScreen
             HideMessage();
             createBtn.interactable = true;
             mapSelector.OnEntryClicked += OnMapSelect;
+
+            foreach (var rule in GetComponentsInChildren<RuleEntryInputFieldUI>())
+            {
+                ruleEntriesInputField[rule.RuleType] = rule;
+            }
+            foreach (var rule in GetComponentsInChildren<RuleEntryToggleUI>())
+            {
+                ruleEntriesToggle[rule.RuleType] = rule;
+            }
         }
 
         void OnMapSelect(MapEntryUI entry)
@@ -50,16 +74,31 @@ namespace UZSG.TitleScreen
                 return;
             }
 
+            int seed;
+            if (int.TryParse(ruleEntriesInputField[RuleTypeEnum.Seed].Value, out var value))
+            {
+                seed = value;
+            }
+            else
+            {
+                seed = ruleEntriesInputField[RuleTypeEnum.Seed].Value.GetHashCode();
+            }
+
             var options = new CreateWorldOptions()
             {
                 WorldName = worldnameInput.text,
                 MapId = mapEntry.LevelData.Id,
-                Seed = 12345,
+                Seed = seed,
                 CreatedDate = DateTime.Now,
                 LastModifiedDate = DateTime.Now,
             };
 
             Game.World.CreateWorld(ref options, OnCreateWorldCompleted);
+        }
+
+        void SetRandomSeed()
+        {
+            ruleEntriesInputField[RuleTypeEnum.Seed].Value = UnityEngine.Random.Range(WorldAttributes.MIN_SEED, WorldAttributes.MAX_SEED).ToString();
         }
 
         bool ValidateCreatingWorld()
@@ -89,7 +128,7 @@ namespace UZSG.TitleScreen
                     Mode = LoadSceneMode.Single,
                     ActivateOnLoad = true,
                 };
-                Game.Main.LoadSceneAsync(options, () =>
+                Game.Main.LoadScene(options, () =>
                 {
                     OnLoadingScreenLoaded(result.FilePath);
                 });
@@ -117,7 +156,7 @@ namespace UZSG.TitleScreen
             }
             else if (result.Result == Result_u.Failed)
             {
-                Game.Main.LoadSceneAsync(
+                Game.Main.LoadScene(
                     new(){
                         SceneToLoad = SceneNames.TitleScreen,
                         Mode = LoadSceneMode.Single

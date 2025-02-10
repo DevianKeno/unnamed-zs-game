@@ -8,24 +8,9 @@ namespace UZSG.UI
 {
     public class SettingEntryToggleUI : SettingEntryUI
     {
+        public new bool Value => toggle.isOn;
+
         [SerializeField] Toggle toggle;
         public Toggle Toggle => toggle;
-        public override object Value => toggle.isOn;
-
-        protected override void Awake()
-        {
-            base.Awake();
-            toggle.onValueChanged.AddListener(OnSliderValueChanged);
-        }
-
-        void OnSliderValueChanged(bool value)
-        {
-            MarkDirty(this);
-        }
-
-        public void SetSelected(int index)
-        {
-            
-        }
     }
 }

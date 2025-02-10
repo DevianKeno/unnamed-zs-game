@@ -164,7 +164,7 @@ namespace UZSG.TitleScreen
                     Mode = LoadSceneMode.Additive,
                     ActivateOnLoad = true,
                 };
-                Game.Main.LoadSceneAsync(options, OnLoadingScreenLoaded);
+                Game.Main.LoadScene(options, OnLoadingScreenLoaded);
             }
         }
 
@@ -186,7 +186,7 @@ namespace UZSG.TitleScreen
             }
             else if (result.Result == Result_u.Failed)
             {
-                Game.Main.LoadSceneAsync(
+                Game.Main.LoadScene(
                     new(){
                         SceneToLoad = "TitleScreen",
                         Mode = LoadSceneMode.Single

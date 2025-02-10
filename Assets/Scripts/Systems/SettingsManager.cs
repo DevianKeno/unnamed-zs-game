@@ -7,6 +7,7 @@ using TMPro;
 
 using UZSG.UI;
 using UZSG.Data;
+using UZSG.Settings;
 
 namespace UZSG
 {
@@ -23,38 +24,128 @@ namespace UZSG
             if (_isInitialized) return;
 
             _isInitialized = true;
-            userInterface = Instantiate(globalSettingsWindow, parent: Game.UI.Canvas.transform).GetComponent<GlobalSettingsWindow>();
-            userInterface.name = "Global Settings Window";
-            userInterface.Initialize();
-            userInterface.Hide();
-
-            InitializeSettings();
-
+            
             foreach (var setting in Resources.LoadAll<SettingsEntryData>("Data/Settings"))
             {
                 if (!settingsDataDict.TryGetValue(setting.Category, out var list))
                 {
                     list = new();
+                    settingsDataDict[setting.Category] = list;
                 }
                 
                 list.Add(setting);
             }
 
+            userInterface = Instantiate(globalSettingsWindow, parent: Game.UI.Canvas.transform).GetComponent<GlobalSettingsWindow>();
+            userInterface.name = "Global Settings Window";
+            userInterface.Initialize();
+            userInterface.Hide();
+
+
             LoadGlobalSettings();
         }
 
-        void InitializeSettings()
+
+        #region Public methods
+
+        /// <summary>
+        /// Loads all settings stored in PlayerPrefs and applies them.
+        /// </summary>
+        public void LoadGlobalSettings()
         {
-            InitializeVideoSettings();
-            InitializeAccessibilitySettings();
+            LoadAudioSettings();
+            LoadVideoSettings();
+            LoadGraphicsSettings();
+            // LoadControlsSettings();
+            LoadAccessibilitySettings();
         }
 
-        void InitializeAccessibilitySettings()
+        /// <summary>
+        /// Saves all settings that are marked dirty and stores it in PlayerPrefs.
+        /// </summary>
+        public void SaveGlobalSettings()
         {
-            GetLanguageOptions();
+            foreach (SettingCategory category in Enum.GetValues(typeof(SettingCategory)))
+            {
+                if (false == settingsDataDict.TryGetValue(category, out var settingList))
+                {
+                    Debug.LogWarning($"{category} was not found in settings dictionary! Is it empty?");
+                    continue;
+                }
+
+                foreach (var setting in settingList)
+                {
+                    if (false == TryGetEntryUI(setting.Id, out SettingEntryUI ui) ||
+                        false == ui.IsDirty)
+                    {
+                        continue;
+                    }
+                    
+                    if (ui.Setting == null)
+                    {
+                        Debug.LogWarning($"SettingEntry for '{setting.Id}' is null!");
+                        return;
+                    }
+
+                    ui.Setting.Apply(ui.Value);
+                    ui.Setting.Save();
+                }
+            }
+
+            PlayerPrefs.Save();
         }
 
-        void InitializeVideoSettings()
+        [ContextMenu("Force Save All Settings")]
+        public void ForceSaveGlobalSettings()
+        {
+            foreach (SettingCategory category in Enum.GetValues(typeof(SettingCategory)))
+            {
+                foreach (var setting in settingsDataDict[category])
+                {
+                    if (false == TryGetEntryUI(setting.Id, out SettingEntryUI ui))
+                    {
+                        continue;
+                    }
+                    
+                    if (ui.Setting == null)
+                    {
+                        Debug.LogWarning($"SettingEntry for '{setting.Id}' is null!");
+                        return;
+                    }
+
+                    ui.Setting.Apply(ui.Value);
+                    ui.Setting.Save();
+                }
+            }
+
+            PlayerPrefs.Save();
+        }
+
+        /// <summary>
+        /// Shows the Global Settings Window.
+        /// </summary>
+        public void ShowGlobalInterface()
+        {
+            userInterface.Show();
+        }
+
+        /// <summary>
+        /// Hide the Global Settings Window.
+        /// </summary>
+        public void HideGlobalInterface()
+        {
+            userInterface.Hide();
+        }
+
+        #endregion
+
+
+        void LoadAudioSettings()
+        {
+            
+        }
+
+        void LoadVideoSettings()
         {
             GetMonitorOptions();
             GetWindowModeOptions();
@@ -63,93 +154,21 @@ namespace UZSG
             GetFramerateCapOptions();
         }
 
-
-        #region Public methods
-
-        public void ShowGlobalInterface()
+        void LoadGraphicsSettings()
         {
-            userInterface.Show();
+            
         }
 
-        public void HideGlobalInterface()
+        void LoadControlsSettings()
         {
-            userInterface.Hide();
-        }
-
-        public void LoadGlobalSettings()
-        {
-            LoadVideoSettings();
-            LoadAccessibilitySettings();
-        }
-
-        public void SaveGlobalSettings()
-        {
-            SaveAudioSettings();
-            SaveVideoSettings();
-            SaveGraphicsSettings();
-            SaveControlsSettings();
-            SaveAccessibilitySettings();
-
-            PlayerPrefs.Save();
-        }
-
-        #endregion
-
-
-        void LoadVideoSettings()
-        {
-            QualitySettings.shadowResolution = (ShadowResolution) PlayerPrefs.GetInt("shadows_quality", (int) ShadowResolution.Medium);
+            
         }
 
         void LoadAccessibilitySettings()
         {
-            Game.Locale.SetLocalization(PlayerPrefs.GetString("language", "en_us"));
+            GetLanguageOptions();
         }
-
-        void SaveVideoSettings()
-        {
-            SettingEntryUI ui;
-
-            foreach (var setting in settingsDataDict[SettingCategory.Accessibility])
-            {
-                if (TryGetEntryUI(setting.Id, out ui) && ui._isDirty)
-                {
-                    if (ui.Setting == null)
-                    {
-                        Debug.LogWarning($"SettingEntry for '{setting.Id}' is null!");
-                        return;
-                    }
-
-                    ui.Setting.Apply();
-                    ui.Setting.Save();
-                }
-            }
-        }
-
-        public enum ShadowDistance {
-            Low = 16,
-            Medium = 32,
-            High = 64,
-            VeryHigh = 128,
-            Ultra = 256,
-        }
-
-        void SaveGraphicsSettings()
-        {
-        }
-
-        void SaveControlsSettings()
-        {
-        }
-
-        void SaveAudioSettings()
-        {
-        }
-
-        void SaveAccessibilitySettings()
-        {
-        }
-
+        
 
         #region Audio  Settings
 
@@ -164,7 +183,9 @@ namespace UZSG
         {
             if (!TryGetEntryUI("monitor", out var ui)) return;
             
-            ui.Setting = new MonitorSetting();
+            var monitorSetting = new MonitorSetting();
+            monitorSetting.Load();
+            ui.Setting = monitorSetting;
             var dropdown = (ui as SettingEntryDropdownUI).Dropdown;
             var options = new List<TMP_Dropdown.OptionData>();
 
@@ -183,9 +204,11 @@ namespace UZSG
         {
             if (!TryGetEntryUI("fullscreen_mode", out var ui)) return;
             
-            ui.Setting = new MonitorSetting();
-            var dropdown = (ui as SettingEntryDropdownUI).Dropdown;
+            var windowModeSetting = new WindowModeSetting();
+            windowModeSetting.Load();
+            ui.Setting = windowModeSetting;
 
+            var dropdown = (ui as SettingEntryDropdownUI).Dropdown;
             dropdown.ClearOptions();
             dropdown.AddOptions(new List<string>()
             {
@@ -198,13 +221,15 @@ namespace UZSG
         void GetResolutionOptions()
         {
             if (!TryGetEntryUI("resolution", out var ui)) return;
-
+            
             var availableResolutions = Screen.resolutions.Distinct().ToArray();
             var options = new List<string>();
 
-            ui.Setting = new ResolutionSetting();
-            var dropdown = (ui as SettingEntryDropdownUI).Dropdown;
+            var resolutionSetting = new ResolutionSetting();
+            resolutionSetting.Load();
+            ui.Setting = resolutionSetting;
 
+            var dropdown = (ui as SettingEntryDropdownUI).Dropdown;
             int selected = 0;
             for (int i = 0; i < availableResolutions.Length; i++)
             {
@@ -227,7 +252,10 @@ namespace UZSG
         {
             if (!TryGetEntryUI("v_sync", out var ui)) return;
 
-            ui.Setting = new VSyncSetting(); 
+            var vSyncSetting = new VSyncSetting();
+            vSyncSetting.Load();
+            ui.Setting = vSyncSetting; 
+
             var toggle = (ui as SettingEntryToggleUI).Toggle;
             toggle.isOn = QualitySettings.vSyncCount > 0;
         }
@@ -236,7 +264,10 @@ namespace UZSG
         {
             if (!TryGetEntryUI("framerate_cap", out var ui)) return;
 
-            ui.Setting = new FramerateCapSetting(); 
+            var framerateCapSetting = new FramerateCapSetting();
+            framerateCapSetting.Load();
+            ui.Setting = framerateCapSetting;
+
             var slider = (ui as SettingEntrySliderUI).Slider;
             slider.minValue = Mathf.FloorToInt((float) FramerateCapSetting.MIN_FPS);
             slider.maxValue = Mathf.FloorToInt((float) Screen.currentResolution.refreshRateRatio.value) + 1; /// +1 for no cyap 
@@ -291,7 +322,10 @@ namespace UZSG
         {
             if (!TryGetEntryUI("language", out var ui)) return;
 
-            ui.Setting = new LanguageSetting();
+            var languageSetting = new LanguageSetting();
+            languageSetting.Load();
+            ui.Setting = languageSetting;
+
             var dropdown = (ui as SettingEntryDropdownUI).Dropdown;
             var options = new List<TMP_Dropdown.OptionData>();
 

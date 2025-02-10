@@ -7,8 +7,8 @@ namespace UZSG.UI
 {
     public class ToggleUI : UIElement
     {
-        [SerializeField] bool value = true;
-        public bool Value => value;
+        [SerializeField] bool isOn = true;
+        public bool Value => isOn;
         public float SpeedInSeconds = 0.5f;
         public Color BackgroundColorOff = new(0.37f, 0.37f, 0.37f, 1f);
         public Color BackgroundColorOn = new(0.2f, 0.33f, 0.46f, 1f);
@@ -21,41 +21,50 @@ namespace UZSG.UI
         protected override void Awake()
         {
             base.Awake();
-            SetValue(value);
+            SetValue(isOn);
             toggle.onValueChanged.AddListener(SetValue);
         }
 
         public bool GetValue()
         {
-            return value;
+            return isOn;
         }
 
-        public void SetValue(bool value)
+        public void SetValue(bool isOn)
         {
-            this.value = value;
+            this.isOn = isOn;
             toggle.interactable = false;
 
             SetInteractableAfter(true, SpeedInSeconds);
 
-            if (this.value)
+            if (this.isOn)
             {
-                LeanTween.move(knobRect, new Vector3(35f, 0f, 0f), SpeedInSeconds)
+                LeanTween.value(knobRect.gameObject, 0f, 1f, SpeedInSeconds)
+                .setOnUpdate((float i) =>
+                {
+                    knobRect.pivot = new Vector2(i, knobRect.pivot.y);
+                })
                 .setEaseOutExpo();
 
                 LeanTween.value(backgroundImage.gameObject, 0.1f, 1f, SpeedInSeconds)
                 .setEaseOutExpo()
-                .setOnUpdate( (float i) =>
+                .setOnUpdate((float i) =>
                 {
                     backgroundImage.color = Color.Lerp(BackgroundColorOff, BackgroundColorOn, i);
                 });
-            } else
+            }
+            else
             {
-                LeanTween.move(knobRect, new Vector3(-35f, 0f, 0f), SpeedInSeconds)
+                LeanTween.value(knobRect.gameObject, 1f, 0f, SpeedInSeconds)
+                .setOnUpdate((float i) =>
+                {
+                    knobRect.pivot = new Vector2(i, knobRect.pivot.y);
+                })
                 .setEaseOutExpo();
 
                 LeanTween.value(backgroundImage.gameObject, 0.1f, 1f, SpeedInSeconds)
                 .setEaseOutExpo()
-                .setOnUpdate( (float i) =>
+                .setOnUpdate((float i) =>
                 {
                     backgroundImage.color = Color.Lerp(BackgroundColorOn, BackgroundColorOff, i);
                 });

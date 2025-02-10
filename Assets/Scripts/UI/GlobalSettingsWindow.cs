@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 using static UnityEngine.EventSystems.PointerEventData.InputButton;
 
 namespace UZSG.UI
@@ -10,7 +12,15 @@ namespace UZSG.UI
     {
         internal Dictionary<string, SettingEntryUI> settingEntryUIs = new();
 
+        [Header("UI Elements")]
         [SerializeField] SettingInformationDisplayUI settingInformationDisplay;
+        [SerializeField] Button applyButton;
+
+        protected override void Awake()
+        {
+            base.Awake();
+            applyButton.onClick.AddListener(OnApplyBtnClick);
+        }
 
         internal void Initialize()
         {
@@ -24,11 +34,14 @@ namespace UZSG.UI
                 }
 
                 settingEntryUIs[settingEntryUI.Data.Id] = settingEntryUI;
-                settingEntryUI.OnClicked += OnSettingEntryMouseDown;
-                settingEntryUI.OnValueChanged += OnSettingValueChanged;
+                settingEntryUI.OnMouseDown += OnSettingEntryMouseDown;
             }
         }
         
+        void OnApplyBtnClick()
+        {
+            Game.Settings.SaveGlobalSettings();
+        }
         
         #region Event callbacks
 
@@ -37,10 +50,6 @@ namespace UZSG.UI
             var settingEntry = (SettingEntryUI) sender;
 
             settingInformationDisplay.SetSettingData(settingEntry.Data);
-        }
-
-        void OnSettingValueChanged(SettingEntryUI settingEntry)
-        {        
         }
 
         #endregion

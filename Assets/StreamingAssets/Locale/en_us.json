@@ -1009,8 +1009,8 @@
       "description": "Global graphics settings."
     },
     "language": {
-      "name": "Shadows Quality",
-      "description": "Lacks description!"
+      "name": "Language",
+      "description": "Local language."
     },
     "master_volume": {
       "name": "Master Volume",
@@ -1083,6 +1083,24 @@
     "action.interact": "Interact",
     "action.open": "Open",
     "action.pick_up": "Pick Up",
-    "action.use": "Use"
+    "action.use": "Use",
+    "menu.back": "Back",
+    "menu.create_world.name": "Create world",
+    "menu.create_world.map": "Map",
+    "menu.create_world.seed": "Seed",
+    "menu.exit": "Exit",
+    "menu.join_world": "Join world",
+    "menu.join_world.friends": "Friends",
+    "menu.join_world.join": "Join",
+    "menu.join_world.lan": "LAN",
+    "menu.join_world.online": "Online",
+    "menu.multiplayer": "Multiplayer",
+    "menu.multiplayer.host_world": "Host world",
+    "menu.refresh": "Refresh",
+    "menu.settings": "Settings",
+    "menu.sign_in": "Sign in",
+    "menu.sign_out": "Sign out",
+    "menu.singleplayer": "Singleplayer",
+    "menu.worlds.name": "Worlds"
   }
 }

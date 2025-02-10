@@ -1000,8 +1000,8 @@
             "description": "グローバルなグラフィックス設定。"
         },
         "language": {
-            "name": "影の品質",
-            "description": "説明がありません！"
+            "name": "言語",
+            "description": "現地の言語。"
         },
         "master_volume": {
             "name": "マスターボリューム",

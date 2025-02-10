@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -16,6 +18,7 @@ namespace UZSG
 {
     public class LocalizationManager : MonoBehaviour
     {
+        const string DEFAULT_LOCALE = "en_us";
         const string MISSING_KEY = "Missing_Locale_Key";
 
         [SerializeField] LocalizationData currentLocale;
@@ -24,30 +27,42 @@ namespace UZSG
         List<LocalizationData> availableLocales = new();
         public List<LocalizationData> AvailableLocales => new(availableLocales);
         Dictionary<string, string> translationKeys = new();
+        ConcurrentDictionary<string, string> translationKeysConcurrent = new();
 
-        internal void Initialize()
+        /// <summary>
+        /// Raised once when the locale setting is changed.
+        /// </summary>
+        public event Action OnLocaleChanged;
+
+        internal IEnumerator<float> _Initialize()
         {
             foreach (var localization in Resources.LoadAll<LocalizationData>("Locale"))
             {
                 availableLocales.Add(localization);
             }
-            SetLocalization(currentLocale.LocaleKey);
-        }
-        
-        public void SetLocalization(string localeKey)
-        {
-            LoadLocalizationFile(localeKey.Trim().ToLower());
+            
+            var task = SetLocalizationAsync(currentLocale.LocaleKey, force: true);
+            while (false == task.IsCompleted)
+            {
+                yield return 0f;
+            }
         }
 
+
+        #region Public
+        
+        /// <summary>
+        /// Get a localized version of a string given its key.
+        /// </summary>
         public string Translatable(string key)
         {
-            if (translationKeys.TryGetValue(key, out var translation))
+            if (translationKeys.TryGetValue(key, out var localized))
             {
-                return translation;
+                return localized;
             }
             else
             {
-                return MISSING_KEY + $":{currentLocale.LocaleKey}" + $":{key}";
+                return $"{MISSING_KEY}:{currentLocale.LocaleKey}:{key}";
             }
         }
         
@@ -56,25 +71,63 @@ namespace UZSG
         /// </summary>
         public string TranslatableFormat(string format, params object[] args)
         {
-            return MISSING_KEY;
-        }
-
-        void LoadLocalizationFile(string localeString)
-        {
-            string filePath = Path.Combine(Application.streamingAssetsPath, $"Locale/{localeString}.json");
-            if (File.Exists(filePath))
+            if (translationKeys.TryGetValue(format, out var localizedFormat))
             {
-                string contents = File.ReadAllText(filePath);
-                var locale = JsonConvert.DeserializeObject<LocalizationJson>(contents);
-                InitializeLocale(locale);
+                return string.Format(localizedFormat, args);
             }
             else
             {
-                Debug.LogError($"Localization file not found: {filePath}");
+                return $"{MISSING_KEY}:{currentLocale.LocaleKey}:{format}";
             }
         }
 
-        void InitializeLocale(LocalizationJson locale)
+        public async void SetLocalization(string localeKey)
+        {
+            await Task.Yield();
+            await SetLocalizationAsync(localeKey);
+        }
+
+        #endregion
+        
+
+        /// <summary>
+        /// Sets the current localization.
+        /// The parameter localeKey is formatted as "en_us", "ja_jp", etc.
+        /// </summary>
+        /// <param name="localeKey"></param>
+        async Task SetLocalizationAsync(string localeKey, bool force = false)
+        {
+            if (currentLocale.LocaleKey.Equals(localeKey, StringComparison.OrdinalIgnoreCase) && !force)
+            {
+                return;
+            }
+
+            string filepath = Path.Combine(Application.streamingAssetsPath, $"Locale/{localeKey}.json");
+            if (false == File.Exists(filepath))
+            {
+                Game.Console.LogError($"Unable to change localization.", true);
+                Game.Console.LogWarn($"There exists no localization file for locale '{localeKey}'!");
+                return;
+            }
+
+            try
+            {
+                string contents = await File.ReadAllTextAsync(filepath);
+                var json = JsonConvert.DeserializeObject<LocalizationJson>(contents);
+            
+                InitializeLocaleJson(json);
+                PimDeWitte.UnityMainThreadDispatcher.UnityMainThreadDispatcher.Instance().Enqueue(() => OnLocaleChanged?.Invoke());
+            }
+            catch (Exception ex)
+            {
+                Game.Console.LogError($"Unable to change localization.", true);
+                Game.Console.LogError($"Encountered an error when parsing localization file at '{filepath}' for locale '{localeKey}'.", true);
+                Debug.LogException(ex);
+                return;
+            }
+        }
+
+        void InitializeLocaleJson(LocalizationJson locale)
         {
             translationKeys.Clear();
 

@@ -196,6 +196,10 @@ namespace UZSG
             CreateCommand("say <message>",
                           "Send a message.")
                           .OnInvoke += CSay;
+
+            CreateCommand("seed",
+                          "Queries the world seed.")
+                          .OnInvoke += CSeed;
             
             CreateCommand("spawn <entity_id> [x] [y] [z]",
                           "Spawns an entity.")
@@ -582,7 +586,19 @@ namespace UZSG
         {
             WriteLine(string.Join(" ", args));
         }
-        
+
+        /// <summary>
+        /// Queries the world seed.
+        /// </summary>
+        void CSeed(object sender, string[] args)
+        {
+            if (Game.World.IsInWorld == false)
+            {
+                return;
+            }
+            WriteLine($"Seed: [{Game.World.CurrentWorld.GetSeed()}]");
+        }
+
         /// <summary>
         /// Spawns an entity.
         /// </summary>

@@ -175,7 +175,7 @@ namespace UZSG.UI.Lobbies
                 Mode = LoadSceneMode.Single,
                 ActivateOnLoad = true,
             };
-            Game.Main.LoadSceneAsync(loadOptions, OnLoadingScreenLoaded);
+            Game.Main.LoadScene(loadOptions, OnLoadingScreenLoaded);
         }
 
         void OnLoadingScreenLoaded()
@@ -212,7 +212,7 @@ namespace UZSG.UI.Lobbies
                 EOSSubManagers.Lobbies.LeaveCurrentLobby();
             }
 
-            Game.Main.LoadSceneAsync(
+            Game.Main.LoadScene(
                 new(){
                     SceneToLoad = "TitleScreen",
                     Mode = LoadSceneMode.Single

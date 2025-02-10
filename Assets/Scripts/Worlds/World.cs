@@ -431,7 +431,7 @@ namespace UZSG.Worlds
 
         public int GetSeed()
         {
-            return 12345; /// TEST:
+            return seed;
         }
 
         /// <summary>
@@ -633,8 +633,9 @@ namespace UZSG.Worlds
                 return;
             }
             
-            this.currentSaveData = saveData;
             _hasValidSaveData = true;
+            this.currentSaveData = saveData;
+            this.seed = saveData.Seed;
             
             LoadChunks();
             LoadEntities();

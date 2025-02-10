@@ -17,10 +17,10 @@ namespace UZSG.Data
     {
         [Header("Object Data")]
         [FormerlySerializedAs("Name")] public string DisplayName;
-        public string DisplayNameTranslatable => Game.Locale.Translatable($"item.{Id}.name");
+        public string DisplayNameTranslatable => Game.Locale.Translatable($"object.{Id}.name");
 
         [TextArea] public string Description;
-        public string DescriptionTranslatable => Game.Locale.Translatable($"item.{Id}.description");
+        public string DescriptionTranslatable => Game.Locale.Translatable($"object.{Id}.description");
         
         [FormerlySerializedAs("Model")] public AssetReference Object;
         public List<Attributes.Attribute> Attributes;

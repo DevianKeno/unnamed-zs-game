@@ -13,8 +13,21 @@ namespace UZSG
         }
     }
 
+    public static class MECExt
+    {
+        public static float WaitUntilDone(System.Collections.Generic.IEnumerator<float> coroutine)
+        {
+            return MEC.Timing.WaitUntilDone(MEC.Timing.RunCoroutine(coroutine));
+        }
+    }
+
     public static class Extensions
     {
+        /// <summary>
+        /// Converts an enum name to a more readable format (e.g., "VeryHigh" -> "Very High").
+        /// </summary>
+        /// <param name="enum">Enum value</param>
+        /// <returns>Formatted string</returns>
         public static string ToReadable(this System.Enum @enum)
         {
             string formatted =  @enum.ToString().Replace("_", " ");

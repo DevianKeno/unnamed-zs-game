@@ -9,18 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 38617b20e43fd404995f4f0b39b993f6, type: 3}
-  m_Name: shadows_quality 1
+  m_Script: {fileID: 11500000, guid: ca4b40729d4d46d45bb7d57c67a1bf02, type: 3}
+  m_Name: menu.settings
   m_EditorClassIdentifier: 
   Namespace: uzsg
-  Id: language
+  Id: menu.settings
   Tags: []
-  Category: 2
-  displayName: Shadows Quality
-  description: Lacks description!
-  PerformanceImpact: 0
-  Images:
-  - Quality: 2
-    Image: {fileID: 0}
-  - Quality: 1
-    Image: {fileID: 0}
+  Key: menu.settings
+  DefaultText: Settings

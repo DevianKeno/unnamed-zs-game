@@ -1,31 +1,31 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
+using Epic.OnlineServices.Connect;
 using PlayEveryWare.EpicOnlineServices;
 
 using UZSG.UI;
 using UZSG.EOS;
-using Epic.OnlineServices.Connect;
-using System.Threading.Tasks;
+using MEC;
 
 namespace UZSG
 {
     public class Game : MonoBehaviour, IConnectInterfaceEventListener
     {
+        public const uint VERSION = 1;
+        public const uint BUILD_NUMBER = 0;
+        public const uint PATCH_NUMBER = 0;
+
         public static Game Main { get; private set; }
 
         [SerializeField] bool enableDebugMode = true;
         public bool EnableDebugMode => enableDebugMode;
-        [SerializeField] int targetFramerate = -1;
-
-        public const uint VERSION = 1;
-        public const uint BUILD_NUMBER = 0;
-        public const uint PATCH_NUMBER = 0;
 
 
         #region Core
@@ -137,22 +137,16 @@ namespace UZSG
         void Start()
         {
             IsAlive = true;
-            InitializeManagers();
+            Timing.RunCoroutine(_InitializeManagers());
         }
 
-        void OnValidate()
-        {
-            if (gameObject.activeInHierarchy)
-            {
-                Application.targetFrameRate = targetFramerate;
-            }
-        }
-
-        void InitializeManagers()
+        IEnumerator<float> _InitializeManagers()
         {
             /// The console is initialized first thing
             console.Initialize();
-            localizationManager.Initialize();
+
+            yield return MECExt.WaitUntilDone(localizationManager._Initialize()); /// lmao this worked
+
             settingsManager.Initialize();
             UIManager.Initialize();
             audioManager.Initialize();
@@ -173,6 +167,8 @@ namespace UZSG
 
             OnLateInit?.Invoke();
             Console.LogInfo("Press F1 to hide/show console");
+
+            yield return 0f;
         }
 
         
@@ -192,12 +188,12 @@ namespace UZSG
 
         public delegate void OnLoadSceneCallback();
 
-        public async void LoadSceneAsync(LoadSceneOptions options, OnLoadSceneCallback onCompleted = null)
+        public async void LoadScene(LoadSceneOptions options, OnLoadSceneCallback onCompleted = null)
         {
             try
             {
                 await Task.Delay((int) Math.Clamp(options.DelaySeconds, 0, options.DelaySeconds) * 1000);
-                await LoadScene(options, onCompleted);
+                await LoadSceneAsync(options, onCompleted);
             }
             catch (Exception ex)
             {
@@ -207,7 +203,7 @@ namespace UZSG
 
         Dictionary<string, Scene> unactivatedScenes = new();
 
-        async Task LoadScene(LoadSceneOptions options, OnLoadSceneCallback onCompleted = null)
+        async Task LoadSceneAsync(LoadSceneOptions options, OnLoadSceneCallback onCompleted = null)
         {
             var asyncOp = SceneManager.LoadSceneAsync(options.SceneToLoad, options.Mode);
             asyncOp.allowSceneActivation = false;

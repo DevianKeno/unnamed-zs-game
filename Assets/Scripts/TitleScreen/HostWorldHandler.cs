@@ -24,7 +24,7 @@ namespace UZSG.TitleScreen
         /// <summary>
         /// <c>string</c> is rule Id.
         /// </summary>
-        Dictionary<string, RuleEntryUI> ruleEntriesDict;
+        Dictionary<RuleTypeEnum, RuleEntryUI> ruleEntriesDict;
         Dictionary<RuleTypeEnum, object> ruleLinks;
         
         [Header("UI Elements")]
@@ -42,10 +42,10 @@ namespace UZSG.TitleScreen
             ruleEntriesDict = new();
             ruleLinks = new();
             
-            foreach (RuleEntryUI entry in GetComponentsInChildren<RuleEntryUI>())
+            foreach (RuleEntryUI rule in GetComponentsInChildren<RuleEntryUI>())
             {
-                ruleEntriesDict[entry.Id] = entry;
-                entry.OnValueChanged += OnRuleValueChanged;
+                ruleEntriesDict[rule.RuleType] = rule;
+                // rule.OnValueChanged += OnRuleValueChanged;
             }
 
             selectedWorldEntry.OnClick += (entry) =>
@@ -74,10 +74,10 @@ namespace UZSG.TitleScreen
 
         void OnRuleValueChanged(RuleEntryUI sender, object value)
         {
-            if (ruleLinks.ContainsKey(sender.Rule))
+            if (ruleLinks.ContainsKey(sender.RuleType))
             {
-                ruleLinks[sender.Rule] = value;
-                Debug.Log($"Updated world attribute '{sender.Rule}' to a value of: {value.ToString()}");
+                ruleLinks[sender.RuleType] = value;
+                Debug.Log($"Updated world attribute '{sender.RuleType}' to a value of: {value.ToString()}");
             }
         }
         
@@ -233,7 +233,7 @@ namespace UZSG.TitleScreen
                 Mode = LoadSceneMode.Single,
                 ActivateOnLoad = true,
             };
-            Game.Main.LoadSceneAsync(options, OnLoadingScreenLoaded);
+            Game.Main.LoadScene(options, OnLoadingScreenLoaded);
         }
 
         void OnLoadingScreenLoaded()
@@ -270,7 +270,7 @@ namespace UZSG.TitleScreen
                 EOSSubManagers.Lobbies.LeaveCurrentLobby();
             }
 
-            Game.Main.LoadSceneAsync(
+            Game.Main.LoadScene(
                 new(){
                     SceneToLoad = "TitleScreen",
                     Mode = LoadSceneMode.Single

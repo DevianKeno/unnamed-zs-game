@@ -10,6 +10,8 @@ namespace UZSG.Worlds
     [Serializable]
     public struct WorldAttributes
     {
+        public const int MIN_SEED = int.MinValue;
+        public const int MAX_SEED = int.MaxValue;
         public const int MIN_MAX_NUM_PLAYERS = 1;
         public const int MAX_MAX_NUM_PLAYERS = 64;
         public const int DEFAULT_MAX_NUM_PLAYERS = 8;

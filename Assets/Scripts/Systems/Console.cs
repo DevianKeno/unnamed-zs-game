@@ -300,7 +300,19 @@ namespace UZSG
         {
             LogInfo($"<b><color=\"orange\">[ERROR]:</b> {message}</color>");
         }
-        
+
+        /// <summary>
+        /// Log an orange error message into the game's console.
+        /// </summary>
+        public void LogError(object message, bool logWithUnity)
+        {
+            LogInfo($"<b><color=\"orange\">[ERROR]:</b> {message}</color>");
+            if (logWithUnity)
+            {
+                Debug.LogError(message);
+            }
+        }
+                
         /// <summary>
         /// Log a red fatal message into the game's console.
         /// </summary>

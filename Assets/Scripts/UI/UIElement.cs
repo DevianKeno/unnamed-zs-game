@@ -6,6 +6,7 @@ namespace UZSG.UI
     /// <summary>
     /// UI elements that can be shown or hidden.
     /// </summary>
+    [RequireComponent(typeof(RectTransform))]
     public class UIElement : MonoBehaviour
     {
         [SerializeField] protected RectTransform rect;

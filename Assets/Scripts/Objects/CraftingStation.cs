@@ -17,7 +17,7 @@ namespace UZSG.Objects
     /// Represents objects that can craft items.
     /// </summary>
     [RequireComponent(typeof(Crafter))]
-    public class CraftingStation : BaseObject, IPlayerInteractable, ICrafter
+    public class CraftingStation : BaseObject, IPlayerInteractable, IPickupable, ICrafter
     {
         public WorkstationData WorkstationData => objectData as WorkstationData;
         
@@ -46,6 +46,17 @@ namespace UZSG.Objects
             OutputContainer = new Container(WorkstationData.OutputSize);
             InputContainer = new Container();
             OutputContainer.OnSlotItemChanged += OnOutputSlotItemChanged;
+        }
+        
+        public virtual void Pickup(IInteractActor actor)
+        {
+            if (actor is Player player)
+            {
+                if (this.CanBePickedUp && player.Actions.PickUpItem(this.AsItem()))
+                {
+                    Destruct();
+                }
+            }
         }
         
         public virtual List<InteractAction> GetInteractActions() { return new(); }

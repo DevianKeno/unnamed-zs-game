@@ -11,18 +11,13 @@ using UZSG.Players;
 
 namespace UZSG.Objects
 {
-    public class ResourcePickup : BaseObject, IInteractable
+    public class ResourcePickup : Resource, IInteractable
     {
-        public ResourceData ResourceData => objectData as ResourceData;
-        public string DisplayName => ResourceData.DisplayNameTranslatable;
         public bool AllowInteractions { get; set; } = true;
+        
+        #region Public
 
-        protected override void Start()
-        {
-            base.Start();
-        }
-
-        public List<InteractAction> GetInteractActions()
+        public virtual List<InteractAction> GetInteractActions()
         {
             var actions = new List<InteractAction>();
 
@@ -36,7 +31,7 @@ namespace UZSG.Objects
             return actions;
         }
 
-        public void Interact(InteractionContext context)
+        public virtual void Interact(InteractionContext context)
         {
             if (context.Phase == InteractPhase.Started && context.Actor is Player player)
             {
@@ -52,7 +47,10 @@ namespace UZSG.Objects
             }
         }
 
-        void OnPlayerInteract(InteractionContext context)
+        #endregion
+
+
+        protected virtual void OnPlayerInteract(InteractionContext context)
         {
             if (context.Phase == InteractPhase.Finished)
             {

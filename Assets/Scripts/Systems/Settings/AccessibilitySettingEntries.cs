@@ -8,11 +8,10 @@ namespace UZSG.Settings
 
     public class LanguageSetting : SettingEntry
     {
-        public string LocaleKey;
-
         public override void Load()
         {
-            LocaleKey = PlayerPrefs.GetString("language", "en_us");
+            var localeKey = PlayerPrefs.GetString("language", "en_us");
+            Apply(Game.Locale.GetIndexOf(localeKey));
         }
 
         public override void Save()
@@ -22,9 +21,30 @@ namespace UZSG.Settings
         
         public override void Apply(object value)
         {
-            if (value is string localeKey)
+            if (value is int localeIndex)
             {
-                Game.Locale.SetLocalization(localeKey);
+                if (Game.Locale.AvailableLocales.IsValidIndex(localeIndex))
+                {
+                    ChangeLocaleAsync(localeIndex);
+                }
+            }
+        }
+
+        public override void Revert()
+        {
+            var localeKey = PlayerPrefs.GetString("language", "en_us");
+            Apply(Game.Locale.GetIndexOf(localeKey));
+        }
+
+        async void ChangeLocaleAsync(int localeIndex)
+        {
+            var isSuccessful = await Game.Locale.SetLocalization(Game.Locale.AvailableLocales[localeIndex].LocaleKey);
+            if (isSuccessful)
+            {
+                if (Game.Settings.TryGetUIEntry(SettingId.Language, out var ui))
+                {
+                    ui.SetValue<int>(Game.Locale.GetIndexOf(Game.Locale.CurrentLocale.LocaleKey));
+                }
             }
         }
     }

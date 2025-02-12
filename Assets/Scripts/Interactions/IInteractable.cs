@@ -3,7 +3,7 @@ using System.Collections.Generic;
 namespace UZSG.Interactions
 {
     /// <summary>
-    /// Represents objects that the Player can interact with by pressing the Interact button (F by default).
+    /// Represents objects that can be interacted with by pressing the Interact button (F by default).
     /// </summary>
     public interface IInteractable
     {
@@ -19,7 +19,7 @@ namespace UZSG.Interactions
         /// <summary>
         /// Called when an Actor interacts with the Interactable.
         /// </summary>
-        public void Interact(InteractionContext context);
+        public virtual void Interact(InteractionContext context) { }
 
         public virtual void OnLookEnter() { }
         public virtual void OnLookExit() { }

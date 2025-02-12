@@ -47,7 +47,7 @@ MonoBehaviour:
   renderDistance: 6
   chunkSize: 32
   enableLoadingChunks: 0
-  Seed: 12345
+  Seed: 0
   PlaceTrees: 1
   treesNoiseData: {fileID: 11400000, guid: 9dafe3937ca5cc543992e32cbc4aaeb2, type: 2}
   PlacePickups: 1

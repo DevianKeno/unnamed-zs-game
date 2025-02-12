@@ -8,7 +8,6 @@ namespace UZSG
     [RequireComponent(typeof(TextMeshProUGUI))]
     public class TranslatableTextUGUI : MonoBehaviour
     {
-        public string Key = string.Empty;
         public TranslatableKey KeyData;
 
         [SerializeField] TextMeshProUGUI tmp;
@@ -34,11 +33,7 @@ namespace UZSG
         {
             if (KeyData != null)
             {
-                tmp.text = KeyData.DefaultText;
-            }
-            else if (false == string.IsNullOrWhiteSpace(Key))
-            {
-                tmp.text = Game.Locale.Translatable(Key);
+                tmp.text = Game.Locale.Translatable(KeyData.Key);
             }
         }
     }

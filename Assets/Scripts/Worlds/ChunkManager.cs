@@ -286,11 +286,7 @@ namespace UZSG.Worlds
         Chunk CreateNewChunkWithResources(Vector3Int coord)
         {
             var chunk = CreateEmptyChunk(coord);
-#if UNITY_EDITOR
-            chunk.SetSeed(this.Seed);
-#else
             chunk.SetSeed(World.GetSeed());
-#endif
             chunk.treesNoiseData = treesNoiseData; /// TODO: read from world aatributes
             chunk.pickupsNoiseData = pickupsNoiseData; /// TODO: read from world aatributes
             chunk.oreDepositsNoiseData = oreDepositsNoiseData; /// TODO: read from world aatributes
@@ -299,6 +295,7 @@ namespace UZSG.Worlds
             {
                 PlaceTrees = PlaceTrees,
                 PlacePickups = PlacePickups,
+                PlaceOreDeposits = PlaceOreDeposits,
             };
             chunk.SetGenerationSettings(generationSettings);
             chunk.GenerateResources();

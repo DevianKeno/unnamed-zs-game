@@ -14,10 +14,12 @@ namespace UZSG
     public class SettingsManager : MonoBehaviour
     {
         bool _isInitialized = false;
-        GlobalSettingsWindow userInterface;
-        [SerializeField] GameObject globalSettingsWindow;
-
+        Dictionary<string, SettingEntry> settingsEntries = new();
         Dictionary<SettingCategory, List<SettingsEntryData>> settingsDataDict = new();
+
+        GlobalSettingsWindow userInterface;
+        public GlobalSettingsWindow UI => userInterface;
+        [SerializeField] GameObject globalSettingsWindow;
 
         internal void Initialize()
         {
@@ -42,7 +44,16 @@ namespace UZSG
             userInterface.Hide();
 
 
-            LoadGlobalSettings();
+            LoadSettings();
+        }
+
+        public SettingEntry GetSetting(string id)
+        {
+            if (settingsEntries.TryGetValue(id, out var setting))
+            {
+                return setting;
+            }
+            return null;
         }
 
 
@@ -51,7 +62,7 @@ namespace UZSG
         /// <summary>
         /// Loads all settings stored in PlayerPrefs and applies them.
         /// </summary>
-        public void LoadGlobalSettings()
+        public void LoadSettings()
         {
             LoadAudioSettings();
             LoadVideoSettings();
@@ -61,9 +72,9 @@ namespace UZSG
         }
 
         /// <summary>
-        /// Saves all settings that are marked dirty and stores it in PlayerPrefs.
+        /// Reverts all applied settings back to its original loaded value.
         /// </summary>
-        public void SaveGlobalSettings()
+        public void RevertSettings()
         {
             foreach (SettingCategory category in Enum.GetValues(typeof(SettingCategory)))
             {
@@ -75,46 +86,84 @@ namespace UZSG
 
                 foreach (var setting in settingList)
                 {
-                    if (false == TryGetEntryUI(setting.Id, out SettingEntryUI ui) ||
-                        false == ui.IsDirty)
+                    if (false == TryGetUIEntry(setting.Id, out SettingEntryUI settingUI) ||
+                        false == settingUI.IsDirty)
                     {
                         continue;
                     }
                     
-                    if (ui.Setting == null)
+                    if (settingUI.Setting == null)
                     {
                         Debug.LogWarning($"SettingEntry for '{setting.Id}' is null!");
                         return;
                     }
 
-                    ui.Setting.Apply(ui.Value);
-                    ui.Setting.Save();
+                    settingUI.Setting.Revert();
                 }
             }
-
-            PlayerPrefs.Save();
         }
 
-        [ContextMenu("Force Save All Settings")]
-        public void ForceSaveGlobalSettings()
+        /// <summary>
+        /// Applies the current settings, but does not save them.
+        /// </summary>
+        public void ApplySettings()
         {
             foreach (SettingCategory category in Enum.GetValues(typeof(SettingCategory)))
             {
-                foreach (var setting in settingsDataDict[category])
+                if (false == settingsDataDict.TryGetValue(category, out var settingList))
                 {
-                    if (false == TryGetEntryUI(setting.Id, out SettingEntryUI ui))
+                    Debug.LogWarning($"{category} was not found in settings dictionary! Is it empty?");
+                    continue;
+                }
+
+                foreach (var setting in settingList)
+                {
+                    if (false == TryGetUIEntry(setting.Id, out SettingEntryUI settingUI) ||
+                        false == settingUI.IsDirty)
                     {
                         continue;
                     }
                     
-                    if (ui.Setting == null)
+                    if (settingUI.Setting == null)
                     {
                         Debug.LogWarning($"SettingEntry for '{setting.Id}' is null!");
                         return;
                     }
 
-                    ui.Setting.Apply(ui.Value);
-                    ui.Setting.Save();
+                    settingUI.Setting.Apply(settingUI.Value);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Saves all current settings stores it in PlayerPrefs.
+        /// </summary>
+        public void SaveSettings()
+        {
+            foreach (SettingCategory category in Enum.GetValues(typeof(SettingCategory)))
+            {
+                if (false == settingsDataDict.TryGetValue(category, out var settingList))
+                {
+                    Debug.LogWarning($"{category} was not found in settings dictionary! Is it empty?");
+                    continue;
+                }
+
+                foreach (var setting in settingList)
+                {
+                    if (false == TryGetUIEntry(setting.Id, out SettingEntryUI settingUI) ||
+                        false == settingUI.IsDirty)
+                    {
+                        continue;
+                    }
+                    
+                    if (settingUI.Setting == null)
+                    {
+                        Debug.LogWarning($"SettingEntry for '{setting.Id}' is null!");
+                        return;
+                    }
+
+                    settingUI.Setting.Apply(settingUI.Value);
+                    settingUI.Setting.Save();
                 }
             }
 
@@ -137,6 +186,48 @@ namespace UZSG
             userInterface.Hide();
         }
 
+        /// <summary>
+        /// Retrieve the UI element tied to a setting.
+        /// </summary>
+        public bool TryGetUIEntry(string key, out SettingEntryUI ui)
+        {
+            if (userInterface.settingEntryUIs.TryGetValue(key, out ui))
+            {
+                return true;
+            }
+            else
+            {
+                Debug.LogError($"SettingEntryUI is missing for '{key}'");
+                return false;
+            }
+        }
+
+        [ContextMenu("Force Save All Settings")]
+        public void ForceSaveGlobalSettings()
+        {
+            foreach (SettingCategory category in Enum.GetValues(typeof(SettingCategory)))
+            {
+                foreach (var setting in settingsDataDict[category])
+                {
+                    if (false == TryGetUIEntry(setting.Id, out SettingEntryUI ui))
+                    {
+                        continue;
+                    }
+                    
+                    if (ui.Setting == null)
+                    {
+                        Debug.LogWarning($"SettingEntry for '{setting.Id}' is null!");
+                        return;
+                    }
+
+                    ui.Setting.Apply(ui.Value);
+                    ui.Setting.Save();
+                }
+            }
+
+            PlayerPrefs.Save();
+        }
+
         #endregion
 
 
@@ -148,7 +239,7 @@ namespace UZSG
         void LoadVideoSettings()
         {
             GetMonitorOptions();
-            GetWindowModeOptions();
+            GetFullscreenModeOptions();
             GetResolutionOptions();
             GetVSyncOptions();
             GetFramerateCapOptions();
@@ -181,9 +272,12 @@ namespace UZSG
 
         void GetMonitorOptions()
         {
-            if (!TryGetEntryUI("monitor", out var ui)) return;
+            if (!TryGetUIEntry(SettingId.Monitor, out var ui)) return;
             
-            var monitorSetting = new MonitorSetting();
+            var monitorSetting = new MonitorSetting
+            {
+                UI = ui
+            };
             monitorSetting.Load();
             ui.Setting = monitorSetting;
             var dropdown = (ui as SettingEntryDropdownUI).Dropdown;
@@ -200,11 +294,14 @@ namespace UZSG
             dropdown.AddOptions(options);
         }
         
-        void GetWindowModeOptions()
+        void GetFullscreenModeOptions()
         {
-            if (!TryGetEntryUI("fullscreen_mode", out var ui)) return;
-            
-            var windowModeSetting = new WindowModeSetting();
+            if (!TryGetUIEntry(SettingId.FullscreenMode, out var ui)) return;
+
+            var windowModeSetting = new WindowModeSetting
+            {
+                UI = ui
+            };
             windowModeSetting.Load();
             ui.Setting = windowModeSetting;
 
@@ -220,7 +317,7 @@ namespace UZSG
 
         void GetResolutionOptions()
         {
-            if (!TryGetEntryUI("resolution", out var ui)) return;
+            if (!TryGetUIEntry("resolution", out var ui)) return;
             
             var availableResolutions = Screen.resolutions.Distinct().ToArray();
             var options = new List<string>();
@@ -250,7 +347,7 @@ namespace UZSG
 
         void GetVSyncOptions()
         {
-            if (!TryGetEntryUI("v_sync", out var ui)) return;
+            if (!TryGetUIEntry("v_sync", out var ui)) return;
 
             var vSyncSetting = new VSyncSetting();
             vSyncSetting.Load();
@@ -262,7 +359,7 @@ namespace UZSG
 
         void GetFramerateCapOptions()
         {
-            if (!TryGetEntryUI("framerate_cap", out var ui)) return;
+            if (!TryGetUIEntry("framerate_cap", out var ui)) return;
 
             var framerateCapSetting = new FramerateCapSetting();
             framerateCapSetting.Load();
@@ -281,7 +378,7 @@ namespace UZSG
 
         void GetAmbientOcclusionOptions()
         {
-            if (!TryGetEntryUI("ambient_occlusion", out var ui)) return;
+            if (!TryGetUIEntry("ambient_occlusion", out var ui)) return;
 
             ui.Setting = new ShadowResolutionSetting();
             var dropdown = (ui as SettingEntryDropdownUI).Dropdown;
@@ -298,7 +395,7 @@ namespace UZSG
 
         void GetShadowResolutionOptions()
         {
-            if (!TryGetEntryUI("shadow_resolution", out var ui)) return;
+            if (!TryGetUIEntry("shadow_resolution", out var ui)) return;
 
             ui.Setting = new ShadowResolutionSetting();
             var dropdown = (ui as SettingEntryDropdownUI).Dropdown;
@@ -320,7 +417,7 @@ namespace UZSG
 
         void GetLanguageOptions()
         {
-            if (!TryGetEntryUI("language", out var ui)) return;
+            if (!TryGetUIEntry("language", out var ui)) return;
 
             var languageSetting = new LanguageSetting();
             languageSetting.Load();
@@ -340,19 +437,5 @@ namespace UZSG
         }
 
         #endregion
-
-
-        bool TryGetEntryUI(string key, out SettingEntryUI ui)
-        {
-            if (userInterface.settingEntryUIs.TryGetValue(key, out ui))
-            {
-                return true;
-            }
-            else
-            {
-                Debug.LogError($"SettingEntryUI is missing for '{key}'");
-                return false;
-            }
-        }
     }
 }

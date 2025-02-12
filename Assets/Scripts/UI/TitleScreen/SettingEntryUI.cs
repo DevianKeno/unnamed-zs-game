@@ -10,7 +10,7 @@ using UZSG.Data;
 
 namespace UZSG.UI
 {
-    public class SettingEntryUI : UIElement, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler
+    public abstract class SettingEntryUI : UIElement, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler
     {
         readonly Color HoveredColor = new(1f, 1f, 1f, 0.025f);
         readonly Color NormalColor = Colors.Transparent;
@@ -19,7 +19,7 @@ namespace UZSG.UI
         public SettingsEntryData Data => settingsEntryData;
         public SettingEntry Setting { get; set; }
         public bool IsDirty { get; set; }
-        public object Value { get; }
+        public object Value { get; set; }
 
         [SerializeField] float spacerWidth;
 
@@ -35,11 +35,6 @@ namespace UZSG.UI
             base.Awake();
             labelTmp = transform.Find("Label (TMP)").GetComponent<TextMeshProUGUI>();
             OnValueChanged += MarkDirty;
-        }
-
-        protected virtual void OnValueChangedEvent()
-        {
-            OnValueChanged?.Invoke();
         }
 
         void Start()
@@ -60,9 +55,31 @@ namespace UZSG.UI
             labelTmp.text = settingsEntryData.DisplayNameTranslatable;
         }
 
+        public virtual bool TryGetValue<T>(out T value)
+        {
+            if (Value is T valueT)
+            {
+                value = valueT;
+                return true;
+            }
+            else
+            {
+                value = default;
+                return false;
+            }
+        }
+
+        public abstract void SetValue<T>(T value);
+
         public void MarkDirty()
         {
             IsDirty = true;
+        }
+
+        protected virtual void OnValueChangedEvent<T>(T value)
+        {
+            this.Value = value;
+            OnValueChanged?.Invoke();
         }
 
         public void OnPointerEnter(PointerEventData eventData)

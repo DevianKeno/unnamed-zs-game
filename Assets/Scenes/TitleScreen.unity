@@ -809,6 +809,7 @@ GameObject:
   m_Component:
   - component: {fileID: 77322382}
   - component: {fileID: 77322384}
+  - component: {fileID: 77322385}
   - component: {fileID: 77322383}
   m_Layer: 5
   m_Name: Heading (TMP)
@@ -933,6 +934,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 77322381}
   m_CullTransparentMesh: 1
+--- !u!114 &77322385
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 77322381}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eca26356cd0963b4da9e909bcd6740a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  KeyData: {fileID: 11400000, guid: ac2be420956940f4d8bead21ab2719fe, type: 2}
+  tmp: {fileID: 77322383}
 --- !u!1001 &82174179
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3617,6 +3632,7 @@ RectTransform:
   m_Children:
   - {fileID: 409102419}
   - {fileID: 32425739}
+  - {fileID: 907711835}
   m_Father: {fileID: 410976157}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -3682,7 +3698,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 1
-  m_AdditionalShaderChannelsFlag: 1
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 31000
@@ -3817,6 +3833,7 @@ GameObject:
   m_Component:
   - component: {fileID: 389361835}
   - component: {fileID: 389361837}
+  - component: {fileID: 389361838}
   - component: {fileID: 389361836}
   m_Layer: 5
   m_Name: World name (TMP)
@@ -3941,6 +3958,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 389361834}
   m_CullTransparentMesh: 1
+--- !u!114 &389361838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 389361834}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eca26356cd0963b4da9e909bcd6740a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  KeyData: {fileID: 11400000, guid: c34f66213fb2b5a43b73c9d06ff18f8d, type: 2}
+  tmp: {fileID: 389361836}
 --- !u!1 &409102418
 GameObject:
   m_ObjectHideFlags: 0
@@ -5344,7 +5375,6 @@ RectTransform:
   - {fileID: 484535166}
   - {fileID: 205444151}
   - {fileID: 1055205693}
-  - {fileID: 907711835}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -6588,6 +6618,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 250821398730652663, guid: 513f9b9052bfdab4ca8e314e3bf63d41, type: 3}
+      propertyPath: KeyData
+      value: 
+      objectReference: {fileID: 11400000, guid: ac2be420956940f4d8bead21ab2719fe, type: 2}
     - target: {fileID: 1085767659022631473, guid: 513f9b9052bfdab4ca8e314e3bf63d41, type: 3}
       propertyPath: m_text
       value: Create world
@@ -8352,12 +8386,12 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 530178307}
+  m_Father: {fileID: 373060059}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -246.81006, y: 27.98706}
-  m_SizeDelta: {x: 493.6155, y: 55.9741}
+  m_AnchoredPosition: {x: -246.81006, y: 18.633545}
+  m_SizeDelta: {x: 493.6155, y: 37.2669}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &907711836
 MonoBehaviour:
@@ -8388,8 +8422,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 2164260863
+  m_fontColor: {r: 1, g: 1, b: 1, a: 0.5019608}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -10208,6 +10242,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 250821398730652663, guid: 513f9b9052bfdab4ca8e314e3bf63d41, type: 3}
+      propertyPath: KeyData
+      value: 
+      objectReference: {fileID: 11400000, guid: a4b151c831b79f14c9378ff7bbc32b25, type: 2}
     - target: {fileID: 1085767659022631473, guid: 513f9b9052bfdab4ca8e314e3bf63d41, type: 3}
       propertyPath: m_text
       value: Multiplayer
@@ -13260,7 +13298,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eca26356cd0963b4da9e909bcd6740a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Key: 
   KeyData: {fileID: 11400000, guid: 3d6b1235d86a62544b14f5f729d92d30, type: 2}
   tmp: {fileID: 1478981167}
 --- !u!1 &1480937648
@@ -13969,6 +14006,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 250821398730652663, guid: 513f9b9052bfdab4ca8e314e3bf63d41, type: 3}
+      propertyPath: KeyData
+      value: 
+      objectReference: {fileID: 11400000, guid: cfd2f00192550b74ca5d7cfa284c756b, type: 2}
     - target: {fileID: 1085767659022631473, guid: 513f9b9052bfdab4ca8e314e3bf63d41, type: 3}
       propertyPath: m_text
       value: Exit
@@ -14731,6 +14772,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 250821398730652663, guid: 513f9b9052bfdab4ca8e314e3bf63d41, type: 3}
+      propertyPath: KeyData
+      value: 
+      objectReference: {fileID: 11400000, guid: 5fea1ed00c77f894e9e54c50773f7f82, type: 2}
     - target: {fileID: 1085767659022631473, guid: 513f9b9052bfdab4ca8e314e3bf63d41, type: 3}
       propertyPath: m_text
       value: Settings

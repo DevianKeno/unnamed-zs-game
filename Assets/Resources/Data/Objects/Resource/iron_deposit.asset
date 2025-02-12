@@ -15,20 +15,23 @@ MonoBehaviour:
   Namespace: uzsg
   Id: iron_deposit
   Tags: []
-  Name: Iron Deposit
-  Model:
-    m_AssetGUID: bc0b442a5a7b2d241a9d4b637a4f8278
+  DisplayName: Iron Deposit
+  Description: 
+  Object:
+    m_AssetGUID: 6862e99c086e63d41a77d502e4a79516
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
   Attributes:
   - data: {fileID: 11400000, guid: e1db9201565269c4caebcb12298f0665, type: 2}
-    value: 250
-    baseMaximum: 250
+    value: 1000
+    baseMaximum: 1000
     multiplier: 1
     flatBonus: 0
     LimitOverflow: 0
     LimitUnderflow: 0
+  CanBePickedUp: 0
+  PickupTimeSeconds: 0
   HasAudio: 1
   AudioAssetsData: {fileID: 11400000, guid: 11bc0fff6a43ee148b15187e4870dcfb, type: 2}
   ToolType: 2
@@ -36,9 +39,7 @@ MonoBehaviour:
   Yield:
     itemData: {fileID: 11400000, guid: d91e12a0a4b6668499c647324acdd545, type: 2}
     count: 1
-    attributes:
-      attributesReadOnly: []
-  Yields: []
+  LootTable: {fileID: 0}
   IsPickup: 0
   PickupDuration: 0
   MaxInteractDistance: 0

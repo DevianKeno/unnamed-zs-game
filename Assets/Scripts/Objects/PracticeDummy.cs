@@ -12,13 +12,7 @@ namespace UZSG.Objects
     public class PracticeDummy : BaseObject, IAttributable, ICollisionTarget
     {
         [SerializeField] GameObject model;
-        
-        /// OnPlace!
-        protected override void Start()
-        {
-            base.Start();
-        }
-        
+                
         public void AttackedBy(HitboxCollisionInfo info)
         {
             if (info.ObjectType == ObjectCollisionType.Melee)

@@ -1,27 +1,26 @@
-using System;
 using System.Collections.Generic;
 
 using UnityEngine;
 
 using MEC;
 
-using UZSG.Attributes;
 using UZSG.Data;
 using UZSG.Entities;
 using UZSG.Interactions;
 using UZSG.Items;
 using UZSG.Items.Tools;
 
-
 namespace UZSG.Objects
 {
-    public class Tree : Resource
+    public class Tree : Resource, IInteractable
     {
+        public bool AllowInteractions { get; set; } = true;
         public bool IsChoppable { get; set; } = true;
         /// <summary>
         /// If the tree is cut down or not.
         /// </summary>
         public bool IsFelled { get; private set; } = false;
+
         /// <summary>
         /// Whether the tree is generated via resource chunks.
         /// </summary>

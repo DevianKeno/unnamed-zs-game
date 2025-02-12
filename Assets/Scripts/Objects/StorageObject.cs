@@ -13,7 +13,7 @@ namespace UZSG.Objects
     /// <summary>
     /// Represent objects that have item storage (e.g., chests, crates, etc.).
     /// </summary>
-    public class StorageObject : BaseObject, IPlayerInteractable, ISaveDataReadWrite<StorageObjectSaveData>
+    public class StorageObject : BaseObject, IPlayerInteractable, IPickupable, ISaveDataReadWrite<StorageObjectSaveData>
     {
         public StorageData StorageData => objectData as StorageData;
 
@@ -114,11 +114,13 @@ namespace UZSG.Objects
             });
         }
         
-        public override void Pickup(IInteractActor actor)
+        public virtual void Pickup(IInteractActor actor)
         {
             if (actor is Player player)
             {
-                if (this.CanBePickedUp && player.Actions.PickUpItem(this.AsItem()))
+                if (!Container.HasAnyItem &&
+                    this.CanBePickedUp &&
+                    player.Actions.PickUpItem(this.AsItem()))
                 {
                     Destruct();
                 }
@@ -132,13 +134,12 @@ namespace UZSG.Objects
             this.Container.ReadSaveData(saveData.Slots);
         }
 
-        public new StorageObjectSaveData WriteSaveData()
+        public StorageObjectSaveData WriteSaveData()
         {
-            var objectSave = base.WriteSaveData();
             return new StorageObjectSaveData()
             {
-                Id = objectSave.Id,
-                Transform = objectSave.Transform,
+                Id = objectData.Id,
+                Transform = base.WriteTransform(),
                 Slots = Container.WriteSaveData(),
             };
         }

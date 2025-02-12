@@ -7,16 +7,17 @@ using UZSG.Interactions;
 using UZSG.Items;
 using UZSG.Items.Tools;
 
-
 namespace UZSG.Objects
 {
-    public class OreDeposit : Resource, IInteractable
+    public class OreDeposit : Resource, IInteractable, IDamageable
     {
-        public void Damage(float amount)
+        public bool AllowInteractions { get; set; } = true;
+
+        public void TakeDamage(DamageInfo damage)
         {
             if (Attributes.TryGet("health", out var health))
             {
-                health.Remove(amount);
+                health.Remove(damage.Amount);
             }
         }
 
@@ -63,8 +64,11 @@ namespace UZSG.Objects
             {
                 damage *= 0.1f;
             }
-
-            this.Damage(damage);
+            
+            if (info.Source is IDamageSource damageSource)
+            {
+                TakeDamage(new DamageInfo(damageSource, damage));
+            }
         }
 
         public List<InteractAction> GetInteractActionOptions()

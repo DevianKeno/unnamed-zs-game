@@ -15,13 +15,16 @@ namespace UZSG.UI
         [Header("UI Elements")]
         [SerializeField] SettingInformationDisplayUI settingInformationDisplay;
         [SerializeField] Button applyButton;
+        [SerializeField] Button saveButton;
+        [SerializeField] Button closeButton;
 
         protected override void Awake()
         {
             base.Awake();
             applyButton.onClick.AddListener(OnApplyBtnClick);
+            saveButton.onClick.AddListener(OnSaveBtnClick);
+            closeButton.onClick.AddListener(OnCloseBtnClick);
         }
-
         internal void Initialize()
         {
             var allEntries = GetComponentsInChildren<SettingEntryUI>();
@@ -40,8 +43,21 @@ namespace UZSG.UI
         
         void OnApplyBtnClick()
         {
-            Game.Settings.SaveGlobalSettings();
+            Game.Settings.ApplySettings();
         }
+
+        void OnSaveBtnClick()
+        {
+            Game.Settings.SaveSettings();
+            Hide();
+        }
+
+        void OnCloseBtnClick()
+        {
+            Game.Settings.RevertSettings();
+            Hide();
+        }
+
         
         #region Event callbacks
 

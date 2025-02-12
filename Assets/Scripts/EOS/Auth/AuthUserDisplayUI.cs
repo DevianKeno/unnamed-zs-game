@@ -54,7 +54,7 @@ namespace UZSG.EOS
                 if (EOSSubManagers.Auth.RememberLogin)
                 {
                     signInBtn.interactable = false;
-                    usernameTMP.text = "Signing in...";
+                    usernameTMP.text = Game.Locale.Translatable("menu.signing_in");
                     SetUIForLoading();
                     EOSSubManagers.Auth.StartPersistentLogin();
                     return;
@@ -69,7 +69,7 @@ namespace UZSG.EOS
         void StartLogin()
         {
             signInBtn.interactable = false;
-            usernameTMP.text = "Signing in...";
+            usernameTMP.text = Game.Locale.Translatable("menu.signing_in");
             SetUIForLoading();
             EOSSubManagers.Auth.StartLogin();
         }
@@ -81,7 +81,7 @@ namespace UZSG.EOS
         public void StartLogout()
         {
             SetUIForLoading();
-            usernameTMP.text = "Logging out...";
+            usernameTMP.text = Game.Locale.Translatable("menu.signing_out");
 
             var options = new Epic.OnlineServices.Connect.LogoutOptions()
             {
@@ -207,7 +207,7 @@ namespace UZSG.EOS
 
         public void SetUIFakeLogin()
         {
-            usernameTMP.text = "Signing in...";
+            usernameTMP.text = Game.Locale.Translatable("menu.signing_in");
             SetUIForLoading();
         }
 

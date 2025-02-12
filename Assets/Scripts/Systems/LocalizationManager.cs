@@ -25,12 +25,20 @@ namespace UZSG
         public LocalizationData CurrentLocale => currentLocale;
 
         List<LocalizationData> availableLocales = new();
+        /// <summary>
+        /// List of available locales. [Read Only]
+        /// </summary>
         public List<LocalizationData> AvailableLocales => new(availableLocales);
+
+        string _previousLocaleKey;
+        /// <summary>
+        /// Key is key, Value is the localized string.
+        /// </summary>
         Dictionary<string, string> translationKeys = new();
-        ConcurrentDictionary<string, string> translationKeysConcurrent = new();
+        ConcurrentDictionary<string, string> translationKeysConcurrent = new(); /// UNUSED
 
         /// <summary>
-        /// Raised once when the locale setting is changed.
+        /// Raised once upon successfully changing locales.
         /// </summary>
         public event Action OnLocaleChanged;
 
@@ -67,7 +75,7 @@ namespace UZSG
         }
         
         /// <summary>
-        /// idk what do to with this
+        /// Get a formatted localized version of a string given its key.
         /// </summary>
         public string TranslatableFormat(string format, params object[] args)
         {
@@ -81,10 +89,25 @@ namespace UZSG
             }
         }
 
-        public async void SetLocalization(string localeKey)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="localeKey">localeKey formatted as "en_us", "ja_jp", etc.</param>
+        /// <returns><c>bool</c>: whether if successfully changed locales.</returns>
+        public async Task<bool> SetLocalization(string localeKey)
         {
-            await Task.Yield();
             await SetLocalizationAsync(localeKey);
+            return _previousLocaleKey != currentLocale.LocaleKey;
+        }
+
+        /// <summary>
+        /// Gets the index of a locale key as its stored in the list of available locales.
+        /// </summary>
+        /// <param name="localeKey">locale key formatted as "en_us", "ja_jp", etc.</param>
+        /// <returns>the index of the locale, -1 if not present</returns>
+        public int GetIndexOf(string localeKey)
+        {
+            return availableLocales.FindIndex((l) => l.LocaleKey.Equals(localeKey, StringComparison.OrdinalIgnoreCase));
         }
 
         #endregion
@@ -102,6 +125,7 @@ namespace UZSG
                 return;
             }
 
+            _previousLocaleKey = currentLocale.LocaleKey;
             string filepath = Path.Combine(Application.streamingAssetsPath, $"Locale/{localeKey}.json");
             if (false == File.Exists(filepath))
             {
@@ -116,6 +140,7 @@ namespace UZSG
                 var json = JsonConvert.DeserializeObject<LocalizationJson>(contents);
             
                 InitializeLocaleJson(json);
+                currentLocale = availableLocales.Find((l) => l.LocaleKey == localeKey);
                 PimDeWitte.UnityMainThreadDispatcher.UnityMainThreadDispatcher.Instance().Enqueue(() => OnLocaleChanged?.Invoke());
             }
             catch (Exception ex)

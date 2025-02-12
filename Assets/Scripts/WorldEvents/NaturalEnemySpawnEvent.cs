@@ -1,10 +1,8 @@
-using System;
 using System.Collections.Generic;
 
 using UnityEngine;
 
 using UZSG.Entities;
-
 
 namespace UZSG.Worlds.Events
 {
@@ -17,7 +15,7 @@ namespace UZSG.Worlds.Events
         /// <summary>
         /// Around the player 
         /// </summary>.
-        const float MIN_SPAWN_RADIUS = 48; /// TODO: arbitrary value, change by gameplay design
+        const float MIN_SPAWN_RADIUS = 64; /// TODO: arbitrary value, change by gameplay design
         /// <summary>
         /// Around the player 
         /// </summary>.
@@ -62,15 +60,16 @@ namespace UZSG.Worlds.Events
         {
             if (Game.World.CurrentWorld.Players.Count <= 0) return;
 
-            var position = GetRandomPositionAroundPlayer(GetRandomPlayer());
-
-            Game.Entity.Spawn(GetRandomEnemy(), position, callback: (info) =>
+            if (GetRandomTerrainPositionAroundPlayer(GetRandomPlayer(), out var position))
             {
-                if (info.Entity is not Enemy enemy) return;
-                
-                enemy.OnDeath += OnEnemyDeath;
-                spawnedEnemies.Add(enemy);
-            });
+                Game.Entity.Spawn(GetRandomEnemy(), position, callback: (info) =>
+                {
+                    if (info.Entity is not Enemy enemy) return;
+                    
+                    enemy.OnDeath += OnEnemyDeath;
+                    spawnedEnemies.Add(enemy);
+                });
+            }
         }
 
         void OnEnemyDeath(Enemy enemy)
@@ -93,34 +92,58 @@ namespace UZSG.Worlds.Events
             return enemyIds[index];
         }
         
-        Vector3 GetRandomPositionAroundPlayer(Player player)
+        /// <summary>
+        /// Gets a random position with terrain around the player.
+        /// Returns false if no terrain.
+        /// </summary>
+        bool GetRandomTerrainPositionAroundPlayer(Player player, out Vector3 position)
         {
-            // Generate a random point in a 2D circle
-            Vector2 randomPoint = UnityEngine.Random.insideUnitCircle.normalized; // Normalize to ensure consistent distance
+            var randomPoint = UnityEngine.Random.onUnitSphere;
             float randomRadius = UnityEngine.Random.Range(MIN_SPAWN_RADIUS, MAX_SPAWN_RADIUS);
             randomPoint *= randomRadius;
+            position = player.transform.position + new Vector3(randomPoint.x, 0f, randomPoint.z);
 
-            // Offset the point relative to the player's position
-            Vector3 positionAround = player.Position + new Vector3(randomPoint.x, 0, randomPoint.y);
-
-            // Ensure the point is behind the player
-            Vector3 directionToPlayer = (positionAround - player.Position).normalized;
-            if (Vector3.Dot(directionToPlayer, player.Forward) > 0)
+            /// terraincast
+            if (Physics.Raycast(new Vector3(position.x, 300f, position.z), -Vector3.up, out var hit, 999f))
             {
-                // If the point is in front of the player, flip it to the opposite side
-                positionAround = player.Position - new Vector3(randomPoint.x, 0, randomPoint.y);
-            }
-
-            // Terrain cast to find the ground height
-            if (Physics.Raycast(new Vector3(positionAround.x, 300f, positionAround.z), -Vector3.up, out var hit, 999f))
-            {
-                return hit.point; // Return the point on the terrain
+                position = hit.point;
+                return true;
             }
             else
             {
-                return positionAround; // Fallback to the calculated position
+                return false;
             }
         }
+
+        /// This spawns ettys behind the player but it seemed weird 
+        // Vector3 GetRandomPositionAroundPlayer(Player player)
+        // {
+        //     // Generate a random point in a 2D circle
+        //     Vector2 randomPoint = UnityEngine.Random.insideUnitCircle.normalized; // Normalize to ensure consistent distance
+        //     float randomRadius = UnityEngine.Random.Range(MIN_SPAWN_RADIUS, MAX_SPAWN_RADIUS);
+        //     randomPoint *= randomRadius;
+
+        //     // Offset the point relative to the player's position
+        //     Vector3 positionAround = player.Position + new Vector3(randomPoint.x, 0, randomPoint.y);
+
+        //     // Ensure the point is behind the player
+        //     Vector3 directionToPlayer = (positionAround - player.Position).normalized;
+        //     if (Vector3.Dot(directionToPlayer, player.Forward) > 0)
+        //     {
+        //         // If the point is in front of the player, flip it to the opposite side
+        //         positionAround = player.Position - new Vector3(randomPoint.x, 0, randomPoint.y);
+        //     }
+
+        //     // Terrain cast to find the ground height
+        //     if (Physics.Raycast(new Vector3(positionAround.x, 300f, positionAround.z), -Vector3.up, out var hit, 999f))
+        //     {
+        //         return hit.point; // Return the point on the terrain
+        //     }
+        //     else
+        //     {
+        //         return positionAround; // Fallback to the calculated position
+        //     }
+        // }
 
         internal void IncludeSpawned(Enemy enemy)
         {

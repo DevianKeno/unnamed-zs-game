@@ -42,7 +42,7 @@ namespace UZSG.Worlds
         /// <summary>
         /// Whether to save this chunk on world exit.
         /// </summary>
-        public bool IsDirty { get; private set; }
+        public bool IsDirty { get; private set; } = false;
         [SerializeField] int seed;
         [SerializeField] internal NoiseData treesNoiseData;
         [SerializeField] internal NoiseData pickupsNoiseData;
@@ -97,7 +97,7 @@ namespace UZSG.Worlds
             {
                 ChunkSize = ChunkSize,
                 Seed = this.seed,
-                Offset = new(Coord.x, Coord.z),
+                Offset = new(Coord.x * ChunkSize, Coord.z * ChunkSize),
                 Density = Mathf.Clamp(treesNoiseData.Noise.Density, 0, MAX_TREE_DENSITY),
                 TreeCoords = _treeCoords.AsParallelWriter(),
             };
@@ -115,7 +115,7 @@ namespace UZSG.Worlds
             {
                 ChunkSize = ChunkSize,
                 Seed = this.seed,
-                Offset = new(Coord.x, Coord.z),
+                Offset = new(Coord.x * ChunkSize, Coord.z * ChunkSize),
                 Density = Mathf.Clamp(pickupsNoiseData.Noise.Density, 0, MAX_PICKUPS_DENSITY),
                 PickupsCoords = _pickupsCoords.AsParallelWriter(),
             };
@@ -133,7 +133,7 @@ namespace UZSG.Worlds
             {
                 ChunkSize = ChunkSize,
                 Seed = this.seed,
-                Offset = new(Coord.x, Coord.z),
+                Offset = new(Coord.x * ChunkSize, Coord.z * ChunkSize),
                 Density = Mathf.Clamp(oreDepositsNoiseData.Noise.Density, 0, MAX_ORE_DEPOSITS_DENSITY),
                 OreDepositsCoords = _oreDepositsCoords.AsParallelWriter(),
             };
@@ -219,10 +219,8 @@ namespace UZSG.Worlds
                 _population[coord] = null; /// mark/pre-populate, to prevent problems later
                 Game.Objects.PlaceNew<Objects.Tree>("pine_tree_heart", hit.point, (info) =>
                 {
-                    info.Object.OnDestructed += OnObjectDestructed;
-                    info.Object.transform.SetParent(transform);
                     var randomRotation = info.Object.Rotation.eulerAngles;
-                    randomRotation.y = 360f * Mathf.PerlinNoise(coord.x, coord.z);
+                    randomRotation.y = GetRandomRotationPerlin(coord.x, coord.z);
                     info.Object.Rotation = Quaternion.Euler(randomRotation);
                     _population[coord] = info.Object;
                 });
@@ -273,7 +271,7 @@ namespace UZSG.Worlds
                 {
                     info.Object.transform.SetParent(transform);
                     var randomRotation = info.Object.Rotation.eulerAngles;
-                    randomRotation.y = 360f * Mathf.PerlinNoise(coord.x, coord.z);
+                    randomRotation.y = GetRandomRotationPerlin(coord.x, coord.z);
                     info.Object.Rotation = Quaternion.Euler(randomRotation);
                     _population[coord] = info.Object;
                 });
@@ -322,11 +320,11 @@ namespace UZSG.Worlds
                 value >= 1f)
             {
                 _population[coord] = null; /// mark/pre-populate, to prevent problems later
-                Game.Objects.PlaceNew<Objects.Tree>("iron_deposit", hit.point, (info) =>
+                Game.Objects.PlaceNew<OreDeposit>("iron_deposit", hit.point, (info) =>
                 {
                     info.Object.transform.SetParent(transform);
                     var randomRotation = info.Object.Rotation.eulerAngles;
-                    randomRotation.y = 360f * Mathf.PerlinNoise(coord.x, coord.z);
+                    randomRotation.y = GetRandomRotationPerlin(coord.x, coord.z);
                     info.Object.Rotation = Quaternion.Euler(randomRotation);
                     _population[coord] = info.Object;
                 });
@@ -338,6 +336,14 @@ namespace UZSG.Worlds
         }
 
         #endregion
+
+
+        float GetRandomRotationPerlin(float x, float z)
+        {
+            return 360f * Mathf.PerlinNoise(
+                x + (this.Coord.x * ChunkSize),
+                z + (this.Coord.y * ChunkSize));
+        }
 
 
         #region Event callbacks
@@ -391,6 +397,7 @@ namespace UZSG.Worlds
         internal void RegisterObject(BaseObject baseObject)
         {
             _objects.Add(baseObject);
+            baseObject.OnDestructed += OnObjectDestructed;
             MarkDirty();
         }
 
@@ -427,6 +434,7 @@ namespace UZSG.Worlds
         public void SetSeed(int seed)
         {
             this.seed = seed;
+            UnityEngine.Random.InitState(this.seed);
         }
 
         public void MarkDirty()

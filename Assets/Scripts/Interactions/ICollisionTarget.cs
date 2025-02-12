@@ -2,13 +2,6 @@ using System;
 
 namespace UZSG.Interactions
 {
-    [Serializable]
-    public struct DamageContext
-    {
-        public float Value { get; set; }
-        public bool Penetration { get; set; }
-    }
-
     /// <summary>
     /// Represents stuff that is targeted by collisions, which are ICollisionSources.
     /// </summary>

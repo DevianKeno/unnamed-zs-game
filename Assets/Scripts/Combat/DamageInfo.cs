@@ -3,7 +3,7 @@ using System;
 namespace UZSG
 {
     [Serializable]
-    public struct DamageInfo
+    public class DamageInfo
     {
         public IDamageSource Source { get; set; }
         public float Amount { get; set; }

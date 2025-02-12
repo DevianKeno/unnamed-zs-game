@@ -1,21 +1,17 @@
 using System;
 
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.AsyncOperations;
 
 using UZSG.Attributes;
 using UZSG.Data;
-using UZSG.Entities;
 using UZSG.Interactions;
 using UZSG.Items;
 using UZSG.Saves;
-using UZSG.UI;
 using UZSG.Worlds;
 
 namespace UZSG.Objects
 {
-    public abstract class BaseObject : MonoBehaviour, IAttributable, IPlaceable, IPickupable, ICollisionTarget, ISaveDataReadWrite<BaseObjectSaveData>
+    public abstract class BaseObject : MonoBehaviour, IAttributable, IPlaceable, ICollisionTarget, ISaveDataReadWrite<BaseObjectSaveData>
     {
         [SerializeField] protected ObjectData objectData;
         public ObjectData ObjectData => objectData;
@@ -32,6 +28,14 @@ namespace UZSG.Objects
 
         public virtual bool IsPlaced { get; protected set; } = false;
         public virtual bool IsDamageable { get; protected set; } = true;
+        public virtual bool IsDamaged
+        {
+            get
+            {
+                if (Attributes.TryGet(AttributeId.Health, out var health)) return !health.IsFull;
+                return false;
+            }
+        }
         public virtual bool IsDirty { get; protected set; } = false;
         public virtual bool CanBePickedUp
         {
@@ -44,7 +48,6 @@ namespace UZSG.Objects
                 return objectData.CanBePickedUp;
             }
         }
-        
         /// <summary>
         /// The transform position of this Object. 
         /// </summary>
@@ -73,11 +76,10 @@ namespace UZSG.Objects
         public event EventHandler<HitboxCollisionInfo> OnCollision;
         public event Action<BaseObject> OnDestructed;
         
-        Material material;
+        protected Material material;
+
 
         #region Initializing methods
-
-        protected virtual void Start() { }
 
         internal void PlaceInternal()
         {
@@ -102,51 +104,38 @@ namespace UZSG.Objects
             chunk = Game.World.CurrentWorld.GetChunkBy(worldPosition: this.Position);
             if (chunk != null)
             {
-                chunk.RegisterObject(this);
                 transform.SetParent(chunk.transform, worldPositionStays: true);
+            
+                if (this is INaturallyPlaced)
+                {
+                }
+                else
+                {
+                    chunk.RegisterObject(this);
+                }
             }
 
             OnPlaceEvent();
             this.IsPlaced = true;
         }
 
-        public virtual void Pickup(IInteractActor actor)
+        internal void DestructInternal()
         {
-            if (actor is Player player)
+            if (chunk != null)
             {
-                if (this.CanBePickedUp && player.Actions.PickUpItem(this.AsItem()))
-                {
-                    Destruct();
-                }
+                chunk = Game.World.CurrentWorld.GetChunkBy(worldPosition: this.Position);
             }
+            chunk?.MarkDirty();
         }
 
-        protected virtual void LoadGUIAsset(AssetReference guiAsset, Action<ObjectGUI> onLoadCompleted = null)
-        {
-            if (!guiAsset.IsSet())
-            {
-                Game.Console.LogWithUnity($"There's no GUI set for Workstation '{objectData.Id}'. This won't be usable unless otherwise you set its GUI.");
-                return;
-            }
+        #endregion
 
-            Addressables.LoadAssetAsync<GameObject>(guiAsset).Completed += (a) =>
-            {
-                if (a.Status == AsyncOperationStatus.Succeeded)
-                {
-                    var go = Instantiate(a.Result, Vector3.zero, Quaternion.identity, transform);
-                    
-                    if (go.TryGetComponent<ObjectGUI>(out var gui))
-                    {
-                        onLoadCompleted?.Invoke(gui);
-                        return;
-                    }
-                }
-            };
-        }
 
+        #region Public methods
+        
         public void ReadSaveData(BaseObjectSaveData saveData)
         {
-            InitializeTransform(saveData.Transform);
+            ReadTransform(saveData.Transform);
         }
 
         public virtual BaseObjectSaveData WriteSaveData()
@@ -154,22 +143,11 @@ namespace UZSG.Objects
             var saveData = new BaseObjectSaveData()
             {
                 Id = objectData.Id,
-                Transform = new()
-                {
-                    Position = Utils.ToFloatArray(transform.position),
-                    Rotation = Utils.ToFloatArray(transform.rotation.eulerAngles),
-                    // LocalScale = Utils.ToFloatArray(transform.localScale),
-                }
+                Transform = WriteTransform(),
             };
 
             return saveData;
         }
-
-        #endregion
-
-
-        #region Public methods
-
         /// <summary>
         /// Returns the Item representation of this object (if any).
         /// Returns <c>Item.None</c> if not represented.
@@ -201,8 +179,9 @@ namespace UZSG.Objects
         /// <i>Destroys</i> this object in accordance with UZSG laws.
         /// <c>Destruct</c> because <c>Destroy</c> is reserved for UnityEngine's method.
         /// </summary>
-        public virtual void Destruct()
+        public void Destruct()
         {
+            DestructInternal();
             OnDestructEvent();
             OnDestructed?.Invoke(this);
             MonoBehaviour.Destroy(gameObject);
@@ -233,13 +212,23 @@ namespace UZSG.Objects
         #endregion
 
 
-        void InitializeTransform(TransformSaveData data)
+        public void ReadTransform(TransformSaveData data)
         {
             var position = Utils.FromFloatArray(data.Position);
             var rotation = Utils.FromFloatArray(data.Rotation);
             // var scale = Utils.FromNumericVec3(data.LocalScale);
             transform.SetPositionAndRotation(position, Quaternion.Euler(rotation));
             // transform.localScale = scale;
+        }
+        
+        public TransformSaveData WriteTransform()
+        {
+            return new()
+            {
+                Position = Utils.ToFloatArray(transform.position),
+                Rotation = Utils.ToFloatArray(transform.rotation.eulerAngles),
+                // LocalScale = Utils.ToFloatArray(transform.localScale),
+            };
         }
     }
 }

@@ -71,11 +71,11 @@ namespace UZSG
                     return;
                 }
 
+                baseObject.PlaceInternal();
                 var info = new ObjectPlacedInfo()
                 {
                     Object = baseObject
                 };
-                baseObject.PlaceInternal();
                 callback?.Invoke(info);
                 
                 // Game.Console.LogDebug($"Placed object '{objectId}' at ({position.x}, {position.y}, {position.z})");
@@ -128,11 +128,11 @@ namespace UZSG
                     return;
                 }
 
+                baseObject.PlaceInternal();
                 var info = new ObjectPlacedInfo<T>()
                 {
                     Object = baseObject as T
                 };
-                baseObject.PlaceInternal();
                 callback?.Invoke(info);
 
                 // Game.Console.LogDebug($"Placed object '{objectId}' at ({position.x}, {position.y}, {position.z})");

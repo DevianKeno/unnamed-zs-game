@@ -45,21 +45,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0ae019cbe49653499577225eef8467c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NoiseType: 1
-  Seed: 12345
-  Density: 0.5
-  noiseParameters:
-    Type: 0
-    Seed: 12345
+  Size: {x: 32, y: 32}
+  noiseLayer:
+    Seed: 0
+    NoiseType: 0
     Offset: {x: 0, y: 0}
     Octaves: 0
     Persistence: 0
     Lacunarity: 0
-    NoiseScale: 0
-    Threshold: 0
-  Size: {x: 32, y: 32}
-  Scale: 10
-  Offset: {x: 0, y: 0}
+    Scale: 0
+    Density: 0
   image: {fileID: 7811000196547772189}
 --- !u!1 &4204242319399061817
 GameObject:
@@ -196,7 +191,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 1
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2500
   m_TargetDisplay: 0
 --- !u!114 &8927608611514288964
 MonoBehaviour:

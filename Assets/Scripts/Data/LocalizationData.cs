@@ -6,7 +6,7 @@ using UnityEngine;
 namespace UZSG.Data
 {
     /// <summary>
-    /// Localization data for locales.
+    /// Manifest of localization data for locales.
     /// Values are set in Inspector; <b>Do not write</b>.
     /// </summary>
     [Serializable]

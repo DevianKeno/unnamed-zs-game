@@ -103,7 +103,7 @@ namespace UZSG.Entities
             
             if (saveData.Transform != null)
             {
-                ReadTransformSaveData(saveData.Transform);
+                ReadTransform(saveData.Transform);
             }
             /// Read attributes()
             attributes = new();
@@ -117,24 +117,29 @@ namespace UZSG.Entities
             var saveData = new EntitySaveData()
             {
                 Id = entityData.Id,
-                Transform = new()
-                {
-                    Position = Utils.ToFloatArray(transform.position),
-                    Rotation = Utils.ToFloatArray(transform.rotation.eulerAngles),
-                    // LocalScale = Utils.ToFloatArray(transform.localScale),
-                }
+                Transform = WriteTransform(),                
             };
 
             return saveData;
         }
         
-        protected virtual void ReadTransformSaveData(TransformSaveData data)
+        protected virtual void ReadTransform(TransformSaveData saveData)
         {
-            var position = Utils.FromFloatArray(data.Position);
-            var rotation = Utils.FromFloatArray(data.Rotation);
+            var position = Utils.FromFloatArray(saveData.Position);
+            var rotation = Utils.FromFloatArray(saveData.Rotation);
             // var scale = Utils.FromNumericVec3(data.LocalScale);
             transform.SetPositionAndRotation(position, Quaternion.Euler(rotation));
             // transform.localScale = scale;
+        }
+
+        protected virtual TransformSaveData WriteTransform()
+        {
+            return new TransformSaveData()
+            {
+                Position = Utils.ToFloatArray(transform.position),
+                Rotation = Utils.ToFloatArray(transform.rotation.eulerAngles),
+                // LocalScale = Utils.ToFloatArray(transform.localScale),
+            };
         }
 
         /// <summary>

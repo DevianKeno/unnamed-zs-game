@@ -34,7 +34,7 @@ namespace UZSG.Objects
 
         void SpawnDamageText(Vector3 position)
         {
-            Game.Entity.Spawn<DamageText>("damage_text", position, (info) =>
+            Game.Entity.Spawn<DamageText>("damage_text", position, onCompleted: (info) =>
             {
                 info.Entity.Text = "15";
             });

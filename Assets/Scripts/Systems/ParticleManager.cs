@@ -114,6 +114,7 @@ namespace UZSG
             {
                 var particle = _pooledParticlesDict[particleData].Dequeue();
                 particle.gameObject.transform.position = position;
+                onSpawn?.Invoke(particle as T);
                 particle.ParticleSystem.Play();
                 _pooledParticlesDict[particleData].Enqueue(particle);
             }

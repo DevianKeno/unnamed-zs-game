@@ -366,6 +366,17 @@ namespace UZSG.Worlds
 
         #region Public methods
 
+        public WorldTime GetWorldTime()
+        {
+            return new()
+            {
+                Day = this.currentDay,
+                Hour = this.currentHour,
+                Minute = this.currentMinute,
+                Second = this.currentSecond,
+            };
+        }
+
         public void SetTimeRaw(float value)
         {
             RawTime = value;

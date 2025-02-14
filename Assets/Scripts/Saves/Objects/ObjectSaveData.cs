@@ -1,7 +1,8 @@
 using System;
+using System.Collections.Generic;
 
-using Newtonsoft.Json;
 using JsonSubTypes;
+using Newtonsoft.Json;
 
 namespace UZSG.Saves
 {
@@ -11,7 +12,7 @@ namespace UZSG.Saves
     [JsonSubtypes.KnownSubType(typeof(WorkstationObjectSaveData), "WorkstationObjectSaveData")]
     public class BaseObjectSaveData : SaveData
     {
-        public string Id;
         public TransformSaveData Transform;
+        public List<AttributeSaveData> Attributes = new();
     }
 }

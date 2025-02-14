@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3372a5b7bb26d3f488d62bf6042f3f86, type: 3}
   m_Name: m4ar
   m_EditorClassIdentifier: 
+  Namespace: uzsg
   Id: m4ar
-  Name: M4AR
+  Tags: []
+  DisplayName: M4AR
+  Description: 
   Output:
-    _itemData: {fileID: 11400000, guid: 2f09e9f87261c444ebb4b595f760d88d, type: 2}
-    _count: 1
-  Materials:
-  - _itemData: {fileID: 11400000, guid: 9632887a2e9858a4394041398036f076, type: 2}
-    _count: 4
-  - _itemData: {fileID: 11400000, guid: 74e8913029c3a3b4583fb180fdd991bc, type: 2}
-    _count: 2
-  DurationSeconds: 5
+    itemData: {fileID: 11400000, guid: 2f09e9f87261c444ebb4b595f760d88d, type: 2}
+    count: 1
+  Materials: []
+  RequiresFuel: 0
+  CraftingTimeSeconds: 5

@@ -80,7 +80,7 @@ namespace UZSG.Entities
             
             if (Physics.Raycast(ray, out var hit, distance, LayerMask))
             {
-                OnHit(hit.point, hit.collider);
+                OnHit(hit);
             }
         }
 
@@ -120,16 +120,18 @@ namespace UZSG.Entities
             }
         }
 
-        void OnHit(Vector3 point, Collider hitObject)
+        void OnHit(RaycastHit hit)
         {
             var info = new HitboxCollisionInfo()
             {
                 ObjectType = ObjectCollisionType.Projectile,
                 Source = this,
-                ContactPoint = point,
+                ContactNormal = hit.normal,
+                ContactPoint = hit.point,
+                Velocity = rb.velocity,
             };
 
-            var target = hitObject.GetComponentInParent<ICollisionTarget>();
+            var target = hit.collider.GetComponentInParent<ICollisionTarget>();
             if (target != null)
             {
                 // CalculatedDamage = CalculateDamage(hitbox.Part);

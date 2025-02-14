@@ -7,6 +7,7 @@ using MEC;
 
 using UZSG.Data;
 using UZSG.Saves;
+using UZSG.Worlds;
 
 namespace UZSG.Crafting 
 {
@@ -20,8 +21,8 @@ namespace UZSG.Crafting
         public CraftItemOptions Options => options;
 
         public CraftingRoutineStatus Status { get; protected set; }
-        public float StartTime { get; protected set; }
-        public float EndTime { get; protected set; }
+        public WorldTime StartTime { get; protected set; }
+        public WorldTime EndTime { get; protected set; }
         /// <summary>
         /// Seconds elapsed for the entire Crafting Routine.
         /// </summary>
@@ -107,7 +108,7 @@ namespace UZSG.Crafting
             }
 
             _hasStartedOnce = true;
-            StartTime = Time.time;
+            StartTime = Game.World.CurrentWorld.GetWorldTime();
             Status = CraftingRoutineStatus.Started;
             OnNotify?.Invoke(this);
             _routineHandle = Timing.RunCoroutine(_StartCraftRoutine());
@@ -134,7 +135,7 @@ namespace UZSG.Crafting
             
             Timing.KillCoroutines(_routineHandle); /// what's finished's finished
             Status = CraftingRoutineStatus.Finished;
-            EndTime = Time.time;
+            EndTime = Game.World.CurrentWorld.GetWorldTime();
             OnNotify?.Invoke(this);
         }
         
@@ -164,7 +165,7 @@ namespace UZSG.Crafting
                     yield return Timing.WaitForOneFrame;
                 }
 
-                SecondsElapsedSingle -= RecipeData.CraftingTimeSeconds;
+                SecondsElapsedSingle = 0;
                 CurrentYield++;
                 RemainingYield = TotalYield - CurrentYield;
                 
@@ -179,12 +180,33 @@ namespace UZSG.Crafting
 
         public void ReadSaveData(CraftingRoutineSaveData saveData)
         {
-            throw new NotImplementedException();
+            this.TotalYield = saveData.TotalYield;
+            this.CurrentYield = saveData.CurrentYield;
+            this.RemainingYield = saveData.RemainingYield;
+            this.SecondsElapsed = saveData.SecondsElapsed;
+            this.SecondsElapsedSingle = saveData.SecondsElapsedSingle;
+            this.Status = (CraftingRoutineStatus) saveData.Status;
+
+            /// Restart the coroutine if the routine was ongoing
+            if (this.Status == CraftingRoutineStatus.Ongoing)
+            {
+                _hasStartedOnce = true;
+                _routineHandle = Timing.RunCoroutine(_StartCraftRoutine());
+            }
         }
 
         public CraftingRoutineSaveData WriteSaveData()
         {
-            throw new NotImplementedException();
+            return new()
+            {
+                RecipeId = this.RecipeData.Id,
+                TotalYield = this.TotalYield,
+                CurrentYield = this.CurrentYield,
+                RemainingYield = this.RemainingYield,
+                SecondsElapsed = this.SecondsElapsed,
+                SecondsElapsedSingle = this.SecondsElapsedSingle,
+                Status = (int) this.Status
+            };
         }
     }
 }

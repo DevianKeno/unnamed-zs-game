@@ -1,6 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
-
 using Cinemachine;
 
 namespace UZSG
@@ -11,64 +9,38 @@ namespace UZSG
         public float MoveSpeed = 5f;
         public float Sensitivity = 0.32f;
 
-        Vector3 _movement;
-
         [SerializeField] Camera mainCamera;
         [SerializeField] CinemachineVirtualCamera virtualCamera;
         CinemachinePOV POV;
-        [SerializeField] PlayerInput input;
-        InputAction moveInput;
-        InputAction jumpInput;
-        InputAction crouchInput;
-        InputAction runInput;
 
         void Awake()
         {
             mainCamera = Camera.main;
             virtualCamera = GetComponent<CinemachineVirtualCamera>();
             POV = virtualCamera.GetCinemachineComponent<CinemachinePOV>();
-            input = GetComponent<PlayerInput>();            
-            
-            moveInput = input.actions.FindAction("Move");
-            jumpInput = input.actions.FindAction("Jump");
-            runInput = input.actions.FindAction("Run");
-            crouchInput = input.actions.FindAction("Crouch");
-        }
-
-        void OnDisable()
-        {
-            Game.UI.OnCursorToggled -= CursorToggledCallback;
-        }
-
-        void CursorToggledCallback(bool isVisible)
-        {
-            EnableControls = !isVisible;
         }
 
         void Update()
         {
-            Vector2 input = moveInput.ReadValue<Vector2>();
-            Vector3 movement = (input.x * mainCamera.transform.right) + (input.y * mainCamera.transform.forward);
+            if (!EnableControls) return;
+
+            // Get movement input
+            float horizontal = Input.GetAxis("Horizontal");
+            float vertical = Input.GetAxis("Vertical");
+            Vector3 movement = (horizontal * mainCamera.transform.right) + (vertical * mainCamera.transform.forward);
+            // movement.y = 0f; // Prevent movement on the y-axis (no flying)
 
             transform.position += movement * (MoveSpeed * Time.deltaTime);
-        }
 
-        public void InitializeInputs()
-        {
-            moveInput.Enable();
-            jumpInput.Enable();
-            runInput.Enable();
-            crouchInput.Enable();
+            // Get mouse input for camera rotation
+            float mouseX = Input.GetAxis("Mouse X");
+            float mouseY = Input.GetAxis("Mouse Y");
 
-            runInput.started += (context) =>
+            if (POV != null)
             {
-                MoveSpeed = 10f;
-            };
-
-            runInput.canceled += (context) =>
-            {
-                MoveSpeed = 5f;
-            };
+                POV.m_HorizontalAxis.Value += mouseX * Sensitivity;
+                POV.m_VerticalAxis.Value -= mouseY * Sensitivity;
+            }
         }
 
         public void ToggleControls(bool enabled)

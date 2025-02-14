@@ -14,6 +14,7 @@ namespace UZSG.Interactions
         public ObjectCollisionType ObjectType { get; set; }
         public Collider Collider { get; set; }
         public Vector3 ContactPoint { get; set; }
-        public Vector3 Inertia { get; set; }
+        public Vector3 ContactNormal { get; set; }
+        public Vector3 Velocity { get; set; }
     }
 }

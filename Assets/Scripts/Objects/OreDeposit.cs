@@ -40,7 +40,7 @@ namespace UZSG.Objects
                     if (tool.Owner is Player player)
                     {
                         var yield = new Item(ResourceData.Yield);
-                        if (player.Inventory.Bag.TryPutNearest(yield))
+                        if (player.Actions.PickUpItem(yield))
                         {
                             
                         }

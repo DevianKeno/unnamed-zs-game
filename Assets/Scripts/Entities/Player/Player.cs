@@ -564,7 +564,7 @@ namespace UZSG.Entities
             
             this.saveData = saveData;
 
-            ReadTransformSaveData(saveData.Transform);
+            ReadTransform(saveData.Transform);
             
             attributes = new();
             attributes.ReadSaveData(saveData.Attributes);
@@ -600,7 +600,7 @@ namespace UZSG.Entities
             return psd;
         }
 
-        protected override void ReadTransformSaveData(TransformSaveData data)
+        protected override void ReadTransform(TransformSaveData data)
         {
             data ??= new();
             Rigidbody.position = Utils.FromFloatArray(data.Position);

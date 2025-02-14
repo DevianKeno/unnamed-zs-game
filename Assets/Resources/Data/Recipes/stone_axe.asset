@@ -12,19 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3372a5b7bb26d3f488d62bf6042f3f86, type: 3}
   m_Name: stone_axe
   m_EditorClassIdentifier: 
-  SourceId: uzsg
+  Namespace: uzsg
   Id: stone_axe
   Tags: []
-  Name: Stone Axe
+  DisplayName: Stone Axe
+  Description: 
   Output:
     itemData: {fileID: 11400000, guid: 81b558a61bb8d6844a1ed53dc7b42180, type: 2}
     count: 1
-    attributes:
-      attributesReadOnly: []
   Materials:
   - itemData: {fileID: 11400000, guid: 9a15ab273ce6ac4408d2a9e03329c10f, type: 2}
     count: 1
-    attributes:
-      attributesReadOnly: []
+  - itemData: {fileID: 11400000, guid: 1a052c19c2caff046a456a3918e4c3eb, type: 2}
+    count: 1
+  - itemData: {fileID: 11400000, guid: 28840410f2d8d0444ae7781a4c648d85, type: 2}
+    count: 1
   RequiresFuel: 0
-  DurationSeconds: 3
+  CraftingTimeSeconds: 1

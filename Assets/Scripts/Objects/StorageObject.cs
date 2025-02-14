@@ -134,7 +134,7 @@ namespace UZSG.Objects
             this.Container.ReadSaveData(saveData.Slots);
         }
 
-        public StorageObjectSaveData WriteSaveData()
+        public new StorageObjectSaveData WriteSaveData()
         {
             return new StorageObjectSaveData()
             {

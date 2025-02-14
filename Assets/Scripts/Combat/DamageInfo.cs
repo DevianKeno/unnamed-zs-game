@@ -11,7 +11,7 @@ namespace UZSG
         public DamageInfo(IDamageSource source, float amount)
         {
             this.Source = source;
-            this.Amount = amount;
+            this.Amount = Math.Clamp(amount, 0f, amount); /// dealing negative damage is prohibited
         }
     }
 }

@@ -15,16 +15,13 @@ MonoBehaviour:
   Namespace: uzsg
   Id: workbench
   Tags: []
-  Name: Workbench
+  DisplayName: Workbench
+  Description: 
   Output:
     itemData: {fileID: 11400000, guid: 424f5a81295155b41a8a54a58e3da1c3, type: 2}
     count: 1
-    attributes:
-      attributesReadOnly: []
   Materials:
   - itemData: {fileID: 11400000, guid: 28840410f2d8d0444ae7781a4c648d85, type: 2}
     count: 20
-    attributes:
-      attributesReadOnly: []
   RequiresFuel: 0
   CraftingTimeSeconds: 1

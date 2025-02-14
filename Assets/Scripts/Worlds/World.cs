@@ -451,7 +451,7 @@ namespace UZSG.Worlds
 
             var spawnPosition = ValidateWorldSpawn(currentSaveData.WorldSpawn);
 
-            Game.Entity.Spawn<Player>("player", spawnPosition, (info) =>
+            Game.Entity.Spawn<Player>("player", spawnPosition, onCompleted: (info) =>
             {
                 Player player = info.Entity;
 
@@ -464,6 +464,14 @@ namespace UZSG.Worlds
             });
 
             Game.Console.LogInfo($"[World]: {displayName} has entered the world");
+        }
+
+        /// <summary>
+        /// Retrieve the world time information.
+        /// </summary>
+        public WorldTime GetWorldTime()
+        {
+            return Time.GetWorldTime();
         }
 
         /// <summary>
@@ -573,7 +581,15 @@ namespace UZSG.Worlds
             WorldSaveData saveData = WriteSaveData();
             var settings = new JsonSerializerSettings(){ ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
             var save = JsonConvert.SerializeObject(saveData, Formatting.Indented, settings);
+
             var filepath = Path.Join(this.worldpath, "level.dat");
+            if (File.Exists(filepath))
+            {
+                var backupsDirectory = Path.Join(this.worldpath, "Backups");
+                if (!Directory.Exists(backupsDirectory)) Directory.CreateDirectory(backupsDirectory);
+                var bakpath = Path.Join(backupsDirectory, $"level.bak");
+                File.Copy(filepath, bakpath, overwrite: true);
+            }
             if (!Directory.Exists(this.worldpath)) Directory.CreateDirectory(this.worldpath);
             File.WriteAllText(filepath, save);
 

@@ -133,7 +133,7 @@ namespace UZSG.Objects
 
         #region Public methods
         
-        public void ReadSaveData(BaseObjectSaveData saveData)
+        public virtual void ReadSaveData(BaseObjectSaveData saveData)
         {
             ReadTransform(saveData.Transform);
         }
@@ -191,6 +191,7 @@ namespace UZSG.Objects
         {
             Game.Particles.Create<MaterialBreak>(Game.Particles.GetParticleData("material_break"), info.ContactPoint, onSpawn: (particle) =>
             {
+                particle.transform.rotation = Quaternion.LookRotation(Vector3.Reflect(info.Velocity, info.ContactNormal));
                 particle.SetMaterial(this.material);
             });
 

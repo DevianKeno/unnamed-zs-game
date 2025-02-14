@@ -48,7 +48,7 @@ namespace UZSG
             return null;
         }
 
-        public bool TryGetRecipeData(string id, out RecipeData recipeData)
+        public bool TryGetData(string id, out RecipeData recipeData)
         {
             if (_recipeDict.ContainsKey(id))
             {

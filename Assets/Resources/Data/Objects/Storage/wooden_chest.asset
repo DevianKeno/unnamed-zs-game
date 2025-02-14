@@ -33,7 +33,7 @@ MonoBehaviour:
   CanBePickedUp: 0
   PickupTimeSeconds: 0
   HasAudio: 0
-  AudioAssetsData: {fileID: 0}
+  AudioAssetsData: {fileID: 11400000, guid: 4ecb55d50104f56498cf5b8ba488d5e0, type: 2}
   StorageName: Wooden Crate
   Size: 18
   GUIAsset:

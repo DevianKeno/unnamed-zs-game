@@ -172,13 +172,13 @@ namespace UZSG.Players
                     case Tags.INTERACTABLE:
                     {
                         var interactable = hit.collider.GetComponentInParent<IInteractable>();
-                        if (interactable != null && interactable.AllowInteractions)
-                        {
-                            if (interactable == _lookingAt) return;
+                        if (interactable == null || interactable.AllowInteractions == false) return;
+                        /// looking at same object
+                        if (interactable == _lookingAt) return;
 
-                            LookAt(interactable);
-                            newInteractionFound = true;
-                        }
+                        /// handle look at new object
+                        LookAt(interactable);
+                        newInteractionFound = true;
                         break;
                     }
                 }
@@ -189,7 +189,7 @@ namespace UZSG.Players
                 LookAt(null);
             }
         }
-
+        
         void DetectOutOfBounds()
         {
             if (!Player.Controls.IsFalling) return;

@@ -443,7 +443,7 @@ namespace UZSG.Players
             else
             {
                 _targetMoveSpeed = _cachedAttributeValues["move_speed"];
-                _targetMoveState = default;
+                _targetMoveState = MoveStates.Jog;
             }
 
             _isRunning = run;
@@ -462,7 +462,7 @@ namespace UZSG.Players
             else
             {
                 _targetMoveSpeed = _cachedAttributeValues["move_speed"];
-                _targetMoveState = default;
+                _targetMoveState = MoveStates.Jog;
             }
 
             _isWalking = walk;

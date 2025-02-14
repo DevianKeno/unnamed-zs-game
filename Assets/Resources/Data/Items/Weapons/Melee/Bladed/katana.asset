@@ -15,17 +15,17 @@ MonoBehaviour:
   Namespace: uzsg
   Id: katana
   Tags: []
-  Name: Katana
+  DisplayName: Katana
   Description: 
-  Model:
-    m_AssetGUID: ce0c1c137c546c54ab1b00d6a785a5ef
+  EntityModel:
+    m_AssetGUID: 
     m_SubObjectName: 
     m_SubObjectType: 
-    m_EditorAssetChanged: 1
+    m_EditorAssetChanged: 0
   Sprite: {fileID: 21300000, guid: a8ee1e1ec748a65418b843c6e66fbba4, type: 3}
   Type: 1
   Subtype: 5
-  Weight: 1.6
+  WeightKg: 0
   StackSize: 1
   IsFuel: 0
   FuelDurationSeconds: 0
@@ -94,9 +94,9 @@ MonoBehaviour:
       Duration: 0
       RecoverySpeed: 0
       RecoveryDuration: 0
-  armsAnimations: {fileID: 9100000, guid: 5fed95e4c06b23e4fb6d4dae1f812d5f, type: 2}
+  armsAnimations: {fileID: 9100000, guid: c43bf7c0ea923e945bf9ce6131c0f85d, type: 2}
   viewmodelAsset:
-    m_AssetGUID: d9cca734af0fddd4da51aae80de100a9
+    m_AssetGUID: 6e42d4d07a62e5743972bc496e172704
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0

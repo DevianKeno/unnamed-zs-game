@@ -3,6 +3,7 @@ using UnityEngine.AddressableAssets;
 
 using UZSG.Data;
 using UZSG.Entities;
+using UZSG.Interactions;
 using UZSG.Saves;
 using UZSG.UI;
 
@@ -42,6 +43,13 @@ namespace UZSG.Objects
 
                 Game.UI.SetCursorVisible(true);
             });
+        }
+
+        public override void HitBy(HitboxCollisionInfo info)
+        {
+            base.HitBy(info);
+
+            Game.Audio.PlayInWorld("bullet_hit_wood", info.ContactPoint);
         }
 
         protected override void OnCloseInventory()

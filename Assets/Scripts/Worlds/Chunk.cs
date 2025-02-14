@@ -217,7 +217,7 @@ namespace UZSG.Worlds
                 value >= 1f) /// only layers with full grass influence
             {
                 _population[coord] = null; /// mark/pre-populate, to prevent problems later
-                Game.Objects.PlaceNew<Objects.Tree>("pine_tree_heart", hit.point, (info) =>
+                Game.Objects.PlaceNew<Objects.TreeResource>("pine_tree_heart", hit.point, (info) =>
                 {
                     var randomRotation = info.Object.Rotation.eulerAngles;
                     randomRotation.y = GetRandomRotationPerlin(coord.x, coord.z);
@@ -363,35 +363,48 @@ namespace UZSG.Worlds
         {
             foreach (var objectSave in saveData.Objects)
             {
-                var position = Utils.FromFloatArray(objectSave.Transform.Position);
-                Game.Objects.PlaceNew(objectSave.Id, position: position, callback: (info) =>
+                try
                 {
-                    Game.Saves.ReadAsBaseObject(info.Object, objectSave);
-                });
+                    var position = Utils.FromFloatArray(objectSave.Transform.Position);
+                    Game.Objects.PlaceNew(objectSave.Id, position: position, callback: (info) =>
+                    {
+                        Game.Saves.ReadAsBaseObject(info.Object, objectSave);
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Game.Console.LogError($"An internal error occured when reading object save '{objectSave.Id}'", true);
+                    Debug.LogException(ex);
+                }
             }
         }
 
         public ChunkSaveData WriteSaveData()
         {
-            var csd = new ChunkSaveData
+            var chunkSaveData = new ChunkSaveData
             {
                 Coord = new int[3]{ Coord.x, Coord.y, Coord.z }
             };
             
-            List<BaseObjectSaveData> objects = new();
+            chunkSaveData.Objects.Clear();
             foreach (var obj in _objects)
             {
-                var saveData = Game.Saves.WriteAsBaseObject(obj);
-                objects.Add(saveData);
-            }
-            foreach (var resource in _population.Values)
-            {
-                var saveData = Game.Saves.WriteAsBaseObject(resource);
-                objects.Add(saveData);
-            }
-            csd.Objects = objects;
+                if (obj == null) continue;
 
-            return csd;
+                chunkSaveData.Objects.Add(Game.Saves.WriteAsBaseObject(obj));
+            }
+            foreach (var resObj in _population.Values)
+            {
+                if (resObj == null ||
+                    resObj.IsDirty == false ||
+                    resObj is not Resource resource)
+                {
+                    continue;
+                }
+                chunkSaveData.Objects.Add(Game.Saves.WriteAsBaseObject(resource));
+            }
+
+            return chunkSaveData;
         }
 
         internal void RegisterObject(BaseObject baseObject)

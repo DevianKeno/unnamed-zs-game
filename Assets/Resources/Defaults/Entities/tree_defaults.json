@@ -1,0 +1,18 @@
+{
+  "Id": "tree",
+  "Transform": null,
+  "Attributes": [
+    {
+      "Id": "health",
+      "Value": 250.0,
+      "Minimum": 0.0,
+      "BaseMaximum": 250.0,
+      "Multiplier": 0.0,
+      "FlatBonus": 0.0,
+      "LimitOverflow": false,
+      "LimitUnderflow": false,
+      "Type": "AttributeSaveData"
+    }
+  ],
+  "Type": "EntitySaveData"
+}

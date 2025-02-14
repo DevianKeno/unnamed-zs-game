@@ -39,7 +39,7 @@ namespace UZSG.Worlds.Events
         {
             /// This event is indefinite
             naturalEnemySpawnEvent = new NaturalEnemySpawnEvent();
-            naturalEnemySpawnEvent.StartEvent();
+            // naturalEnemySpawnEvent.StartEvent();
         }
     }
 }

@@ -1,8 +1,3 @@
-using Epic.OnlineServices;
-using UZSG.EOS;
-using UZSG.EOS.Lobbies;
-
-
 namespace UZSG
 {
     public static class Utils
@@ -11,24 +6,11 @@ namespace UZSG
         {
             return Game.Main.GetVersionString() == version;
         }
-        
-        /// <summary>
-        /// Convert UnityEngine Quaternion to System.Numerics Quaternion.
-        /// </summary>
-        public static System.Numerics.Quaternion FromUnityQuat(UnityEngine.Quaternion quaternion)
-        {
-            return new System.Numerics.Quaternion(
-                x: quaternion.x,
-                y: quaternion.y,
-                z: quaternion.z,
-                w: quaternion.w
-            );
-        }
 
         /// <summary>
         /// Convert System.Numerics Quaternion to UnityEngine Quaternion.
         /// </summary>
-        public static UnityEngine.Quaternion FromNumericQuat(System.Numerics.Quaternion quaternion)
+        public static UnityEngine.Quaternion ToUnityQuat(System.Numerics.Quaternion quaternion)
         {
             return new UnityEngine.Quaternion(
                 x: quaternion.X,
@@ -39,9 +21,38 @@ namespace UZSG
         }
 
         /// <summary>
+        /// Convert float array size 3 to UnityEngine Quaternion.
+        /// </summary>
+        public static UnityEngine.Quaternion ToUnityQuat(float[] euler)
+        { 
+            return UnityEngine.Quaternion.Euler(new UnityEngine.Vector3(euler[0], euler[1] ,euler[2]));
+        }
+        
+        /// <summary>
+        /// Convert UnityEngine Quaternion to System.Numerics Quaternion.
+        /// </summary>
+        public static System.Numerics.Quaternion ToNumericsQuat(UnityEngine.Quaternion quaternion)
+        {
+            return new System.Numerics.Quaternion(
+                x: quaternion.x,
+                y: quaternion.y,
+                z: quaternion.z,
+                w: quaternion.w
+            );
+        }
+
+        /// <summary>
+        /// Convert float array size 3 to UnityEngine Vector3.
+        /// </summary>
+        public static UnityEngine.Vector3 ToUnityVector3(float[] values)
+        {
+            return new UnityEngine.Vector3(values[0], values[1], values[2]);
+        }
+
+        /// <summary>
         /// Convert UnityEngine Vector3 to System.Numerics Vector3.
         /// </summary>
-        public static System.Numerics.Vector3 FromUnityVec3(UnityEngine.Vector3 vector)
+        public static System.Numerics.Vector3 ToNumericsVec3(UnityEngine.Vector3 vector)
         {
             return new System.Numerics.Vector3(
                 x: vector.x,
@@ -49,6 +60,7 @@ namespace UZSG
                 z: vector.z
                 );
         }
+
         
         /// <summary>
         /// Convert UnityEngine Vector3 to float array size 3.

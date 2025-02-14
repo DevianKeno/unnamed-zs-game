@@ -12,12 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3372a5b7bb26d3f488d62bf6042f3f86, type: 3}
   m_Name: fiber_cord
   m_EditorClassIdentifier: 
+  Namespace: uzsg
   Id: fiber_cord
-  Name: Fiber Cord
+  Tags: []
+  DisplayName: Fiber Cord
+  Description: 
   Output:
-    _itemData: {fileID: 11400000, guid: 1a052c19c2caff046a456a3918e4c3eb, type: 2}
-    _count: 1
+    itemData: {fileID: 11400000, guid: 1a052c19c2caff046a456a3918e4c3eb, type: 2}
+    count: 1
   Materials:
-  - _itemData: {fileID: 11400000, guid: 35a7f50afca84d847b7a649f7d65b88b, type: 2}
-    _count: 2
-  DurationSeconds: 1
+  - itemData: {fileID: 11400000, guid: 35a7f50afca84d847b7a649f7d65b88b, type: 2}
+    count: 4
+  RequiresFuel: 0
+  CraftingTimeSeconds: 1

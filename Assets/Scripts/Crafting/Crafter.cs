@@ -3,23 +3,40 @@ using System.Collections.Generic;
 using System.Linq;
 
 using UnityEngine;
-
-using UZSG.Inventory;
-using UZSG.Items;
-using UZSG.Data;
-using UZSG.Objects;
+using UZSG.Saves;
 
 namespace UZSG.Crafting
 {
     /// <summary>
-    /// Base abstract class for all crafting logic.
+    /// Base class for crafting logic.
     /// </summary>
     public class Crafter : MonoBehaviour
     {
-        [SerializeField] protected bool simultaneousCrafting = false;
+        /// <summary>
+        /// The maximum number of crafting routines that can be queued.
+        /// </summary>
+        public int QueueSize;
+        /// <summary>
+        /// The maximum number of crafting routines that can be queued.
+        /// </summary>
+        public int AvailableQueueSlots
+        {
+            get => QueueSize - routines.Count;
+        }
+        /// <summary>
+        /// Whether to immediately start the next crafting routine in queue after the current is finished.
+        /// </summary>
+        public bool AutoCraftNext = true;
+        /// <summary>
+        /// Whether to allow multiple crafting routines to craft at one time.
+        /// </summary>
+        public bool SimultaneousCrafting = false;
         [SerializeField] protected int maxSimultaneousCrafts = 1;
-        [SerializeField] protected bool autoCraftNext = true;
-        [SerializeField] protected int availableCraftSlots;
+        /// <summary>
+        /// The number of crafting routines that can be simultaneously crafted at one time.
+        /// Only taken into account if <c>SimultaneousCrafting</c> is enabled.
+        /// </summary>
+        public int MaxSimultaneousCrafts;
         [SerializeField] protected List<CraftingRoutine> routines = new();
         /// <summary>
         /// The list of CraftingRoutines this crafter is currently processing.
@@ -28,11 +45,8 @@ namespace UZSG.Crafting
         /// <summary>
         /// Whether if the crafter has available slots for crafting.
         /// </summary>
-        public bool IsQueueFull
-        {
-            get => availableCraftSlots == 0;
-        }
-
+        public bool IsQueueFull => routines.Count >= QueueSize;
+        
         #region Events
 
         /// <summary>
@@ -45,12 +59,6 @@ namespace UZSG.Crafting
         public event Action<CraftingRoutine> OnRoutineUpdate;
 
         #endregion
-
-
-        void Start()
-        {
-            availableCraftSlots = maxSimultaneousCrafts;
-        }
 
         /// <summary>
         /// Crafts a new item using the provided options.
@@ -66,7 +74,10 @@ namespace UZSG.Crafting
             routine.OnUpdate += OnRoutineEventUpdate;
             routine.Prepare();
             routines.Add(routine);
-            if (begin && availableCraftSlots > 0)
+            
+            if (begin &&
+                SimultaneousCrafting &&
+                AvailableQueueSlots > 0)
             {
                 CraftNextAvailable();
             }
@@ -82,7 +93,6 @@ namespace UZSG.Crafting
             if (nextRoutine != null)
             {
                 nextRoutine.Start();
-                availableCraftSlots--;
             }
         }
 
@@ -138,6 +148,37 @@ namespace UZSG.Crafting
             }
         }
 
+        public void ReadSaveData(List<CraftingRoutineSaveData> routineSaves)
+        {
+            foreach (var save in routineSaves)
+            {
+                if (false == Game.Recipes.TryGetData(save.RecipeId, out var recipeData)) continue;
+
+                var routine = new CraftingRoutine(new()
+                {
+                    Recipe = recipeData,
+                    Count = save.Count,
+                });
+                routine.ReadSaveData(save);
+
+                routine.OnNotify += OnRoutineEventCall;
+                routine.OnUpdate += OnRoutineEventUpdate;
+                routine.Prepare();
+            }
+        }
+
+        public List<CraftingRoutineSaveData> WriteSaveData()
+        {
+            var list = new List<CraftingRoutineSaveData>();
+            foreach (var r in routines)
+            {
+                r.Pause();
+                list.Add(r.WriteSaveData());
+
+            }
+            return list;
+        }
+
 
         #region Crafting routine event callbacks
 
@@ -148,9 +189,8 @@ namespace UZSG.Crafting
                 routines.Remove(routine);
                 routine.OnNotify -= OnRoutineEventCall;
                 routine.OnUpdate -= OnRoutineEventUpdate;
-                availableCraftSlots++;
 
-                if (autoCraftNext) CraftNextAvailable();
+                if (AutoCraftNext) CraftNextAvailable();
             }
 
             OnRoutineNotify?.Invoke(routine);

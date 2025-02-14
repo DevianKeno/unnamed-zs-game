@@ -78,7 +78,7 @@ namespace UZSG
         /// Spawn an entity in the game world.
         /// Should only be called when within a world.
         /// </summary>
-        public async void Spawn(string entityId, Vector3 position = default, OnEntitySpawnComplete callback = null)
+        public async void Spawn(string entityId, Vector3 position = default, Quaternion rotation = default, OnEntitySpawnComplete callback = null)
         {
             if (!_entitiesDict.ContainsKey(entityId))
             {
@@ -94,10 +94,11 @@ namespace UZSG
 
                 if (asyncOp.Status == AsyncOperationStatus.Succeeded)
                 {
-                    var go = Instantiate(asyncOp.Result, position, Quaternion.identity, Game.World.CurrentWorld.entitiesContainer);
+                    var go = Instantiate(asyncOp.Result, position, rotation, Game.World.CurrentWorld.entitiesContainer);
                     go.name = $"{ettyData.DisplayName} (Entity)";
                     if (!go.TryGetComponent(out Entity entity)) /// what do making entity without an entity component!!
                     {
+                        Game.Console.LogWarn($"'{entityId}' does not have a BaseObject component! Discarding...", true);
                         Destroy(go);
                         return;
                     }
@@ -137,7 +138,7 @@ namespace UZSG
         /// Spawn an entity in the game world.
         /// Should only be called when within a world.
         /// </summary>
-        public async void Spawn<T>(string entityId, Vector3 position = default, OnSpawnCallback<T> onCompleted = null) where T : Entity
+        public async void Spawn<T>(string entityId, Vector3 position = default, Quaternion rotation = default, OnSpawnCallback<T> onCompleted = null) where T : Entity
         {
             if (!_entitiesDict.ContainsKey(entityId))
             {
@@ -153,10 +154,11 @@ namespace UZSG
 
                 if (asyncOp.Status == AsyncOperationStatus.Succeeded)
                 {
-                    var go = Instantiate(asyncOp.Result, position, Quaternion.identity, Game.World.CurrentWorld.entitiesContainer);
+                    var go = Instantiate(asyncOp.Result, position, rotation, Game.World.CurrentWorld.entitiesContainer);
                     go.name = $"{ettyData.DisplayName} (Entity)";
                     if (!go.TryGetComponent(out Entity entity))
                     {
+                        Game.Console.LogWarn($"'{entityId}' does not have a BaseObject component! Discarding...", true);
                         Destroy(go);
                         return;
                     }

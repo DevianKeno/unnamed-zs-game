@@ -9,6 +9,7 @@ using UZSG.Entities;
 using UZSG.Interactions;
 using UZSG.Inventory;
 using UZSG.Items;
+using UZSG.Saves;
 using UZSG.UI;
 
 namespace UZSG.Objects
@@ -17,7 +18,7 @@ namespace UZSG.Objects
     /// Represents objects that can craft items.
     /// </summary>
     [RequireComponent(typeof(Crafter))]
-    public class CraftingStation : BaseObject, IPlayerInteractable, IPickupable, ICrafter
+    public class CraftingStation : BaseObject, IPlayerInteractable, IPickupable, ICrafter, ISaveDataReadWrite<CraftingStationSaveData>
     {
         public WorkstationData WorkstationData => objectData as WorkstationData;
         
@@ -45,6 +46,7 @@ namespace UZSG.Objects
             QueueSlots = new List<ItemSlot>(WorkstationData.QueueSize);
             OutputContainer = new Container(WorkstationData.OutputSize);
             InputContainer = new Container();
+            Crafter.QueueSize = WorkstationData.QueueSize;
             OutputContainer.OnSlotItemChanged += OnOutputSlotItemChanged;
         }
         
@@ -105,6 +107,27 @@ namespace UZSG.Objects
         public void CancelCraft(CraftingRoutine routine)
         {
             throw new NotImplementedException();
+        }
+
+        public void ReadSaveData(CraftingStationSaveData saveData)
+        {
+            base.ReadSaveData(saveData);
+
+            this.Crafter.ReadSaveData(saveData.CraftingRoutines);
+            this.OutputContainer.ReadSaveData(saveData.OutputSlots);
+        }
+
+        public new CraftingStationSaveData WriteSaveData()
+        {
+            var sd = base.WriteSaveData();
+            var cssd = new CraftingStationSaveData()
+            {
+                Id = sd.Id,
+                Transform = sd.Transform,
+                CraftingRoutines = this.Crafter.WriteSaveData(),
+                OutputSlots = this.OutputContainer.WriteSaveData(),
+            };
+            return cssd;
         }
 
         protected virtual void OnCraftEvent(CraftingRoutine routine)

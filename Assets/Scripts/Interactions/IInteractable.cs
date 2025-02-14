@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 
+using UnityEngine;
+
 namespace UZSG.Interactions
 {
     /// <summary>
@@ -7,6 +9,7 @@ namespace UZSG.Interactions
     /// </summary>
     public interface IInteractable
     {
+        public GameObject gameObject { get; }
         public string DisplayName { get; }
         /// <summary>
         /// Whether to allow interactions for the Interactable.

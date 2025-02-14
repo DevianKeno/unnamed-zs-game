@@ -7,8 +7,11 @@ namespace UZSG.Saves
     {
         public string RecipeId;
         public int Count;
-        public float StartTime;
-        public float EndTime;
-        public float Progress;
+        public int TotalYield;
+        public int CurrentYield;
+        public int RemainingYield;
+        public float SecondsElapsed;
+        public float SecondsElapsedSingle;
+        public int Status;
     }
 }

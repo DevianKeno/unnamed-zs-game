@@ -471,7 +471,7 @@ namespace UZSG.UI
         {
             foreach (var id in ids)
             {
-                if (Game.Recipes.TryGetRecipeData(id, out var data))
+                if (Game.Recipes.TryGetData(id, out var data))
                 {
                     CreateCraftableItemUI(data);
                 }

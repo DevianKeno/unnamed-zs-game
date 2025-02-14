@@ -44,7 +44,7 @@ namespace UZSG.UI.Players
             /// subject to change
             if (context.Status == FrameController.SwitchStatus.Started)
             {
-                if (EnableSelector)
+                if (EnableSelectorUI)
                 {
                     selector?.Hide();
                 }
@@ -57,7 +57,7 @@ namespace UZSG.UI.Players
             {
                 if (context.NextId == "bag")
                 {
-                    if (EnableSelector)
+                    if (EnableSelectorUI)
                     {
                         selector?.Show();
                     }

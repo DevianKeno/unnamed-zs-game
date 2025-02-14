@@ -4,6 +4,9 @@ using UZSG.Entities;
 
 namespace UZSG.FPP
 {
+    /// <summary>
+    /// Rotates the target transform to match the source camera rotation as it plays.
+    /// </summary>
     public class FPPCameraAnimationTarget : MonoBehaviour
     {
         public Player Player;
@@ -24,6 +27,7 @@ namespace UZSG.FPP
         }
         public Transform Target;
         Transform _cameraBone;
+        readonly static Quaternion blenderOffset = Quaternion.Euler(180f, 0f, 0f);
 
         void LateUpdate()
         {
@@ -61,25 +65,12 @@ namespace UZSG.FPP
             _playAnimation = false;
         }
 
-        void ApplyRotation() /// additively
+        void ApplyRotation()
         {
             if (_playAnimation)
             {
-                var targetRotation = Quaternion.Inverse(cameraFpp.transform.rotation) * _cameraBone.rotation;
-                Target.localRotation = Quaternion.Slerp(Target.localRotation, targetRotation, Slerp * Time.deltaTime);
+                Target.localRotation =  _cameraBone.localRotation * blenderOffset;
             }
-            // else
-            // {
-            //     Target.localRotation *= Quaternion.Slerp(Target.localRotation, Quaternion.identity, Slerp / Time.deltaTime);
-            
-            //     print($"EVALLL {Target.localRotation} == {Quaternion.identity}");
-            //     if (Target.localRotation == Quaternion.identity)
-            //     {
-            //         print($"STOPPING ANIM! {Target.localRotation} == {Quaternion.identity}");
-            //         StopAnimation();
-            //         Enabled = false;
-            //     }
-            // }
         }
     }
 }

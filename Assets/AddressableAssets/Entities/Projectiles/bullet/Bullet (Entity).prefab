@@ -301,7 +301,7 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 43008
+    m_Bits: 43520
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -326,8 +326,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   instanceId: 0
   entityData: {fileID: 11400000, guid: 405cf52e16b571e489e63a0bc1f4aff7, type: 2}
-  attributes:
-    attributesReadOnly: []
   DamageAttributes:
     BaseDamage: 0
     IsPartDamage: 0
@@ -347,7 +345,7 @@ MonoBehaviour:
     MinRenderDistance: 0
   LayerMask:
     serializedVersion: 2
-    m_Bits: 43008
+    m_Bits: 43520
   rb: {fileID: 5723560054871247184}
   coll: {fileID: 2886082513997833480}
   meshRenderer: {fileID: 3034706727560040334}

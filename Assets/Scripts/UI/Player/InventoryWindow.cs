@@ -23,6 +23,7 @@ namespace UZSG.UI.Players
 
         bool _isInitialized;
         public bool IsInitialized => _isInitialized;
+        public bool EnableSelectorUI { get; set; } = false;
 
         int _lastSelectedSlotIndex;
         bool _isHoldingItem = false;
@@ -32,22 +33,34 @@ namespace UZSG.UI.Players
         public bool IsHoldingItem => _isHoldingItem;
         bool _isPutting;
         bool _isGetting;
+        bool _hasDisplayedItem;
         bool _hasExternalContainerOpen;
 
         Item _heldItem = Item.None;
-        public Item HeldItem => _heldItem;
+        public Item HeldItem
+        {
+            get => _heldItem;
+            set
+            {
+                HoldItem(value);
+            }
+        }
         ItemSlot _selectedSlot;
         ItemSlotUI _selectedSlotUI;
         Dictionary<int, ItemSlotUI> _bagSlotUIs = new();
         List<FadeableElement> _fadeableElements = new();
         
-        ChoiceWindow itemOptions;
-        public ChoiceWindow ItemOptions => itemOptions;
-        bool _hasDisplayedItem;
-        ItemDisplayUI displayedItem;
-        public bool EnableSelector { get; set; } = false;
+
+        #region Runtime UI elements
+
         Selector selector;
         public Selector Selector => selector;
+        ItemDisplayUI heldItemDisplay;
+        ChoiceWindow itemOptions;
+        public ChoiceWindow ItemOptions => itemOptions;
+
+        #endregion
+
 
         [Header("UI Elements")]
         [SerializeField] HotbarUI hotbarUI;
@@ -60,7 +73,7 @@ namespace UZSG.UI.Players
         {
             if (_hasDisplayedItem)
             {
-                displayedItem.transform.position = Input.mousePosition;
+                heldItemDisplay.transform.position = Input.mousePosition;
             }
         }
         
@@ -88,7 +101,7 @@ namespace UZSG.UI.Players
             {
                 if (context.NextId != "bag" &&
                     IsVisible &&
-                    EnableSelector)
+                    EnableSelectorUI)
                 {
                     selector?.Hide();
                 }
@@ -106,14 +119,14 @@ namespace UZSG.UI.Players
             
             OnOpened += () =>
             {
-                if (EnableSelector)
+                if (EnableSelectorUI)
                 {
                     selector?.Show();
                 }
             };
             OnClosed += () =>
             {
-                if (EnableSelector)
+                if (EnableSelectorUI)
                 {
                     selector?.Hide();
                 }
@@ -187,7 +200,7 @@ namespace UZSG.UI.Players
                 rect.localScale = Vector3.one;
             }
                 
-            if (EnableSelector)
+            if (EnableSelectorUI)
             {
                 selector?.Hide();
             }
@@ -218,7 +231,7 @@ namespace UZSG.UI.Players
             PutBackHeldItem();
             DestroyItemOptions();
             _selectedSlotUI = null;
-            if (EnableSelector)
+            if (EnableSelectorUI)
             {
                 selector?.Hide();
             }
@@ -228,6 +241,9 @@ namespace UZSG.UI.Players
 
         #region Public methods
 
+        /// <summary>
+        /// Makes the cursor in the Inventory screen "hold" the item.
+        /// </summary>
         public void HoldItem(Item item)
         {
             if (item.IsNone || item.Count < 1)
@@ -249,20 +265,13 @@ namespace UZSG.UI.Players
             return toReturn;
         }
 
-        public Item TakeHeldItemSingle()
-        {
-            Item toReturn = _heldItem.Take(1);
-            return toReturn;
-        }
-
         /// <summary>
         /// Swaps held items, holding the new given Item, and returning the previously held Item.
         /// </summary>
         public Item SwapHeldWith(Item item)
         {
-            Item prevHeld = _heldItem;
-            _heldItem = item;
-            displayedItem.SetDisplayedItem(_heldItem);
+            Item prevHeld = new(_heldItem);
+            HeldItem = item;
             return prevHeld;
         }
 
@@ -343,7 +352,7 @@ namespace UZSG.UI.Players
                     }
                     else if (_selectedSlot.Item.Is(HeldItem))
                     {
-                        Item ofOne = TakeHeldItemSingle();
+                        Item ofOne = _heldItem.Take(1);
                         if (_selectedSlot.TryStack(ofOne, out var excess))
                         {
                             if (!excess.IsNone) HeldItem.Stack(excess);
@@ -539,8 +548,8 @@ namespace UZSG.UI.Players
         void ReplaceItemDisplay(Item item)
         {
             DestroyItemDisplay();
-            displayedItem = Game.UI.Create<ItemDisplayUI>("Item Display");
-            displayedItem.SetDisplayedItem(item);
+            heldItemDisplay = Game.UI.Create<ItemDisplayUI>("Item Display");
+            heldItemDisplay.SetDisplayedItem(item);
             _hasDisplayedItem = true;
         }
 
@@ -552,18 +561,20 @@ namespace UZSG.UI.Players
             }
             else
             {
-                if (displayedItem != null)
+                /// do not simplify
+                if (heldItemDisplay != null)
                 {
-                    displayedItem.SetDisplayedItem(_heldItem);
+                    heldItemDisplay.SetDisplayedItem(_heldItem);
                 }
             }
         }
 
         void DestroyItemDisplay()
         {
-            if (displayedItem != null)
+            /// do not simplify
+            if (heldItemDisplay != null)
             {
-                Destroy(displayedItem.gameObject);
+                heldItemDisplay.Destruct();
             }
             _hasDisplayedItem = false;
         }

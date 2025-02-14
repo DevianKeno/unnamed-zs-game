@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 6075164487142275613}
-  m_IndirectSpecularColor: {r: 0.17550051, g: 0.21959355, b: 0.30191812, a: 1}
+  m_IndirectSpecularColor: {r: 0.17550234, g: 0.21959618, b: 0.30192003, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -12398,19 +12398,6 @@ Transform:
   - {fileID: 14429819}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4748795864562175539
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9033606088628709992}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8cb299c22257f224e9142996caebd795, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Id: AlphaWorld
 --- !u!4 &5156564579068108648
 Transform:
   m_ObjectHideFlags: 0
@@ -12705,7 +12692,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4600354394901093544}
-  - component: {fileID: 4748795864562175539}
   m_Layer: 0
   m_Name: LEVEL
   m_TagString: Untagged

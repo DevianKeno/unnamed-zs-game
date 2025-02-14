@@ -15,17 +15,17 @@ MonoBehaviour:
   Namespace: uzsg
   Id: iron_pickaxe
   Tags: []
-  Name: Iron Pickaxe
+  DisplayName: Iron Pickaxe
   Description: Used to mine resource deposits to acquire minerals.
-  Model:
-    m_AssetGUID: 695d97c0eaa4c714fa58af62d3bbb34b
+  EntityModel:
+    m_AssetGUID: 
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
   Sprite: {fileID: 21300000, guid: f96dc9b4512f0814aa078cd3f402abee, type: 3}
   Type: 2
   Subtype: 4
-  Weight: 0
+  WeightKg: 0
   StackSize: 1
   IsFuel: 0
   FuelDurationSeconds: 0
@@ -76,9 +76,9 @@ MonoBehaviour:
     BaseCritStrike: 0
     BaseCritDamage: 0
     ComboCount: 1
-  armsAnimations: {fileID: 9100000, guid: 5cfc4e636c916af439e6377ac83eb14e, type: 2}
+  armsAnimations: {fileID: 9100000, guid: d1bef13b0bf95f746a8139354943a5bc, type: 2}
   viewmodel:
-    m_AssetGUID: adc67ffbd1a8f1940b6c612bfca8efc9
+    m_AssetGUID: 22ed87124ef9f8c4d9f43f893a88002e
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0

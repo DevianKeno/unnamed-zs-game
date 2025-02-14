@@ -27,6 +27,17 @@ namespace UZSG
 
         #region BaseObject Read
 
+        public void ReadAsResource(Resource resource, SaveData saveData)
+        {
+            switch (saveData)
+            {
+                default:
+                {
+                    break;
+                }
+            }
+        }
+
         /// I don't know what I was thinking when making this but, this gut feeling+
         public void ReadAsBaseObject(BaseObject baseObject, SaveData saveData)
         {
@@ -36,6 +47,12 @@ namespace UZSG
                     when baseObject is ISaveDataReadable<StorageObjectSaveData> storageObjectReader:
                 {
                     storageObjectReader.ReadSaveData(storageObjectSave);
+                    break;
+                }
+                case CraftingStationSaveData craftingStationSave 
+                    when baseObject is ISaveDataReadable<CraftingStationSaveData> craftingStationReader:
+                {
+                    craftingStationReader.ReadSaveData(craftingStationSave);
                     break;
                 }
                 case BaseObjectSaveData baseObjectSave
@@ -64,6 +81,10 @@ namespace UZSG
                 case ISaveDataWriteable<StorageObjectSaveData> storageObjectWriter:
                 {
                     return storageObjectWriter.WriteSaveData();
+                }
+                case ISaveDataWriteable<CraftingStationSaveData> craftingStationWriter:
+                {
+                    return craftingStationWriter.WriteSaveData();
                 }
                 case ISaveDataWriteable<BaseObjectSaveData> baseObjectWriter:
                 {

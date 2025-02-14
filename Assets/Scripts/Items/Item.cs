@@ -3,7 +3,6 @@ using System;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-
 using UZSG.Data;
 using UZSG.Saves;
 using UZSG.Attributes;
@@ -11,7 +10,7 @@ using UZSG.Attributes;
 namespace UZSG.Items
 {
     /// <summary>
-    /// Represents an Item with count.
+    /// Represents an instanc of an Item with count.
     /// </summary>
     [Serializable]
     public class Item : IAttributable, ISaveDataReadWrite<ItemSaveData>
@@ -19,23 +18,18 @@ namespace UZSG.Items
         public const int MAX_STACK_SIZE = 99999;
         public const int NONE_ITEM_HASH_CODE = -1;
         public static Item None => new(null);
-        
-        [FormerlySerializedAs("_itemData")]
-        [SerializeField] ItemData itemData;
+
+        [FormerlySerializedAs("_itemData"), SerializeField] ItemData itemData;
         public ItemData Data
         {
-            get
-            {
-                return itemData;
-            }
+            get => itemData;
             set
             {
                 itemData = value;
                 this._hashCode = GetHashCode();
             }
         }
-        [FormerlySerializedAs("_count")]
-        [SerializeField] int count;
+        [FormerlySerializedAs("_count"), SerializeField] int count;
         public int Count
         {
             get => count;
@@ -59,7 +53,7 @@ namespace UZSG.Items
         public bool IsNone => _hashCode == NONE_ITEM_HASH_CODE || this.itemData == null;
         public string Id => itemData.Id;
         /// <summary>
-        /// Called whenever this Item is changed/updated.
+        /// Raised whenever this Item is changed/updated.
         /// </summary>
         public event Action OnChanged;
 
@@ -284,6 +278,11 @@ namespace UZSG.Items
                 return _hashCode == otherItem._hashCode;
             }
             return false;
+        }
+
+        public override string ToString()
+        {
+            return $"item:{(count > 0 ? count + " " : "")}{itemData.Id ?? "none"}";
         }
 
         public override int GetHashCode()

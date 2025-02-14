@@ -15,9 +15,9 @@ MonoBehaviour:
   Namespace: uzsg
   Id: workbench
   Tags: []
-  Name: Workbench
+  DisplayName: Workbench
   Description: 
-  Model:
+  EntityModel:
     m_AssetGUID: 
     m_SubObjectName: 
     m_SubObjectType: 
@@ -25,7 +25,7 @@ MonoBehaviour:
   Sprite: {fileID: 0}
   Type: 6
   Subtype: 0
-  Weight: 1
+  WeightKg: 0
   StackSize: 1
   IsFuel: 0
   FuelDurationSeconds: 0
@@ -36,4 +36,4 @@ MonoBehaviour:
   Recipes:
   - {fileID: 11400000, guid: ddcfcfa45af810b46a3243dfd28e9347, type: 2}
   SourceDescription: 
-  AudioAssetsData: {fileID: 0}
+  AudioAssetsData: {fileID: 11400000, guid: 4ecb55d50104f56498cf5b8ba488d5e0, type: 2}

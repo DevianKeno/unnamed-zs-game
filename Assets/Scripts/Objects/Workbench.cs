@@ -66,6 +66,13 @@ namespace UZSG.Objects
             }
         }
 
+        public override void HitBy(HitboxCollisionInfo info)
+        {
+            base.HitBy(info);
+
+            Game.Audio.PlayInWorld("bullet_hit_wood", info.ContactPoint);
+        }
+
 
         #region Public methods
 

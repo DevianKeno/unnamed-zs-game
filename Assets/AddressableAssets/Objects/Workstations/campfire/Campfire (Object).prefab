@@ -50,10 +50,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ddf594ea1efd5f4299ebdfbbf3cbe75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  simultaneousCrafting: 0
+  QueueSize: 0
+  AutoCraftNext: 1
+  SimultaneousCrafting: 0
   maxSimultaneousCrafts: 1
-  autoCraftNext: 1
-  availableCraftSlots: 0
+  MaxSimultaneousCrafts: 0
   routines: []
 --- !u!114 &6900531646128027691
 MonoBehaviour:

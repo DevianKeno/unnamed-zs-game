@@ -217,8 +217,9 @@ namespace UZSG.Worlds
                 value >= 1f) /// only layers with full grass influence
             {
                 _population[coord] = null; /// mark/pre-populate, to prevent problems later
-                Game.Objects.PlaceNew<Objects.TreeResource>("pine_tree_heart", hit.point, (info) =>
+                Game.Objects.PlaceNew<Objects.TreeResource>("pine_tree", hit.point, (info) =>
                 {
+                    info.Object.isNaturallyGenerated = true;
                     var randomRotation = info.Object.Rotation.eulerAngles;
                     randomRotation.y = GetRandomRotationPerlin(coord.x, coord.z);
                     info.Object.Rotation = Quaternion.Euler(randomRotation);

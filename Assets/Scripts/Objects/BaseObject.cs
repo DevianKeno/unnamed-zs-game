@@ -15,7 +15,6 @@ namespace UZSG.Objects
     {
         [SerializeField] protected ObjectData objectData;
         public ObjectData ObjectData => objectData;
-        
         public string DisplayName => objectData.DisplayNameTranslatable;
 
         [SerializeField] protected AttributeCollection attributes;
@@ -217,9 +216,9 @@ namespace UZSG.Objects
         {
             var position = Utils.FromFloatArray(data.Position);
             var rotation = Utils.FromFloatArray(data.Rotation);
-            // var scale = Utils.FromNumericVec3(data.LocalScale);
+            var scale = Utils.FromFloatArray(data.LocalScale);
             transform.SetPositionAndRotation(position, Quaternion.Euler(rotation));
-            // transform.localScale = scale;
+            transform.localScale = scale;
         }
         
         public TransformSaveData WriteTransform()
@@ -228,7 +227,7 @@ namespace UZSG.Objects
             {
                 Position = Utils.ToFloatArray(transform.position),
                 Rotation = Utils.ToFloatArray(transform.rotation.eulerAngles),
-                // LocalScale = Utils.ToFloatArray(transform.localScale),
+                LocalScale = Utils.ToFloatArray(transform.localScale),
             };
         }
     }

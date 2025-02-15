@@ -13,12 +13,9 @@ namespace UZSG.Entities
     /// </summary>
     public abstract class Entity : MonoBehaviour, IAttributable, ISaveDataReadWrite<EntitySaveData>
     {
-        [SerializeField] int instanceId; /// so we can see In inspector
-        public int InstanceId => instanceId;
-        [Space]
-        
         [SerializeField] protected EntityData entityData;
         public EntityData EntityData => entityData;
+        public string DisplayName => entityData.DisplayNameTranslatable;
         /// <summary>
         /// Shorthand to get EntityData Id.
         /// </summary>
@@ -71,7 +68,6 @@ namespace UZSG.Entities
             }
             catch { }
             _hasAlreadySpawned = true;
-            instanceId = GetInstanceID();
             OnSpawnEvent();
         }
 
@@ -125,11 +121,11 @@ namespace UZSG.Entities
         
         protected virtual void ReadTransform(TransformSaveData saveData)
         {
-            var position = Utils.FromFloatArray(saveData.Position);
-            var rotation = Utils.FromFloatArray(saveData.Rotation);
-            // var scale = Utils.FromNumericVec3(data.LocalScale);
+            var position = Utils.ToUnityVector3(saveData.Position);
+            var rotation = Utils.ToUnityVector3(saveData.Rotation);
+            var scale = Utils.ToUnityVector3(saveData.LocalScale);
             transform.SetPositionAndRotation(position, Quaternion.Euler(rotation));
-            // transform.localScale = scale;
+            transform.localScale = scale;
         }
 
         protected virtual TransformSaveData WriteTransform()

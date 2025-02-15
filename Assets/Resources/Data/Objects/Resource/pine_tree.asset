@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8cc029cec14b78e47bd523602bdd0778, type: 3}
+  m_Name: pine_tree
+  m_EditorClassIdentifier: 
+  Namespace: uzsg
+  Id: pine_tree
+  Tags: []
+  DisplayName: Pine Tree
+  Description: 
+  Object:
+    m_AssetGUID: 9e638413022ed8e4f93269c26ea28359
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 1
+  Attributes:
+  - data: {fileID: 11400000, guid: e1db9201565269c4caebcb12298f0665, type: 2}
+    value: 500
+    baseMaximum: 500
+    multiplier: 1
+    flatBonus: 0
+    LimitOverflow: 0
+    LimitUnderflow: 0
+  CanBePickedUp: 0
+  PickupTimeSeconds: 0
+  HasAudio: 1
+  AudioAssetsData: {fileID: 11400000, guid: 4cd27413eab54914d9286d94b997c7bf, type: 2}
+  ToolType: 1
+  HarvestType: 0
+  Yield:
+    itemData: {fileID: 11400000, guid: 28840410f2d8d0444ae7781a4c648d85, type: 2}
+    count: 1
+  LootTable: {fileID: 0}
+  IsPickup: 0
+  PickupDuration: 0
+  MaxInteractDistance: 0
+  UseInstances: 0
+  Instances: []

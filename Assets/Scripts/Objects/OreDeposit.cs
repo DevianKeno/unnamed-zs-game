@@ -29,7 +29,7 @@ namespace UZSG.Objects
 
             if (info.Source is HeldToolController tool)
             {
-                if (tool.Attributes.TryGet("efficiency", out var efficiency))
+                if (tool.Attributes.TryGet(AttributeId.Efficiency, out var efficiency))
                 {
                     damage += efficiency.Value;
                 }

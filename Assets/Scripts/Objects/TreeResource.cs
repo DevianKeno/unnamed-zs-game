@@ -10,6 +10,9 @@ using UZSG.Saves;
 
 namespace UZSG.Objects
 {
+    /// <summary>
+    /// Tree that is planted on the ground and is harvestable.
+    /// </summary>
     public class TreeResource : Resource, IInteractable, ISaveDataReadWrite<BaseObjectSaveData>
     {
         public bool AllowInteractions { get; set; } = true;
@@ -22,7 +25,7 @@ namespace UZSG.Objects
         /// <summary>
         /// Whether the tree is generated via resource chunks.
         /// </summary>
-        bool isNaturallyGenerated;
+        internal bool isNaturallyGenerated;
         /// <summary>
         /// The angle of the tree when it gets chopped. 
         /// </summary>
@@ -33,10 +36,8 @@ namespace UZSG.Objects
         Vector3 _lastHitAngle;
 
         [Space, Header("Components")]
-        [SerializeField] GameObject leaves0; /// lod0
+        [SerializeField] GameObject stump;
         [SerializeField] new Rigidbody rigidbody;
-        [SerializeField] LODGroup lodGroup;
-        [SerializeField] GameObject lod0;
         
         protected override void OnPlaceEvent()
         {
@@ -50,7 +51,7 @@ namespace UZSG.Objects
 
             if (info.Source is HeldToolController tool)
             {
-                if (tool.Attributes.TryGet("efficiency", out var efficiency))
+                if (tool.Attributes.TryGet(AttributeId.Efficiency, out var efficiency))
                 {
                     damage += efficiency.Value;
                 }
@@ -98,12 +99,20 @@ namespace UZSG.Objects
         {
             base.ReadSaveData(saveData);
             Attributes.Get(AttributeId.Health).Value = saveData.GetEntry<float>("health");
+            this.IsFelled = saveData.GetEntry<bool>("is_felled");
+            if (this.IsFelled)
+            {
+                stump.transform.SetParent(this.transform);
+                stump.transform.SetAsFirstSibling();
+                DestroyAllChildren();
+            }
         }
 
         public override BaseObjectSaveData WriteSaveData()
         {
             var sd = base.WriteSaveData();
             sd.AddEntry("health", Attributes[AttributeId.Health].Value);
+            sd.AddEntry<bool>("is_felled", this.IsFelled);
             return sd;
         }
 
@@ -134,26 +143,23 @@ namespace UZSG.Objects
                 Game.Entity.SpawnItem(yield, player.Position);
             }
         }
-        
-        void PlayChopSound()
-        {
-
-        }
-        
+                
         public void Cutdown()
         {
             IsChoppable = false;
             IsFelled = true;
             AllowInteractions = false;
-            this.rigidbody.isKinematic = true;
 
             Game.Audio.PlayInWorld("tree_fell", Position);
-            Game.Entity.Spawn<TreeEntity>("tree_log", this.Position, this.Rotation, (info) =>
+            Game.Entity.Spawn<TreeFelledEntity>($"{objectData.Id}_felled", this.Position, this.Rotation, (info) =>
             {
-                var treeEntity = info.Entity;
-                treeEntity.Rigidbody.mass = this.rigidbody.mass;
-                treeEntity.Rigidbody.AddForce(_lastHitAngle * rigidbody.mass, ForceMode.Impulse);
-                DestroySelf();
+                stump.transform.SetParent(this.transform);
+                stump.transform.SetAsFirstSibling();
+                DestroyAllChildren();
+
+                var treeFelledEntity = info.Entity;
+                treeFelledEntity.Rigidbody.mass = this.rigidbody.mass;
+                treeFelledEntity.Rigidbody.AddForce(_lastHitAngle * rigidbody.mass, ForceMode.Impulse);
             });
         }
 
@@ -173,16 +179,25 @@ namespace UZSG.Objects
             }); 
         }
 
-        void DestroySelf()
-        {
-            /// play some wood/bark explosion particles and stuff
-            Destruct();
-        }
-
         void ResetChopAngle()
         {
             LeanTween.rotate(gameObject, Vector3.zero, 0.33f)
             .setEaseOutExpo();
+        }
+
+        void DestroyAllChildren()
+        {
+            /// start at 1 so stump is skipped
+            for (int i = 1; i < transform.childCount; i++)
+            {
+                Destroy(transform.GetChild(i).gameObject);
+            }
+        }
+
+        void DestroySelf()
+        {
+            /// play some wood/bark explosion particles and stuff
+            Destruct();
         }
     }
 }

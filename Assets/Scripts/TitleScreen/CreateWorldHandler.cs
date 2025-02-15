@@ -9,6 +9,7 @@ using TMPro;
 
 using UZSG.Worlds;
 using UZSG.UI;
+using System.IO;
 
 namespace UZSG.TitleScreen
 {
@@ -106,6 +107,12 @@ namespace UZSG.TitleScreen
             if (string.IsNullOrEmpty(worldnameInput.text))
             {
                 SetMessage("World name cannot be empty");
+                return false;
+            }
+
+            if (WorldManager.WorldNameExists(worldnameInput.text))
+            {
+                SetMessage("World name already exists");
                 return false;
             }
 

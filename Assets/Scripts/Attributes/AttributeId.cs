@@ -9,6 +9,7 @@ namespace UZSG
         public const string AttackRange = "attack_range";
         public const string AttackSpeed = "attack_speed";
         public const string CrouchSpeed = "crouch_speed";
+        public const string Efficiency = "efficiency";
         public const string Health = "health";
         public const string Hunger = "hunger";
         public const string Hydration = "hydration";

@@ -7,6 +7,16 @@ namespace UZSG
             return Game.Main.GetVersionString() == version;
         }
 
+        public static int BoolToInt(bool value)
+        {
+            return value ? 1 : 0;
+        }
+
+        public static bool IntToBool(int value)
+        {
+            return value != 0;
+        }
+
         /// <summary>
         /// Convert System.Numerics Quaternion to UnityEngine Quaternion.
         /// </summary>

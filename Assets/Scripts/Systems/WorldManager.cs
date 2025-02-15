@@ -409,6 +409,12 @@ namespace UZSG
             }
         }
 
+        public static bool WorldNameExists(string name)
+        {
+            var worldDir = Path.Join(Application.persistentDataPath, WorldManager.WORLDS_FOLDER, name);
+            return Directory.Exists(worldDir);
+        }
+
         #endregion
         
 

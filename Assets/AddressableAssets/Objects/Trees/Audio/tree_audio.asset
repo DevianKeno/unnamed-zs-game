@@ -15,6 +15,10 @@ MonoBehaviour:
   PoolSize: 3
   Path: Assets/AddressableAssets/Objects/Trees/Audio
   AudioClips:
+  - m_AssetGUID: ea3be6d83106f664d84f6a4cba530574
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
   - m_AssetGUID: f2627de69c775bd4391eca845e65b555
     m_SubObjectName: 
     m_SubObjectType: 

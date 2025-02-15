@@ -1,4 +1,7 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace UZSG.Saves
 {
@@ -23,10 +26,41 @@ namespace UZSG.Saves
             return this;
         }
 
+        public SaveData AddBool(string key, bool value)
+        {
+            Entries[key] = value;
+            return this;
+        }
+
+        public bool GetBool(string key)
+        {
+            if (Entries.TryGetValue(key, out var value) &&
+                value is bool valueBool)
+            {
+                return valueBool;
+            }
+            return default;
+        }
+
         public SaveData AddEntry<T>(string key, T value)
         {
             Entries[key] = value;
             return this;
+        }
+
+        public SaveData AddArray<T>(string key, T[] values)
+        {
+            Entries[key] = values;
+            return this;
+        }
+
+        public object GetEntry(string id)
+        {
+            if (Entries.TryGetValue(id, out var value))
+            {
+                return value;
+            }
+            return default;
         }
 
         public T GetEntry<T>(string id)
@@ -39,12 +73,12 @@ namespace UZSG.Saves
             return default;
         }
 
-        public SaveData[] GetArray(string id)
+        public T[] GetJArray<T>(string id)
         {
             if (Entries.TryGetValue(id, out var value) &&
-                value is SaveData[] array)
+                value is JArray jArray)
             {
-                return array;
+                return jArray.Select(token => token.Value<T>()).ToArray();
             }
             return default;
         }

@@ -462,7 +462,8 @@ namespace UZSG.UI.Players
             {
                 var equipped = Inventory.Equipment.Mainhand.Item;
                 ItemSlot.SwapContents(Inventory.Equipment.Mainhand, _selectedSlot);
-                Player.FPP.HoldItem(item.Data);
+                Player.FPP.EquipHotbarIndex((int) EquipmentIndex.Mainhand);
+
                 if (!equipped.IsNone) Player.FPP.ReleaseItem(equipped.Data);
             });
             
@@ -471,13 +472,14 @@ namespace UZSG.UI.Players
             {
                 var equipped = Inventory.Equipment.Mainhand.Item;
                 ItemSlot.SwapContents(Inventory.Equipment.Offhand, _selectedSlot);
-                Player.FPP.HoldItem(item.Data);
+                Player.FPP.EquipHotbarIndex((int) EquipmentIndex.Offhand);
+
                 if (!equipped.IsNone) Player.FPP.ReleaseItem(equipped.Data);
             });
 
             /// Disables Choices when performing FPP actions
             /// and re-enables it on finish
-            if (Player.FPP.IsPerforming)
+            if (Player.FPP.IsBusy)
             {
                 equipMainhand.SetEnabled(false);
                 equipOffhand.SetEnabled(false);

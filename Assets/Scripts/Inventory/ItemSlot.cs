@@ -19,11 +19,6 @@ namespace UZSG.Inventory
             public ItemSlot ItemSlot { get; set; }
             public Item OldItem { get; set; }
             public Item NewItem { get; set; }
-
-            #region ??? idk
-            public readonly bool AddedItem => NewItem != Item.None;
-            public readonly bool RemovedItem => NewItem == Item.None;
-            #endregion
         }
         
         [SerializeField] int index;
@@ -100,6 +95,11 @@ namespace UZSG.Inventory
                 NewItem = item,
             };
             OnItemChangedInternal?.Invoke(this, context);
+            OnItemChangedEvent(this, context);
+        }
+
+        protected virtual void OnItemChangedEvent(object sender, ItemChangedContext context)
+        {
             OnItemChanged?.Invoke(this, context);
         }
 

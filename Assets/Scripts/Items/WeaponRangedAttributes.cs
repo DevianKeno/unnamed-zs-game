@@ -6,7 +6,7 @@ namespace UZSG.Items.Weapons
     [Serializable]
     public struct WeaponRangedAttributes
     {
-        public FiringModes FiringModes;
+        public FiringModeFlags FiringModes;
         public int RoundsPerMinute;
         public int ClipSize;
         public float ReloadSpeed;

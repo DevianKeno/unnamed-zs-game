@@ -41,7 +41,7 @@ namespace UZSG
         public bool DebugMode = false;
         
         /// <summary>
-        /// Called everytime after the State changes.
+        /// Raised everytime after the State changes.
         /// Use this if you want to the events of the State Machine itself.
         /// </summary>
         public event Action<TransitionContext> OnTransition;

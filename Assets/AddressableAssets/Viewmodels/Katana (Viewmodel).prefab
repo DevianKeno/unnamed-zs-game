@@ -47,9 +47,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d45a45955e08ef4bb7b8c4fdf26da31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  modelAnimator: {fileID: 4330196706789930832}
+  ItemData: {fileID: 11400000, guid: 88da606ba73bada4a94a5495acd26d83, type: 2}
+  viewmodelAnimator: {fileID: 4330196706789930832}
   cameraAnimator: {fileID: 7567855568033223628}
   cameraAnimationSource: {fileID: 6160877048207587141}
+  subComponents: []
 --- !u!114 &622373751888451876
 MonoBehaviour:
   m_ObjectHideFlags: 0

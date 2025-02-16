@@ -12,7 +12,6 @@ namespace UZSG.FPP
         public Player Player;
         [Space]
         public bool Enabled;
-        public float Slerp = 1f;
         bool _playAnimation;
 
         [SerializeField] FPPCameraInput cameraFpp;

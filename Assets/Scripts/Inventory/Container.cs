@@ -131,10 +131,10 @@ namespace UZSG
                 CacheItem(context.NewItem, slot);
             }
 
-            SlotContentChanged(slot, context);
+            OnSlotItemChangedEvent(slot, context);
         }
 
-        protected virtual void SlotContentChanged(object sender, ItemSlot.ItemChangedContext context)
+        protected virtual void OnSlotItemChangedEvent(object sender, ItemSlot.ItemChangedContext context)
         {
             OnSlotItemChanged?.Invoke(this, context);
         }

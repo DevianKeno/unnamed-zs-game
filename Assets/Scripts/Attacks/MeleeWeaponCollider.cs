@@ -2,12 +2,13 @@ using System;
 
 using UnityEngine;
 
+using UZSG.FPP;
 using UZSG.Interactions;
 using UZSG.Items.Weapons;
 
 namespace UZSG.Attacks
 {
-    public class MeleeWeaponCollider : MonoBehaviour
+    public class MeleeWeaponCollider : ViewmodelSubcomponent
     {
         public bool IsAttacking = false;
         public LayerMask Layer;

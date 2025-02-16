@@ -1,11 +1,9 @@
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
-
+using UnityEngine.Serialization;
 
 using UZSG.Data;
 using UZSG.Entities;
@@ -13,12 +11,6 @@ using UZSG.Players;
 
 namespace UZSG.FPP
 {
-    public interface IViewmodelModifier
-    {
-        public Vector3 GetPositionOffset();
-        public Quaternion GetRotationOffset();
-    }
-
     public class FPPViewmodelController : MonoBehaviour
     {
         public Player Player;
@@ -26,7 +18,7 @@ namespace UZSG.FPP
 
         FPPViewmodelBobbing bobbing;
         FPPViewmodelSway sway;
-        [SerializeField] Transform modelHolder;
+        [SerializeField, FormerlySerializedAs("modelHolder")] Transform viewmodelsHolder;
 
         void Awake()
         {
@@ -63,59 +55,33 @@ namespace UZSG.FPP
             bobbing.SetViewmodelSettings(settings);
             if (settings.UseOffsets)
             {
-                modelHolder.SetLocalPositionAndRotation(settings.PositionOffset, Quaternion.Euler(settings.RotationOffset));
+                viewmodelsHolder.SetLocalPositionAndRotation(settings.PositionOffset, Quaternion.Euler(settings.RotationOffset));
             }
         }
 
-        public struct LoadAssetReferenceInfo
+        public async Task<ViewmodelComponent> LoadViewmodelAssetAsync(IViewmodelItem viewmodelItem)
         {
-            public GameObject GameObject { get; set; }
-            public AsyncOperationStatus Status { get; set; }
-        }
-
-        public async Task<LoadAssetReferenceInfo> LoadAssetReferenceAsync(AssetReference asset)
-        {
-            var op = Addressables.LoadAssetAsync<GameObject>(asset);
-            await op.Task;
-            return new LoadAssetReferenceInfo
+            if (false == viewmodelItem.HasViewmodel)
             {
-                GameObject = op.Result,
-                Status = op.Status
-            };
-        }
-
-        public async Task<Viewmodel> LoadViewmodelAssetAsync(IViewmodel viewmodel)
-        {
-            if (!viewmodel.HasViewmodel)
-            {
-                var msg = $"Item '{(viewmodel as ItemData).Id}' has no viewmodel set.";
-                Game.Console.LogWithUnity(msg);
+                Game.Console.LogWarn($"Item '{(viewmodelItem as ItemData).Id}' has no viewmodel set.", true);
                 return null;
             }
-
-            LoadAssetReferenceInfo result = await LoadAssetReferenceAsync(viewmodel.Viewmodel);
             
-            if (result.Status == AsyncOperationStatus.Succeeded)
-            {
-                var model = Instantiate(result.GameObject, modelHolder);
-                if (model.TryGetComponent<ViewmodelComponent>(out var component))
-                {
-                    return new Viewmodel
-                    {
-                        ItemData = (ItemData) viewmodel,
-                        Model = model,
-                        Settings = viewmodel.Settings,
-                        ArmsAnimations = viewmodel.ArmsAnimations,
+            var asyncOp = Addressables.LoadAssetAsync<GameObject>(viewmodelItem.ViewmodelAsset);
+            await asyncOp.Task;
 
-                        ModelAnimator = component.ModelAnimator,
-                        CameraAnimator = component.CameraAnimator,
-                        CameraAnimationSource = component.CameraAnimationSource,
-                    };
+            if (asyncOp.Status == AsyncOperationStatus.Succeeded)
+            {
+                var model = Instantiate(asyncOp.Result, viewmodelsHolder);
+                if (false == model.TryGetComponent<ViewmodelComponent>(out var viewmodelComponent))
+                {
+                    Game.Console.LogWarn($"Item '{(viewmodelItem as ItemData).Id}' is a viewmodel but has no Viewmodel Component.", true);
+                    Destroy(model);
+                    return null;
                 }
-                
-                Destroy(model);
-                var msg = $"Item '{(viewmodel as ItemData).Id}' is a viewmodel but has no Viewmodel Component.";
-                Game.Console.LogWithUnity(msg);
+
+                viewmodelComponent.ItemData = (ItemData) viewmodelItem;
+                return viewmodelComponent;
             }
 
             return null;

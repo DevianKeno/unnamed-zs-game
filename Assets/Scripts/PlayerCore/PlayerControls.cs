@@ -347,7 +347,7 @@ namespace UZSG.Players
         {
             if (!AllowMovement) return;
 
-            if (input.started && CanRun && !Player.FPP.IsPerforming)
+            if (input.started && CanRun && !Player.FPP.IsBusy)
             {
                 ToggleCrouch(false); /// in the future, the player should be able to crouch-run
                 ToggleWalk(false);

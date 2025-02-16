@@ -3,7 +3,7 @@ using System;
 namespace UZSG.Items.Weapons
 {
     [Flags]
-    public enum FiringModes
+    public enum FiringModeFlags
     {
         None = 0,
         Single = 1 << 1,

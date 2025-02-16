@@ -34,7 +34,7 @@ namespace UZSG.UI.HUD
         {
             player.Actions.OnInteract += OnPlayerInteract;
             player.Actions.OnInteractVehicle += OnPlayerInteractVehicle;
-            player.FPP.OnFPPControllerChanged += OnPlayerChangeHeldItem;
+            player.FPP.OnFPPItemChanged += OnPlayerChangeHeldItem;
             player.BuildManager.OnEnteredBuildMode += OnEnteredBuildMode;
             player.BuildManager.OnExitedBuildMode += OnExitedBuildMode;
             
@@ -85,7 +85,7 @@ namespace UZSG.UI.HUD
         void OnPlayerChangeHeldItem(FPPItemController controller)
         {
             /// Switch crosshairs
-            if (player.FPP.FPPItemController is GunWeaponController gunWeapon)
+            if (player.FPP.CurrentFPPItem is GunWeaponController gunWeapon)
             {
                 dotCrosshair.gameObject.SetActive(false);
                 dynamicCrosshair.Show();

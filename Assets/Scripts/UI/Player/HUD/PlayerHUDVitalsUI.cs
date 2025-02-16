@@ -97,8 +97,8 @@ namespace UZSG.UI.HUD
             Player.Actions.OnEquipEquipment += OnEquipEquipment;
             Player.Actions.OnEquipHotbar += OnEquipHotbar;
             Player.FPP.OnHeldItemChanged += OnHeldItemChanged;
-            Player.FPP.OnFPPControllerChanged += OnFPPControllerChanged;
-            Player.FPP.OnSelectedHotbarChanged += OnSelectedHotbarChanged;
+            Player.FPP.OnFPPItemChanged += OnFPPControllerChanged;
+            Player.FPP.OnSelectedHotbarIndexChanged += OnSelectedHotbarChanged;
             Player.Inventory.Bag.OnSlotItemChanged += OnBagSlotItemChanged;
 
             /// Gui events
@@ -232,7 +232,7 @@ namespace UZSG.UI.HUD
         void OnBagSlotItemChanged(object sender, ItemSlot.ItemChangedContext e)
         {
             if (e.OldItem.Data is AmmoData || e.NewItem.Data is AmmoData)
-            if (Player.FPP.FPPItemController is GunWeaponController gun)
+            if (Player.FPP.CurrentFPPItem is GunWeaponController gun)
             {
                 AmmoCounter.SetReserve(gun.Reserve);
             }
@@ -262,7 +262,7 @@ namespace UZSG.UI.HUD
 
             if (!string.IsNullOrEmpty(itemData.DisplayName))
             {
-                equippedItemTMP.text = itemData.DisplayName;
+                equippedItemTMP.text = itemData.DisplayNameTranslatable;
             }
             else
             {

@@ -23,7 +23,7 @@ namespace UZSG.Data
     /// </summary>
     [Serializable]
     [CreateAssetMenu(fileName = "New Tool Data", menuName = "UZSG/Items/Tool Data")]
-    public class ToolData : ItemData, IViewmodel
+    public class ToolData : ItemData, IViewmodelItem
     {
         [Header("Tool Data")]
         // public Sprite HotbarIcon;
@@ -42,11 +42,11 @@ namespace UZSG.Data
         [SerializeField] RuntimeAnimatorController armsAnimations;
         public RuntimeAnimatorController ArmsAnimations => armsAnimations;
         [SerializeField] AssetReference viewmodel;
-        public AssetReference Viewmodel => viewmodel;
+        public AssetReference ViewmodelAsset => viewmodel;
         [SerializeField] ViewmodelSettings viewmodelOffsets;
-        public ViewmodelSettings Settings => viewmodelOffsets;
+        public ViewmodelSettings ViewmodelSettings => viewmodelOffsets;
         [SerializeField] EquipmentAnimationData anims;
-        public EquipmentAnimationData Animations => anims;
+        public EquipmentAnimationData AnimationsData => anims;
         [SerializeField] EquipmentAudioData audioData;
         public EquipmentAudioData AudioData => audioData;
         public bool HasViewmodel => viewmodel != null && viewmodel.IsSet();

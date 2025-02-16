@@ -9,11 +9,11 @@ using UZSG.Saves;
 namespace UZSG.Inventory
 {
     public enum HotbarIndex {
-        Three, Four, Five, Six, Seven, Eight, Nine, //Ten,
+        Three = 3, Four = 4, Five = 5, Six = 6, Seven = 7, Eight = 8, Nine = 9, //Ten,
     }
 
     public enum EquipmentIndex {
-        UNDEFINED, Mainhand, Offhand
+        UNDEFINED = -1, Mainhand = 1, Offhand = 2
     }
 
     public class PlayerInventoryManager : MonoBehaviour, ISaveDataReadWrite<InventorySaveData>

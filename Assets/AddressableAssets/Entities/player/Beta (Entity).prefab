@@ -159,7 +159,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Player: {fileID: 8107631895800867322}
   Enabled: 0
-  Slerp: 1
   cameraFpp: {fileID: 4657274095525333481}
   source: {fileID: 0}
   Target: {fileID: 2976232900609880596}
@@ -178,7 +177,7 @@ GameObject:
   - component: {fileID: 5069990445555364325}
   - component: {fileID: 6206635905438684906}
   m_Layer: 8
-  m_Name: Viewmodel Holder
+  m_Name: Viewmodel Controller/Holder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -214,7 +213,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Player: {fileID: 8107631895800867322}
-  modelHolder: {fileID: 575518672668688267}
+  viewmodelsHolder: {fileID: 575518672668688267}
 --- !u!114 &7766360178944467007
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -446,14 +445,14 @@ Camera:
   serializedVersion: 2
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0, g: 0, b: 0, a: 1}
-  m_projectionMatrixMode: 1
+  m_projectionMatrixMode: 2
   m_GateFitMode: 2
   m_FOVAxisMode: 0
   m_Iso: 200
   m_ShutterSpeed: 0.005
   m_Aperture: 16
   m_FocusDistance: 10
-  m_FocalLength: 50
+  m_FocalLength: 25.734083
   m_BladeCount: 5
   m_Curvature: {x: 2, y: 11}
   m_BarrelClipping: 0.25
@@ -765,7 +764,7 @@ GameObject:
   - component: {fileID: 6073486126791691618}
   - component: {fileID: 1760353934298345573}
   m_Layer: 8
-  m_Name: Camera Holder
+  m_Name: Camera Holder (Bob/Tilt)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1375,7 +1374,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1762222224130438581}
   m_Layer: 8
-  m_Name: Held Items
+  m_Name: Held Items Container
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1513,7 +1512,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2daf140050a9d56449e80f50ff4d14b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  instanceId: 0
   entityData: {fileID: 11400000, guid: 49cc9582dd61df247ab5d3da96dd2cf1, type: 2}
   CanPickUpItems: 1
   inventory: {fileID: 6573940630714393000}
@@ -1606,15 +1604,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b3b220ac7de4514d89e9127e3b69c8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fppItemController: {fileID: 0}
-  AppendAnimationPrefixes: 0
+  player: {fileID: 0}
+  currentViewmodelComponent: {fileID: 0}
+  currentFPPItemController: {fileID: 0}
   cameraController: {fileID: 4657274095525333481}
-  armsController: {fileID: 5105896103929999244}
+  fppArmsController: {fileID: 5105896103929999244}
   viewmodelController: {fileID: 2004487973244473114}
-  recoilCamera: {fileID: 0}
   cameraAnimationTarget: {fileID: 9155779205102779035}
-  gunMuzzleController: {fileID: 0}
-  meleeWeaponCollider: {fileID: 0}
   heldItemsContainer: {fileID: 8334059616362085046}
   meleeWeaponControllerPrefab: {fileID: 1441765491178271053, guid: e83ed1a86c94c5e43b675ea1a3e947c1, type: 3}
   gunWeaponControllerPrefab: {fileID: 1441765491178271053, guid: 7bf816374faf0a44f8a0520f423fd2a8, type: 3}

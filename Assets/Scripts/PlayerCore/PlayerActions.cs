@@ -3,16 +3,16 @@ using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
+
 using MEC;
 
-
 using UZSG.Data;
-using UZSG.UI;
-using UZSG.Interactions;
 using UZSG.Entities;
+using UZSG.Interactions;
 using UZSG.Inventory;
 using UZSG.Items;
-using UnityEngine.Serialization;
+using UZSG.UI;
 
 namespace UZSG.Players
 {
@@ -509,10 +509,10 @@ namespace UZSG.Players
 
             if (item.Data.Type == ItemType.Weapon) /// put in equipment (if possible)
             {
-                if (Player.Inventory.Equipment.TryEquipWeapon(item, out EquipmentIndex index))
+                if (Player.Inventory.Equipment.TryEquipWeapon(item, out EquipmentIndex putOnIndex))
                 {
-                    Player.FPP.HoldItem(item.Data);
-                    OnEquipEquipment?.Invoke(item.Data, index);
+                    Player.FPP.EquipHotbarIndex((int) putOnIndex);
+                    OnEquipEquipment?.Invoke(item.Data, putOnIndex);
                     /// TODO: gun item entities store ammunition data, if is reloaded, etc.
                     // if (itemEntity is GunItemEntity gun)
                     // {
@@ -526,7 +526,7 @@ namespace UZSG.Players
             {
                 if (Player.Inventory.Hotbar.TryEquip(item, out int putOnIndex))
                 {
-                    Player.FPP.HoldItem(item.Data);
+                    Player.FPP.EquipHotbarIndex(putOnIndex);
                     OnEquipHotbar?.Invoke(item.Data, putOnIndex);
                     OnPickupItem?.Invoke(item);
                     return true;
@@ -557,7 +557,7 @@ namespace UZSG.Players
         public bool PickUpItem(ItemEntity itemEntity)
         {
             if (!Player.CanPickUpItems) return false;
-            if (Player.FPP.IsPerforming) return false;
+            if (Player.FPP.IsBusy) return false;
 
             Item item = itemEntity.Item;
             if (PickUpItem(item))

@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-
 using UZSG.Data;
 using UZSG.Entities;
 using UZSG.Players;
@@ -36,7 +35,7 @@ namespace UZSG.Items.Weapons
         [Space]
         [SerializeField] GunWeaponStateMachine stateMachine;
         public GunWeaponStateMachine StateMachine => stateMachine;
-        public GunMuzzleController MuzzleController;
+        [SerializeField] GunMuzzleController muzzleController = null;
         
 
         #region Properites
@@ -58,7 +57,7 @@ namespace UZSG.Items.Weapons
                 }
                 else
                 {
-                    return -1;
+                    return 0;
                 }
             }
         }
@@ -98,6 +97,8 @@ namespace UZSG.Items.Weapons
             InitializeBullets();
             InitializeEventsFromOwnerInput();
 
+            if (Viewmodel.TryGetSubcomponent<GunMuzzleController>(out muzzleController)) { };
+
             _hasValidAmmoData = RangedAttributes.Ammo != null;
             Player.Actions.OnPickupItem += OnPlayerPickupItem;
         }
@@ -110,8 +111,8 @@ namespace UZSG.Items.Weapons
             });
 
             int audioPoolSize;
-            if ((RangedAttributes.FiringModes & FiringModes.FullAuto) == FiringModes.FullAuto
-                || (RangedAttributes.FiringModes & FiringModes.Burst) == FiringModes.Burst)
+            if ((RangedAttributes.FiringModes & FiringModeFlags.FullAuto) == FiringModeFlags.FullAuto
+                || (RangedAttributes.FiringModes & FiringModeFlags.Burst) == FiringModeFlags.Burst)
             {
                 audioPoolSize = 24;
             }
@@ -136,6 +137,7 @@ namespace UZSG.Items.Weapons
                 Player.VitalsHUD.AmmoCounter.SetCartridgeText("-");
             }
             CurrentRounds = RangedAttributes.ClipSize; /// To be removed
+            Player.VitalsHUD.AmmoCounter.DisplayWeaponStats(this);
         }
 
         /// <summary>
@@ -324,7 +326,7 @@ namespace UZSG.Items.Weapons
 
             _inhibitActions = true;
             var availableModes = RangedAttributes.FiringModes;
-            if (availableModes == FiringModes.None)
+            if (availableModes == FiringModeFlags.None)
             {
                 Debug.LogWarning($"The weapon '{ItemData.Id}'s firing mode is set to none! It will not fire!");
                 _inhibitActions = false;
@@ -346,13 +348,13 @@ namespace UZSG.Items.Weapons
             return (FiringMode) (((int) mode + 1) % firingModes.Length);
         }
 
-        FiringModes GetFiringModeFlag(FiringMode mode)
+        FiringModeFlags GetFiringModeFlag(FiringMode mode)
         {
             return mode switch
             {
-                FiringMode.Single => FiringModes.Single,
-                FiringMode.FullAuto => FiringModes.FullAuto,
-                FiringMode.Burst => FiringModes.Burst,
+                FiringMode.Single => FiringModeFlags.Single,
+                FiringMode.FullAuto => FiringModeFlags.FullAuto,
+                FiringMode.Burst => FiringModeFlags.Burst,
             };
         }
         
@@ -361,7 +363,7 @@ namespace UZSG.Items.Weapons
             PlayRandomFireSound();
             SpawnBulletEntity();
             CurrentRounds--;
-            MuzzleController?.Fire();
+            muzzleController?.Fire();
             stateMachine.ToState(GunWeaponStates.Fire);
             OnFire?.Invoke();
             Player.VitalsHUD.AmmoCounter.SetClip(CurrentRounds);

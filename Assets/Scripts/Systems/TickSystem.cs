@@ -99,7 +99,14 @@ namespace UZSG
 
                     if (_currentTick >= _ticksPerSecond)
                     {
-                        OnSecond?.Invoke(new SecondInfo());
+                        try
+                        {
+                            OnSecond?.Invoke(new SecondInfo());
+                        }
+                        catch (Exception ex)
+                        {
+                            
+                        }
 
                         _currentTick = 0;
                         _secondsElapsed++;

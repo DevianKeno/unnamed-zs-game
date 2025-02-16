@@ -81,6 +81,15 @@ namespace UZSG.Items.Weapons
             InitializeAudioController();
             InitializeEventsFromOwnerInput();
             InitializeEvents();
+        
+            if (Viewmodel.TryGetSubcomponent<MeleeWeaponCollider>(out var meleeWeaponCollider))
+            {
+                if (meleeWeaponCollider != null)
+                {
+                    stateMachine.OnTransition += meleeWeaponCollider.OnStateChanged;
+                    meleeWeaponCollider.OnCollide += OnMeleeAttackHit;
+                }
+            }
 
             ComboCounter = 0;
         }
@@ -286,15 +295,6 @@ namespace UZSG.Items.Weapons
         {
             Vector3 reflectDirection = Vector3.Reflect(swingDirection, contactNormal);
             return reflectDirection;
-        }
-
-        internal void InitializeMeleeCollider(MeleeWeaponCollider mwc)
-        {
-            if (mwc != null)
-            {
-                stateMachine.OnTransition += mwc.OnStateChanged;
-                mwc.OnCollide += OnMeleeAttackHit;
-            }
         }
     }
 }

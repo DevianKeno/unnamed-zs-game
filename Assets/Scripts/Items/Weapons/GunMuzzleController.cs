@@ -1,9 +1,10 @@
-using System.Collections;
 using UnityEngine;
+
+using UZSG.FPP;
 
 namespace UZSG
 {
-    public class GunMuzzleController : MonoBehaviour
+    public class GunMuzzleController : ViewmodelSubcomponent
     {
         [Header("Muzzle Flash Settings")]
         public bool EnableMuzzleFlash = true;

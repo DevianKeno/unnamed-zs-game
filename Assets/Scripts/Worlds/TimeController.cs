@@ -229,6 +229,7 @@ namespace UZSG.Worlds
             
             UpdateTime();
             UpdateCelestialBodies();
+            UpdateSkybox();
             UpdateFog();
         }
 
@@ -402,6 +403,8 @@ namespace UZSG.Worlds
             RawTime = value;
             UpdateTime();
             UpdateCelestialBodies();
+            UpdateSkybox();
+            UpdateFog();
         }
 
         public void SetTime(int hour, int minute)

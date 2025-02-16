@@ -8,11 +8,12 @@ using UZSG.Players;
 using UZSG.Attributes;
 using UZSG.Saves;
 using System;
+using UZSG.FPP;
 
 namespace UZSG.Items
 {
     /// <summary>
-    /// Controller for "Held Items".
+    /// Controller for "Held Items" that have viewmodels visible in first-person perspective.
     /// </summary>
     public abstract class FPPItemController : MonoBehaviour, IAttributable, ISaveDataReadWrite<ItemSaveData>
     {
@@ -22,6 +23,14 @@ namespace UZSG.Items
             get { return itemData; }
             set { itemData = value; }
         }
+        
+        protected ViewmodelComponent viewmodel;
+        public ViewmodelComponent Viewmodel
+        {
+            get { return viewmodel; }
+            set { viewmodel = value; }
+        }
+
         protected Entity owner;
         public Entity Owner
         {

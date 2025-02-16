@@ -6,7 +6,6 @@ using UnityEngine.InputSystem;
 
 using MEC;
 
-
 using UZSG.Data;
 using UZSG.Interactions;
 using UZSG.Entities;
@@ -20,20 +19,20 @@ namespace UZSG.Items.Tools
     /// </summary>
     public class HeldToolController : FPPItemController, ICollisionSource, IDamageSource
     {
-        public static float COMBO_RESET_SECONDS = 1f;
+        public const float COMBO_RESET_SECONDS = 1f;
 
         public Player Player => owner as Player;
         public ToolData ToolData => ItemData as ToolData;
         
-        bool _inhibitActions;
-        bool _isAttacking;
-        bool _onCooldown;
+        protected bool _inhibitActions;
+        protected bool _isAttacking;
+        protected bool _onCooldown;
         public int ComboCounter { get; protected set; }
 
         public string CollisionTag => "Tool";
-        ToolItemStateMachine stateMachine;
+        protected ToolItemStateMachine stateMachine;
         public ToolItemStateMachine StateMachine => stateMachine;
-        CoroutineHandle _comboResetTimerHandle;
+        protected CoroutineHandle _comboResetTimerHandle;
 
         public bool IsBroken
         {
@@ -78,7 +77,7 @@ namespace UZSG.Items.Tools
 
         #region Initializing methods
 
-        void Awake()
+        protected virtual void Awake()
         {
             stateMachine = GetComponent<ToolItemStateMachine>();
         }
@@ -91,13 +90,13 @@ namespace UZSG.Items.Tools
             InitializeEvents();
         }
 
-        void InitializeAudioController()
+        protected virtual void InitializeAudioController()
         {
             audioSourceController.LoadAudioAssetsData(ToolData.AudioAssetsData);
             audioSourceController.CreateAudioPool(size: 8); 
         }
 
-        void InitializeInputs()
+        protected virtual void InitializeInputs()
         {
             var inputs = Player.Actions.Inputs;
 
@@ -108,12 +107,12 @@ namespace UZSG.Items.Tools
             inputs["Secondary Action"].canceled += OnPlayerSecondary;
         }
 
-        void InitializeEvents()
+        protected virtual void InitializeEvents()
         {
             stateMachine.OnTransition += OnStateChanged;
         }
 
-        void OnDestroy()
+        protected virtual void OnDestroy()
         {
             if (owner is Player player)
             {
@@ -137,13 +136,13 @@ namespace UZSG.Items.Tools
             }
         }
 
-        void LoadDefaultAttributes()
+        protected virtual void LoadDefaultAttributes()
         {
             attributes = new();
             attributes.AddList(ToolData.Attributes);
         }
 
-        void RetrieveToolAttributes()
+        protected virtual void RetrieveToolAttributes()
         {
             
         }
@@ -153,7 +152,7 @@ namespace UZSG.Items.Tools
 
         #region Player input callbacks
 
-        void OnPlayerPrimary(InputAction.CallbackContext context)
+        protected virtual void OnPlayerPrimary(InputAction.CallbackContext context)
         {
             if (!gameObject.activeSelf) return;
             
@@ -174,14 +173,14 @@ namespace UZSG.Items.Tools
             }
         }
 
-        void OnPlayerSecondary(InputAction.CallbackContext context)
+        protected virtual void OnPlayerSecondary(InputAction.CallbackContext context)
         {
             
         }
 
         #endregion
 
-        IEnumerator AttackCoroutine()
+        protected IEnumerator AttackCoroutine()
         {
             if (_inhibitActions || _isAttacking) yield break;
             
@@ -200,7 +199,7 @@ namespace UZSG.Items.Tools
             stateMachine.ToState(ToolItemStates.Idle);
         }
 
-        void TrackCombo()
+        protected void TrackCombo()
         {
             if (ComboCounter >= 1)
             {
@@ -212,24 +211,24 @@ namespace UZSG.Items.Tools
             }
         }
         
-        IEnumerator<float> _ComboResetTimerCoroutine()
+        protected IEnumerator<float> _ComboResetTimerCoroutine()
         {
             yield return Timing.WaitForSeconds(COMBO_RESET_SECONDS);
             ComboCounter = 0;
             yield break;
         }
 
-        void ConsumeStamina()
+        protected void ConsumeStamina()
         {
             owner.Attributes["stamina"].Remove(attributes["stamina_cost"].Value);
         }
 
-        void PlaySound()
+        protected void PlaySound()
         {
             audioSourceController.PlaySound("swing_heavy");
         }
 
-        IEnumerator<float> CooldownAttack()
+        protected IEnumerator<float> CooldownAttack()
         {
             _onCooldown = true;
 
@@ -242,7 +241,7 @@ namespace UZSG.Items.Tools
             _onCooldown = false;
         }
         
-        MeleeAttackParameters GetAttackParams()
+        protected MeleeAttackParameters GetAttackParams()
         {
             #region TODO: Implement combos
             #endregion
@@ -259,7 +258,7 @@ namespace UZSG.Items.Tools
             }
         }      
         
-        void CreateAttackRays(ref MeleeAttackParameters atk)
+        protected void CreateAttackRays(ref MeleeAttackParameters atk)
         {
             Timing.RunCoroutine(CreateRaycastRays(atk));
             
@@ -277,7 +276,7 @@ namespace UZSG.Items.Tools
             }
         }
 
-        IEnumerator<float> CreateRaycastRays(MeleeAttackParameters atk)
+        protected IEnumerator<float> CreateRaycastRays(MeleeAttackParameters atk)
         {
             Color rayColor = Color.yellow;
 
@@ -306,7 +305,7 @@ namespace UZSG.Items.Tools
             yield break;
         }
         
-        void OnToolAttackHit(HitboxCollisionInfo info)
+        protected virtual void OnToolAttackHit(HitboxCollisionInfo info)
         {
             info.Source = this;
             info.Target.HitBy(info);

@@ -1,4 +1,3 @@
-using UnityEngine;
 using UnityEngine.AddressableAssets;
 
 using UZSG.Data;
@@ -6,14 +5,13 @@ using UZSG.Data;
 namespace UZSG.FPP
 {
     /// <summary>
-    /// For objects that is visible on FPP.
+    /// Represent items that are visible on first-person perspective.
     /// </summary>
-    public interface IViewmodel
+    public interface IViewmodelItem
     {
-        public RuntimeAnimatorController ArmsAnimations { get; }
-        public AssetReference Viewmodel { get; }
-        public ViewmodelSettings Settings { get; }
-        public EquipmentAnimationData Animations { get; }
         public bool HasViewmodel { get; }
+        public AssetReference ViewmodelAsset { get; }
+        public ViewmodelSettings ViewmodelSettings { get; }
+        public EquipmentAnimationData AnimationsData { get; }
     }
 }

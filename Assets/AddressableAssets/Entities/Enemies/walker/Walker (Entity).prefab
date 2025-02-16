@@ -191,8 +191,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.6735749, y: 2.2439957, z: 0.4726982}
-  m_Center: {x: 0.037664652, y: 1.1794319, z: 0.17827797}
+  m_Size: {x: 0.6735749, y: 2.0988214, z: 0.4726982}
+  m_Center: {x: 0.037664652, y: 1.1974276, z: 0.17827797}
 --- !u!195 &5002864878521246475
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -214,7 +214,7 @@ NavMeshAgent:
   m_Height: 2.3
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
+  m_ObstacleAvoidanceType: 3
 --- !u!1 &7581130955350013156
 GameObject:
   m_ObjectHideFlags: 0
@@ -323,7 +323,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 98a5113de4d60b34c82352ab039a6e25, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 0.004
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 98a5113de4d60b34c82352ab039a6e25, type: 3}
       propertyPath: m_LocalPosition.y
@@ -331,7 +331,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 98a5113de4d60b34c82352ab039a6e25, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -0.097
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 98a5113de4d60b34c82352ab039a6e25, type: 3}
       propertyPath: m_LocalRotation.w

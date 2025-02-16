@@ -10,11 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3225a92847421ec41a13a5cd94ac5446, type: 3}
-  m_Name: tools_shared_audio
+  m_Name: tools_Shared Audio
   m_EditorClassIdentifier: 
   PoolSize: 0
   Path: Assets/AddressableAssets/Tools/Shared Audio
   AudioClips:
+  - m_AssetGUID: 2b21f0ace4ab36846918f8f15d092968
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
   - m_AssetGUID: 4e2d79b91b497354f8b6db557517c255
     m_SubObjectName: 
     m_SubObjectType: 

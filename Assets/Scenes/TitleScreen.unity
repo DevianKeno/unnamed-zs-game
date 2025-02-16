@@ -7425,6 +7425,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentWorld: {fileID: 0}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!1001 &820267511
 PrefabInstance:
   m_ObjectHideFlags: 0

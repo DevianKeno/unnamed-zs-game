@@ -29,7 +29,7 @@ namespace UZSG.Data
     [CreateAssetMenu(fileName = "New Resource Object Data", menuName = "UZSG/Objects/Resource Object Data")]
     public class ResourceData : ObjectData
     {
-        [Header("Resource")]
+        [Header("Resource Data")]
         /// <summary>
         /// The best tool to harvest this resource.
         /// </summary>

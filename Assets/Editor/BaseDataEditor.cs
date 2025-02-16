@@ -8,7 +8,7 @@ namespace UZSG.UnityEditor
     [CustomEditor(typeof(BaseData))]
     public class BaseDataEditor : Editor
     {
-        SerializedProperty sourceId,
+        protected SerializedProperty sourceId,
             id,
             tags;
         

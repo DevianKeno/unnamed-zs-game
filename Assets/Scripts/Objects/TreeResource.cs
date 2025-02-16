@@ -68,7 +68,7 @@ namespace UZSG.Objects
                         }
                     }
                     
-                    Game.Audio.PlayInWorld("tree_chop_wood", info.ContactPoint);
+                    Game.Audio.Play3D("tree_chop_wood", info.ContactPoint);
                     Game.Particles.Create("tree_bark_break", info.ContactPoint);
                     
                     if (!IsFelled)
@@ -150,7 +150,7 @@ namespace UZSG.Objects
             IsFelled = true;
             AllowInteractions = false;
 
-            Game.Audio.PlayInWorld("tree_fell", Position);
+            Game.Audio.Play3D("tree_fell", Position);
             Game.Entity.Spawn<TreeFelledEntity>($"{objectData.Id}_felled", this.Position, this.Rotation, (info) =>
             {
                 stump.transform.SetParent(this.transform);

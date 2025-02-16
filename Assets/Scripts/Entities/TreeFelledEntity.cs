@@ -11,15 +11,61 @@ namespace UZSG.Objects
     /// </summary>
     public class TreeFelledEntity : Entity
     {
-        [SerializeField] GameObject leaves;
+        bool _enableUpdate = false;
+        bool _hadCrashedOnce = false;
+        /// <summary>
+        /// Audio clip when the tree log is rolling on the ground
+        /// </summary>
+        AudioSource rollingAudio;
+        [SerializeField] Rigidbody leavesRigidbody;
         [SerializeField] Rigidbody rb;
         public Rigidbody Rigidbody => rb;
 
         public override void OnSpawnEvent()
         {
             base.OnSpawnEvent();
-            Game.Audio.PlayInWorld("leaves_rustle", Position);
-            Destroy(leaves, 3f);
+            
+            rollingAudio = Game.Audio.Create3D("tree_log_rolling", rb.centerOfMass);
+            rollingAudio.transform.SetParent(this.transform, worldPositionStays: false);
+        }
+
+        void FixedUpdate()
+        {
+            if (!_enableUpdate) return;
+            
+            HandleAudio();
+        }
+
+        void HandleAudio()
+        {
+            /// play rolling sound when the log is moving
+            if (rb.velocity.magnitude > 0.2f)
+            {
+                if (!rollingAudio.isPlaying)
+                {
+                    rollingAudio.Play();
+                }
+            }
+            else
+            {
+                rollingAudio.Stop();
+            }
+        }
+
+        public void OnCollisionEnter(Collision other)
+        {
+            if (other.gameObject.layer == Game.World.GROUND_LAYER)
+            {
+                if (!_hadCrashedOnce)
+                {
+                    _hadCrashedOnce = true;
+                    Game.Audio.Play3D("tree_crash", rb.position);
+                    Game.Audio.Play3D("leaves_rustle", rb.centerOfMass);
+                    leavesRigidbody.isKinematic = false; /// makes leaves fall down
+                    Destroy(leavesRigidbody.gameObject, 3f);
+                }
+                _enableUpdate = true;
+            }
         }
         
         public override void ReadSaveData(EntitySaveData saveData)

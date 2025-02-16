@@ -29,4 +29,4 @@ MonoBehaviour:
     flatBonus: 0
     LimitOverflow: 0
     LimitUnderflow: 0
-  AudioAssetsData: {fileID: 0}
+  AudioAssetsData: {fileID: 11400000, guid: 4cd27413eab54914d9286d94b997c7bf, type: 2}

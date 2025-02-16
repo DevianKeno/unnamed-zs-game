@@ -48,8 +48,7 @@ namespace UZSG.Attributes
             LimitUnderflow = attr.LimitUnderflow;
         }
         
-        [SerializeField, Tooltip("The current value.")]
-        protected float value = 0f;
+        [SerializeField, Tooltip("The current value.")] protected float value = 0f;
         /// <summary>
         /// The current value.
         /// Setting this value directly will clamp it to Minimum and CurrentMaximum.

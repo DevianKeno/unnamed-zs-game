@@ -179,7 +179,12 @@ namespace UZSG.Building
         {
             if (context.performed)
             {
-                if (_isObjectGhostEntitySpawned && objectGhost.TryPlaceObject(targetPosition, Quaternion.Euler(targetEulerAngle)))
+                if (false == _isObjectGhostEntitySpawned)
+                {
+                    return;
+                }
+                
+                if (objectGhost.TryPlaceObject(objectGhost.Position, objectGhost.Rotation))
                 {
                     var heldItem = new Item(_heldItem, 0);
 
@@ -290,19 +295,18 @@ namespace UZSG.Building
         {
             if (_showObjectGhost && _isObjectGhostEntitySpawned)
             {
-                if (Physics.Raycast(Player.EyeLevel, Player.Forward, out var hit, _buildRange, BuildableLayers))
+                if (false == Physics.Raycast(Player.EyeLevel, Player.Forward, out var hit, _buildRange, BuildableLayers))
                 {
-                    if (Vector3.Dot(hit.normal, Vector3.up) >= HorizontalSurfaceThreshold)
-                    {
-                        objectGhost.Show();
-                        targetPosition = hit.point;
-                        objectGhost.Position = targetPosition;
-                        objectGhost.Rotation = Quaternion.Euler(targetEulerAngle);
-                    }
-                    else
-                    {
-                        objectGhost.Hide();
-                    }
+                    objectGhost.Hide();
+                }
+
+                if (Vector3.Dot(hit.normal, Vector3.up) >= HorizontalSurfaceThreshold)
+                {
+                    objectGhost.Show();
+                    targetPosition = hit.point;
+                    objectGhost.Position = targetPosition;
+                    /// align rotation with terrain normal
+                    objectGhost.Rotation = Quaternion.FromToRotation(Vector3.up, hit.normal) * Quaternion.Euler(targetEulerAngle);
                 }
                 else
                 {

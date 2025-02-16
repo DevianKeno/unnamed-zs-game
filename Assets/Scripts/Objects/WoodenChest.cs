@@ -49,7 +49,7 @@ namespace UZSG.Objects
         {
             base.HitBy(info);
 
-            Game.Audio.PlayInWorld("bullet_hit_wood", info.ContactPoint);
+            Game.Audio.Play3D("bullet_hit_wood", info.ContactPoint);
         }
 
         protected override void OnCloseInventory()

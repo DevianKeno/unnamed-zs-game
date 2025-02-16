@@ -118,13 +118,35 @@ namespace UZSG
             }
         }
 
-        public void PlayInWorld(string name, Vector3 position)
+        /// <summary>
+        /// Play an audio clip in 3D space.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="position"></param>
+        /// <returns></returns>
+        public AudioSource Play3D(string name, Vector3 position)
         {
             if (_audioClipsDict.TryGetValue(name, out var clip))
             {
-                PlayClipAsNewSource3D(clip, position);
+                return PlayClipAsNewSource3D(clip, position);
             }
+            return null;
         }
+        
+        /// <summary>
+        /// Instantiates an audio source in 3D space.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="position"></param>
+        /// <returns></returns>
+        public AudioSource Create3D(string name, Vector3 position, bool play = false)
+        {
+            if (_audioClipsDict.TryGetValue(name, out var clip))
+            {
+                return CreateClipAsNewSource3D(clip, position, play);
+            }
+            return null;
+        }   
 
         public void PlayInWorld(AudioClip audioClip, Vector3 position)
         {
@@ -190,6 +212,27 @@ namespace UZSG
                 Timing.RunCoroutine(_DestroyAfterDuration(source, source.clip.length));
             }
             source.Play();
+            return source;
+        }
+
+        public AudioSource CreateClipAsNewSource3D(AudioClip clip, Vector3 position, bool play, bool loop = false)
+        {
+            var source = InstantiateAudioSource();
+            source.transform.position = position;
+            source.clip = clip;
+            source.spatialBlend = 1f;
+            if (play)
+            {
+                if (loop)
+                {
+                    source.loop = true;
+                }
+                else
+                {
+                    Timing.RunCoroutine(_DestroyAfterDuration(source, source.clip.length));
+                }
+                source.Play();
+            }
             return source;
         }
 

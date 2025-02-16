@@ -557,7 +557,7 @@ namespace UZSG
             {
                 // if (groundLayerMask.Includes(hit.collider.gameObject.layer))
                 // {
-                    Game.Objects.PlaceNew(args[0], position: hit.point, (info) =>
+                    Game.Objects.PlaceNew(args[0], position: hit.point, callback: (info) =>
                     {
                         info.Object.Rotation = Quaternion.identity; /// some objects should placed facing the player :P
                     });

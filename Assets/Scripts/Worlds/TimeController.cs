@@ -3,7 +3,6 @@ using System;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-
 using UZSG.Saves;
 using UZSG.Data;
 using UZSG.UI;
@@ -33,6 +32,8 @@ namespace UZSG.Worlds
         public float SunlightIntensity = 3f;
         [SerializeField, FormerlySerializedAs("MoonLight")] Light moonLight;
         public float MoonlightIntensity = 1f;
+        [SerializeField] bool tintSkybox = true;
+        [SerializeField] bool fog = true;
 
 
         #region Time properties
@@ -73,6 +74,8 @@ namespace UZSG.Worlds
         /// Raw time elapsed from 21:00 (by default) onwards.
         /// </summary>
         float rawTimeSinceNightfall => RawTime - nightStartRawTime;
+        float dayT => rawTimeSinceSunrise / _dayLength;
+        float nightT => rawTimeSinceNightfall / _nightLength;
 
         #endregion
 
@@ -166,7 +169,7 @@ namespace UZSG.Worlds
 
         #endregion
 
-
+#if UNITY_EDITOR
         void OnValidate()
         {
             if (gameObject.activeInHierarchy)
@@ -174,13 +177,17 @@ namespace UZSG.Worlds
                 ValidateFields();
                 SetTimeRaw(rawTime);
                 UpdateCelestialBodies();
+                UpdateSkybox();
                 UpdateFog();
             }
         }
+#endif        
 
         void ValidateFields()
         {
-            //
+            RenderSettings.fog = fog;
+            RenderSettings.skybox = WeatherPreset.Skybox;
+            RenderSettings.ambientMode = WeatherPreset.AmbientMode;
         }
 
         void UpdateTime()
@@ -283,6 +290,21 @@ namespace UZSG.Worlds
             UpdateMoonLight();
         }
 
+
+        void UpdateSkybox()
+        {
+            if (!tintSkybox) return;
+
+            if (IsDay)
+            {
+                RenderSettings.skybox.SetColor("_Tint", WeatherPreset.DaySkyboxTint.Evaluate(dayT));
+            }
+            else if (IsNight)
+            {
+                RenderSettings.skybox.SetColor("_Tint", WeatherPreset.NightSkyboxTint.Evaluate(nightT));
+            }
+        }
+
         float CalculateSunAngle(float startRawTime, float endRawTime, float startAngle, float endAngle)
         {
             float timeElapsed = RawTime - startRawTime;
@@ -297,16 +319,14 @@ namespace UZSG.Worlds
         /// </summary>
         void UpdateSunLight()
         {
-            float t;
             if (IsDay)
             {
-                t = rawTimeSinceSunrise / _dayLength;
+                sunLight.color = WeatherPreset.DayColors.Evaluate(dayT);
             }
             else
             {
-                t = rawTimeSinceNightfall / _nightLength;
+                sunLight.color = WeatherPreset.NightColors.Evaluate(nightT);
             }
-            sunLight.color = WeatherPreset.DayColors.Evaluate(t);;
         }
 
         void UpdateMoonLight()
@@ -328,7 +348,7 @@ namespace UZSG.Worlds
                 var timeSinceMidnight = RawTime - (24f * rawTimePerHour);
                 var timeFromMidnightToSunrise = totalDayLength - nightStartRawTime;
                 targetIntensity = Mathf.Lerp(MoonlightIntensity, 0f, timeSinceMidnight / timeFromMidnightToSunrise);
-                targetColor = WeatherPreset.NightColors.Evaluate(rawTimeSinceNightfall / _nightLength);
+                targetColor = WeatherPreset.NightColors.Evaluate(nightT);
             }
             else
             {
@@ -338,7 +358,7 @@ namespace UZSG.Worlds
             moonLight.color = targetColor;
             moonLight.intensity = targetIntensity;
         }
-        
+                
         void UpdateFog()
         {
             Color fogColor;
@@ -346,14 +366,14 @@ namespace UZSG.Worlds
             if (IsDay)
             {
                 var t = rawTimeSinceSunrise / _dayLength;
-                fogColor = WeatherPreset.DayFogColor.Evaluate(t);
-                fogDensity = WeatherPreset.DayFogDensity.Evaluate(t);
+                fogColor = WeatherPreset.DayFogColor.Evaluate(dayT);
+                fogDensity = WeatherPreset.DayFogDensity.Evaluate(dayT);
             }
             else if (IsNight)
             {
                 var t = rawTimeSinceNightfall / _nightLength;
-                fogColor = WeatherPreset.NightFogColor.Evaluate(t);
-                fogDensity = WeatherPreset.NightFogDensity.Evaluate(t);
+                fogColor = WeatherPreset.NightFogColor.Evaluate(nightT);
+                fogDensity = WeatherPreset.NightFogDensity.Evaluate(nightT);
             }
             else
             {

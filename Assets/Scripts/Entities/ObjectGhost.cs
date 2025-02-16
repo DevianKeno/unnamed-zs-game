@@ -245,11 +245,7 @@ namespace UZSG.Entities
                 return false; /// TODO: add prompt
             }
             
-            Game.Objects.PlaceNew(this.objectData.Id, callback: (info) =>
-            {
-                info.Object.Position = position;
-                info.Object.Rotation = rotation;
-            });
+            Game.Objects.PlaceNew(this.objectData.Id, position, rotation);
             return true;
         }
         

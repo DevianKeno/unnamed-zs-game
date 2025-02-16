@@ -39,6 +39,11 @@ namespace UZSG
         public World CurrentWorld => currentWorld;
         public bool IsInWorld { get; private set; } = false;
         public bool IsPaused => IsInWorld && currentWorld.IsPaused;
+        [SerializeField] LayerMask groundLayer;
+        /// <summary>
+        /// Default layer for all entities.
+        /// </summary>
+        public int GROUND_LAYER => groundLayer;
 
         #region WorldManager Events
         /// <summary>
@@ -62,6 +67,7 @@ namespace UZSG
 
         internal void Initialize()
         {
+            groundLayer = LayerMask.NameToLayer("Ground");
             RetrieveSavedWorlds();
             SetupPauseMenu();
         }

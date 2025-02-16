@@ -42,7 +42,7 @@ namespace UZSG
         /// Place a new Object at position.
         /// Should only be called when within a world.
         /// </summary>
-        public async void PlaceNew(string objectId, Vector3 position = default, OnObjectPlaceCompleted callback = null)
+        public async void PlaceNew(string objectId, Vector3 position = default, Quaternion rotation = default, OnObjectPlaceCompleted callback = null)
         {
             if (!_objectsDict.ContainsKey(objectId))
             {
@@ -62,7 +62,7 @@ namespace UZSG
                     return;
                 }
 
-                var go = Instantiate(asyncOp.Result, position, Quaternion.identity/*, Game.World.CurrentWorld.objectsContainer*/);
+                var go = Instantiate(asyncOp.Result, position, rotation/*, Game.World.CurrentWorld.objectsContainer*/);
                 go.name = $"{objData.DisplayName} (Object)";
                 if (false == go.TryGetComponent(out BaseObject baseObject))
                 {

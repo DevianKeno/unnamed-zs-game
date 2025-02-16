@@ -98,19 +98,23 @@ namespace UZSG.Worlds
 
         void InitializeParticleSystem(WeatherData preset)
         {
-            if (preset.WeatherParticlesPrefab == null) /// no weather particles
+            if (preset.WeatherParticlesPrefab != null) /// no weather particles
             {
-                Destroy(weatherParticleSystem.gameObject);
-            }; 
-
-            var go = Instantiate(preset.WeatherParticlesPrefab);
-            go.name = $"Weather Particle System ({preset.DisplayName})";
-            weatherParticleSystem = go.GetComponent<ParticleSystem>();
+                var go = Instantiate(preset.WeatherParticlesPrefab);
+                go.name = $"Weather Particle System ({preset.DisplayName})";
+                weatherParticleSystem = go.GetComponent<ParticleSystem>();
+            }
+            else
+            {
+                if (weatherParticleSystem != null)
+                {
+                    Destroy(weatherParticleSystem.gameObject);
+                }
+            }
             
             var localPlayer = World.GetLocalPlayer();
             if (localPlayer == null)
             {
-                Destroy(weatherParticleSystem.gameObject);
                 return;
             }
 

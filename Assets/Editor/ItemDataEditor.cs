@@ -8,7 +8,7 @@ namespace UZSG.UnityEditor
     [CustomEditor(typeof(ItemData))]
     public class ItemDataEditor : BaseDataEditor
     {
-        SerializedProperty assetReference,
+        protected SerializedProperty assetReference,
             displayNameProperty,
             description,
             sprite,
